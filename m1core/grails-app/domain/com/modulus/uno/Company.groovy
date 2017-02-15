@@ -29,6 +29,7 @@ class Company {
                     commissions:Commission,
                     telephones:Telephone]
 
+  static hasOne = [machinery:Machinery]
 
   static constraints = {
     bussinessName blank:false,size:1..100
