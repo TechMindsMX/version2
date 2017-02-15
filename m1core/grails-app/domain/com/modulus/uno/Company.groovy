@@ -37,7 +37,6 @@ class Company {
     rfc unique:true,blank:false,size:10..50,matches:/^[A-Z]{3,4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/
     numberOfAuthorizations nullable:false
     artemisaId nullable:true
-    machinery: nullable:true
   }
 
   String toString(){
