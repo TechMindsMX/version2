@@ -2,7 +2,12 @@ package com.modulus.uno
 
 class Machinery {
 
-  static hasMany = [states:State,
-                    transitions:Transition]
+  State initialState 
+  Company company
+
+  Date dateCreated
+  Date lastUpdated
+
+  static hasMany = [states:State]
 
 }
