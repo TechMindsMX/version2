@@ -2,8 +2,7 @@ package com.modulus.uno
 
 class Machinery {
 
-  State initialState 
-  Company company
+  State initialState
 
   Date dateCreated
   Date lastUpdated
