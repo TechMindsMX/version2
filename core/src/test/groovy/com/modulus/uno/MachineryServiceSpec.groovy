@@ -34,8 +34,8 @@ class MachineryServiceSpec extends Specification {
       service.addTransitionToMachinery(machinery.id,action.id,anotherAction.id)
     then:
       machinery.states.size() == 2
-      machinery.states.last().finaState == true
-      machinery.states.first().transitions.size() == 1 
+      machinery.states.last().isFinalState == true
+      machinery.states.first().transitions.size() == 1
   }
 
 }

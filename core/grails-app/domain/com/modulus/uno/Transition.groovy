@@ -7,6 +7,8 @@ class Transition {
 
   Date dateCreated
   Date lastUpdated
+  
+  static belongsTo = [state: State]
 
   static constraints = {
     action nullable:false
