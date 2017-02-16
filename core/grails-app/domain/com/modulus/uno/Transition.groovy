@@ -8,4 +8,9 @@ class Transition {
   Date dateCreated
   Date lastUpdated
 
+  static constraints = {
+    action nullable:false
+    stateTo nullable:false
+  }
+
 }
