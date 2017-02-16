@@ -4,9 +4,10 @@ import grails.test.mixin.TestFor
 import spock.lang.Specification
 import java.lang.Void as Should
 import grails.test.mixin.Mock
+import spock.lang.FailsWith
 
 @TestFor(MachineryService)
-@Mock([PurchaseOrder,State,Machinery,MachineryLink])
+@Mock([PurchaseOrder,Bank,State,Machinery,MachineryLink])
 class MachineryServiceSpec extends Specification {
 
   Should "create the link between the state machine and an instance"(){
@@ -26,4 +27,16 @@ class MachineryServiceSpec extends Specification {
       machineryLink.machineries[0].id == machinery.id
   }
 
+  @FailsWith(RuntimeException)
+  Should "fail while trying to create a machine for an instace without the implements"(){
+    given:
+      def instance = new Bank()
+      instance.save()
+      Machinery machinery = new Machinery()
+    when:
+      MachineryLink machineryLink = service.createMachineriesForThisInstance(instance,[machinery])
+    then:
+      !machineryLink.id
+  }
+    
 }
