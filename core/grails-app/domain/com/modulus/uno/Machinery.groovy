@@ -9,4 +9,8 @@ class Machinery {
 
   static hasMany = [states:State]
 
+  static constraints = {
+    initialState nullable:false
+  }
+
 }
