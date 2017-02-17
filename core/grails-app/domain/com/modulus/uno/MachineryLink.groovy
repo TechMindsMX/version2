@@ -1,7 +1,5 @@
 package com.modulus.uno
 
-import grails.converters.JSON
-
 class MachineryLink {
 
   Long machineryRef
