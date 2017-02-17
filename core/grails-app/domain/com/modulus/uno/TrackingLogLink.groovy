@@ -8,7 +8,7 @@ class TrackingLogLink {
   Date dateCreated
   Date lastUpdated
 
-  static hasMany = [trackingLogs:TrackingLog]
+  static hasMany = [records:TrackingLog]
 
   static constraints = {
     trackingRef min:0L
