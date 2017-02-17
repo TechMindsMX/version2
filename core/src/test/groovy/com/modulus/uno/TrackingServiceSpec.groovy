@@ -12,10 +12,10 @@ class TrackingServiceSpec extends Specification {
 
   Should "create a tracking link for an instance"(){
     given:"the instance that implements the interface"
-      PurchaseOrder purchaserOrder = new PurchaseOrder()
+      PurchaseOrder purchaseOrder = new PurchaseOrder()
       purchaseOrder.save(validate:false)
     when:
-      TrackingLogLink trackingLogLink = service.createTrackingForThisInstance(purchaseOrder)
+      TrackingLogLink trackingLogLink = service.createTrackingLogForThisInstance(purchaseOrder)
     then:
       trackingLogLink.id
       trackingLogLink.type == purchaseOrder.class.simpleName
