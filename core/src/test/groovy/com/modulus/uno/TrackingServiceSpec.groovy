@@ -54,7 +54,8 @@ class TrackingServiceSpec extends Specification {
     and:"the states"
       ArrayList<State> states = [new State(),new State(),new State(isFinalState:true)]
       states.each{ state ->
-        service.addRecordToInstanceLog(purchaseOrder,state)
+        state.save(validate:false)
+        service.addRecordToInstanceLog(purchaseOrder,state.id)
       }
     when:
       ArrayList<LogRecord> logRecords = service.findTrackingLogOfInstance(purchaseOrder)
