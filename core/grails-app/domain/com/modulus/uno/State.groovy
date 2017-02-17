@@ -2,7 +2,7 @@ package com.modulus.uno
 
 class State {
 
-  Boolean isFinalState = false
+  Boolean finalState = false
 
   static belongsTo = [machinery:Machinery]
   static hasMany = [transitions:Transition]
@@ -11,7 +11,7 @@ class State {
   Date lastUpdated
 
   static constraints = {
-    isFinalState nullable:false
+    finalState nullable:false
   }
 
 }
