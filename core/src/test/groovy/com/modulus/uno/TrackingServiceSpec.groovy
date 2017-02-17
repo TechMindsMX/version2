@@ -26,7 +26,7 @@ class TrackingServiceSpec extends Specification {
     given:
       Bank instance = new Bank()
     when:
-      TrackingLogLink trackingLogLink = service.createTrackinForThisInstance(instance) 
+      TrackingLogLink trackingLogLink = service.createTrackingLogForThisInstance(instance) 
     then:
       !trackingLogLink.id
   }
@@ -36,7 +36,7 @@ class TrackingServiceSpec extends Specification {
       PurchaseOrder purchaseOrder = new PurchaseOrder()
       purchaseOrder.save(validate:false)
     and:"its tracking log link"
-      TrackingLogLink trackingLogLink = service.createTrackinForThisInstance(purchaseOrder) 
+      TrackingLogLink trackingLogLink = service.createTrackingLogForThisInstance(purchaseOrder) 
     and:"the current state of the instance in the machine"
       State state = new State()
       state.save()
