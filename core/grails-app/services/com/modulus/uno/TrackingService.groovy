@@ -19,7 +19,7 @@ class TrackingService {
 
   
   TrackingLog addRecordToInstanceLog(def instance,Long stateId){
-    TrackingLogLink trackingLink = TrackingLogLink.findByTrackingRefAndType(trackingRef:instance.id,type:instance.class.simpleName) 
+    TrackingLogLink trackingLink = TrackingLogLink.findByTrackingRefAndType(instance.id,instance.class.simpleName)
     State currentState = State.get(stateId)
     TrackingLog record = new TrackingLog(currentState:currentState)
     trackingLink.addToRecords(record)

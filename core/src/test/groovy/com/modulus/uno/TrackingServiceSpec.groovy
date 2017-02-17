@@ -39,12 +39,12 @@ class TrackingServiceSpec extends Specification {
       TrackingLogLink trackingLogLink = service.createTrackingLogForThisInstance(purchaseOrder) 
     and:"the current state of the instance in the machine"
       State state = new State()
-      state.save()
+      state.save(validate:false)
     when:
       TrackingLog record = service.addRecordToInstanceLog(purchaseOrder,state.id)
     then:
       record.id
-      record.state.id == state.id
+      record.currentState.id == state.id
   }
 
 }
