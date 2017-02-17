@@ -1,6 +1,6 @@
 package com.modulus.uno
 
-class TrackingLog{
+class LogRecord{
   
   State currentState
 
