@@ -19,7 +19,7 @@ class MachineryServiceSpec extends Specification {
       machinery.initialState
       machinery.initialState.transitions.size() == 1
       machinery.initialState.transitions.first().id 
-      machinery.states.size() == 1
+      machinery.states.size() == 2
   }
 
   Should "add a transition for a machine"(){
@@ -31,11 +31,11 @@ class MachineryServiceSpec extends Specification {
       Action anotherAction = new Action(name:"Do another thing")
       anotherAction.save()
     when:
-      service.addTransitionToMachinery(machinery.id,action.id,anotherAction.id)
+      Machinery machineryUpdated = service.createTransition(machinery.id,action.id,anotherAction.id)
     then:
-      machinery.states.size() == 2
-      machinery.states.last().isFinalState == true
-      machinery.states.first().transitions.size() == 1
+      machineryUpdated.states.size() == 3
+      machineryUpdated.states.last().isFinalState == true
+      machineryUpdated.states[1].transitions.size() == 1
   }
 
 }
