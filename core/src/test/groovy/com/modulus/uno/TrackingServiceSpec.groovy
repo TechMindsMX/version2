@@ -50,6 +50,7 @@ class TrackingServiceSpec extends Specification {
   Should "get the records of the log"(){
     given:"the instance"
       PurchaseOrder purchaseOrder = new PurchaseOrder()
+      purchaseOrder.save(validate:false)
       service.createTrackingLogForThisInstance(purchaseOrder)
     and:"the states"
       ArrayList<State> states = [new State(),new State(),new State(isFinalState:true)]

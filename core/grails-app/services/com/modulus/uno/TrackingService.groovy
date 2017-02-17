@@ -22,11 +22,11 @@ class TrackingService {
   }
 
   LogRecord addRecordToInstanceLog(def instance,Long stateId){
-    TrackingLogLink trackingLink = getTrackingLogLinkOfInstance(instance)
+    TrackingLogLink trackingLogLink = getTrackingLogLinkOfInstance(instance)
     State currentState = State.get(stateId)
     LogRecord record = new LogRecord(currentState:currentState)
-    trackingLink.addToRecords(record)
-    record.save()
+    trackingLogLink.addToRecords(record)
+    trackingLogLink.save()
     record
   }
 
