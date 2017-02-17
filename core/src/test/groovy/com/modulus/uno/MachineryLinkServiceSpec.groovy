@@ -19,12 +19,12 @@ class MachineryLinkServiceSpec extends Specification {
       initialState.save()
       Machinery machinery = new Machinery(initialState:initialState)
     when:
-      MachineryLink machineryLink = service.createMachineriesForThisInstance(instance,[machinery])
+      MachineryLink machineryLink = service.createMachineryLinkForThisInstance(instance,machinery)
     then:
       machineryLink.id
       machineryLink.type == PurchaseOrder.class.simpleName
-      machineryLink.machineries
-      machineryLink.machineries[0].id == machinery.id
+      machineryLink.machinery
+      machineryLink.machinery.id == machinery.id
   }
 
   @FailsWith(RuntimeException)
@@ -34,7 +34,7 @@ class MachineryLinkServiceSpec extends Specification {
       instance.save()
       Machinery machinery = new Machinery()
     when:
-      MachineryLink machineryLink = service.createMachineriesForThisInstance(instance,[machinery])
+      MachineryLink machineryLink = service.createMachineryLinkForThisInstance(instance,machinery)
     then:
       !machineryLink.id
   }
