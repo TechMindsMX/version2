@@ -17,14 +17,22 @@ class TrackingService {
     trackingLogLink
   }
 
-  
-  TrackingLog addRecordToInstanceLog(def instance,Long stateId){
-    TrackingLogLink trackingLink = TrackingLogLink.findByTrackingRefAndType(instance.id,instance.class.simpleName)
+  TrackingLogLink getTrackingLogLinkOfInstance(def instance){
+    TrackingLogLink.findByTrackingRefAndType(instance.id,instance.class.simpleName)
+  }
+
+  LogRecord addRecordToInstanceLog(def instance,Long stateId){
+    TrackingLogLink trackingLink = getTrackingLogLinkOfInstance(instance)
     State currentState = State.get(stateId)
-    TrackingLog record = new TrackingLog(currentState:currentState)
+    LogRecord record = new LogRecord(currentState:currentState)
     trackingLink.addToRecords(record)
     record.save()
     record
+  }
+
+  ArrayList<LogRecord> findTrackingLogOfInstance(def instance){
+    TrackingLogLink trackingLink  = getTrackingLogLinkOfInstance(instance)
+    trackingLink.records
   }
 
 }
