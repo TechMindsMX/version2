@@ -48,20 +48,35 @@ class TrackingServiceSpec extends Specification {
   }
 
   Should "get the records of the log"(){
-    given:"the instance"
+    given:"the instance and its tracking log"
       PurchaseOrder purchaseOrder = new PurchaseOrder()
       purchaseOrder.save(validate:false)
-      service.createTrackingLogForThisInstance(purchaseOrder)
-    and:"the states"
-      ArrayList<State> states = [new State(),new State(),new State(isFinalState:true)]
-      states.each{ state ->
-        state.save(validate:false)
-        service.addRecordToInstanceLog(purchaseOrder,state.id)
-      }
+      createTrackingLog(purchaseOrder)
     when:
       ArrayList<LogRecord> logRecords = service.findTrackingLogOfInstance(purchaseOrder)
     then:
       logRecords.size() == 3
+  }
+
+  Should "get the last record of the instance transition"(){
+    given:"the instance"
+      PurchaseOrder purchaseOrder = new PurchaseOrder()
+      purchaseOrder.save(validate:false)
+      createTrackingLog(purchaseOrder)
+    when:
+      LogRecord logRecord = service.findLastTrackingLogRecord(purchaseOrder)
+    then:
+      logRecord.currentState.finalState
+  }
+
+  private createTrackingLog(PurchaseOrder purchaseOrder){
+    service.createTrackingLogForThisInstance(purchaseOrder)
+    ArrayList<State> states = [new State(),new State(),new State(finalState:true)]
+    states.eachWithIndex{ state, index ->
+      state.dateCreated = new Date()
+      state.save(validate:false)
+      service.addRecordToInstanceLog(purchaseOrder,state.id)
+    }
   }
 
 }
