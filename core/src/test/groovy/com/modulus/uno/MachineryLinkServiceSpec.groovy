@@ -7,7 +7,7 @@ import grails.test.mixin.Mock
 import spock.lang.FailsWith
 
 @TestFor(MachineryLinkService)
-@Mock([PurchaseOrder,Bank,State,Machinery,MachineryLink])
+@Mock([PurchaseOrder,Bank,State,Machine,MachineryLink])
 class MachineryLinkServiceSpec extends Specification {
 
   Should "create the link between the state machine and an instance"(){
@@ -17,7 +17,7 @@ class MachineryLinkServiceSpec extends Specification {
     and:"the machinery"
       State initialState = new State()
       initialState.save()
-      Machinery machinery = new Machinery(initialState:initialState)
+      Machine machinery = new Machine(initialState:initialState)
     when:
       MachineryLink machineryLink = service.createMachineryLinkForThisInstance(instance,machinery)
     then:
@@ -32,7 +32,7 @@ class MachineryLinkServiceSpec extends Specification {
     given:
       Bank instance = new Bank()
       instance.save()
-      Machinery machinery = new Machinery()
+      Machine machine = new Machine()
     when:
       MachineryLink machineryLink = service.createMachineryLinkForThisInstance(instance,machinery)
     then:
