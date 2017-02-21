@@ -35,4 +35,16 @@ class TrackingService {
     trackingLink.records
   }
 
+  LogRecord findLastTrackingLogRecord(def instance){
+    TrackingLogLink trackingLink  = getTrackingLogLinkOfInstance(instance)
+    def criteria = LogRecord.createCriteria()
+    Date maxDate = criteria.get{
+      projections{
+        max "dateCreated"
+      }
+    }
+
+    LogRecord.findByDateCreated(maxDate)
+  }
+
 }
