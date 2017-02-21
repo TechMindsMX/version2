@@ -1,6 +1,6 @@
 package com.modulus.uno
 
-class Machinery {
+class Machine {
 
   State initialState
 
