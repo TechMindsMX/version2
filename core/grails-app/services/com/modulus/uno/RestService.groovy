@@ -188,17 +188,17 @@ class RestService {
   }
 
   def getTransactionsIntegrator(MessageCommand command, String template){
-    try {
-      log.info "Calling Service : ${template}"
-      restClientBean.uri = grailsApplication.config.modulus.url
-      def resultGet = restClientBean.get(
-        path: "${template}/${command.type}/${command.begin}/${command.end}"
-      )
+    log.info "Calling Service : ${template}"
+    log.debug "aqui mero"
+    def response = wsliteConnectionService.get("grailsApplication.config.modulus.url",
+                                               "${template}/${command.type}/${command.begin}/${command.end}")
+    response ?: new RestException("Error aqui")
+  /*try {
       resultGet.responseData
     } catch(BusinessException ex) {
       log.warn "Error ${ex.message}"
       throw new RestException(ex.message)
-    }
+    }*/
   }
 
   def sendFilesForInvoiceM1(def bodyMap, def token) {
