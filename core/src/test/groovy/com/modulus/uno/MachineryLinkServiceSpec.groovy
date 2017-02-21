@@ -24,7 +24,7 @@ class MachineryLinkServiceSpec extends Specification {
       machineryLink.id
       machineryLink.type == PurchaseOrder.class.simpleName
       machineryLink.machine
-      machineryLink.machine.id == machinery.id
+      machineryLink.machine.id == machine.id
   }
 
   @FailsWith(RuntimeException)
