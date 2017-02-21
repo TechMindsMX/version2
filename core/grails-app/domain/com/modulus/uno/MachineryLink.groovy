@@ -4,7 +4,7 @@ class MachineryLink {
 
   Long machineryRef
   String type
-  Machinery machinery
+  Machine machine
 
   Date dateCreated
   Date lastUpdated
