@@ -1,7 +1,7 @@
 package com.modulus.uno
 import grails.converters.JSON
 
-class PurchaseOrder implements StateMachine,Tracking {
+class PurchaseOrder implements Machinery,Tracking {
 
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
   String providerName
