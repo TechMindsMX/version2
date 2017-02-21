@@ -173,32 +173,18 @@ class RestService {
   }
 
   def getTransactionsAccount(MessageCommand command){
-    try {
-      log.info "Calling Service : services/integra/tx/getTransactions"
-      //String token = obtainingTokenForCreateAccountOfModulusUno()
-      restClientBean.uri = grailsApplication.config.modulus.url
-      def resultGet = restClientBean.get(
-        path: "services/integra/tx/getTransactions/${command.uuid}/${command.begin}/${command.end}"
-      )
-      resultGet.responseData
-    } catch(BusinessException ex) {
-      log.warn "Error ${ex.message}"
-      throw new RestException(ex.message)
-    }
+    log.info "Calling Service : services/integra/tx/getTransactions"
+    wsliteConnectionService.get(grailsApplication.config.modulus.url,
+                                "services/integra/tx/getTransactions/${command.uuid}/${command.begin}/${command.end}")
   }
 
+  //TODO Metodo que no se usa, pero que se usara, pero se tendra que ajustar, 
+  //     falta agregar cuenta concentradora (PD no se si jala por cambio de peticion)
   def getTransactionsIntegrator(MessageCommand command, String template){
     log.info "Calling Service : ${template}"
-    log.debug "aqui mero"
     def response = wsliteConnectionService.get("grailsApplication.config.modulus.url",
                                                "${template}/${command.type}/${command.begin}/${command.end}")
     response ?: new RestException("Error aqui")
-  /*try {
-      resultGet.responseData
-    } catch(BusinessException ex) {
-      log.warn "Error ${ex.message}"
-      throw new RestException(ex.message)
-    }*/
   }
 
   def sendFilesForInvoiceM1(def bodyMap, def token) {
