@@ -12,6 +12,7 @@ class RestService {
 
   def grailsApplication
   def restClientBean
+  WsliteConnectionService wsliteConnectionService
 
   def getOnModulus(MessageCommand message, String template) {
     try {
@@ -226,17 +227,10 @@ class RestService {
   }
 
   def existEmisorForGenerateInvoice(String rfc) {
-    try {
-      log.info "CALLING Service: Verify if exist emisor"
-      log.info "Path: ${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.invoice}/${rfc}"
-      def http = new HTTPBuilder("${grailsApplication.config.modulus.facturacionUrl}")
-      http.get(path: "${grailsApplication.config.modulus.invoice}/${rfc}")
-
-    } catch (Exception ex) {
-      log.info "entro al error"
-      log.error "Exception: ${ex.message}"
-      return [error:false]
-    }
+    log.info "CALLING Service: Verify if exist emisor"
+    def result = wsliteConnectionService.get("${grailsApplication.config.modulus.facturacionUrl}",
+                                           "${grailsApplication.config.modulus.invoice}/${rfc}")
+    result ?: [error:false]
   }
 
 }
