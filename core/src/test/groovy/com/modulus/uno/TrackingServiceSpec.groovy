@@ -72,8 +72,7 @@ class TrackingServiceSpec extends Specification {
   private createTrackingLog(PurchaseOrder purchaseOrder){
     service.createTrackingLogForThisInstance(purchaseOrder)
     ArrayList<State> states = [new State(),new State(),new State(finalState:true)]
-    states.eachWithIndex{ state, index ->
-      state.dateCreated = new Date()
+    states.each{ state ->
       state.save(validate:false)
       service.addRecordToInstanceLog(purchaseOrder,state.id)
     }
