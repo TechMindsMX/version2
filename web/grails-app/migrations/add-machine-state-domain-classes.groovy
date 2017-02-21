@@ -1,56 +1,56 @@
 databaseChangeLog = {
 
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-1") {
-        createTable(tableName: "action") {
-            column(autoIncrement: "true", name: "id", type: "BIGINT") {
-                constraints(primaryKey: "true", primaryKeyName: "actionPK")
-            }
+  changeSet(author: "makingdevs (generated)", id: "1487714352840-1") {
+    createTable(tableName: "action") {
+      column(autoIncrement: "true", name: "id", type: "BIGINT") {
+        constraints(primaryKey: "true", primaryKeyName: "actionPK")
+      }
 
-            column(name: "version", type: "BIGINT") {
-                constraints(nullable: "false")
-            }
+      column(name: "version", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "date_created", type: "datetime") {
-                constraints(nullable: "false")
-            }
+      column(name: "date_created", type: "datetime") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "last_updated", type: "datetime") {
-                constraints(nullable: "false")
-            }
+      column(name: "last_updated", type: "datetime") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "name", type: "VARCHAR(255)") {
-                constraints(nullable: "false")
-            }
-        }
+      column(name: "name", type: "VARCHAR(255)") {
+        constraints(nullable: "false")
+      }
     }
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-2") {
-        createTable(tableName: "log_record") {
-            column(autoIncrement: "true", name: "id", type: "BIGINT") {
-                constraints(primaryKey: "true", primaryKeyName: "log_recordPK")
-            }
+  changeSet(author: "makingdevs (generated)", id: "1487714352840-2") {
+    createTable(tableName: "log_record") {
+      column(autoIncrement: "true", name: "id", type: "BIGINT") {
+        constraints(primaryKey: "true", primaryKeyName: "log_recordPK")
+      }
 
-            column(name: "version", type: "BIGINT") {
-                constraints(nullable: "false")
-            }
+      column(name: "version", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "current_state_id", type: "BIGINT") {
-                constraints(nullable: "false")
-            }
+      column(name: "current_state_id", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "date_created", type: "datetime") {
-                constraints(nullable: "false")
-            }
+      column(name: "date_created", type: "datetime") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "last_updated", type: "datetime") {
-                constraints(nullable: "false")
-            }
+      column(name: "last_updated", type: "datetime") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "tracking_log_link_id", type: "BIGINT") {
-                constraints(nullable: "false")
-            }
-        }
+      column(name: "tracking_log_link_id", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
     }
+  }
 
     changeSet(author: "makingdevs (generated)", id: "1487714352840-3") {
         createTable(tableName: "machine") {
@@ -1028,45 +1028,8 @@ databaseChangeLog = {
         addForeignKeyConstraint(baseColumnNames: "telephone_id", baseTableName: "profile_telephone", constraintName: "FK_s6qu1iyo2xra9o42sj0vney", referencedColumnNames: "id", referencedTableName: "telephone")
     }
 
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-177") {
-        dropForeignKeyConstraint(baseTableName: "movimientos_bancarios", constraintName: "FK_sorpav5eibs6myntu9bm6oerw")
+   
+    
 
-        addForeignKeyConstraint(baseColumnNames: "cuenta_id", baseTableName: "movimientos_bancarios", constraintName: "FK_sorpav5eibs6myntu9bm6oerw", referencedColumnNames: "id", referencedTableName: "bank_account")
-    }
 
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-178") {
-        dropForeignKeyConstraint(baseTableName: "corporate_company", constraintName: "FK_te8x5ha1oi9xmpbummb33gonr")
-
-        addForeignKeyConstraint(baseColumnNames: "corporate_companies_id", baseTableName: "corporate_company", constraintName: "FK_te8x5ha1oi9xmpbummb33gonr", referencedColumnNames: "id", referencedTableName: "corporate")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-179") {
-        dropForeignKeyConstraint(baseTableName: "profile_s3asset", constraintName: "FK_tf5ckj7ugmmbtd0nku9nm1hs5")
-
-        addForeignKeyConstraint(baseColumnNames: "profile_documents_id", baseTableName: "profile_s3asset", constraintName: "FK_tf5ckj7ugmmbtd0nku9nm1hs5", referencedColumnNames: "id", referencedTableName: "profile")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-180") {
-        dropForeignKeyConstraint(baseTableName: "purchase_order_s3asset", constraintName: "FK_thyldems4h03uogsgduropc0i")
-
-        addForeignKeyConstraint(baseColumnNames: "purchase_order_documents_id", baseTableName: "purchase_order_s3asset", constraintName: "FK_thyldems4h03uogsgduropc0i", referencedColumnNames: "id", referencedTableName: "purchase_order")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-181") {
-        dropForeignKeyConstraint(baseTableName: "cash_out_order", constraintName: "FK_tn08matxb1rdwy9879bbx2bsk")
-
-        addForeignKeyConstraint(baseColumnNames: "account_id", baseTableName: "cash_out_order", constraintName: "FK_tn08matxb1rdwy9879bbx2bsk", referencedColumnNames: "id", referencedTableName: "bank_account")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-182") {
-        dropForeignKeyConstraint(baseTableName: "profile_s3asset", constraintName: "FK_vevapj0ikfqe1s21iy1d9yyf")
-
-        addForeignKeyConstraint(baseColumnNames: "s3asset_id", baseTableName: "profile_s3asset", constraintName: "FK_vevapj0ikfqe1s21iy1d9yyf", referencedColumnNames: "id", referencedTableName: "s3asset")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1487714352840-183") {
-        dropForeignKeyConstraint(baseTableName: "loan_order", constraintName: "FK_wbaipjtxlax1ajhy32amn5pe")
-
-        addForeignKeyConstraint(baseColumnNames: "company_id", baseTableName: "loan_order", constraintName: "FK_wbaipjtxlax1ajhy32amn5pe", referencedColumnNames: "id", referencedTableName: "company")
-    }
 }
