@@ -22,8 +22,8 @@ class MachineService {
     machine
   }
 
-  Machine createTransition(Long machineryId,Long actionBeforeId,Long newActionId){
-    Machine currentMachine = Machine.get(machineryId)
+  Machine createTransition(Long machineId,Long actionBeforeId,Long newActionId){
+    Machine currentMachine = Machine.get(machineId)
     Action newAction = Action.get(newActionId)
 
     def criteria = Transition.createCriteria()
@@ -34,8 +34,8 @@ class MachineService {
       }
 
       state{
-        machinery{
-          eq("id",machineryId)
+        machine{
+          eq("id",machineId)
         }
       }
     }
