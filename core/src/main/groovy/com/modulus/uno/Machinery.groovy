@@ -1,4 +1,4 @@
 package com.modulus.uno
 
-interface StateMachine{
+interface Machinery{
 }
