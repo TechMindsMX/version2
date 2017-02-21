@@ -74,7 +74,7 @@ class MachineServiceSpec extends Specification {
     machine = service.createTransition(machine.id,firstAction.id,actions[0].id)
    
     (1..(actions.size()-1)).each{ index ->
-      machine = service.createTransition(machine,actions[index-1].id,actions[index].id)
+      machine = service.createTransition(machine.id,actions[index-1].id,actions[index].id)
     } 
 
     machine
