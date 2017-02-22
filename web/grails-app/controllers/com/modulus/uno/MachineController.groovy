@@ -9,9 +9,16 @@ class MachineController {
   static allowedMethods = [save: "POST", update: "PUT",delete:"DELETE"]
 
   MachineryLinkService machineryLinkService
+  CompanyService companyService
+  CorporateService corporateService
+  def springSecurityService
 
   def index(){
-    render view:"index",model:[entities:machineryLinkService.getClassesWithMachineryInterface()]
+    User user =  springSecurityService.currentUser
+    Corporate corporate = corporateService.findCorporateOfUser(user)
+    ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
+    render view:"index",model:[entities:machineryLinkService.getClassesWithMachineryInterface(),
+                               companies:companies]
   }
 
   def create(){
