@@ -7,7 +7,7 @@ import spock.lang.Ignore
 import java.lang.Void as Should
 
 @TestFor(MachineService)
-@Mock([PurchaseOrder,Machine,State,Transition,Action,MachineryLink,LogRecord])
+@Mock([PurchaseOrder,Machine,State,Transition,Action,MachineryLink,LogRecord,Company])
 class MachineServiceSpec extends Specification {
 
   Should "create a new machinery with an action"(){
@@ -43,10 +43,13 @@ class MachineServiceSpec extends Specification {
     given:"the machine"
       PurchaseOrder instance = new PurchaseOrder()
       instance.save(validate:false)
+    and:"the company"
+      Company company = new Company(bussinessName:"MakingDevs")
+      company.save(validate:false)
     and:"the machinery"
       Machine machine = createMachine()
     and:"the link between the instance and its machine"
-      MachineryLink machineryLink = new MachineryLink(machineryRef:instance.id,
+      MachineryLink machineryLink = new MachineryLink(companyRef:instance.id,
                                                       type:instance.class.simpleName)
       machineryLink.machine = machine
       machineryLink.save()
