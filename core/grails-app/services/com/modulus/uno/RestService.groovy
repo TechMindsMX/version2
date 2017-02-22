@@ -15,17 +15,10 @@ class RestService {
   WsliteConnectionService wsliteConnectionService
 
   def getOnModulus(MessageCommand message, String template) {
-    try {
-      log.info "Calling Service : ${template}"
-      restClientBean.uri = grailsApplication.config.modulus.url
-      def resultGet = restClientBean.get(
-        path: "${template}/${message.uuid}"
-      )
-      resultGet
-    } catch(Exception ex) {
-      log.warn "Error ${ex.message}"
-      throw new RestException(ex.message)
-    }
+    log.info "Calling Service : ${template}"
+    def response = wsliteConnectionService.get(grailsApplication.config.modulus.url,
+                                           "${template}/${message.uuid}")
+    response ?: new RestException("Error")
   }
 
   def getInvoiceData(def invoice) {
