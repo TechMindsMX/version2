@@ -67,7 +67,7 @@ class ModulusUnoService {
 
   def consultBalanceIntegratorOfType(String type) {
     def balance = restService.getBalancesIntegrator(type, grailsApplication.config.modulus.integratorBalance)
-    [balance.responseData.balance, balance.responseData.usd]
+    [balance.balance, balance.usd]
   }
 
   def createAccount(Company company,String email) {
