@@ -39,4 +39,9 @@ class MachineryLinkServiceSpec extends Specification {
       !machineryLink.id
   }
 
+  Should "get the classes that implements Machinery interface"(){
+    expect:
+      service.getNamesOfClassesWithMachineryInterface().size() == 1
+  }
+
 }
