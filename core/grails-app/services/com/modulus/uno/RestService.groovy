@@ -1,5 +1,6 @@
 package com.modulus.uno
 
+import wslite.rest.*
 import static groovyx.net.http.ContentType.*
 import groovyx.net.http.HTTPBuilder
 import org.apache.http.entity.mime.MultipartEntity
@@ -18,20 +19,16 @@ class RestService {
     log.info "Calling Service : ${template}"
     def response = wsliteConnectionService.get(grailsApplication.config.modulus.url,
                                            "${template}/${message.uuid}")
-    response ?: new RestException("Error")
+    response ? response[0] : new RestException("Error")
   }
 
   def getInvoiceData(def invoice) {
-    try {
-      restClientBean.uri = "http://api.makingdevs.com"
-      restClientBean.post(
-        path: "/InvoiceDetail.groovy",
-        body:invoice,
-        requestContentType: 'application/octet-stream')
-    } catch(BusinessException ex){
-      log.warm "Error ${ex.message}"
-      throw new RestException(ex.message)
-    }
+    def response = wsliteConnectionService.post("http://api.makingdevs.com",
+                                                "/InvoiceDetail.groovy",[:],{
+        type ContentType.BINARY
+        bytes invoice
+      })
+    response ?: new RestException("Error!!!")
   }
 
   def getBalancesIntegrator(String type, String template) {
