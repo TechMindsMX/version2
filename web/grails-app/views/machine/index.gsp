@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8">
     <meta name="layout" content="main" />
@@ -10,9 +10,9 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-cog fa-3x"></i>
-        <g:message code="machine.create" args="[entityName]" />
+        <g:message code="machine.index" args="[entityName]" />
         <small>
-          <g:message code="machine.new" />
+          <g:message code="machine.list" />
         </small>
       </h1>
     </div>
@@ -25,7 +25,7 @@
         <div class="portlet-body">
           <!-- BEGIN CREATE-ADDRESS -->
           <div class="content scaffold-create">
-            <form action="create">
+            <form action="create" method="POST">
               <fieldset class="form">
                 <div class="row">
                   <div class="form-group col-lg-3">
