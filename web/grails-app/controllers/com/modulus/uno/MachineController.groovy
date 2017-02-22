@@ -11,12 +11,12 @@ class MachineController {
   MachineryLinkService machineryLinkService
 
   def index(){
-    ArrayList<Map> entities = [] 
-    machineryLinkService.getNamesOfClassesWithMachineryInterface().each{ entity ->
-      entities << [key:entity,value:entity]
-    }
+    render view:"index",model:[entities:machineryLinkService.getClassesWithMachineryInterface()]
+  }
 
-    respond new Machine(),model:[entities:entities]
+  def create(){
+    String entity = params.entity ? "${params.entity[0].toLowerCase()}${params.entity[1..params.entity.size()-1]}" : ""
+    render view:"create",model:[entity:g.message(code:"${entity}.name")]
   }
 
 }
