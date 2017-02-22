@@ -335,6 +335,6 @@ class NotifyService {
   }
 
   private def sendNotify(def arguments){
-    restService.sendArgumentsToEmailer(arguments)
+    restService.sendEmailToEmailer(arguments)
   }
 }
