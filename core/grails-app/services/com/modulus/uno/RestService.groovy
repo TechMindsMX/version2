@@ -38,24 +38,11 @@ class RestService {
     response ?: new RestException("Error!!!")
   }
 
-  def sendArgumentsToEmailer(def message){
+  def sendEmailToEmailer(def message){
     log.info "Calling Emailer Service"
     def response = wsliteConnectionService.post(grailsApplication.config.emailer.urlEmailer, "" ,[:] , { json message })
   }
 
-  def sendCommand(MessageCommand message, String template){
-    try{
-      log.info "CALLING Email service: ${template}"
-      restClientBean.uri = grailsApplication.config.emailer.url
-      restClientBean.post(
-        path: template,
-        body: message,
-        requestContentType: 'application/json' )
-    } catch(BusinessException ex) {
-      log.warn "Error: ${ex.message}"
-      throw new RestException(ex.message)
-    }
-  }
 
   def sendCommandWithAuth(MessageCommand message, String template){
     try{
