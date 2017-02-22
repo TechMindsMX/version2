@@ -5,6 +5,8 @@ import grails.transaction.Transactional
 @Transactional
 class MachineryLinkService {
 
+  def grailsApplication
+
   MachineryLink createMachineryLinkForThisInstance(def instance,Machine machine){
     if(!Machinery.class.isAssignableFrom(instance.class)){
       throw new RuntimeException("Machinery is not assignable from ${instance.class.simpleName}")
@@ -15,6 +17,11 @@ class MachineryLinkService {
     machineryLink.machine = machine
     machineryLink.save()
     machineryLink
+  }
+
+  ArrayList<String> getNamesOfClassesWithMachineryInterface(){
+    ArrayList<String> names = []
+    grailsApplication.domainClasses.findAll { Machinery.class.isAssignableFrom(it.clazz) }*.clazz*.name
   }
 
 }
