@@ -13,7 +13,7 @@ class MachineServiceSpec extends Specification {
   Should "create a new machinery with an action"(){
     given:"the action"
       Action action = new Action(name:"Do Something")
-      action.save()
+      action.save(validate:false)
     when:
       Machine machine = service.createMachineWithAction(action)
     then:
@@ -26,7 +26,7 @@ class MachineServiceSpec extends Specification {
   Should "add a transition for a machine"(){
     given:"the machine"
       Action action = new Action(name:"Do Something")
-      action.save()
+      action.save(validate:false)
       Machine machine = service.createMachineWithAction(action)
     and: "the second action"
       Action anotherAction = new Action(name:"Do another thing")
@@ -55,7 +55,6 @@ class MachineServiceSpec extends Specification {
       machineryLink.save()
     and:"the action"
       Action action = Action.findByName("Initial Action")
-      action.save()
     and:"the tracking service mock"
       TrackingService trackingServiceMock = Mock(TrackingService)
       service.trackingService = trackingServiceMock
@@ -70,9 +69,9 @@ class MachineServiceSpec extends Specification {
     Machine machine = new Machine()
     machine.save()
     ArrayList<Action> actions = [new Action(name:"Sell"),new Action(name:"Buy"),new Action(name:"Send")] 
-    actions*.save()
+    actions*.save(validate:false)
     Action firstAction = new Action(name:"Initial Action")
-    firstAction.save()
+    firstAction.save(validate:false)
     machine = service.createMachineWithAction(firstAction)
     machine = service.createTransition(machine.id,firstAction.id,actions[0].id)
    
