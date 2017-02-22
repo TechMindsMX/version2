@@ -23,7 +23,12 @@ class MachineController {
 
   def create(){
     String entity = params.entity ? "${params.entity[0].toLowerCase()}${params.entity[1..params.entity.size()-1]}" : ""
-    render view:"create",model:[entity:g.message(code:"${entity}.name")]
+    Long company = params.long('company')
+    ArrayList<Action> actions = Action.list() 
+
+    render view:"create",model:[entity:g.message(code:"${entity}.name"),
+                                company:company,
+                                actions:actions]
   }
 
 }
