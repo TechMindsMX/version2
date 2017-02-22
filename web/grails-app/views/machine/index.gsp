@@ -27,14 +27,20 @@
           <div class="content scaffold-create">
             <form action="create">
               <fieldset class="form">
-                <div class="form-group col-lg-3">
-                  <label for="entity">
-                    ${message(code:'machine.for.label')}
-                  </label>
-                  <g:select name="entity" class="form-control" from="${entities}" optionKey="key" optionValue="value" noSelection="${['':'Seleccionar']}"></g:select>
+                <div class="row">
+                  <div class="form-group col-lg-3">
+                    <label for="entity">
+                      ${message(code:'machine.for.label')}
+                    </label>
+                  </div>
                 </div>
-                <div class="form-group col-lg-3">
-                  
+                <div class="row">
+                  <div class="form-group col-lg-3">
+                    <g:select name="entity" class="form-control" from="${entities}" optionKey="key" optionValue="value" noSelection="${['':'Seleccionar']}"></g:select>
+                  </div>
+                  <div class="form-group col-lg-3">
+                    <g:submitButton name="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+                  </div>
                 </div>
               </fieldset>
             </form>
