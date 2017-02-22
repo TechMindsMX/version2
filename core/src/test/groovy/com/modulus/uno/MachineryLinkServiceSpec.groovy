@@ -41,7 +41,7 @@ class MachineryLinkServiceSpec extends Specification {
 
   Should "get the classes that implements Machinery interface"(){
     expect:
-      service.getNamesOfClassesWithMachineryInterface().size() == 1
+      service.getClassesWithMachineryInterface().size() == 1
   }
 
 }
