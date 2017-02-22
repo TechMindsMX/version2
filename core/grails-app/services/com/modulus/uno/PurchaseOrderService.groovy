@@ -31,10 +31,9 @@ class PurchaseOrderService {
   def callExternalServiceForInvoice(def invoice) {
     File tmp = File.createTempFile("${new File(".").getCanonicalPath()}/${invoice.originalFilename}","")
     invoice.transferTo(tmp)
-
     def responsePOST = restService.getInvoiceData(tmp.bytes)
     tmp.deleteOnExit()
-    responsePOST.responseData
+    responsePOST
   }
 
   def createPurchaseOrder(Long companyId, Map params) {
