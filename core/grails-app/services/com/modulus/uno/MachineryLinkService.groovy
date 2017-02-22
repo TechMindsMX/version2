@@ -21,7 +21,7 @@ class MachineryLinkService {
 
   ArrayList<String> getNamesOfClassesWithMachineryInterface(){
     ArrayList<String> names = []
-    grailsApplication.domainClasses.findAll { Machinery.class.isAssignableFrom(it.clazz) }*.clazz*.name
+    grailsApplication.domainClasses.findAll { Machinery.class.isAssignableFrom(it.clazz) }*.clazz*.simpleName
   }
 
 }
