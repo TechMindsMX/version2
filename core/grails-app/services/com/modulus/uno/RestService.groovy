@@ -32,31 +32,15 @@ class RestService {
   }
 
   def getBalancesIntegrator(String type, String template) {
-    try {
-      log.info "Calling Service : ${template}"
-      restClientBean.uri = grailsApplication.config.modulus.url
-      def resultGet = restClientBean.get(
-        path: "${template}/${type}"
-      )
-      resultGet
-    } catch(BusinessException ex) {
-      log.warn "Error ${ex.message}"
-      throw new RestException(ex.message)
-    }
+    log.info "Calling Service : ${template}"
+    def response = wsliteConnectionService.get(grailsApplication.config.modulus.url,
+                                           "${template}/${type}")
+    response ?: new RestException("Error!!!")
   }
 
-//Send arguments to Emailer Modulus Uno
   def sendArgumentsToEmailer(def message){
-    try{
-      log.info message.dump()
-      restClientBean.uri = grailsApplication.config.emailer.urlEmailer
-      restClientBean.post(
-        body: message,
-        requestContentType: 'application/json' )
-    } catch(BusinessException ex) {
-      log.warn "Error: ${ex.message}"
-      throw new RestException(ex.message)
-    }
+    log.info "Calling Emailer Service"
+    def response = wsliteConnectionService.post(grailsApplication.config.emailer.urlEmailer, "" ,[:] , { json message })
   }
 
   def sendCommand(MessageCommand message, String template){
