@@ -33,11 +33,21 @@
                       ${message(code:'machine.for.label')}
                     </label>
                   </div>
+                  <div class="form-group col-lg-3">
+                    <label for="entity">
+                      ${message(code:'company.label')}
+                    </label>
+                  </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-lg-3">
                     <g:select name="entity" class="form-control" from="${entities}" optionKey="key" optionValue="value" noSelection="${['':'Seleccionar']}"></g:select>
                   </div>
+
+                  <div class="form-group col-lg-3">
+                    <g:select name="company" class="form-control" from="${companies}" optionKey="id" optionValue="bussinessName" noSelection="${['':'Seleccionar']}"></g:select>
+                  </div>
+
                   <div class="form-group col-lg-3">
                     <g:submitButton name="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
                   </div>
