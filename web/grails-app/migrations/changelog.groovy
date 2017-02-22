@@ -16,4 +16,5 @@ databaseChangeLog = {
   include file: 'adding-column-payment-method-to-sale-order.groovy'
   include file: 'adding-column-discount-to-sale-order-item.groovy'
   include file: 'add-machine-state-domain-classes.groovy'
+  include file: 'updating-machinery-link-class.groovy'
 }
