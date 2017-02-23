@@ -38,10 +38,10 @@ var MachineCreateController = (function(){
       var actionFromId = $(selectors.actionFrom).val(),
       actionToId = $(selectors.actionTo).val(),
       actionToName = $(selectors.actionTo + ' option:selected').text();
-      machine.addTransition({actionFromId:actionFromId,
-                             actionToId:actionToId,
-                             actionName:actionToName});
-
+      var newTransition = machine.addTransition({actionFromId:actionFromId,
+                                                 actionToId:actionToId,
+                                                 actionName:actionToName});
+      
       MachineCreateView.render(machine);
       updateFromSelect(actionToId,actionToName);
     }
@@ -49,12 +49,17 @@ var MachineCreateController = (function(){
 
   updateFromSelect = function(actionId,actionName){
     var options = $(selectors.actionFrom).find('option');
-    var existentAction = $.grep(machine.getActions(),function(action,index){
-      action.id == actionId; 
+
+    $.each(options,function(index,option){
+      if($(option).val()){
+        $(option).remove();
+      }
     });
 
-    if(existentAction.length == 0)
-      $(selectors.actionFrom).append('<option value="'+actionId+'">'+actionName+'</option>');
+    $.each(machine.getActions(),function(index,action){
+      $(selectors.actionFrom).append('<option value="'+action.id+'">'+action.name+'</option>')
+    });
+
   },
 
   bindEvents = function(){
