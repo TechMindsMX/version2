@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8">
     <meta name="layout" content="main" />
-    <title></title>
+    <title>Modulus UNO | Crear Máquina</title>
+    <asset:javascript src="machine/machine_create_controller.js"/>
   </head>
   <body>
     <!-- BEGIN PAGE TITLE -->     
@@ -20,6 +21,7 @@
     <!-- BEGIN OF PORTLET -->    
     <div class="portlet portlet-blue">
       <div class="portlet-body">
+        <form name="transitionForm">
         <!-- BEGIN ROW -->
         <div class="row">
           <div class="col-sm-6">
@@ -58,6 +60,7 @@
 
           </div>
         </div>
+        </form>
       </div>
     </div>
     <!-- END OF PORTLET -->
