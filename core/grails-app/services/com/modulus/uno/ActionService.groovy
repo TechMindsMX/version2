@@ -10,4 +10,5 @@ class ActionService {
     company.addToActions(action)
     company.save()
   }
+
 }

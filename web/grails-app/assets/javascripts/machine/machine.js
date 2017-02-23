@@ -28,9 +28,19 @@ var Machine = {
       
       if(transitionOfLastAction != null){
         var stateFrom = transitionOfLastAction.stateTo;
-        var stateTo = this.getNextState();
-        console.log('InitialState');
-        console.log(stateTo); 
+        var existentTransition  = $.grep(this.transitions,function(transition,index){
+          return transition.stateFrom == stateFrom && transition.actionId == data.actionToId;
+        })[0];
+
+        if(existentTransition == null){
+          var stateTo = (data.actionFromId == data.actionToId) ? stateFrom : this.getNextState();
+
+          transition = Transition.create({stateFrom:stateFrom,
+                                          action:data.actionName,
+                                          actionId:data.actionToId,
+                                          stateTo:stateTo});
+          this.transitions.push(transition)
+        }
       }
       
     }
