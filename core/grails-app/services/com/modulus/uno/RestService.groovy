@@ -19,7 +19,7 @@ class RestService {
     log.info "Calling Service : ${template}"
     def response = wsliteConnectionService.get(grailsApplication.config.modulus.url,
                                            "${template}/${message.uuid}")
-    response ? response[0] : new RestException("Error")
+    response ?: new RestException("Error")
   }
 
   def getInvoiceData(def invoice) {
@@ -42,7 +42,6 @@ class RestService {
     log.info "Calling Emailer Service"
     def response = wsliteConnectionService.post(grailsApplication.config.emailer.urlEmailer, "" ,[:] , { json message })
   }
-
 
   def sendCommandWithAuth(MessageCommand message, String template){
     try{
