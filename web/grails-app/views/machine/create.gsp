@@ -28,20 +28,20 @@
             <!-- BEGIN ROW -->
             <div class="row">
               <div class="form-group col-sm-6">
-                <label for="entity">
+                <label for="actionFrom">
                   ${message(code:'machine.action.from')}
                 </label>
                 <select name="actionFrom" class="form-control">
-                  <option>Seleccionar</option>
+                  <option selected value>Seleccionar</option>
                   <option value="0">Inicio</option>
                   <g:each var="action" in="${actions}">
                     <option value="${action.id}">${action.name}</option>
-                  </g:each>  
+                  </g:each>
                 </select>
               </div>
 
               <div class="form-group col-sm-6">
-                <label for="entity">
+                <label for="actionTo">
                   ${message(code:'machine.action.to')}
                 </label>
                 <g:select name="actionTo" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
