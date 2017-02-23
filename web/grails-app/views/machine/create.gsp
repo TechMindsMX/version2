@@ -29,7 +29,13 @@
                 <label for="entity">
                   ${message(code:'machine.action.from')}
                 </label>
-                <g:select name="actionFrom" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
+                <select name="actionFrom" class="form-control">
+                  <option>Seleccionar</option>
+                  <option value="0">Inicio</option>
+                  <g:each var="action" in="${actions}">
+                    <option value="${action.id}">${action.name}</option>
+                  </g:each>  
+                </select>
               </div>
 
               <div class="form-group col-sm-6">

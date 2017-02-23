@@ -93,6 +93,7 @@
               <li><g:link controller="corporate" action="addUser" id="${session.corporate.id}">Alta Usuario</g:link></li>
               <li><g:link controller="corporate" action="users" id="${session.corporate.id}">Lista de Usuarios</g:link></li>
               <li><g:link controller="corporate" action="companies" id="${session.corporate.id}">Todas las Empresas</g:link></li>
+              <li><g:link controller="machine" action="index">Lista de máquinas</g:link></li>
             </g:if>
           </sec:ifAnyGranted>
 
