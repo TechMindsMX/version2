@@ -20,8 +20,35 @@
     <!-- BEGIN OF PORTLET -->    
     <div class="portlet portlet-blue">
       <div class="portlet-body">
+        <!-- BEGIN ROW -->
         <div class="row">
-          <div class="col-sm-3">
+          <div class="col-sm-6">
+            <!-- BEGIN ROW -->
+            <div class="row">
+              <div class="form-group col-sm-6">
+                <label for="entity">
+                  ${message(code:'machine.action.from')}
+                </label>
+                <g:select name="actionFrom" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
+              </div>
+
+              <div class="form-group col-sm-6">
+                <label for="entity">
+                  ${message(code:'machine.action.to')}
+                </label>
+                <g:select name="actionTo" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
+              </div>
+            </div>
+            <!-- END OF ROW -->
+            <!-- BEGIN ROW -->
+            <div class="row">
+              <div class="col-sm-12">
+                <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
+              </div>
+            </div>
+            <!-- END OF ROW -->
+          </div>
+          <div class="col-sm-6">
 
           </div>
         </div>
