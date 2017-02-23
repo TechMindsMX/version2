@@ -1,5 +1,7 @@
 //= require third-party/jquery-validation/dist/jquery.validate.js
+//= require helpers/machine_helpers.js
 //= require machine/machine.js
+//= require machine/machine_create_view.js
 
 var MachineCreateController = (function(){
   
@@ -8,7 +10,8 @@ var MachineCreateController = (function(){
     actionTo:'select[name=actionTo]',
     transitionForm:'form[name=transitionForm]'
   },
-  
+  machine = null,  
+
   initValidations = function(){
     $(selectors.transitionForm).validate({
       rules:{
@@ -23,7 +26,7 @@ var MachineCreateController = (function(){
         $(element).parent('div').addClass("has-error");
       },
       success: function(label,element){
-        $(element).parent('div').addClass("has-error");
+        $(element).parent('div').removeClass("has-error");
       }
     });
   },
@@ -32,12 +35,26 @@ var MachineCreateController = (function(){
     event.preventDefault();
     var form = $(event.currentTarget);
     if(form.valid()){
-      console.log('True');
+      var actionFromId = $(selectors.actionFrom).val(),
+      actionToId = $(selectors.actionTo).val(),
+      actionToName = $(selectors.actionTo + ' option:selected').text();
+      machine.addTransition({actionFromId:actionFromId,
+                             actionToId:actionToId,
+                             actionName:actionToName});
+
+      MachineCreateView.render(machine);
+      updateFromSelect(actionToId,actionToName);
     }
-    else{
-      console.log('False');
-    }
-    console.log(form);
+  },
+
+  updateFromSelect = function(actionId,actionName){
+    var options = $(selectors.actionFrom).find('option');
+    var existentAction = $.grep(machine.getActions(),function(action,index){
+      action.id == actionId; 
+    });
+
+    if(existentAction.length == 0)
+      $(selectors.actionFrom).append('<option value="'+actionId+'">'+actionName+'</option>');
   },
 
   bindEvents = function(){
@@ -45,6 +62,7 @@ var MachineCreateController = (function(){
   },
 
   start = function(){
+    machine = Machine.create();
     initValidations();
     bindEvents();
   };
