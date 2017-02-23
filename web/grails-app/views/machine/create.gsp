@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="layout" content="main" />
     <title>Modulus UNO | Crear Máquina</title>
+    <asset:javascript src="third-party/handlebars/handlebars.js"/>
     <asset:javascript src="machine/machine_create_controller.js"/>
   </head>
   <body>
@@ -22,47 +23,85 @@
     <div class="portlet portlet-blue">
       <div class="portlet-body">
         <form name="transitionForm">
-        <!-- BEGIN ROW -->
-        <div class="row">
-          <div class="col-sm-6">
-            <!-- BEGIN ROW -->
-            <div class="row">
-              <div class="form-group col-sm-6">
-                <label for="actionFrom">
-                  ${message(code:'machine.action.from')}
-                </label>
-                <select name="actionFrom" class="form-control">
-                  <option selected value>Seleccionar</option>
-                  <option value="0">Inicio</option>
-                  <g:each var="action" in="${actions}">
-                    <option value="${action.id}">${action.name}</option>
-                  </g:each>
-                </select>
-              </div>
+          <!-- BEGIN ROW -->
+          <div class="row">
+            <div class="col-sm-6">
+              <!-- BEGIN ROW -->
+              <div class="row">
+                <div class="form-group col-sm-6">
+                  <label for="actionFrom">
+                    ${message(code:'machine.action.from')}
+                  </label>
+                  <select name="actionFrom" class="form-control">
+                    <option selected value>Seleccionar</option>
+                    <option value="0">Inicio</option>
+                  </select>
+                </div>
 
-              <div class="form-group col-sm-6">
-                <label for="actionTo">
-                  ${message(code:'machine.action.to')}
-                </label>
-                <g:select name="actionTo" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
+                <div class="form-group col-sm-6">
+                  <label for="actionTo">
+                    ${message(code:'machine.action.to')}
+                  </label>
+                  <g:select name="actionTo" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
+                </div>
               </div>
-            </div>
-            <!-- END OF ROW -->
-            <!-- BEGIN ROW -->
-            <div class="row">
-              <div class="col-sm-12">
-                <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
+              <!-- END OF ROW -->
+              <!-- BEGIN ROW -->
+              <div class="row">
+                <div class="form-group col-sm-12">
+                  <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
+                </div>
               </div>
+              <!-- END OF ROW -->
+              <!-- BEGIN ROW -->
+              <div class="row">
+                <div class="col-lg-12" id="transitionsTableContainer">
+                    
+                </div>
+              </div>
+              <!-- END OF ROW -->
             </div>
-            <!-- END OF ROW -->
+            <div class="col-sm-6">
+            
+            </div>
           </div>
-          <div class="col-sm-6">
-
-          </div>
-        </div>
+          <!-- END OF ROW --> 
         </form>
       </div>
     </div>
     <!-- END OF PORTLET -->
+
+    <script id="transitionsTable" type="text/x-handlebars-template">
+      <div class="table-responsive" >
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Estado Inicial</th>
+              <th>Acción</th>
+              <th>Estado Final</th>
+              <th></th>
+            </tr>
+          </thead>  
+          <tbody>
+            {{#each machine.transitions}}
+            <tr>
+              <td>
+                {{isInitialState stateFrom}}
+              </td>
+              <td>
+                {{action}}
+              </td>
+              <td>
+                {{stateTo}}
+              </td>
+              <td>
+                <button type="button" class="btn btn-red">Eliminar</button>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>  
+      </div>
+    </script>
   </body>
 </html>
