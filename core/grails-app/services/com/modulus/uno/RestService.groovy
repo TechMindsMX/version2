@@ -14,6 +14,7 @@ class RestService {
   def grailsApplication
   def restClientBean
   WsliteConnectionService wsliteConnectionService
+  WsliteRequestService wsliteRequestService
 
   def getOnModulus(MessageCommand message, String template) {
     log.info "Calling Service : ${template}"
@@ -107,29 +108,29 @@ class RestService {
   }
 
   private def obtainingFacturaToken() {
-    log.info "Creating RestTemplate Object for obtain token"
-    restClientBean.uri = grailsApplication.config.modulus.facturacionUrl
-    log.info "Calling Modulus Uno service for token"
-    def tokenResponse = restClientBean.post(
-      path: grailsApplication.config.modulus.token,
-      body: getAuthMap(),
-      requestContentType: URLENC
-      )
+    log.info "Calling Facturación service for token"
+    def tokenResponse = wsliteConnectionService.post(grailsApplication.config.modulus.facturacionUrl,
+                                                     grailsApplication.config.modulus.token, [:], { urlenc getAuthMap() })
     log.info "Return token obtained ${tokenResponse.dump()}"
-    tokenResponse.responseData.access_token
+    tokenResponse.access_token
   }
 
   private def callingFacturaService(MessageCommand message,String template,String token) {
-    log.info "Creating RestTemplate object for create Modulus Uno facturacion"
-    restClientBean.uri = grailsApplication.config.modulus.facturacionUrl
-    log.info "Calling service for creating factura"
+    log.info "Calling Facturación service for creating factura"
+    String baseUrl = grailsApplication.config.modulus.facturacionUrl
+    String endpoint = template
+    def response = wsliteRequestService.doRequest{
+      baseUrl baseUrl
+      endpointUrl endpoint
+      headers Authorization: "Bearer ${token}"
+      callback { urlenc message}
+    }.json()
+    response
+    /*
     def modulusAccountResponse = restClientBean.post(
-      path: template,
-      headers: [Authorization:"Bearer ${token}"],
       body:message,
       requestContentType: 'application/json')
-    log.info "Returning factura properties of Modulus Uno"
-    modulusAccountResponse.responseData
+    */
   }
 
   def getTransactionsAccount(MessageCommand command){
@@ -174,9 +175,13 @@ class RestService {
 
   def existEmisorForGenerateInvoice(String rfc) {
     log.info "CALLING Service: Verify if exist emisor"
-    def result = wsliteConnectionService.get("${grailsApplication.config.modulus.facturacionUrl}",
-                                           "${grailsApplication.config.modulus.invoice}/${rfc}")
-    result ?: [error:false]
+    String facturacionUrl = grailsApplication.config.modulus.facturacionUrl
+    String endpoint = "${grailsApplication.config.modulus.invoice}/${rfc}"
+    def response = wsliteRequestService.doRequest{
+      baseUrl facturacionUrl
+      endpointUrl endpoint
+    }.json()
+    response ?: [error:false]
   }
 
 }
