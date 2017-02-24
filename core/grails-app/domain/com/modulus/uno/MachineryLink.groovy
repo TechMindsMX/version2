@@ -2,7 +2,7 @@ package com.modulus.uno
 
 class MachineryLink {
 
-  Long companyRef
+  Long machineryRef
   String type
   Machine machine
 
@@ -10,7 +10,7 @@ class MachineryLink {
   Date lastUpdated
 
   static constraints = {
-    companyRef min:0L
+    machineryRef min:0L
     type blank:false
   }
 

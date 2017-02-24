@@ -49,7 +49,7 @@ class MachineServiceSpec extends Specification {
     and:"the machinery"
       Machine machine = createMachine()
     and:"the link between the instance and its machine"
-      MachineryLink machineryLink = new MachineryLink(companyRef:company.id,
+      MachineryLink machineryLink = new MachineryLink(machineryRef:instance.id,
                                                       type:instance.class.simpleName)
       machineryLink.machine = machine
       machineryLink.save()
