@@ -58,12 +58,12 @@ class MachineService {
   }
 
   def moveToAction(def instance,Action action){
-    MachineryLink machineryLink = MachineryLink.findByCompanyRefAndType(instance.id,instance.class.simpleName)
+    MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     Machine machine = machineryLink.machine
     State state = trackingService.findLastTrackingLogRecord(instance)?.state
 
     if(!state)
-      state = machine.initialState 
+      state = machine.initialState
 
     Transition transition = state.transitions.find{ transition -> transition.action.id == action.id }
 
