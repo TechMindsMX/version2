@@ -7,7 +7,7 @@ import spock.lang.Ignore
 import java.lang.Void as Should
 
 @TestFor(MachineService)
-@Mock([PurchaseOrder,Machine,State,Transition,Action,MachineryLink,Company])
+@Mock([PurchaseOrder,Machine,State,Transition,Action,MachineryLink,Company,TrackingLog])
 class MachineServiceSpec extends Specification {
 
   Should "create a new machinery with an action"(){
@@ -39,7 +39,6 @@ class MachineServiceSpec extends Specification {
       updatedMachine.states[1].transitions.size() == 1
   }
 
-  @Ignore
   Should "move the instance to the first state"(){
     given:"the machine"
       PurchaseOrder instance = new PurchaseOrder()
@@ -60,8 +59,6 @@ class MachineServiceSpec extends Specification {
       State newState = service.moveToAction(instance,action)
     then:
       machineryLink.trackingLogs.size() == 1
-      1 * trackingServiceMock.addRecordToInstanceLog(_,_)
-      1 * trackingServiceMock.findLastTrackingLogRecord(_)
   }
 
   Machine createMachine(){

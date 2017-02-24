@@ -31,7 +31,7 @@ class MachineController {
 
     render view:"create",model:[entity:g.message(code:"${entity}.name"),
                                 company:company.id,
-                                actions:company.actions]
+                                actions:Action.list()]
   }
 
 }
