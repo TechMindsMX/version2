@@ -27,8 +27,7 @@ class Company {
                     feesReceipts:FeesReceipt,
                     loanOrders: LoanOrder,
                     commissions:Commission,
-                    telephones:Telephone,
-                    actions:Action]
+                    telephones:Telephone]
 
   static constraints = {
     bussinessName blank:false,size:1..100
