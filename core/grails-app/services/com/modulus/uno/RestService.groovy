@@ -93,45 +93,39 @@ class RestService {
     modulusAccountResponse.responseData
   }
 
-  //Metodos de consulta de facturacion
-  def sendFacturaCommandWithAuth(MessageCommand message, String template){
-    try{
-      log.info "CALLING Modulusuno facturacion service: ${template}"
-      String token = obtainingFacturaToken()
-      def modulusResponse = callingFacturaService(message,template,token)
-      log.info "Return Information of modulus uno"
-      modulusResponse
-    } catch(BusinessException ex) {
-      log.warn "Error: ${ex.message}"
-      throw new RestException(ex.message)
-    }
+  def sendFacturaCommandWithAuth(MessageCommand message, String template){    
+    log.info "CALLING Modulusuno facturacion service: ${template}"
+    String token = obtainingFacturaToken()
+    callingFacturaService(message,template,token)
   }
 
   private def obtainingFacturaToken() {
     log.info "Calling Facturación service for token"
-    def tokenResponse = wsliteConnectionService.post(grailsApplication.config.modulus.facturacionUrl,
-                                                     grailsApplication.config.modulus.token, [:], { urlenc getAuthMap() })
-    log.info "Return token obtained ${tokenResponse.dump()}"
-    tokenResponse.access_token
+    def facturacionUrl = grailsApplication.config.modulus.facturacionUrl
+    def endpoint = grailsApplication.config.modulus.token
+    def data = getAuthMap()
+    def response = wsliteRequestService.doRequest{
+      baseUrl facturacionUrl
+      endpointUrl endpoint
+      callback { urlenc data }
+      method HTTPMethod.POST
+    }.doit()
+    log.info "Return token obtained ${response?.json?.access_token}"
+    response?.json?.access_token
   }
 
   private def callingFacturaService(MessageCommand message,String template,String token) {
     log.info "Calling Facturación service for creating factura"
-    String otramadre = grailsApplication.config.modulus.facturacionUrl
-    String endpoint = template
-    log.debug groovy.json.JsonOutput.toJson(message) 
     def response = wsliteRequestService.doRequest{
-      baseUrl endpoint
+      baseUrl template
       headers Authorization: "Bearer ${token}"
       method HTTPMethod.POST
-      callback { 
+      callback {
         type ContentType.JSON
-        text groovy.json.JsonOutput.toJson(message) 
+        text groovy.json.JsonOutput.toJson(message)
       }
-    }.json()
-    log.debug "*"*30
-    log.debug response
-    response
+    }.doit()
+    response.data
   }
 
   def getTransactionsAccount(MessageCommand command){
@@ -181,14 +175,8 @@ class RestService {
     def response = wsliteRequestService.doRequest{
       baseUrl facturacionUrl
       endpointUrl endpoint
-    }.json()
-    response ?: [error:false]
-  }
-
-  private Map asMap(command) {
-    command.class.declaredFields.findAll { !it.synthetic }.collectEntries {
-      [ (it.name):"$it.name" ]
-    }
+    }.doit()
+    response ? response.json : [error:false]
   }
 
 }
