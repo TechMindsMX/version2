@@ -117,20 +117,21 @@ class RestService {
 
   private def callingFacturaService(MessageCommand message,String template,String token) {
     log.info "Calling Facturación service for creating factura"
-    String baseUrl = grailsApplication.config.modulus.facturacionUrl
+    String otramadre = grailsApplication.config.modulus.facturacionUrl
     String endpoint = template
+    log.debug groovy.json.JsonOutput.toJson(message) 
     def response = wsliteRequestService.doRequest{
-      baseUrl baseUrl
-      endpointUrl endpoint
+      baseUrl endpoint
       headers Authorization: "Bearer ${token}"
-      callback { urlenc message}
+      method HTTPMethod.POST
+      callback { 
+        type ContentType.JSON
+        text groovy.json.JsonOutput.toJson(message) 
+      }
     }.json()
+    log.debug "*"*30
+    log.debug response
     response
-    /*
-    def modulusAccountResponse = restClientBean.post(
-      body:message,
-      requestContentType: 'application/json')
-    */
   }
 
   def getTransactionsAccount(MessageCommand command){
@@ -182,6 +183,12 @@ class RestService {
       endpointUrl endpoint
     }.json()
     response ?: [error:false]
+  }
+
+  private Map asMap(command) {
+    command.class.declaredFields.findAll { !it.synthetic }.collectEntries {
+      [ (it.name):"$it.name" ]
+    }
   }
 
 }
