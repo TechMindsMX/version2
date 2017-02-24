@@ -58,7 +58,7 @@ class MachineService {
   def moveToAction(def instance,Action action){
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     Machine machine = machineryLink.machine
-    State state = machineryLink.trackingLogs.max{ trackingLog -> trackingLog.id }?.state
+    State state = machineryLink.trackingLogs?.max{ trackingLog -> trackingLog.id }?.state
 
     if(!state)
       state = machine.initialState
