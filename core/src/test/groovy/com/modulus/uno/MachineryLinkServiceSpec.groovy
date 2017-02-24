@@ -23,9 +23,10 @@ class MachineryLinkServiceSpec extends Specification {
       initialState.save()
       Machine machine = new Machine(initialState:initialState)
     when:
-      MachineryLink machineryLink = service.createMachineryLinkForThisInstance(company.id,instance.class.simpleName,machine)
+      MachineryLink machineryLink = service.createMachineryLinkForThisInstance(instance,machine)
     then:
       machineryLink.id
+      machineryLink.machineryRef == instance.id
       machineryLink.type == PurchaseOrder.class.simpleName
       machineryLink.machine
       machineryLink.machine.id == machine.id
