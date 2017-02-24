@@ -31,12 +31,12 @@ class Request {
   def method(m) { this.method = m; this }
   def callback(c) { this.callback = c; this }
 
-  def json(){
+  def doit(){
     try{
       def client = new RESTClient(this.baseUrl)
       def response = client."${this.method.code}"([path:this.endpointUrl, query:this.query,
         headers:this.headers], this.callback)
-      response.json
+      response
     }catch (HTTPClientException e) {
       handleError(
         e:e, method:this.method, baseUrl:this.baseUrl, endpoint:this.endpointUrl, query:this.query)
