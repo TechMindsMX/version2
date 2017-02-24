@@ -10,27 +10,6 @@ import spock.lang.FailsWith
 @Mock([PurchaseOrder,Bank,TrackingLogLink,LogRecord,State])
 class TrackingServiceSpec extends Specification {
 
-  Should "create a tracking link for an instance"(){
-    given:"the instance that implements the interface"
-      PurchaseOrder purchaseOrder = new PurchaseOrder()
-      purchaseOrder.save(validate:false)
-    when:
-      TrackingLogLink trackingLogLink = service.createTrackingLogForThisInstance(purchaseOrder)
-    then:
-      trackingLogLink.id
-      trackingLogLink.type == purchaseOrder.class.simpleName
-  }
-
-  @FailsWith(RuntimeException)
-  Should "fail while trying to create the tracking for an instance without implements"(){
-    given:
-      Bank instance = new Bank()
-    when:
-      TrackingLogLink trackingLogLink = service.createTrackingLogForThisInstance(instance) 
-    then:
-      !trackingLogLink.id
-  }
-
   Should "create the log register for instance"(){
     given:"the instance"
       PurchaseOrder purchaseOrder = new PurchaseOrder()
