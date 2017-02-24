@@ -5,8 +5,6 @@ import grails.transaction.Transactional
 @Transactional
 class MachineService {
 
-  TrackingService trackingService
- 
   Machine createMachineWithAction(Action action){
     State initialState = new State()
     State finalState = new State(finalState:true)
@@ -60,7 +58,7 @@ class MachineService {
   def moveToAction(def instance,Action action){
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     Machine machine = machineryLink.machine
-    State state = trackingService.findLastTrackingLogRecord(instance)?.state
+    State state = machineryLink.trackingLogs.max{ trackingLog -> trackingLog.id }?.state
 
     if(!state)
       state = machine.initialState
@@ -71,7 +69,9 @@ class MachineService {
       throw new StatelessException("There is n't a transition for the action ${action.name}.")
 
     State newState = transition.stateTo
-    trackingService.addRecordToInstanceLog(instance,newState.id)
+    TrackingLog trackingLog = new TrackingLog(state:newState)
+    machineryLink.addToTrackingLogs(trackingLog)
+    machineryLink.save()
     newState
   }
 
