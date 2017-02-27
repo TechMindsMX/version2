@@ -39,4 +39,11 @@ class GroupNotificationService {
     GroupNotification.findById(groupId)
   }
 
+  //TODO: checar el toInteger()
+  def getUserList(ArrayList<Integer> userIdList, ArrayList<User> userList){
+    def users = userList.findAll{
+    userIdList.contains(it.id.toInteger())
+   }
+  }
+
 }

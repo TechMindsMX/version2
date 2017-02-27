@@ -96,6 +96,24 @@ class GroupNotificationServiceSpec extends Specification {
         groupTwo.id != 1
     }
 
+    def "Get a user's list"(){
+        given:"A set of users"
+        def user1= new User(username:"User1",enabled:true,
+        profile:new Profile(name:"User1", email:"user1@me.com")).save(validate:false)
+        def user2= new User(username:"User2",enabled:true,
+        profile:new Profile(name:"User2", email:"user2@me.com")).save(validate:false)
+        def user3= new User(username:"User3", enabled:true,
+        profile:new Profile(name:"User3", email:"user3@me.com")).save(validate:false)
+        def listUser = [user1,user2,user3]
+        and: "A list of id"
+        def userIdList = [1,2]
+        when: "We want to get a list of users"
+        def userList = service.getUserList(userIdList,listUser)
+        then: "We should get a list of users"
+        userList.contains(user1)
+        userList.contains(user2)
+    }
+
       private createFirstUserGroup(){
         def user1= new User(username:"User1",enabled:true,
         profile:new Profile(name:"User1", email:"user1@me.com")).save(validate:false)
