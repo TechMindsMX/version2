@@ -1,13 +1,13 @@
 package com.modulus.uno
 
 import wslite.http.HTTPClientException
+import groovy.util.logging.Slf4j
 import wslite.rest.*
-import groovy.util.logging.*
 
 class WsliteRequestService {
 
-  def doRequest(@DelegatesTo(Request) Closure cl){
-    def request = new Request()
+  def doRequest(String url, @DelegatesTo(Request) Closure cl){
+    def request = new Request(url)
     def code = cl.rehydrate(request, this, this)
     code.resolveStrategy = Closure.DELEGATE_ONLY
     code()
@@ -23,6 +23,10 @@ class Request {
   Map headers = ["Accept":"application/json; charset=utf-8"]
   HTTPMethod method = HTTPMethod.GET
   Closure callback = {}
+
+  Request(String url){
+    this.baseUrl = url
+  }
 
   def baseUrl(String url) { this.baseUrl = url; this }
   def endpointUrl(String e) { this.endpointUrl = e; this }
