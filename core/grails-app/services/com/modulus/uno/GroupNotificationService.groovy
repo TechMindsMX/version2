@@ -7,10 +7,20 @@ class GroupNotificationService {
 
   def corporateService
 
-  def addNewGroup(def groupParams, def corporateId){
-    //TODO: Problema al obtener los usuarios del checkbox, se estan registrando todos los usuarios del corpote.
-   def corporateUsers = corporateService.findCorporateUsers(corporateId)
-   createGroup(groupParams.nameGroup, groupParams.notificationId, corporateUsers)
+  def addNewGroup(def command, ArrayList<User> users){
+    log.info "**-----**"*20
+    log.info users
+    log.info "**-----**"*20
+    log.info command
+    log.info "**-----**"*20
+    log.info command.userList
+    log.info "**-----**"*20
+
+    def usersList = getUserList(command.userList, users)
+    log.info "------------"*10
+    log.info usersList
+    log.info "------------"*10
+    //createGroup(command.nameGroup, command.notificationId, usersList)
   }
 
   def createGroup(String groupName, String notifyId, def usersList){
@@ -40,8 +50,8 @@ class GroupNotificationService {
   }
 
   //TODO: checar el toInteger()
-  def getUserList(ArrayList<Integer> userIdList, ArrayList<User> userList){
-    def users = userList.findAll{
+  def getUserList(def  userIdList, def userList){
+   def users = userList.findAll{
     userIdList.contains(it.id.toInteger())
    }
   }

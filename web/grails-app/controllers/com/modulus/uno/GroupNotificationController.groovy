@@ -13,9 +13,14 @@ class GroupNotificationController {
     }
 
     //TODO: estoy mandando session.corporate para guardar usuarios, pero solo para fines prácticos, pedir ayuda!!HEEEEEELP
-    def save(){
-        groupNotificationService.addNewGroup(params, session.corporate.id)
-        render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
+    def save(GroupNotificationCommand groupNotificationCommand){
+      log.info "1--------------->"*10
+      log.info groupNotificationCommand.userList
+      def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
+      log.info "2--------------->"*10
+      log.info usersCorporate
+     groupNotificationService.addNewGroup(groupNotificationCommand, usersCorporate)
+      render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
     }
 
     //TODO: Acomodar vista para mostrar los grupos
