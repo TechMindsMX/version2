@@ -7,20 +7,11 @@ class GroupNotificationService {
 
   def corporateService
 
+  //TODO: No sé si necesita refactor junto a createGroup.
+  //CHECHAR: Long2Integer y toInteger
   def addNewGroup(def command, ArrayList<User> users){
-    log.info "**-----**"*20
-    log.info users
-    log.info "**-----**"*20
-    log.info command
-    log.info "**-----**"*20
-    log.info command.userList
-    log.info "**-----**"*20
-
     def usersList = getUserList(command.userList, users)
-    log.info "------------"*10
-    log.info usersList
-    log.info "------------"*10
-    //createGroup(command.nameGroup, command.notificationId, usersList)
+    createGroup(command.nameGroup, command.notificationId, usersList)
   }
 
   def createGroup(String groupName, String notifyId, def usersList){
