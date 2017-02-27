@@ -77,7 +77,7 @@ class ModulusUnoService {
                                            email:email)
 
 
-    def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.users)
+    def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.users)?.json
     accountResult
   }
 
