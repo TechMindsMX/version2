@@ -25,7 +25,7 @@
         <div class="portlet-body">
           <!-- BEGIN CREATE-ADDRESS -->
           <div class="content scaffold-create">
-            <form action="create" method="POST">
+            <g:form action="create" method="POST">
               <fieldset class="form">
                 <div class="row">
                   <div class="form-group col-lg-3">
@@ -53,7 +53,7 @@
                   </div>
                 </div>
               </fieldset>
-            </form>
+            </g:form>
           </div>
           <!-- END OF CREATE-ADDRESS -->
         </div>
