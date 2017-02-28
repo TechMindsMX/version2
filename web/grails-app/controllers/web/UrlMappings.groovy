@@ -1,5 +1,6 @@
-class UrlMappings {
+package web
 
+class UrlMappings {
   static mappings = {
     "/$controller/$action?/$id?(.$format)?"{
       constraints {
@@ -15,5 +16,4 @@ class UrlMappings {
     "500"(controller: "error", action: "serverError")
     "404"(view:'/notFound')
   }
-
 }
