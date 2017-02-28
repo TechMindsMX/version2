@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import grails.web.servlet.mvc.GrailsParameterMap
 
 @TestFor(SaleOrderService)
-@Mock([BusinessEntity, SaleOrder, Company, User, Address,Authorization, Commission])
+@Mock([BusinessEntity, SaleOrder, SaleOrderItem, Company, User, Address,Authorization, Commission])
 class SaleOrderServiceSpec extends Specification {
 
   def items = []
@@ -46,16 +46,13 @@ class SaleOrderServiceSpec extends Specification {
     given:"A sale order item"
       def item = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS)
     and:"A sale order"
-      def saleOrder = Mock(SaleOrder)
-      saleOrder.metaClass.addToItems {
-        items.add(item)
-      }
+      def saleOrder = new SaleOrder()
+      saleOrder.save(validate:false)
     when:"We create a sale order"
-      def result = service.addItemToSaleOrder(saleOrder, item)
+      def soSaved = service.addItemToSaleOrder(saleOrder, item)
     then:"We expect a new sale order"
-    items.size() == 1
-    items.get(0) == item
-    1 * saleOrder.save()
+    soSaved.items.size() == 1
+    soSaved.items.first() == item
   }
 
   void "should add two items to a sale order"() {
@@ -63,15 +60,12 @@ class SaleOrderServiceSpec extends Specification {
       def item1 = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(15000.00), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS,quantity:0.23)
       def item2 = new SaleOrderItem(sku:'A002',name:'Lemur 14',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS,quantity:1.23)
     and:"A sale order"
-      def saleOrder = Mock(SaleOrder)
-      saleOrder.metaClass.addToItems {
-        items.add(item)
-      }
+      def saleOrder = new SaleOrder()
+      saleOrder.save(validate:false)
     when:"We create a sale order"
-      def result = service.addItemToSaleOrder(saleOrder, item1, item2)
+      def soSaved = service.addItemToSaleOrder(saleOrder, item1, item2)
     then:"We expect a new sale order"
-    items.size() == 2
-    1 * saleOrder.save()
+    soSaved.items.size() == 2
   }
 
   void "should send a sale order to confirmation"(){
