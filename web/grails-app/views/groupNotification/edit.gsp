@@ -11,8 +11,11 @@
 
       <h1>
         <i class="fa fa-user fa-3x"></i>
-        Registro de grupo de usuarios a notificar
-        <small>Nuevo Grupo</small>
+        Grupo a editar: ${group.name}
+        <small>Emailer Id: ${group.notificationId}</small>
+        <g:each var="user" in="${group.users}">
+        ${user.username}<br>
+        </g:each>
       </h1>
 
     </div>
@@ -32,25 +35,25 @@
       <div class="panel-collapse collapse in">
         <!-- BEGIN PORTLET-BODY -->
         <div class="portlet-body">
-          <g:form controller="groupNotification" action="update">
-
-
+          <g:form controller="groupNotification" action="update" method="post">
            <div class="form-group">
+           <g:hiddenField name="idGroup" value="${group.id}" />
+           <label for="">Nombre para actualizar grupo</label>
             <div class="input-group col-md-4">
-              <label for="">Grupo a Actualizar: ${group.name}</label>
+            <input type="text" class="form-control" id="" name="nameGroup" placeholder=""/>
             </div>
            </div>
 
            <div class="form-group">
-           <label for="">Actualizar Emailer para notificar</label>
+           <label for="">Emailer para actualizar  ---</label>
             <div class="input-group col-md-4">
             <g:select optionKey="id" optionValue="subject"
-                  name="notificationId" from="${emailers}" />
+                  name="notificationId" from="${emailer}" />
             </div>
            </div>
 
            <div class="form-group">
-           <label for="">Actualizar Usuarios que serán notificados</label>
+           <label for="">Usuarios que serán notificados</label>
             <div class="input-group col-md-4">
                <g:each var="user" in="${users}">
                <g:checkBox name="userList" value="${user.id}" checked="false" />
@@ -62,13 +65,11 @@
 
           <div class="form-group">
             <div class="input-group col-md-4">
-             <g:actionSubmit class="save btn btn-default" value="Save"/>
+             <g:actionSubmit class="save btn btn-default" value="Actualizar Grupo"/>
           </g:form>
             </div>
           </div>
 
         </div>
-      </div>
-      </div>
   </body>
 </html>
