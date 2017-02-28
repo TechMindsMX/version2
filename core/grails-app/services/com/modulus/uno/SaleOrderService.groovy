@@ -49,6 +49,7 @@ class SaleOrderService {
       saleOrder.addToItems(it)
     }
     saleOrder.save()
+    saleOrder
   }
 
   def sendOrderToConfirmation(SaleOrder saleOrder){
