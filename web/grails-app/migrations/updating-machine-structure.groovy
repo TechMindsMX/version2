@@ -1,220 +1,117 @@
 databaseChangeLog = {
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-1") {
-        createTable(tableName: "machine_transition") {
-            column(name: "machine_transitions_id", type: "BIGINT")
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-1") {
+    createTable(tableName: "machine_transition") {
+      column(name: "machine_transitions_id", type: "BIGINT")
 
-            column(name: "transition_id", type: "BIGINT")
-        }
+        column(name: "transition_id", type: "BIGINT")
     }
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-2") {
-        createTable(tableName: "tracking_log") {
-            column(autoIncrement: "true", name: "id", type: "BIGINT") {
-                constraints(primaryKey: "true", primaryKeyName: "tracking_logPK")
-            }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-2") {
+    createTable(tableName: "tracking_log") {
+      column(autoIncrement: "true", name: "id", type: "BIGINT") {
+        constraints(primaryKey: "true", primaryKeyName: "tracking_logPK")
+      }
 
-            column(name: "version", type: "BIGINT") {
-                constraints(nullable: "false")
-            }
+      column(name: "version", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "date_created", type: "datetime") {
-                constraints(nullable: "false")
-            }
+      column(name: "date_created", type: "datetime") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "last_updated", type: "datetime") {
-                constraints(nullable: "false")
-            }
+      column(name: "last_updated", type: "datetime") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "machinery_link_id", type: "BIGINT") {
-                constraints(nullable: "false")
-            }
+      column(name: "machinery_link_id", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
 
-            column(name: "state_id", type: "BIGINT") {
-                constraints(nullable: "false")
-            }
-        }
+      column(name: "state_id", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
     }
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-3") {
-        addColumn(tableName: "machinery_link") {
-            column(name: "machinery_ref", type: "bigint") {
-                constraints(nullable: "false")
-            }
-        }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-3") {
+    addColumn(tableName: "machinery_link") {
+      column(name: "machinery_ref", type: "bigint") {
+        constraints(nullable: "false")
+      }
     }
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-4") {
-        addColumn(tableName: "transition") {
-            column(name: "state_from_id", type: "bigint") {
-                constraints(nullable: "false")
-            }
-        }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-4") {
+    addColumn(tableName: "transition") {
+      column(name: "state_from_id", type: "bigint") {
+        constraints(nullable: "false")
+      }
     }
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-5") {
-        addForeignKeyConstraint(baseColumnNames: "transition_id", baseTableName: "machine_transition", constraintName: "FK_4gilg0ncwq427quffg4h6p5h3", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "transition")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-5") {
+    addForeignKeyConstraint(baseColumnNames: "transition_id", baseTableName: "machine_transition", constraintName: "FK_4gilg0ncwq427quffg4h6p5h3", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "transition")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-6") {
-        addForeignKeyConstraint(baseColumnNames: "machinery_link_id", baseTableName: "tracking_log", constraintName: "FK_i4ybd4ois5uw2uo2f16hls4n5", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "machinery_link")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-6") {
+    addForeignKeyConstraint(baseColumnNames: "machinery_link_id", baseTableName: "tracking_log", constraintName: "FK_i4ybd4ois5uw2uo2f16hls4n5", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "machinery_link")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-7") {
-        addForeignKeyConstraint(baseColumnNames: "state_id", baseTableName: "tracking_log", constraintName: "FK_ls87l50wof9a7mrjhcgqtwfhm", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "state")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-7") {
+    addForeignKeyConstraint(baseColumnNames: "state_id", baseTableName: "tracking_log", constraintName: "FK_ls87l50wof9a7mrjhcgqtwfhm", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "state")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-8") {
-        addForeignKeyConstraint(baseColumnNames: "state_from_id", baseTableName: "transition", constraintName: "FK_lu4fu49pufeusyluwqfd9b3pr", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "state")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-8") {
+    addForeignKeyConstraint(baseColumnNames: "state_from_id", baseTableName: "transition", constraintName: "FK_lu4fu49pufeusyluwqfd9b3pr", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "state")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-9") {
-        addForeignKeyConstraint(baseColumnNames: "machine_transitions_id", baseTableName: "machine_transition", constraintName: "FK_ssa3s68fmoiejgu2qt04i7xtl", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "machine")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-9") {
+    addForeignKeyConstraint(baseColumnNames: "machine_transitions_id", baseTableName: "machine_transition", constraintName: "FK_ssa3s68fmoiejgu2qt04i7xtl", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "machine")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-10") {
-        dropForeignKeyConstraint(baseTableName: "transition", constraintName: "FK_5gxuh0fyamf2txaxrr76wdfyi")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-10") {
+    dropForeignKeyConstraint(baseTableName: "transition", constraintName: "FK_5gxuh0fyamf2txaxrr76wdfyi")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-11") {
-        dropForeignKeyConstraint(baseTableName: "log_record", constraintName: "FK_epvhqrdg99srwcq3si46re2ii")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-11") {
+    dropForeignKeyConstraint(baseTableName: "log_record", constraintName: "FK_epvhqrdg99srwcq3si46re2ii")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-12") {
-        dropForeignKeyConstraint(baseTableName: "action", constraintName: "FK_eyb39jmfkulkar6tr9n2j0rcm")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-12") {
+    dropForeignKeyConstraint(baseTableName: "action", constraintName: "FK_eyb39jmfkulkar6tr9n2j0rcm")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-13") {
-        dropForeignKeyConstraint(baseTableName: "log_record", constraintName: "FK_ppne1f2e71fj5in1mtoad9206")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-13") {
+    dropForeignKeyConstraint(baseTableName: "log_record", constraintName: "FK_ppne1f2e71fj5in1mtoad9206")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-14") {
-        dropTable(tableName: "log_record")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-14") {
+    dropTable(tableName: "log_record")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-15") {
-        dropTable(tableName: "tracking_log_link")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-15") {
+    dropTable(tableName: "tracking_log_link")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-16") {
-        dropColumn(columnName: "company_id", tableName: "action")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-16") {
+    dropColumn(columnName: "company_id", tableName: "action")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-17") {
-        dropColumn(columnName: "company_ref", tableName: "machinery_link")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-17") {
+    dropColumn(columnName: "company_ref", tableName: "machinery_link")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-18") {
-        dropColumn(columnName: "state_id", tableName: "transition")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-18") {
+    dropColumn(columnName: "state_id", tableName: "transition")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-19") {
-        dropIndex(indexName: "FK_14gx7m1jy60c780oe6uycmfug", tableName: "sale_order_s3asset")
-    }
+  changeSet(author: "makingdevs (generated)", id: "1488297563036-21") {
+    dropIndex(indexName: "FK_1koe0yhvkysc02wsx7nx8f3y0", tableName: "transition")
+  }
 
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-20") {
-        dropIndex(indexName: "FK_18m22ybal0ga91hy3s5l66bul", tableName: "fees_receipt_s3asset")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-21") {
-        dropIndex(indexName: "FK_1koe0yhvkysc02wsx7nx8f3y0", tableName: "transition")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-22") {
-        dropIndex(indexName: "FK_1mcjtpxmwom9h9bf2q0k412e0", tableName: "user")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-23") {
-        dropIndex(indexName: "FK_26aw28fqp8nv9kd2n9kug1ate", tableName: "payment")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-24") {
-        dropIndex(indexName: "FK_29tfk85uscogyuyhnmogjstyq", tableName: "sale_order_authorization")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-25") {
-        dropIndex(indexName: "FK_2b7qu5poo9sv9mtyuw9xhkcl2", tableName: "payment")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-26") {
-        dropIndex(indexName: "FK_2hoido30po6klvme7xsojbcib", tableName: "purchase_order_payment_to_purchase")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-27") {
-        dropIndex(indexName: "FK_3f85cq7on905fe0rwqwbvinnn", tableName: "fees_receipt_authorization")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-28") {
-        dropIndex(indexName: "FK_3y480lpgswma3dlahkas0piv2", tableName: "employee_link")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-29") {
-        dropIndex(indexName: "FK_5a9nmc0j5rhmo268sm9f08lef", tableName: "purchase_order_authorization")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-30") {
-        dropIndex(indexName: "FK_5b91qa29nyutp6sh2fo4x4tn6", tableName: "cash_out_order_authorization")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-31") {
-        dropIndex(indexName: "FK_5iomp5vtj1eh4ykkyf02cd808", tableName: "company_business_entity")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-32") {
-        dropIndex(indexName: "FK_5jo2bsgk40m6yjjd587bdvp2k", tableName: "sale_order_item")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-33") {
-        dropIndex(indexName: "FK_64uboislmwsbb72nj98pwjt06", tableName: "fees_receipt")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-34") {
-        dropIndex(indexName: "FK_6aaj211p0i2g5rjxve1679j1c", tableName: "corporate_user")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-35") {
-        dropIndex(indexName: "FK_78mxqus4c33f8agef1720orat", tableName: "deposit_order_s3asset")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-36") {
-        dropIndex(indexName: "FK_7js7ru525ir9t0f0atxgr143u", tableName: "cash_out_order_authorization")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-37") {
-        dropIndex(indexName: "FK_7khskpewos3jrxg9umn6n6mj5", tableName: "user_role_company")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-38") {
-        dropIndex(indexName: "FK_7s9iidg2nghqx5vm8ufivle2f", tableName: "loan_order_authorization")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-39") {
-        dropIndex(indexName: "FK_8vi2muat59yyggpgqvqpum19o", tableName: "loan_order_s3asset")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-40") {
-        dropIndex(indexName: "FK_97miav6mf441scxegv4yeahxn", tableName: "corporate_company")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-41") {
-        dropIndex(indexName: "FK_9jma5e7kyk19qyuircu3nnol0", tableName: "loan_payment_order_authorization")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-42") {
-        dropIndex(indexName: "FK_a64q6jugjh0qqbrmik3wc4m57", tableName: "commission")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-43") {
-        dropIndex(indexName: "FK_ajahww2oyodgs8nkgxii8vcyc", tableName: "sale_order_address")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-44") {
-        dropIndex(indexName: "FK_aoni3grb28trkd55k5qdvmmlp", tableName: "loan_order")
-    }
-
-    changeSet(author: "makingdevs (generated)", id: "1488297563036-45") {
-        dropIndex(indexName: "FK_atewti54qfefm3c47tl56bc6q", tableName: "profile_telephone")
-    }
 
     changeSet(author: "makingdevs (generated)", id: "1488297563036-46") {
         dropIndex(indexName: "FK_b9vi6vh4wjnnlhg3fiqhibbn0", tableName: "company_telephone")
