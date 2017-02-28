@@ -6,6 +6,8 @@ class GroupNotificationController {
     def groupNotificationService
     def corporateService
 
+    static allowedMethods = [save: "POST", update: "POST"]
+
     //ok
     def create() {
       def emailerStorage = emailerClientService.getEmailerStorage()
@@ -19,32 +21,28 @@ class GroupNotificationController {
       render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
     }
 
-    //TODO: Acomodar vista para mostrar los grupos
-    //ok
+    //TODO: falta usuarios
     def show() {
       render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
     }
 
-    //TODO: probar: mostrar datos en el formulario
+    //ok
     def edit(){
       def groupNotification = groupNotificationService.getGroup(params.id)
       def emailerStorage = emailerClientService.getEmailerStorage()
-      //render (view:"edit", model: [group: groupNotification, emailers:emailerStorage, users:corporateService.findCorporateUsers(session.corporate.id)])
-      render (view:"edit", model: [group: groupNotification])
+      def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
+      render (view:"edit", model: [group: groupNotification, emailer: emailerStorage, users:usersCorporate])
      }
 
     //TODO: Probar
     def update(){
-      log.info "------mexican debugger-----"*10
-      log.info params.dump()
-      groupNotificationService.updateGroup(params.id, params.name, params.users, params.notifyId)
-      render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
+      log.info "------ Updating-----"*10
+      //groupNotificationService.updateGroup(params.id, params.name, params.users, params.notifyId)
+      //render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
     }
 
-    //TODO: probar esto
+    //ok
     def delete(){
-      log.info "------mexican debugger-----"*10
-      log.info params.id
       groupNotificationService.deleteGroup(params.id)
       render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
     }
