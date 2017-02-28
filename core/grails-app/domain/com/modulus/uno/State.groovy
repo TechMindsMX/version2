@@ -5,7 +5,6 @@ class State {
   Boolean finalState = false
 
   static belongsTo = [machine:Machine]
-  static hasMany = [transitions:Transition]
 
   Date dateCreated
   Date lastUpdated
