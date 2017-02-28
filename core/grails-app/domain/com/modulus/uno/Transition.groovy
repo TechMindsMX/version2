@@ -1,9 +1,10 @@
 package com.modulus.uno
 
 class Transition {
-  
+
+  State stateFrom
+  State stateTo  
   Action action
-  State stateTo
 
   Date dateCreated
   Date lastUpdated

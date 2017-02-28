@@ -7,10 +7,11 @@ class Machine {
   Date dateCreated
   Date lastUpdated
 
-  static hasMany = [states:State]
+  static hasMany = [states:State,
+                    transitions:Transition]
 
   static constraints = {
-    initialState nullable:false
+    initialState nullable:true
   }
 
 }
