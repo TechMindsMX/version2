@@ -7,16 +7,27 @@ beans:
 grails:
     profile: web
     codegen:
-        defaultPackage: modulusuno
+        defaultPackage: web
+    spring:
+        transactionManagement:
+            proxies: false
 info:
     app:
         name: '@info.app.name@'
         version: '@info.app.version@'
         grailsVersion: '@info.app.grailsVersion@'
 spring:
+    main:
+        banner-mode: "off"
     groovy:
         template:
             check-template-location: false
+
+# Spring Actuator Endpoints are Disabled by Default
+endpoints:
+    enabled: false
+    jmx:
+        enabled: true
 
 ---
 grails:
@@ -57,6 +68,9 @@ grails:
             maxsize: 1000
     controllers:
         defaultScope: singleton
+        upload:                                                                                                                         │
+                maxFileSize: 100000000                                                                                                    │
+                maxRequestSize: 200000000
     converters:
         encoding: UTF-8
     views:
@@ -70,20 +84,14 @@ grails:
                 scriptlets: html
                 taglib: none
                 staticparts: none
+endpoints:
+    jmx:
+        unique-names: true
+
 ---
 hibernate:
     cache:
         queries: false
         use_second_level_cache: true
         use_query_cache: false
-        region.factory_class: 'org.hibernate.cache.ehcache.EhCacheRegionFactory'
-
-endpoints:
-    jmx:
-        unique-names: true
-
-grails:
-    controllers:
-                upload:
-                      maxFileSize: 100000000
-                      maxRequestSize: 200000000
+        region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
