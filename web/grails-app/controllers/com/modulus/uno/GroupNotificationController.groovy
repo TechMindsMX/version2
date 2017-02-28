@@ -30,13 +30,12 @@ class GroupNotificationController {
       render (view:"edit", model: [group: groupNotification, emailer: emailerStorage, users:usersCorporate])
      }
 
-    //TODO: Probar
-    def update(){
-      log.debug "------ Updating-----"*10
-      log.debug params.dump()
-      //groupNotificationService.updateGroup(params.id, params.name, params.users, params.notifyId)
+    def update (GroupNotificationCommand groupNotificationCommand){
+      def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
+      groupNotificationService.editGroup(groupNotificationCommand, usersCorporate)
       render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
     }
+
 
     def delete(){
       groupNotificationService.deleteGroup(params.id)
