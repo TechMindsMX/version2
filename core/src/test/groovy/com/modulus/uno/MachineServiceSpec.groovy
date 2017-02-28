@@ -42,7 +42,6 @@ class MachineServiceSpec extends Specification {
       updatedMachine.transitions.size() == 2
   }
 
-  
   Should "get the current state of the instance"(){
     given:"the instance"
       PurchaseOrder instance = new PurchaseOrder()
@@ -87,6 +86,29 @@ class MachineServiceSpec extends Specification {
       State newState = service.moveToAction(instance,action)
     then:
       machineryLink.trackingLogs.size() == 1
+  }
+
+  Should "get the next states of instance"(){
+    given:"the instance"
+      PurchaseOrder instance = new PurchaseOrder()
+      instance.save(validate:false)
+    and:"the machine"
+      createMachine()
+      Machine machine = Machine.get(1)
+    and:"the link between the instance and its machine"
+      MachineryLink machineryLink = new MachineryLink(machineryRef:instance.id,
+                                                      type:instance.class.simpleName)
+      machineryLink.machine = machine
+      machineryLink.save()
+    and:"the movements"
+      ArrayList<Action> actions = [Action.findByName("Initial Action"),Action.findByName("Sell")]
+      actions.each{ action ->
+        service.moveToAction(instance,action)
+      }
+    when:
+      ArrayList<State> states = service.findNextStatesOfInstance(instance)
+    then:
+      states.size() == 1
   }
 
   void createMachine(){
