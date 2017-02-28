@@ -138,6 +138,6 @@ class ModulusUnoService {
   def generateSubAccountStpForClient(CreateAccountCommand command) {
     def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.subAccountUser)
     log.info "New Sub Account Registered ${accountResult}"
-    accountResult?.stpClabe
+    accountResult?.json?.stpClabe
   }
 }
