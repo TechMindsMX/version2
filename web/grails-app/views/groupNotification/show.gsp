@@ -41,6 +41,10 @@
                 </g:link>
                 <br>
                 <small>: ${group.notificationId}</small><br></li>
+                <g:link controller="groupNotification" action="delete"
+                id="${group.id}"> Eliminar
+                </g:link>
+
               </g:each>
             </ul>
             </div>
