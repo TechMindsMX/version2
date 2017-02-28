@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.machine
 
 class Transition {
 
@@ -8,6 +8,8 @@ class Transition {
 
   Date dateCreated
   Date lastUpdated
+
+  static belongsTo = [machine:Machine]
 
   static constraints = {
     action nullable:false

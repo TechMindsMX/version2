@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.machine
 
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
