@@ -35,41 +35,41 @@
       <div class="panel-collapse collapse in">
         <!-- BEGIN PORTLET-BODY -->
         <div class="portlet-body">
-          <g:form controller="groupNotification" action="update" method="post">
-           <div class="form-group">
-           <g:hiddenField name="idGroup" value="${group.id}" />
-           <label for="">Nombre para actualizar grupo</label>
-            <div class="input-group col-md-4">
-            <input type="text" class="form-control" id="" name="nameGroup" placeholder=""/>
+          <g:form controller="groupNotification" action="update">
+            <div class="form-group">
+              <label for="">Nombre para actualizar grupo</label>
+                <g:hiddenField name="idGroup" value="${group.id}" />
+                <div class="input-group col-md-4">
+                  <input type="text" class="form-control" id="" name="nameGroup" placeholder=""/>
+                </div>
             </div>
-           </div>
 
-           <div class="form-group">
-           <label for="">Emailer para actualizar  ---</label>
-            <div class="input-group col-md-4">
-            <g:select optionKey="id" optionValue="subject"
-                  name="notificationId" from="${emailer}" />
+            <div class="form-group">
+              <label for="">Emailer para actualizar  ---</label>
+              <div class="input-group col-md-4">
+                <g:select optionKey="id" optionValue="subject" name="notificationId" from="${emailer}" />
+              </div>
             </div>
-           </div>
 
-           <div class="form-group">
-           <label for="">Usuarios que serán notificados</label>
-            <div class="input-group col-md-4">
-               <g:each var="user" in="${users}">
-               <g:checkBox name="userList" value="${user.id}" checked="false" />
-                  ${user.username}
-                  <br>
-                  </g:each>
+            <div class="form-group">
+              <label for="">Usuarios que serán notificados</label>
+              <div class="input-group col-md-4">
+                <g:each var="user" in="${users}">
+                <g:checkBox name="userList" value="${user.id}" checked="false" />
+                ${user.username}
+                <br>
+                </g:each>
+              </div>
             </div>
-           </div>
 
-          <div class="form-group">
-            <div class="input-group col-md-4">
-             <g:actionSubmit class="save btn btn-default" value="Actualizar Grupo"/>
+            <div class="form-group">
+              <div class="input-group col-md-4">
+                <button type="submit" class="save btn btn-default">Actualizar Grupo</button>
+              </div>
+            </div>
           </g:form>
-            </div>
-          </div>
-
         </div>
+      </div>
+    </div>
   </body>
 </html>
