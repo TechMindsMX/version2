@@ -7,7 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
-@Mock([BusinessEntity])
+@Mock([BusinessEntity, ComposeName])
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
@@ -26,16 +26,12 @@ class BusinessEntityServiceSpec extends Specification {
   @Unroll
   void "Should append names to business entity for properties #properties"() {
     given:"a business entity"
-      def name = new ComposeName(value:"Nombre", type:NameType.NOMBRE)
-      def businessEntity = Mock(BusinessEntity)
-      businessEntity.metaClass.addToNames = {
-        names.add(name)
-      }
+      def businessEntity = new BusinessEntity(rfc:"MDE130712JA6")
+      businessEntity.save(validate:false)
     when:""
-      def result = service.appendNamesToBusinessEntity(businessEntity, properties)
+      def biSaved = service.appendNamesToBusinessEntity(businessEntity, properties)
     then:""
-      names.size() == sizeExpected
-      1 * businessEntity.save()
+      biSaved.names.size() == sizeExpected
     where:
       properties                                      || sizeExpected
       ["Nombre", "Paterno", "Materno"] as String[]    ||  3
@@ -44,16 +40,12 @@ class BusinessEntityServiceSpec extends Specification {
 
   void "Should append data to business entity"() {
     given:"a business entity"
-      def name = new ComposeName(value:"Negocio", type:NameType.RAZON_SOCIAL)
-      def businessEntity = Mock(BusinessEntity)
-      businessEntity.metaClass.addToNames = {
-        names.add(name)
-      }
+      def businessEntity = new BusinessEntity(rfc:"MDE130712JA6")
+      businessEntity.save(validate:false)
     when:""
-      def result = service.appendDataToBusinessEntity(businessEntity, "Negocio")
+      def biSaved = service.appendDataToBusinessEntity(businessEntity, "Negocio")
     then:""
-      names.size() == 1
-      1 * businessEntity.save()
+      biSaved.names.size() == 1
   }
 
   void "Should create a bank account and adding to business entity"() {
