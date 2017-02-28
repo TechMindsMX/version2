@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.util.Holders as H
+import wslite.rest.*
 
 class RestService {
 
@@ -37,7 +38,6 @@ class RestService {
   def sendEmailToEmailer(def message){
     log.info "Calling Emailer Service"
     wsliteRequestService.doRequest(grailsApplication.config.emailer.urlEmailer){
-      endpointUrl "${template}/${type}"
       method HTTPMethod.POST
       callback { json message }
     }.doit()?.json
@@ -138,8 +138,7 @@ class RestService {
 
   private def callingFacturaService(MessageCommand message,String template,String token) {
     log.info "Calling Facturación service for creating factura"
-    def response = wsliteRequestService.doRequest{
-      baseUrl template
+    def response = wsliteRequestService.doRequest(template){
       headers Authorization: "Bearer ${token}"
       method HTTPMethod.POST
       callback {
@@ -152,9 +151,8 @@ class RestService {
 
   private def callingModulusUno(MessageCommand message,String template,String token) {
     log.info "Calling Modulusuno service: ${template}"
-    log.debug groovy.json.JsonOutput.toJson(message)
     def response = wsliteRequestService.doRequest(modulusunoUrl){
-      endpointUrl template
+      endpointUrl "${template}"
       headers Authorization: "Bearer ${token}"
       method HTTPMethod.POST
       callback {
