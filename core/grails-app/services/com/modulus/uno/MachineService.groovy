@@ -92,4 +92,17 @@ class MachineService {
     machineryLink.trackingLogs?.max{ trackingLog -> trackingLog.id }?.state
   }
 
+  ArrayList<State> findNextStatesOfInstance(def instance){
+    State currentState = getCurrentStateOfInstance(instance)
+    def criteria = Transition.createCriteria()
+
+    ArrayList<Transition> transitions = criteria.list{
+      stateFrom{
+        eq("id",currentState.id)
+      }
+    }
+
+    transitions*.stateTo
+  }
+
 }
