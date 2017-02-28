@@ -19,4 +19,5 @@ databaseChangeLog = {
   include file: 'add-machine-state-domain-classes.groovy'
   include file: 'updating-machinery-link-class.groovy'
   include file: 'adding-actions-to-company.groovy'
+  include file: 'updating-machine-structure.groovy'
 }
