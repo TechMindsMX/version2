@@ -2,11 +2,15 @@ package com.modulus.uno
 
 class GroupNotificationController {
 
-  static allowedMethods = [save: "POST", otherMethod: "POST"]
+  static allowedMethods = [save: "POST"]
 
     def emailerClientService
     def groupNotificationService
     def corporateService
+
+    def index() {
+      [groups: groupNotificationService.getGroupsList()]
+    }
 
     def create() {
       def emailerStorage = emailerClientService.getEmailerStorage()
@@ -16,11 +20,7 @@ class GroupNotificationController {
     def save(GroupNotificationCommand groupNotificationCommand){
       def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
       groupNotificationService.addNewGroup(groupNotificationCommand, usersCorporate)
-      render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
-    }
-
-    def show() {
-      render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
+      redirect action:"index", method:"GET"
     }
 
     def edit(){
@@ -34,13 +34,13 @@ class GroupNotificationController {
     def update (GroupNotificationCommand groupNotificationCommand){
       def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
       groupNotificationService.editGroup(groupNotificationCommand, usersCorporate)
-      render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
+      redirect action:"index", method:"GET"
     }
 
 
     def delete(){
-        groupNotificationService.deleteGroup(params.id)
-      render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
+      groupNotificationService.deleteGroup(params.id)
+      redirect action:"index", method:"GET"
     }
 
 }
