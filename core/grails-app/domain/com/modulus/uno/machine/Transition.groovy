@@ -9,7 +9,6 @@ class Transition {
   Date lastUpdated
 
   static hasMany = [actions:String]
-
   static belongsTo = [machine:Machine]
 
   static constraints = {

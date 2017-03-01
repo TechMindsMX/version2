@@ -26,26 +26,33 @@ class MachineService {
 
   Machine createTransition(Long stateFromId,String stateToName,String newAction){
     State stateOrigin = State.get(stateFromId)
-    Machine machine = stateOrigin.machine
+    Machine currentMachine = stateOrigin.machine
 
-    stateOrigin.finalState = false
-
-    ArrayList<Transition> stateFromTransitions = Transition.where{
+    ArrayList<Transition> stateOriginTransitions = Transition.where{
       stateFrom.id == stateOrigin.id
     }.list()
 
-    State newState = machine.states.find{ state -> state.name == stateToName } ?: new State(name:stateToName)
+    State newState = currentMachine.states.find{ state -> state.name == stateToName } ?: new State(name:stateToName)
 
-    if(!stateFromTransitions){
+    if(!stateOriginTransitions || stateOriginTransitions.findAll{ it.stateTo.finalState } ){
+      stateOrigin.finalState = false
       newState.finalState = true
     }
 
-    machine.addToStates(newState)
-    machine.save()
+    if(!newState.id)
+      currentMachine.addToStates(newState)
+    else
+      newState.save()
+      
+    currentMachine.save()
 
     def criteria = Transition.createCriteria()
 
     Transition newTransition = criteria.get{
+      machine{
+        eq("id",currentMachine)
+      }
+
       stateFrom{
         eq("id",stateOrigin.id)
       }
@@ -57,12 +64,13 @@ class MachineService {
    
     if(!newTransition.actions?.contains(newAction)){
       newTransition.addToActions(newAction)
-      newTransition.save()
     }
-
-    machine.addToTransitions(newTransition)
-    machine.save()
-    machine 
+    
+    if(!newTransition.id)
+      currentMachine.addToTransitions(newTransition)
+    
+    currentMachine.save(failOnError:true)
+    currentMachine 
   }
 
   State moveToAction(def instance,String action){

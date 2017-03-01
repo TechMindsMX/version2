@@ -53,9 +53,6 @@ class MachineServiceSpec extends Specification {
     and:"the machine"
       createMachine()
       Machine machine = Machine.get(1)
-      Transition.list().each{ transition ->
-        println "${transition.id} ${machine.id} ${transition.stateFrom.name}(${transition.stateFrom.finalState}) ${transition.actions} ${transition.stateTo.name} (${transition.stateTo.finalState})"
-      }
     and:"the link between the instance and its machine"
       MachineryLink machineryLink = new MachineryLink(machineryRef:instance.id,
                                                       type:instance.class.simpleName)
@@ -99,9 +96,6 @@ class MachineServiceSpec extends Specification {
     and:"the machine"
       createMachine()
       Machine machine = Machine.get(1)
-      machine.transitions.each{ transition ->
-        println "${transition.stateFrom.name}(${transition.stateFrom.finalState}) ${transition.actions} ${transition.stateTo.name} (${transition.stateTo.finalState})"
-      }
     and:"the link between the instance and its machine"
       MachineryLink machineryLink = new MachineryLink(machineryRef:instance.id,
                                                       type:instance.class.simpleName)
