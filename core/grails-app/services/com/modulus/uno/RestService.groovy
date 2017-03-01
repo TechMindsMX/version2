@@ -138,7 +138,8 @@ class RestService {
 
   private def callingFacturaService(MessageCommand message,String template,String token) {
     log.info "Calling Facturación service for creating factura"
-    def response = wsliteRequestService.doRequest(template){
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl template
       headers Authorization: "Bearer ${token}"
       method HTTPMethod.POST
       callback {
@@ -146,7 +147,7 @@ class RestService {
         text groovy.json.JsonOutput.toJson(message)
       }
     }.doit()
-    response.data
+    response
   }
 
   private def callingModulusUno(MessageCommand message,String template,String token) {
