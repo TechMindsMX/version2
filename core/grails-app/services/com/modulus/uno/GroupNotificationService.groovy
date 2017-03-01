@@ -23,7 +23,6 @@ class GroupNotificationService {
   }
 
   def updateGroup(def groupId, String newNameGroup, def  newUserList, String newNotification){
-
     GroupNotification groupNotification = GroupNotification.findById(groupId)
       groupNotification.name=newNameGroup
       groupNotification.users=newUserList
@@ -48,6 +47,13 @@ class GroupNotificationService {
    def users = userList.findAll{
     userIdList.contains(it.id.toInteger())
    }
+  }
+
+  def getUserListWithoutGroup(def usersWithGroup, def usersCorporate){
+
+    def usersWithoutGroup = usersCorporate.findAll {
+     !usersWithGroup.contains( it )
+    }
   }
 
 }
