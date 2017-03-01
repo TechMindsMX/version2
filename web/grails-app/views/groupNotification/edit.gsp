@@ -43,7 +43,7 @@
             <div class="form-group">
               <label for="">Emailer para actualizar</label>
               <div class="input-group col-md-4">
-                <g:select optionKey="id" optionValue="subject" name="notificationId" from="${emailer}" />
+                <g:select optionKey="id" optionValue="subject" value="${group.notificationId}" name="notificationId" from="${emailer}" />
               </div>
             </div>
 
