@@ -37,12 +37,72 @@ class AddressService {
     customAddressTypes
   }
 
+  def getAddressTypesForBusinessEntity(BusinessEntity businessEntity){
+    def customAddressTypes = []
+    def addressTypes
+
+    if(businessEntity.addresses.find{ it.addressType == AddressType.FISCAL })
+      addressTypes = AddressType.values().findAll{ it.name() != AddressType.FISCAL.name() }
+    else
+      addressTypes = AddressType.values()
+
+    addressTypes.each{ addressType ->
+      customAddressTypes << [key:addressType.name(),value:addressType.name().toLowerCase().capitalize()]
+    }
+
+    customAddressTypes
+  }
+
+  def getAllAddressTypes(){
+    def customAddressTypes = []
+    def addressTypes = AddressType.values()
+
+    addressTypes.each{ addressType ->
+      customAddressTypes << [key:addressType.name(),value:addressType.name().toLowerCase().capitalize()]
+    }
+
+    customAddressTypes
+  }
+
   def findAddressTypeForOrganization(Long companyId){
     def addresses = Company.get(companyId).addresses
     if(addresses.find{ it.addressType == AddressType.FISCAL })
       AddressType.values().findAll{ it.name() != AddressType.FISCAL.name() }
     else
       AddressType.values()
+  }
+
+  def getAddressTypesForEditCompanyAddress(Address address, String companyId){
+    def customAddressTypes = []
+    def addressTypes
+    Company company = Company.get(companyId)
+    if (company.addresses.find {it.addressType == AddressType.FISCAL}) {
+      addressTypes = address.addressType == AddressType.FISCAL ? AddressType.values() : AddressType.values().findAll{ it.name() != AddressType.FISCAL.name() }
+    } else {
+      addressTypes = AddressType.values()
+    }
+
+    addressTypes.each{ addressType ->
+      customAddressTypes << [key:addressType.name(),value:addressType.name().toLowerCase().capitalize()]
+    }
+
+    customAddressTypes
+  }
+
+  def getAddressTypesForEditBusinessEntityAddress(Address address, BusinessEntity businessEntity){
+    def customAddressTypes = []
+    def addressTypes
+    if (businessEntity.addresses.find {it.addressType == AddressType.FISCAL}) {
+      addressTypes = address.addressType == AddressType.FISCAL ? AddressType.values() : AddressType.values().findAll{ it.name() != AddressType.FISCAL.name() }
+    } else {
+      addressTypes = AddressType.values()
+    }
+
+    addressTypes.each{ addressType ->
+      customAddressTypes << [key:addressType.name(),value:addressType.name().toLowerCase().capitalize()]
+    }
+
+    customAddressTypes
   }
 
 }
