@@ -42,7 +42,12 @@ class AddressController {
   }
 
   def edit(Address address) {
-    respond address,model:[addressTypes:addressService.getAddresTypesForOrganization(session.company.toLong()), relation:params.relation, businessEntityId:params.businessEntityId]
+    def businessEntity = BusinessEntity.get(params.businessEntityId)
+    def addressTypes = addressService.getAddresTypesForOrganization(session.company.toLong())
+    if (businessEntity)
+      addressTypes = addressService.getAllAddressTypes()
+
+    respond address,model:[addressTypes:addressTypes, relation:params.relation, businessEntity:businessEntity]
   }
 
   @Transactional
