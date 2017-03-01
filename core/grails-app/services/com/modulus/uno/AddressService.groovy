@@ -53,6 +53,17 @@ class AddressService {
     customAddressTypes
   }
 
+  def getAllAddressTypes(){
+    def customAddressTypes = []
+    def addressTypes = AddressType.values()
+
+    addressTypes.each{ addressType ->
+      customAddressTypes << [key:addressType.name(),value:addressType.name().toLowerCase().capitalize()]
+    }
+
+    customAddressTypes
+  }
+
   def findAddressTypeForOrganization(Long companyId){
     def addresses = Company.get(companyId).addresses
     if(addresses.find{ it.addressType == AddressType.FISCAL })
