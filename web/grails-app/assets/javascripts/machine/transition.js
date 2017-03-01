@@ -1,6 +1,8 @@
+//= require machine/state.js
+
 var Transition = {
-  stateFrom:'',
-  stateTo:'', 
+  stateFrom:null,
+  stateTo:null, 
   action:'',
   actionId:'',
 
