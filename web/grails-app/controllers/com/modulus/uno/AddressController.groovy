@@ -43,9 +43,9 @@ class AddressController {
 
   def edit(Address address) {
     def businessEntity = BusinessEntity.get(params.businessEntityId)
-    def addressTypes = addressService.getAddresTypesForOrganization(session.company.toLong())
+    def addressTypes = addressService.getAddressTypesForEditCompanyAddress(address, session.company)
     if (businessEntity)
-      addressTypes = addressService.getAllAddressTypes()
+      addressTypes = addressService.getAddressTypesForEditBusinessEntityAddress(address, businessEntity)
 
     respond address,model:[addressTypes:addressTypes, relation:params.relation, businessEntity:businessEntity]
   }
