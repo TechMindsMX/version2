@@ -7,7 +7,11 @@
   </head>
   <body>
     <div class="page-title">
-      <h1><g:message code="address.create"/></h1>
+      <h1>
+        <i class="fa fa-newspaper-o fa-3x"></i>
+        <g:message code="address.create.label"/>
+        <small>${businessEntity}</small>
+      </h1>
     </div>
     <div id="create-address" class="content scaffold-create" role="main">
       <div class="portlet portlet-blue">
