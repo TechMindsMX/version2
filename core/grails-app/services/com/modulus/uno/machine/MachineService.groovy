@@ -34,7 +34,7 @@ class MachineService {
       stateFrom.id == stateOrigin.id
     }.list()
 
-    State newState = machine.states.find{ state -> state.name == stateToName } ?: new State(name:states.stateTo)
+    State newState = machine.states.find{ state -> state.name == stateToName } ?: new State(name:stateToName)
 
     if(!stateFromTransitions){
       newState.finalState = true
@@ -55,8 +55,8 @@ class MachineService {
       }
     } ?: new Transition(stateFrom:stateOrigin,stateTo:newState)
    
-    if(!newTransition.actions.contains(newAction)){
-      newTransition.addToActions(action)
+    if(!newTransition.actions?.contains(newAction)){
+      newTransition.addToActions(newAction)
       newTransition.save()
     }
 
@@ -74,7 +74,7 @@ class MachineService {
     if(!state)
       state = machine.initialState
     
-    Transition transition = machine.transitions.find{ transition -> transition.action.id == action.id && transition.stateFrom.id == state.id }
+    Transition transition = machine.transitions.find{ transition -> transition.stateFrom.id == state.id && transition.actions.contains(action) }
 
     if(!transition)
       throw new StatelessException("There is n't a transition for the action ${action}.")
