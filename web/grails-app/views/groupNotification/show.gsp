@@ -37,14 +37,15 @@
            <ul>
               <g:each var="group" in="${groups}">
               <li>
-                <g:link controller="groupNotification" action="edit" id="${group.id}"> Grupo: ${group.name}
+                ${group.name}
+                <g:link controller="groupNotification" action="edit" id="${group.id}">
+                  <i class="fa fa-pencil"></i>
                 </g:link>
-                <br>
-                <small>: ${group.notificationId}</small><br></li>
                 <g:link controller="groupNotification" action="delete"
-                id="${group.id}"> Eliminar
+                id="${group.id}">
+                  <i class="fa fa-close"></i>
                 </g:link>
-
+              </li>
               </g:each>
             </ul>
             </div>
