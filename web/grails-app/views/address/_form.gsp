@@ -20,6 +20,6 @@
     <g:select name="addressType" from="${addressTypes}" class="form-control" optionKey="key" optionValue="value" value="${address.addressType}" />
   </div>
 
-<input type="hidden" value="${businessEntity ? businessEntity.id : businessEntityId}" name="businessEntityId" />
+<input type="hidden" value="${businessEntity.id}" name="businessEntityId" />
 <input type="hidden" value="${session.sepomexUrl}" id="sepomexUrl"/>
 <input type="hidden" value="${address.colony}" id="currentColony"/>
