@@ -5,17 +5,18 @@ import grails.transaction.Transactional
 @Transactional
 class MachineService {
 
-  Machine createMachineWithAction(Action action){
+  Machine createMachineWithAction(String startName,String stateToName,String action){
     Machine machine = new Machine()
-    State initialState = new State()
-    State finalState = new State(finalState:true)
+    State initialState = new State(name:startName)
+    State finalState = new State(name:stateToName,
+                                 finalState:true)
     machine.addToStates(initialState)
     machine.addToStates(finalState)
     machine.save()
 
-    Transition transition = new Transition(action:action,
-                                           stateFrom:initialState,
+    Transition transition = new Transition(stateFrom:initialState,
                                            stateTo:finalState)
+    transition.addToActions(action)
 
     machine.initialState = initialState
     machine.addToTransitions(transition)
@@ -23,50 +24,48 @@ class MachineService {
     machine
   }
 
-  Machine createTransition(Long machineId,Long actionBeforeId,Long newActionId){
-    Machine currentMachine = Machine.get(machineId)
-    Action newAction = Action.get(newActionId)
+  Machine createTransition(Long stateFromId,String stateToName,String newAction){
+    State stateOrigin = State.get(stateFromId)
+    Machine machine = stateOrigin.machine
+
+    stateOrigin.finalState = false
+
+    ArrayList<Transition> stateFromTransitions = Transition.where{
+      stateFrom.id == stateOrigin.id
+    }.list()
+
+    State newState = machine.states.find{ state -> state.name == stateToName } ?: new State(name:states.stateTo)
+
+    if(!stateFromTransitions){
+      newState.finalState = true
+    }
+
+    machine.addToStates(newState)
+    machine.save()
 
     def criteria = Transition.createCriteria()
 
-    Transition transition = criteria.get {
-      action{
-        eq("id",actionBeforeId)
-      }
-
+    Transition newTransition = criteria.get{
       stateFrom{
-        machine{
-          eq("id",machineId)
-        }
+        eq("id",stateOrigin.id)
       }
+      
+      stateTo{
+        eq("id",newState.id)
+      }
+    } ?: new Transition(stateFrom:stateOrigin,stateTo:newState)
+   
+    if(!newTransition.actions.contains(newAction)){
+      newTransition.addToActions(action)
+      newTransition.save()
     }
 
-    State lastState = transition.stateTo
-    lastState.finalState = false
-
-    ArrayList<Transition> lastStateTransitions = Transition.where{
-      stateFrom.id == lastState.id
-    }.find()
-
-    State newState = new State()
-
-    if(!lastStateTransitions){
-      newState.finalState = true    
-    }
-
-    currentMachine.addToStates(newState)
-    currentMachine.save()
-
-    Transition newTransition = new Transition(action:newAction,
-                                              stateFrom:lastState, 
-                                              stateTo:newState)
-
-    currentMachine.addToTransitions(newTransition)
-    currentMachine.save()
-    currentMachine
+    machine.addToTransitions(newTransition)
+    machine.save()
+    machine 
   }
 
-  State moveToAction(def instance,Action action){
+  State moveToAction(def instance,String action){
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     Machine machine = machineryLink.machine
 
@@ -78,7 +77,7 @@ class MachineService {
     Transition transition = machine.transitions.find{ transition -> transition.action.id == action.id && transition.stateFrom.id == state.id }
 
     if(!transition)
-      throw new StatelessException("There is n't a transition for the action ${action.name}.")
+      throw new StatelessException("There is n't a transition for the action ${action}.")
 
     State newState = transition.stateTo
     TrackingLog trackingLog = new TrackingLog(state:newState)
