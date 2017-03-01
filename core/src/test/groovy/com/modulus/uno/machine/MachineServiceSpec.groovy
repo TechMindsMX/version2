@@ -125,7 +125,7 @@ class MachineServiceSpec extends Specification {
 
     indexes.each{ row ->
       State state = State.findByName(states[row[0]])
-      machine = service.createTransition(state,states[row[1]],row[2])
+      machine = service.createTransition(state.id,states[row[1]],actions[row[2]])
     }    
 
     machine
