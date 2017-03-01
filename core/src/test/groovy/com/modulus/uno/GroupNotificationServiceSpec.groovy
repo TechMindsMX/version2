@@ -13,15 +13,7 @@ class GroupNotificationServiceSpec extends Specification {
 
     def "Create a new notification group"() {
       given:"A users list"
-        def user1= new User(username:"User1",enabled:true,
-        profile:new Profile(name:"User1", email:"user1@me.com")).save(validate:false)
-        def user2= new User(username:"User2",enabled:true,
-        profile:new Profile(name:"User2", email:"user2@me.com")).save(validate:false)
-        def user3= new User(username:"User3", enabled:true,
-        profile:new Profile(name:"User3", email:"user3@me.com")).save(validate:false)
-        def user0= new User(username:"User0", enabled:true,
-        profile:new Profile(name:"User0", email:"user0@me.com")).save(validate:false)
-        ArrayList<User> userList = [user1, user2, user3]
+        def userList = createUserList()
       and:"a notification id and a group name"
         def notificationId = "586d4944e1d4ae54524dd622"
         def groupName = "Contadores"
@@ -32,23 +24,20 @@ class GroupNotificationServiceSpec extends Specification {
         firstUserNotificationGroup.name == "Contadores"
         firstUserNotificationGroup.name != "Null-Contadores"
         firstUserNotificationGroup.notificationId == "586d4944e1d4ae54524dd622"
-        assert firstUserNotificationGroup.users.contains(user1)
-        assert firstUserNotificationGroup.users.contains(user2)
-        assert firstUserNotificationGroup.users.contains(user3)
-        assert !firstUserNotificationGroup.users.contains(user0)
+        firstUserNotificationGroup.users.contains(userList[0])
+        firstUserNotificationGroup.users.contains(userList[1])
+        firstUserNotificationGroup.users.contains(userList[2])
+        firstUserNotificationGroup.users.contains(userList[3])
+        firstUserNotificationGroup.users.contains(userList[4])
     }
 
     def "Update a notification group"() {
       given:"A groupNotification"
         GroupNotification firstGroup = createFirstUserGroup()
       and:"A new users list for update"
-        def user4= new User(username:"newUser1",enabled:true,
-        profile:new Profile(name:"newUser1", email:"user1new@me.com")).save(validate:false)
-        def user5= new User(username:"newUser2",enabled:true,
-        profile:new Profile(name:"newUser2", email:"user2new@me.com")).save(validate:false)
-        def user6= new User(username:"newUser3", enabled:true,
-        profile:new Profile(name:"newUser3", email:"user3new@me.com")).save(validate:false)
-        ArrayList<User> newUserList = [user4, user5, user6]
+        def newUser1= new User().save(validate:false)
+        def newUser2= new User().save(validate:false)
+       ArrayList<User> newUserList = [newUser1, newUser2]
       and:"a  new notification id and a new name"
         def newNotificationId = "586d4944e1d4ae5diamon666"
         def newName = "ContadoresGroup"
@@ -57,9 +46,8 @@ class GroupNotificationServiceSpec extends Specification {
       then:"we should get"
         firstGroup.name == "ContadoresGroup"
         firstGroup.notificationId == newNotificationId
-        assert firstGroup.users.contains(user4)
-        assert firstGroup.users.contains(user5)
-        assert firstGroup.users.contains(user6)
+        firstGroup.users.contains(newUser1)
+        firstGroup.users.contains(newUser2)
     }
 
     def "Delete a notification group"(){
@@ -98,34 +86,42 @@ class GroupNotificationServiceSpec extends Specification {
 
     def "Get a user's list"(){
         given:"A set of users"
-        def user1= new User(username:"User1",enabled:true,
-        profile:new Profile(name:"User1", email:"user1@me.com")).save(validate:false)
-        def user2= new User(username:"User2",enabled:true,
-        profile:new Profile(name:"User2", email:"user2@me.com")).save(validate:false)
-        def user3= new User(username:"User3", enabled:true,
-        profile:new Profile(name:"User3", email:"user3@me.com")).save(validate:false)
-        def listUser = [user1,user2,user3]
+        def users = createUserList()
         and: "A list of id"
         def userIdList = [1,2]
         when: "We want to get a list of users"
-        def userList = service.getUserList(userIdList,listUser)
+        def userList = service.getUserList(userIdList, users)
         then: "We should get a list of users"
-        userList.contains(user1)
-        userList.contains(user2)
+        userList.contains(users[0])
+        userList.contains(users[1])
+    }
+
+
+    def "Get a list of users without groupNotification"(){
+        given:"A list of users of corporate"
+        def usersCorporate = createUserList()
+        and: "A list of users within a group"
+        def usersGroup = [usersCorporate[0],usersCorporate[1]]
+        when:"We want to know the users without groupNotification"
+        def usersWithoutGroup = service.getUserListWithoutGroup(usersGroup, usersCorporate)
+        then:"We should get"
+        usersWithoutGroup.contains(usersCorporate[2])
     }
 
       private createFirstUserGroup(){
-        def user1= new User(username:"User1",enabled:true,
-        profile:new Profile(name:"User1", email:"user1@me.com")).save(validate:false)
-        def user2= new User(username:"User2",enabled:true,
-        profile:new Profile(name:"User2", email:"user2@me.com")).save(validate:false)
-        def user3= new User(username:"User3", enabled:true,
-        profile:new Profile(name:"User3", email:"user3@me.com")).save(validate:false)
-        ArrayList<User> userList = [user1, user2, user3]
+        def userList = createUserList()
         def firstNotificationGroup = new GroupNotification(notificationId: "763gytdg327fgfg67fv5f", users: userList, name:"ModulusUnoGroup")
         firstNotificationGroup.save(validate:false)
         firstNotificationGroup
+    }
 
+       private createUserList(){
+        def user1= new User(username:"User1").save(validate:false)
+        def user2= new User(username:"User2").save(validate:false)
+        def user3= new User(username:"User3").save(validate:false)
+        def user4= new User(username:"User4").save(validate:false)
+        def user5= new User(username:"User5").save(validate:false)
+        ArrayList<User> userList = [user1, user2, user3, user4, user5]
     }
 
 }
