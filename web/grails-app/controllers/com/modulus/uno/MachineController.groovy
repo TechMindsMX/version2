@@ -1,5 +1,6 @@
 package com.modulus.uno
 
+import com.modulus.uno.machine.MachineryLinkService
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
