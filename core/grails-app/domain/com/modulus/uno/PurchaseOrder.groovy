@@ -1,5 +1,7 @@
 package com.modulus.uno
+
 import grails.converters.JSON
+import com.modulus.uno.machine.Machinery
 
 class PurchaseOrder implements Machinery {
 
