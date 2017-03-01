@@ -7,7 +7,6 @@ class GroupNotificationController {
     def emailerClientService
     def groupNotificationService
     def corporateService
-    def index(){[num:50] }
 
     def create() {
       def emailerStorage = emailerClientService.getEmailerStorage()
@@ -28,7 +27,8 @@ class GroupNotificationController {
       def groupNotification = groupNotificationService.getGroup(params.id)
       def emailerStorage = emailerClientService.getEmailerStorage()
       def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
-      render (view:"edit", model: [group: groupNotification, emailer: emailerStorage, users:usersCorporate])
+      def usersWithoutGroup = groupNotificationService.getUserListWithoutGroup(groupNotification.users, usersCorporate)
+      render (view:"edit", model: [group: groupNotification, emailer: emailerStorage, usersEmpty: usersWithoutGroup])
      }
 
     def update (GroupNotificationCommand groupNotificationCommand){

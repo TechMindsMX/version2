@@ -12,12 +12,6 @@
       <h1>
         <i class="fa fa-users fa-3x"></i>
         ${group.name}
-        <small><b>
-        <g:each var="user" in="${group.users}">
-        ${user.username}
-        </g:each>
-          </b>
-        </small>
       </h1>
 
     </div>
@@ -47,7 +41,7 @@
             </div>
 
             <div class="form-group">
-              <label for="">Emailer para actualizar  ---</label>
+              <label for="">Emailer para actualizar</label>
               <div class="input-group col-md-4">
                 <g:select optionKey="id" optionValue="subject" name="notificationId" from="${emailer}" />
               </div>
@@ -56,16 +50,19 @@
             <div class="form-group">
               <label for="">Usuarios que serán notificados</label>
               <div class="input-group col-md-4">
-                <g:each var="user" in="${users}">
-                <g:if test="${group.users*.id.contains(user.id)}">
-                  <g:checkBox name="userList" value="${user.id}" checked="true" />
-                </g:if>
-                <g:else>
-                  <g:checkBox name="userList" value="${user.id}" checked="false" />
-                </g:else>
+
+                <g:each var="user" in="${group.users}">
+                <g:checkBox name="userList" value="${user.id}" checked="true" />
                 ${user.username}
                 <br>
                 </g:each>
+
+                <g:each var="user" in="${usersEmpty}">
+                <g:checkBox name="userList" value="${user.id}" checked="false" />
+                ${user.username}
+                <br>
+                </g:each>
+
               </div>
             </div>
 
