@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.machine
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -6,18 +6,17 @@ import java.lang.Void as Should
 import grails.test.mixin.Mock
 import spock.lang.FailsWith
 import org.springframework.context.i18n.LocaleContextHolder
+import com.modulus.uno.Bank
+import com.modulus.uno.PurchaseOrder
 
 @TestFor(MachineryLinkService)
-@Mock([PurchaseOrder,Bank,State,Machine,MachineryLink,Company])
+@Mock([PurchaseOrder,Bank,State,Machine,MachineryLink])
 class MachineryLinkServiceSpec extends Specification {
 
   Should "create the link between the state machine and an instance"(){
     given:"the instance"
       PurchaseOrder instance = new PurchaseOrder()
       instance.save(validate:false)
-    and:"the company"
-      Company company = new Company(bussinessName:"MakingDevs")
-      company.save(validate:false)
     and:"the machinery"
       State initialState = new State()
       initialState.save()
@@ -38,9 +37,6 @@ class MachineryLinkServiceSpec extends Specification {
       Bank instance = new Bank()
       instance.save()
       Machine machine = new Machine()
-    and:"the company"
-      Company company = new Company(bussinessName:"MakingDevs")
-      company.save(validate:false)
     when:
       MachineryLink machineryLink = service.createMachineryLinkForThisInstance(company.id,instance.class.simpleName,machine)
     then:

@@ -1,5 +1,6 @@
 package com.modulus.uno
 
+import com.modulus.uno.machine.MachineryLinkService
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
@@ -23,14 +24,12 @@ class MachineController {
 
   def create(){
     String entity = params.entity ? "${params.entity[0].toLowerCase()}${params.entity[1..params.entity.size()-1]}" : ""
-    Company company = Company.get(params.long('company'))
 
-    if(!company || !entity){
+    if(!entity){
       return response.sendError(404)
     }
 
     render view:"create",model:[entity:g.message(code:"${entity}.name"),
-                                company:company.id,
                                 actions:Action.list()]
   }
 

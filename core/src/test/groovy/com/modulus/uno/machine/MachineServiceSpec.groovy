@@ -1,21 +1,24 @@
-package com.modulus.uno
+package com.modulus.uno.machine
 
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Ignore
 import java.lang.Void as Should
+import com.modulus.uno.PurchaseOrder
 
 @TestFor(MachineService)
-@Mock([PurchaseOrder,Machine,State,Transition,Action,MachineryLink,Company,TrackingLog])
+@Mock([PurchaseOrder,Machine,State,Transition,MachineryLink,TrackingLog])
 class MachineServiceSpec extends Specification {
 
   Should "create a new machine with an action"(){
     given:"the action"
-      Action action = new Action(name:"Do Something")
-      action.save(validate:false)
+      String action = "Add Coin"
+    and:"the state names"
+      String startName = "Locked"
+      String stateToName = "Unlocked"
     when:
-      Machine machine = service.createMachineWithAction(action)
+      Machine machine = service.createMachineWithAction(startName,stateToName,action)
     then:
       machine.initialState
       machine.transitions.size() == 1
@@ -28,14 +31,15 @@ class MachineServiceSpec extends Specification {
 
   Should "add a transition for a machine"(){
     given:"the machine"
-      Action action = new Action(name:"Do Something")
-      action.save(validate:false)
-      Machine machine = service.createMachineWithAction(action)
+      String action = "Insert Card"
+      Machine machine = service.createMachineWithAction("Idle","Active",action)
     and: "the second action"
-      Action anotherAction = new Action(name:"Do another thing")
-      anotherAction.save()
+      String anotherAction = "Fix"
+    and:"the state from and the state to name"
+      State stateFrom = State.findByName("Active")
+      String stateToName = "Out of service"
     when:
-      Machine updatedMachine = service.createTransition(machine.id,action.id,anotherAction.id)
+      Machine updatedMachine = service.createTransition(stateFrom.id,stateToName,anotherAction)
     then:
       updatedMachine.states.size() == 3
       updatedMachine.states.last().finalState == true
@@ -55,23 +59,20 @@ class MachineServiceSpec extends Specification {
       machineryLink.machine = machine
       machineryLink.save()
     and:"the movements"
-      ArrayList<Action> actions = [Action.findByName("Initial Action"),Action.findByName("Sell")]
+      ArrayList<String> actions = ["Insert Card","Cancel","Service"]
       actions.each{ action ->
         service.moveToAction(instance,action)
       }
     when:
       State state = service.getCurrentStateOfInstance(instance)
     then:
-      state.id == 3 
+      state.name == "Out Of Service"
   }
 
   Should "move the instance to the first state"(){
     given:"the instance"
       PurchaseOrder instance = new PurchaseOrder()
       instance.save(validate:false)
-    and:"the company"
-      Company company = new Company(bussinessName:"MakingDevs")
-      company.save(validate:false)
     and:"the machine"
       createMachine()
       Machine machine = Machine.get(1)
@@ -81,7 +82,7 @@ class MachineServiceSpec extends Specification {
       machineryLink.machine = machine
       machineryLink.save()
     and:"the action"
-      Action action = Action.findByName("Initial Action")
+      String action = "Insert Card"
     when:
       State newState = service.moveToAction(instance,action)
     then:
@@ -101,28 +102,31 @@ class MachineServiceSpec extends Specification {
       machineryLink.machine = machine
       machineryLink.save()
     and:"the movements"
-      ArrayList<Action> actions = [Action.findByName("Initial Action"),Action.findByName("Sell")]
+      ArrayList<String> actions = ["Insert Card","Cancel","Service"]
       actions.each{ action ->
         service.moveToAction(instance,action)
       }
     when:
       ArrayList<State> states = service.findNextStatesOfInstance(instance)
     then:
+      states.find{ it.name == "Idle" }
       states.size() == 1
   }
 
   void createMachine(){
-    Machine machine = new Machine()
-    ArrayList<Action> actions = [new Action(name:"Sell"),new Action(name:"Buy"),new Action(name:"Send")] 
-    actions*.save(validate:false)
-    Action firstAction = new Action(name:"Initial Action")
-    firstAction.save(validate:false)
-    machine = service.createMachineWithAction(firstAction)
-    machine = service.createTransition(machine.id,firstAction.id,actions[0].id)
+    ArrayList<String> actions = ["Service","Insert Card","Cancel","Fix","Finish"]
+    ArrayList<String> states = ["Idle","Out Of Service","Active"]
+    Machine machine = service.createMachineWithAction(states[0],states[1],actions[0])
 
-    (1..(actions.size()-1)).each{ index ->
-      machine = service.createTransition(machine.id,actions[index-1].id,actions[index].id)
-    } 
+    def indexes = [[0,2,1],
+                   [1,0,3],
+                   [2,0,2],
+                   [2,0,4]]
+
+    indexes.each{ row ->
+      State state = State.findByName(states[row[0]])
+      machine = service.createTransition(state.id,states[row[1]],actions[row[2]])
+    }    
 
     machine
   }

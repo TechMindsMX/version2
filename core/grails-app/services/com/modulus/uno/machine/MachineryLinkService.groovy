@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.machine
 
 import grails.transaction.Transactional
 import org.springframework.context.i18n.LocaleContextHolder as LCH
@@ -32,4 +32,5 @@ class MachineryLinkService {
     machineryClasses
   }
 
+  
 }
