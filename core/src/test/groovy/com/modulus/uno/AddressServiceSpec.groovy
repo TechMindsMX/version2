@@ -97,6 +97,86 @@ class AddressServiceSpec extends Specification {
       result.find {it.key == "FISCAL"} == null
   }
 
+  void "Should return address types without Fiscal type when edit an address and company has it already"() {
+    given:"A company with address type Fiscal"
+      def company = createCompany()
+      def address = new Address(street:"Bellas Artes",
+                                streetNumber:205,
+                                addressType:AddressType.FISCAL).save(validate:false)
+      def addressToEdit = new Address(street:"Developers",
+                                streetNumber:205,
+                                addressType:AddressType.SOCIAL).save(validate:false)
+
+      company.addToAddresses(address)
+      company.addToAddresses(addressToEdit)
+      company.save(validate:false)
+    when:
+      def result = service.getAddressTypesForEditCompanyAddress(addressToEdit, company.id.toString())
+    then:
+      result.size() == 2
+      result.find {it.key == "FISCAL"} == null
+  }
+
+  void "Should return address types with Fiscal type when edit an address of type Fiscal and company has it already"() {
+    given:"A company with address type Fiscal"
+      def company = createCompany()
+      def address = new Address(street:"Bellas Artes",
+                                streetNumber:205,
+                                addressType:AddressType.FISCAL).save(validate:false)
+      def addressTwo = new Address(street:"Developers",
+                                streetNumber:205,
+                                addressType:AddressType.SOCIAL).save(validate:false)
+
+      company.addToAddresses(address)
+      company.addToAddresses(addressTwo)
+      company.save(validate:false)
+    when:
+      def result = service.getAddressTypesForEditCompanyAddress(address, company.id.toString())
+    then:
+      result.size() == 3
+      result.find {it.key == "FISCAL"}
+  }
+
+  void "Should return address types without Fiscal type when edit an address and business entity has it already"() {
+    given:"A businessEntity with address type Fiscal"
+      def businessEntity = new BusinessEntity(rfc:"AAA010101AAA")
+      def address = new Address(street:"Bellas Artes",
+                                streetNumber:205,
+                                addressType:AddressType.FISCAL).save(validate:false)
+      def addressToEdit = new Address(street:"Developers",
+                                streetNumber:205,
+                                addressType:AddressType.SOCIAL).save(validate:false)
+
+      businessEntity.addToAddresses(address)
+      businessEntity.addToAddresses(addressToEdit)
+      businessEntity.save(validate:false)
+    when:
+      def result = service.getAddressTypesForEditBusinessEntityAddress(addressToEdit, businessEntity)
+    then:
+      result.size() == 2
+      result.find {it.key == "FISCAL"} == null
+  }
+
+  void "Should return address types with Fiscal type when edit an address of type Fiscal and business entity has it already"() {
+    given:"A businessEntity with address type Fiscal"
+      def businessEntity = new BusinessEntity(rfc:"AAA010101AAA")
+      def address = new Address(street:"Bellas Artes",
+                                streetNumber:205,
+                                addressType:AddressType.FISCAL).save(validate:false)
+      def addressTwo = new Address(street:"Developers",
+                                streetNumber:205,
+                                addressType:AddressType.SOCIAL).save(validate:false)
+
+      businessEntity.addToAddresses(address)
+      businessEntity.addToAddresses(addressTwo)
+      businessEntity.save(validate:false)
+    when:
+      def result = service.getAddressTypesForEditBusinessEntityAddress(address, businessEntity)
+    then:
+      result.size() == 3
+      result.find {it.key == "FISCAL"}
+  }
+
   private def createCompany(){
     new Company(rfc:"ROS861224NHA",
                 bussinessName:"MakingDevs",
