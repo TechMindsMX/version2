@@ -10,12 +10,14 @@
     <div class="page-title">
 
       <h1>
-        <i class="fa fa-user fa-3x"></i>
-        Grupo a editar: ${group.name}
-        <small>Emailer Id: ${group.notificationId}</small>
+        <i class="fa fa-users fa-3x"></i>
+        ${group.name}
+        <small><b>
         <g:each var="user" in="${group.users}">
-        ${user.username}<br>
+        ${user.username}
         </g:each>
+          </b>
+        </small>
       </h1>
 
     </div>
@@ -40,7 +42,7 @@
               <label for="">Nombre para actualizar grupo</label>
                 <g:hiddenField name="idGroup" value="${group.id}" />
                 <div class="input-group col-md-4">
-                  <input type="text" class="form-control" id="" name="nameGroup" placeholder=""/>
+                  <input type="text" class="form-control" id="nameGroup" name="nameGroup" value="${group.name}"/>
                 </div>
             </div>
 
