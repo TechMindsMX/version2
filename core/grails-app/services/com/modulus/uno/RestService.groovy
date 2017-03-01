@@ -239,4 +239,26 @@ class RestService {
     }
   }
 
+  def updateFilesForInvoice(def bodyMap) {
+    try {
+      log.info "Calling Service : Update files to stamp"
+      log.info "Path: ${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
+      def http = new HTTPBuilder("${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}")
+      http.request(POST) { req ->
+        requestContentType: "multipart/form-data"
+        MultipartEntity multiPartContent = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
+        multiPartContent.addPart("cer", new InputStreamBody(bodyMap.cer.inputStream, bodyMap.cer.contentType, bodyMap.cer.originalFilename))
+        multiPartContent.addPart("key", new InputStreamBody(bodyMap.key.inputStream, bodyMap.key.contentType, bodyMap.key.originalFilename))
+        multiPartContent.addPart("logo", new InputStreamBody(bodyMap.logo.inputStream, bodyMap.logo.contentType, bodyMap.logo.originalFilename))
+        multiPartContent.addPart("password", new StringBody(bodyMap.password))
+        multiPartContent.addPart("certNumber", new StringBody(bodyMap.certNumber))
+
+        req.setEntity(multiPartContent)
+      }
+    } catch(Exception ex) {
+      log.error "Error ${ex.message}"
+      return "500"
+    }
+  }
+
 }

@@ -275,6 +275,18 @@ class CompanyController {
     renderPdf(template: "/documentTemplates/pastDuePortfolioForCompany", model: [company:company, detail:detailPastDuePortfolio, days:days])
   }
 
+  def changeStampDocuments(Company company) {
+    respond company
+  }
+
+  def updateDocumentsToStamp() {
+    def company = Company.get(session.company)
+    def responseStatus = companyService.updateDocumentsToStamp(params, company.rfc)
+    flash.responseStatus = "Archivos de Facturación Actualizados"//responseStatus
+    redirect action:"show", id:company.id
+
+  }
+
   private String getAlertColor(Integer days) {
     switch(days) {
       case 30: "info"

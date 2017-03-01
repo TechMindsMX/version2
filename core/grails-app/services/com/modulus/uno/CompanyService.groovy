@@ -192,6 +192,12 @@ class CompanyService {
     result
   }
 
+  def updateDocumentsToStamp(def params, def rfc) {
+    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert]
+    def result = restService.updateFilesForInvoice(documents)
+    result
+  }
+
   def isAvailableForGenerateInvoices(String rfc) {
     def response = restService.existEmisorForGenerateInvoice(rfc)
     isAvailableForInvoices(response)
