@@ -8,7 +8,9 @@ var MachineCreateController = (function(){
   var selectors = {
     actionFrom:'select[name=actionFrom]',
     actionTo:'select[name=actionTo]',
-    transitionForm:'form[name=transitionForm]'
+    machineForm:'form[name=machineForm]',
+    transitionForm:'form[name=transitionForm]',
+    stateFrom:'input[name=stateFrom]' 
   },
   machine = null,  
 
@@ -61,8 +63,15 @@ var MachineCreateController = (function(){
     });
 
   },
+  
+  createInitialState = function(event){
+    event.preventDefault();
+    machine.addInitialState($(selectors.stateFrom).val());
+    MachineCreateView.render('#transitions-form-template','#machineCreationDiv',{states:machine.getStates()});
+  },
 
   bindEvents = function(){
+    $(selectors.machineForm).on('submit',createInitialState);
     $(selectors.transitionForm).on('submit',addNewTransition);
   },
 
