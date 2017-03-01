@@ -10,7 +10,7 @@
       <h1>
         <i class="fa fa-newspaper-o fa-3x"></i>
         <g:message code="address.create.label"/>
-        <small>${businessEntity}</small>
+        <small>${businessEntity ?: ""}</small>
       </h1>
     </div>
     <div id="create-address" class="content scaffold-create" role="main">
