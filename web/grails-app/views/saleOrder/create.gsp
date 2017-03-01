@@ -1,4 +1,5 @@
 <%! import com.modulus.uno.PaymentMethod %>
+<%! import com.modulus.uno.AddressType %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -102,12 +103,10 @@
             <div class="portlet-body">
               <p><strong>${client.rfc}</strong></p>
               <p>
-              <g:if test="${client.addresses}">
+              <g:if test="${client.addresses.find {it.addressType == AddressType.FISCAL}}">
               Direccion de facturación:
-              <g:radioGroup name="addressId" values="${client.addresses*.id}"
-                  labels="${client.addresses}" value="${client.addresses*.id.first()}" >
-              <p>${it.radio} : ${it.label} </p>
-              </g:radioGroup>
+              <input type="hidden" name="addressId" value="${(client.addresses.find {it.addressType == AddressType.FISCAL}).id}"/>
+              <p>${client.addresses.find {it.addressType == AddressType.FISCAL}}</p>
               <input type="hidden" name="companyId" value="${company.id}" />
               <input type="hidden" name="clientId" value="${client.id}" />
               </p>
@@ -133,7 +132,7 @@
               </p>
               </g:if>
               <g:else>
-                  <p>El cliente seleccionado no tiene direcciones registradas</p>
+                  <p>El cliente seleccionado no tiene dirección Fiscal registrada</p>
                   <g:link controller="businessEntity" action="show" id="${client.id}" class="btn btn-green btn-block">
                       Registrar Dirección
                   </g:link>
