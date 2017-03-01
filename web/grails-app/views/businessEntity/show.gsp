@@ -9,12 +9,12 @@
   </head>
   <body>
     <div class="page-title">
-       <h1><g:message code="businessEntity.view.show.label" /></h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Compañia</li>
-          <li class="active"><g:message code="businessEntity.view.show.label" /></li>
-        </ol>
-      </div>
+      <h1>
+        <i class="fa fa-user fa-3x"></i>
+        <g:message code="businessEntity.view.show.label" />
+      </h1>
+    </div>
+
       <div id="edit-address" class="content scaffold-edit" role="main">
         <div class="portlet portlet-blue">
           <div class="portlet-heading">
@@ -84,15 +84,14 @@
             <span id="address-label" class="property-label">Dirección</span>
             <div class="property-value" aria-labelledby="telefono-label">
               <ul>
-                <g:each var="address" in="${businessEntity.addresses}">
+                <g:each var="address" in="${businessEntity.addresses.sort{it.id}}">
                 <g:link controller="address" action="edit" id="${address.id}" params="[relation:relation, businessEntityId:businessEntity.id]">
-                    <li class="subList">${address.street} #${address.streetNumber} - ${address.suite} CP ${address.zipCode}, ${address.colony}, ${address.city}, ${address.town}. ${address.federalEntity}, ${address.country}</li>
+                <li class="subList">${address.addressType}: ${address.street} #${address.streetNumber} - ${address.suite} CP ${address.zipCode}, ${address.colony}, ${address.city}, ${address.town}. ${address.federalEntity}, ${address.country}</li>
                   </g:link>
                 </g:each>
               </ul>
             </div>
           </g:if>
-          <g:else>
             <g:if test="${!relation.equals('EMPLEADO')}">
             <div class="property-value" aria-labelledby="company-label">
               <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
@@ -100,7 +99,6 @@
               </sec:ifAnyGranted>
             </div>
             </g:if>
-          </g:else>
           <br />
           <div class="property-value">
             <span class="property-label"><g:message code="businessEntity.label.bankAccounts.${relation}" default="Cuentas Bancarias"/></span>
