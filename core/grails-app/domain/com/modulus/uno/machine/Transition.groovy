@@ -4,15 +4,15 @@ class Transition {
 
   State stateFrom
   State stateTo  
-  Action action
 
   Date dateCreated
   Date lastUpdated
 
+  static hasMany = [actions:String]
+
   static belongsTo = [machine:Machine]
 
   static constraints = {
-    action nullable:false
     stateTo nullable:false
   }
 
