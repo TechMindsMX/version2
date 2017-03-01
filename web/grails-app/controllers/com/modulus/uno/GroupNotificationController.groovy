@@ -7,6 +7,7 @@ class GroupNotificationController {
     def emailerClientService
     def groupNotificationService
     def corporateService
+    def index(){[num:50] }
 
     def create() {
       def emailerStorage = emailerClientService.getEmailerStorage()
@@ -38,7 +39,7 @@ class GroupNotificationController {
 
 
     def delete(){
-      groupNotificationService.deleteGroup(params.id)
+        groupNotificationService.deleteGroup(params.id)
       render (view:"show", model: [groups: groupNotificationService.getGroupsList()])
     }
 
