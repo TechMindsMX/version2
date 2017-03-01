@@ -12,6 +12,13 @@ class EmailerClientService {
     def emailersList = getEmailerList(storage)
   }
 
+  def getSubject(def idEmailer, def emailers){
+    def emailer = emailers.find{
+     it.containsValue(idEmailer)
+    }
+    emailer.subject
+  }
+
   private getEmailerList(def emailerStorage){
     def emailerList
     emailerList = emailerStorage.collect{ emailer ->
