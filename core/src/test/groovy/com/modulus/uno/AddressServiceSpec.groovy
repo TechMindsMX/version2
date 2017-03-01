@@ -6,7 +6,7 @@ import java.lang.Void as Should
 import grails.test.mixin.Mock
 
 @TestFor(AddressService)
-@Mock([Company,Address])
+@Mock([Company, Address, BusinessEntity])
 class AddressServiceSpec extends Specification {
 
   BusinessEntityService businessEntityService = Mock(BusinessEntityService)
@@ -70,6 +70,31 @@ class AddressServiceSpec extends Specification {
       def result = service.createAddressForAObject(address, 0, 1)
     then:
       1 * companyService.createAddressForCompany(_, _)
+  }
+
+  void "Should return all address type when businessEntity hasn't addresses"() {
+    given:"A business entity"
+      def businessEntity = new BusinessEntity(rfc:"AAA010101AAA")
+      businessEntity.save(validate:false)
+    when:
+      def result = service.getAddressTypesForBusinessEntity(businessEntity)
+    then:
+      result.size() == AddressType.values().size()
+  }
+
+  void "Should return address types without Fiscal type when businessEntity has it already"() {
+    given:"A business entity"
+      def businessEntity = new BusinessEntity(rfc:"AAA010101AAA")
+      def address = new Address(street:"Bellas Artes",
+                                streetNumber:205,
+                                addressType:AddressType.FISCAL).save(validate:false)
+      businessEntity.addToAddresses(address)
+      businessEntity.save(validate:false)
+    when:
+      def result = service.getAddressTypesForBusinessEntity(businessEntity)
+    then:
+      result.size() == 2
+      result.find {it.key == "FISCAL"} == null
   }
 
   private def createCompany(){
