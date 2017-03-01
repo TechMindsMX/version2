@@ -21,55 +21,81 @@
     <!-- END OF PAGE TITLE -->
     <!-- BEGIN OF PORTLET -->    
     <div class="portlet portlet-blue">
+      <!-- BEGIN PORTLET-BODY -->
       <div class="portlet-body">
-        <form name="transitionForm">
-          <!-- BEGIN ROW -->
-          <div class="row">
-            <div class="col-sm-6">
-              <!-- BEGIN ROW -->
-              <div class="row">
-                <div class="form-group col-sm-6">
-                  <label for="actionFrom">
-                    ${message(code:'machine.action.from')}
-                  </label>
-                  <select name="actionFrom" class="form-control">
-                    <option selected value>Seleccionar</option>
-                    <option value="0">Inicio</option>
-                  </select>
-                </div>
+        <!-- BEGIN ROW -->
+        <div class="row">
+          <div class="col-sm-6" id="machineCreationDiv">
+            <form name="machineForm">
+            <!-- BEGIN ROW -->
+            <div class="row">
+              <div class="form-group col-sm-6">
+                <label for="actionFrom">
+                  ${message(code:'machine.initial.state')}
+                </label>
+                <input type="text" class="form-control" name="stateFrom" maxlength="100" autocomplete="off" />
+                <%--
+                <select name="actionFrom" class="form-control">
+                  <option selected value>Seleccionar</option>
+                  <option value="0">Inicio</option>
+                </select>
+                --%>
+              </div>
 
-                <div class="form-group col-sm-6">
-                  <label for="actionTo">
-                    ${message(code:'machine.action.to')}
-                  </label>
-                  <g:select name="actionTo" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
-                </div>
+              <div class="form-group col-sm-6">
+                <%--
+                <label for="actionTo">
+                  ${message(code:'machine.action.to')}
+                </label>
+                <g:select name="actionTo" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
+                --%>
               </div>
-              <!-- END OF ROW -->
-              <!-- BEGIN ROW -->
-              <div class="row">
-                <div class="form-group col-sm-12">
-                  <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
-                </div>
-              </div>
-              <!-- END OF ROW -->
-              <!-- BEGIN ROW -->
-              <div class="row">
-                <div class="col-lg-12" id="transitionsTableContainer">
-                    
-                </div>
-              </div>
-              <!-- END OF ROW -->
             </div>
-            <div class="col-sm-6">
-            
+            <!-- END OF ROW -->
+            <!-- BEGIN ROW -->
+            <div class="row">
+              <div class="form-group col-sm-12">
+                <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
+              </div>
             </div>
+            <!-- END OF ROW -->
+            </form>
+            <!-- BEGIN ROW -->
+            <div class="row">
+              <div class="col-lg-12" id="transitionsTableContainer">
+                  
+              </div>
+            </div>
+            <!-- END OF ROW -->
           </div>
-          <!-- END OF ROW --> 
-        </form>
+          <div class="col-sm-6">
+          
+          </div>
+        </div>
+        <!-- END OF ROW --> 
       </div>
+      <!-- END OF PORTLET-BODY -->
     </div>
     <!-- END OF PORTLET -->
+
+    <script id="transitions-form-template" type="text/x-handlebars-template">
+      <!-- BEGIN FORM -->
+      <form name="transitionForm">
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="form-group col-sm-6">
+              <select name="stateFrom" class="form-control">
+                <option value selected>Seleccionar</option>
+                {{#each states}}
+                <option value="{{name}}">{{name}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+      <!-- END OF FORM -->
+    </script>
 
     <script id="transitionsTable" type="text/x-handlebars-template">
       <div class="table-responsive" >
