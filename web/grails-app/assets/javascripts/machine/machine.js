@@ -1,6 +1,7 @@
 //= require machine/transition.js
 
 var Machine = {
+  initialState:null,
   transitions:[],
   actions:[],
   states:[],
@@ -8,6 +9,16 @@ var Machine = {
   create:function(data){
     this.actions.push({id:0,name:'Inicio'});
     return $.extend({},this,data);
+  },
+  
+  addInitialState:function(name) {
+    this.initialState = State.create({name:name});
+    this.addState(name);
+  },
+
+  addState:function(name){
+    var state = State.create({name:name});
+    this.states.push(state);
   },
 
   addTransition:function(data){
@@ -63,23 +74,8 @@ var Machine = {
     return this.transitions;
   },
 
-  getActions:function(){
-    return this.actions;
-  },
-  
-  getMaxState:function(){
-    var max = 0;
-    $.each(this.states,function(index,state){
-      if(max < state)
-        max = state;
-    });
-    return max;
-  },
-
-  getNextState:function(){
-    var nextState = this.getMaxState()+1;
-    this.states.push(nextState);
-    return nextState;
+  getStates:function(){
+    return this.states;
   }
 
 };
