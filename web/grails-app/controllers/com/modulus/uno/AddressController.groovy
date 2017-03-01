@@ -24,7 +24,10 @@ class AddressController {
 
   def create() {
     def businessEntity = BusinessEntity.get(params.businessEntity)
-    respond new Address(params),model:[businessEntity:businessEntity, addressTypes:addressService.getAddresTypesForOrganization(session.company.toLong())]
+    def addressTypes = addressService.getAddresTypesForOrganization(session.company.toLong())
+    if (businessEntity)
+      addressTypes = addressService.getAddressTypesForBusinessEntity(businessEntity)
+    respond new Address(params),model:[businessEntity:businessEntity, addressTypes:addressTypes]
   }
 
   @Transactional
