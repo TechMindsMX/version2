@@ -17,6 +17,7 @@ function complete() {
       var estado = $('#federalEntity')
       var pais = $('#country')
       var currentCol = $('#currentColony')
+      var ciudadEdit = ciudad.val()
 
       colonia.find('option').remove()
       delegacion.val('')
@@ -33,7 +34,8 @@ function complete() {
       })
 
       delegacion.val(response.dMnpio)
-      ciudad.val(response.dCiudad)
+      var cd = (response.dCiudad != '') ? response.dCiudad : ciudadEdit
+      ciudad.val(cd)
       estado.val(response.dEstado)
       pais.val(response.country)
     }else{

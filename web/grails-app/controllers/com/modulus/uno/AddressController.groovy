@@ -24,7 +24,10 @@ class AddressController {
 
   def create() {
     def businessEntity = BusinessEntity.get(params.businessEntity)
-    respond new Address(params),model:[businessEntity:businessEntity, addressTypes:addressService.getAddresTypesForOrganization(session.company.toLong())]
+    def addressTypes = addressService.getAddresTypesForOrganization(session.company.toLong())
+    if (businessEntity)
+      addressTypes = addressService.getAddressTypesForBusinessEntity(businessEntity)
+    respond new Address(params),model:[businessEntity:businessEntity, addressTypes:addressTypes]
   }
 
   @Transactional
@@ -39,7 +42,12 @@ class AddressController {
   }
 
   def edit(Address address) {
-    respond address,model:[addressTypes:addressService.getAddresTypesForOrganization(session.company.toLong()), relation:params.relation, businessEntityId:params.businessEntityId]
+    def businessEntity = BusinessEntity.get(params.businessEntityId)
+    def addressTypes = addressService.getAddressTypesForEditCompanyAddress(address, session.company)
+    if (businessEntity)
+      addressTypes = addressService.getAddressTypesForEditBusinessEntityAddress(address, businessEntity)
+
+    respond address,model:[addressTypes:addressTypes, relation:params.relation, businessEntity:businessEntity]
   }
 
   @Transactional
