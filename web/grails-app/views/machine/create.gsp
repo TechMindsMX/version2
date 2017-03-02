@@ -25,40 +25,28 @@
       <div class="portlet-body">
         <!-- BEGIN ROW -->
         <div class="row">
-          <div class="col-sm-6" id="machineCreationDiv">
+          <div class="col-sm-6" >
             <form name="machineForm">
-            <!-- BEGIN ROW -->
-            <div class="row">
-              <div class="form-group col-sm-6">
-                <label for="actionFrom">
-                  ${message(code:'machine.initial.state')}
-                </label>
-                <input type="text" class="form-control" name="stateFrom" maxlength="100" autocomplete="off" />
-                <%--
-                <select name="actionFrom" class="form-control">
-                  <option selected value>Seleccionar</option>
-                  <option value="0">Inicio</option>
-                </select>
-                --%>
-              </div>
+              <!-- BEGIN ROW -->
+              <div class="row" id="transitionsDiv">
+                <div class="form-group col-sm-6">
+                  <label for="actionFrom">
+                    ${message(code:'machine.initial.state')}
+                  </label>
+                  <input type="text" class="form-control" name="stateFrom" maxlength="100" autocomplete="off" />
+                </div>
 
-              <div class="form-group col-sm-6">
-                <%--
-                <label for="actionTo">
-                  ${message(code:'machine.action.to')}
-                </label>
-                <g:select name="actionTo" class="form-control" from="${actions}" optionKey="id" optionValue="name" noSelection="${['':'Seleccionar']}"></g:select>
-                --%>
+                <div class="form-group col-sm-6">
+                </div>
               </div>
-            </div>
-            <!-- END OF ROW -->
-            <!-- BEGIN ROW -->
-            <div class="row">
-              <div class="form-group col-sm-12">
-                <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
+              <!-- END OF ROW -->
+              <!-- BEGIN ROW -->
+              <div class="row">
+                <div class="form-group col-sm-12">
+                  <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
+                </div>
               </div>
-            </div>
-            <!-- END OF ROW -->
+              <!-- END OF ROW -->
             </form>
             <!-- BEGIN ROW -->
             <div class="row">
@@ -79,36 +67,31 @@
     <!-- END OF PORTLET -->
 
     <script id="transitions-form-template" type="text/x-handlebars-template">
-      <!-- BEGIN FORM -->
-      <form name="transitionForm">
-        <div class="row">
-          <div class="col-sm-4">
-            <label for="actionFrom">
-              ${message(code:'machine.initial.state')}
-            </label>
-            <select name="stateFrom" class="form-control">
-              <option value selected>Seleccionar</option>
-              {{#each states}}
-              <option value="{{name}}">{{name}}</option>
-              {{/each}}
-            </select>
-          </div>
-
-          <div class="col-sm-4">
-            <label for="actionFrom">
-              ${message(code:'machine.action')}
-            </label>
-            <input type="text" name="action" class="form-control" />
-          </div>
-
-          <div class="col-sm-4">
-            <label for="actionFrom">
-              ${message(code:'machine.state.to')}
-            </label>
-          </div>
+        <div class="form-group col-sm-4">
+          <label for="actionFrom">
+            ${message(code:'machine.initial.state')}
+          </label>
+          <select name="stateFrom" class="form-control">
+            <option value selected>Seleccionar</option>
+            {{#each states}}
+            <option value="{{name}}">{{name}}</option>
+            {{/each}}
+          </select>
         </div>
-      </form>
-      <!-- END OF FORM -->
+
+        <div class="form-group col-sm-4">
+          <label for="actionFrom">
+            ${message(code:'machine.action')}
+          </label>
+          <input type="text" name="action" class="form-control" />
+        </div>
+
+        <div class="form-group col-sm-4">
+          <label for="actionFrom">
+            ${message(code:'machine.state.to')}
+          </label>
+          <input type="text" name="stateTo" class="form-control" />
+        </div>
     </script>
 
     <script id="transitionsTable" type="text/x-handlebars-template">
