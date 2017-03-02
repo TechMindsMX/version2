@@ -5,10 +5,12 @@ import grails.transaction.Transactional
 @Transactional
 class EmailerClientService {
 
-  WsliteConnectionService wsliteConnectionService
+  WsliteRequestService wsliteRequestService
 
   def getEmailerStorage(){
-    def storage = wsliteConnectionService.get("http://emailerv2.modulusuno.com", "/show")
+    def storage = wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
+      endPointUrl "/show"
+    }.doit().json
     def emailersList = getEmailerList(storage)
   }
 
