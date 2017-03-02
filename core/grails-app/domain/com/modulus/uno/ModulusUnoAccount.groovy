@@ -7,6 +7,7 @@ class ModulusUnoAccount {
   String integraUuid
   String stpClabe
   String timoneUuid
+  String aliasStp
 
   Date dateCreated
   Date lastUpdated
@@ -19,5 +20,6 @@ class ModulusUnoAccount {
     integraUuid nullable:false
     stpClabe nullable:false
     timoneUuid nullable:false
+    aliasStp nullable:true
   }
 }

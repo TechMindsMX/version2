@@ -15,4 +15,5 @@ databaseChangeLog = {
   include file: 'adding-columns-dates-and-status-to-stp-deposit.groovy'
   include file: 'adding-column-payment-method-to-sale-order.groovy'
   include file: 'updating-type-venta-to-factura-in-commission.groovy'
+  include file: 'adding-column-alias-stp-to-modulus-uno-account.groovy'
 }
