@@ -81,16 +81,30 @@
     <script id="transitions-form-template" type="text/x-handlebars-template">
       <!-- BEGIN FORM -->
       <form name="transitionForm">
-        <div class="col-sm-6">
-          <div class="row">
-            <div class="form-group col-sm-6">
-              <select name="stateFrom" class="form-control">
-                <option value selected>Seleccionar</option>
-                {{#each states}}
-                <option value="{{name}}">{{name}}</option>
-                {{/each}}
-              </select>
-            </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <label for="actionFrom">
+              ${message(code:'machine.initial.state')}
+            </label>
+            <select name="stateFrom" class="form-control">
+              <option value selected>Seleccionar</option>
+              {{#each states}}
+              <option value="{{name}}">{{name}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="col-sm-4">
+            <label for="actionFrom">
+              ${message(code:'machine.action')}
+            </label>
+            <input type="text" name="action" class="form-control" />
+          </div>
+
+          <div class="col-sm-4">
+            <label for="actionFrom">
+              ${message(code:'machine.state.to')}
+            </label>
           </div>
         </div>
       </form>
