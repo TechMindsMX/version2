@@ -3,8 +3,7 @@
 var Transition = {
   stateFrom:null,
   stateTo:null, 
-  action:'',
-  actionId:'',
+  actions:[],
 
   create:function(data){
     return $.extend({},this,data);
