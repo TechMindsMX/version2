@@ -1,4 +1,5 @@
 package com.modulus.uno
+import com.modulus.uno.GroupNotification
 
 class GroupNotificationCommand{
 
@@ -7,14 +8,13 @@ class GroupNotificationCommand{
   List<Long> userList
   String nameGroup
 
-  def toDomain(){
-    def usersToGroup = GroupNotificationService.getUserList(userList)
-    GroupNotification group = new GroupNotification(name:nameGroup, notificationId:notificationId, users: usersToGroup)
+  GroupNotification getGroupNotification(){
+    return new GroupNotification(
+                                 notificationId:notificationId,
+                                 name:nameGroup)
   }
 
-  def toMap(){
-    def usersToGroup = GroupNotificationService.getUserList(userList)
-    def updateMap = ["id":idGroup, "notification": notificationId, "name":nameGroup, "users":usersToGroup]
+  def getParams(){
+   def params = ["id":idGroup,"name":nameGroup, "notification":notificationId]
   }
-
 }
