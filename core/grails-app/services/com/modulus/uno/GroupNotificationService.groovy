@@ -7,26 +7,15 @@ class GroupNotificationService {
 
   def corporateService
 
-  def addNewGroup(def command, ArrayList<User> users){
-    def usersList = getUserList(command.userList, users)
-    createGroup(command.nameGroup, command.notificationId, usersList)
+  def saveNewGroup(GroupNotification group){
+    group.save()
   }
 
-  def createGroup(String groupName, String notifyId, def usersList){
-    def newGroup = new GroupNotification(name:groupName, notificationId:notifyId, users:usersList)
-    newGroup.save()
-  }
-
-  def editGroup(def command, ArrayList<User> users){
-    def usersList = getUserList(command.userList, users)
-    updateGroup(command.idGroup.toInteger(), command.nameGroup, usersList, command.notificationId)
-  }
-
-  def updateGroup(def groupId, String newNameGroup, def  newUserList, String newNotification){
-    GroupNotification groupNotification = GroupNotification.findById(groupId)
-      groupNotification.name=newNameGroup
-      groupNotification.users=newUserList
-      groupNotification.notificationId = newNotification
+  def updateGroup(def updateParams){
+     GroupNotification groupNotification = GroupNotification.findById(updateParams.id)
+      groupNotification.name=updateParams.name
+      groupNotification.users=updateParams.users
+      groupNotification.notificationId = updateParams.notification
       groupNotification.save()
   }
 
@@ -43,14 +32,13 @@ class GroupNotificationService {
     GroupNotification.findById(groupId)
   }
 
-  def getUserList(def  userIdList, def userList){
-   def users = userList.findAll{
-    userIdList.contains(it.id.toInteger())
+  def getUserList(def  userIdList){
+   userIdList.collect{
+     User.findById(it.toInteger())
    }
   }
 
   def getUserListWithoutGroup(def usersWithGroup, def usersCorporate){
-
     def usersWithoutGroup = usersCorporate.findAll {
      !usersWithGroup.contains( it )
     }
