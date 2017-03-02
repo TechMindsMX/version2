@@ -14,7 +14,10 @@ class GroupNotificationController {
 
     def create() {
       def emailerStorage = emailerClientService.getEmailerStorage()
-      render (view:"create", model: [emailers : emailerStorage, users:corporateService.findCorporateUsers(session.corporate.id)])
+      [
+        emailers : emailerStorage,
+        users:corporateService.findCorporateUsers(session.corporate.id)
+      ]
     }
 
     def save(GroupNotificationCommand command){
