@@ -9,12 +9,12 @@ class GroupNotificationCommand{
   String nameGroup
 
   GroupNotification getGroupNotification(){
-    return new GroupNotification(
+    new GroupNotification(
                                  notificationId:notificationId,
                                  name:nameGroup)
   }
 
   def getParams(){
-   def params = ["id":idGroup,"name":nameGroup, "notification":notificationId]
+    ["id":idGroup,"name":nameGroup, "notification":notificationId]
   }
 }
