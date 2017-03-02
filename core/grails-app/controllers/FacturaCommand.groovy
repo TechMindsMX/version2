@@ -10,4 +10,5 @@ class FacturaCommand implements MessageCommand {
   List<Concepto> conceptos
   List<Impuesto> impuestos
   Boolean betweenIntegrated = false
+  String observaciones
 }

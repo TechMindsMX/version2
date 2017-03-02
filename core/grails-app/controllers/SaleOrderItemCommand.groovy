@@ -8,6 +8,7 @@ class SaleOrderItemCommand implements Validateable{
   String name
   String quantity
   String price
+  String discount
   String ieps
   String iva
   String unitType
@@ -18,6 +19,7 @@ class SaleOrderItemCommand implements Validateable{
       name:this.name,
       quantity:getValueInBigDecimal(this.quantity),
       price:getValueInBigDecimal(this.price),
+      discount:getValueInBigDecimal(this.discount),
       ieps:getValueInBigDecimal(this.ieps?:"0"),
       iva:getValueInBigDecimal(this.iva?:"0"),
       unitType:UnitType.values().find {  it.toString() == this.unitType } ?: unitType
