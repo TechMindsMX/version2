@@ -34,7 +34,7 @@ class GroupNotificationService {
 
   def getUserList(def  userIdList){
    userIdList.collect{
-     User.findById(it.toInteger())
+     User.findById(it.toLong())
    }
   }
 
