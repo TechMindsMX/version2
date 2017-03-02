@@ -9,7 +9,7 @@ class EmailerClientService {
 
   def getEmailerStorage(){
     def storage = wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
-      endPointUrl "/show"
+      endpointUrl "/show"
     }.doit().json
     def emailersList = getEmailerList(storage)
   }
