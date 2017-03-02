@@ -280,8 +280,10 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
   def idEmailer
   def paramsEmailer=notifyService.parametersForPurchaseOrder(order, order.status)
   switch(order.status){
-    //case PurchaseOrderStatus.CREADA:
-    //break;
+    case PurchaseOrderStatus.CREADA:
+    idEmailer = grailsApplication.config.emailer.purchaseOrderAcceptStatus
+    emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
+    break;
     case PurchaseOrderStatus.POR_AUTORIZAR:
     idEmailer = grailsApplication.config.emailer.purchaseOrderAcceptStatus
     emailList = getEmailList(order.company,["ROLE_AUTHORIZER_VISOR", "ROLE_AUTHORIZER_EJECUTOR"])
