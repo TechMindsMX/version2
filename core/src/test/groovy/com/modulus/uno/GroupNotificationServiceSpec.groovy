@@ -10,7 +10,7 @@ class GroupNotificationServiceSpec extends Specification {
 
     def "Delete a notification group"(){
       given:"A group notification"
-        GroupNotification firstGroup = createUserGroup()
+        GroupNotification firstGroup = createGroup()
       when:"we want to delete a group notification"
         service.deleteGroup(firstGroup.id)
       then:"We shouldn't have any group notification"
@@ -19,9 +19,9 @@ class GroupNotificationServiceSpec extends Specification {
 
     def "Get a list of notification groups"(){
       given:"Many notificationGroups"
-        GroupNotification firstGroup = createUserGroup()
-        GroupNotification secondGroup = createUserGroup()
-        GroupNotification thirdGroup = createUserGroup()
+        GroupNotification firstGroup = createGroup()
+        GroupNotification secondGroup = createGroup()
+        GroupNotification thirdGroup = createGroup()
       when:"I want to know all the notification groups"
         def groupsList = service.getGroupsList()
       then:"We should get a list"
@@ -32,8 +32,8 @@ class GroupNotificationServiceSpec extends Specification {
 
     def "Find and get a specific groupNotification"(){
         given:"A groupNotifications"
-        GroupNotification firstGroup = createUserGroup()
-        GroupNotification secondGroup = createUserGroup()
+        GroupNotification firstGroup = createGroup()
+        GroupNotification secondGroup = createGroup()
         when:"We want to get the groupNotification with the id 2"
         def idToFind = 2
         def groupTwo = service.getGroup(idToFind)
@@ -52,8 +52,22 @@ class GroupNotificationServiceSpec extends Specification {
         then:"We should get"
         usersWithoutGroup.contains(usersCorporate[2])
     }
-
-      private createUserGroup(){
+    def "Update a GroupNotification"(){
+      given: "A GroupNotification"
+      def group = createGroup()
+      and: "A map of params"
+      def user6= new User(username:"User6").save(validate:false)
+      def user7= new User(username:"User7").save(validate:false)
+      def map = [id:1, name:"newGroup", notification:"123456789", users:[user6,user7]]
+      when: "We want to update the group"
+      service.updateGroup(map)
+      then:"We should get"
+      group.name == "newGroup"
+      group.notificationId == "123456789"
+      group.users.contains(user6)
+      group.users.contains(user7)
+    }
+      private createGroup(){
         def userList = createUserList()
         def firstNotificationGroup = new GroupNotification(notificationId: "763gytdg327fgfg67fv5f", users: userList, name:"ModulusUnoGroup")
         firstNotificationGroup.save(validate:false)
