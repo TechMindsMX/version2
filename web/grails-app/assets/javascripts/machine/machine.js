@@ -1,24 +1,33 @@
 //= require machine/transition.js
+//= require third-party/lodash/lodash.js
+//= require third-party/graphlib/dist/graphlib.core.js
+//= require third-party/dagre/dist/dagre.core.js
+//= require third-party/dagre-d3/dist/dagre-d3.core.js
+//= require third-party/d3/d3.js
 
 var Machine = {
   initialState:null,
   transitions:[],
   actions:[],
   states:[],
+  graph:null,
 
   create:function(data){
     this.actions.push({id:0,name:'Inicio'});
+    this.graph = new dagreD3.graphlib.Graph().setGraph({});
     return $.extend({},this,data);
   },
   
   addInitialState:function(name) {
     this.initialState = State.create({name:name});
     this.addState(name);
+    
   },
 
   addState:function(name){
     var state = State.create({name:name});
     this.states.push(state);
+    this.graph.setNode(name,{});
   },
 
   addTransition:function(data){
@@ -76,6 +85,10 @@ var Machine = {
 
   getStates:function(){
     return this.states;
+  },
+
+  getGraph:function(){
+    return this.graph;
   }
 
 };
