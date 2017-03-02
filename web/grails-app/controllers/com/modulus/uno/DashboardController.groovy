@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import grails.transaction.Transactional
+
 class DashboardController {
 
   def companyService
@@ -60,4 +62,14 @@ class DashboardController {
      [companies:Company.list(params),companiesCount: Company.count()]
   }
 
+  def defineCostCenters() {
+     params.max = (params.max ?: 10)
+     [companies:Company.list(params), companiesCount:Company.count()]
+  }
+
+  @Transactional
+  def saveAliasStp() {
+    companyService.assignAliasStpToCompany(Company.get(params.company), params.aliasStp)
+    redirect action:'defineCostCenters'
+  }
 }

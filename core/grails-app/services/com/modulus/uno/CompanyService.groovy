@@ -251,4 +251,9 @@ class CompanyService {
     saleOrderService.obtainListPastDuePortfolio(idCompany, days)
   }
 
+  def assignAliasStpToCompany(Company company, String alias) {
+    ModulusUnoAccount m1 = company.accounts.first()
+    m1.aliasStp = alias
+    m1.save()
+  }
 }
