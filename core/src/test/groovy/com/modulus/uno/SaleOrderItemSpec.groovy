@@ -53,4 +53,36 @@ class SaleOrderItemSpec extends Specification {
   'H129'      | 'Galgo System 90' | -1       | 500   | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || false
   }
 
+  @Unroll
+  void """When item has (quantity=#quantity, price=#price, discount=#discount) we expect (amountDiscount=#amountDiscount, priceWithDiscount=#priceWithDiscount, netPrice=#netPrice, netAmount=#netAmount)"""() {
+  given:"A item"
+    def item = new SaleOrderItem()
+  and:"A sale order"
+    def saleOrder = new SaleOrder(rfc:'rfc', clientName:'clientName')
+  when:"We set its values"
+    item.sku = sku
+    item.name = name
+    item.price = price
+    item.discount = discount
+    item.ieps = ieps
+    item.iva = iva
+    item.quantity = quantity
+    item.unitType = unitType
+    item.currencyType = currencyType
+    item.saleOrder = saleOrder
+    def result = item.save()
+  then:"We validate"
+    result.amountDiscount == amountDiscount
+    result.priceWithDiscount == priceWithDiscount
+    result.netPrice == netPrice
+    result.netAmount == netAmount
+  where:"We have following values"
+  sku    | name              | quantity | price | discount | ieps  | iva  | unitType          | currencyType      || amountDiscount | priceWithDiscount | netPrice | netAmount
+  'H129' | 'Galgo System 71' | 1.0      | 500   | 0        | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 0              | 500               | 580      | 580
+  'H129' | 'Galgo System 71' | 1.0      | 500   | 10       | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 50             | 450               | 522      | 522
+  'H129' | 'Galgo System 71' | 2.0      | 500   | 10       | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 50             | 450               | 522      | 1044
+  'H129' | 'Galgo System 71' | 0.5      | 500   | 10       | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 50             | 450               | 522      | 261
+  'H129' | 'Galgo System 71' | 1.0      | 500   | 5.5      | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 27.50          | 472.50            | 548.10   | 548.10
+  }
+
 }

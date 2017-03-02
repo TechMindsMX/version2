@@ -5,4 +5,5 @@ class Concepto {
   String descripcion
   String unidad
   BigDecimal valorUnitario
+  BigDecimal descuento
 }
