@@ -6,7 +6,8 @@ class CashoutCommand implements MessageCommand {
   String clabe
   String bankCode
   BigDecimal amount
-  BigDecimal speiFee
+  BigDecimal fee
   String beneficiary
   String concept
+  String feeType
 }

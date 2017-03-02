@@ -135,6 +135,10 @@ class ModulusUnoServiceSpec extends Specification {
       company.addToAccounts(account)
       company.save(validate:false)
     and:
+      def commission = new Commission(fee:0.00, percentage:5.00, type:CommissionType.PAGO)
+      company.addToCommissions(commission)
+      company.save(validate:false)
+    and:
       BankAccount bankAccount = Mock(BankAccount)
       Bank bank = Mock(Bank)
       bank.bankingCode >> '123'

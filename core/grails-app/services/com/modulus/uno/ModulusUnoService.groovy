@@ -12,13 +12,17 @@ class ModulusUnoService {
   static final feeType = [
     SaleOrder : "SALE_FEE",
     DepositOrder : "DEPOSIT_FEE",
-    LoanOrder : "LOAN_FEE"
+    LoanOrder : "LOAN_FEE",
+    PurchaseOrder : "PAYMENT_FEE",
+    CashOutOrder : "CASHOUT_FEE"
   ]
 
   static final commissionType = [
     SaleOrder : "FACTURA",
     DepositOrder : "DEPOSITO",
-    LoanOrder : "PRESTAMO"
+    LoanOrder : "PRESTAMO",
+    PurchaseOrder : "PAGO",
+    CashOutOrder : "PAGO"
   ]
 
   static final cashOutConcept = [
@@ -40,7 +44,7 @@ class ModulusUnoService {
       if (commission.fee){
         amountFee = commission.fee * 1.0
       } else {
-        amountFee = order.class.simpleName == "SaleOrder" ? order.total * (commission.percentage/100) : order.amount * (commission.percentage/100)
+        amountFee = (order.class.simpleName == "SaleOrder" || order.class.simpleName == "PurchaseOrder") ? order.total * (commission.percentage/100) : order.amount * (commission.percentage/100)
       }
       String uuid = order.company.accounts.first().timoneUuid
       command = new FeeCommand(uuid:uuid,amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:fType)
@@ -53,8 +57,13 @@ class ModulusUnoService {
   }
 
   def approveCashOutOrder(CashOutOrder cashOutOrder) {
+    FeeCommand feeCommand = createFeeCommandFromOrder(cashOutOrder)
+    if (!feeCommand){
+      throw new CommissionException("No existe comisión para la operación")
+    }
+
     BigDecimal amount = cashOutOrder.amount.setScale(2, RoundingMode.HALF_UP)
-    CashoutCommand command = new CashoutCommand(uuid:cashOutOrder.timoneUuid, clabe:cashOutOrder.account.clabe, bankCode:cashOutOrder.account.banco.bankingCode, amount:amount, speiFee:grailsApplication.config.speiFee, beneficiary:cashOutOrder.company.bussinessName, concept:cashOutConcept.CashOutOrder)
+    CashoutCommand command = new CashoutCommand(uuid:cashOutOrder.timoneUuid, clabe:cashOutOrder.account.clabe, bankCode:cashOutOrder.account.banco.bankingCode, amount:amount, fee:feeCommand.amount, beneficiary:cashOutOrder.company.bussinessName, concept:cashOutConcept.CashOutOrder, feeType:feeCommand.type)
     restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
   }
 
@@ -104,7 +113,12 @@ class ModulusUnoService {
   }
 
   def payPurchaseOrder(PurchaseOrder order, PaymentToPurchase payment) {
-    CashoutCommand command = new CashoutCommand(uuid:order.company.accounts?.first()?.timoneUuid, clabe:order.bankAccount.clabe, bankCode:order.bankAccount.banco.bankingCode, amount:payment.amount.setScale(2, RoundingMode.HALF_UP), speiFee:grailsApplication.config.speiFee, beneficiary:order.providerName, concept:cashOutConcept.PurchaseOrder)
+    FeeCommand feeCommand = createFeeCommandFromOrder(order)
+    if (!feeCommand){
+      throw new CommissionException("No existe comisión para la operación")
+    }
+
+    CashoutCommand command = new CashoutCommand(uuid:order.company.accounts?.first()?.timoneUuid, clabe:order.bankAccount.clabe, bankCode:order.bankAccount.banco.bankingCode, amount:payment.amount.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, beneficiary:order.providerName, concept:cashOutConcept.PurchaseOrder, feeType:feeCommand.type)
     restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
     command
 
