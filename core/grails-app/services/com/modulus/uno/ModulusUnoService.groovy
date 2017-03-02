@@ -16,7 +16,7 @@ class ModulusUnoService {
   ]
 
   static final commissionType = [
-    SaleOrder : "VENTA",
+    SaleOrder : "FACTURA",
     DepositOrder : "DEPOSITO",
     LoanOrder : "PRESTAMO"
   ]

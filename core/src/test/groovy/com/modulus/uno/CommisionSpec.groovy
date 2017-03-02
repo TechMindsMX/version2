@@ -24,19 +24,19 @@ class CommissionSpec extends Specification {
       result == commission.validate()
     where:"We have the following values"
     fee   | percentage | type                    || result
-    100   | 0          | CommissionType.VENTA    || true
-    100   | null       | CommissionType.VENTA    || true
-    null  | 10         | CommissionType.VENTA    || true
-    0     | 10         | CommissionType.VENTA    || true
-    0     | 0          | CommissionType.VENTA    || true
-    null  | null       | CommissionType.VENTA    || true
+    100   | 0          | CommissionType.FACTURA  || true
+    100   | null       | CommissionType.FACTURA  || true
+    null  | 10         | CommissionType.FACTURA  || true
+    0     | 10         | CommissionType.FACTURA  || true
+    0     | 0          | CommissionType.FACTURA  || true
+    null  | null       | CommissionType.FACTURA  || true
     100   | 0          | CommissionType.DEPOSITO || true
     100   | 0          | CommissionType.PRESTAMO || true
     100   | 0          | null                    || false
-    100   | -1         | CommissionType.VENTA    || false
-    100   | 101        | CommissionType.VENTA    || false
-    -1    | 0          | CommissionType.VENTA    || false
-    11    | 12         | CommissionType.VENTA    || false
+    100   | -1         | CommissionType.FACTURA  || false
+    100   | 101        | CommissionType.FACTURA  || false
+    -1    | 0          | CommissionType.FACTURA  || false
+    11    | 12         | CommissionType.FACTURA  || false
   }
 
 }
