@@ -17,11 +17,9 @@ class GroupNotificationController {
       render (view:"create", model: [emailers : emailerStorage, users:corporateService.findCorporateUsers(session.corporate.id)])
     }
 
-    //TODO: Pasar al command
     def save(GroupNotificationCommand command){
-      def groupUsers = groupNotificationService.getUserList(command.userList)
-      GroupNotification group = new GroupNotification(name:command.nameGroup, notificationId:command.notificationId, users:groupUsers)
-      //groupNotificationService.saveNewGroup(group.toDomain())
+      def group = command.getGroupNotification()
+      group.users = groupNotificationService.getUserList(command.userList)
       groupNotificationService.saveNewGroup(group)
       redirect action:"index", method:"GET"
     }
@@ -34,11 +32,9 @@ class GroupNotificationController {
       render (view:"edit", model: [group: groupNotification, emailer: emailerStorage, usersEmpty: usersWithoutGroup])
      }
 
-    //TODO: Pasar al command
     def update (GroupNotificationCommand command){
-      def groupUsers = groupNotificationService.getUserList(command.userList)
-      def updateParams = ["id":command.idGroup, "name":command.nameGroup, "notification":command.notificationId, "users":groupUsers]
-      //groupNotificationService.updateGroup(command.toMap())
+      def updateParams = command.getParams()
+      updateParams.users = groupNotificationService.getUserList(command.userList)
       groupNotificationService.updateGroup(updateParams)
       redirect action:"index", method:"GET"
     }
