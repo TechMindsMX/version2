@@ -107,6 +107,19 @@ class CorporateService {
     "${corporateList.first().corporateUrl}${System.env['DOMAIN_BASE_URL']}"
   }
 
+  def findLegalRepresentativesOfCompany(Long companyId){
+    Corporate corporate = Corporate.createCriteria().get{
+      companies{
+        eq("id",companyId)
+      }
+    }
+
+    def users = corporate.users ?: []
+    users.findAll{ user -> user.getAuthorities()*.authority.contains('ROLE_LEGAL_REPRESENTATIVE_EJECUTOR') ||
+      user.getAuthorities()*.authority.contains('ROLE_LEGAL_REPRESENTATIVE_VISOR')
+    }
+  }
+
   private def copyAndReplaceTextInFile(source, dest, Closure replaceText) {
     dest.write(replaceText(source.text))
   }

@@ -8,5 +8,8 @@ class FeesReceiptModulusunoCommand implements MessageCommand {
   BigDecimal iva
   BigDecimal isr
   String beneficiary
+  String emailBeneficiary
   String concept
+  String payerName
+  String payerClabe
 }

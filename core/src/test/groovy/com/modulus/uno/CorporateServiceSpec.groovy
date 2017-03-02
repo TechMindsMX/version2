@@ -140,4 +140,38 @@ class CorporateServiceSpec extends Specification {
       println response
   }
 
+  Should "get the legal representatives of a company"(){
+    given:"the company"
+      Company company = new Company(rfc:"CIGE930831RB1",
+                                    webSite:"http://www.somewebsite.com",
+                                    employeeNumbers:10)
+      company.save(validate:false)
+    and:"the corporate"
+      Corporate corporate = new Corporate(nameCorporate:"someName",
+                                          corporateUrl:"someUrl")
+      corporate.addToCompanies(company)
+    and:"the user legal ejecutor"
+      User user = new User(username:"legal01")
+      user.save(validate:false)
+      Role role = new Role(authority:"ROLE_LEGAL_REPRESENTATIVE_EJECUTOR")
+      role.save(validate:false)
+      UserRole.create(user,role)
+      corporate.addToUsers(user)
+      corporate.save(validate:false)
+    and:"the user legal visor"
+      User user2 = new User(username:"legal02")
+      user2.save(validate:false)
+      Role role2 = new Role(authority:"ROLE_LEGAL_REPRESENTATIVE_VISOR")
+      role2.save(validate:false)
+      UserRole.create(user2,role2)
+      corporate.addToUsers(user2)
+      corporate.save(validate:false)
+    when:
+      def legalReps = service.findLegalRepresentativesOfCompany(company.id)
+    then:
+      legalReps
+      legalReps[0].username == "legal01"
+      legalReps[1].username == "legal02"
+  }
+
 }

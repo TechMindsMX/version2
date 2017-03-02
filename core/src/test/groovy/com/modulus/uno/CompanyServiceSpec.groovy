@@ -474,4 +474,22 @@ and:
       result == false
   }
 
+  void "Should assign alias stp to company account m1"() {
+    given:"A company"
+      Company company = createCompany()
+    and:"An account"
+      ModulusUnoAccount account = Mock(ModulusUnoAccount)
+      account.timoneUuid   = "1234567890"
+      account.save(validate:false)
+      company.accounts = [account]
+      company.status = CompanyStatus.ACCEPTED
+      company.save(validate:false)
+    and:"An alias"
+      String alias = "AliasStp"
+    when:
+      service.assignAliasStpToCompany(company, alias)
+    then:
+      1 * account.save()
+  }
+
 }

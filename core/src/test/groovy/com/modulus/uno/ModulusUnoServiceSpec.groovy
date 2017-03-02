@@ -12,10 +12,12 @@ import java.lang.Void as Should
 class ModulusUnoServiceSpec extends Specification {
 
   def restService = Mock(RestService)
+  def corporateService = Mock(CorporateService)
   def grailsApplication = new GrailsApplicationMock()
 
   def setup() {
     service.restService = restService
+    service.corporateService = corporateService
     service.grailsApplication = grailsApplication
   }
 
@@ -150,6 +152,14 @@ class ModulusUnoServiceSpec extends Specification {
       order.account = bankAccount
       order.company = company
       order.save()
+    and:"A legal representative"
+      User user = new User()
+      Profile profile = new Profile()
+      profile.email = "emailUser"
+      profile.save(validate:false)
+      user.profile = profile
+      user.save(validate:false)
+      corporateService.findLegalRepresentativesOfCompany(_) >> [user]
     when:
       CashoutCommand command = service.approveCashOutOrder(order)
     then:

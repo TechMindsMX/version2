@@ -52,14 +52,16 @@ class FeesReceiptService {
 
   private def createFeesReceiptCommand(FeesReceipt feesReceipt){
     new FeesReceiptModulusunoCommand(
-      uuid:feesReceipt.company.accounts[0].timoneUuid,
+      uuid:feesReceipt.company.accounts.first().timoneUuid,
       clabe:feesReceipt.bankAccount.clabe,
       bankCode:feesReceipt.bankAccount.banco.bankingCode,
       amount: feesReceipt.amount + feesReceipt.iva - feesReceipt.ivaWithHolding - feesReceipt.isr,
       iva:feesReceipt.ivaWithHolding,
       isr:feesReceipt.isr,
       beneficiary:feesReceipt.collaboratorName,
-      concept:"HONORARIOS"
+      concept:"HONORARIOS",
+      payerName:feesReceipt.company.accounts.first().aliasStp,
+      payerClabe:feesReceipt.company.accounts.first().stpClabe
     )
   }
 

@@ -168,31 +168,32 @@ class EmailSenderService {
 
   //FeesReceipt
   def notifyFeesReceiptChangeStatus(FeesReceipt feesReceipt){
-    def emailList=directoryService.searchUsersSendToAuthorize(feesReceipt.company)
+    //def emailList=directorService.searchUsersSendToAuthorize(feesReceipt.company)
     def paramsEmailer=notifyService.parametersForFeesReceipt(feesReceipt, feesReceipt.status, feesReceipt.company)
     def idEmailer
+    def emailList
     switch(feesReceipt.status){
       //case FeesReceiptStatus.CREADA:
       //break
       case FeesReceiptStatus.POR_AUTORIZAR:
       idEmailer = grailsApplication.config.emailer.feesReceiptAcceptStatus
-      emailList = getEmailList(order.company,["ROLE_AUTHORIZER_VISOR", "ROLE_AUTHORIZER_EJECUTOR"])
+      emailList = getEmailList(feesReceipt.company,["ROLE_AUTHORIZER_VISOR", "ROLE_AUTHORIZER_EJECUTOR"])
       break
       case FeesReceiptStatus.AUTORIZADA:
       idEmailer = grailsApplication.config.emailer.feesReceiptAcceptStatus
-      emailList = getEmailList(order.company,["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
+      emailList = getEmailList(feesReceipt.company,["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
       break
       case FeesReceiptStatus.EJECUTADA:
       idEmailer = grailsApplication.config.emailer.feesReceiptAcceptStatus
-      emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
+      emailList = getEmailList(feesReceipt.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break
       case FeesReceiptStatus.CANCELADA:
       idEmailer = grailsApplication.config.emailer.feesReceiptCancelStatus
-      emailList = getEmailList(order.company,["ROLE_OPERATOR_VISOR", "ROLE_OPERATOR_EJECUTOR"])
+      emailList = getEmailList(feesReceipt.company,["ROLE_OPERATOR_VISOR", "ROLE_OPERATOR_EJECUTOR"])
       break
       case FeesReceiptStatus.RECHAZADA:
       idEmailer = grailsApplication.config.emailer.feesReceiptCancelStatus
-      emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
+      emailList = getEmailList(feesReceipt.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break
     }
     notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
