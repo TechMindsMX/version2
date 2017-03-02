@@ -1,26 +1,27 @@
 //= require third-party/jquery-validation/dist/jquery.validate.js
+//= require third-party/d3/d3.js
 //= require helpers/machine_helpers.js
 //= require machine/machine.js
 //= require machine/machine_create_view.js
 
 var MachineCreateController = (function(){
-  
+
   var selectors = {
-    actionFrom:'select[name=actionFrom]',
-    actionTo:'select[name=actionTo]',
+    action:'input[name=action]',
     machineForm:'form[name=machineForm]',
-    transitionForm:'form[name=transitionForm]',
-    stateFrom:'input[name=stateFrom]' 
+    stateFrom:'input[name=stateFrom],select[name=stateFrom]',
+    stateTo:'input[name=stateTo]',
+    transitionsDiv:'#transitionsDiv'
   },
   machine = null,  
+  svg = null,
+  inner = null,
+  render = null,
 
   initValidations = function(){
-    $(selectors.transitionForm).validate({
+    $(selectors.machineForm).validate({
       rules:{
-        actionFrom:{
-          required:true
-        },
-        actionTo:{
+        stateFrom:{
           required:true
         }
       },
@@ -33,24 +34,35 @@ var MachineCreateController = (function(){
     });
   },
 
+  addNewRules = function(){
+    $(selectors.stateTo).rules("add",{required:true});
+    $(selectors.action).rules("add",{required:true});
+  },
+
   addNewTransition = function(event){
     event.preventDefault();
     var form = $(event.currentTarget);
+
     if(form.valid()){
-      var actionFromId = $(selectors.actionFrom).val(),
-      actionToId = $(selectors.actionTo).val(),
-      actionToName = $(selectors.actionTo + ' option:selected').text();
-      var newTransition = machine.addTransition({actionFromId:actionFromId,
-                                                 actionToId:actionToId,
-                                                 actionName:actionToName});
-      
-      MachineCreateView.render(machine);
-      updateFromSelect(actionToId,actionToName);
+      if(machine.getStates().length == 0){
+        machine.addInitialState($(selectors.stateFrom).val());
+        MachineCreateView.render('#transitions-form-template','#transitionsDiv',{states:machine.getStates()});
+        addNewRules();
+      }
+      else{
+        machine.addTransition({stateFrom:$(selectors.stateFrom).val(),
+                               stateTo:$(selectors.stateTo).val(),
+                               action:$(selectors.action).val()});
+      }
+
+      updateFromSelect();
     }
+
+    renderGraph(machine.getGraph());
   },
 
-  updateFromSelect = function(actionId,actionName){
-    var options = $(selectors.actionFrom).find('option');
+  updateFromSelect = function(){
+    var options = $(selectors.stateFrom).find('option');
 
     $.each(options,function(index,option){
       if($(option).val()){
@@ -58,8 +70,9 @@ var MachineCreateController = (function(){
       }
     });
 
-    $.each(machine.getActions(),function(index,action){
-      $(selectors.actionFrom).append('<option value="'+action.id+'">'+action.name+'</option>')
+    console.log(machine.getStates());
+    $.each(machine.getStates(),function(index,state){
+      $(selectors.stateFrom).append('<option value="'+state.name+'">'+state.name+'</option>')
     });
 
   },
@@ -71,12 +84,20 @@ var MachineCreateController = (function(){
   },
 
   bindEvents = function(){
-    $(selectors.machineForm).on('submit',createInitialState);
-    $(selectors.transitionForm).on('submit',addNewTransition);
+    $(selectors.machineForm).on('submit',addNewTransition);
+  },
+
+  renderGraph = function(graph){
+    render(inner, graph);
+    var xCenterOffset = ($('svg').width() - graph.graph().width) / 2;
+    inner.attr("transform", "translate(" + xCenterOffset + ", 20)");
   },
 
   start = function(){
     machine = Machine.create();
+    svg = d3.select("svg");
+    inner = svg.append("g");
+    render = new dagreD3.render();
     initValidations();
     bindEvents();
   };
