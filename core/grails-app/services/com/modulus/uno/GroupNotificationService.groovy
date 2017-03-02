@@ -12,11 +12,12 @@ class GroupNotificationService {
   }
 
   def updateGroup(def updateParams){
-     GroupNotification groupNotification = GroupNotification.findById(updateParams.id)
-      groupNotification.name=updateParams.name
-      groupNotification.users=updateParams.users
-      groupNotification.notificationId = updateParams.notification
-      groupNotification.save()
+    GroupNotification groupNotification = GroupNotification.findById(updateParams.id)
+    groupNotification.name=updateParams.name
+    groupNotification.users=updateParams.users
+    groupNotification.notificationId = updateParams.notification
+    groupNotification.save()
+    groupNotification
   }
 
   def deleteGroup(def groupId){
@@ -32,16 +33,12 @@ class GroupNotificationService {
     GroupNotification.findById(groupId)
   }
 
-  def getUserList(def  userIdList){
-   userIdList.collect{
-     User.findById(it.toLong())
-   }
+  def getUserList(List userIdList){
+    User.findAllByIdInList(userIdList)
   }
 
   def getUserListWithoutGroup(def usersWithGroup, def usersCorporate){
-    def usersWithoutGroup = usersCorporate.findAll {
-     !usersWithGroup.contains( it )
-    }
+    usersCorporate - usersWithGroup
   }
 
 }
