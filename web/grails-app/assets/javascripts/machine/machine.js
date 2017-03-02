@@ -21,52 +21,43 @@ var Machine = {
   addInitialState:function(name) {
     this.initialState = State.create({name:name});
     this.addState(name);
-    
   },
 
   addState:function(name){
     var state = State.create({name:name});
     this.states.push(state);
-    this.graph.setNode(name,{});
+    this.graph.setNode(name.toUpperCase(),{label :name.toUpperCase()});
+
+    return state;
   },
 
   addTransition:function(data){
     var transition = null;
+    var action = data.action.toUpperCase();
+    var stateFrom = $.grep(this.states,function(state,index){
+      return state.name == data.stateFrom;
+    })[0];
 
-    if(this.transitions.length == 0){
-      
-      transition = Transition.create({stateFrom:this.getNextState(),
-                                      action:data.actionName,
-                                      actionId:data.actionToId,
-                                      stateTo:this.getNextState()})
-      this.transitions.push(transition);
-    }
-    else{
-      var transitionOfLastAction = $.grep(this.transitions,function(transition,index){
-        return transition.actionId == data.actionFromId;
-      })[0];
-      
-      if(transitionOfLastAction != null){
-        var stateFrom = transitionOfLastAction.stateTo;
-        var existentTransition  = $.grep(this.transitions,function(transition,index){
-          return transition.stateFrom == stateFrom && transition.actionId == data.actionToId;
-        })[0];
+    var stateTo = $.grep(this.states,function(state,index){
+      return state.name == data.stateTo;
+    })[0];
+    
+    if(!stateTo){
+      stateTo = this.addState(data.stateTo);
+    } 
 
-        if(existentTransition == null){
-          var stateTo = (data.actionFromId == data.actionToId) ? stateFrom : this.getNextState();
-
-          transition = Transition.create({stateFrom:stateFrom,
-                                          action:data.actionName,
-                                          actionId:data.actionToId,
-                                          stateTo:stateTo});
-          this.transitions.push(transition)
-        }
+    this.graph.setEdge(stateFrom.name.toUpperCase(),stateTo.name.toUpperCase(), { label: data.action });
+    
+    var existentTransition = $.grep(this.transitions,function(transition,index){
+      return transition.stateFrom == stateFrom.name && transition.stateTo == stateTo.name;
+    })[0];
+ 
+    if(existentTransition != null){
+      if(existentTransition.actions.indexOf(action) >= 0){
+        existentTransition.actions.push(action);
       }
-      
     }
 
-    this.addAction(data.actionToId,data.actionName);
-    return transition;
   },
 
   addAction: function(idAction,name){
