@@ -7,6 +7,7 @@ class NotifyService {
 
   def restService
   def grailsApplication
+  def corporateService
 
   def parametersForDepositOrder(DepositOrder depositOrder, def status){
     def paramsMap = [:]
@@ -44,7 +45,7 @@ class NotifyService {
     }
     paramsMap = buildParamsEmailMap(depositOrder, paramsFields)
     paramsMap.status = orderStatus
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(depositOrder.company.id)
     paramsMap
   }
 
@@ -96,7 +97,7 @@ class NotifyService {
     }
     paramsMap = buildParamsEmailMap(saleOrder, paramsFields)
     paramsMap.status = orderStatus
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(saleOrder.company.id)
     paramsMap
   }
 
@@ -132,7 +133,7 @@ class NotifyService {
     }
     paramsMap = buildParamsEmailMap(purchaseOrder, paramsFields)
     paramsMap.status = orderStatus
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(purchaseOrder.company.id)
     paramsMap
   }
 
@@ -176,7 +177,7 @@ class NotifyService {
     }
     paramsMap = buildParamsEmailMap(loanOrder, paramsFields)
     paramsMap.status = orderStatus
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(loanOrder.company.id)
     paramsMap
   }
 
@@ -216,7 +217,7 @@ class NotifyService {
     }
     paramsMap = buildParamsEmailMap(cashOutOrder, paramsFields)
     paramsMap.status = orderStatus
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(cashOutOrder.company.id)
     paramsMap
   }
 
@@ -252,7 +253,7 @@ class NotifyService {
     }
     paramsMap = buildParamsEmailMap(loanPaymentOrder, paramsFields)
     paramsMap.status = orderStatus
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(loanPaymentOrder.company.id)
     paramsMap
 
   }
@@ -290,7 +291,7 @@ class NotifyService {
     paramsMap = buildParamsEmailMap(feesReceipt, paramsFields)
     paramsMap.status=orderStatus
     paramsMap.company=company.toString()
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(feesReceipt.company.id)
     paramsMap
   }
 
@@ -298,7 +299,7 @@ class NotifyService {
     def paramsFields = ['id', 'rfc']
     def paramsMap = buildParamsEmailMap(businessEntity, paramsFields)
     paramsMap.company=company.toString()
-    paramsMap.url=grailsApplication.config.grails.server.url
+    paramsMap.url=corporateService.findCorporateByCompanyId(company.id)
     paramsMap
   }
 

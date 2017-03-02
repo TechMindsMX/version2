@@ -6,13 +6,15 @@ import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(NotifyService)
-@Mock([User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, DepositOrder, PurchaseOrder])
+@Mock([User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, DepositOrder, PurchaseOrder,Corporate,SaleOrderItem])
 class NotifyServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
+  CorporateService corporateService = Mock(CorporateService)
 
   def setup(){
     service.grailsApplication = grailsApplication
+    service.corporateService = corporateService
   }
 
   @Unroll("Obtain the params when the DEPOSIT ORDER is #status")
@@ -20,6 +22,16 @@ class NotifyServiceSpec extends Specification {
   given:"a deposit order"
     def depositOrder = new DepositOrder(amount:10000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO)
     depositOrder.save(validate:false)
+  and:
+    def company = new Company().save(validate:false)
+    depositOrder.company = company
+    depositOrder.save(validate:false)
+  and:
+    Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+    corporate.addToCompanies(company)
+    corporate.save()
+  and:
+    corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
   when:"we extract the params"
     def params = service.parametersForDepositOrder(depositOrder, status)
   then:"we should get"
@@ -36,13 +48,13 @@ class NotifyServiceSpec extends Specification {
       ]
 
   expectedParams <<[
-    [id:1, amount:10000, status:"CREADA", url:"http://localhost:8080/"],
-    [id:1, amount:10000, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"http://localhost:8080/"],
-    [id:1, amount:10000, status:"AUTORIZADA", url:"http://localhost:8080/" ],
-    [id:1, amount:10000, status:"RECHAZADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"],
-    [id:1, amount:10000, status:"EJECUTADA", url:"http://localhost:8080/"],
-    [id:1, amount:10000, status:"CANCELADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"],
-    [id:1, amount:10000, status:"CONCILIADA", url:"http://localhost:8080/"]
+    [id:1, amount:10000, status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amount:10000, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amount:10000, status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}" ],
+    [id:1, amount:10000, status:"RECHAZADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amount:10000, status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amount:10000, status:"CANCELADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amount:10000, status:"CONCILIADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
   ]
   }
 
@@ -50,7 +62,19 @@ class NotifyServiceSpec extends Specification {
   void "obtain the params for SaleOrder Status to populate the email"(){
     given:"a sale order"
       def saleOrder = new SaleOrder(rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake")
+      def item = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS)
+      saleOrder.addToItems(item)
       saleOrder.save(validate:false)
+    and:
+      def company = new Company().save(validate:false)
+      saleOrder.company = company
+      saleOrder.save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
     when:"we extract the params"
       def params = service.prepareParametersToSendForSaleOrder(saleOrder, status)
     then:"we should get"
@@ -69,24 +93,34 @@ class NotifyServiceSpec extends Specification {
       SaleOrderStatus.CANCELACION_EJECUTADA
     ]
     expectedParams << [
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"CREADA", url:"http://localhost:8080/"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"RECHAZADA", url:"http://localhost:8080/"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PAGADA", url:"http://localhost:8080/"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"EJECUTADA", url:"http://localhost:8080/"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELADA", url:"http://localhost:8080/"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELADA POR AUTORIZAR", url:"http://localhost:8080/"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELACION AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELACION EJECUTADA", url:"http://localhost:8080/"]
+      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"RECHAZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PAGADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELADA POR AUTORIZAR", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELACION AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELACION EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
     ]
    }
 
   @Unroll("Obtain the params when the CashOutOrder is #status")
   void "obtain the params for CashOut Order Status to populate the email"(){
     given:"a cashOut order"
-     def cashOutOrder = new CashOutOrder(amount:9999, comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO)
-    cashOutOrder.save(validate:false)
+      def cashOutOrder = new CashOutOrder(amount:9999, comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO)
+      cashOutOrder.save(validate:false)
+    and:
+      def company = new Company().save(validate:false)
+      cashOutOrder.company = company
+      cashOutOrder.save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
     when:"we extract the params"
     def params = service.parametersForCashOutOrder(cashOutOrder, status)
     then:"we should get"
@@ -103,21 +137,31 @@ class NotifyServiceSpec extends Specification {
       ]
 
     expectedParams <<[
-      [id:1, amount:9999, status:"CREADA", url:"http://localhost:8080/"],
-      [id:1, amount:9999, status:"EN PROCESO", url:"http://localhost:8080/"],
-      [id:1, amount:9999, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, amount:9999, status:"AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, amount:9999, status:"RECHAZADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"],
-      [id:1, amount:9999, status:"EJECUTADA", url:"http://localhost:8080/"],
-      [id:1, amount:9999, status:"CANCELADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"]
+      [id:1, amount:9999, status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:9999, status:"EN PROCESO", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:9999, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:9999, status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:9999, status:"RECHAZADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:9999, status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:9999, status:"CANCELADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
       ]
   }
 
   @Unroll("Obtain the params when the Purchase Order is #status")
   void "obtain the params for Purchase Order Status to populate the email"(){
     given:"a purchase order"
-    def purchaseOrder = new PurchaseOrder(providerName:"Fake Inc", rejectReason: RejectReason.DOCUMENTO_INVALIDO, rejectComment:"Fake")
-    purchaseOrder.save(validate:false)
+      def purchaseOrder = new PurchaseOrder(providerName:"Fake Inc", rejectReason: RejectReason.DOCUMENTO_INVALIDO, rejectComment:"Fake")
+      purchaseOrder.save(validate:false)
+    and:
+      def company = new Company().save(validate:false)
+      purchaseOrder.company = company
+      purchaseOrder.save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
     when:"we extract the params"
     def params = service.parametersForPurchaseOrder(purchaseOrder, status)
     then:"we should get"
@@ -132,12 +176,12 @@ class NotifyServiceSpec extends Specification {
       PurchaseOrderStatus.CANCELADA
       ]
     expectedParams <<[
-      [id:1, providerName:"Fake Inc", status:"CREADA", url:"http://localhost:8080/"],
-      [id:1, providerName:"Fake Inc", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, providerName:"Fake Inc", status:"AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"RECHAZADA", url:"http://localhost:8080/" ],
-      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"PAGADA", url:"http://localhost:8080/"],
-      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"CANCELADA", url:"http://localhost:8080/"]
+      [id:1, providerName:"Fake Inc", status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, providerName:"Fake Inc", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, providerName:"Fake Inc", status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"RECHAZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}" ],
+      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"PAGADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"CANCELADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
     ]
   }
 
@@ -146,6 +190,16 @@ class NotifyServiceSpec extends Specification {
     given:"a loan order"
     def loanOrder = new LoanOrder (amount:88888, rejectComment:"Mentiroso", rejectReason: RejectReason.DOCUMENTO_INVALIDO)
     loanOrder.save(validate:false)
+    and:
+      def company = new Company().save(validate:false)
+      loanOrder.company = company
+      loanOrder.save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
     when:"we extract the params"
     def params = service.parametersForLoanOrder(loanOrder, status)
     then:"we should get"
@@ -162,22 +216,32 @@ class NotifyServiceSpec extends Specification {
       LoanOrderStatus.CANCELED
     ]
     expectedParams <<[
-      [id:1, amount:88888, status:"CREADA", url:"http://localhost:8080/"],
-      [id:1, amount:88888, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, amount:88888, status:"AUTORIZADA", url:"http://localhost:8080/"],
-      [id:1, amount:88888, status:"EJECUTADA", url:"http://localhost:8080/"],
-      [id:1, amount:88888, status:"APROBADA", url:"http://localhost:8080/"],
-      [id:1, amount:88888, status:"ACEPTADA", url:"http://localhost:8080/"],
-      [id:1, amount:88888, status:"RECHAZADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"],
-      [id:1, amount:88888, status:"CANCELADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"]
+      [id:1, amount:88888, status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:88888, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:88888, status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:88888, status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:88888, status:"APROBADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:88888, status:"ACEPTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:88888, status:"RECHAZADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+      [id:1, amount:88888, status:"CANCELADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
 ]
   }
 
   @Unroll("Obtain the params when the LoanPayment Order is #status")
   void "obtain the params for LoanPayment Order Status to populate the email"(){
     given:"a loan payment order"
-    def loanPaymentOrder = new LoanPaymentOrder(amountInterest:10000, amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO)
-    loanPaymentOrder.save(validate:false)
+      def loanPaymentOrder = new LoanPaymentOrder(amountInterest:10000, amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO)
+      loanPaymentOrder.save(validate:false)
+    and:
+      def company = new Company().save(validate:false)
+      loanPaymentOrder.company = company
+      loanPaymentOrder.save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
     when:"we extract the params"
     def params = service.parametersForLoanPaymentOrder(loanPaymentOrder, status)
     then:"we should get"
@@ -192,12 +256,12 @@ class NotifyServiceSpec extends Specification {
     LoanPaymentOrderStatus.CANCELED
     ]
     expectedParams <<[
-    [id:1, amountInterest:10000, status:"CREADA", amountIvaInterest:20000, amountToCapital:30000, url:"http://localhost:8080/"],
-    [id:1, amountInterest:10000, status:"PUESTA EN ESPERA DE SER AUTORIZADA", amountIvaInterest:20000, amountToCapital:30000, url:"http://localhost:8080/"],
-    [id:1, amountInterest:10000, status:"AUTORIZADA", amountIvaInterest:20000, amountToCapital:30000, url:"http://localhost:8080/"],
-    [id:1, amountInterest:10000, status:"RECHAZADA", amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"],
-    [id:1, amountInterest:10000, status:"EJECUTADA", amountIvaInterest:20000, amountToCapital:30000, url:"http://localhost:8080/"],
-    [id:1, amountInterest:10000, status:"CANCELADA", amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"http://localhost:8080/"]
+    [id:1, amountInterest:10000, status:"CREADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amountInterest:10000, status:"PUESTA EN ESPERA DE SER AUTORIZADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amountInterest:10000, status:"AUTORIZADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amountInterest:10000, status:"RECHAZADA", amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amountInterest:10000, status:"EJECUTADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    [id:1, amountInterest:10000, status:"CANCELADA", amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
 ]
      }
 
@@ -206,9 +270,16 @@ class NotifyServiceSpec extends Specification {
     given:"a company"
     def company = new Company("rfc":"qwerty123456", "bussinessName":"apple")
     company.save(validate:false)
+    and:
+    Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+    corporate.addToCompanies(company)
+    corporate.save()
     and: "a fees Receipt"
     def feesReceipt = new FeesReceipt(rejectReason:RejectReason.DOCUMENTO_INVALIDO, comments:"fake")
+    feesReceipt.company = company
     feesReceipt.save(validate:false)
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
     when:"we extract the params"
     def params = service.parametersForFeesReceipt(feesReceipt, status, company)
     then:"we should get"
@@ -223,12 +294,12 @@ class NotifyServiceSpec extends Specification {
     FeesReceiptStatus.RECHAZADA
     ]
     expectedParams <<[
-    ['id':1, 'company':'apple', 'status':'CREADA', 'url':'http://localhost:8080/'],
-    ['id':1, 'company':'apple', 'status':'PUESTA EN ESPERA DE SER AUTORIZADA', 'url':'http://localhost:8080/'],
-    ['id':1, 'company':'apple', 'status':'AUTORIZADA', 'url':'http://localhost:8080/'],
-    ['id':1, 'company':'apple', 'status':'EJECUTADA', 'url':'http://localhost:8080/'],
-    ['id':1, 'company':'apple', 'status':'CANCELADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO, 'comments':'fake', 'url':'http://localhost:8080/'],
-    ['id':1, 'company':'apple', 'status':'RECHAZADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO, 'comments':'fake', 'url':'http://localhost:8080/']
+    ['id':1, 'company':'apple', 'status':'CREADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    ['id':1, 'company':'apple', 'status':'PUESTA EN ESPERA DE SER AUTORIZADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    ['id':1, 'company':'apple', 'status':'AUTORIZADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    ['id':1, 'company':'apple', 'status':'EJECUTADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    ['id':1, 'company':'apple', 'status':'CANCELADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO, 'comments':'fake', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
+    ['id':1, 'company':'apple', 'status':'RECHAZADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO, 'comments':'fake', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"]
     ]
   }
 
@@ -243,14 +314,20 @@ class NotifyServiceSpec extends Specification {
     and: " A company"
     def company = new Company('rfc':'qwerty123456', 'bussinessName':'PAtitoABC')
     company.save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
     when:"we extract the params"
     def paramsProvider = service.parametersForBusinessEntity(provider, company)
     def paramsClient = service.parametersForBusinessEntity(client, company)
     def paramsEmployee = service.parametersForBusinessEntity(employee, company)
     then:"we should get"
-    paramsProvider == ['id':1, 'rfc':'abc123456', company:"PAtitoABC", url:"http://localhost:8080/"]
-    paramsClient == ['id':2, 'rfc':'pasc123456', company:"PAtitoABC", url:"http://localhost:8080/"]
-    paramsEmployee == ['id':3, 'rfc':'sara123456', company:"PAtitoABC", url:"http://localhost:8080/"]
+    paramsProvider == ['id':1, 'rfc':'abc123456', company:"PAtitoABC", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+    paramsClient == ['id':2, 'rfc':'pasc123456', company:"PAtitoABC", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+    paramsEmployee == ['id':3, 'rfc':'sara123456', company:"PAtitoABC", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
     }
 
   void "Get parameters for build params when we need confirm account or password recovery"(){
@@ -277,4 +354,7 @@ class NotifyServiceSpec extends Specification {
     then:"We should get a map"
     emailMap == [id:"12345678qwerty", to:"hi@me.com", subject:"Mensaje de Modulus Uno", params:["a":1] ]
   }
+
+
+
 }
