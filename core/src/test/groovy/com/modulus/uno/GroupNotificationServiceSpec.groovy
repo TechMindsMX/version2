@@ -11,45 +11,6 @@ class GroupNotificationServiceSpec extends Specification {
     def setup() {
     }
 
-    def "Create a new notification group"() {
-      given:"A users list"
-        def userList = createUserList()
-      and:"a notification id and a group name"
-        def notificationId = "586d4944e1d4ae54524dd622"
-        def groupName = "Contadores"
-      when:"we want to save the group"
-        def firstUserNotificationGroup = service.createGroup(groupName, notificationId, userList)
-      then:"we should get"
-        firstUserNotificationGroup.id == 1
-        firstUserNotificationGroup.name == "Contadores"
-        firstUserNotificationGroup.name != "Null-Contadores"
-        firstUserNotificationGroup.notificationId == "586d4944e1d4ae54524dd622"
-        firstUserNotificationGroup.users.contains(userList[0])
-        firstUserNotificationGroup.users.contains(userList[1])
-        firstUserNotificationGroup.users.contains(userList[2])
-        firstUserNotificationGroup.users.contains(userList[3])
-        firstUserNotificationGroup.users.contains(userList[4])
-    }
-
-    def "Update a notification group"() {
-      given:"A groupNotification"
-        GroupNotification firstGroup = createFirstUserGroup()
-      and:"A new users list for update"
-        def newUser1= new User().save(validate:false)
-        def newUser2= new User().save(validate:false)
-       ArrayList<User> newUserList = [newUser1, newUser2]
-      and:"a  new notification id and a new name"
-        def newNotificationId = "586d4944e1d4ae5diamon666"
-        def newName = "ContadoresGroup"
-      when:"we want to update the userList and the notificationId"
-        service.updateGroup(firstGroup.id, newName, newUserList, newNotificationId)
-      then:"we should get"
-        firstGroup.name == "ContadoresGroup"
-        firstGroup.notificationId == newNotificationId
-        firstGroup.users.contains(newUser1)
-        firstGroup.users.contains(newUser2)
-    }
-
     def "Delete a notification group"(){
       given:"A group notification"
         GroupNotification firstGroup = createFirstUserGroup()
@@ -83,19 +44,6 @@ class GroupNotificationServiceSpec extends Specification {
         groupTwo.id == 2
         groupTwo.id != 1
     }
-
-    def "Get a user's list"(){
-        given:"A set of users"
-        def users = createUserList()
-        and: "A list of id"
-        def userIdList = [1,2]
-        when: "We want to get a list of users"
-        def userList = service.getUserList(userIdList, users)
-        then: "We should get a list of users"
-        userList.contains(users[0])
-        userList.contains(users[1])
-    }
-
 
     def "Get a list of users without groupNotification"(){
         given:"A list of users of corporate"
