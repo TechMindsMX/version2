@@ -6,6 +6,7 @@ import grails.transaction.Transactional
 class EmailerClientService {
 
   WsliteRequestService wsliteRequestService
+  NotifyService notifyService
 
   def getEmailerStorage(){
     def storage = wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
@@ -16,9 +17,21 @@ class EmailerClientService {
 
   def getSubject(def idEmailer, def emailers){
     def emailer = emailers.find{
-     it.containsValue(idEmailer)
+      it.containsValue(idEmailer)
     }
     emailer.subject
+  }
+
+  def sendNotifyToGroup(def idGroup, def paramsEmailer){
+    GroupNotification group = GroupNotification.findById(idGroup)
+    def userEmails = getEmails(group.users)
+    notifyService.sendEmailNotifications(userEmails, group.notificationId, paramsEmailer)
+  }
+
+  private getEmails(def users){
+    users.collect{ user ->
+      user.profile.email
+    }
   }
 
   private getEmailerList(def emailerStorage){
