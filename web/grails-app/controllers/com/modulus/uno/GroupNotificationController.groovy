@@ -13,7 +13,7 @@ class GroupNotificationController {
     }
 
     def create() {
-      def emailerStorage = emailerClientService.getEmailerStorage()
+      def emailerStorage = emailerClientService.findEmailerStorageSubjects()
       [
         emailers : emailerStorage,
         users:corporateService.findCorporateUsers(session.corporate.id)
@@ -28,7 +28,7 @@ class GroupNotificationController {
     }
 
     def edit(){
-      def emailerStorage = emailerClientService.getEmailerStorage()
+      def emailerStorage = emailerClientService.findEmailerStorageSubjects()
       def groupNotification = GroupNotification.findById(params.id)
       def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
       def usersWithoutGroup = groupNotificationService.findUserListWithoutGroup(groupNotification.users, usersCorporate)
