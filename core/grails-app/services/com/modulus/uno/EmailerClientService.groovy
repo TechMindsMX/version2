@@ -8,14 +8,21 @@ class EmailerClientService {
   WsliteRequestService wsliteRequestService
   NotifyService notifyService
 
-  def getEmailerStorage(){
+  def findEmailerStorageSubjects(){
     def storage = wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
       endpointUrl "/show"
     }.doit().json
-    def emailersList = getEmailerList(storage)
+    def emailersList = findEmailerSubjects(storage)
   }
 
-  def getSubject(def idEmailer, def emailers){
+  def findEmailerStorageContents(){
+    def storage = wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
+      endpointUrl "/show"
+    }.doit().json
+    def emailersList = findEmailerContents(storage)
+  }
+
+  def findSubject(def idEmailer, def emailers){
     def emailer = emailers.find{
       it.containsValue(idEmailer)
     }

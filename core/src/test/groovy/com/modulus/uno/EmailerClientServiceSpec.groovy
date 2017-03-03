@@ -30,7 +30,7 @@ class EmailerClientServiceSpec extends Specification {
     and: "A list of emailers"
     def emailerList = [["id":"123abc", "subject":"Subject Found"], ["id":"223abc", "subject":"uno"], ["id":"323abc", "subject":"dos"]]
     when:"We want to know the subject"
-    def subjectEmailer = service.getSubject(idEmailer, emailerList)
+    def subjectEmailer = service.findSubject(idEmailer, emailerList)
     then:"We should get"
     subjectEmailer == "Subject Found"
   }
