@@ -1,14 +1,20 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import grails.util.Holders as H
 
 @Transactional
 class CorporateService {
 
   RecoveryService recoveryService
+  def grailsApplication
   def springSecurityService
   def awsRoute53Service
   def grailsResourceLocator
+
+  private final String VALUE_HOST_IP = H.grailsApplication.config.grails.plugin.awssdk.value.host.ip
+  private final String DOMAIN_BASE_URL = H.grailsApplication.config.grails.plugin.awssdk.domain.base.url
+  private final String FILES_NGINX = H.grailsApplication.config.grails.plugin.awssdk.files.nginx
 
   def addCompanyToCorporate(Corporate corporate, Company company) {
     corporate.addToCompanies(company)
@@ -21,8 +27,8 @@ class CorporateService {
   }
 
   def createRoute53(Corporate corporate) {
-    def valueHost = System.env['VALUE_HOST_IP']
-    def baseUrl = System.env['DOMAIN_BASE_URL']
+    def valueHost = VALUE_HOST_IP
+    def baseUrl = DOMAIN_BASE_URL
     def listResultSets = awsRoute53Service.getResourceRecordSet()
     if (!existRecordSetInAWS(listResultSets,corporate.corporateUrl)) {
       awsRoute53Service.createRecordSet(corporate.corporateUrl,"-api${baseUrl}", valueHost)
@@ -35,14 +41,14 @@ class CorporateService {
 
   private existRecordSetInAWS(def listResultSets, def corporateUrl) {
     def result
-    result = listResultSets.find{ set -> set.name == "${corporateUrl}${System.env['DOMAIN_BASE_URL']}."}
-    result = listResultSets.find{ set -> set.name == "${corporateUrl}-api${System.env['DOMAIN_BASE_URL']}."}
+    result = listResultSets.find{ set -> set.name == "${corporateUrl}${DOMAIN_BASE_URL}."}
+    result = listResultSets.find{ set -> set.name == "${corporateUrl}-api${DOMAIN_BASE_URL}."}
     result? true: false
   }
 
   def createAVirtualHostNginx(Corporate corporate) {
-    def baseUrl = System.env['DOMAIN_BASE_URL']
-    def tempDirectory = System.env['FILES_NGINX']
+    def baseUrl = DOMAIN_BASE_URL
+    def tempDirectory = FILES_NGINX
     createWebAndApiViHost(corporate, baseUrl, tempDirectory)
     "sudo service nginx reload".execute()
 
