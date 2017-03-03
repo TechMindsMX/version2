@@ -25,19 +25,7 @@ class GroupNotificationService {
     groupNotification.delete()
   }
 
-  def getGroupsList(){
-    GroupNotification.findAll()
-  }
-
-  def getGroup(def groupId){
-    GroupNotification.findById(groupId)
-  }
-
-  def getUserList(List userIdList){
-    User.findAllByIdInList(userIdList)
-  }
-
-  def getUserListWithoutGroup(def usersWithGroup, def usersCorporate){
+  def findUserListWithoutGroup(def usersWithGroup, def usersCorporate){
     usersCorporate - usersWithGroup
   }
 

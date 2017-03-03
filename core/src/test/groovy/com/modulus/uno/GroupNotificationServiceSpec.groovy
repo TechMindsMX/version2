@@ -8,52 +8,7 @@ import grails.test.mixin.Mock
 @Mock([GroupNotification, User])
 class GroupNotificationServiceSpec extends Specification {
 
-  def "Delete a notification group"(){
-    given:"A group notification"
-      GroupNotification firstGroup = createGroup()
-    when:"we want to delete a group notification"
-      service.deleteGroup(firstGroup.id)
-    then:"We shouldn't have any group notification"
-      !GroupNotification.findById(firstGroup.id)
-  }
-
-  def "Get a list of notification groups"(){
-    given:"Many notificationGroups"
-      GroupNotification firstGroup = createGroup()
-      GroupNotification secondGroup = createGroup()
-      GroupNotification thirdGroup = createGroup()
-    when:"I want to know all the notification groups"
-      def groupsList = service.getGroupsList()
-    then:"We should get a list"
-      groupsList.contains(firstGroup)
-      groupsList.contains(secondGroup)
-      groupsList.contains(thirdGroup)
-  }
-
-  def "Find and get a specific groupNotification"(){
-      given:"A groupNotifications"
-      GroupNotification firstGroup = createGroup()
-      GroupNotification secondGroup = createGroup()
-      when:"We want to get the groupNotification with the id 2"
-      def idToFind = 2
-      def groupTwo = service.getGroup(idToFind)
-      then:"We should get the groupNotification with the id 2"
-      groupTwo.id == 2
-      groupTwo.id != 1
-  }
-
-  def "Get a list of users without groupNotification"(){
-      given:"A list of users of corporate"
-      def usersCorporate = createUserList()
-      and: "A list of users within a group"
-      def usersGroup = [usersCorporate[0],usersCorporate[1]]
-      when:"We want to know the users without groupNotification"
-      def usersWithoutGroup = service.getUserListWithoutGroup(usersGroup, usersCorporate)
-      then:"We should get"
-      usersWithoutGroup.contains(usersCorporate[2])
-      usersWithoutGroup == usersCorporate[2..4]
-  }
-  def "Update a GroupNotification"(){
+ def "Update a GroupNotification"(){
     given: "An existent notification group"
     def group = createGroup()
     def oldGroupName = group.name
@@ -73,13 +28,26 @@ class GroupNotificationServiceSpec extends Specification {
     group.users.contains(user7)
   }
 
-/* An existenbt group:
-    - Add users to the group
-    - Change the notification
-    - Remove users from the group
-    - Change the name's group
-    - All at the same time
-*/
+  def "Get a list of users without groupNotification"(){
+      given:"A list of users of corporate"
+      def usersCorporate = createUserList()
+      and: "A list of users within a group"
+      def usersGroup = [usersCorporate[0],usersCorporate[1]]
+      when:"We want to know the users without groupNotification"
+      def usersWithoutGroup = service.getUserListWithoutGroup(usersGroup, usersCorporate)
+      then:"We should get"
+      usersWithoutGroup.contains(usersCorporate[2])
+      usersWithoutGroup == usersCorporate[2..4]
+  }
+
+  def "Delete a notification group"(){
+    given:"A group notification"
+      GroupNotification firstGroup = createGroup()
+    when:"we want to delete a group notification"
+      service.deleteGroup(firstGroup.id)
+    then:"We shouldn't have any group notification"
+      !GroupNotification.findById(firstGroup.id)
+  }
 
   private createGroup(){
     def userList = createUserList()
