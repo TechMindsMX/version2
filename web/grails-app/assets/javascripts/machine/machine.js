@@ -8,12 +8,10 @@
 var Machine = {
   initialState:null,
   transitions:[],
-  actions:[],
   states:[],
   graph:null,
 
   create:function(data){
-    this.actions.push({id:0,name:'Inicio'});
     this.graph = new dagreD3.graphlib.Graph({multigraph: true}).setGraph({});
     return $.extend({},this,data);
   },
@@ -56,26 +54,22 @@ var Machine = {
 
     this.graph.setEdge(stateFrom.name,stateTo.name, { label: action },action);
     
-    var existentTransition = $.grep(this.transitions,function(transition,index){
-      return transition.stateFrom == stateFrom.name && transition.stateTo == stateTo.name;
+    var existentTransition = $.grep(this.transitions,function(transition_,index){
+      return transition_.stateFrom.name == stateFrom.name && transition_.stateTo.name == stateTo.name;
     })[0];
- 
+
     if(existentTransition != null){
-      if(existentTransition.actions.indexOf(action) >= 0){
+      if(existentTransition.actions.indexOf(action) < 0){
         existentTransition.actions.push(action);
       }
     }
-
-  },
-
-  addAction: function(idAction,name){
-    var existentAction = $.grep(this.actions,function(action,index){
-      return action.id == idAction;
-    });
-
-    if(existentAction.length == 0){
-      this.actions.push({id:idAction,name:name});
+    else{
+      transition = Transition.create({stateFrom:stateFrom,
+                                      stateTo:stateTo});
+      transition.actions.push(action)
+      this.transitions.push(transition)
     }
+
   },
 
   getTransitions:function(){
