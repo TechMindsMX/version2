@@ -54,7 +54,6 @@ var MachineCreateController = (function(){
                                stateTo:$(selectors.stateTo).val(),
                                action:$(selectors.action).val()});
       }
-
       updateFromSelect();
     }
 
@@ -70,11 +69,13 @@ var MachineCreateController = (function(){
       }
     });
 
-    console.log(machine.getStates());
     $.each(machine.getStates(),function(index,state){
       $(selectors.stateFrom).append('<option value="'+state.name+'">'+state.name+'</option>')
     });
 
+    $.each($(selectors.machineForm).find("input[type=text],select"),function(index,input){
+      $(input).val('');
+    });
   },
   
   createInitialState = function(event){
