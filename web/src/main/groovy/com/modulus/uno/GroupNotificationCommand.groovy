@@ -1,7 +1,8 @@
 package com.modulus.uno
 import com.modulus.uno.GroupNotification
+import grails.validation.Validateable
 
-class GroupNotificationCommand {
+class GroupNotificationCommand implements Validateable{
 
   Long idGroup
   String notificationId
