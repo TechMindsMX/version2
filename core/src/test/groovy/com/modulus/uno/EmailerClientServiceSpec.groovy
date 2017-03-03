@@ -19,7 +19,7 @@ class EmailerClientServiceSpec extends Specification {
     ["_id":"123abc", "dateCreated":2223232, "version":2, "lastUpdate":234343, "subject":"uno", "content":"<b>contentido</b>"]
     ]
     when:"We want to list the emailers by id and subject"
-    def emailerList = service.getEmailerList(emailerStorage)
+    def emailerList = service.findEmailerSubjects(emailerStorage)
     then:"We should get a list with id and subject"
     emailerList == [["id":"123abc", "subject":"uno"], ["id":"123abc", "subject":"uno"], ["id":"123abc", "subject":"uno"]]
   }
@@ -35,7 +35,7 @@ class EmailerClientServiceSpec extends Specification {
     subjectEmailer == "Subject Found"
   }
 
-  def "Get a list of emaisl"(){
+  def "Get a list of emails"(){
     given:"A list of users"
     def user1= new User(username:"User1",enabled:true,
     profile:new Profile(email:"user1@me.com")).save(validate:false)
@@ -46,5 +46,30 @@ class EmailerClientServiceSpec extends Specification {
     def emails = service.getEmails(users)
     then:"We should get a list of emails"
     emails == ["user1@me.com","user2@me.com"]
+  }
+
+  def "Get a list of emailers with id and content"(){
+    given:"A data of all emailers"
+    def emailerStorage = [
+    ["_id":"123abc", "dateCreated":2223232, "version":2, "lastUpdate":234343, "subject":"uno", "content":"<b>contenido</b>"],
+    ["_id":"123abc", "dateCreated":2223232, "version":2, "lastUpdate":234343, "subject":"uno", "content":"<b>contenido</b>"],
+    ["_id":"123abc", "dateCreated":2223232, "version":2, "lastUpdate":234343, "subject":"uno", "content":"<b>contenido</b>"]
+    ]
+    when:"We want to list the emailers by id and content"
+    def emailerList = service.findEmailerContents(emailerStorage)
+    then:"We should get a list with id and subject"
+    emailerList == [["id":"123abc", "content":"<b>contenido</b>"], ["id":"123abc", "content":"<b>contenido</b>"], ["id":"123abc", "content":"<b>contenido</b>"]]
+  }
+
+  def "Get the content of emailer"(){
+    given:"An id of emailer"
+    def idEmailer = "123abc"
+    and: "A list of emailers"
+    def emailerList = [["id":"123abc", "content":"<b>found!</b>"], ["id":"223abcd", "content":"<b>content</b>"], ["id":"323abc", "content":"<b>found!</b>"]]
+    when:"We want to know the subject"
+    def contentEmailer = service.findContent(idEmailer, emailerList)
+    then:"We should get"
+    contentEmailer == "<b>found!</b>"
+    contentEmailer != "This is not the content"
   }
 }

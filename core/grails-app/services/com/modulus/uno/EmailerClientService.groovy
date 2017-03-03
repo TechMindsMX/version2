@@ -22,6 +22,13 @@ class EmailerClientService {
     emailer.subject
   }
 
+  def findContent(def idEmailer, def emailers){
+    def emailer = emailers.find{
+      it.containsValue(idEmailer)
+    }
+    emailer.content
+  }
+
   def sendNotifyToGroup(def idGroup, def paramsEmailer){
     GroupNotification group = GroupNotification.findById(idGroup)
     def userEmails = getEmails(group.users)
@@ -34,11 +41,15 @@ class EmailerClientService {
     }
   }
 
-  private getEmailerList(def emailerStorage){
-    def emailerList
-    emailerList = emailerStorage.collect{ emailer ->
+  private findEmailerSubjects(def emailerStorage){
+    emailerStorage.collect{ emailer ->
       ["id":emailer._id, "subject":emailer.subject]
     }
   }
 
+  private findEmailerContents(def emailerStorage){
+    emailerStorage.collect{ emailer ->
+      ["id":emailer._id, "content":emailer.content]
+    }
+  }
 }
