@@ -1,17 +1,28 @@
 ---
 grails:
-    profile: web-api
+    profile: web
     codegen:
         defaultPackage: webservices
+    spring:
+        transactionManagement:
+            proxies: false
 info:
     app:
         name: '@info.app.name@'
         version: '@info.app.version@'
         grailsVersion: '@info.app.grailsVersion@'
 spring:
+    main:
+        banner-mode: "off"
     groovy:
         template:
             check-template-location: false
+
+# Spring Actuator Endpoints are Disabled by Default
+endpoints:
+    enabled: false
+    jmx:
+        enabled: true
 
 ---
 grails:
@@ -38,6 +49,7 @@ grails:
               - application/json
               - text/json
             multipartForm: multipart/form-data
+            pdf: application/pdf
             rss: application/rss+xml
             text: text/plain
             hal:
@@ -53,6 +65,25 @@ grails:
         defaultScope: singleton
     converters:
         encoding: UTF-8
-    hibernate:
-        cache:
-            queries: false
+    views:
+        default:
+            codec: html
+        gsp:
+            encoding: UTF-8
+            htmlcodec: xml
+            codecs:
+                expression: html
+                scriptlets: html
+                taglib: none
+                staticparts: none
+endpoints:
+    jmx:
+        unique-names: true
+
+---
+hibernate:
+    cache:
+        queries: false
+        use_second_level_cache: true
+        use_query_cache: false
+        region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
