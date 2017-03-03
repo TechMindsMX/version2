@@ -10,22 +10,20 @@ class GroupNotificationServiceSpec extends Specification {
 
  def "Update a GroupNotification"(){
     given: "An existent notification group"
-    def group = createGroup()
-    def oldGroupName = group.name
-    and: "two new users that I want add to this group"
+    def oldGroup = createGroup()
+    def oldGroupName = oldGroup.name
+    and: "two new users, a new name, and a new notification Emailer Id that I want add to this group"
     def user6= new User(username:"User6").save(validate:false)
     def user7= new User(username:"User7").save(validate:false)
-    and: "idGroup, new name's group, new notificationId, new user's list "
-    def map = [id:1, name:"newGroup", notification:"123456789", users:[user6,user7]]
+    def groupForUpdate = new GroupNotification(id: 1, notificationId: "1234567890qwerty", users: [user6, user7], name:"ModulusUnoGroupUpdated")
     when: "We want to update the group"
-    //def updatedGroup = service.updateGroup(map)
-    service.updateGroup(map)
+    def groupUpdated = service.updateGroup(groupForUpdate)
     then:"We should get"
-    group.name == "newGroup"
-    group.name != oldGroupName
-    group.notificationId == "123456789"
-    group.users.contains(user6)
-    group.users.contains(user7)
+    groupUpdated.name == "ModulusUnoGroupUpdated"
+    groupUpdated.name != oldGroupName
+    groupUpdated.notificationId == "1234567890qwerty"
+    groupUpdated.users.contains(user6)
+    groupUpdated.users.contains(user7)
   }
 
   def "Get a list of users without groupNotification"(){
@@ -34,7 +32,7 @@ class GroupNotificationServiceSpec extends Specification {
       and: "A list of users within a group"
       def usersGroup = [usersCorporate[0],usersCorporate[1]]
       when:"We want to know the users without groupNotification"
-      def usersWithoutGroup = service.getUserListWithoutGroup(usersGroup, usersCorporate)
+      def usersWithoutGroup = service.findUserListWithoutGroup(usersGroup, usersCorporate)
       then:"We should get"
       usersWithoutGroup.contains(usersCorporate[2])
       usersWithoutGroup == usersCorporate[2..4]

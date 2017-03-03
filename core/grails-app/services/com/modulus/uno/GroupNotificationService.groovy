@@ -11,11 +11,11 @@ class GroupNotificationService {
     group.save()
   }
 
-  def updateGroup(def updateParams){
-    GroupNotification groupNotification = GroupNotification.findById(updateParams.id)
-    groupNotification.name=updateParams.name
-    groupNotification.users=updateParams.users
-    groupNotification.notificationId = updateParams.notification
+  def updateGroup(GroupNotification groupUpdated){
+    GroupNotification groupNotification = GroupNotification.findById(groupUpdated.id)
+    groupNotification.name=groupUpdated.name
+    groupNotification.users=groupUpdated.users
+    groupNotification.notificationId =groupUpdated.notificationId
     groupNotification.save()
     groupNotification
   }
