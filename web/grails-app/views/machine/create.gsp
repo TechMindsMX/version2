@@ -6,6 +6,8 @@
     <title>Modulus UNO | Crear Máquina</title>
     <asset:javascript src="third-party/handlebars/handlebars.js"/>
     <asset:javascript src="machine/machine_create_controller.js"/>
+    <asset:stylesheet src="third-party/EasyAutocomplete/dist/easy-autocomplete.css" />
+    <asset:stylesheet src="machine/style.css" />
   </head>
   <body>
     <!-- BEGIN PAGE TITLE -->     
@@ -24,8 +26,10 @@
       <!-- BEGIN PORTLET-BODY -->
       <div class="portlet-body">
         <!-- BEGIN ROW -->
-        <div class="row">
-          <div class="col-sm-6" >
+        <div class="row" >
+          <!-- BEGIN COL-SM-6 -->
+          <div class="col-sm-6">
+            <!-- BEGIN MACHINE FORM -->
             <form name="machineForm">
               <!-- BEGIN ROW -->
               <div class="row" id="transitionsDiv">
@@ -48,16 +52,18 @@
               </div>
               <!-- END OF ROW -->
             </form>
+            <!-- END OF MACHINE FORM -->
             <!-- BEGIN ROW -->
             <div class="row">
               <div class="col-lg-12" id="transitionsTableContainer">
-                  
+                
               </div>
             </div>
             <!-- END OF ROW -->
           </div>
+          <!-- END OF COL-SM-6 -->
           <div class="col-sm-6">
-          
+            <svg id="svg" width="100%"></svg>
           </div>
         </div>
         <!-- END OF ROW --> 
@@ -67,31 +73,31 @@
     <!-- END OF PORTLET -->
 
     <script id="transitions-form-template" type="text/x-handlebars-template">
-        <div class="form-group col-sm-4">
-          <label for="actionFrom">
-            ${message(code:'machine.initial.state')}
-          </label>
-          <select name="stateFrom" class="form-control">
-            <option value selected>Seleccionar</option>
-            {{#each states}}
-            <option value="{{name}}">{{name}}</option>
-            {{/each}}
-          </select>
-        </div>
+      <div class="form-group col-sm-4">
+        <label for="actionFrom">
+          ${message(code:'machine.initial.state')}
+        </label>
+        <select name="stateFrom" class="form-control">
+          <option value selected>Seleccionar</option>
+          {{#each states}}
+          <option value="{{name}}">{{name}}</option>
+          {{/each}}
+        </select>
+      </div>
 
-        <div class="form-group col-sm-4">
-          <label for="actionFrom">
-            ${message(code:'machine.action')}
-          </label>
-          <input type="text" name="action" class="form-control" />
-        </div>
+      <div class="form-group col-sm-4">
+        <label for="actionFrom">
+          ${message(code:'machine.action')}
+        </label>
+        <input type="text" name="action" class="form-control" />
+      </div>
 
-        <div class="form-group col-sm-4">
-          <label for="actionFrom">
-            ${message(code:'machine.state.to')}
-          </label>
-          <input type="text" name="stateTo" class="form-control" />
-        </div>
+      <div class="form-group col-sm-4">
+        <label for="actionFrom">
+          ${message(code:'machine.state.to')}
+        </label>
+        <input type="text" name="stateTo" class="form-control" />
+      </div>
     </script>
 
     <script id="transitionsTable" type="text/x-handlebars-template">
@@ -106,21 +112,23 @@
             </tr>
           </thead>  
           <tbody>
-            {{#each machine.transitions}}
-            <tr>
-              <td>
-                {{isInitialState stateFrom}}
-              </td>
-              <td>
-                {{action}}
-              </td>
-              <td>
-                {{stateTo}}
-              </td>
-              <td>
-                <button type="button" class="btn btn-red">Eliminar</button>
-              </td>
-            </tr>
+            {{#each transitions}}
+              {{#each this.actions}}
+              <tr>
+                <td>
+                  {{../stateFrom.name}}
+                </td>
+                <td>
+                  {{this}}
+                </td>
+                <td>
+                  {{../stateTo.name}}
+                </td>
+                <td>
+                  <button type="button" class="btn btn-red">Eliminar</button>
+                </td>
+              </tr>
+              {{/each}}
             {{/each}}
           </tbody>
         </table>  
