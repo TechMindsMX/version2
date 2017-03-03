@@ -19,14 +19,22 @@ var Machine = {
   },
   
   addInitialState:function(name) {
-    this.initialState = State.create({name:name});
+    this.initialState = State.create({name:name.toUpperCase()});
     this.addState(name);
   },
 
   addState:function(name){
-    var state = State.create({name:name});
-    this.states.push(state);
-    this.graph.setNode(name.toUpperCase(),{label :name.toUpperCase()});
+    name = name.toUpperCase();
+    var state;
+    state = $.grep(this.states,function(state,index){
+      return state.name == name
+    })[0];
+    
+    if(state == null || state == 'undefined'){
+      state = State.create({name:name});
+      this.states.push(state);
+      this.graph.setNode(name,{label: name});
+    }
 
     return state;
   },
@@ -46,7 +54,7 @@ var Machine = {
       stateTo = this.addState(data.stateTo);
     } 
 
-    this.graph.setEdge(stateFrom.name.toUpperCase(),stateTo.name.toUpperCase(), { label: data.action });
+    this.graph.setEdge(stateFrom.name,stateTo.name, { label: action });
     
     var existentTransition = $.grep(this.transitions,function(transition,index){
       return transition.stateFrom == stateFrom.name && transition.stateTo == stateTo.name;
