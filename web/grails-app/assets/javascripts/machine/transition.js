@@ -5,8 +5,10 @@ var Transition = {
   stateTo:null, 
   actions:[],
 
-  create:function(data){
-    return $.extend({},this,data);
+  create: function(data){
+    var newTransition = $.extend({},this,data);
+    newTransition.actions = [];
+    return newTransition;
   }
 
 };
