@@ -68,6 +68,7 @@ var MachineCreateController = (function(){
 
     updateAutocomplete();
     renderGraph(machine.getGraph());
+    renderTransitionsTable();
   },
 
   updateFromSelect = function(){
@@ -107,8 +108,13 @@ var MachineCreateController = (function(){
     render(inner, graph);
     var center = ($('svg').width() - graph.graph().width) / 2;
     inner.attr("transform", "translate(" + center + ", 20)");
+    svg.attr("height", graph.graph().height + 40);
   },
 
+  renderTransitionsTable = function(){
+    MachineCreateView.render('#transitionsTable','#transitionsTableContainer',{transitions:machine.getTransitions()});
+  },
+   
   start = function(){
     machine = Machine.create();
     svg = d3.select("svg");
