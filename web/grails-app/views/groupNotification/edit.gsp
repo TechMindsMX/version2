@@ -68,7 +68,9 @@
 
             <div class="form-group">
               <div class="input-group col-md-4">
+                <div class="px-2">
                 <button type="submit" class="save btn btn-default">Actualizar Grupo</button>
+                  <g:link resource="groupNotification" action="index" class="save btn btn-default">Regresar</g:link></div>
               </div>
             </div>
           </g:form>
