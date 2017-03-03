@@ -14,7 +14,7 @@ var Machine = {
 
   create:function(data){
     this.actions.push({id:0,name:'Inicio'});
-    this.graph = new dagreD3.graphlib.Graph().setGraph({});
+    this.graph = new dagreD3.graphlib.Graph({multigraph: true}).setGraph({});
     return $.extend({},this,data);
   },
   
@@ -54,7 +54,7 @@ var Machine = {
       stateTo = this.addState(data.stateTo);
     } 
 
-    this.graph.setEdge(stateFrom.name,stateTo.name, { label: action });
+    this.graph.setEdge(stateFrom.name,stateTo.name, { label: action },action);
     
     var existentTransition = $.grep(this.transitions,function(transition,index){
       return transition.stateFrom == stateFrom.name && transition.stateTo == stateTo.name;
