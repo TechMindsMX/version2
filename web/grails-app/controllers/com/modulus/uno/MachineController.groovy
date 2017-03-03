@@ -29,8 +29,7 @@ class MachineController {
       return response.sendError(404)
     }
 
-    render view:"create",model:[entity:g.message(code:"${entity}.name"),
-                                actions:Action.list()]
+    render view:"create",model:[entity:g.message(code:"${entity}.name")]
   }
 
 }
