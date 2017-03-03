@@ -1,14 +1,14 @@
 package com.modulus.uno
 import com.modulus.uno.GroupNotification
 
-class GroupNotificationCommand implements Validateable{
+class GroupNotificationCommand {
 
   Long idGroup
   String notificationId
   List<Long> userList
   String nameGroup
 
-  GroupNotification getGroupNotification(){
+  GroupNotification toGroupNotification(){
     new GroupNotification(
       notificationId:notificationId,
       name:nameGroup)
@@ -16,5 +16,12 @@ class GroupNotificationCommand implements Validateable{
 
   def getParams(){
     ["id":idGroup,"name":nameGroup, "notification":notificationId]
+  }
+
+  GroupNotification toGroupNotificationUpdated(){
+    new GroupNotification(
+      id: idGroup,
+      notificationId:notificationId,
+      name:nameGroup)
   }
 }

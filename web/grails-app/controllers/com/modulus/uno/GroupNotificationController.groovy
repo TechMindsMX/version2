@@ -21,7 +21,7 @@ class GroupNotificationController {
     }
 
     def save(GroupNotificationCommand command){
-      def group = command.getGroupNotification()
+      def group = command.toGroupNotification()
       group.users = User.findAllByIdInList(command.userList)
       groupNotificationService.saveNewGroup(group)
       redirect action:"index", method:"GET"
@@ -41,9 +41,9 @@ class GroupNotificationController {
      }
 
     def update (GroupNotificationCommand command){
-      def updateParams = command.getParams()
-      updateParams.users = User.findAllByIdInList(command.userList)
-      groupNotificationService.updateGroup(updateParams)
+      def groupUpdated = command.toGroupNotificationUpdated()
+      groupUpdated.users = User.findAllByIdInList(command.userList)
+      groupNotificationService.updateGroup(groupUpdated)
       redirect action:"index", method:"GET"
     }
 
