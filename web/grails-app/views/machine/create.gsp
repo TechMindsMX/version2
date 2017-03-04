@@ -101,38 +101,40 @@
     </script>
 
     <script id="transitionsTable" type="text/x-handlebars-template">
-      <div class="table-responsive" >
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Estado Inicial</th>
-              <th>Acción</th>
-              <th>Estado Final</th>
-              <th></th>
-            </tr>
-          </thead>  
-          <tbody>
-            {{#each transitions}}
-              {{#each this.actions}}
+      <form name="machineForm">
+        <div class="table-responsive" >
+          <table class="table table-bordered">
+            <thead>
               <tr>
-                <td>
-                  {{../stateFrom.name}}
-                </td>
-                <td>
-                  {{this}}
-                </td>
-                <td>
-                  {{../stateTo.name}}
-                </td>
-                <td>
-                  <button type="button" class="btn btn-red">Eliminar</button>
-                </td>
+                <th>Estado Inicial</th>
+                <th>Acción</th>
+                <th>Estado Final</th>
+                <th></th>
               </tr>
+            </thead>  
+            <tbody>
+              {{#each transitions}}
+                {{#each this.actions}}
+                <tr>
+                  <td>
+                    {{../stateFrom.name}}
+                  </td>
+                  <td>
+                    {{this}}
+                  </td>
+                  <td>
+                    {{../stateTo.name}}
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-red">Eliminar</button>
+                  </td>
+                </tr>
+                {{/each}}
               {{/each}}
-            {{/each}}
-          </tbody>
-        </table>  
-      </div>
+            </tbody>
+          </table>  
+        </div>
+      </form>
     </script>
   </body>
 </html>
