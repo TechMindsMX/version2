@@ -20,4 +20,5 @@ databaseChangeLog = {
   include file: 'updating-machinery-link-class.groovy'
   include file: 'adding-actions-to-company.groovy'
   include file: 'updating-machine-structure.groovy'
+  include file: 'updating-transition-actions-relation.groovy'
 }
