@@ -101,50 +101,7 @@
     </script>
 
     <script id="transitionsTable" type="text/x-handlebars-template">
-      <form name="machineForm">
-        <!-- BEGIN TABLE-RESPONSIVE -->
-        <div class="table-responsive" >
-          <!-- BEGIN TABLE -->
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Estado Inicial</th>
-                <th>Acción</th>
-                <th>Estado Final</th>
-                <th></th>
-              </tr>
-            </thead>  
-            <tbody>
-              {{#each transitions}}
-                {{#each this.actions}}
-                <tr>
-                  <td>
-                    {{../stateFrom.name}}
-                  </td>
-                  <td>
-                    {{this}}
-                  </td>
-                  <td>
-                    {{../stateTo.name}}
-                  </td>
-                  <td>
-                    <button type="button" class="btn btn-red">Eliminar</button>
-                  </td>
-                </tr>
-                {{/each}}
-              {{/each}}
-            </tbody>
-          </table>  
-        </div>
-        <!-- END OF TABLE-RESPONSIVE -->
-        <!-- BEGIN ROW -->
-        <div class="row">
-          <div class="col-lg-12">
-            <button type="submit" class="btn btn-primary">Guardar</button>
-          </div>
-        </div>
-        <!-- END OF ROW -->
-      </form>
+      <g:render template="transitionList"  />
     </script>
   </body>
 </html>
