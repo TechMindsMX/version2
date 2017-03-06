@@ -59,7 +59,7 @@ class FeesReceiptService {
       iva:feesReceipt.ivaWithHolding,
       isr:feesReceipt.isr,
       beneficiary:feesReceipt.collaboratorName,
-      concept:"HONORARIOS",
+      concept:"RECIBO DE HONORARIOS ${feesReceipt.id}, ${feesReceipt.collaboratorName}"
       payerName:feesReceipt.company.accounts.first().aliasStp,
       payerClabe:feesReceipt.company.accounts.first().stpClabe
     )
