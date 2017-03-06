@@ -153,7 +153,7 @@ class CorporateController {
 
   def createCommissionsToCompany(Company company) {
     def commissionDeposito = new Commission(fee:new BigDecimal("0"), percentage: new BigDecimal(0), type: CommissionType.DEPOSITO, company: company).save()
-    def commissionVenta = new Commission(fee:new BigDecimal("0"), percentage: new BigDecimal(0), type: CommissionType.VENTA, company: company).save()
+    def commissionFactura = new Commission(fee:new BigDecimal("0"), percentage: new BigDecimal(0), type: CommissionType.FACTURA, company: company).save()
     def commissionPrestamo = new Commission(fee:new BigDecimal("0"), percentage: new BigDecimal(0), type: CommissionType.PRESTAMO, company: company).save()
   }
 

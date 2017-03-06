@@ -105,7 +105,7 @@ class ModulusUnoServiceSpec extends Specification {
     given:
        def account = new ModulusUnoAccount(timoneUuid:"qwer23456rty567ty").save(validate:false)
     and:
-      def commission = new Commission(fee:fee, percentage:percentage, type:CommissionType.VENTA)
+      def commission = new Commission(fee:fee, percentage:percentage, type:CommissionType.FACTURA)
     and:
       def company = new Company().save(validate:false)
       company.addToAccounts(account)
@@ -133,6 +133,10 @@ class ModulusUnoServiceSpec extends Specification {
     and:
       def company = new Company(bussinessName:"CompanyName").save(validate:false)
       company.addToAccounts(account)
+      company.save(validate:false)
+    and:
+      def commission = new Commission(fee:0.00, percentage:5.00, type:CommissionType.PAGO)
+      company.addToCommissions(commission)
       company.save(validate:false)
     and:
       BankAccount bankAccount = Mock(BankAccount)

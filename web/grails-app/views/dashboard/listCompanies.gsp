@@ -34,7 +34,7 @@
                 <td>${company.toString()}</td>
                 <td>${company.rfc}</td>
                 <td>
-                  <g:if test="${company.commissions.size() == 3}">
+                  <g:if test="${company.commissions}">
                   <g:link controller="commission" class="btn btn-success" params="[companyId: company.id]" >Editar</g:link>
                   </g:if>
                   <g:else>

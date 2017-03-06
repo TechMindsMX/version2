@@ -41,7 +41,7 @@
   </li>
   <li>
     <a href="javascript:;" data-parent="#operaciones" data-toggle="collapse" class="accordion-toggle" data-target="#saleOrder-${action}">
-      Ordenes de Venta <i class="fa fa-caret-down"></i>
+      Órdenes de Venta <i class="fa fa-caret-down"></i>
     </a>
       <li>
         <ul class="collapse nav" id="saleOrder-${action}" style="padding-left:2em;">
