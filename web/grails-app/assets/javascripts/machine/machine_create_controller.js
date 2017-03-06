@@ -112,7 +112,8 @@ var MachineCreateController = (function(){
   },
 
   renderTransitionsTable = function(){
-    MachineCreateView.render('#transitionsTable','#transitionsTableContainer',{transitions:machine.getTransitions()});
+    MachineCreateView.render('#transitionsTable','#transitionsTableContainer',{transitions:machine.getTransitions(),
+                                                                               initialState:machine.getInitialState()});
   },
    
   start = function(){
