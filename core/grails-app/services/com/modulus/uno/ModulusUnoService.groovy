@@ -156,6 +156,8 @@ class ModulusUnoService {
       throw new CommissionException("No existe comisión para la operación")
     }
 
+    String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
+    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
     CashoutCommand command = new CashoutCommand(
       uuid:order.company.accounts?.first()?.timoneUuid,
       beneficiaryClabe:order.bankAccount.clabe,
@@ -165,7 +167,7 @@ class ModulusUnoService {
       beneficiary:order.providerName,
       //TODO: Registrar el email de los proveedores
       emailBeneficiary:"mailBeneficiary@mail.com",
-      concept:"${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}",
+      concept:adjustConcept,
       feeType:feeCommand.type,
       payerName:order.company.accounts?.first()?.aliasStp,
       payerClabe:order.company.accounts?.first()?.stpClabe
