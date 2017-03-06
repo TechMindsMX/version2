@@ -7,5 +7,6 @@ class CashinWithCommissionCommand implements MessageCommand {
   String fee
   String feeType
   BigDecimal speiFee
+  String concept
 
 }
