@@ -139,7 +139,9 @@ class ModulusUnoService {
       throw new CommissionException("No existe comisión para la operación")
     }
 
-    CashoutCommand command = new CashoutCommand(uuid:order.company.accounts?.first()?.timoneUuid, clabe:order.bankAccount.clabe, bankCode:order.bankAccount.banco.bankingCode, amount:payment.amount.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, beneficiary:order.providerName, concept:"${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}", feeType:feeCommand.type)
+    String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
+    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
+    CashoutCommand command = new CashoutCommand(uuid:order.company.accounts?.first()?.timoneUuid, clabe:order.bankAccount.clabe, bankCode:order.bankAccount.banco.bankingCode, amount:payment.amount.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, beneficiary:order.providerName, concept:adjustConcept, feeType:feeCommand.type)
 
     restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
     command
