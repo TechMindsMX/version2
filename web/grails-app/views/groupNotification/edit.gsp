@@ -43,7 +43,7 @@
             <div class="form-group">
               <label for="">Emailer para actualizar</label>
               <div class="input-group col-md-4">
-                <g:select optionKey="id" optionValue="subject" value="${group.notificationId}" name="notificationId" from="${emailer}" />
+                <g:select optionKey="id" optionValue="subject" value="${group.notificationId}" name="notificationId" from="${emailerStorage}" />
               </div>
             </div>
 
@@ -77,5 +77,26 @@
         </div>
       </div>
     </div>
+
+    <h1>Emailer Previewer</h1>
+      <div class="portlet portlet-blue">
+        <div class="portlet-heading">
+        <!-- BEGIN PORTLET-WIDGETS -->
+        <div class="portlet-widgets">
+      </div>
+      <!-- END OF PORTLET-WIDGETS -->
+      <div class="clearfix"></div>
+      </div>
+
+      <!-- BEGIN BLUE-PORTLET -->
+      <div class="panel-collapse collapse in">
+        <!-- BEGIN PORTLET-BODY -->
+        <div class="portlet-body">
+          content here
+          ${emailerPreview}
+        </div>
+      </div>
+
+
   </body>
 </html>
