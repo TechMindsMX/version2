@@ -76,6 +76,10 @@ var Machine = {
     return this.transitions;
   },
 
+  getInitialState:function(){
+    return this.initialState;
+  },
+
   getStates:function(){
     return this.states;
   },
