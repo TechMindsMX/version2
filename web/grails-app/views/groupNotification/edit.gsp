@@ -41,13 +41,6 @@
             </div>
 
             <div class="form-group">
-              <label for="">Emailer para actualizar</label>
-              <div class="input-group col-md-4">
-                <g:select optionKey="id" optionValue="subject" value="${group.notificationId}" name="notificationId" from="${emailerStorage}" />
-              </div>
-            </div>
-
-            <div class="form-group">
               <label for="">Usuarios que serán notificados</label>
               <div class="input-group col-md-4">
 
@@ -67,6 +60,14 @@
             </div>
 
             <div class="form-group">
+              <label for="">Emailer para actualizar</label>
+              <div class="input-group col-md-4">
+                <g:select optionKey="id" optionValue="subject" value="${group.notificationId}" name="notificationId" from="${subjects}" />
+              </div>
+            </div>
+
+
+            <div class="form-group">
               <div class="input-group col-md-4">
                 <div class="px-2">
                 <button type="submit" class="save btn btn-default">Actualizar Grupo</button>
@@ -78,7 +79,7 @@
       </div>
     </div>
 
-    <h1>Emailer </h1>
+    <h2> Preview de la notificación </h2>
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
         <!-- BEGIN PORTLET-WIDGETS -->
@@ -86,16 +87,14 @@
       </div>
       <!-- END OF PORTLET-WIDGETS -->
       <div class="clearfix"></div>
-      </div>
-
       <!-- BEGIN BLUE-PORTLET -->
       <div class="panel-collapse collapse in">
         <!-- BEGIN PORTLET-BODY -->
-        <div class="portlet-body">
-          ${raw(emailerPreview)}
+        <div class="portlet-body" style="background-color:white;">
+          ${raw(preview)}
         </div>
+        <br/>
       </div>
-
 
   </body>
 </html>
