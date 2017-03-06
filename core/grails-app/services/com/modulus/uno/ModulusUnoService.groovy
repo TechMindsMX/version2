@@ -87,7 +87,7 @@ class ModulusUnoService {
       throw new CommissionException("No existe comisión para la operación")
     }
 
-    CashinWithCommissionCommand command = new CashinWithCommissionCommand(uuid:order.company.accounts.first().timoneUuid,amount:order.amount.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, feeType:feeCommand.type)
+    CashinWithCommissionCommand command = new CashinWithCommissionCommand(uuid:order.company.accounts.first().timoneUuid,amount:order.amount.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, feeType:feeCommand.type, concept: "DEPÓSITO ${order.id}")
     def cashinResult = restService.sendCommandWithAuth(command,grailsApplication.config.modulus.cashin)
     cashinResult
   }
@@ -98,7 +98,7 @@ class ModulusUnoService {
       throw new CommissionException("No existe comisión para la operación")
     }
 
-    CashinWithCommissionCommand command = new CashinWithCommissionCommand(uuid:order.company.accounts.first().timoneUuid, amount:order.total.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, feeType:feeCommand.type)
+    CashinWithCommissionCommand command = new CashinWithCommissionCommand(uuid:order.company.accounts.first().timoneUuid, amount:order.total.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, feeType:feeCommand.type, concept:"FACTURA ${order.id}, ${order.clientName}, ${order.rfc}")
     def cashinResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashin)
     cashinResult
   }
