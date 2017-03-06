@@ -13,7 +13,7 @@ class GroupNotificationController {
     }
 
     def create() {
-      def emailerStorage = emailerClientService.findEmailerStorageSubjects()
+      def emailerStorage = emailerClientService.findAllSubjects()
       [
         emailers : emailerStorage,
         users:corporateService.findCorporateUsers(session.corporate.id)
@@ -27,19 +27,17 @@ class GroupNotificationController {
       redirect action:"index", method:"GET"
     }
 
-    //TODO: Necesita Refactor
     def edit(){
-      def emailerSubjects = emailerClientService.findEmailerStorageSubjects()
-      def emailerContents = emailerClientService.findEmailerStorageContents()
+      def emailerSubjects = emailerClientService.findAllSubjects()
       def groupNotification = GroupNotification.findById(params.id)
-      def preview = emailerClientService.findContent(groupNotification.notificationId, emailerContents)
+      def emailerPreview = emailerClientService.findContent(groupNotification.notificationId)
       def usersCorporate = corporateService.findCorporateUsers(session.corporate.id)
       def usersWithoutGroup = groupNotificationService.findUserListWithoutGroup(groupNotification.users, usersCorporate)
 
       [
         group: groupNotification,
-        emailerStorage: emailerSubjects,
-        emailerPreview: preview,
+        subjects: emailerSubjects,
+        preview: emailerPreview,
         usersEmpty: usersWithoutGroup
       ]
      }

@@ -19,7 +19,7 @@ class EmailerClientServiceSpec extends Specification {
     ["_id":"123abc", "dateCreated":2223232, "version":2, "lastUpdate":234343, "subject":"uno", "content":"<b>contentido</b>"]
     ]
     when:"We want to list the emailers by id and subject"
-    def emailerList = service.findEmailerSubjects(emailerStorage)
+    def emailerList = service.obtainSubjectList(emailerStorage)
     then:"We should get a list with id and subject"
     emailerList == [["id":"123abc", "subject":"uno"], ["id":"123abc", "subject":"uno"], ["id":"123abc", "subject":"uno"]]
   }
@@ -30,7 +30,7 @@ class EmailerClientServiceSpec extends Specification {
     and: "A list of emailers"
     def emailerList = [["id":"123abc", "subject":"Subject Found"], ["id":"223abc", "subject":"uno"], ["id":"323abc", "subject":"dos"]]
     when:"We want to know the subject"
-    def subjectEmailer = service.findSubject(idEmailer, emailerList)
+    def subjectEmailer = service.findSubject(idEmailer)
     then:"We should get"
     subjectEmailer == "Subject Found"
   }
@@ -56,7 +56,7 @@ class EmailerClientServiceSpec extends Specification {
     ["_id":"123abc", "dateCreated":2223232, "version":2, "lastUpdate":234343, "subject":"uno", "content":"<b>contenido</b>"]
     ]
     when:"We want to list the emailers by id and content"
-    def emailerList = service.findEmailerContents(emailerStorage)
+    def emailerList = service.obtainContentList(emailerStorage)
     then:"We should get a list with id and subject"
     emailerList == [["id":"123abc", "content":"<b>contenido</b>"], ["id":"123abc", "content":"<b>contenido</b>"], ["id":"123abc", "content":"<b>contenido</b>"]]
   }
@@ -67,7 +67,7 @@ class EmailerClientServiceSpec extends Specification {
     and: "A list of emailers"
     def emailerList = [["id":"123abc", "content":"<b>found!</b>"], ["id":"223abcd", "content":"<b>content</b>"], ["id":"323abc", "content":"<b>found!</b>"]]
     when:"We want to know the subject"
-    def contentEmailer = service.findContent(idEmailer, emailerList)
+    def contentEmailer = service.findContent(idEmailer)
     then:"We should get"
     contentEmailer == "<b>found!</b>"
     contentEmailer != "This is not the content"

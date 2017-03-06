@@ -8,38 +8,44 @@ class EmailerClientService {
   WsliteRequestService wsliteRequestService
   NotifyService notifyService
 
-  def findEmailerStorageSubjects(){
-    def storage = wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
-      endpointUrl "/show"
-    }.doit().json
-    def emailersList = findEmailerSubjects(storage)
+  def findAllSubjects(){
+    def storageEmailer = callEmailerServiceStorage()
+    def emailersList = obtainSubjectList(storageEmailer)
   }
 
-  def findEmailerStorageContents(){
-    def storage = wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
-      endpointUrl "/show"
-    }.doit().json
-    def emailersList = findEmailerContents(storage)
+  def findAllContents(){
+    def storageEmailer = callEmailerServiceStorage()
+    def emailersList = obtainContentList(storageEmailer)
   }
 
-  def findSubject(def idEmailer, def emailers){
-    def emailer = emailers.find{
+  def findSubject(def idEmailer){
+    def emailerStorage = findAllSubjects()
+    def emailerFound = emailerStorage.find{
       it.containsValue(idEmailer)
     }
-    emailer.subject
+    emailerFound.subject
   }
 
-  def findContent(def idEmailer, def emailers){
-    def emailer = emailers.find{
+  def findContent(def idEmailer){
+    def emailerStorage = findAllContents()
+    def emailerFound = emailerStorage.find{
       it.containsValue(idEmailer)
     }
-    emailer.content
+    emailerFound.content
   }
 
+  //Servicio para implementar en máquina de estados.
   def sendNotifyToGroup(def idGroup, def paramsEmailer){
     GroupNotification group = GroupNotification.findById(idGroup)
     def userEmails = getEmails(group.users)
     notifyService.sendEmailNotifications(userEmails, group.notificationId, paramsEmailer)
+  }
+
+  //TODO: Externalizar URL
+  private callEmailerServiceStorage(){
+    wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
+      endpointUrl "/show"
+    }.doit().json
   }
 
   private getEmails(def users){
@@ -48,13 +54,13 @@ class EmailerClientService {
     }
   }
 
-  private findEmailerSubjects(def emailerStorage){
+  private obtainSubjectList(def emailerStorage){
     emailerStorage.collect{ emailer ->
       ["id":emailer._id, "subject":emailer.subject]
     }
   }
 
-  private findEmailerContents(def emailerStorage){
+  private obtainContentList(def emailerStorage){
     emailerStorage.collect{ emailer ->
       ["id":emailer._id, "content":emailer.content]
     }
