@@ -18,7 +18,7 @@ class MachineServiceSpec extends Specification {
       String startName = "Locked"
       String stateToName = "Unlocked"
     when:
-      Machine machine = service.createMachineWithAction(startName,stateToName,action)
+      Machine machine = service.createMachineWithActions(startName,stateToName,[action])
     then:
       machine.initialState
       machine.transitions.size() == 1
@@ -32,7 +32,7 @@ class MachineServiceSpec extends Specification {
   Should "add a transition for a machine"(){
     given:"the machine"
       String action = "Insert Card"
-      Machine machine = service.createMachineWithAction("Idle","Active",action)
+      Machine machine = service.createMachineWithActions("Idle","Active",[action])
     and: "the second action"
       String anotherAction = "Fix"
     and:"the state from and the state to name"
@@ -116,7 +116,7 @@ class MachineServiceSpec extends Specification {
   void createMachine(){
     ArrayList<String> actions = ["Service","Insert Card","Cancel","Fix","Finish"]
     ArrayList<String> states = ["Idle","Out Of Service","Active"]
-    Machine machine = service.createMachineWithAction(states[0],states[1],actions[0])
+    Machine machine = service.createMachineWithActions(states[0],states[1],[actions[0]])
 
     def indexes = [[0,2,1],
                    [1,0,3],
