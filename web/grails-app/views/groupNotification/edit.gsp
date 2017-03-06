@@ -78,7 +78,7 @@
       </div>
     </div>
 
-    <h1>Emailer Previewer</h1>
+    <h1>Emailer </h1>
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
         <!-- BEGIN PORTLET-WIDGETS -->
@@ -92,8 +92,7 @@
       <div class="panel-collapse collapse in">
         <!-- BEGIN PORTLET-BODY -->
         <div class="portlet-body">
-          content here
-          ${emailerPreview}
+          ${raw(emailerPreview)}
         </div>
       </div>
 
