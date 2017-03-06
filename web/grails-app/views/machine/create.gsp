@@ -47,7 +47,7 @@
               <!-- BEGIN ROW -->
               <div class="row">
                 <div class="form-group col-sm-12">
-                  <g:submitButton name="create" class="save btn btn-default" value="Agregar" />
+                  <g:submitButton name="create" class="save btn btn-primary" value="Agregar" />
                 </div>
               </div>
               <!-- END OF ROW -->
@@ -102,7 +102,9 @@
 
     <script id="transitionsTable" type="text/x-handlebars-template">
       <form name="machineForm">
+        <!-- BEGIN TABLE-RESPONSIVE -->
         <div class="table-responsive" >
+          <!-- BEGIN TABLE -->
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -134,6 +136,14 @@
             </tbody>
           </table>  
         </div>
+        <!-- END OF TABLE-RESPONSIVE -->
+        <!-- BEGIN ROW -->
+        <div class="row">
+          <div class="col-lg-12">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </div>
+        <!-- END OF ROW -->
       </form>
     </script>
   </body>
