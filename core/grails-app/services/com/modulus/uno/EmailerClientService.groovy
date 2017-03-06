@@ -20,24 +20,26 @@ class EmailerClientService {
 
   def findSubject(def idEmailer){
     def emailerStorage = findAllSubjects()
-    def emailerFound = emailerStorage.find{
-      it.containsValue(idEmailer)
-    }
+    def emailerFound = findEmailer(idEmailer, emailerStorage)
     emailerFound.subject
   }
 
   def findContent(def idEmailer){
     def emailerStorage = findAllContents()
-    def emailerFound = emailerStorage.find{
+    def emailerFound = findEmailer(idEmailer, emailerStorage)
+    emailerFound.content
+  }
+
+  def findEmailer(def idEmailer, def emailerStorage){
+    emailerStorage.find{
       it.containsValue(idEmailer)
     }
-    emailerFound.content
   }
 
   //Servicio para implementar en máquina de estados.
   def sendNotifyToGroup(def idGroup, def paramsEmailer){
     GroupNotification group = GroupNotification.findById(idGroup)
-    def userEmails = getEmails(group.users)
+    def userEmails = obtainEmailList(group.users)
     notifyService.sendEmailNotifications(userEmails, group.notificationId, paramsEmailer)
   }
 
@@ -48,7 +50,7 @@ class EmailerClientService {
     }.doit().json
   }
 
-  private getEmails(def users){
+  private obtainEmailList(def users){
     users.collect{ user ->
       user.profile.email
     }
