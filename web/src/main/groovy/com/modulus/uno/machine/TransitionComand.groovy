@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.machine
 
 class TransitionCommand {
   String stateFrom
