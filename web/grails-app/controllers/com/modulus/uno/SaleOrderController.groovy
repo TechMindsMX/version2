@@ -151,8 +151,24 @@ class SaleOrderController {
     response.outputStream << file
   }
 
-  def save() {
-    def saleOrder = saleOrderService.createSaleOrderWithAddress(params)
+  def save(SaleOrderCommand saleOrderCommand) {
+    log.info "Creating a sale order: ${saleOrderCommand.dump()}"
+    if (!saleOrderCommand) {
+      transactionStatus.setRollbackOnly()
+      notFound()
+      return
+    }
+
+    SaleOrder saleOrder = saleOrderCommand.createSaleOrder()
+    if (saleOrder.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      flash.message = "No se pudo crear la orden de venta"
+      redirect action:'create'
+    }
+
+    saleOrder.save flush:true
+
+    //def saleOrder = saleOrderService.createSaleOrderWithAddress(params)
     if (saleOrder.id) {
       redirect action:'show', id:saleOrder.id
     } else {
