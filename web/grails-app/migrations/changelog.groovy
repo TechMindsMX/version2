@@ -15,4 +15,5 @@ databaseChangeLog = {
   include file: 'adding-columns-dates-and-status-to-stp-deposit.groovy'
   include file: 'adding-column-payment-method-to-sale-order.groovy'
     include file: 'adding-column-discount-to-sale-order-item.groovy'
+    include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
 }
