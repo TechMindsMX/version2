@@ -1,4 +1,4 @@
-<g:form name="newMachineForm" controller="machine" action="save">
+<g:form name="newMachineForm" controller="machine" action="save" method="POST">
   <!-- BEGIN TABLE-RESPONSIVE -->
   <div class="table-responsive" >
     <!-- BEGIN TABLE -->
