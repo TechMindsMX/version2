@@ -61,7 +61,7 @@ class UserService {
 
   User setAuthorityToUser(User user,String authority){
     Role role = Role.findByAuthority(authority)
-    UserRole.create user,role, true
+    UserRole.create user, role
     user.save()
     user
   }
@@ -76,7 +76,7 @@ class UserService {
 
   def save(User user, Role role){
     user.save()
-    UserRole.create user, role, true
+    UserRole.create user, role
     recoveryService.sendConfirmationAccountToken(user.profile?.email)
   }
 
