@@ -71,6 +71,71 @@ var Machine = {
     }
 
   },
+  
+  removeTransition: function(data){
+    var transitionIndex = this.findIndexOfTransition(data.stateFrom,data.stateTo);
+
+    if(transitionIndex >= 0){
+      this.transitions.splice(transitionIndex,1);
+      this.removeState(data.stateTo);
+      this.graph.removeEdge(data.stateFrom,data.stateTo,data.action);
+    }
+
+  },
+  
+  removeState:function(destinyState){
+    var states = [destinyState];
+    var that = this;
+    while(states.length > 0){
+      var currentState = states.splice(0,1); 
+      
+      var transitionsToDestinyState = $.grep(this.transitions,function(transition,index){
+        return transition.stateTo.name === currentState;
+      });
+        
+      if(transitionsToDestinyState.length == 0){
+        var transitionsFromDestinyState = $.grep(this.transitions,function(transition,index){
+          return transition.stateFrom.name == currentState;
+        });
+
+        $.each(transitionsFromDestinyState,function(index,transition){
+          states.push(transition.stateTo.name);
+          var transitionIndex = that.findIndexOfTransition(transition.stateFrom.name,transition.stateTo.name);
+          that.transitions.splice(transitionIndex,1);
+
+          $.each(transition.actions,function(i,action){
+            that.graph.removeEdge(transition.stateFrom,transition.stateTo,action);
+          });
+        });
+        
+        var indexOfCurrentState = this.findIndexOfState(currentState);
+        this.states.splice(indexOfCurrentState,1);
+        this.graph.removeNode(currentState);
+      }
+    }
+  },
+  
+  findIndexOfTransition:function(stateFrom,stateTo){
+    var index = -1;
+    for(var i=0;i<this.transitions.length;i++){
+      if(this.transitions[i].stateFrom.name == stateFrom && this.transitions[i].stateTo.name == stateTo){
+        index = i;
+        break;
+      }
+    }
+    return index;
+  },
+
+  findIndexOfState:function(name){
+    var index = -1; 
+    for(var i=0;i<this.states.length;i++){
+      if(this.states[i].name === name){
+        index = i;
+        break;
+      }
+    }
+    return index;
+  },
 
   getTransitions:function(){
     return this.transitions;
