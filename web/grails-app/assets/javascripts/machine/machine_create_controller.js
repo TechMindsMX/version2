@@ -64,11 +64,10 @@ var MachineCreateController = (function(){
                              stateTo:$(selectors.stateTo).val(),
                              action:$(selectors.action).val()});
       updateFromSelect();
+      updateAutocomplete();
+      renderGraph(machine.getGraph());
+      renderTransitionsTable();
     }
-
-    updateAutocomplete();
-    renderGraph(machine.getGraph());
-    renderTransitionsTable();
   },
 
   updateFromSelect = function(){
