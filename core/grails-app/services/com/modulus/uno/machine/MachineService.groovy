@@ -5,7 +5,7 @@ import grails.transaction.Transactional
 @Transactional
 class MachineService {
 
-  Machine createMachineWithAction(String startName,String stateToName,String action){
+  Machine createMachineWithActions(String startName,String stateToName,ArrayList<String> actions){
     Machine machine = new Machine()
     State initialState = new State(name:startName)
     State finalState = new State(name:stateToName,
@@ -16,7 +16,9 @@ class MachineService {
 
     Transition transition = new Transition(stateFrom:initialState,
                                            stateTo:finalState)
-    transition.addToActions(action)
+    actions.each{ action ->
+      transition.addToActions(action)
+    }
 
     machine.initialState = initialState
     machine.addToTransitions(transition)
@@ -50,7 +52,7 @@ class MachineService {
 
     Transition newTransition = criteria.get{
       machine{
-        eq("id",currentMachine)
+        eq("id",currentMachine.id)
       }
 
       stateFrom{
