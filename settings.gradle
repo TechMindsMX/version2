@@ -1,2 +1,1 @@
-include "m1core", "web"
-//include "web", "core", "webservices"
+include "m1core", "web", "webservices"

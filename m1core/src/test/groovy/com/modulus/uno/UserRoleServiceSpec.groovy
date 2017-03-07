@@ -11,9 +11,9 @@ class UserRoleServiceSpec extends Specification {
 
   Should "Delete the userRoles of user in session"(){
     given:
-      Role role1 = new Role("ROLE_LEGAL_REPRESENTATIVE_EJECUTOR").save(validate:false)
-      Role role2 = new Role("ROLE_FICO_VISOR").save(validate:false)
-      User user = new User("user","user")
+      Role role1 = new Role(authorization:"ROLE_LEGAL_REPRESENTATIVE_EJECUTOR").save(validate:false)
+      Role role2 = new Role(authorization:"ROLE_FICO_VISOR").save(validate:false)
+      User user = new User(username:"user", password:"user")
       user.save(validate:false)
       UserRole userRole1 = new UserRole(user:user, role:role1)
       UserRole userRole2 = new UserRole(user:user, role:role2)
@@ -25,9 +25,9 @@ class UserRoleServiceSpec extends Specification {
 
   Should "Create the current userRoles of user in session"(){
     given:
-      Role role1 = new Role("ROLE_LEGAL_REPRESENTATIVE_EJECUTOR").save(validate:false)
-      Role role2 = new Role("ROLE_FICO_VISOR").save(validate:false)
-      User user = new User("user","user")
+      Role role1 = new Role(authorization:"ROLE_LEGAL_REPRESENTATIVE_EJECUTOR").save(validate:false)
+      Role role2 = new Role(authorization:"ROLE_FICO_VISOR").save(validate:false)
+      User user = new User(username:"user",password:"user")
       user.save(validate:false)
     when:
       service.createUserRolesForUser(user, [role1, role2])

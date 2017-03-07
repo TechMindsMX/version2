@@ -409,7 +409,7 @@ and:
                                                                                       email:userInfo.email)).save(validate:false)
 
     if(!UserRole.get(user.id,userRole.id))
-      UserRole.create user, userRole, true
+      UserRole.create user, userRole
 
     UserRoleCompany userRoleCompany = new UserRoleCompany(user:user,
                                                           company:company)

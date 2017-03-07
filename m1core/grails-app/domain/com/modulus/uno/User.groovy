@@ -15,7 +15,7 @@ class User implements Serializable {
   String uuid = UuidGenerator.generateUuid()
 	String username
 	String password
-	boolean enabled = true
+	boolean enabled
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired

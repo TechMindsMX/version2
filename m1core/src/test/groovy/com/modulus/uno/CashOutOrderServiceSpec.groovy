@@ -74,7 +74,7 @@ class CashOutOrderServiceSpec extends Specification {
       email:email)).save(validate:false)
 
       if(!UserRole.get(user.id,userRole.id))
-        UserRole.create user, userRole, true
+        UserRole.create user, userRole
   }
 
 }

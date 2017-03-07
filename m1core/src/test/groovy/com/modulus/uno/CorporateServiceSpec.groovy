@@ -42,7 +42,7 @@ class CorporateServiceSpec extends Specification {
     and: "create a corpotate"
       Corporate corporate = new Corporate(nameCorporate:"test", corporateUrl:"url").save(validate:false)
     and: "create Role corporative"
-      new Role("ROLE_CORPORATIVE").save()
+      new Role(authority:"ROLE_CORPORATIVE").save()
     when:
       def corporateWithUser = service.addUserToCorporate(corporate.id,user)
     then:
@@ -56,7 +56,7 @@ class CorporateServiceSpec extends Specification {
     and:"the corporative"
       Corporate corporate = new Corporate(nameCorporate:"Corporate1",corporateUrl:"someUrl").save(validate:false)
     and: "create Role corporative"
-      new Role("ROLE_CORPORATIVE").save()
+      new Role(authority:"ROLE_CORPORATIVE").save()
     and:"the user is added to the corporate"
       service.addUserToCorporate(corporate.id,user)
     when:

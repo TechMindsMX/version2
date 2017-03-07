@@ -46,7 +46,7 @@ class LegalRepresentativeService {
     def role = Role.findByAuthority("ROLE_LEGAL_REPRESENTATIVE")
 
     if(!UserRole.get(user.id,role.id)){
-      UserRole.create(user,role, true)
+      UserRole.create(user,role)
     }
   }
 
