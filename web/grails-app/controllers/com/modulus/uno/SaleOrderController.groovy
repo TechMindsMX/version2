@@ -246,4 +246,8 @@ class SaleOrderController {
     List payments = Payment.findAllByRfcAndStatus(params.rfc, PaymentStatus.PENDING)
     render view:"/payment/reconcile", model:[payments: payments, saleOrders:saleOrders, company: company]
   }
+
+  def applyDiscount(SaleOrder saleOrder) {
+    redirect action:"show", id:saleOrder.id
+  }
 }

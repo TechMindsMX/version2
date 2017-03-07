@@ -7,6 +7,13 @@ class InvoiceService {
   def restService
   def grailsApplication
 
+  String generateFactura(SaleOrder saleOrder){
+    def factura = createInvoiceFromSaleOrder(saleOrder)
+    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    result.str
+  }
+
+
   private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
     def datosDeFacturacion = new DatosDeFacturacion(folio: "${saleOrder.id}", metodoDePago: "${saleOrder.paymentMethod}")
     def emisor = new Contribuyente(datosFiscales:new DatosFiscales())
@@ -28,6 +35,7 @@ class InvoiceService {
 
     command.emitter = company.rfc
     command.pdfTemplate = saleOrder.pdfTemplate
+    command.observaciones = saleOrder.note
 
     command.receptor.datosFiscales.rfc = saleOrder.rfc
     command.receptor.datosFiscales.razonSocial = saleOrder.clientName
@@ -52,24 +60,18 @@ class InvoiceService {
 
     def conceptos = []
     saleOrder.items.each { item ->
-      conceptos.add(new Concepto(cantidad:item.quantity, valorUnitario:item.price, descripcion:item.name, unidad:item.unitType))
+      conceptos.add(new Concepto(cantidad:item.quantity, valorUnitario:item.price, descuento:item.discount, descripcion:item.name, unidad:item.unitType))
     }
 
     command.conceptos = conceptos
 
     def impuestos = []
     saleOrder.items.each { item ->
-      impuestos.add(new Impuesto(importe:item.quantity * item.price * item.iva / 100, tasa:item.iva, impuesto:'IVA'))
+      impuestos.add(new Impuesto(importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva, impuesto:'IVA'))
     }
 
     command.impuestos = impuestos
     command
-  }
-
-  String generateFactura(SaleOrder saleOrder){
-    def factura = createInvoiceFromSaleOrder(saleOrder)
-    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
-    result.str
   }
 
   def generatePreviewFactura(SaleOrder saleOrder){

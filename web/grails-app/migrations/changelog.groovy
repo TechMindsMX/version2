@@ -14,4 +14,5 @@ databaseChangeLog = {
   include file: 'adding-unique-to-variable-of-corporate.groovy'
   include file: 'adding-columns-dates-and-status-to-stp-deposit.groovy'
   include file: 'adding-column-payment-method-to-sale-order.groovy'
+    include file: 'adding-column-discount-to-sale-order-item.groovy'
 }
