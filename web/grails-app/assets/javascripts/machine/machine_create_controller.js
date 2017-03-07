@@ -12,7 +12,8 @@ var MachineCreateController = (function(){
     machineForm:'form[name=machineForm]',
     stateFrom:'input[name=stateFrom],select[name=stateFrom]',
     stateTo:'input[name=stateTo]',
-    transitionsDiv:'#transitionsDiv'
+    transitionsDiv:'#transitionsDiv',
+    deleteTransition:'.delete-transition'
   },
   machine = null,
   svg = null,
@@ -99,8 +100,26 @@ var MachineCreateController = (function(){
     renderGraph(machine.getGraph());
   },
 
+  deleteMachineTransition = function(event){
+    var element = $(event.currentTarget);
+    var row = element.parent().parent();
+    var stateFrom = $(row).find('.state-from-column').text().trim(),
+    action = row.find('.action-column').text().trim(),
+    stateTo = row.find('.state-to-column').text().trim();
+
+    machine.removeTransition({stateFrom:stateFrom,
+                              stateTo:stateTo,
+                              action:action});
+
+    updateFromSelect();
+    updateAutocomplete();
+    renderGraph(machine.getGraph());
+    renderTransitionsTable();
+  },
+
   bindEvents = function(){
     $(selectors.machineForm).on('submit',createInitialState);
+    $('#transitionsTableContainer').on('click',selectors.deleteTransition,deleteMachineTransition);
   },
 
   renderGraph = function(graph){
