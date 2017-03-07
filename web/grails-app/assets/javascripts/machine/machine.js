@@ -17,12 +17,12 @@ var Machine = {
   },
   
   addInitialState:function(name) {
-    this.initialState = State.create({name:name.toUpperCase()});
+    this.initialState = State.create({name:name.toUpperCase().trim()});
     this.addState(name);
   },
 
   addState:function(name){
-    name = name.toUpperCase();
+    name = name.toUpperCase().trim();
     var state;
     state = $.grep(this.states,function(state,index){
       return state.name == name
@@ -39,7 +39,7 @@ var Machine = {
 
   addTransition:function(data){
     var transition = null;
-    var action = data.action.toUpperCase();
+    var action = data.action.toUpperCase().trim();
     var stateFrom = $.grep(this.states,function(state,index){
       return state.name == data.stateFrom;
     })[0];
