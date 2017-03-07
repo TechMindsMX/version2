@@ -2,8 +2,7 @@ package com.modulus.uno.machine
 
 import grails.validation.Validateable
 
-@Validateable
-class MachineCommand {
+class MachineCommand implements Validateable {
   String initialState
   ArrayList<TransitionCommand> transitions;
 }
