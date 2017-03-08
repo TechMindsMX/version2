@@ -168,7 +168,6 @@ class SaleOrderController {
 
     saleOrder.save flush:true
 
-    //def saleOrder = saleOrderService.createSaleOrderWithAddress(params)
     if (saleOrder.id) {
       redirect action:'show', id:saleOrder.id
     } else {
