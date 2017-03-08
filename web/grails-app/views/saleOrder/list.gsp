@@ -45,8 +45,8 @@
            <th>RFC</th>
            <th>Cliente</th>
            <th>Estatus</th>
-           <th>Compañía</th>
-           <th>Fecha de Creación</th>
+           <th>Fecha de Cobro</th>
+           <th>Moneda</th>
            <th>Total</th>
           </tr>
           <g:if test="${saleOrders.isEmpty()}">
@@ -60,8 +60,8 @@
             <td>${sale.rfc}</td>
             <td>${sale.clientName}</td>
             <td><g:message code="saleOrder.status.${sale.status}" default="${sale.status}"/> </td>
-            <td>${sale.company}</td>
-            <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${sale.dateCreated}"/></td>
+            <td><g:formatDate format="dd-MM-yyyy" date="${sale.fechaCobro}"/></td>
+            <td>${sale.currency}</td>
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
           </tr>
          </g:each>
