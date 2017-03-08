@@ -58,6 +58,9 @@ class MachineServiceSpec extends Specification {
                                                       type:instance.class.simpleName)
       machineryLink.machine = machine
       machineryLink.save()
+    and:"the machinery event executer mock"
+      def machineEventExecuterMock = Mock(MachineEventExecuter)
+      service.machineEventExecuter = machineEventExecuterMock
     and:"the movements"
       ArrayList<String> actions = ["Insert Card","Cancel","Service"]
       actions.each{ action ->
@@ -67,6 +70,7 @@ class MachineServiceSpec extends Specification {
       State state = service.getCurrentStateOfInstance(instance)
     then:
       state.name == "Out Of Service"
+      actions.size() * machineEventExecuterMock.executeEvent()
   }
 
   Should "move the instance to the first state"(){
