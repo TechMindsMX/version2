@@ -94,6 +94,7 @@ class SaleOrderController {
     model.ieps = product.ieps
     model.iva = product.iva
     model.unit = product.unitType.name()
+    model.currency = product.currencyType.name()
     render model as JSON
   }
 
@@ -107,6 +108,7 @@ class SaleOrderController {
     model.ieps = product.ieps
     model.iva = product.iva
     model.unit = product.unitType.name()
+    model.currency = product.currencyType.name()
     render model as JSON
   }
 
