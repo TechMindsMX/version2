@@ -18,6 +18,18 @@
         <dd>
         ${saleOrder.items.size()}
         </dd>
+
+        <dt>Moneda</dt>
+        <dd>
+        ${saleOrder.currency}
+        </dd>
+        <g:if test="${saleOrder.currency == 'USD'}">
+        <dt>Tipo de Cambio</dt>
+        <dd>
+        ${modulusuno.formatPrice(number:saleOrder.changeType)}
+        </dd>
+        </g:if>
+
         <dt>Subtotal</dt>
         <dd>
         ${modulusuno.formatPrice(number:saleOrder.subtotal)}
