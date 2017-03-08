@@ -19,6 +19,8 @@
         ${saleOrder.items.size()}
         </dd>
 
+        <g:hiddenField name="saleCurrency" value="${saleOrder.currency}"/>
+        <g:hiddenField name="saleChangeType" value="${saleOrder.changeType}"/>
         <dt>Moneda</dt>
         <dd>
         ${saleOrder.currency}
