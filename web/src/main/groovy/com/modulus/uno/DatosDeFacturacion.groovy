@@ -8,5 +8,6 @@ class DatosDeFacturacion {
   String metodoDePago = 'TRANSFERENCIA ELECTRONICA'
   String numeroDeCuentaDePago = 'DESCONOCIDO'
   String moneda = 'MXN'
+  BigDecimal tipoDeCambio = new BigDecimal(1)
   String addendaLabel
 }

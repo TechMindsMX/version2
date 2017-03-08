@@ -23,6 +23,8 @@ class SaleOrder {
   Date originalDate
   String pdfTemplate
   String note
+  String currency
+  BigDecimal changeType = new BigDecimal(0)
 
   static belongsTo = [company:Company]
 
@@ -40,6 +42,8 @@ class SaleOrder {
     originalDate nullable:true
     note nullable:true, size:1..300
     pdfTemplate nullable:true
+    currency nullable:false
+    changeType nullable:false
   }
 
   BigDecimal getTotalIVA(){

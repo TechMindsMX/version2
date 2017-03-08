@@ -22,4 +22,5 @@ databaseChangeLog = {
   include file: 'adding-actions-to-company.groovy'
   include file: 'updating-machine-structure.groovy'
   include file: 'updating-transition-actions-relation.groovy'
+  include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
 }
