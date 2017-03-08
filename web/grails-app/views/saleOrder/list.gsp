@@ -9,17 +9,8 @@
   <div class="page-title">
     <h1>
       <i class="icon-factura fa-3x"></i>
-      <sec:ifAnyGranted roles="ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
         Facturación &amp; Cobranza<small><g:message code="saleOrder.list" args="[entityName]" /></small>
-      </sec:ifAnyGranted>
-      <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
-        Operaciones / Facturación<small><g:message code="saleOrder.list" args="[entityName]" /></small>
-      </sec:ifAnyGranted>
     </h1>
-    <ol class="breadcrumb">
-      <li><i class="fa fa-caret-square-o-up"></i>Compañía</li>
-      <li class="active">Orden de Venta</li>
-    </ol>
   </div>
 <div id="edit-address" class="content scaffold-edit" role="main">
   <div class="portlet portlet-blue">
