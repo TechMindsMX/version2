@@ -1,14 +1,10 @@
 var MachineCreateView = (function(){
-  var selectors = {
-    templateName:'#transitionsTable',
-    divDestiny:'#transitionsTableContainer'
-  },
   
-  render = function(data){
-    var source = $(selectors.templateName).html();
+  render = function(templateName,divDestiny,data){
+    var source = $(templateName).html();
     var template = Handlebars.compile(source); 
-    var html = template({machine:data});
-    $(selectors.divDestiny).html(html);
+    var html = template(data);
+    $(divDestiny).html(html);
   };
 
   return{

@@ -1,11 +1,14 @@
-var Transition = {
-  stateFrom:'',
-  stateTo:'', 
-  action:'',
-  actionId:'',
+//= require machine/state.js
 
-  create:function(data){
-    return $.extend({},this,data);
+var Transition = {
+  stateFrom:null,
+  stateTo:null, 
+  actions:[],
+
+  create: function(data){
+    var newTransition = $.extend({},this,data);
+    newTransition.actions = [];
+    return newTransition;
   }
 
 };

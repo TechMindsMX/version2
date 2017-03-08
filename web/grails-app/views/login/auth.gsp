@@ -29,10 +29,10 @@
               </g:if>
               <form action='${postUrl}' method='POST' id='loginForm' class='cssform' autocomplete='off'>
                 <fieldset>
-                  <label for="j_username">Nombre del usuario</label>
-                  <input type="text" name='j_username' class="form-control" placeholder="Nombre de usuario" id='username' value="${flash.username ?: session.username}" >
-                  <label for="j_password">Contraseña</label>
-                  <input type="password" name='j_password' class="form-control" placeholder="Contraseña" id='password' >
+                  <label for="username">Nombre del usuario</label>
+                  <input type="text" name='username' class="form-control" placeholder="Nombre de usuario" id='username' value="${flash.username ?: session.username}" >
+                  <label for="password">Contraseña</label>
+                  <input type="password" name='password' class="form-control" placeholder="Contraseña" id='password' >
                   <br/>
                   <button id="btn-success" type="submit" class="btn btn-lg btn-primary btn-block">Ingresar</button>
                   <hr>

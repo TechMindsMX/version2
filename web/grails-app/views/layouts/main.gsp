@@ -84,7 +84,6 @@
               <g:link controller="dashboard" action="index" >Ver Corporativos</g:link>
               <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
               <g:link controller="dashboard" action="listCompanies" >Agregar Comisiones a Empresas</g:link>
-              <g:link controller="dashboard" action="defineCostCenters" >Definir Centros de Costos</g:link>
             </li>
           </sec:ifAnyGranted>
 
@@ -94,7 +93,8 @@
               <li><g:link controller="corporate" action="addUser" id="${session.corporate.id}">Alta Usuario</g:link></li>
               <li><g:link controller="corporate" action="users" id="${session.corporate.id}">Lista de Usuarios</g:link></li>
               <li><g:link controller="corporate" action="companies" id="${session.corporate.id}">Todas las Empresas</g:link></li>
-              <li><g:link controller="machine" action="index">Lista de máquinas</g:link></li>
+              <li><g:link controller="machine" action="register">Crear nueva máquina</g:link></li>
+              <li><g:link controller="machine" action="index">Lista de Máquinas</g:link></li>
             </g:if>
           </sec:ifAnyGranted>
 
