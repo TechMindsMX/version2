@@ -1,10 +1,12 @@
 package com.modulus.uno
 
 import spock.lang.Specification
+import grails.test.mixin.Mock
+import grails.test.mixin.TestFor
 
+@TestFor(RecoveryService)
+@Mock([User])
 class RecoveryServiceSpec extends Specification {
-
-  def service = new RecoveryService()
 
   def recoveryCollaboratorService = Mock(RecoveryCollaboratorService)
   def registrationService = Mock(RegistrationService)
