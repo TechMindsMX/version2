@@ -10,9 +10,9 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-cog fa-3x"></i>
-        <g:message code="machine.index" args="[entityName]" />
+        <g:message code="machine.register" args="[entityName]" />
         <small>
-          <g:message code="machine.list" />
+          <g:message code="machine.register.label" />
         </small>
       </h1>
     </div>
