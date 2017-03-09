@@ -59,8 +59,8 @@ class MachineServiceSpec extends Specification {
       machineryLink.machine = machine
       machineryLink.save()
     and:"the machinery event executer mock"
-      def machineEventExecuterMock = Mock(MachineEventExecuter)
-      service.machineEventExecuter = machineEventExecuterMock
+      def machineEventExecuterServiceMock = Mock(MachineEventExecuterService)
+      service.machineEventExecuterService = machineEventExecuterServiceMock
     and:"the movements"
       ArrayList<String> actions = ["Insert Card","Cancel","Service"]
       actions.each{ action ->
@@ -87,8 +87,8 @@ class MachineServiceSpec extends Specification {
     and:"the action"
       String action = "Insert Card"
     and:"the machinery event executer mock"
-      def machineEventExecuterMock = Mock(MachineEventExecuter)
-      service.machineEventExecuter = machineEventExecuterMock
+      def machineEventExecuterServiceMock = Mock(MachineEventExecuterService)
+      service.machineEventExecuterService = machineEventExecuterServiceMock
     when:
       State newState = service.moveToAction(instance,action)
     then:
@@ -109,8 +109,8 @@ class MachineServiceSpec extends Specification {
       machineryLink.machine = machine
       machineryLink.save()
     and:"the machinery event executer mock"
-      def machineEventExecuterMock = Mock(MachineEventExecuter)
-      service.machineEventExecuter = machineEventExecuterMock
+      def machineEventExecuterServiceMock = Mock(MachineEventExecuterService)
+      service.machineEventExecuterService = machineEventExecuterServiceMock
     and:"the movements"
       ArrayList<String> actions = ["Insert Card","Cancel","Service"]
       actions.each{ action ->
