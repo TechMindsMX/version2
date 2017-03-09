@@ -17,7 +17,7 @@ class MachineController {
 
 
   def index(){
-
+    [entities:machineryLinkService.getClassesWithMachineryInterface()]
   }
 
   def register(){
