@@ -38,7 +38,7 @@ class SaleOrderController {
       @ApiImplicitParam(name = 'externalId', value = '', required = true, dataType = 'string',paramType = 'form'),
       @ApiImplicitParam(name = 'paymentMethod', value = '0, 1, 2 o 3', required = true, dataType = 'string',paramType = 'form'),
       @ApiImplicitParam(name = 'currencyUsd', value = 'MXN o USD', required = true, dataType = 'string',paramType = 'form'),
-      @ApiImplicitParam(name = 'changeType', value = 'Aplica sólo si currencyUsd=USD', required = true, defaultValue = "0", dataType = 'number',paramType = 'form')
+      @ApiImplicitParam(name = 'changeType', value = 'Tipo de cambio a aplicar', required = true, defaultValue = "0", dataType = 'number',paramType = 'form')
       ])
   def save(SaleOrderCommand saleOrderCommand) {
     if (!saleOrderCommand.validate()) {
