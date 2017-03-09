@@ -15,8 +15,9 @@ class MachineController {
   def springSecurityService
   MachineService machineService
 
+
   def index(){
-     
+
   }
 
   def register(){
