@@ -15,10 +15,6 @@ class GroupNotificationCommand implements Validateable{
       name:nameGroup)
   }
 
-  def getParams(){
-    ["id":idGroup,"name":nameGroup, "notification":notificationId]
-  }
-
   GroupNotification toGroupNotificationUpdated(){
     new GroupNotification(
       id: idGroup,
