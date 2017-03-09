@@ -58,6 +58,9 @@ class MachineServiceSpec extends Specification {
                                                       type:instance.class.simpleName)
       machineryLink.machine = machine
       machineryLink.save()
+    and:"the machinery event executer mock"
+      def machineEventExecuterServiceMock = Mock(MachineEventExecuterService)
+      service.machineEventExecuterService = machineEventExecuterServiceMock
     and:"the movements"
       ArrayList<String> actions = ["Insert Card","Cancel","Service"]
       actions.each{ action ->
@@ -83,10 +86,14 @@ class MachineServiceSpec extends Specification {
       machineryLink.save()
     and:"the action"
       String action = "Insert Card"
+    and:"the machinery event executer mock"
+      def machineEventExecuterServiceMock = Mock(MachineEventExecuterService)
+      service.machineEventExecuterService = machineEventExecuterServiceMock
     when:
       State newState = service.moveToAction(instance,action)
     then:
       machineryLink.trackingLogs.size() == 1
+      1 * machineEventExecuterMock.executeEvent()
   }
 
   Should "get the next states of instance"(){
@@ -101,6 +108,9 @@ class MachineServiceSpec extends Specification {
                                                       type:instance.class.simpleName)
       machineryLink.machine = machine
       machineryLink.save()
+    and:"the machinery event executer mock"
+      def machineEventExecuterServiceMock = Mock(MachineEventExecuterService)
+      service.machineEventExecuterService = machineEventExecuterServiceMock
     and:"the movements"
       ArrayList<String> actions = ["Insert Card","Cancel","Service"]
       actions.each{ action ->

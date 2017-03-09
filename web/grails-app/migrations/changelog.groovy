@@ -23,4 +23,5 @@ databaseChangeLog = {
   include file: 'updating-machine-structure.groovy'
   include file: 'updating-transition-actions-relation.groovy'
   include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
+  include file: 'removing-state-relation-with-log.groovy'
 }
