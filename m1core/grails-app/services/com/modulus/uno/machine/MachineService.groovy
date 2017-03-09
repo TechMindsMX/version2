@@ -4,8 +4,8 @@ import grails.transaction.Transactional
 
 @Transactional
 class MachineService {
-  
-  def machineEventExecuter
+
+  MachineEventExecuterService machineEventExecuterService
 
   Machine createMachineWithActions(String startName,String stateToName,ArrayList<String> actions){
     Machine machine = new Machine()
@@ -95,7 +95,7 @@ class MachineService {
     TrackingLog trackingLog = new TrackingLog(state:newState.name)
     machineryLink.addToTrackingLogs(trackingLog)
     machineryLink.save(failOnError:true)
-    machineEventExecuter.executeEvent()
+    machineEventExecuterService.executeEvents()
     newState
   }
 
