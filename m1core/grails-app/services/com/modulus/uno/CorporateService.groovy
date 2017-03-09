@@ -110,7 +110,7 @@ class CorporateService {
         eq("id", companyId)
       }
     }
-    "${corporateList.first().corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+    "${corporateList.first().corporateUrl}${DOMAIN_BASE_URL}"
   }
 
   def findLegalRepresentativesOfCompany(Long companyId){
