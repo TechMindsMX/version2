@@ -5,7 +5,8 @@
 //= require third-party/jquery-ui/jquery-ui.js
 //= require third-party/modulus-uno-theme/js/flex.js
 //= require home/home_controller.js
-
+//= require third-party/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js
+//= require third-party/moment/src/moment.js
 var App = (function(){
 
   var start = function(){
