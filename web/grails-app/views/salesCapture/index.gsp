@@ -115,12 +115,51 @@
                 <table class="table"style="width:50%">
                   <tbody>
                     <tr>
-                    <th colspan="3">Subtotal</th>
-                  </tr>
+                      <th colspan="3">Subtotal</th>
+                      <td colspan="3" style="width:30%;"align="right"><input style="text-align:right;" type="text" class="form-control" value="$0.00"></td>
+                    </tr>
+                    <tr>
+                      <th >Descuento</th>
+                      <td style="width:30%;"><input style="text-align:right;" type="text" class="form-control" value="$0.00"></td>
+                      <td style="width:30%;"><select class="form-control" style="text-align-last:right;"><option>$</option><option>%</option></select></td>
+                      <td style="width:30%;"><input style="text-align:right;" type="text" class="form-control" value="$0.00"></td>
+
+                    </tr>
+                    <tr>
+                      <th>Envió</th>
+                      <td colspan="2"style="width:30%;"><input style="text-align:right;" type="text" class="form-control" value="$0.00"></td>
+                      <td style="width:30%;"><input style="text-align:right;" type="text" class="form-control" value="$0.00"></td>
+                    </tr>
+                    <tr>
+                      <th colspan="3" style="background:#E6E6E6" >Total</th>
+                      <td colspan="3" style="width:10%;" ><input style="text-align:right;" type="text" class="form-control" value="$0.00"></td>
+                    </tr>
+
+
                   </tbody>
 
                 </table>
               </div>
+              <div class="checkbox">
+                <label><input type="checkbox" value="">    Permitir pago parcial     <span  data-toggle="tooltip" data-placement="top" title="El cliente podra ingresar un pago"class="badge">?</span> </label>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-xs-6 left-indent">
+                  <div class="form-group"><label for="terms">Nota para el destinatario</label><textarea placeholder="Como, por ejemplo, “Gracias por su preferencia”" rows="5" class="form-control" name="notes" id="notes"></textarea><p class="help-block text-right" id="notesChars">4000</p>
+                  </div>
+                </div>
+                <div class="col-xs-6">
+                  <div class="form-group"><label for="notes">Términos y condiciones</label><textarea placeholder="Incluir su política de devoluciones o de cancelación" rows="5" class="form-control" name="terms" id="terms"></textarea><p class="help-block text-right" id="termsChars">4000</p>
+                  </div>
+                </div>
+              </div>
+              <hr>
+              <div align="right">
+                <button type="button" class="btn btn-primary">Vista Previa</button>
+                <button type="button" class="btn btn-success">Enviar</button>
+              </div>
+
             </div>
           </div>
         </div>
