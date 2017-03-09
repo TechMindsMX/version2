@@ -22,6 +22,8 @@
     "dropzone": "^4.3.0",
     "handlebars": "^4.0.5",
     "holderjs": "~2.9.1",
-    "jquery-ui": "jqueryui#^1.12.1"
+    "jquery-ui": "jqueryui#^1.12.1",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "moment": "^2.17.1"
   }
 }
