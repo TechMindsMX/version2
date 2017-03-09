@@ -23,7 +23,6 @@ class SignService {
     def sign = listKeys.collect{ String key ->
       data."$key"
     }.join("|")
-    println sign
     "||${sign}||"
   }
 }
