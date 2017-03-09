@@ -11,6 +11,7 @@ import spock.lang.Unroll
 class CorporateServiceSpec extends Specification {
 
   def setup() {
+      grailsApplication.config.grails.plugin.awssdk.domain.base.url = "-qa.modulusuno.com"
   }
 
   Should "create a corporate"() {
