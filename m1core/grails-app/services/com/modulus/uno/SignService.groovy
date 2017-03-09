@@ -17,12 +17,13 @@ class SignService {
     "claveDelCatalogoDeUsuario2","claveDelPago",
     "referenciaDeCobranza","referenciaNumérica",
     "tipoDeOperación","topologia","usuario",
-    "medioDeEntrega","prioridad"]
+    "medioDeEntrega","prioridad","iva"]
     if (!(listKeys == data*.key.intersect(listKeys)))
       throw new SignException("Datos faltantes para la generación de la firma")
     def sign = listKeys.collect{ String key ->
       data."$key"
     }.join("|")
+    println sign
     "||${sign}||"
   }
 }
