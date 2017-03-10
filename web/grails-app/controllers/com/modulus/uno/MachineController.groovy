@@ -3,6 +3,7 @@ package com.modulus.uno
 import com.modulus.uno.machine.*
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import grails.converters.JSON
 
 @Transactional(readOnly=true)
 class MachineController {
@@ -14,7 +15,6 @@ class MachineController {
   CorporateService corporateService
   def springSecurityService
   MachineService machineService
-
 
   def index(){
     [entities:machineryLinkService.getClassesWithMachineryInterface()]
@@ -46,6 +46,7 @@ class MachineController {
 
     //TODO: Move BFS to Service
     if(initialTransition){
+
       Machine newMachine = machineService.createMachineWithActions(initialTransition.stateFrom,initialTransition.stateTo,initialTransition.actions)
       ArrayList<String> states = [initialState,initialTransition.stateTo]//Q
       ArrayList<TransitionCommand> transitionsToSave = []
@@ -66,6 +67,11 @@ class MachineController {
     }
 
     redirect(action:"index")
+  }
+
+  def list(){
+    ArrayList<Machine> machines = Machine.list()
+    [machines:machines]
   }
 
 }
