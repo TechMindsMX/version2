@@ -1,13 +1,19 @@
 //= require machine/machine.js
 
 var MachineListController = (function(){
-  
+
   var selectors = {
-    entitySelector:'select[name=entity]'
+    entitySelector:'select[name=entity]',
+    actionListURL:'#actionListURL'
   },
 
-  showMachines = function(){
-    
+  showMachines = function(event){
+    var select = $(event.currentTarget);
+
+    $.get($(selectors.actionListURL).val(),{className:select.val()},function(data){
+      
+    });
+
   },
 
   bindEvents = function(){
