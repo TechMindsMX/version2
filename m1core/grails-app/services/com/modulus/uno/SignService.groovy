@@ -15,7 +15,7 @@ class SignService {
     "rfcCurpDelBeneficiario2","conceptoDelPago",
     "conceptoDelPago2","claveDelCatalogoDeUsuario1",
     "claveDelCatalogoDeUsuario2","claveDelPago",
-    "referenciaDeCobranza","referenciaNumérica",
+    "referenciaDeCobranza","referenciaNumerica",
     "tipoDeOperación","topologia","usuario",
     "medioDeEntrega","prioridad","iva"]
     if (!(listKeys == data*.key.intersect(listKeys)))
