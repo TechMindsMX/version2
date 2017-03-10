@@ -20,6 +20,7 @@ build/
 .asscache
 grails-app/assets/javascripts/third-party/node_modules/
 grails-app/assets/javascripts/third-party/
+grails-app/assets/javascripts/compiled-coffee-script/
 node_modules/
 logs/
 **.swp
