@@ -98,7 +98,7 @@ class MachineService {
     TrackingLog trackingLog = new TrackingLog(state:newState.name)
     machineryLink.addToTrackingLogs(trackingLog)
     machineryLink.save(failOnError:true)
-    machineEventExecuterService.executeEvents()
+    machineEventExecuterService.executeEvents(instance)
     newState
   }
 
