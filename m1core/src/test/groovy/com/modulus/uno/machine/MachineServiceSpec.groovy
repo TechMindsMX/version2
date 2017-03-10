@@ -93,7 +93,7 @@ class MachineServiceSpec extends Specification {
       State newState = service.moveToAction(instance,action)
     then:
       machineryLink.trackingLogs.size() == 1
-      1 * machineEventExecuterMock.executeEvents(_)
+      1 * machineEventExecuterServiceMock.executeEvents(_)
   }
 
   Should "get the next states of instance"(){
