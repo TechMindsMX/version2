@@ -9,9 +9,11 @@ class MachineService {
 
   Machine createMachineWithActions(String startName,String stateToName,ArrayList<String> actions){
     Machine machine = new Machine()
+
     State initialState = new State(name:startName)
     State finalState = new State(name:stateToName,
                                  finalState:true)
+
     machine.addToStates(initialState)
     machine.addToStates(finalState)
     machine.save()
@@ -21,10 +23,11 @@ class MachineService {
     actions.each{ action ->
       transition.addToActions(action)
     }
-
+    
     machine.initialState = initialState
     machine.addToTransitions(transition)
     machine.save()
+
     machine
   }
 
@@ -95,7 +98,7 @@ class MachineService {
     TrackingLog trackingLog = new TrackingLog(state:newState.name)
     machineryLink.addToTrackingLogs(trackingLog)
     machineryLink.save(failOnError:true)
-    machineEventExecuterService.executeEvents()
+    machineEventExecuterService.executeEvents(instance)
     newState
   }
 

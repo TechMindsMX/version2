@@ -8,7 +8,7 @@ class EventNotificationService implements MachineEvent {
 
   NotifyService notifyService 
 
-  void executeEvent() {
+  void executeEvent(def instance) {
     log.debug("Sending the email...")
   }
 
