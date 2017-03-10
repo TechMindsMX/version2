@@ -1,0 +1,7 @@
+model{
+  Machine machine
+}
+
+json{
+  dateCreated machine.dateCreated.format("dd/MM/yyyy")
+}
