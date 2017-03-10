@@ -33,6 +33,18 @@
           <!-- END OF COL-SM-6 -->
         </div>
         <!-- END OF ROW -->
+
+        <!-- BEGIN ROW -->
+        <div class="row">
+          <!-- BEGIN COL-SM-6 -->
+          <div class="form-group col-lg-6">
+
+          </div>
+          <!-- END OF COL-SM-6 -->
+        </div>
+        <!-- END OF ROW -->
+
+        <input type="hidden" value="${createLink(action:'list')}" id="actionListURL" />
       </div>
       <!-- END OF PORTLET-BODY -->
     </div>
