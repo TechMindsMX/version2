@@ -9,7 +9,8 @@ buildscript {
     classpath "org.grails:grails-gradle-plugin:$grailsVersion"
     classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.11.6"
     classpath "org.grails.plugins:hibernate5:6.0.7"
-    classpath 'org.grails.plugins:database-migration:3.0.0'
+    classpath "org.grails.plugins:database-migration:3.0.0"
+    classpath "org.grails.plugins:views-gradle:1.1.5" 
     // classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
     // classpath "net.saliman:gradle-cobertura-plugin:2.4.0"
   }
@@ -24,6 +25,7 @@ apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 apply plugin:"asset-pipeline"
+apply plugin:"org.grails.plugins.views-json"
 
 // apply plugin: "org.sonarqube"
 // apply plugin: "net.saliman.cobertura"
@@ -86,8 +88,8 @@ dependencies {
   compile 'org.grails.plugins:database-migration:3.0.0'
   compile 'org.liquibase:liquibase-core:3.5.3'
   compile 'org.grails.plugins:excel-export:2.0.1'
-
   compile 'org.grails.plugins:spring-security-core:3.1.1'
+  compile 'org.grails.plugins:views-json:1.1.5'
 }
 
 grails {
