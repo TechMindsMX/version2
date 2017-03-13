@@ -24,6 +24,8 @@ class SaleOrderSTP implements Validateable {
   String tipoDeLaCuentaDelOrdenante
   String tipoDelPago
 
+  String firma
+
   String tipoDeCuentaDelBeneficiario2
   String nombreDelBeneficiario2 
   String cuentaDelBeneficiario2
@@ -49,7 +51,7 @@ class SaleOrderSTP implements Validateable {
     emailDelBeneficiario blank:true, nullable:false, maxSize:120
     empresa blank:false, nullable:false, maxSize:15
     fechaDeOperacion blank:true, nullable:false, maxSize:8
-    // firma
+    firma blank:false, nullable:false, maxSize:172
     folioOrigen blank:true, nullable:false, maxSize:50
     institucionContraparte blank:false, nullable:false, maxSize:5
     institucionOperante blank:false, nullable:false, maxSize:5
