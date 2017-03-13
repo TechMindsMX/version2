@@ -24,34 +24,59 @@ class SaleOrderSTP implements Validateable {
   String tipoDeLaCuentaDelOrdenante
   String tipoDelPago
 
-  String tipoDeCuentaDelBeneficiario2, nombreDelBeneficiario2, 
-  cuentaDelBeneficiario2, rfcCurpDelBeneficiario2, conceptoDelPago2, 
-  claveDelCatalogoDeUsuario1, claveDelCatalogoDeUsuario2, 
-  claveDelPago, referenciaDeCobranza, tipoDeOperación, topologia, 
-  usuario, medioDeEntrega, prioridad, iva
+  String tipoDeCuentaDelBeneficiario2
+  String nombreDelBeneficiario2 
+  String cuentaDelBeneficiario2
+  String rfcCurpDelBeneficiario2
+  String conceptoDelPago2
+  String claveDelCatalogoDeUsuario1
+  String claveDelCatalogoDeUsuario2
+  String claveDelPago
+  String referenciaDeCobranza
+  String tipoDeOperación
+  String topologia
+  String usuario
+  String medioDeEntrega
+  String prioridad
+  String iva
 
 
   static constraints = {
     claveDeRastreo  blank:false, nullable:false, maxSize:30
-    conceptoDelPago blank:false, nullable:false
-    cuentaDelBeneficiario blank:false, nullable:false
-    cuentaDelOrdenante blank:true, nullable:false
-    emailDelBeneficiario blank:true, nullable:false
-    empresa blank:false, nullable:false
-    fechaDeOperacion blank:true, nullable:false
+    conceptoDelPago blank:false, nullable:false, maxSize:210
+    cuentaDelBeneficiario blank:false, nullable:false, maxSize:20
+    cuentaDelOrdenante blank:true, nullable:false, maxSize:20
+    emailDelBeneficiario blank:true, nullable:false, maxSize:120
+    empresa blank:false, nullable:false, maxSize:15
+    fechaDeOperacion blank:true, nullable:false, maxSize:8
     // firma
-    folioOrigen blank:true, nullable:false
-    institucionContraparte blank:false, nullable:false
-    institucionOperante blank:false, nullable:false
-    montoDelPago blank:false, nullable:false //evaluar valor
-    nombreDelBeneficiario blank:false, nullable:false
-    nombreDelOrdenante blank:true, nullable:false
-    referenciaNumerica blank:false, nullable:false
-    rfcCurpDelBeneficiario blank:false, nullable:false
-    rfcCurpDelOrdenante blank:true, nullable:false
-    tipoDeCuentaDelBeneficiario blank:false, nullable:false
-    tipoDeLaCuentaDelOrdenante blank:true, nullable:false
-    tipoDelPago blank:false, nullable:false
+    folioOrigen blank:true, nullable:false, maxSize:50
+    institucionContraparte blank:false, nullable:false, maxSize:5
+    institucionOperante blank:false, nullable:false, maxSize:5
+    montoDelPago blank:false, nullable:false //verify
+    nombreDelBeneficiario blank:false, nullable:false, maxSize:120
+    nombreDelOrdenante blank:true, nullable:false, maxSize:120
+    referenciaNumerica blank:false, nullable:false, maxSize:7
+    rfcCurpDelBeneficiario blank:false, nullable:false, maxSize:18
+    rfcCurpDelOrdenante blank:true, nullable:false, maxSize:18
+    tipoDeCuentaDelBeneficiario blank:false, nullable:false, maxSize:2
+    tipoDeLaCuentaDelOrdenante blank:true, nullable:false, maxSize:2
+    tipoDelPago blank:false, nullable:false, maxSize:2
+
+    tipoDeCuentaDelBeneficiario2 blank:true, nullable:false
+    nombreDelBeneficiario2  blank:true, nullable:false
+    cuentaDelBeneficiario2 blank:true, nullable:false
+    rfcCurpDelBeneficiario2 blank:true, nullable:false
+    conceptoDelPago2 blank:true, nullable:false
+    claveDelCatalogoDeUsuario1 blank:true, nullable:false
+    claveDelCatalogoDeUsuario2 blank:true, nullable:false
+    claveDelPago blank:true, nullable:false
+    referenciaDeCobranza blank:true, nullable:false
+    tipoDeOperación blank:true, nullable:false
+    topologia blank:true, nullable:false
+    usuario blank:true, nullable:false
+    medioDeEntrega blank:true, nullable:false
+    prioridad blank:true, nullable:false
     iva blank:true, nullable:false
   }
 
