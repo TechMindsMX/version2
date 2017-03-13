@@ -151,33 +151,22 @@ class RestService {
     response
   }
 
-  def existEmisorForGenerateInvoice(String rfc) {
-    log.info "CALLING Service: Verify if exist emisor"
-    def result = wsliteConnectionService.get("${grailsApplication.config.modulus.facturacionUrl}",
-                                           "${grailsApplication.config.modulus.invoice}/${rfc}")
-    result ?: [error:false]
-  }
-
   def updateFilesForInvoice(def bodyMap) {
-    try {
-      log.info "Calling Service : Update files to stamp"
-      log.info "Path: ${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
-      def http = new HTTPBuilder("${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}")
-      http.request(POST) { req ->
-        requestContentType: "multipart/form-data"
-        MultipartEntity multiPartContent = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
-        multiPartContent.addPart("cer", new InputStreamBody(bodyMap.cer.inputStream, bodyMap.cer.contentType, bodyMap.cer.originalFilename))
-        multiPartContent.addPart("key", new InputStreamBody(bodyMap.key.inputStream, bodyMap.key.contentType, bodyMap.key.originalFilename))
-        multiPartContent.addPart("logo", new InputStreamBody(bodyMap.logo.inputStream, bodyMap.logo.contentType, bodyMap.logo.originalFilename))
-        multiPartContent.addPart("password", new StringBody(bodyMap.password))
-        multiPartContent.addPart("certNumber", new StringBody(bodyMap.certNumber))
-
-        req.setEntity(multiPartContent)
+    log.info "Calling Service : Update files to stamp"
+    log.info "Path: ${facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
+    def endpoint = "${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl endpoint
+      method HTTPMethod.POST
+      callback {
+        multipart "cer", bodyMap.cer.bytes, bodyMap.cer.contentType, bodyMap.cer.originalFilename
+        multipart "key", bodyMap.key.bytes, bodyMap.key.contentType, bodyMap.key.originalFilename
+        multipart "logo", bodyMap.cer.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
+        multipart "password", bodyMap.password.bytes
+        multipart "certNumber", bodyMap.certNumber.bytes
       }
-    } catch(Exception ex) {
-      log.error "Error ${ex.message}"
-      return "500"
-    }
+    }.doit()
+    response
   }
 
   private def callingModulusUno(MessageCommand message,String template,String token) {
