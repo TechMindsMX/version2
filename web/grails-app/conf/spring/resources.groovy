@@ -1,6 +1,3 @@
-// Place your Spring DSL code here
-
-import groovyx.net.http.RESTClient
 import com.solab.alarms.channels.*
 import com.solab.alarms.aop.*
 import com.solab.alarms.*
@@ -19,10 +16,6 @@ beans = {
   localeResolver(org.springframework.web.servlet.i18n.SessionLocaleResolver) {
     defaultLocale = new Locale("es","ES_MX")
     java.util.Locale.setDefault(defaultLocale)
-  }
-
-  restClientBean(RESTClient) {
-    // uri = grailsApplication.config.modulus.url
   }
 
   def token = grailsApplication.config.slack.token

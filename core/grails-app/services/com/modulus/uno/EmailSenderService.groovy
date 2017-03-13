@@ -168,7 +168,6 @@ class EmailSenderService {
 
   //FeesReceipt
   def notifyFeesReceiptChangeStatus(FeesReceipt feesReceipt){
-    //def emailList=directorService.searchUsersSendToAuthorize(feesReceipt.company)
     def paramsEmailer=notifyService.parametersForFeesReceipt(feesReceipt, feesReceipt.status, feesReceipt.company)
     def idEmailer
     def emailList

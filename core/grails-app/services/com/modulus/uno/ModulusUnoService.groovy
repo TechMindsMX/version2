@@ -87,13 +87,13 @@ class ModulusUnoService {
   def consultBalanceOfAccount(String account) {
     def command = new BalanceIntegratedCommand()
     command.uuid = account
-    def balance = restService.getOnModulus(command, grailsApplication.config.modulus.users)
-    [balance.responseData.balance, balance.responseData.usd]
+    def response = restService.getOnModulus(command, grailsApplication.config.modulus.users)
+    [response.balance, response.usd]
   }
 
   def consultBalanceIntegratorOfType(String type) {
     def balance = restService.getBalancesIntegrator(type, grailsApplication.config.modulus.integratorBalance)
-    [balance.responseData.balance, balance.responseData.usd]
+    [balance.balance, balance.usd]
   }
 
   def createAccount(Company company,String email) {
@@ -103,7 +103,7 @@ class ModulusUnoService {
                                            email:email)
 
 
-    def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.users)
+    def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.users)?.json
     accountResult
   }
 
@@ -182,6 +182,6 @@ class ModulusUnoService {
   def generateSubAccountStpForClient(CreateAccountCommand command) {
     def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.subAccountUser)
     log.info "New Sub Account Registered ${accountResult}"
-    accountResult?.stpClabe
+    accountResult?.json?.stpClabe
   }
 }
