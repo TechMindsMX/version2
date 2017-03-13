@@ -102,7 +102,7 @@ class ModulusUnoService {
 
   private String getMailFromLegalRepresentatitveCompany(Company company) {
     def users = corporateService.findLegalRepresentativesOfCompany(company.id)
-    users?.first().profile.email
+    users ? users.first().profile.email : ""
   }
 
   def consultBalanceOfAccount(String account) {
