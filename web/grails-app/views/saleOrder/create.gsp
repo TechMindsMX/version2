@@ -110,18 +110,25 @@
               <input type="hidden" name="companyId" value="${company.id}" />
               <input type="hidden" name="clientId" value="${client.id}" />
               </p>
+              <div class="form-group">
+                <input type="checkbox" id="currencyUsd" name="currencyUsd" value="USD" />&nbsp;&nbsp;<label>Factura en Dólares</label>
+              </div>
+              <div class="form-group">
+                <label>Tipo de Cambio:</label>
+                <input id="changeType" name="changeType" type="number" value="0.00" min="0.0" step="0.01" readonly="" required=""/>
+              </div>
               <div class="">
-                <label>Fecha de Cobro<font color="red"> *Requerida</font></label>
+                <label>Fecha de Cobro:</label>
                 <input type="text" id="datepicker" name="fechaCobro" required="required">
               </div>
               <br />
               <div class="form-group">
-                <label>Notas</label>
+                <label>Notas:</label>
                 <textarea class="form-control" rows="4" cols="50" name="note" id="note" ></textarea>
               </div>
               <br/>
               <div class="form-group">
-                <label>Método de Pago</label>
+                <label>Método de Pago:</label>
                 <g:select name="paymentMethod" from="${PaymentMethod.values()}"/>
               </div>
               <p>

@@ -165,39 +165,6 @@ class SaleOrderServiceSpec extends Specification {
       result.externalId == "abcde"
   }
 
-  void "Should create a sale order"() {
-    given:"The params"
-      MockHttpServletRequest mockRequest = new MockHttpServletRequest()
-      mockRequest.addParameter("companyId", "1")
-      mockRequest.addParameter("clientId", "1")
-      mockRequest.addParameter("addressId", "1")
-      mockRequest.addParameter("fechaCobro", "15/12/2016")
-      mockRequest.addParameter("externalId", "abcde")
-      mockRequest.addParameter("paymentMethod", "01 - EFECTIVO")
-      GrailsParameterMap params = new GrailsParameterMap(mockRequest)
-    and:"A Sale Order"
-      SaleOrder.metaClass.static.findByExternalId = { null }
-      def company = new Company(rfc:"JIGE930831NZ1",
-                                bussinessName:"Apple Computers",
-                                webSite:"http://www.apple.com",
-                                employeeNumbers:40,
-                                grossAnnualBilling:4000).save(validate:false)
-      def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
-      def address = new Address(street:"street", zipCode:"00000").save(validate:false)
-      Company.get(_) >> company
-      BusinessEntity.get(_) >> businessEntity
-      Address.get(_) >> address
-      SaleOrder.metaClass.addToAddresses {
-        addresses = []
-        addresses.add(address)
-      }
-    when:
-      def result = service.createOrUpdateSaleOrder(params)
-    then:
-      result.id == 1
-      result.externalId == "abcde"
-  }
-
   @Unroll
   void "verify if original date exist or not and set new value for Fecha Cobro: #fechaCobro and original Date: #originalDate"() {
     given:
