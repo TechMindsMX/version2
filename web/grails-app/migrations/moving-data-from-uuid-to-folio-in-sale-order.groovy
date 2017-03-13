@@ -1,5 +1,3 @@
-import com.modulus.uno.SaleOrder
-
 databaseChangeLog = {
 
   changeSet(author: "temoc (manual)", id: "moving-uuid-to-folio-from-sale-order") {

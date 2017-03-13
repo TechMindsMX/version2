@@ -1,7 +1,9 @@
 package com.modulus.uno
-import grails.converters.JSON
 
-class PurchaseOrder {
+import grails.converters.JSON
+import com.modulus.uno.machine.Machinery
+
+class PurchaseOrder implements Machinery {
 
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
   String providerName

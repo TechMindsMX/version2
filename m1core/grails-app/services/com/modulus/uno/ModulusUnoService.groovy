@@ -158,7 +158,6 @@ class ModulusUnoService {
 
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
     String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
-
     CashoutCommand command = new CashoutCommand(
       uuid:order.company.accounts?.first()?.timoneUuid,
       beneficiaryClabe:order.bankAccount.clabe,
@@ -167,7 +166,7 @@ class ModulusUnoService {
       fee:feeCommand.amount,
       beneficiary:order.providerName,
       //TODO: Registrar el email de los proveedores
-      emailBeneficiary:"",
+      emailBeneficiary:"mailBeneficiary@mail.com",
       concept:adjustConcept,
       feeType:feeCommand.type,
       payerName:order.company.accounts?.first()?.aliasStp,

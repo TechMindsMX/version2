@@ -29,7 +29,6 @@ class Company {
                     commissions:Commission,
                     telephones:Telephone]
 
-
   static constraints = {
     bussinessName blank:false,size:1..100
     webSite nullable:true,size:5..50

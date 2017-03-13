@@ -35,12 +35,21 @@ class SaleOrderController {
       @ApiImplicitParam(name = 'addressId', value = '', required = true, dataType = 'number',paramType = 'form'),
       @ApiImplicitParam(name = 'fechaCobro', value = 'dd/MM/yyyy', required = true, dataType = 'date',paramType = 'form'),
       @ApiImplicitParam(name = 'note', value = '', required = false, dataType = 'string',paramType = 'form'),
-      @ApiImplicitParam(name = 'externalId', value = '', required = true, dataType = 'string',paramType = 'form')
+      @ApiImplicitParam(name = 'externalId', value = '', required = true, dataType = 'string',paramType = 'form'),
+      @ApiImplicitParam(name = 'paymentMethod', value = '0, 1, 2 o 3', required = true, dataType = 'string',paramType = 'form'),
+      @ApiImplicitParam(name = 'currencyUsd', value = 'MXN o USD', required = true, dataType = 'string',paramType = 'form'),
+      @ApiImplicitParam(name = 'changeType', value = 'Tipo de cambio a aplicar', required = true, defaultValue = "0", dataType = 'number',paramType = 'form')
       ])
-  def save() {
-    def saleOrder = saleOrderService.createOrUpdateSaleOrder(params)
-    saleOrderService.sendOrderToConfirmation(saleOrder)
-    respond saleOrder, status:201, formats: ['json']
+  def save(SaleOrderCommand saleOrderCommand) {
+    if (!saleOrderCommand.validate()) {
+      log.error "Invalid parameters invalid of sale order: ${saleOrderCommand.errors}"
+      response.sendError(422, "Any parameter is invalid")
+    } else {
+      SaleOrder saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
+      saleOrder.save()
+      saleOrderService.sendOrderToConfirmation(saleOrder)
+      respond saleOrder, status:201, formats: ['json']
+    }
   }
 
 
@@ -64,7 +73,7 @@ class SaleOrderController {
     if(saleOrderItem)
       respond saleOrderItem, status:201, formats: ['json']
     else
-      response.senErrod(404, "Missing fields for item")
+      response.sendError(404, "Missing fields for item")
 
   }
 
