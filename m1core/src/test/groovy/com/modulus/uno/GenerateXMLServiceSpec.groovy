@@ -42,7 +42,8 @@ class GenerateXMLServiceSpec extends Specification {
         usuario: "",
         medioDeEntrega: "",
         prioridad: "",
-        iva: ""
+        iva: "",
+        firma: "Yik10Fo+yReNXvSfeYvbIlthR2e05PETN+4WXqnOsfStHBYTo/QCRsDJCsCgaNOLfGArByCWGwDA9Lx5htWRB0KKnyZVIDE1qBrsjfb7MEY+sqCqiNDw4SAihuKEPZteG9Ej0Ku9z3R8wMyTMXq8Uu70iB7SOWY13mBcSVnt5CQ="
       ]     
     when:""
       def xml = service.xmlOrderSaleRequest(data)
@@ -74,6 +75,51 @@ class GenerateXMLServiceSpec extends Specification {
           </soapenv:Body>
         </soapenv:Envelope>
       """.replaceAll("\n", "").replaceAll(" ", "")
+  }
+
+  void "Generate xml of incorrect sale order"() {
+    given:""
+      def data = [
+        institucionContraparte: "40002",
+        empresa: "TEXTO muy grande mas de lo permitidooooooooooooooooo",
+        fechaDeOperacion: "20170306",  
+        folioOrigen: "",
+        claveDeRastreo: "1488820184033",
+        institucionOperante: "90646",
+        montoDelPago: "250.00",
+        tipoDelPago: "1",
+        tipoDeLaCuentaDelOrdenante: "",
+        nombreDelOrdenante: "TECHMINDS",
+        cuentaDelOrdenante: "",
+        rfcCurpDelOrdenante: "",
+        tipoDeCuentaDelBeneficiario: "40",
+        nombreDelBeneficiario: "Provider Soft Temoc Uno",
+        cuentaDelBeneficiario: "002180000201612076",
+        rfcCurpDelBeneficiario: "NA",
+        emailDelBeneficiario: "mailBeneficiary@mail.com",
+        tipoDeCuentaDelBeneficiario2: "",
+        nombreDelBeneficiario2: "",
+        cuentaDelBeneficiario2: "",
+        rfcCurpDelBeneficiario2: "",
+        conceptoDelPago: "PAGO A PROVEEDOR",
+        conceptoDelPago2: "",
+        claveDelCatalogoDeUsuario1: "",
+        claveDelCatalogoDeUsuario2: "",
+        claveDelPago: "",
+        referenciaDeCobranza: "",
+        referenciaNumerica: "1170306",
+        tipoDeOperación: "",
+        topologia: "",
+        usuario: "",
+        medioDeEntrega: "",
+        prioridad: "",
+        iva: "",
+        firma: "Yik10Fo+yReNXvSfeYvbIlthR2e05PETN+4WXqnOsfStHBYTo/QCRsDJCsCgaNOLfGArByCWGwDA9Lx5htWRB0KKnyZVIDE1qBrsjfb7MEY+sqCqiNDw4SAihuKEPZteG9Ej0Ku9z3R8wMyTMXq8Uu70iB7SOWY13mBcSVnt5CQ="
+      ]     
+    when:""
+      service.xmlOrderSaleRequest(data)
+    then:""
+      thrown XMLException
   }
 
 }
