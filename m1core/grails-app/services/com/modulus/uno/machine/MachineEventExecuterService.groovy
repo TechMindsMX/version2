@@ -16,9 +16,11 @@ class MachineEventExecuterService{
 
   def executeEvents(def instance){
     ArrayList<String> eventImplementerNames = grailsApplication.serviceClasses.findAll{ serviceClazz -> MachineEventImplementer.isAssignableFrom(serviceClazz.clazz) }*.propertyName
-    
+
     eventImplementerNames.each{ eventImplementerName ->
-      EventImplementer eventImplementer = new EventImplementer(eventImplementerName:eventImplementerName,instance:instance)
+      EventImplementer eventImplementer = new EventImplementer(eventImplementerName:eventImplementerName,
+                                                               instanceClassName:instance.class.simpleName,
+                                                               instanceId:instance.id)
       machineEventExecuterActorService.send(eventImplementer)
     }
 
