@@ -331,7 +331,7 @@ class NotifyService {
 
   private buildParamsEmailMap(def order, def fieldsEmail){
     def emailParamsMap=[:]
-    fieldsEmail.each{ p -> emailParamsMap."$p" = order."$p"}
+    fieldsEmail.each{ p -> emailParamsMap."$p" = order."$p" ? order."$p".toString() : ""}
     emailParamsMap
   }
 
