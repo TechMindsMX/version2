@@ -12,6 +12,8 @@ class NotifyServiceSpec extends Specification {
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
   CorporateService corporateService = Mock(CorporateService)
 
+  static final URL = "makingdevs-qa.modulusuno.com"
+
   def setup(){
     service.grailsApplication = grailsApplication
     service.corporateService = corporateService
@@ -31,7 +33,7 @@ class NotifyServiceSpec extends Specification {
     corporate.addToCompanies(company)
     corporate.save()
   and:
-    corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+    corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
   when:"we extract the params"
     def params = service.parametersForDepositOrder(depositOrder, status)
   then:"we should get"
@@ -48,13 +50,13 @@ class NotifyServiceSpec extends Specification {
       ]
 
   expectedParams <<[
-    [id:1, amount:10000, status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amount:10000, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amount:10000, status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}" ],
-    [id:1, amount:10000, status:"RECHAZADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amount:10000, status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amount:10000, status:"CANCELADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amount:10000, status:"CONCILIADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+    [id:"1", amount:"10000", status:"CREADA", url:URL],
+    [id:"1", amount:"10000", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:URL],
+    [id:"1", amount:"10000", status:"AUTORIZADA", url:URL ],
+    [id:"1", amount:"10000", status:"RECHAZADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
+    [id:"1", amount:"10000", status:"EJECUTADA", url:URL],
+    [id:"1", amount:"10000", status:"CANCELADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
+    [id:"1", amount:"10000", status:"CONCILIADA", url:URL]
   ]
   }
 
@@ -74,7 +76,7 @@ class NotifyServiceSpec extends Specification {
       corporate.addToCompanies(company)
       corporate.save()
     and:
-      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
       def params = service.prepareParametersToSendForSaleOrder(saleOrder, status)
     then:"we should get"
@@ -93,16 +95,16 @@ class NotifyServiceSpec extends Specification {
       SaleOrderStatus.CANCELACION_EJECUTADA
     ]
     expectedParams << [
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"RECHAZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PAGADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, clientName:"PatitoAC", rfc:"MDE130712JA6", status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELADA POR AUTORIZAR", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELACION AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake", status:"CANCELACION EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+      [id:"1", clientName:"PatitoAC", rfc:"MDE130712JA6", status:"CREADA", url:URL],
+      [id:"1", clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:URL],
+      [id:"1", clientName:"PatitoAC", rfc:"MDE130712JA6", status:"AUTORIZADA", url:URL],
+      [id:"1", rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), comments:"fake", status:"RECHAZADA", url:URL],
+      [id:"1", clientName:"PatitoAC", rfc:"MDE130712JA6", status:"PAGADA", url:URL],
+      [id:"1", clientName:"PatitoAC", rfc:"MDE130712JA6", status:"EJECUTADA", url:URL],
+      [id:"1", rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), comments:"fake", status:"CANCELADA", url:URL],
+      [id:"1", rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), comments:"fake", status:"CANCELADA POR AUTORIZAR", url:URL],
+      [id:"1", rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), comments:"fake", status:"CANCELACION AUTORIZADA", url:URL],
+      [id:"1", rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), comments:"fake", status:"CANCELACION EJECUTADA", url:URL]
     ]
    }
 
@@ -120,7 +122,7 @@ class NotifyServiceSpec extends Specification {
       corporate.addToCompanies(company)
       corporate.save()
     and:
-      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
     def params = service.parametersForCashOutOrder(cashOutOrder, status)
     then:"we should get"
@@ -137,13 +139,13 @@ class NotifyServiceSpec extends Specification {
       ]
 
     expectedParams <<[
-      [id:1, amount:9999, status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:9999, status:"EN PROCESO", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:9999, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:9999, status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:9999, status:"RECHAZADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:9999, status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:9999, status:"CANCELADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+      [id:"1", amount:"9999", status:"CREADA", url:URL],
+      [id:"1", amount:"9999", status:"EN PROCESO", url:URL],
+      [id:"1", amount:"9999", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:URL],
+      [id:"1", amount:"9999", status:"AUTORIZADA", url:URL],
+      [id:"1", amount:"9999", status:"RECHAZADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
+      [id:"1", amount:"9999", status:"EJECUTADA", url:URL],
+      [id:"1", amount:"9999", status:"CANCELADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL]
       ]
   }
 
@@ -161,7 +163,7 @@ class NotifyServiceSpec extends Specification {
       corporate.addToCompanies(company)
       corporate.save()
     and:
-      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
     def params = service.parametersForPurchaseOrder(purchaseOrder, status)
     then:"we should get"
@@ -176,12 +178,12 @@ class NotifyServiceSpec extends Specification {
       PurchaseOrderStatus.CANCELADA
       ]
     expectedParams <<[
-      [id:1, providerName:"Fake Inc", status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, providerName:"Fake Inc", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, providerName:"Fake Inc", status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"RECHAZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}" ],
-      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"PAGADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO, status:"CANCELADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+      [id:"1", providerName:"Fake Inc", status:"CREADA", url:URL],
+      [id:"1", providerName:"Fake Inc", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:URL],
+      [id:"1", providerName:"Fake Inc", status:"AUTORIZADA", url:URL],
+      [id:"1", providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), status:"RECHAZADA", url:URL ],
+      [id:"1", providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), status:"PAGADA", url:URL],
+      [id:"1", providerName:"Fake Inc", rejectComment:"Fake", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), status:"CANCELADA", url:URL]
     ]
   }
 
@@ -199,7 +201,7 @@ class NotifyServiceSpec extends Specification {
       corporate.addToCompanies(company)
       corporate.save()
     and:
-      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
     def params = service.parametersForLoanOrder(loanOrder, status)
     then:"we should get"
@@ -216,14 +218,14 @@ class NotifyServiceSpec extends Specification {
       LoanOrderStatus.CANCELED
     ]
     expectedParams <<[
-      [id:1, amount:88888, status:"CREADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:88888, status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:88888, status:"AUTORIZADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:88888, status:"EJECUTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:88888, status:"APROBADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:88888, status:"ACEPTADA", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:88888, status:"RECHAZADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-      [id:1, amount:88888, status:"CANCELADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+      [id:"1", amount:"88888", status:"CREADA", url:URL],
+      [id:"1", amount:"88888", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:URL],
+      [id:"1", amount:"88888", status:"AUTORIZADA", url:URL],
+      [id:"1", amount:"88888", status:"EJECUTADA", url:URL],
+      [id:"1", amount:"88888", status:"APROBADA", url:URL],
+      [id:"1", amount:"88888", status:"ACEPTADA", url:URL],
+      [id:"1", amount:"88888", status:"RECHAZADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
+      [id:"1", amount:"88888", status:"CANCELADA", rejectComment:"Mentiroso", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL]
 ]
   }
 
@@ -241,7 +243,7 @@ class NotifyServiceSpec extends Specification {
       corporate.addToCompanies(company)
       corporate.save()
     and:
-      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
     def params = service.parametersForLoanPaymentOrder(loanPaymentOrder, status)
     then:"we should get"
@@ -256,12 +258,12 @@ class NotifyServiceSpec extends Specification {
     LoanPaymentOrderStatus.CANCELED
     ]
     expectedParams <<[
-    [id:1, amountInterest:10000, status:"CREADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amountInterest:10000, status:"PUESTA EN ESPERA DE SER AUTORIZADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amountInterest:10000, status:"AUTORIZADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amountInterest:10000, status:"RECHAZADA", amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amountInterest:10000, status:"EJECUTADA", amountIvaInterest:20000, amountToCapital:30000, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    [id:1, amountInterest:10000, status:"CANCELADA", amountIvaInterest:20000, amountToCapital:30000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO, url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+    [id:"1", amountInterest:"10000", status:"CREADA", amountIvaInterest:"20000", amountToCapital:"30000", url:URL],
+    [id:"1", amountInterest:"10000", status:"PUESTA EN ESPERA DE SER AUTORIZADA", amountIvaInterest:"20000", amountToCapital:"30000", url:URL],
+    [id:"1", amountInterest:"10000", status:"AUTORIZADA", amountIvaInterest:"20000", amountToCapital:"30000", url:URL],
+    [id:"1", amountInterest:"10000", status:"RECHAZADA", amountIvaInterest:"20000", amountToCapital:"30000", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
+    [id:"1", amountInterest:"10000", status:"EJECUTADA", amountIvaInterest:"20000", amountToCapital:"30000", url:URL],
+    [id:"1", amountInterest:"10000", status:"CANCELADA", amountIvaInterest:"20000", amountToCapital:"30000", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL]
 ]
      }
 
@@ -279,7 +281,7 @@ class NotifyServiceSpec extends Specification {
     feesReceipt.company = company
     feesReceipt.save(validate:false)
     and:
-      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
     def params = service.parametersForFeesReceipt(feesReceipt, status, company)
     then:"we should get"
@@ -294,12 +296,12 @@ class NotifyServiceSpec extends Specification {
     FeesReceiptStatus.RECHAZADA
     ]
     expectedParams <<[
-    ['id':1, 'company':'apple', 'status':'CREADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    ['id':1, 'company':'apple', 'status':'PUESTA EN ESPERA DE SER AUTORIZADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    ['id':1, 'company':'apple', 'status':'AUTORIZADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    ['id':1, 'company':'apple', 'status':'EJECUTADA', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    ['id':1, 'company':'apple', 'status':'CANCELADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO, 'comments':'fake', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"],
-    ['id':1, 'company':'apple', 'status':'RECHAZADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO, 'comments':'fake', 'url':"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+    ['id':"1", 'company':'apple', 'status':'CREADA', 'url':URL],
+    ['id':"1", 'company':'apple', 'status':'PUESTA EN ESPERA DE SER AUTORIZADA', 'url':URL],
+    ['id':"1", 'company':'apple', 'status':'AUTORIZADA', 'url':URL],
+    ['id':"1", 'company':'apple', 'status':'EJECUTADA', 'url':URL],
+    ['id':"1", 'company':'apple', 'status':'CANCELADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO.toString(), 'comments':'fake', 'url':URL],
+    ['id':"1", 'company':'apple', 'status':'RECHAZADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO.toString(), 'comments':'fake', 'url':URL]
     ]
   }
 
@@ -319,15 +321,15 @@ class NotifyServiceSpec extends Specification {
       corporate.addToCompanies(company)
       corporate.save()
     and:
-      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
     def paramsProvider = service.parametersForBusinessEntity(provider, company)
     def paramsClient = service.parametersForBusinessEntity(client, company)
     def paramsEmployee = service.parametersForBusinessEntity(employee, company)
     then:"we should get"
-    paramsProvider == ['id':1, 'rfc':'abc123456', company:"PAtitoABC", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
-    paramsClient == ['id':2, 'rfc':'pasc123456', company:"PAtitoABC", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
-    paramsEmployee == ['id':3, 'rfc':'sara123456', company:"PAtitoABC", url:"makingdevs${System.env['DOMAIN_BASE_URL']}"]
+    paramsProvider == ['id':"1", 'rfc':'abc123456', company:"PAtitoABC", url:URL]
+    paramsClient == ['id':"2", 'rfc':'pasc123456', company:"PAtitoABC", url:URL]
+    paramsEmployee == ['id':"3", 'rfc':'sara123456', company:"PAtitoABC", url:URL]
     }
 
   void "Get parameters for build params when we need confirm account or password recovery"(){
