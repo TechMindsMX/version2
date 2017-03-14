@@ -1,6 +1,10 @@
 package com.modulus.uno
 
+import com.stp.h2h.CryptoHandler.STPCryptoHandler
+
 class SignService {
+
+  def grailsApplication
 
   def generateSign(Map data){
     def listKeys = ["institucionContraparte","empresa",
@@ -18,11 +22,21 @@ class SignService {
     "referenciaDeCobranza","referenciaNumerica",
     "tipoDeOperación","topologia","usuario",
     "medioDeEntrega","prioridad","iva"]
-    if (!(listKeys == data*.key.intersect(listKeys)))
+    if (!(listKeys == data*.key.intersect(listKeys))){
       throw new SignException("Datos faltantes para la generación de la firma")
+    }
     def sign = listKeys.collect{ String key ->
       data."$key"
     }.join("|")
     "||${sign}||"
   }
+
+  def encodeSign(String sign){
+    def jks = grailsApplication.config.stp.jks
+    def username = ""
+    def password = ""
+    def cripto = new STPCryptoHandler()
+    cripto.sign(jks, password, username, sign)
+  }
+
 }
