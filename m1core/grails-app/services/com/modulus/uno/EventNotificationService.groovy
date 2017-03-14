@@ -6,8 +6,9 @@ import com.modulus.uno.machine.MachineEventImplementer
 class EventNotificationService implements MachineEventImplementer {
 
   NotifyService notifyService 
+  def grailsApplication
 
-  void executeEvent(def instance) {
+  void executeEvent(String className,Long instanceId) {
     log.debug("Sending the email...")
   }
 
