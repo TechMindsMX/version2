@@ -45,6 +45,44 @@ class RestService {
 
   def sendCommandWithAuth(MessageCommand message, String template){
     log.info "CALLING Modulusuno service: ${template}"
+    log.debug "*"*30
+    def data = [
+        institucionContraparte: message.bankCode,
+        empresa: "TECHMINDS", alias empresa
+        fechaDeOperacion: new Date().format("yyyyMMdd"),  
+        folioOrigen: "",
+        claveDeRastreo: new Date().timestap(),
+        institucionOperante: "90646",
+        montoDelPago: message.amount,
+        tipoDelPago: "1",
+        tipoDeLaCuentaDelOrdenante: "",
+        nombreDelOrdenante: "TECHMINDS",
+        cuentaDelOrdenante: "",
+        rfcCurpDelOrdenante: "",
+        tipoDeCuentaDelBeneficiario: "40",
+        nombreDelBeneficiario: "Provider Soft Temoc Uno",
+        cuentaDelBeneficiario: message.clabe,
+        rfcCurpDelBeneficiario: "NA",
+        emailDelBeneficiario: "mailBeneficiary@mail.com",
+        tipoDeCuentaDelBeneficiario2: "",
+        nombreDelBeneficiario2: "",
+        cuentaDelBeneficiario2: "",
+        rfcCurpDelBeneficiario2: "",
+        conceptoDelPago: message.concept,
+        conceptoDelPago2: "",
+        claveDelCatalogoDeUsuario1: "",
+        claveDelCatalogoDeUsuario2: "",
+        claveDelPago: "",
+        referenciaDeCobranza: "",
+        referenciaNumerica: "1170306",
+        tipoDeOperación: "",
+        topologia: "",
+        usuario: "",
+        medioDeEntrega: "",
+        prioridad: "",
+        iva: "",
+      ]    
+    log.debug message.properties.toString()
     String token = obtainingTokenFromModulusUno()
     callingModulusUno(message,template,token)
   }
