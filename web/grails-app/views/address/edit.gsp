@@ -7,11 +7,11 @@
   </head>
   <body>
     <div class="page-title">
-      <h1><g:message code="company.show"/></h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-        <li class="active">Edición de Dirección</b></li>
-      </ol>
+      <h1>
+        <i class="fa fa-newspaper-o fa-3x"></i>
+        <g:message code="address.edit.label"/>
+        <small>${businessEntity}</small>
+      </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
@@ -44,7 +44,7 @@
             </g:form>
           </div>
           <g:if test="${relation}">
-            <g:link controller="businessEntity" action="show" id="${businessEntityId}" class="btn btn-default">
+            <g:link controller="businessEntity" action="show" id="${businessEntity.id}" class="btn btn-default">
               Regresar
             </g:link>
           </g:if>

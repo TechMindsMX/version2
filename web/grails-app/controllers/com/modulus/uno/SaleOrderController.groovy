@@ -94,6 +94,7 @@ class SaleOrderController {
     model.ieps = product.ieps
     model.iva = product.iva
     model.unit = product.unitType.name()
+    model.currency = product.currencyType.name()
     render model as JSON
   }
 
@@ -107,6 +108,7 @@ class SaleOrderController {
     model.ieps = product.ieps
     model.iva = product.iva
     model.unit = product.unitType.name()
+    model.currency = product.currencyType.name()
     render model as JSON
   }
 
@@ -151,8 +153,23 @@ class SaleOrderController {
     response.outputStream << file
   }
 
-  def save() {
-    def saleOrder = saleOrderService.createSaleOrderWithAddress(params)
+  def save(SaleOrderCommand saleOrderCommand) {
+    log.info "Creating a sale order: ${saleOrderCommand.dump()}"
+    if (!saleOrderCommand) {
+      transactionStatus.setRollbackOnly()
+      notFound()
+      return
+    }
+
+    SaleOrder saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
+    if (saleOrder.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      flash.message = "No se pudo crear la orden de venta"
+      redirect action:'create'
+    }
+
+    saleOrder.save flush:true
+
     if (saleOrder.id) {
       redirect action:'show', id:saleOrder.id
     } else {

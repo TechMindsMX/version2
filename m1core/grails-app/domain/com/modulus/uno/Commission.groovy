@@ -4,7 +4,7 @@ class Commission {
 
   BigDecimal fee = 0.00
   BigDecimal percentage = 0.00
-  CommissionType type = CommissionType.VENTA
+  CommissionType type = CommissionType.FACTURA
 
   static belongsTo = [company:Company]
 

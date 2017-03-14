@@ -6,6 +6,7 @@ import wslite.rest.*
 class RestService {
 
   def grailsApplication
+
   WsliteRequestService wsliteRequestService
 
   String facturacionUrl = H.grailsApplication.config.modulus.facturacionUrl
@@ -183,6 +184,24 @@ class RestService {
       callback {
         type ContentType.JSON
         text groovy.json.JsonOutput.toJson(message)
+      }
+    }.doit()
+    response
+  }
+
+  def updateFilesForInvoice(def bodyMap) {
+    log.info "Calling Service : Update files to stamp"
+    log.info "Path: ${facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
+    def endpoint = "${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl endpoint
+      method HTTPMethod.POST
+      callback {
+        multipart "cer", bodyMap.cer.bytes, bodyMap.cer.contentType, bodyMap.cer.originalFilename
+        multipart "key", bodyMap.key.bytes, bodyMap.key.contentType, bodyMap.key.originalFilename
+        multipart "logo", bodyMap.cer.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
+        multipart "password", bodyMap.password.bytes
+        multipart "certNumber", bodyMap.certNumber.bytes
       }
     }.doit()
     response

@@ -2,8 +2,7 @@
 <div class="portlet portlet-blue">
   <div class="portlet-heading">
     <div class="portlet-title">
-      <h4>Archivos para Facturacion</h4>
-      <h6>Se deberan de subir los archivos *.key, *.cer y logo</h6>
+      <h4>Archivos para Facturación</h4>
     </div>
     <div class="clearfix"></div>
   </div>
@@ -15,9 +14,9 @@
           <input type="file" required="true" class="form-control" name="key" />
           <label>Archivo .cer</label>
           <input type="file" required="true" class="form-control" name="cer" />
-          <label>Numero de Certificado <small><a href="https://portalsat.plataforma.sat.gob.mx/RecuperacionDeCertificados/">Más Informacion</a></small></label>
+          <label>Número de Certificado <small><a href="https://portalsat.plataforma.sat.gob.mx/RecuperacionDeCertificados/">Más Información</a></small></label>
           <input type="text" required="true" class="form-control" name="numCert" />
-          <label>Logotipo <small>(Solo se acepta archivos *.png con dimenciones 254 × 101)</small></label>
+          <label>Logotipo <small>(Solo se acepta archivos *.png con dimensiones 254 × 101)</small></label>
           <input type="file" required="true" class="form-control" name="logo" accept="image/png" />
           <label>Password</label>
           <input type="password" required="true" class="form-control" name="password" />
@@ -33,33 +32,36 @@
           <span class="label label-success">
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
           </span>
-          1.- Archivo .key
+          Archivo .key
         </li>
         <li class="text-primary">
           <span class="label label-success">
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
           </span>
-          2.- Archivo .cer
+          Archivo .cer
         </li>
         <li class="text-primary">
           <span class="label label-success">
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
           </span>
-          3.- Logotipo
+          Logotipo
         </li>
         <li class="text-primary">
           <span class="label label-success">
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
           </span>
-          4.- Password del Certificado
+          Password del Certificado
          </li>
          <li class="text-primary">
            <span class="label label-success">
              <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
            </span>
-           5.- Numero de Certificado
+           Número de Certificado
          </li>
        </ul>
+       <div class="text-right">
+         <g:link class="btn btn-primary" action="changeStampDocuments" id="${company.id}">Cambiar</g:link>
+       </div>
       </g:else>
     </div>
   </div>

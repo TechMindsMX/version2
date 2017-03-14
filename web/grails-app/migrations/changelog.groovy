@@ -13,6 +13,9 @@ databaseChangeLog = {
   include file: 'initialize-uuid-for-existing-fees-receipt.groovy'
   include file: 'adding-unique-to-variable-of-corporate.groovy'
   include file: 'adding-columns-dates-and-status-to-stp-deposit.groovy'
+  include file: 'updating-type-venta-to-factura-in-commission.groovy'
   include file: 'adding-column-payment-method-to-sale-order.groovy'
-    include file: 'adding-column-discount-to-sale-order-item.groovy'
+  include file: 'adding-column-alias-stp-to-modulus-uno-account.groovy'
+  include file: 'adding-column-discount-to-sale-order-item.groovy'
+  include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
 }

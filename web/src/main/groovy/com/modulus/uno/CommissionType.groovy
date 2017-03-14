@@ -1,5 +1,5 @@
 package com.modulus.uno
 
 enum CommissionType {
-  VENTA, DEPOSITO, PRESTAMO
+  FACTURA, DEPOSITO, PRESTAMO, PAGO
 }

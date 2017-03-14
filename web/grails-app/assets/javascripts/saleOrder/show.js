@@ -32,7 +32,7 @@ var options = {
             return false;
           } else {
             if(data.sku!==undefined){$('#sku').val(data.sku);}
-            if(data.price!==undefined){$('#price').val(data.price.toFixed(2));}
+            if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}//data.price.toFixed(2)
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
             if(data.ieps!==undefined){$('#ieps').val(data.ieps.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
@@ -86,7 +86,7 @@ var optionsBySku = {
             return false;
           } else {
             if(data.productName!==undefined){$('#product-name').val(data.productName);}
-            if(data.price!==undefined){$('#price').val(data.price.toFixed(2));}
+            if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
             if(data.ieps!==undefined){$('#ieps').val(data.ieps.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
@@ -132,7 +132,7 @@ $('#products').on('blur',function(){
         return false;
       } else {
         if(data.sku!==undefined){$('#sku').val(data.sku);}
-        if(data.price!==undefined){$('#price').val(data.price.toFixed(2));}
+        if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}
         if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
         if(data.ieps!==undefined){$('#ieps').val(data.ieps.toFixed(2));}
         if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
@@ -149,6 +149,21 @@ $('#products').on('blur',function(){
     return false;
   }
 });
+
+function caculatePriceWithCurrency(prodPrice, prodCurrency) {
+  if (($("#saleCurrency").val()=='MXN' && prodCurrency=='PESOS')
+     || ($("#saleCurrency").val()=='USD' && prodCurrency=='USD')) {
+    return prodPrice
+  }
+
+  if (($("#saleCurrency").val()=='MXN' && prodCurrency=='USD')) {
+    return 0
+  }
+
+  if (($("#saleCurrency").val()=='USD' && prodCurrency=='PESOS')) {
+    return (prodPrice / $("#saleChangeType").val()).toFixed(2)
+  }
+}
 
 function calculatePriceWithDiscount() {
   return $("#price").val() - $("#price").val()*($("#discount").val()/100)
@@ -203,3 +218,16 @@ $("#btnExecute").click( function() {
     $("#executeSale").submit()
   }
 )
+
+$('#product-name').keypress(function (e) {
+    var regex = new RegExp("^[a-zA-Z0-9 ñÑ\s\+\-.#$%*();:]$")
+    var str = String.fromCharCode(!e.charCode ? e.which : e.charCode)
+    if (regex.test(str)) {
+      return true
+    }
+
+    e.preventDefault()
+    return false
+  }
+)
+

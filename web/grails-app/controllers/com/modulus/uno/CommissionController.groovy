@@ -79,16 +79,21 @@ class CommissionController {
 
     if (commission.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      respond commission.errors, view:'edit'
+      respond commission.errors, view:'edit', model:[company:commission.company]
       return
     }
 
+    if (commissionTypeAlreadyExists(commission)) {
+      transactionStatus.setRollbackOnly()
+      respond commission, view:'edit', model:[company:commission.company]
+      return
+    }
 
     commission.save flush:true
 
     request.withFormat {
       form multipartForm {
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'commission.label', default: 'Commission'), commission.id])
+        flash.message = message(code: 'commission.updated.message')
         redirect commission
       }
       '*'{ respond commission, [status: OK] }
@@ -114,6 +119,10 @@ class CommissionController {
       }
       '*'{ render status: NO_CONTENT }
     }
+  }
+
+  private Commission commissionTypeAlreadyExists(Commission commission) {
+    Commission.findByCompanyAndTypeAndIdNotEqual(commission.company, commission.type, commission.id)
   }
 
   protected void notFound() {

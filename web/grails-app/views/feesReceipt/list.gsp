@@ -8,18 +8,8 @@
   <body>
     <div class="page-title">
       <h1>
-        <i class="icon-recibo fa-3x">
-        <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
-          <i class="icon-recibo fa-3x"></i>Recibos de honorarios<small><g:message code="feesReceipt.list.label" /></small>
-        </sec:ifAnyGranted>
-        <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR">
-          </i>Operaciones | Recibo de honorarios<small><g:message code="feesReceipt.list.label" /></small>
-        </sec:ifAnyGranted>
+       <i class="icon-recibo fa-3x"></i>Recibos de honorarios<small><g:message code="feesReceipt.list.label" /></small>
       </h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-        <li class="active">Órdenes de Recibo de Honorarios</li>
-      </ol>
     </div>
 
     <div class="row">

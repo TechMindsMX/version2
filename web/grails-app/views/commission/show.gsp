@@ -7,11 +7,11 @@
   </head>
   <body>
     <div class="page-title">
-      <h1><g:message code="commission.show.label" /></h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañia</li>
-        <li class="active">Información de la Comisión</b></li>
-      </ol>
+      <h1>
+        <i class="fa fa-info-circle fa-3x"></i>
+        <g:message code="commission.show.label" />
+        <small>${commission.company}</small>
+      </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
@@ -41,9 +41,7 @@
             </div>
             <div class="form-group">
               <label><g:message code="commission.company"/>:</label>
-              <g:link controller="company" action="show" id="${commission.company.id}">
-                ${commission.company}
-              </g:link>
+              ${commission.company}
             </div>
             <g:form resource="${this.commission}" method="DELETE">
             <fieldset class="buttons">
@@ -56,6 +54,5 @@
       </div>
     </div>
     <g:link class="list btn btn-default" action="index" params='[companyId:commission.company.id]'><g:message code="commission.list.label" args="[entityName]" /></g:link>
-    <g:link class="create btn btn-default" action="create" params='[companyId:commission.company.id]'><g:message code="commission.create.label" args="[entityName]"/></g:link>
   </body>
 </html>
