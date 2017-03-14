@@ -1,6 +1,6 @@
 package com.modulus.uno.machine
 
-interface MachineEvent {
+interface MachineEventImplementer {
 
   void executeEvent(def instance);
 
