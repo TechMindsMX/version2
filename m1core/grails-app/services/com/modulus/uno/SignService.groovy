@@ -33,10 +33,10 @@ class SignService {
 
   def encodeSign(String sign){
     def jks = grailsApplication.config.stp.jks
-    def username = ""
-    def password = ""
+    def username = grailsApplication.config.stp.username
+    def password = grailsApplication.config.stp.password
     def cripto = new STPCryptoHandler()
-    cripto.sign(jks, password, username, sign)
+    cripto.sign(jks, password, username, sign).replaceAll("\n", "")
   }
 
 }
