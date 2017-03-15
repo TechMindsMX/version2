@@ -2,14 +2,14 @@ package com.modulus.uno
 
 class NotificationForState {
 
-  def stateMachine
-  Long groupNotificationId
-  def orderClass
+  Long groupNotification
+  Long stateMachine
+  String orderClass
 
   static constraints = {
     stateMachine blank:false
-    users blank: false
-    name blank: false
+    groupNotification blank: false
+    orderClass blank:false
   }
 
 }
