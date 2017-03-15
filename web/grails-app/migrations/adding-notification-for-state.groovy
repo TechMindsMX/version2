@@ -1,9 +1,8 @@
 databaseChangeLog = {
-
-  changeSet(author: "makingdevs (generated)", id: "1489422143942-1") {
-    createTable(tableName: "notificacion_for_state") {
+  changeSet(author: "makingdevs (generated)", id: "1489602960634-1") {
+    createTable(tableName: "notification_for_state") {
       column(autoIncrement: "true", name: "id", type: "BIGINT") {
-        constraints(primaryKey: "true", primaryKeyName: "notificacion_for_statePK")
+        constraints(primaryKey: "true", primaryKeyName: "notification_for_statePK")
       }
 
       column(name: "version", type: "BIGINT") {
