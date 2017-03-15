@@ -23,10 +23,12 @@ class TelephoneController {
   }
 
   def createForCompany(){
-    respond new Telephone()
+    respond new Telephone(), model:[company:Company.get(session.company)]
   }
 
+  @Transactional
   def save(Telephone telephone) {
+    log.info "Saving telephone: ${telephone.dump()}"
     if (telephone == null) {
       transactionStatus.setRollbackOnly()
       notFound()
@@ -44,7 +46,9 @@ class TelephoneController {
     render view:"/user/show", model:[user:user,company:session.company]
   }
 
+  @Transactional
   def saveForCompany(Telephone telephone) {
+    log.info "Saving telephone: ${telephone.dump()}"
     if (telephone == null) {
       transactionStatus.setRollbackOnly()
       notFound()
@@ -52,11 +56,11 @@ class TelephoneController {
     }
 
     if (telephone.hasErrors()) {
-      respond telephone.errors, view:'create'
+      respond telephone.errors, view:'create', model:[company:Company.get(session.company)]
       return
     }
 
-    Company company = Company.findById(session.company.toLong())
+    Company company = Company.get(session.company)
     telephoneService.saveForCompany(telephone, company)
 
     redirect(action:"show", controller:"company", id:"${session.company}")
@@ -68,7 +72,7 @@ class TelephoneController {
   }
 
   def editForCompany(Telephone telephone) {
-    respond telephone
+    respond telephone, model:[company:Company.get(session.company)]
   }
 
   @Transactional
@@ -98,6 +102,7 @@ class TelephoneController {
 
   @Transactional
   def updateForCompany(Telephone telephone) {
+    log.info "Updating telephone: ${telephone.dump()}"
     if (telephone == null) {
       transactionStatus.setRollbackOnly()
       notFound()
@@ -106,7 +111,7 @@ class TelephoneController {
 
     if (telephone.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      respond telephone.errors, view:'editForCompany'
+      respond telephone.errors, view:'editForCompany', model:[company:Company.get(session.company)]
       return
     }
 

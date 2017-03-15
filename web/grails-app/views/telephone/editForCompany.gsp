@@ -7,11 +7,11 @@
     </head>
     <body>
       <div class="page-title">
-        <h1><g:message code="telephone.company.edit" /></h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-          <li class="active"><g:message code="telephone.company.edit"/></li>
-        </ol>
+        <h1>
+          <i class="fa fa-phone fa-3x"></i>
+          <g:message code="telephone.company.edit"/>
+          <small>${company}</small>
+        </h1>
       </div>
         <div class="portlet portlet-blue">
             <div class="portlet-heading">
@@ -35,7 +35,7 @@
                         </g:eachError>
                     </ul>
                       </g:hasErrors>
-                      <g:form action="updateForCompany" id="${session.company}" method="PUT">
+                      <g:form action="updateForCompany" id="${this.telephone.id}" method="PUT">
                       <g:hiddenField name="version" value="${this.telephone?.version}" />
                       <fieldset class="form">
                         <g:render template="form"/>
