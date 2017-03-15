@@ -47,21 +47,20 @@ class RestService {
 
   def sendCommandWithAuth(MessageCommand message, String template){
     log.info "CALLING Modulusuno service: ${template}"
-    log.debug "*"*30
     def data = [
         institucionContraparte: message.bankCode,
         empresa: message.payerName,
         fechaDeOperacion: new Date().format("yyyyMMdd"),  
         folioOrigen: "",
         claveDeRastreo: new Date().toTimestamp(),
-        institucionOperante: "90646", // GA.90646
+        institucionOperante: grailsApplication.config.stp.institutionOperation,
         montoDelPago: message.amount,
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
         nombreDelOrdenante: message.payerBusinessName,
         cuentaDelOrdenante: "",
         rfcCurpDelOrdenante: "",
-        tipoDeCuentaDelBeneficiario: "40", // GA.40
+        tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
         nombreDelBeneficiario: message.beneficiary,
         cuentaDelBeneficiario: message.beneficiaryClabe,
         rfcCurpDelBeneficiario: "NA",
@@ -85,8 +84,6 @@ class RestService {
         iva: ""
       ]    
     stpService.sendPayOrder(data)
-    //String token = obtainingTokenFromModulusUno()
-    //callingModulusUno(message,template,token)
   }
 
   def obtainingTokenFromModulusUno() {
@@ -203,20 +200,6 @@ class RestService {
         multipart "logo", bodyMap.cer.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
         multipart "password", bodyMap.password.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
-      }
-    }.doit()
-    response
-  }
-
-  private def callingModulusUno(MessageCommand message,String template,String token) {
-    log.info "Calling Modulusuno service: ${template}"
-    def response = wsliteRequestService.doRequest(modulusunoUrl){
-      endpointUrl "${template}"
-      headers Authorization: "Bearer ${token}"
-      method HTTPMethod.POST
-      callback {
-        type ContentType.JSON
-        text groovy.json.JsonOutput.toJson(message)
       }
     }.doit()
     response
