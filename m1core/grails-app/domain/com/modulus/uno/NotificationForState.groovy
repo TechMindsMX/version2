@@ -1,6 +1,6 @@
 package com.modulus.uno
 
-class NotificacionForState {
+class NotificationForState {
 
   def stateMachine
   Long groupNotificationId
