@@ -2,7 +2,7 @@ package com.modulus.uno
 
 import grails.validation.Validateable
 
-class SaleOrderSTP implements Validateable {
+class PayOrderSTP implements Validateable {
 
   String claveDeRastreo
   String conceptoDelPago
@@ -14,7 +14,7 @@ class SaleOrderSTP implements Validateable {
   String folioOrigen
   String institucionContraparte
   String institucionOperante
-  String montoDelPago
+  BigDecimal montoDelPago
   String nombreDelBeneficiario
   String nombreDelOrdenante
   String referenciaNumerica
@@ -26,6 +26,7 @@ class SaleOrderSTP implements Validateable {
 
   String firma
 
+  //Valores no documentados en STP pero necesarios para la firma
   String tipoDeCuentaDelBeneficiario2
   String nombreDelBeneficiario2 
   String cuentaDelBeneficiario2
@@ -55,7 +56,9 @@ class SaleOrderSTP implements Validateable {
     folioOrigen blank:true, nullable:false, maxSize:50
     institucionContraparte blank:false, nullable:false, maxSize:5
     institucionOperante blank:false, nullable:false, maxSize:5
-    montoDelPago blank:false, nullable:false //verify
+    montoDelPago validator: {
+      if (!(it.scale() == 2) || !(it.precision() <= 14)) return false
+    }
     nombreDelBeneficiario blank:false, nullable:false, maxSize:120
     nombreDelOrdenante blank:true, nullable:false, maxSize:120
     referenciaNumerica blank:false, nullable:false, maxSize:7

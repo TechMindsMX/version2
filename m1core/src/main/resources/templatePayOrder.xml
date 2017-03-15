@@ -1,4 +1,4 @@
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:h2h="http://h2h.integration.spei.enlacefi.lgec.com/">
+<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:h2h='http://h2h.integration.spei.enlacefi.lgec.com/'>
   <soapenv:Header/>
   <soapenv:Body>
     <h2h:registraOrden>
