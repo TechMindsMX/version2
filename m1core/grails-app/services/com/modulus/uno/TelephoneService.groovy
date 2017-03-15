@@ -9,8 +9,10 @@ class TelephoneService {
   }
 
   def saveForCompany(Telephone telephone, Company company) {
+    log.info "Adding telephone: ${telephone} to company: ${company}"
     company.addToTelephones(telephone)
     company.save()
+    log.info "Telephones for company: ${company.telephones}"
     telephone
   }
 
