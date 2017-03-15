@@ -15,6 +15,6 @@ class StpService {
     def result = requestSOAPService.doRequest(grailsApplication.config.stp.urls.payOrder){
       xml xmlPayOrder
     }.doit()
-    result
+    result.envelope.text()
   }
 }
