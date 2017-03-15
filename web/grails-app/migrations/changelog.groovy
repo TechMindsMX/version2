@@ -20,4 +20,5 @@ databaseChangeLog = {
   include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
   include file: 'removing-state-relation-with-log.groovy'
   include file: 'adding-uuid-to-machine.groovy'
+  include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
 }

@@ -43,7 +43,7 @@ class SaleOrder {
     note nullable:true, size:1..300
     pdfTemplate nullable:true
     currency nullable:false
-    changeType nullable:false
+    changeType nullable:true
   }
 
   BigDecimal getTotalIVA(){

@@ -154,14 +154,8 @@ function caculatePriceWithCurrency(prodPrice, prodCurrency) {
   if (($("#saleCurrency").val()=='MXN' && prodCurrency=='PESOS')
      || ($("#saleCurrency").val()=='USD' && prodCurrency=='USD')) {
     return prodPrice
-  }
-
-  if (($("#saleCurrency").val()=='MXN' && prodCurrency=='USD')) {
+  } else {
     return 0
-  }
-
-  if (($("#saleCurrency").val()=='USD' && prodCurrency=='PESOS')) {
-    return (prodPrice / $("#saleChangeType").val()).toFixed(2)
   }
 }
 
