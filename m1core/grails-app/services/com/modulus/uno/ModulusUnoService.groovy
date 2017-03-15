@@ -95,7 +95,8 @@ class ModulusUnoService {
       concept:"${cashOutConcept.CashOutOrder} ID:${cashOutOrder.id}",
       feeType:feeCommand.type,
       payerName:cashOutOrder.company.accounts?.first()?.aliasStp,
-      payerClabe:cashOutOrder.company.accounts?.first()?.stpClabe
+      payerClabe:cashOutOrder.company.accounts?.first()?.stpClabe,
+      payerBusinessName:cashOutOrder.company.bussinessName
     )
     restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
   }
