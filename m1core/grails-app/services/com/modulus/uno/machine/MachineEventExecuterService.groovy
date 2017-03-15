@@ -7,11 +7,14 @@ import javax.annotation.PostConstruct
 class MachineEventExecuterService{
 
   def grailsApplication
-  MachineEventExecuterActorService machineEventExecuterActorService 
+  MachineEventExecuterSupervisorService machineEventExecuterSupervisorService
+  MachineEventExecuterActorService machineEventExecuterActorService
 
   @PostConstruct 
   private def init() {
     machineEventExecuterActorService.start()
+    machineEventExecuterSupervisorService.start()
+    machineEventExecuterSupervisorService.link(machineEventExecuterActorService)
   }
 
   def executeEvents(def instance){
@@ -21,7 +24,8 @@ class MachineEventExecuterService{
       EventImplementer eventImplementer = new EventImplementer(eventImplementerName:eventImplementerName,
                                                                instanceClassName:instance.class.simpleName,
                                                                instanceId:instance.id)
-      machineEventExecuterActorService.send(eventImplementer)
+
+      machineEventExecuterSupervisorService.send(eventImplementer)
     }
 
   }
