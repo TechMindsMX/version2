@@ -134,4 +134,28 @@ class PaymentController {
     redirect action:'index'
   }
 
+  def conciliation() {
+  }
+
+  def referencedPayments() {
+    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabInvoiceWithoutPayment:""]
+    render view:"conciliation", model:[styleClasses:styleClasses]
+  }
+
+  def notReferencedPayments() {
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabInvoiceWithoutPayment:""]
+    render view:"conciliation", model:[styleClasses:styleClasses]
+  }
+
+  def conciliateInvoicesWithoutPayments() {
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabInvoiceWithoutPayment:"active"]
+    render view:"conciliation", model:[styleClasses:styleClasses]
+  }
+
+  def chooseInvoice(Payment payment) {
+    log.info "Payment: ${payment.dump()}"
+    log.info "Conciliation type: ${params.conciliationType}"
+    //llamar a service que obtenga las facturas por tipo de pago(referenciado o no referenciado) y por tipo de conciliación
+    render view:"chooseInvoiceFullPayment", model:[payment:payment]
+  }
 }
