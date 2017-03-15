@@ -1,6 +1,7 @@
 package com.modulus.uno.machine
 
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 @Transactional
 class MachineService {
@@ -80,6 +81,12 @@ class MachineService {
     currentMachine 
   }
 
+  def moveToActionAndListen(def instance,String action){
+    moveToAction(instance,action)
+    machineEventExecuterService.executeEvents(instance)
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   State moveToAction(def instance,String action){
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     Machine machine = machineryLink.machine
@@ -98,7 +105,6 @@ class MachineService {
     TrackingLog trackingLog = new TrackingLog(state:newState.name)
     machineryLink.addToTrackingLogs(trackingLog)
     machineryLink.save(failOnError:true)
-    machineEventExecuterService.executeEvents(instance)
     newState
   }
 
