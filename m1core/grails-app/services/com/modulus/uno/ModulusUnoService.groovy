@@ -9,6 +9,7 @@ class ModulusUnoService {
   def restService
   def corporateService
   def grailsApplication
+  StpService stpService
 
   static final feeType = [
     SaleOrder : "SALE_FEE",
@@ -83,22 +84,44 @@ class ModulusUnoService {
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
     }
-
     BigDecimal amount = cashOutOrder.amount.setScale(2, RoundingMode.HALF_UP)
-    CashoutCommand command = new CashoutCommand(
-      uuid:cashOutOrder.timoneUuid,
-      beneficiaryClabe:cashOutOrder.account.clabe,
-      bankCode:cashOutOrder.account.banco.bankingCode,
-      amount:amount, fee:feeCommand.amount,
-      beneficiary:cashOutOrder.company.bussinessName,
-      emailBeneficiary:getMailFromLegalRepresentatitveCompany(cashOutOrder.company),
-      concept:"${cashOutConcept.CashOutOrder} ID:${cashOutOrder.id}",
-      feeType:feeCommand.type,
-      payerName:cashOutOrder.company.accounts?.first()?.aliasStp,
-      payerClabe:cashOutOrder.company.accounts?.first()?.stpClabe,
-      payerBusinessName:cashOutOrder.company.bussinessName
-    )
-    restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
+    def data = [
+      institucionContraparte: cashOutOrder.account.banco.bankingCode,
+      empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
+      fechaDeOperacion: new Date().format("yyyyMMdd"),  
+      folioOrigen: "",
+      claveDeRastreo: new Date().toTimestamp(),
+      institucionOperante: grailsApplication.config.stp.institutionOperation,
+      montoDelPago: amount,
+      tipoDelPago: "1",
+      tipoDeLaCuentaDelOrdenante: "",
+      nombreDelOrdenante: cashOutOrder.company.bussinessName,
+      cuentaDelOrdenante: "",
+      rfcCurpDelOrdenante: "",
+      tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
+      nombreDelBeneficiario: cashOutOrder.company.bussinessName,
+      cuentaDelBeneficiario: cashOutOrder.account.clabe,
+      rfcCurpDelBeneficiario: "NA",
+      emailDelBeneficiario: getMailFromLegalRepresentatitveCompany(cashOutOrder.company),
+      tipoDeCuentaDelBeneficiario2: "",
+      nombreDelBeneficiario2: "",
+      cuentaDelBeneficiario2: "",
+      rfcCurpDelBeneficiario2: "",
+      conceptoDelPago: "${cashOutConcept.CashOutOrder} ID:${cashOutOrder.id}",
+      conceptoDelPago2: "",
+      claveDelCatalogoDeUsuario1: "",
+      claveDelCatalogoDeUsuario2: "",
+      claveDelPago: "",
+      referenciaDeCobranza: "",
+      referenciaNumerica: "1${new Date().format("yyMMdd")}",
+      tipoDeOperación: "",
+      topologia: "",
+      usuario: "",
+      medioDeEntrega: "",
+      prioridad: "",
+      iva: ""
+    ]
+    stpService.sendPayOrder(data)
   }
 
   private String getMailFromLegalRepresentatitveCompany(Company company) {
