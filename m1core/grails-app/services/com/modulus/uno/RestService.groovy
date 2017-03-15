@@ -8,6 +8,7 @@ class RestService {
   def grailsApplication
 
   WsliteRequestService wsliteRequestService
+  StpService stpService
 
   String facturacionUrl = H.grailsApplication.config.modulus.facturacionUrl
   String modulusunoUrl = H.grailsApplication.config.modulus.url
@@ -41,7 +42,7 @@ class RestService {
     wsliteRequestService.doRequest(grailsApplication.config.emailer.urlEmailer){
       method HTTPMethod.POST
       callback { json message }
-    }.doit()?.json
+    }.doit()
   }
 
   def sendCommandWithAuth(MessageCommand message, String template){
@@ -49,22 +50,22 @@ class RestService {
     log.debug "*"*30
     def data = [
         institucionContraparte: message.bankCode,
-        empresa: "TECHMINDS", alias empresa
+        empresa: message.payerName,
         fechaDeOperacion: new Date().format("yyyyMMdd"),  
         folioOrigen: "",
-        claveDeRastreo: new Date().timestap(),
-        institucionOperante: "90646",
+        claveDeRastreo: new Date().toTimestamp(),
+        institucionOperante: "90646", // GA.90646
         montoDelPago: message.amount,
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
-        nombreDelOrdenante: "TECHMINDS",
+        nombreDelOrdenante: message.payerBusinessName,
         cuentaDelOrdenante: "",
         rfcCurpDelOrdenante: "",
-        tipoDeCuentaDelBeneficiario: "40",
-        nombreDelBeneficiario: "Provider Soft Temoc Uno",
-        cuentaDelBeneficiario: message.clabe,
+        tipoDeCuentaDelBeneficiario: "40", // GA.40
+        nombreDelBeneficiario: message.beneficiary,
+        cuentaDelBeneficiario: message.beneficiaryClabe,
         rfcCurpDelBeneficiario: "NA",
-        emailDelBeneficiario: "mailBeneficiary@mail.com",
+        emailDelBeneficiario: message.emailBeneficiary,
         tipoDeCuentaDelBeneficiario2: "",
         nombreDelBeneficiario2: "",
         cuentaDelBeneficiario2: "",
@@ -75,17 +76,17 @@ class RestService {
         claveDelCatalogoDeUsuario2: "",
         claveDelPago: "",
         referenciaDeCobranza: "",
-        referenciaNumerica: "1170306",
+        referenciaNumerica: "1${new Date().format("yyMMdd")}",
         tipoDeOperación: "",
         topologia: "",
         usuario: "",
         medioDeEntrega: "",
         prioridad: "",
-        iva: "",
+        iva: ""
       ]    
-    log.debug message.properties.toString()
-    String token = obtainingTokenFromModulusUno()
-    callingModulusUno(message,template,token)
+    stpService.sendPayOrder(data)
+    //String token = obtainingTokenFromModulusUno()
+    //callingModulusUno(message,template,token)
   }
 
   def obtainingTokenFromModulusUno() {
