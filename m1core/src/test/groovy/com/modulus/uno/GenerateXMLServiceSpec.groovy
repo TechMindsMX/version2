@@ -6,7 +6,7 @@ import spock.lang.Specification
 @TestFor(GenerateXMLService)
 class GenerateXMLServiceSpec extends Specification {
 
-  void "Generate xml of order sale for request to stp"() {
+  void "Generate xml for pay order for request to stp"() {
     given:""
       def data = [
         institucionContraparte: "40002",
@@ -15,7 +15,7 @@ class GenerateXMLServiceSpec extends Specification {
         folioOrigen: "",
         claveDeRastreo: "1488820184033",
         institucionOperante: "90646",
-        montoDelPago: "250.00",
+        montoDelPago: 250.00,
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
         nombreDelOrdenante: "TECHMINDS",
@@ -46,10 +46,10 @@ class GenerateXMLServiceSpec extends Specification {
         firma: "Yik10Fo+yReNXvSfeYvbIlthR2e05PETN+4WXqnOsfStHBYTo/QCRsDJCsCgaNOLfGArByCWGwDA9Lx5htWRB0KKnyZVIDE1qBrsjfb7MEY+sqCqiNDw4SAihuKEPZteG9Ej0Ku9z3R8wMyTMXq8Uu70iB7SOWY13mBcSVnt5CQ="
       ]     
     when:""
-      def xml = service.xmlOrderSaleRequest(data)
+      def xml = service.xmlPayOrderRequest(data)
     then:""
       xml.replaceAll("\n", "").replaceAll(" ", "") == """
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:h2h="http://h2h.integration.spei.enlacefi.lgec.com/">
+        <soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:h2h='http://h2h.integration.spei.enlacefi.lgec.com/'>
           <soapenv:Header/>
           <soapenv:Body>
              <h2h:registraOrden>
@@ -68,7 +68,7 @@ class GenerateXMLServiceSpec extends Specification {
                    <rfcCurpBeneficiario>NA</rfcCurpBeneficiario>
                    <conceptoPago>PAGO A PROVEEDOR</conceptoPago>
                    <referenciaNumerica>1170306</referenciaNumerica>
-                   <firma></firma>
+                   <firma>Yik10Fo+yReNXvSfeYvbIlthR2e05PETN+4WXqnOsfStHBYTo/QCRsDJCsCgaNOLfGArByCWGwDA9Lx5htWRB0KKnyZVIDE1qBrsjfb7MEY+sqCqiNDw4SAihuKEPZteG9Ej0Ku9z3R8wMyTMXq8Uu70iB7SOWY13mBcSVnt5CQ=</firma>
                    <emailBeneficiario>mailBeneficiary@mail.com</emailBeneficiario>
                </ordenPago>
            </h2h:registraOrden>
@@ -77,7 +77,7 @@ class GenerateXMLServiceSpec extends Specification {
       """.replaceAll("\n", "").replaceAll(" ", "")
   }
 
-  void "Generate xml of incorrect sale order"() {
+  void "Generate xml of incorrect pay order"() {
     given:""
       def data = [
         institucionContraparte: "40002",
@@ -86,7 +86,7 @@ class GenerateXMLServiceSpec extends Specification {
         folioOrigen: "",
         claveDeRastreo: "1488820184033",
         institucionOperante: "90646",
-        montoDelPago: "250.00",
+        montoDelPago: 250.00,
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
         nombreDelOrdenante: "TECHMINDS",
@@ -117,7 +117,7 @@ class GenerateXMLServiceSpec extends Specification {
         firma: "Yik10Fo+yReNXvSfeYvbIlthR2e05PETN+4WXqnOsfStHBYTo/QCRsDJCsCgaNOLfGArByCWGwDA9Lx5htWRB0KKnyZVIDE1qBrsjfb7MEY+sqCqiNDw4SAihuKEPZteG9Ej0Ku9z3R8wMyTMXq8Uu70iB7SOWY13mBcSVnt5CQ="
       ]     
     when:""
-      service.xmlOrderSaleRequest(data)
+      service.xmlPayOrderRequest(data)
     then:""
       thrown XMLException
   }
