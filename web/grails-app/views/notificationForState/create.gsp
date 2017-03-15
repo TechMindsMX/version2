@@ -24,7 +24,7 @@
           <!-- BEGIN CREATE-ADDRESS -->
           <div class="content scaffold-create">
               <fieldset class="form">
-
+               <g:form controller="notificationForState" action="save">
                 <div class="row">
                   <div class="col-md-2">
                     <label class="text-right">Grupo de usuarios a notificar</label>
@@ -40,8 +40,8 @@
                     <label>Estado de la Máquina</label>
                   </div>
                   <div class="col-md-2">
-                    <g:select optionKey="name" optionValue="name"
-                                               name="machineState" from="${states}" />
+                    <g:select optionKey="id" optionValue="name"
+                                               name="state" from="${states}" />
                   </div>
                 </div>
 
@@ -52,7 +52,7 @@
                     <g:submitButton name="create" class="save btn btn-default" value="Añadir Notificación" />
                   </div>
                 </div>
-
+               </g:form>
               </fieldset>
           </div>
           <!-- END OF CREATE-ADDRESS -->
