@@ -1,13 +1,15 @@
 package com.modulus.uno.machine
 
 import grails.transaction.Transactional
+
 import groovyx.gpars.actor.DynamicDispatchActor
 
 class MachineEventExecuterSupervisorService extends DynamicDispatchActor {
 
-  SupervisedActor supervised
+  def grailsApplication
+  MachineEventExecuterActorService supervised
 
-  void link(SupervisedActor supervisedActor){
+  void link(MachineEventExecuterActorService supervisedActor){
     this.supervised = supervisedActor
   }
 
@@ -16,6 +18,10 @@ class MachineEventExecuterSupervisorService extends DynamicDispatchActor {
   }
 
   void onMessage(SupervisedException exception){
+    log.error("The actor dies with exception ${exception.message}")
+    this.supervised = new MachineEventExecuterActorService()
+    this.supervised.machineEventExecuterSupervisorService = this
+    this.supervised.grailsApplication = this.grailsApplication
     supervised.start()
   }
 
