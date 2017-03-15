@@ -13,4 +13,5 @@ class CashoutCommand implements MessageCommand {
   String emailBeneficiary
   String payerName
   String payerClabe
+  String payerBusinessName
 }
