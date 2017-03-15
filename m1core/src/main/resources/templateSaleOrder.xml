@@ -17,7 +17,7 @@
         <rfcCurpBeneficiario>$rfcCurpDelBeneficiario</rfcCurpBeneficiario>
         <conceptoPago>$conceptoDelPago</conceptoPago>
         <referenciaNumerica>$referenciaNumerica</referenciaNumerica>
-        <firma></firma>
+        <firma>$firma</firma>
         <emailBeneficiario>$emailDelBeneficiario</emailBeneficiario>
       </ordenPago>
     </h2h:registraOrden>
