@@ -15,7 +15,7 @@ class InvoiceService {
 
 
   private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
-    def datosDeFacturacion = new DatosDeFacturacion(folio: "${saleOrder.id}", metodoDePago: "${saleOrder.paymentMethod}", moneda:saleOrder.currency, tipoDeCambio:saleOrder.changeType)
+    def datosDeFacturacion = new DatosDeFacturacion(folio: "${saleOrder.id}", metodoDePago: "${saleOrder.paymentMethod}", moneda:saleOrder.currency, tipoDeCambio:saleOrder.changeType?:new BigDecimal(0))
     def emisor = new Contribuyente(datosFiscales:new DatosFiscales())
     def receptor = new Contribuyente(datosFiscales:new DatosFiscales())
     def command = new FacturaCommand(datosDeFacturacion:datosDeFacturacion, emisor:emisor, receptor:receptor)
