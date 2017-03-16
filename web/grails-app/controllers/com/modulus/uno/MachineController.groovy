@@ -20,12 +20,21 @@ class MachineController {
     [entities:machineryLinkService.getClassesWithMachineryInterface()]
   }
 
+  def show(String id){
+    def machine = Machine.findByUuid(id) 
+
+    if(!machine)
+      return response.sendError(404)
+
+    [machine:machine]
+  }
+
   def register(){
     User user =  springSecurityService.currentUser
     Corporate corporate = corporateService.findCorporateOfUser(user)
     ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
     render view:"register",model:[entities:machineryLinkService.getClassesWithMachineryInterface(),
-                               companies:companies]
+                                  companies:companies]
   }
 
   def create(){
