@@ -179,26 +179,45 @@ class ModulusUnoService {
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
     }
-
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
     String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
-    CashoutCommand command = new CashoutCommand(
-      uuid:order.company.accounts?.first()?.timoneUuid,
-      beneficiaryClabe:order.bankAccount.clabe,
-      bankCode:order.bankAccount.banco.bankingCode,
-      amount:payment.amount.setScale(2, RoundingMode.HALF_UP),
-      fee:feeCommand.amount,
-      beneficiary:order.providerName,
-      //TODO: Registrar el email de los proveedores
-      emailBeneficiary:"mailBeneficiary@mail.com",
-      concept:adjustConcept,
-      feeType:feeCommand.type,
-      payerName:order.company.accounts?.first()?.aliasStp,
-      payerClabe:order.company.accounts?.first()?.stpClabe
-    )
-    restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
-    command
-
+    def data = [
+        institucionContraparte: order.bankAccount.banco.bankingCode,
+        empresa: order.company.accounts?.first()?.aliasStp,
+        fechaDeOperacion: new Date().format("yyyyMMdd"),  
+        folioOrigen: "",
+        claveDeRastreo: new Date().toTimestamp(),
+        institucionOperante: grailsApplication.config.stp.institutionOperation,
+        montoDelPago: payment.amount.setScale(2, RoundingMode.HALF_UP),
+        tipoDelPago: "1",
+        tipoDeLaCuentaDelOrdenante: "",
+        nombreDelOrdenante: order.company.bussinessName,
+        cuentaDelOrdenante: "",
+        rfcCurpDelOrdenante: "",
+        tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
+        nombreDelBeneficiario: order.providerName,
+        cuentaDelBeneficiario: order.bankAccount.clabe,
+        rfcCurpDelBeneficiario: "NA",
+        emailDelBeneficiario: "mailBeneficiary@mail.com",
+        tipoDeCuentaDelBeneficiario2: "",
+        nombreDelBeneficiario2: "",
+        cuentaDelBeneficiario2: "",
+        rfcCurpDelBeneficiario2: "",
+        conceptoDelPago: adjustConcept,
+        conceptoDelPago2: "",
+        claveDelCatalogoDeUsuario1: "",
+        claveDelCatalogoDeUsuario2: "",
+        claveDelPago: "",
+        referenciaDeCobranza: "",
+        referenciaNumerica: "1${new Date().format("yyMMdd")}",
+        tipoDeOperación: "",
+        topologia: "",
+        usuario: "",
+        medioDeEntrega: "",
+        prioridad: "",
+        iva: ""
+    ]
+    stpService.sendPayOrder(data)
   }
 
   def generedModulusUnoAccountByCompany(Company company, String email) {
