@@ -138,8 +138,10 @@ class PaymentController {
   }
 
   def referencedPayments() {
+    Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabInvoiceWithoutPayment:""]
-    render view:"conciliation", model:[styleClasses:styleClasses]
+    Map payments = paymentService.findReferencedPaymentsForCompany(company)
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
   }
 
   def notReferencedPayments() {
@@ -152,10 +154,9 @@ class PaymentController {
     render view:"conciliation", model:[styleClasses:styleClasses]
   }
 
-  def chooseInvoice(Payment payment) {
+  def chooseInvoiceToConciliate(Payment payment) {
     log.info "Payment: ${payment.dump()}"
-    log.info "Conciliation type: ${params.conciliationType}"
     //llamar a service que obtenga las facturas por tipo de pago(referenciado o no referenciado) y por tipo de conciliación
-    render view:"chooseInvoiceFullPayment", model:[payment:payment]
+    [payment:payment]
   }
 }
