@@ -181,7 +181,7 @@
                     <div class="modal-dialog">
                       <!--Modal content -->
                       <div class="modal-content">
-                        <div class="modal-header">
+                        <div class="modal-header" align="center">
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                           <h4 class="modal-title">Información del Cliente</h4>
                         </div>
@@ -229,7 +229,7 @@
                               <div class="row">
                                 <div class="col-xs-6">
                                   <div class="form-group">
-                                    <label><input type="checkbox" value=true  id="partialPayment">    Guardar Usuario en la lista de direcciones  <span  data-toggle="tooltip" data-placement="top" title="El cliente podra ingresar un pago "class="glyphicon glyphicon-question-sign"></span></label>
+                                    <label><input type="checkbox" value=true  id="saveUser">    Guardar Usuario en la lista de direcciones  <span  data-toggle="tooltip" data-placement="top" title="El cliente podra ingresar un pago "class="glyphicon glyphicon-question-sign"></span></label>
                                   </div>
                                 </div>
                               </div>
@@ -237,8 +237,8 @@
                             </div>
                           </div>
                           <div class="row">
-                            <a href="#">Dirección de facturación</a>
-                            <div class="col-xs-12">
+                            <label id="hiddeAddress" class="col-xs-6"><span class="glyphicon glyphicon-circle-arrow-down"></span>  Dirección de facturación</label>
+                            <div class="col-xs-12" id="mainAddress" style="display:none">
                               <div class="row">
                                 <div class="col-xs-6">
                                   <div class="form-group">
@@ -291,6 +291,11 @@
                           </div>
 
                         </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                          <button type="button" class="btn btn-success" data-dismiss="modal">Guardar</button>
+                        </div>
+
                       </div>
                       <!--Fin modal Content -->
                     </div>
@@ -397,11 +402,11 @@
                   <hr>
                   <div class="row">
                     <div class="col-xs-6 left-indent">
-                      <div class="form-group"><label for="terms">Nota para el destinatario</label><textarea placeholder="Como, por ejemplo, “Gracias por su preferencia”" rows="5" class="form-control" name="notes" id="notes"></textarea><p class="help-block text-right" id="notesChars">4000</p>
+                      <div class="form-group"><label for="terms">Nota para el destinatario</label><textarea placeholder="Como, por ejemplo, “Gracias por su preferencia”" rows="5" class="form-control" name="notes" id="notes" maxlength="4000"></textarea><p class="help-block text-right" id="notesChars">4000</p>
                       </div>
                     </div>
                     <div class="col-xs-6">
-                      <div class="form-group"><label for="notes">Términos y condiciones</label><textarea placeholder="Incluir su política de devoluciones o de cancelación" rows="5" class="form-control" name="terms" id="terms"></textarea><p class="help-block text-right" id="termsChars">4000</p>
+                      <div class="form-group"><label for="notes">Términos y condiciones</label><textarea placeholder="Incluir su política de devoluciones o de cancelación" rows="5" class="form-control" name="terms" id="terms" maxlength="4000"></textarea><p class="help-block text-right" id="termsChars">4000</p>
                       </div>
                     </div>
                   </div>
@@ -418,7 +423,8 @@
           </g:form>
         </div>
       </div>
-
+      <script>
+      </script>
       <g:render template="template"/>
         <asset:javascript src="compiled-coffee-script/salesCapture/app.js" />
           <asset:javascript src="compiled-coffee-script/salesCapture/index_view_controller.js" />
