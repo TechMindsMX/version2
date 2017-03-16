@@ -7,6 +7,7 @@
 # to generate your .gitignore file.
 
 Thumbs.db
+../.DS_Store
 .DS_Store
 .gradle
 build/
