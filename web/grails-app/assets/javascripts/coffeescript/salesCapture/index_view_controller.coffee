@@ -12,7 +12,7 @@ class App.IndexViewController
     source = $(template).html()
     template = Handlebars.compile(source)
     html = template(data)
-    $(destiny).render(html)
+    $(destiny).html(html)
 
 
 
