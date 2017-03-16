@@ -208,4 +208,9 @@ class SaleOrderService {
     sql.execute("delete from sale_order_address where sale_order_addresses_id=${saleOrder.id}")
     saleOrder.delete()
   }
+
+  List<SaleOrder> findOrdersToConciliateForCompanyAndClient(Company company, String rfc) {
+    SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
+  }
+
 }
