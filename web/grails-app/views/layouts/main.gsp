@@ -93,8 +93,8 @@
               <li><g:link controller="corporate" action="addUser" id="${session.corporate.id}">Alta Usuario</g:link></li>
               <li><g:link controller="corporate" action="users" id="${session.corporate.id}">Lista de Usuarios</g:link></li>
               <li><g:link controller="corporate" action="companies" id="${session.corporate.id}">Todas las Empresas</g:link></li>
-              <li><g:link controller="machine" action="register">Crear nueva máquina</g:link></li>
               <li><g:link controller="machine" action="index">Lista de Máquinas</g:link></li>
+              <li><g:link controller="machine" action="register">Crear nueva máquina</g:link></li>
               <li><g:link controller="groupNotification" action="index">Grupos de Usuarios a Notificar</g:link></li>
               <li><g:link controller="groupNotification" action="create">Nuevo Grupo de Usuarios a notificar</g:link></li>
               <li><g:link controller="notificationForState" action="index">Notificaciones</g:link></li>
