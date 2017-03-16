@@ -41,12 +41,12 @@ class App.IndexController
     switch $('#typeOfOrden option:selected').text()
       when "Cantidad" then console.log("Predeterminado")
       when "Horas" then console.log("Debe cambiar")
-      when "Solo Importe" then console.log("Si esta funcionando")
+      when "Solo importe" then console.log("Si esta funcionando")
 
   bindEvents: () ->
     $(@selectors.partialPayment).on('click',@partialPaymentMethod)
     $(@selectors.addNewItem).on('click',@addNewItemBox)
-    $('#typeOfOrden').on('click',@typeOfTable)
+    $('#typeOfOrden').change =>  @typeOfTable()
 
 
 new App.IndexController().start()
