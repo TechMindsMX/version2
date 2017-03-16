@@ -155,6 +155,18 @@ var Machine = {
 
   getGraph:function(){
     return this.graph;
+  },
+
+  deserialize: function(data){
+    var _self = Machine.create({});
+    
+    Object.keys(_self).forEach(function(key){
+      if(typeof _self[key] == 'function'){
+        _self[key] = data[key];
+      }
+    });
+
+    return _self;
   }
 
 };
