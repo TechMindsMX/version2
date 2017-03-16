@@ -9,6 +9,8 @@ class PaymentController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def paymentService
+  def saleOrderService
+  def conciliationService
 
   @Transactional(readOnly = true)
   def index(Integer max) {
@@ -155,8 +157,15 @@ class PaymentController {
   }
 
   def chooseInvoiceToConciliate(Payment payment) {
-    log.info "Payment: ${payment.dump()}"
-    //llamar a service que obtenga las facturas por tipo de pago(referenciado o no referenciado) y por tipo de conciliación
-    [payment:payment]
+    log.info "Payment to conciliate: ${payment.dump()}"
+    List<SaleOrder> saleOrders = payment.rfc ? saleOrderService.findOrdersToConciliateForCompanyAndClient(payment.company, payment.rfc) : saleOrderService.findOrdersToConciliateForCompany(payment.company)
+    BigDecimal toApply = conciliationService.getTotalToApplyForPayment(payment)
+    [payment:payment, saleOrders:saleOrders, toApply:toApply]
   }
+
+  def addSaleOrderToConciliate(ConciliationCommand command) {
+    log.info "Adding conciliation to apply: ${command.dump()}"
+    redirect action:"chooseInvoiceToConciliate", id:command.paymentId
+  }
+
 }
