@@ -3,7 +3,7 @@
 //= require third-party/d3/d3.js
 //= require helpers/machine_helpers.js
 //= require machine/machine.js
-//= require machine/machine_create_view.js
+//= require machine/machine_view.js
 
 var MachineCreateController = (function(){
 
@@ -92,7 +92,7 @@ var MachineCreateController = (function(){
   createInitialState = function(event){
     event.preventDefault();
     machine.addInitialState($(selectors.stateFrom).val());
-    MachineCreateView.render('#transitions-form-template','#transitionsDiv',{states:machine.getStates()});
+    MachineView.render('#transitions-form-template','#transitionsDiv',{states:machine.getStates()});
     addNewRules();
     $(selectors.machineForm).unbind('submit');
     $(selectors.machineForm).on('submit',addNewTransition);
