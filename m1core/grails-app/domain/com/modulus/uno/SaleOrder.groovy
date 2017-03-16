@@ -75,7 +75,7 @@ class SaleOrder {
   }
 
   String toString(){
-    "${clientName} / \$ ${total.setScale(2, RoundingMode.HALF_UP)}"
+    "${id} / ${clientName} / ${currency} / Total:\$ ${total.setScale(2, RoundingMode.HALF_UP)} / Por pagar: \$"
   }
 
   static marshaller = {
