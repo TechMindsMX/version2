@@ -3,10 +3,14 @@ class App.IndexController
     partialPayment:'#partialPayment'
     addNewItem: '.addMoreItem'
     articleInfoRowTemplate: '#article-info-row'
-    articleInfoRoeTemplateHours: '#article-info-row-hours'
-    articlesTable:'#articles-table'
+    articleInfoRowTemplateHours: '#article-info-row-hours'
+    articlesTable:'body #articles-table'
     partialPaymentTemplate: '#partialPaymentTemplate'
     checkBoxPartialPayment: '#checkboxPartialPayment'
+    tableTemplate: '#tableHours'
+    tableTemplateCount: '#tableCount'
+    tableTemplateOnlyImport: '#tableOnlyImport'
+    tbodyTemplateOnlyAmount: '#tbodyOnlyAmount'
 
   constructor: ->
 
@@ -14,7 +18,6 @@ class App.IndexController
     @bindEvents()
     @datetimepicker()
     @tooltip()
-    @typeOfTable()
 
   datetimepicker: () ->
     console.log("hola")
@@ -31,22 +34,36 @@ class App.IndexController
   addNewItemBox: (event) =>
     event.preventDefault()
     switch $('#typeOfOrden option:selected').text()
-      when "Cantidad" then console.log("Cantidad")
-      when "Horas" then console.log("Horas")
-      when "Solo Importe" then console.log("Solo importe")
+      when "Cantidad" then new App.IndexViewController().append(@selectors.articleInfoRowTemplate,@selectors.articlesTable,{})
+      when "Horas" then new App.IndexViewController().append(@selectors.articleInfoRowTemplateHours,@selectors.articlesTable,{})
+      when "Solo importe" then new App.IndexViewController().append(@selectors.tbodyTemplateOnlyAmount,@selectors.articlesTable,{})
     if $('#typeOfOrden option:selected').text() =="Cantidad" then  console.log("*****hola")
-    new App.IndexViewController().append(@selectors.articleInfoRowTemplate,@selectors.articlesTable,{})
 
   typeOfTable: (event) =>
     switch $('#typeOfOrden option:selected').text()
-      when "Cantidad" then console.log("Predeterminado")
-      when "Horas" then console.log("Debe cambiar")
-      when "Solo importe" then console.log("Si esta funcionando")
+      when "Cantidad" then  new App.IndexViewController().render(@selectors.tableTemplateCount,@selectors.articlesTable,{})
+      when "Horas" then  new App.IndexViewController().render(@selectors.tableTemplate,@selectors.articlesTable,{})
+      when "Solo importe" then new App.IndexViewController().render(@selectors.tableTemplateOnlyImport,@selectors.articlesTable,{})
+
+  wordCounter: () ->
+    max_chars = 4000
+    $('#terms').keyup ->
+        chars = $(this).val().length
+        diff = max_chars - chars
+        $('#termsChars').html diff
+    $('#notes').keyup ->
+        chars = $(this).val().length
+        diff = max_chars - chars
+        $('#notesChars').html diff
+
+
 
   bindEvents: () ->
-    $(@selectors.partialPayment).on('click',@partialPaymentMethod)
-    $(@selectors.addNewItem).on('click',@addNewItemBox)
-    $('#typeOfOrden').change =>  @typeOfTable()
+    $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
+    $("body").on('click',@selectors.addNewItem,@addNewItemBox)
+    $('#typeOfOrden').change => @typeOfTable()
+    $('#hiddeAddress').click -> $('#mainAddress').toggle 'slow'
+    @wordCounter()
 
 
 new App.IndexController().start()
