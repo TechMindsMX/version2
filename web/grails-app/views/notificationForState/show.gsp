@@ -26,14 +26,25 @@
           <!-- BEGIN CREATE-ADDRESS -->
           <div class="content scaffold-create">
               <fieldset class="form">
-                <div class="row">
-                  <div class="form-group col-lg-12">
-                    <g:link action="create" id="${machine.id}" class="save btn btn-default">Agregar nueva notificación</g:link>
-                  </div>
+                <div class="row text-center">
+                  <label> Notificaciones Registradas </label><br>
+                  <g:link action="create" id="${machine.id}" class="save btn btn-default">Agregar nueva notificación</g:link>
+                  <br><br>
                 </div>
-                <div class="row center">
-                  <div class="form-group col-xs-6 col-sm-4"></div>
-                  <div class="form-group col-xs-6 col-sm-4">
+                <div class="row">
+                  <div class="form-group col-sm-2"></div>
+                  <div class="form-group col-sm-8">
+                    <table class="table text-center">
+                      <tr><td><strong>Grupo a notificar</strong></td><td><strong>Estado de la máquina</strong></td><td colspan=2><strong>Opciones</strong></td></tr>
+                      <g:each var="notification" in="${notifications}">
+                        <tr>
+                          <td> <g:select optionKey="id" optionValue="name" value="${notification.groupNotification}" name="notificationId" from="${groups}" disabled="${mode == 'edit'}"/></td>
+                          <td> <g:select optionKey="id" optionValue="name" value="${notification.stateMachine}" name="notificationId" from="${states}" disabled="${mode == 'edit'}"/> </td>
+                          <td> <g:link controller="notificationForState" action="edit" id="${notification.id}"><i class="fa fa-pencil"></i> Actualizar  </g:link> &nbsp;
+                                &nbsp;<g:link controller="notificationForState" action="delete" id="${notification.id}">   <i class="fa fa-close"></i> Eliminar</g:link></td>
+                        </tr>
+                      </g:each>
+                    </table>
                   </div>
                 </div>
               </fieldset>
