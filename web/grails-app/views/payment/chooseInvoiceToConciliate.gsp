@@ -27,28 +27,33 @@
               <div class="row">
                 <div class="col-md-4 text-center"><g:formatDate format="dd-MM-yyyy" date="${payment.dateCreated}"/></div>
                 <div class="col-md-4 text-center">${modulusuno.formatPrice(number: payment.amount)}</div>
-                <div class="col-md-4 text-center">${modulusuno.formatPrice(number: payment.amount)}</div>
+                <div class="col-md-4 text-center">${modulusuno.formatPrice(number: toApply)}</div>
               </div>
               <hr>
+              <g:if test="${toApply > 0}">
               <div class="row">
-                <div class="col-md-4">
+                <g:form action="addSaleOrderToConciliate">
+                <g:hiddenField name="paymentId" value="${payment.id}"/>
+                <div class="col-md-6">
                   <label>Facturas disponibles:</label>
-                  <select class="form-control" name="saleOrder.id"></select>
+                  <g:select class="form-control" name="saleOrderId" from="${saleOrders}" noSelection="['':' Elegir factura...']" required="true" optionKey="id"/>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <label>Tipo de Cambio:</label>
-                  <input class="form-control" type="number" min="0.01" step="0.01" name="changeType"/>
+                  <input class="form-control" type="number" min="0.01" step="0.01" name="changeType" readOnly="true" value="0.00"/>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <label>Monto a aplicar:</label>
-                  <input class="form-control" type="number" min="0.01" step="0.01" name="changeType"/>
+                  <input class="form-control" type="number" min="0.01" step="0.01" name="amountToApply" required="true"/>
                 </div>
                 <div class="col-md-2 text-right">
                   <br/>
                   <button class="btn btn-primary">Agregar</button>
                 </div>
+                </g:form>
               </div>
               <hr>
+              </g:if>
               <label>Facturas seleccionadas:</label>
               <div class="table-responsive">
                 <table class="table">
