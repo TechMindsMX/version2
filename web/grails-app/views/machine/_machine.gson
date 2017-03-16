@@ -3,5 +3,6 @@ model{
 }
 
 json{
+  uuid machine.uuid
   dateCreated machine.dateCreated.format("dd/MM/yyyy")
 }

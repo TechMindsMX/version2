@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="layout" content="main" />
     <title>Modulus UNO | Lista de Máquinas</title>
+    <asset:javascript src="third-party/handlebars/handlebars.js"/>
     <asset:javascript src="machine/machine_list_controller.js" />
   </head>
   <body>
@@ -37,13 +38,13 @@
         <!-- BEGIN ROW -->
         <div class="row">
           <!-- BEGIN COL-SM-6 -->
-          <div class="form-group col-lg-6">
+          <div class="form-group col-lg-6" id="machine-list">
 
           </div>
           <!-- END OF COL-SM-6 -->
         </div>
         <!-- END OF ROW -->
-
+        <g:render template="/machine/list" />
         <input type="hidden" value="${createLink(action:'list')}" id="actionListURL" />
       </div>
       <!-- END OF PORTLET-BODY -->
