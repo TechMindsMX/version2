@@ -13,7 +13,7 @@
 <script id="article-info-row" type="text/x-handlebars-template">
   <tbody>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
+                    <td><input type="text" name="name" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
                     <td><input type="text" class="form-control" placeholder="Nº" ></input></td>
                     <td><input type="text" class="form-control" placeholder="0.00" ></input></td>
                     <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
