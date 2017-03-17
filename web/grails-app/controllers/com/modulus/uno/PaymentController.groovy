@@ -158,18 +158,22 @@ class PaymentController {
 
   def chooseInvoiceToConciliate(Payment payment) {
     log.info "Payment to conciliate: ${payment.dump()}"
-    List<SaleOrder> saleOrders = payment.rfc ? saleOrderService.findOrdersToConciliateForCompanyAndClient(payment.company, payment.rfc) : saleOrderService.findOrdersToConciliateForCompany(payment.company)
     BigDecimal toApply = conciliationService.getTotalToApplyForPayment(payment)
     List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForPayment(payment)
+    List<SaleOrder> saleOrders = getSaleOrdersToListForPayment(payment, conciliations)
+
+    [payment:payment, saleOrders:saleOrders, toApply:toApply, conciliations:conciliations]
+  }
+
+  private List<SaleOrder> getSaleOrdersToListForPayment(Payment payment, List<Conciliation> conciliations) {
+    List<SaleOrder> saleOrders = payment.rfc ? saleOrderService.findOrdersToConciliateForCompanyAndClient(payment.company, payment.rfc) : saleOrderService.findOrdersToConciliateForCompany(payment.company)
     List<SaleOrder> saleOrdersFiltered = saleOrders.findAll { saleOrder ->
       if (!conciliations.find { conciliation -> conciliation.saleOrder == saleOrder }){
         saleOrder
       }
     }
 
-    [payment:payment, saleOrders:saleOrdersFiltered, toApply:toApply, conciliations:conciliations]
   }
-
   @Transactional
   def addSaleOrderToConciliate(ConciliationCommand command) {
     log.info "Adding conciliation to apply: ${command.dump()}"
@@ -186,6 +190,16 @@ class PaymentController {
     }
 
     redirect action:"chooseInvoiceToConciliate", id:command.paymentId
+  }
+
+  @Transactional
+  def deleteConciliation(Conciliation conciliation) {
+    log.info "Deleting conciliation to apply: ${conciliation.dump()}"
+    Payment payment = conciliation.payment
+
+    conciliationService.deleteConciliation(conciliation)
+
+    redirect action:"chooseInvoiceToConciliate", id:payment.id
   }
 
 }
