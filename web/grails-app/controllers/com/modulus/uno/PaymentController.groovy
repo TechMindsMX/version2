@@ -160,11 +160,27 @@ class PaymentController {
     log.info "Payment to conciliate: ${payment.dump()}"
     List<SaleOrder> saleOrders = payment.rfc ? saleOrderService.findOrdersToConciliateForCompanyAndClient(payment.company, payment.rfc) : saleOrderService.findOrdersToConciliateForCompany(payment.company)
     BigDecimal toApply = conciliationService.getTotalToApplyForPayment(payment)
-    [payment:payment, saleOrders:saleOrders, toApply:toApply]
+    List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForPayment(payment)
+    List<SaleOrder> saleOrdersFiltered = saleOrders.findAll { saleOrder ->
+      if (!conciliations.find { conciliation -> conciliation.saleOrder == saleOrder }){
+        saleOrder
+      }
+    }
+
+    [payment:payment, saleOrders:saleOrdersFiltered, toApply:toApply, conciliations:conciliations]
   }
 
+  @Transactional
   def addSaleOrderToConciliate(ConciliationCommand command) {
     log.info "Adding conciliation to apply: ${command.dump()}"
+
+    if (command.hasErrors()){
+      transactionStatus.setRollbackOnly()
+    }
+
+    Conciliation conciliation = command.createConciliation()
+    conciliationService.saveConciliation(conciliation)
+
     redirect action:"chooseInvoiceToConciliate", id:command.paymentId
   }
 
