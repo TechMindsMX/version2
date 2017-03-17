@@ -10,7 +10,7 @@ import java.lang.Void as Should
 @Mock([Machine,State,Transition])
 class TransitionServiceSpec extends Specification {
 
-  Should "get the transitions of a machine in the correct order"(){
+  Should "get the transitions of a machine in the correct order"() {
     given:"the machine"
       State initialState = new State(name:"Created")
       initialState.save()
@@ -39,7 +39,7 @@ class TransitionServiceSpec extends Specification {
       transitions.each{ transition ->
         machine.addToTransitions(transition)
       }
-      
+
       machine.save()
     when:
       ArrayList<Transition> orderedTransitions = service.getMachineTransitions(machine.id)
