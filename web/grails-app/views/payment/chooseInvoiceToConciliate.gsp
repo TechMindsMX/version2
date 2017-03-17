@@ -34,15 +34,18 @@
               <div class="row">
                 <g:form action="addSaleOrderToConciliate">
                 <g:hiddenField name="paymentId" value="${payment.id}"/>
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <label>Facturas disponibles:</label>
                   <g:select class="form-control" name="saleOrderId" from="${saleOrders}" noSelection="['':' Elegir factura...']" required="true" optionKey="id"/>
                 </div>
-                <div class="col-md-2">
+              </div>
+              <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-3">
                   <label>Tipo de Cambio:</label>
                   <input class="form-control" type="number" min="0.01" step="0.01" name="changeType" readOnly="true" value="0.00"/>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                   <label>Monto a aplicar (MXN):</label>
                   <input class="form-control" type="number" min="0.01" step="0.01" name="amountToApply" required="true"/>
                 </div>
@@ -54,13 +57,12 @@
               </div>
               <hr>
               </g:if>
+              <g:if test="${conciliations}">
               <label>Facturas seleccionadas:</label>
               <div class="table-responsive">
                 <table class="table">
                   <tr>
-                    <th>Folio</th>
-                    <th>Fecha</th>
-                    <th>Cliente</th>
+                    <th>Factura</th>
                     <th>Total</th>
                     <th>Por pagar</th>
                     <th>Monto a aplicar (MXN)</th>
@@ -69,29 +71,32 @@
                     <th>Tipo Cambio</th>
                     <th></th>
                   </tr>
+                  <g:each in="${conciliations}" var="conciliation">
                   <tr>
-                    <td>100</td>
-                    <td>15/01/2017</td>
-                    <td>Cliente Equis</td>
+                    <td>${conciliation.saleOrder}</td>
+                    <td>${modulusuno.formatPrice(number: conciliation.saleOrder.total)}</td>
                     <td>${modulusuno.formatPrice(number: 8000)}</td>
-                    <td>${modulusuno.formatPrice(number: 8000)}</td>
-                    <td>${modulusuno.formatPrice(number: 8000)}</td>
+                    <td>${modulusuno.formatPrice(number: conciliation.amount)}</td>
                     <td>${modulusuno.formatPrice(number: 0)}</td>
-                    <td>MXN</td>
-                    <td>NA</td>
+                    <td>${conciliation.saleOrder.currency}</td>
+                    <td>${conciliation.changeType ?: "NA"}</td>
                     <td class="text-center">
                       <button class="btn btn-danger">Quitar</button>
                     </td>
                   </tr>
+                  </g:each>
                 </table>
               </div>
-
+              <hr>
+              </g:if>
               <div class="row">
                 <div class="col-md-6">
                   <button class="btn btn-danger">Cancelar</button>
                 </div>
                 <div class="col-md-6 text-right">
+                  <g:if test="${conciliations}">
                   <button class="btn btn-success">Aplicar</button>
+                  </g:if>
                 </div>
               </div>
 
