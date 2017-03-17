@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="layout" content="main" />
+    <asset:javascript src="machine/machine_show_controller.js" />
     <title>Modulus UNO | Máquina</title>
   </head>
   <body>
