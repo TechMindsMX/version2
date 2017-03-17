@@ -1,10 +1,13 @@
 import com.modulus.uno.machine.Machine
 
-model{
+model {
   Machine machine
 }
 
-json{
+json {
   uuid machine.uuid
   dateCreated machine.dateCreated.format("dd/MM/yyyy")
+  initialState g.render(template:"/machine/state/state", model:[machineState:machine.initialState])
+  states g.render(template:"/machine/state/state", collection: machine.states, var:'machineState')
+  transitions g.render(template:"/machine/transition/transition", collection: machine.transitions, var:'transition')
 }
