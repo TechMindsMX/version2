@@ -74,8 +74,12 @@ class SaleOrder {
     items*.appliedDiscount.sum() ?: 0
   }
 
+  BigDecimal getAmountToPay() {
+    getTotal() - (payments*.amount.sum() ?: 0)
+  }
+
   String toString(){
-    "${id} / ${clientName} / ${currency} / Total:\$ ${total.setScale(2, RoundingMode.HALF_UP)} / Por pagar: \$"
+    "${id} / ${clientName} / ${currency} / Total:\$ ${total.setScale(2, RoundingMode.HALF_UP)} / Por pagar: \$ ${amountToPay.setScale(2, RoundingMode.HALF_UP)}"
   }
 
   static marshaller = {
