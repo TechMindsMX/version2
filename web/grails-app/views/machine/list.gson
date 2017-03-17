@@ -1,3 +1,5 @@
+import com.modulus.uno.machine.Machine
+
 model{
   List<Machine> machines
 }

@@ -1,9 +1,0 @@
-import com.modulus.uno.machine.State
-
-model{
-  State state
-}
-
-json{
-  name state.name
-}
