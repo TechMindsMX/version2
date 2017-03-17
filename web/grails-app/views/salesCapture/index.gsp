@@ -15,8 +15,8 @@
             <div class="panel-body">
               Contenido del panel
               <div align="right">
-                <button type="button" class="btn btn-primary">Vista Previa</button>
-                <button type="button" class="btn btn-success">Enviar</button>
+                <button type="button" id="buttonPreview" class="btn btn-primary">Vista Previa</button>
+                <button type="button"id="buttonSaveHead" value="HOla" class="btn btn-success">Enviar</button>
               </div>
               <hr>
               <div class="row">
@@ -47,9 +47,9 @@
                   <div class="col-sm-2 form-group"><input type="text" class="form-control"placeholder="Ej. Nº de pedido"></div>
                   <div class="col-sm-1 nopmargin"><span class="glyphicon glyphicon-question-sign"></span></div>
                 </div>
-                <div align="right">
+                <div align="right" id="divVencimiento">
                   <div class="col-md-4">Vencimiento</div>
-                  <div class="col-md-2"><select class="form-control">
+                  <div class="col-md-2"><select class="form-control" id="selectDate">
                       <option value="noduedate">Sin fecha de vencimiento</option>
                       <option value="receipt" selected="">Al recibir el formato de pago</option>
                       <option value="specified">En la fecha especificada</option>
@@ -342,17 +342,21 @@
 
                 <tbody>
                   <tr>
-                    <td><input type="text" name="name" class="form-control"placeholder="Nombre del artículo" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="Nº" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="0.00" ></input></td>
-                    <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
-                    <td><div class="col-xs-3" style="width:50%; padding:0"><a href="#">
+                    <td><input type="text" name="articles[0].name" id="inputNameArticle"class="form-control"placeholder="Nombre del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].quantity" class="form-control" placeholder="Nº" ></input></td>
+                    <td><input type="text" name="articles[0].price" class="form-control" placeholder="0.00" ></input></td>
+                    <td><input type="text" name="articles[0].tax" class="form-control" value="IVA: 16%" ></input></td>
+                    <td><input type="text" name="articles[0].amount" class="form-control" placeholder="$ 0.00" ></input></td>
+                    <td>
+                      <div class="col-xs-3" style="width:50%; padding:0">
+                        <a href="#">
                           <span class="glyphicon glyphicon-remove"></span>
-                    </a></div></td>
+                        </a>
+                      </div>
+                    </td>
                   </tr>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].description" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
                 <tfoot>
