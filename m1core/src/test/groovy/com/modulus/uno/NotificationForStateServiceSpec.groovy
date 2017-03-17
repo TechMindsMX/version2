@@ -25,13 +25,16 @@ class NotificationForStateServiceSpec extends Specification {
   void "Modify a state machine from existing notification"(){
     given:"A notification"
       def oldNotification = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
-    and:"A new State Machine id"
-      Long stateToUpdate = 3
+    and:"A new notification for update"
+      def notificationForUpdate = new NotificationForState(id:1, groupNotification:2, stateMachine:3, orderClass:"SaleOrderUpdated")
     when:"We want to update the state from the notification"
-      def updatedNotification = service.updateState(oldNotification.id, stateToUpdate)
+      def updatedNotification = service.updateNotification(notificationForUpdate)
     then:"We should get the notification updated"
-      updatedNotification.groupNotification == 1
+      updatedNotification.id == 1
+      updatedNotification.groupNotification == 2
       updatedNotification.stateMachine == 3
+      updatedNotification.groupNotification != 1
+      updatedNotification.stateMachine != 2
   }
 
   void "Delete an existing notification"(){
