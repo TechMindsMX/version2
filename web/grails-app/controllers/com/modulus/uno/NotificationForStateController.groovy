@@ -1,5 +1,6 @@
 package com.modulus.uno
 import com.modulus.uno.machine.*
+import com.modulus.uno.NotificationForState
 
 class NotificationForStateController {
 
@@ -38,16 +39,20 @@ class NotificationForStateController {
   }
 
   def edit(){
-    NotificationForState notify = NotificationForState.findById(params.id.toLong())
     [
       groups: GroupNotification.findAll(),
-      notification: notify]
+      notification: NotificationForState.get(params.id.toLong()),
+      states: State.findAll()
+    ]
   }
 
-  def update(){
+  def update(NotificationForStateCommand command){
+    def notifyToUpdate = command.toUpdateNotification()
+    notifyToUpdate.id = params.notification.toLong()
+    notificationForStateService.updateNotification(notifyToUpdate)
+    redirect action:"index", method:"GET"
   }
 
-  //TODO
   def delete(){
     notificationForStateService.deleteNotification(params.id)
     redirect action:"index", method:"GET"
