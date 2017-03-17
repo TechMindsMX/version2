@@ -90,7 +90,7 @@ class MachineServiceSpec extends Specification {
       def machineEventExecuterServiceMock = Mock(MachineEventExecuterService)
       service.machineEventExecuterService = machineEventExecuterServiceMock
     when:
-      State newState = service.moveToAction(instance,action)
+      State newState = service.moveToActionAndListen(instance,action)
     then:
       machineryLink.trackingLogs.size() == 1
       1 * machineEventExecuterServiceMock.executeEvents(_)
