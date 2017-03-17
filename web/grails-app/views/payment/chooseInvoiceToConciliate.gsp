@@ -43,7 +43,7 @@
                   <input class="form-control" type="number" min="0.01" step="0.01" name="changeType" readOnly="true" value="0.00"/>
                 </div>
                 <div class="col-md-2">
-                  <label>Monto a aplicar:</label>
+                  <label>Monto a aplicar (MXN):</label>
                   <input class="form-control" type="number" min="0.01" step="0.01" name="amountToApply" required="true"/>
                 </div>
                 <div class="col-md-2 text-right">
@@ -63,8 +63,10 @@
                     <th>Cliente</th>
                     <th>Total</th>
                     <th>Por pagar</th>
-                    <th>Monto a aplicar</th>
+                    <th>Monto a aplicar (MXN)</th>
                     <th>Nuevo Saldo</th>
+                    <th>Moneda</th>
+                    <th>Tipo Cambio</th>
                     <th></th>
                   </tr>
                   <tr>
@@ -75,6 +77,8 @@
                     <td>${modulusuno.formatPrice(number: 8000)}</td>
                     <td>${modulusuno.formatPrice(number: 8000)}</td>
                     <td>${modulusuno.formatPrice(number: 0)}</td>
+                    <td>MXN</td>
+                    <td>NA</td>
                     <td class="text-center">
                       <button class="btn btn-danger">Quitar</button>
                     </td>
