@@ -28,4 +28,9 @@ class ConciliationService {
     conciliation.save()
     getConciliationsToApplyForPayment(conciliation.payment)
   }
+
+  void deleteConciliation(Conciliation conciliation) {
+    conciliation.delete()
+  }
+
 }
