@@ -11,6 +11,8 @@ class App.IndexController
     tableTemplateCount: '#tableCount'
     tableTemplateOnlyImport: '#tableOnlyImport'
     tbodyTemplateOnlyAmount: '#tbodyOnlyAmount'
+    specifyDateTemplate: '#specifyDateTemplate'
+    destinationnyDateTemplate: '#divVencimiento'
 
   constructor: ->
 
@@ -18,10 +20,11 @@ class App.IndexController
     @bindEvents()
     @datetimepicker()
     @tooltip()
+    @getNumberAttribute()
 
   datetimepicker: () ->
-    console.log("hola")
     $('#datetimepicker1').datetimepicker({format: 'DD/MM/YYYY', locale: 'en' })
+    $('#datetimepicker2').datetimepicker({format: 'DD/MM/YYYY', locale: 'en' })
 
   tooltip: () ->
     $('[data-toggle="tooltip"]').tooltip()
@@ -34,9 +37,9 @@ class App.IndexController
   addNewItemBox: (event) =>
     event.preventDefault()
     switch $('#typeOfOrden option:selected').text()
-      when "Cantidad" then new App.IndexViewController().append(@selectors.articleInfoRowTemplate,@selectors.articlesTable,{})
-      when "Horas" then new App.IndexViewController().append(@selectors.articleInfoRowTemplateHours,@selectors.articlesTable,{})
-      when "Solo importe" then new App.IndexViewController().append(@selectors.tbodyTemplateOnlyAmount,@selectors.articlesTable,{})
+      when "Cantidad" then new App.IndexViewController().append(@selectors.articleInfoRowTemplate,@selectors.articlesTable,{index:@getNumberAttribute()})
+      when "Horas" then new App.IndexViewController().append(@selectors.articleInfoRowTemplateHours,@selectors.articlesTable,{index:@getNumberAttribute()})
+      when "Solo importe" then new App.IndexViewController().append(@selectors.tbodyTemplateOnlyAmount,@selectors.articlesTable,{index:@getNumberAttribute()})
     if $('#typeOfOrden option:selected').text() =="Cantidad" then  console.log("*****hola")
 
   typeOfTable: (event) =>
@@ -44,6 +47,10 @@ class App.IndexController
       when "Cantidad" then  new App.IndexViewController().render(@selectors.tableTemplateCount,@selectors.articlesTable,{})
       when "Horas" then  new App.IndexViewController().render(@selectors.tableTemplate,@selectors.articlesTable,{})
       when "Solo importe" then new App.IndexViewController().render(@selectors.tableTemplateOnlyImport,@selectors.articlesTable,{})
+
+  specifyDate: (event)->
+    if $('#selectDate option:selected').text() == "En la fecha especificada" then new App.IndexViewController().append(@selectors.specifyDateTemplate,@selectors.destinationnyDateTemplate,{})
+    else $('body #divDataTimer').remove()
 
   wordCounter: () ->
     max_chars = 4000
@@ -56,7 +63,12 @@ class App.IndexController
         diff = max_chars - chars
         $('#notesChars').html diff
 
-
+  getNumberAttribute: () ->
+   attribute =  $('#inputNameArticle').attr 'name'
+   regularExpresion = /\d/
+   index = parseInt(regularExpresion.exec(attribute))
+   index+1
+   console.log(index)
 
   bindEvents: () ->
     $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
@@ -64,6 +76,8 @@ class App.IndexController
     $('#typeOfOrden').change => @typeOfTable()
     $('#hiddeAddress').click -> $('#mainAddress').toggle 'slow'
     @wordCounter()
+    $('#selectDate').change => @specifyDate(); @datetimepicker()
+    $('#buttonPreview').click => @getNumberAttribute()
 
 
 new App.IndexController().start()
