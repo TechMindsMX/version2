@@ -19,10 +19,10 @@ class ConciliationCommand implements Validateable {
 
   Conciliation createConciliation() {
     new Conciliation(
-      payment:this.payment ? Payment.get(this.payment) : null,
+      payment:this.paymentId ? Payment.get(this.paymentId) : null,
       saleOrder:this.saleOrderId ? SaleOrder.get(this.saleOrderId) : null,
       changeType:getValueInBigDecimal(this.changeType),
-      amount:getValueInBigDecimal(this.amountApply),
+      amount:getValueInBigDecimal(this.amountToApply),
       comment:this.comment
     )
   }
