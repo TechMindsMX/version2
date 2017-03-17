@@ -14,7 +14,7 @@
         <th>{{uuid}}</th>
         <th>{{dateCreated}}</th>
         <th>
-          <g:link class="btn btn-primary" controller="machine" action="show">Ver</g:link>
+          <a class="btn btn-primary" href="${createLink(controller:'machine',action:'show')}/{{uuid}}">Ver</a>
         </th>
       </tr>
       {{/each}}
