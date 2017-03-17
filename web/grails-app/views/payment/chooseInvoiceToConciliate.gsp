@@ -95,7 +95,9 @@
                     <td>${conciliation.saleOrder.currency}</td>
                     <td>${conciliation.changeType ?: "NA"}</td>
                     <td class="text-center">
-                      <button class="btn btn-danger">Quitar</button>
+                      <g:form action="deleteConciliation" id="${conciliation.id}">
+                        <button class="btn btn-danger">Quitar</button>
+                      </g:form>
                     </td>
                   </tr>
                   </g:each>
