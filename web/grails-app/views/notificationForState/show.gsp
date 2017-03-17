@@ -38,10 +38,13 @@
                       <tr><td><strong>Grupo a notificar</strong></td><td><strong>Estado de la máquina</strong></td><td colspan=2><strong>Opciones</strong></td></tr>
                       <g:each var="notification" in="${notifications}">
                         <tr>
-                          <td> <g:select optionKey="id" optionValue="name" value="${notification.groupNotification}" name="notificationId" from="${groups}" disabled="${mode == 'edit'}"/></td>
-                          <td> <g:select optionKey="id" optionValue="name" value="${notification.stateMachine}" name="notificationId" from="${states}" disabled="${mode == 'edit'}"/> </td>
-                          <td> <g:link controller="notificationForState" action="edit" id="${notification.id}"><i class="fa fa-pencil"></i> Actualizar  </g:link> &nbsp;
-                                &nbsp;<g:link controller="notificationForState" action="delete" id="${notification.id}">   <i class="fa fa-close"></i> Eliminar</g:link></td>
+                         <g:form controller="notificationForState" action="update">
+                          <td> <g:select optionKey="id" optionValue="name" value="${notification.groupNotification}" name="notificationId" from="${groups}" /></td>
+                          <td> <g:select optionKey="id" optionValue="name" value="${notification.stateMachine}" name="notificationId" from="${states}" /> </td>
+                          <td>
+                            <g:link controller="notificationForState" action="edit" id="${notification.id}"><i class="fa fa-pencil"></i> Actualizar  </g:link> &nbsp;  &nbsp;
+                            <g:link controller="notificationForState" action="delete" id="${notification.id}">   <i class="fa fa-close"></i> Eliminar</g:link></td>
+                         </g:form>
                         </tr>
                       </g:each>
                     </table>
