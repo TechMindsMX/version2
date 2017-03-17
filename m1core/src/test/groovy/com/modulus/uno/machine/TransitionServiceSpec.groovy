@@ -44,7 +44,7 @@ class TransitionServiceSpec extends Specification {
     when:
       ArrayList<Transition> orderedTransitions = service.getMachineTransitions(machine.id)
     then:
-      orderedTransitions.first().stateFrom.finalState
+      orderedTransitions.first().stateFrom.id == initialState.id
       orderedTransitions.size() == 3
   }
 
