@@ -1,35 +1,35 @@
 <script  id="partialPaymentTemplate" type="text/x-handlebars-template">
-  <div id="rowPartialPayment">
-      <div class="row" >
-        <h1>Importe minimo de adeudado (opcional)</h1>
-      </div>
-      <div class="row" >
-           <div class="col-md-2">
-                  <input type="text" class="form-control" placeholder="0"></input>
-            </div>
-      </div>
-      </div>
+<div id="rowPartialPayment">
+  <div class="row" >
+    <h1>Importe minimo de adeudado (opcional)</h1>
+  </div>
+  <div class="row" >
+    <div class="col-md-2">
+      <input type="text" class="form-control" placeholder="0" />
+    </div>
+  </div>
+</div>
 </script>
 <script id="article-info-row" type="text/x-handlebars-template">
-  <tbody>
+      <tbody>
                   <tr>
-                    <td><input type="text" name="name" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="Nº" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="0.00" ></input></td>
-                    <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].name" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].quantity" class="form-control" placeholder="Nº" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].price" class="form-control" placeholder="0.00" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].tax" class="form-control" value="IVA: 16%" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].amount" class="form-control" placeholder="$ 0.00" ></input></td>
   <td><div class="col-xs-3" style="width:50%; padding:0"><a href="#">
                           <span class="glyphicon glyphicon-remove"></span>
                     </a></div></td>
 
                   </tr>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].description" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
-</script>
-<script id="article-info-row-hours" type="text/x-handlebars-template">
-  <tbody>
+              </script>
+              <script id="article-info-row-hours" type="text/x-handlebars-template">
+                <tbody>
                   <tr>
                     <td><input type="text" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
                     <td><input type="text" class="form-control" placeholder="Horas" ></input></td>
@@ -45,9 +45,9 @@
                     <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
-</script>
-<script id="tableHours" type="text/x-handlebars-template">
- <table class="table" id="articles-table">
+              </script>
+              <script id="tableHours" type="text/x-handlebars-template">
+                <table class="table" id="articles-table">
                 <thead>
                   <tr>
                     <th style="width:50%;" >Descripción</th>
@@ -62,7 +62,7 @@
                 <tbody>
                   <tr>
                     <td><input type="text" name="name" class="form-control"placeholder="Nombre del artículo" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="Nº" ></input></td>
+                    <td><input type="text" class="form-control" placeholder="Horas" ></input></td>
                     <td><input type="text" class="form-control" placeholder="0.00" ></input></td>
                     <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
                     <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
@@ -83,9 +83,9 @@
                 </tfoot>
               </table>
 
-</script>
-<script id="tableCount" type="text/x-handlebars-template">
- <table class="table" id="articles-table">
+            </script>
+            <script id="tableCount" type="text/x-handlebars-template">
+              <table class="table" id="articles-table">
                 <thead>
                   <tr>
                     <th style="width:50%;" >Descripción</th>
@@ -120,9 +120,9 @@
                   </tr>
                 </tfoot>
               </table>
-</script>
-<script id="tableOnlyImport" type="text/x-handlebars-template">
-   <table class="table" id="articles-table">
+            </script>
+            <script id="tableOnlyImport" type="text/x-handlebars-template">
+              <table class="table" id="articles-table">
                 <thead>
                   <tr>
                     <th style="width:70%;" >Descripción</th>
@@ -153,10 +153,10 @@
                   </tr>
                 </tfoot>
               </table>
-</script>
-<script id="tbodyOnlyAmount" type="text/x-handlebars-template">
-    <tbody>
-                  <tr>
+            </script>
+            <script id="tbodyOnlyAmount" type="text/x-handlebars-template">
+              <tbody>
+                  <tr id="{{named}}">
                     <td><input type="text" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
                     <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
                     <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
@@ -169,4 +169,20 @@
                     <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
+              </script>
+              <script id="specifyDateTemplate" type="text/x-handlebars-template">
+                <div  align="right" id="divDataTimer">
+                <div class="col-md-4"></div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <div class='input-group date' id='datetimepicker2'>
+                      <input type='text' class="form-control" />
+                      <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
 </script>
