@@ -179,7 +179,11 @@ class PaymentController {
     }
 
     Conciliation conciliation = command.createConciliation()
-    conciliationService.saveConciliation(conciliation)
+    try {
+      conciliationService.saveConciliation(conciliation)
+    } catch (BusinessException ex) {
+      flash.message = ex.message
+    }
 
     redirect action:"chooseInvoiceToConciliate", id:command.paymentId
   }
