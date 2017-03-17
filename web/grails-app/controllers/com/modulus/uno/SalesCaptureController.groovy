@@ -9,13 +9,16 @@ class SalesCaptureController {
   }
 
   //def save(SalesCaptureCommand command){
-  def save(){
+  def save(SalesCaptureCommand salesCaptureCommand){
     log.info "*"*20
-    log.debug params.name
+    salesCaptureCommand.articles.each{
+      log.debug(it.dump())
+    }
     log.info "*"*20
 
     //log.info command
     //salesCaptureService.sendNotify(command)
+    render "Probando"
   }
 
 }
