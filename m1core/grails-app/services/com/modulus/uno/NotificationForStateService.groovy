@@ -1,5 +1,7 @@
 package com.modulus.uno
+import grails.transaction.Transactional
 
+@Transactional
 class NotificationForStateService {
 
   def createNotification(NotificationForState notify){
@@ -7,14 +9,14 @@ class NotificationForStateService {
     notify
   }
 
-  def updateState(Long notifyId, Long newStateId){
-    NotificationForState notification = NotificationForState.findById(notifyId)
-    notification.stateMachine = newStateId
+  def updateNotification(NotificationForState notify){
+    NotificationForState notification = NotificationForState.findById(notify.id)
+    notification.stateMachine = notify.stateMachine
+    notification.groupNotification = notify.groupNotification
     notification.save()
-    notification
   }
 
-  def deleteNotification(Long notifyId){
+  def deleteNotification(def notifyId){
     NotificationForState notify = NotificationForState.findById(notifyId)
     notify.delete()
   }
