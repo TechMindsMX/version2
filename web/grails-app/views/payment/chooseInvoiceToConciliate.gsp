@@ -20,17 +20,31 @@
             <div class="container-fluid">
 
               <div class="row">
-                <div class="col-md-4 text-center"><strong>Fecha del Pago</strong></div>
-                <div class="col-md-4 text-center"><strong>Total</strong></div>
-                <div class="col-md-4 text-center"><strong>Por aplicar</strong></div>
-              </div>
-              <div class="row">
-                <div class="col-md-4 text-center"><g:formatDate format="dd-MM-yyyy" date="${payment.dateCreated}"/></div>
-                <div class="col-md-4 text-center">${modulusuno.formatPrice(number: payment.amount)}</div>
-                <div class="col-md-4 text-center">${modulusuno.formatPrice(number: toApply)}</div>
+                <div class="col-md-4 text-center">
+                  <strong>Fecha del Pago</strong><br>
+                  <g:formatDate format="dd-MM-yyyy" date="${payment.dateCreated}"/>
+                </div>
+                <div class="col-md-4 text-center">
+                  <strong>Total</strong>
+                  <br/>${modulusuno.formatPrice(number: payment.amount)}
+                </div>
+                <g:if test="${toApply == 0}">
+                <div class="col-md-4 text-center alert alert-success">
+                </g:if>
+                <g:else>
+                <div class="col-md-4 text-center alert alert-warning">
+                </g:else>
+                  <strong>Por aplicar</strong><br/>
+                  ${modulusuno.formatPrice(number: toApply)}
+                </div>
               </div>
               <hr>
               <g:if test="${toApply > 0}">
+
+              <g:if test="${flash.message}">
+                <div class="alert alert-danger" role="alert">${flash.message}</div>
+              </g:if>
+
               <div class="row">
                 <g:form action="addSaleOrderToConciliate">
                 <g:hiddenField name="paymentId" value="${payment.id}"/>
@@ -38,7 +52,7 @@
                   <label>Facturas disponibles:</label>
                   <g:select class="form-control" name="saleOrderId" from="${saleOrders}" noSelection="['':' Elegir factura...']" required="true" optionKey="id"/>
                 </div>
-              </div>
+              </div><br/>
               <div class="row">
                 <div class="col-md-4"></div>
                 <div class="col-md-3">
@@ -62,7 +76,7 @@
               <div class="table-responsive">
                 <table class="table">
                   <tr>
-                    <th>Factura</th>
+                    <th class="col-md-4">Factura</th>
                     <th>Total</th>
                     <th>Por pagar</th>
                     <th>Monto a aplicar (MXN)</th>
@@ -73,11 +87,11 @@
                   </tr>
                   <g:each in="${conciliations}" var="conciliation">
                   <tr>
-                    <td>${conciliation.saleOrder}</td>
-                    <td>${modulusuno.formatPrice(number: conciliation.saleOrder.total)}</td>
-                    <td>${modulusuno.formatPrice(number: 8000)}</td>
-                    <td>${modulusuno.formatPrice(number: conciliation.amount)}</td>
-                    <td>${modulusuno.formatPrice(number: 0)}</td>
+                    <td>${conciliation.saleOrder.id} / ${conciliation.saleOrder.clientName}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.total)}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay)}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.amount)}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay - conciliation.amount)}</td>
                     <td>${conciliation.saleOrder.currency}</td>
                     <td>${conciliation.changeType ?: "NA"}</td>
                     <td class="text-center">
@@ -90,12 +104,18 @@
               <hr>
               </g:if>
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 text-center">
                   <button class="btn btn-danger">Cancelar</button>
                 </div>
-                <div class="col-md-6 text-right">
-                  <g:if test="${conciliations}">
+                <div class="col-md-6 text-center">
+                  <g:if test="${conciliations && toApply == 0}">
                   <button class="btn btn-success">Aplicar</button>
+                  </g:if>
+                  <g:if test="${!conciliations}">
+                    <div class="alert alert-warning" role="alert">No ha agregado facturas</div>
+                  </g:if>
+                  <g:if test="${conciliations && toApply > 0}">
+                    <div class="alert alert-warning" role="alert">Aún dispone de monto por aplicar</div>
                   </g:if>
                 </div>
               </div>
