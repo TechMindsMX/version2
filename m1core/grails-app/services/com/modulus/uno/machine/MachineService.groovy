@@ -81,9 +81,10 @@ class MachineService {
     currentMachine 
   }
 
-  def moveToActionAndListen(def instance,String action){
-    moveToAction(instance,action)
+  State moveToActionAndListen(def instance,String action){
+    State currentState = moveToAction(instance,action)
     machineEventExecuterService.executeEvents(instance)
+    currentState
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
