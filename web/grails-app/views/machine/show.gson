@@ -1,0 +1,7 @@
+import com.modulus.uno.machine.Machine
+
+model {
+  Machine machine
+}
+
+json g.render(template:"machine", model:[machine:machine])
