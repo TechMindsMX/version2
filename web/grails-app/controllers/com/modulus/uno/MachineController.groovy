@@ -21,7 +21,7 @@ class MachineController {
   }
 
   def show(String id){
-    def machine = Machine.findByUuid(id) 
+    def machine = Machine.findByUuid(id)
 
     if(!machine)
       return response.sendError(404)
