@@ -8,25 +8,19 @@ class NotificationForStateController {
 
   NotificationForStateService notificationForStateService
 
-  def index() {
-    [machines: Machine.findAll()]
-  }
-
   def create(){
-    def machine = Machine.findById(params.id)
+    def machine = Machine.findById(params.machineId)
     [
       groups: GroupNotification.findAll(),
       states: machine.states
     ]
   }
 
-  def show(){
-    def machine = Machine.findById(params.machineId)
+  def index(){
+    def notificationsBody = notificationForStateService.findBodyNotifications(State.findAll())
     [
-      machine: machine,
-      notifications:NotificationForState.findAll(),
-      groups:GroupNotification.findAll(),
-      states: machine.states
+      machines: Machine.findAll(),
+      notifications:notificationsBody
     ]
   }
 
