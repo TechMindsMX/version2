@@ -8,7 +8,7 @@
     </tr>
     <g:if test="${payments}">
     <g:each in="${payments.list}" var="payment">
-    <g:form action="chooseInvoiceToConciliate" id="${payment.id}">
+    <g:form controller="conciliation" action="chooseInvoiceToConciliate" id="${payment.id}">
     <tr>
       <td><g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}"/></td>
       <td>${modulusuno.formatPrice(number: payment.amount)}</td>
