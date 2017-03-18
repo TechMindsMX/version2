@@ -3,14 +3,30 @@
 var MachineShowController = (function(){
   
   var selectors = {
-
+    machineShowURL:'#machineShowURL',
+    machineUuid:'#machineUuid'
   },
 
-  bindEvents = function(){
+  loadMachine = function(){
+    $.ajax({
+      url:$(selectors.machineShowURL).val()+".json",
+      headers:{
+        Accept: "application/json"
+      },
+      type:'GET',
+      data:{id:$(selectors.machineUuid).val()},
+      success: function(result){
+        console.log(result);
+      },
+      error: function(){
 
+      }
+    });
+    
   },
 
   start = function(){
+    loadMachine();
     console.log('Starting this controller');
   };
 
