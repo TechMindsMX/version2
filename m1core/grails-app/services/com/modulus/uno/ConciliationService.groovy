@@ -18,15 +18,15 @@ class ConciliationService {
     Conciliation.findAllByPaymentAndStatus(payment, ConciliationStatus.TO_APPLY)
   }
 
-  List<Conciliation> saveConciliation(Conciliation conciliation) {
+  void saveConciliationForCompany(Conciliation conciliation, Company company) {
     if (conciliation.amount > conciliation.saleOrder.amountToPay) {
       throw new BusinessException("El monto a conciliar (${conciliation.amount.setScale(2, RoundingMode.HALF_UP)}) no puede ser mayor al monto por pagar de la factura (${conciliation.saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP)})")
     }
 
+    conciliation.company = company
     conciliation.user = springSecurityService.currentUser
     log.info "Saving conciliation: ${conciliation.dump()}"
     conciliation.save()
-    getConciliationsToApplyForPayment(conciliation.payment)
   }
 
   void deleteConciliation(Conciliation conciliation) {
