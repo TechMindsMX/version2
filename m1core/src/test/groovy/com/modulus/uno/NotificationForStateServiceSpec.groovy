@@ -3,9 +3,10 @@ package com.modulus.uno
 import grails.test.mixin.TestFor
 import spock.lang.Specification
 import grails.test.mixin.Mock
+import com.modulus.uno.machine.*
 
 @TestFor(NotificationForStateService)
-@Mock([NotificationForState])
+@Mock([NotificationForState, GroupNotification, State])
 class NotificationForStateServiceSpec extends Specification {
 
   def setup() {
@@ -44,6 +45,24 @@ class NotificationForStateServiceSpec extends Specification {
       service.deleteNotification(notification.id)
     then:"We shouldn't have the notification"
       !NotificationForState.findById(1)
+  }
+
+  void "Get notifications for states"(){
+    given:"A list of states"
+      def states = (1..10).collect{
+        def s = new State(name:"State$it").save(validate:false)
+      }
+    and:"A list of groups"
+      def groups = (1..3).collect{
+        def s = new GroupNotification(name:"Group$it").save(validate:false)
+      }
+    and:"A notifications for state"
+      def notify1 = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
+      def notify2 = new NotificationForState(groupNotification:2, stateMachine:4).save(validate:false)
+    when:"We want to know the notification's body for states"
+      def contentNotification = service.findNotificationForStatesBody(states)
+    then:"We should get the state and groupName of every notification"
+      contentNotification == [[id:1, stateName:"State2", groupName:"Group1"], [id:2, stateName:"State4", groupName:"Group2"]]
   }
 
  }
