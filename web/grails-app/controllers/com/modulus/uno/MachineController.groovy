@@ -15,18 +15,19 @@ class MachineController {
   CorporateService corporateService
   def springSecurityService
   MachineService machineService
+  TransitionService transitionService
 
   def index(){
     [entities:machineryLinkService.getClassesWithMachineryInterface()]
   }
 
   def show(String id){
-    def machine = Machine.findByUuid(id)
+    Machine machine = Machine.findByUuid(id)
 
     if(!machine)
       return response.sendError(404)
-
-    [machine:machine]
+    
+    respond transitionService.getMachineTransitions(machine.id)
   }
 
   def register(){
