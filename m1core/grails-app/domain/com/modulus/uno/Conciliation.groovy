@@ -2,6 +2,7 @@ package com.modulus.uno
 
 class Conciliation {
 
+  Company company
   User user
   SaleOrder saleOrder
   Payment payment
@@ -14,6 +15,7 @@ class Conciliation {
   Date lastUpdated
 
   static constraints = {
+    company nullable:false
     amount nullable:false, min:0.01
     user nullable:false
     saleOrder nullable:true
