@@ -42,7 +42,8 @@
                 </g:each>
               </table>
             </g:if>
-            
+            <input type="text" id="machineShowURL" value="${createLink(controller:'machine',action:'show')}"/>
+            <input type="text" id="machineUuid" value="${machine.uuid}" />
           </div>
         </div>
         <!-- END OF ROW -->
@@ -50,5 +51,6 @@
       <!-- END OF PORTLET-BODY -->
     </div>
     <!-- END OF PORTLET -->
+
   </body>
 </html>
