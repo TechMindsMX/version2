@@ -22,7 +22,7 @@ class NotificationForStateService {
     notify.delete()
   }
 
-  def findNotificationForStatesBody(ArrayList<State> states){
+  def findBodyNotifications(ArrayList<State> states){
     def notifications = NotificationForState.findAllByStateMachineInList(states*.id)
     ArrayList<Map> notificationForStatesBody = []
       notifications.each{ notify ->

@@ -60,7 +60,7 @@ class NotificationForStateServiceSpec extends Specification {
       def notify1 = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
       def notify2 = new NotificationForState(groupNotification:2, stateMachine:4).save(validate:false)
     when:"We want to know the notification's body for states"
-      def contentNotification = service.findNotificationForStatesBody(states)
+      def contentNotification = service.findBodyNotifications(states)
     then:"We should get the state and groupName of every notification"
       contentNotification == [[id:1, stateName:"State2", groupName:"Group1"], [id:2, stateName:"State4", groupName:"Group2"]]
   }
