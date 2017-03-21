@@ -69,4 +69,19 @@ class ConciliationServiceSpec extends Specification {
     then:
       thrown BusinessException
   }
+
+  void "Should delete all conciliations for a payment"() {
+    given:"A payment"
+      Payment payment = new Payment(amount:5000).save(validate:false)
+    and:"The existing conciliations to apply for payment"
+      Conciliation conciliation1 = new Conciliation(amount:300, payment:payment).save(validate:false)
+      Conciliation conciliation2 = new Conciliation(amount:200, payment:payment).save(validate:false)
+      def conciliations = [conciliation1, conciliation2]
+      service.getConciliationsToApplyForPayment(payment) >> conciliations
+    when:
+      service.cancelConciliationsForPayment(payment)
+    then:
+      service.getConciliationsToApplyForPayment(payment) == []
+  }
+
 }
