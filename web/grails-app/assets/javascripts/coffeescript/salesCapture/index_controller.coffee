@@ -64,11 +64,17 @@ class App.IndexController
         $('#notesChars').html diff
 
   getNumberAttribute: () ->
-   attribute =  $('#inputNameArticle').attr 'name'
+   attribute =  $('#itemName_0').attr 'name'
    regularExpresion = /\d/
    index = parseInt(regularExpresion.exec(attribute))
-   index+1
    console.log(index)
+   index = index+1
+   @findNumberOftbody()
+
+  findNumberOftbody:() ->
+    r = $('#articles-table').children('tbody')
+    console.log(r.length)
+    r.length
 
   bindEvents: () ->
     $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
@@ -77,7 +83,7 @@ class App.IndexController
     $('#hiddeAddress').click -> $('#mainAddress').toggle 'slow'
     @wordCounter()
     $('#selectDate').change => @specifyDate(); @datetimepicker()
-    $('#buttonPreview').click => @getNumberAttribute()
+    $('#buttonPreview').click => @getNumberAttribute(); @findNumberOftbody()
 
 
 new App.IndexController().start()

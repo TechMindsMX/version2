@@ -340,13 +340,13 @@
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="tbody_0">
                   <tr>
-                    <td><input type="text" name="articles[0].name" id="inputNameArticle"class="form-control"placeholder="Nombre del artículo" ></input></td>
-                    <td><input type="text" name="articles[0].quantity" class="form-control" placeholder="Nº" ></input></td>
-                    <td><input type="text" name="articles[0].price" class="form-control" placeholder="0.00" ></input></td>
-                    <td><input type="text" name="articles[0].tax" class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" name="articles[0].amount" class="form-control" placeholder="$ 0.00" ></input></td>
+                    <td><input type="text" name="articles[0].name"id="itemName_0" class="form-control inputs"placeholder="Nombre del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].quantity" id="itemQuantuty_0" class="form-control inputs" placeholder="Nº" ></input></td>
+                    <td><input type="text" name="articles[0].price" id="itemPrice_0"class="form-control inputs" placeholder="0.00" ></input></td>
+                    <td><input type="text" name="articles[0].tax" id="itemTax_0" class="form-control inputs" value="IVA: 16%" ></input></td>
+                    <td><input type="text" name="articles[0].amount" id="itemAmount_0" class="form-control inputs" placeholder="$ 0.00 " ></input></td>
                     <td>
                       <div class="col-xs-3" style="width:50%; padding:0">
                         <a href="#">
@@ -356,7 +356,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td><input type="text" name="articles[0].description" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].description" id="itemDescription_0"  class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
                 <tfoot>
