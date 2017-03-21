@@ -24,6 +24,7 @@
     "holderjs": "~2.9.1",
     "jquery-ui": "jqueryui#^1.12.1",
     "jquery-validation": "^1.16.0",
-    "dagre-d3": "^0.4.17"
+    "dagre-d3": "^0.4.17",
+    "graphlib-dot": "^0.6.2"
   }
 }
