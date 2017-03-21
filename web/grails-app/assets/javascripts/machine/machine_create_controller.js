@@ -3,6 +3,7 @@
 //= require helpers/machine_helpers.js
 //= require machine/machine.js
 //= require machine/machine_view.js
+//= require machine/graph_view.js
 
 var MachineCreateController = (function(){
 
@@ -65,7 +66,7 @@ var MachineCreateController = (function(){
                              action:$(selectors.action).val()});
       updateFromSelect();
       updateAutocomplete();
-      renderGraph(machine.getGraph());
+      GraphView.renderGraph(machine.getGraph());
       renderTransitionsTable();
     }
   },
@@ -96,7 +97,7 @@ var MachineCreateController = (function(){
     $(selectors.machineForm).unbind('submit');
     $(selectors.machineForm).on('submit',addNewTransition);
     updateAutocomplete();
-    renderGraph(machine.getGraph());
+    GraphView.renderGraph(machine.getGraph());
   },
 
   deleteMachineTransition = function(event){
@@ -112,20 +113,13 @@ var MachineCreateController = (function(){
 
     updateFromSelect();
     updateAutocomplete();
-    renderGraph(machine.getGraph());
+    GraphView.renderGraph(machine.getGraph());
     renderTransitionsTable();
   },
 
   bindEvents = function(){
     $(selectors.machineForm).on('submit',createInitialState);
     $('#transitionsTableContainer').on('click',selectors.deleteTransition,deleteMachineTransition);
-  },
-
-  renderGraph = function(graph){
-    render(inner, graph);
-    var center = ($('svg').width() - graph.graph().width) / 2;
-    inner.attr("transform", "translate(" + center + ", 20)");
-    svg.attr("height", graph.graph().height + 40);
   },
 
   renderTransitionsTable = function(){
@@ -135,9 +129,7 @@ var MachineCreateController = (function(){
    
   start = function(){
     machine = Machine.create();
-    svg = d3.select("svg");
-    inner = svg.append("g");
-    render = new dagreD3.render();
+    GraphView.initView();
     initValidations();
     bindEvents();
   };
