@@ -13,6 +13,7 @@ class App.IndexController
     tbodyTemplateOnlyAmount: '#tbodyOnlyAmount'
     specifyDateTemplate: '#specifyDateTemplate'
     destinationnyDateTemplate: '#divVencimiento'
+    deleteItem: '.deleteItem'
 
   constructor: ->
 
@@ -42,6 +43,15 @@ class App.IndexController
       when "Solo importe" then new App.IndexViewController().append(@selectors.tbodyTemplateOnlyAmount,@selectors.articlesTable,{index:@getNumberAttribute()})
     if $('#typeOfOrden option:selected').text() =="Cantidad" then  console.log("*****hola")
 
+  deleteItemBox: =>
+    console.log('escuchado')
+    tbodyToDelete= $('.deleteItem').parents('tbody')
+    console.log(tbodyToDelete)
+    console.log('++++++++++++++++')
+    d =event.currentTarget
+    r = $(d).parents('tbody')
+    console.log(r)
+
   typeOfTable: (event) =>
     switch $('#typeOfOrden option:selected').text()
       when "Cantidad" then  new App.IndexViewController().render(@selectors.tableTemplateCount,@selectors.articlesTable,{})
@@ -64,7 +74,7 @@ class App.IndexController
         $('#notesChars').html diff
 
   getNumberAttribute: () ->
-   attribute =  $('#itemName_0').attr 'name'
+   attribute =  $('body #itemName_0').attr 'name'
    regularExpresion = /\d/
    index = parseInt(regularExpresion.exec(attribute))
    console.log(index)
@@ -84,6 +94,7 @@ class App.IndexController
     @wordCounter()
     $('#selectDate').change => @specifyDate(); @datetimepicker()
     $('#buttonPreview').click => @getNumberAttribute(); @findNumberOftbody()
+    $('body').on('click',@selectors.deleteItem,(e) -> console.log($(e.currentTarget).parents("tbody").remove()) )
 
 
 new App.IndexController().start()
