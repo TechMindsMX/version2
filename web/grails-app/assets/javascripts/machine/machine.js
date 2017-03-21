@@ -144,7 +144,7 @@ var Machine = {
   },
 
   getGraph:function(){
-    var digraphText = "digraph { node [rx=5 ry=5 labelStyle=\"font: 300 14px 'Helvetica Neue', Helvetica\"] "
+    var digraphText = "digraph { node [rx=5 ry=5 labelStyle=\"font: 300 14px 'Helvetica Neue', Helvetica\"] " +
                       "edge [labelStyle=\"font: 300 14px 'Helvetica Neue', Helvetica\"] ";
 
     $.each(this.states,function(index,state){
