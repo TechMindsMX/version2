@@ -26,8 +26,8 @@ class MachineController {
 
     if(!machine)
       return response.sendError(404)
-    
-    respond transitionService.getMachineTransitions(machine.id)
+
+    respond (transitionService.getMachineTransitions(machine.id))
   }
 
   def register(){
