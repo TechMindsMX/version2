@@ -1,7 +1,7 @@
 import com.modulus.uno.machine.Machine
 
 model {
-  ArrayList<Transition> transitions
+  ArrayList<Transition> transitionList
 }
 
-g.render(template:"/machine/transition/transition", model:[transition:transitions])
+json tmpl.'transition/transition'(transitionList)
