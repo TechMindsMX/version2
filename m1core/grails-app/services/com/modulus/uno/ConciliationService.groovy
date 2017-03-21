@@ -41,4 +41,11 @@ class ConciliationService {
     conciliation.delete()
   }
 
+  void cancelConciliationsForPayment(Payment payment) {
+    List<Conciliation> conciliations = getConciliationsToApplyForPayment(payment)
+    conciliations.each {
+      deleteConciliation(it)
+    }
+  }
+
 }
