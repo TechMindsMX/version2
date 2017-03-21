@@ -19,58 +19,19 @@
           <div class="panel-body">
             <div class="container-fluid">
 
-              <div class="row">
-                <div class="col-md-4 text-center">
-                  <strong>Fecha del Pago</strong><br>
-                  <g:formatDate format="dd-MM-yyyy" date="${payment.dateCreated}"/>
-                </div>
-                <div class="col-md-4 text-center">
-                  <strong>Total</strong>
-                  <br/>${modulusuno.formatPrice(number: payment.amount)}
-                </div>
-                <g:if test="${toApply == 0}">
-                <div class="col-md-4 text-center alert alert-success">
-                </g:if>
-                <g:else>
-                <div class="col-md-4 text-center alert alert-warning">
-                </g:else>
-                  <strong>Por aplicar</strong><br/>
-                  ${modulusuno.formatPrice(number: toApply)}
-                </div>
-              </div>
+              <g:render template="dataPayment"/>
               <hr>
               <g:if test="${toApply > 0}">
+                <g:if test="${flash.message}">
+                  <div class="alert alert-danger" role="alert">${flash.message}</div>
+                </g:if>
 
-              <g:if test="${flash.message}">
-                <div class="alert alert-danger" role="alert">${flash.message}</div>
-              </g:if>
-
-              <div class="row">
                 <g:form action="addSaleOrderToConciliate">
-                <g:hiddenField name="paymentId" value="${payment.id}"/>
-                <div class="col-md-12">
-                  <label>Facturas disponibles:</label>
-                  <g:select class="form-control" name="saleOrderId" from="${saleOrders}" noSelection="['':' Elegir factura...']" required="true" optionKey="id"/>
-                </div>
-              </div><br/>
-              <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-3">
-                  <label>Tipo de Cambio:</label>
-                  <input class="form-control" type="number" min="0.01" step="0.01" required="true" id="changeType" name="changeType" readOnly="true" value="0.00"/>
-                </div>
-                <div class="col-md-3">
-                  <label>Monto a aplicar (MXN):</label>
-                  <input class="form-control" type="number" min="0.01" max="${toApply}" step="0.01" name="amountToApply" required="true"/>
-                </div>
-                <div class="col-md-2 text-right">
-                  <br/>
-                  <button class="btn btn-primary">Agregar</button>
-                </div>
+                  <g:render template="addInvoiceToConciliate"/>
                 </g:form>
-              </div>
-              <hr>
+                <hr>
               </g:if>
+
               <g:if test="${conciliations}">
               <label>Facturas seleccionadas:</label>
               <div class="table-responsive">
@@ -105,6 +66,7 @@
               </div>
               <hr>
               </g:if>
+
               <div class="row">
                 <div class="col-md-6 text-center">
                   <button class="btn btn-danger">Cancelar</button>
