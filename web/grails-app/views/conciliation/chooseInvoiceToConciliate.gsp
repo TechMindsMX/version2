@@ -57,7 +57,7 @@
                 <div class="col-md-4"></div>
                 <div class="col-md-3">
                   <label>Tipo de Cambio:</label>
-                  <input class="form-control" type="number" min="0.01" step="0.01" name="changeType" readOnly="true" value="0.00"/>
+                  <input class="form-control" type="number" min="0.01" step="0.01" required="true" id="changeType" name="changeType" readOnly="true" value="0.00"/>
                 </div>
                 <div class="col-md-3">
                   <label>Monto a aplicar (MXN):</label>
@@ -127,6 +127,6 @@
         </div>
       </div>
     </div>
-
+    <asset:javascript src="conciliation/chooseInvoice.js"/>
   </body>
 </html>
