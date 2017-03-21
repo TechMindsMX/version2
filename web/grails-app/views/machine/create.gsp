@@ -62,7 +62,7 @@
             <!-- END OF ROW -->
           </div>
           <!-- END OF COL-SM-6 -->
-          <div class="col-sm-6">
+          <div class="col-sm-6 graphDiv" >
             <svg id="svg" width="100%"></svg>
           </div>
         </div>
