@@ -81,9 +81,10 @@ class MachineService {
     currentMachine 
   }
 
-  def moveToActionAndListen(def instance,String action){
-    moveToAction(instance,action)
+  State moveToActionAndListen(def instance,String action){
+    State currentState = moveToAction(instance,action)
     machineEventExecuterService.executeEvents(instance)
+    currentState
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -93,9 +94,6 @@ class MachineService {
 
     State state = getCurrentStateOfInstance(instance)
 
-    if(!state)
-      state = machine.initialState
-    
     Transition transition = machine.transitions.find{ transition -> transition.stateFrom.id == state.id && transition.actions.contains(action) }
 
     if(!transition)
@@ -112,7 +110,7 @@ class MachineService {
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     String currentState = machineryLink.trackingLogs?.max{ trackingLog -> trackingLog.id }?.state
     Machine stateMachine = machineryLink.machine
-    stateMachine.states.find{ state -> state.name == currentState }
+    stateMachine.states.find{ state -> state.name == currentState } ?: stateMachine.initialState
   }
 
   ArrayList<State> findNextStatesOfInstance(def instance){

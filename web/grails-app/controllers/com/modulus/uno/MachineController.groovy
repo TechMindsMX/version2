@@ -15,9 +15,19 @@ class MachineController {
   CorporateService corporateService
   def springSecurityService
   MachineService machineService
+  TransitionService transitionService
 
   def index(){
     [entities:machineryLinkService.getClassesWithMachineryInterface()]
+  }
+
+  def show(String id){
+    Machine machine = Machine.findByUuid(id)
+
+    if(!machine)
+      return response.sendError(404)
+
+    respond (transitionService.getMachineTransitions(machine.id))
   }
 
   def register(){
@@ -25,7 +35,7 @@ class MachineController {
     Corporate corporate = corporateService.findCorporateOfUser(user)
     ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
     render view:"register",model:[entities:machineryLinkService.getClassesWithMachineryInterface(),
-                               companies:companies]
+                                  companies:companies]
   }
 
   def create(){

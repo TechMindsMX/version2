@@ -1,0 +1,11 @@
+import com.modulus.uno.machine.Transition
+
+model {
+  Transition transition
+}
+
+json {
+  stateFrom g.render(template:"/machine/state/state", model:[machineState:transition.stateFrom])
+  stateTo g.render(template:"/machine/state/state", model:[machineState:transition.stateTo])
+  actions g.render(template:"/machine/transition/action", collection: transition.actions, var:'action')
+}
