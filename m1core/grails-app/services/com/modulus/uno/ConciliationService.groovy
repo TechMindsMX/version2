@@ -19,7 +19,7 @@ class ConciliationService {
   }
 
   void saveConciliationForCompany(Conciliation conciliation, Company company) {
-    if (conciliation.amount > conciliation.saleOrder.amountToPay) {
+    if (!validateAmountToApply(conciliation)) {
       throw new BusinessException("El monto a conciliar (${conciliation.amount.setScale(2, RoundingMode.HALF_UP)}) no puede ser mayor al monto por pagar de la factura (${conciliation.saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP)})")
     }
 
@@ -27,6 +27,14 @@ class ConciliationService {
     conciliation.user = springSecurityService.currentUser
     log.info "Saving conciliation: ${conciliation.dump()}"
     conciliation.save()
+  }
+
+  private validateAmountToApply(Conciliation conciliation) {
+    BigDecimal amountToConciliate = conciliation.amount
+    if (conciliation.saleOrder.currency=="USD") {
+      amountToConciliate = conciliation.amount/conciliation.changeType
+    }
+    amountToConciliate <= conciliation.saleOrder.amountToPay
   }
 
   void deleteConciliation(Conciliation conciliation) {
