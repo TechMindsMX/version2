@@ -67,22 +67,7 @@
               <hr>
               </g:if>
 
-              <div class="row">
-                <div class="col-md-6 text-center">
-                  <button class="btn btn-danger">Cancelar</button>
-                </div>
-                <div class="col-md-6 text-center">
-                  <g:if test="${conciliations && toApply == 0}">
-                  <button class="btn btn-success">Aplicar</button>
-                  </g:if>
-                  <g:if test="${!conciliations}">
-                    <div class="alert alert-warning" role="alert">No ha agregado facturas</div>
-                  </g:if>
-                  <g:if test="${conciliations && toApply > 0}">
-                    <div class="alert alert-warning" role="alert">Aún dispone de monto por aplicar</div>
-                  </g:if>
-                </div>
-              </div>
+              <g:render template="actions"/>
 
             </div>
           </div>
