@@ -348,10 +348,10 @@
                     <td><input type="text" name="articles[0].tax" id="itemTax_0" class="form-control inputs" value="IVA: 16%" ></input></td>
                     <td><input type="text" name="articles[0].amount" id="itemAmount_0" class="form-control inputs" placeholder="$ 0.00 " ></input></td>
                     <td>
-                      <div class="col-xs-3" style="width:50%; padding:0">
-                        <a href="#">
-                          <span class="glyphicon glyphicon-remove"></span>
-                        </a>
+                      <div class="col-xs-3 " style="width:50%; padding:0">
+                        <div class="deleteItem">
+                          <span style="cursor: pointer"  class="glyphicon glyphicon-remove"></span>
+                        <div>
                       </div>
                     </td>
                   </tr>
