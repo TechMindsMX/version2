@@ -1,6 +1,5 @@
 //= require third-party/jquery-validation/dist/jquery.validate.js
 //= require third-party/EasyAutocomplete/dist/jquery.easy-autocomplete.js
-//= require third-party/d3/d3.js
 //= require helpers/machine_helpers.js
 //= require machine/machine.js
 //= require machine/machine_view.js
@@ -130,8 +129,8 @@ var MachineCreateController = (function(){
   },
 
   renderTransitionsTable = function(){
-    MachineCreateView.render('#transitionsTable','#transitionsTableContainer',{transitions:machine.getTransitions(),
-                                                                               initialState:machine.getInitialState()});
+    MachineView.render('#transitionsTable','#transitionsTableContainer',{transitions:machine.getTransitions(),
+                                                                         initialState:machine.getInitialState()});
   },
    
   start = function(){
