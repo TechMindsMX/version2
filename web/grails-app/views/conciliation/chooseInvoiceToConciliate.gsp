@@ -61,7 +61,7 @@
                 </div>
                 <div class="col-md-3">
                   <label>Monto a aplicar (MXN):</label>
-                  <input class="form-control" type="number" min="0.01" step="0.01" name="amountToApply" required="true"/>
+                  <input class="form-control" type="number" min="0.01" max="${toApply}" step="0.01" name="amountToApply" required="true"/>
                 </div>
                 <div class="col-md-2 text-right">
                   <br/>
@@ -91,7 +91,7 @@
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.total)}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay)}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.amount)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay - conciliation.amount)}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.currency == "MXN" ? conciliation.saleOrder.amountToPay - conciliation.amount : conciliation.saleOrder.amountToPay - (conciliation.amount/conciliation.changeType)) }</td>
                     <td>${conciliation.saleOrder.currency}</td>
                     <td>${conciliation.changeType ?: "NA"}</td>
                     <td class="text-center">
