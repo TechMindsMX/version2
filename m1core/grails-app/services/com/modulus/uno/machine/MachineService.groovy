@@ -94,9 +94,6 @@ class MachineService {
 
     State state = getCurrentStateOfInstance(instance)
 
-    if(!state)
-      state = machine.initialState
-    
     Transition transition = machine.transitions.find{ transition -> transition.stateFrom.id == state.id && transition.actions.contains(action) }
 
     if(!transition)
@@ -113,7 +110,7 @@ class MachineService {
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     String currentState = machineryLink.trackingLogs?.max{ trackingLog -> trackingLog.id }?.state
     Machine stateMachine = machineryLink.machine
-    stateMachine.states.find{ state -> state.name == currentState }
+    stateMachine.states.find{ state -> state.name == currentState } ?: stateMachine.initialState
   }
 
   ArrayList<State> findNextStatesOfInstance(def instance){
