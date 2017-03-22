@@ -1,6 +1,7 @@
 package com.modulus.uno.machine
 
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 @Transactional
 class MachineService {
@@ -80,15 +81,19 @@ class MachineService {
     currentMachine 
   }
 
+  State moveToActionAndListen(def instance,String action){
+    State currentState = moveToAction(instance,action)
+    machineEventExecuterService.executeEvents(instance)
+    currentState
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   State moveToAction(def instance,String action){
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     Machine machine = machineryLink.machine
 
     State state = getCurrentStateOfInstance(instance)
 
-    if(!state)
-      state = machine.initialState
-    
     Transition transition = machine.transitions.find{ transition -> transition.stateFrom.id == state.id && transition.actions.contains(action) }
 
     if(!transition)
@@ -98,7 +103,6 @@ class MachineService {
     TrackingLog trackingLog = new TrackingLog(state:newState.name)
     machineryLink.addToTrackingLogs(trackingLog)
     machineryLink.save(failOnError:true)
-    machineEventExecuterService.executeEvents(instance)
     newState
   }
 
@@ -106,7 +110,7 @@ class MachineService {
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     String currentState = machineryLink.trackingLogs?.max{ trackingLog -> trackingLog.id }?.state
     Machine stateMachine = machineryLink.machine
-    stateMachine.states.find{ state -> state.name == currentState }
+    stateMachine.states.find{ state -> state.name == currentState } ?: stateMachine.initialState
   }
 
   ArrayList<State> findNextStatesOfInstance(def instance){

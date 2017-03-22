@@ -1,14 +1,14 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
-import com.modulus.uno.machine.MachineEvent
+import com.modulus.uno.machine.MachineEventImplementer
 
-@Transactional
-class EventNotificationService implements MachineEvent {
+class EventNotificationService implements MachineEventImplementer {
 
   NotifyService notifyService 
+  def grailsApplication
 
-  void executeEvent(def instance) {
+  void executeEvent(String className,Long instanceId) {
     log.debug("Sending the email...")
   }
 

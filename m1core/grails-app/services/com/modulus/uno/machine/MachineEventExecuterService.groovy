@@ -1,22 +1,33 @@
 package com.modulus.uno.machine
 
 import grails.transaction.Transactional
-import org.springframework.context.ApplicationContext
-import grails.util.Holders
+import javax.annotation.PostConstruct
 
 @Transactional
 class MachineEventExecuterService{
 
   def grailsApplication
+  MachineEventExecuterSupervisorService machineEventExecuterSupervisorService
+  MachineEventExecuterActorService machineEventExecuterActorService
+
+  @PostConstruct 
+  private def init() {
+    machineEventExecuterActorService.start()
+    machineEventExecuterSupervisorService.start()
+    machineEventExecuterSupervisorService.link(machineEventExecuterActorService)
+  }
 
   def executeEvents(def instance){
-    ArrayList<MachineEvent> events = grailsApplication.serviceClasses.findAll{ serviceClazz -> MachineEvent.isAssignableFrom(serviceClazz.clazz) }
-    ApplicationContext ctx = Holders.getApplicationContext()
+    ArrayList<String> eventImplementerNames = grailsApplication.serviceClasses.findAll{ serviceClazz -> MachineEventImplementer.isAssignableFrom(serviceClazz.clazz) }*.propertyName
 
-    events.each{ event ->
-      def service = ctx.getBean(event.propertyName)
-      service.executeEvent(instance)
+    eventImplementerNames.each{ eventImplementerName ->
+      EventImplementer eventImplementer = new EventImplementer(eventImplementerName:eventImplementerName,
+                                                               instanceClassName:instance.class.simpleName,
+                                                               instanceId:instance.id)
+
+      machineEventExecuterSupervisorService.send(eventImplementer)
     }
+
   }
 
 }

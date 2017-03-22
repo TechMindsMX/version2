@@ -3,6 +3,10 @@ svg {
   min-height:300px;
 }
 
+.graphDiv span {
+  color: #000000 !important;
+}
+
 .node {
   white-space: nowrap;
 }

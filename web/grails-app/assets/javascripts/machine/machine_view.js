@@ -1,5 +1,5 @@
-var MachineCreateView = (function(){
-  
+var MachineView = (function(){
+
   render = function(templateName,divDestiny,data){
     var source = $(templateName).html();
     var template = Handlebars.compile(source); 
