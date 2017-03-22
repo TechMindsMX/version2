@@ -50,33 +50,7 @@ class MachineController {
 
   @Transactional
   def save(MachineCommand machine){
-    Machine currentMachine = machine.getMachine()
-    State initialState = currentMachine.initialState
-    Transition initialTransition = currentMachine.transitions.find{ it.stateFrom.name == initialState.name }
-    ArrayList<Transition> stateTransitions = currentMachine.transitions.findAll{ transition -> (transition.stateFrom.name != initialTransition.stateFrom.name || transition.stateTo.name != initialTransition.stateTo.name) }
-
-    if(initialTransition){
-      ArrayList<String> actions = []
-      actions.addAll(0,initialTransition.actions)
-      Machine newMachine = machineService.createMachineWithActions(initialTransition.stateFrom.name,initialTransition.stateTo.name,actions)
-      ArrayList<State> states = [initialState,initialTransition.stateTo]
-      ArrayList<Transition> transitionsToSave = []
-
-      while(states){
-        State s = states.remove(0)
-        State state = newMachine.states.find{ it.name.toUpperCase() == s.name }
-        transitionsToSave = stateTransitions.findAll{ it.stateFrom.name == s.name }
-        stateTransitions.removeAll{ it.stateFrom.name == s.name }
-        
-        transitionsToSave.each{ transition ->
-          transition.actions.each{ action ->
-            machineService.createTransition(state.id,transition.stateTo.name,action)
-          }
-          states << transition.stateTo
-        }
-      }
-    }
-
+    machineService.saveMachine(machine.getMachine())
     redirect(action:"index")
   }
 
