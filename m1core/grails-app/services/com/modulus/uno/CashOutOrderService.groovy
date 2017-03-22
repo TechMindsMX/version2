@@ -15,7 +15,6 @@ class CashOutOrderService {
 
 	def authorizeAndDoCashOutOrder(CashOutOrder cashOutOrder) {
 		modulusUnoService.approveCashOutOrder(cashOutOrder)
-		cashOutOrder
 	}
 
   BigDecimal getTotalOrdersAuthorizedOfCompany(Company company){
