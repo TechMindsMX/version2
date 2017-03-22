@@ -7,6 +7,8 @@ import java.math.RoundingMode
 class ConciliationService {
 
   def springSecurityService
+  def saleOrderService
+  def paymentService
 
   def getTotalToApplyForPayment(Payment payment) {
     def conciliations = getConciliationsToApplyForPayment(payment)
@@ -46,6 +48,24 @@ class ConciliationService {
     conciliations.each {
       deleteConciliation(it)
     }
+  }
+
+  List<Conciliation> getConciliationsAppliedForPayment(Payment payment) {
+    Conciliation.findAllByPaymentAndStatus(payment, ConciliationStatus.APPLIED)
+  }
+
+  void applyConciliationsForPayment(Payment payment) {
+    List<Conciliation> conciliations = getConciliationsToApplyForPayment(payment)
+    conciliations.each { conciliation ->
+      applyConciliation(conciliation)
+    }
+  }
+
+  private applyConciliation(Conciliation conciliation) {
+    saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount)
+    //****paymentService.conciliatePayment(payment)
+    conciliation.status = ConciliationStatus.APPLIED
+    conciliation.save()
   }
 
 }
