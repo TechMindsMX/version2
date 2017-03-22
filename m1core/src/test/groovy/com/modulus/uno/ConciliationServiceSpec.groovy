@@ -93,8 +93,10 @@ class ConciliationServiceSpec extends Specification {
   }
 
   void "Should apply conciliations for a payment"() {
-    given:"A payment"
-      Payment payment = new Payment(amount:5000).save(validate:false)
+   given:"A company"
+      Company company = new Company().save(validate:false)
+   and:"A payment"
+      Payment payment = new Payment(amount:5000, company:company).save(validate:false)
     and:"The sale orders"
       SaleOrder saleOrder1 = new SaleOrder()
       SaleOrderItem item1 = new SaleOrderItem(price:3000, quantity:1, ieps:0, iva:0, discount:0).save(validate:false)
@@ -104,8 +106,6 @@ class ConciliationServiceSpec extends Specification {
       SaleOrderItem item2 = new SaleOrderItem(price:2000, quantity:1, ieps:0, iva:0, discount:0).save(validate:false)
       saleOrder2.addToItems(item2)
       saleOrder2.save(validate:false)
-    and:"A company"
-      Company company = new Company().save(validate:false)
     and:"A user"
       User user = Mock(User)
     and:"The existing conciliations to apply for payment"
@@ -118,6 +118,8 @@ class ConciliationServiceSpec extends Specification {
     then:
       service.getConciliationsToApplyForPayment(payment) == []
       service.getConciliationsAppliedForPayment(payment) == conciliations
+      2 * saleOrderService.addPaymentToSaleOrder(_, _)
+      1 * paymentService.conciliatePayment(_)
   }
 
 }
