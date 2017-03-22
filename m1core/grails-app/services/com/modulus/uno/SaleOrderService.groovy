@@ -213,8 +213,9 @@ class SaleOrderService {
     SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
   }
 
-  SaleOrder addPaymentToSaleOrder(SaleOrder saleOrder, BigDecimal amount) {
-    SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amount)
+  SaleOrder addPaymentToSaleOrder(SaleOrder saleOrder, BigDecimal amount, BigDecimal changeType) {
+    BigDecimal amountPayment = saleOrder.currency == "MXN" ? amount : amount/changeType
+    SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amountPayment)
     saleOrder.addToPayments(saleOrderPayment)
     saleOrder.save()
     if (saleOrder.amountToPay == 0) {
