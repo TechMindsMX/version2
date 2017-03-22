@@ -213,4 +213,15 @@ class SaleOrderService {
     SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
   }
 
+  SaleOrder addPaymentToSaleOrder(SaleOrder saleOrder, BigDecimal amount) {
+    SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amount)
+    saleOrder.addToPayments(saleOrderPayment)
+    saleOrder.save()
+    if (saleOrder.amountToPay == 0) {
+      saleOrder.status = SaleOrderStatus.PAGADA
+      saleOrder.save()
+    }
+    saleOrder
+  }
+
 }
