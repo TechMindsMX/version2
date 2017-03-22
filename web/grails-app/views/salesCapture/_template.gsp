@@ -14,10 +14,10 @@
   <tbody id="tbody_{{index}}">
     <tr>
       <td><input type="text" name="articles[{{index}}].name" id="itemName_{{index}}" class="form-control inputs"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
-      <td><input type="text" name="articles[{{index}}].quantity" id="itemQuantuty_{{index}}"class="form-control inputs" placeholder="Nº" ></input></td>
-      <td><input type="text" name="articles[{{index}}].price"id="itemPrice_{{index}}" class="form-control inputs" placeholder="0.00" ></input></td>
+      <td><input type="text" name="articles[{{index}}].quantity" id="itemQuantuty_{{index}}"class="form-control inputs inputsQuantity" placeholder="Nº" ></input></td>
+      <td><input type="text" name="articles[{{index}}].price"id="itemPrice_{{index}}" class="form-control inputs inputsPrice" placeholder="0.00" ></input></td>
       <td><input type="text" name="articles[{{index}}].tax" disabled id="itemTax_{{index}}"class="form-control inputs" value="IVA: 16%" ></input></td>
-      <td><input type="text" name="articles[{{index}}].amount"id="itemAmount_{{index}}" class="form-control inputs" placeholder="$ 0.00" ></input></td>
+      <td><input type="text" name="articles[{{index}}].amount"id="itemAmount_{{index}}" class="form-control inputs inputsAmount" placeholder="$ 0.00" ></input></td>
       <td><div class="col-xs-3" style="width:50%; padding:0"><div class="deleteItem"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></div></div></td>
     </tr>
     <tr>
@@ -96,17 +96,15 @@
 
                 <tbody id="tbody_0">
                   <tr>
-                    <td><input type="text" name="articles[0].name"id="itemName_0" class="form-control inputs"placeholder="Nombre del artículo" ></input></td>
-                    <td><input type="text" name="articles[0].quantity" id="itemQuantuty_0" class="form-control inputs" placeholder="Nº" ></input></td>
-                    <td><input type="text" name="articles[0].price" id="itemPrice_0"class="form-control inputs" placeholder="0.00" ></input></td>
-                    <td><input type="text" name="articles[0].tax" id="itemTax_0" class="form-control inputs" value="IVA: 16%" disabled ></input></td>
-                    <td><input type="text" name="articles[0].amount" id="itemAmount_0" class="form-control inputs" placeholder="$ 0.00 " ></input></td>
+                    <td><input type="text" name="articles[0].name"id="itemName_0" class="form-control inputs"placeholder="Nombre del artículo" ></td>
+                    <td><input type="text" name="articles[0].quantity" id="itemQuantuty_0" value="2" class="form-control inputs inputsQuantity" placeholder="Nº" ></td>
+                    <td><input type="text" name="articles[0].price" id="itemPrice_0" value="100" class="form-control inputs inputsPrice" placeholder="0.00" ></td>
+                    <td><input type="text" name="articles[0].tax" disabled id="itemTax_0" class="form-control inputs inputsIva" value="IVA: 16%" ></td>
+                    <td><input type="text" name="articles[0].amount" id="itemAmount_0" class="form-control inputs inputsAmount" value="$ 0.00" placeholder="$ 0.00 " ></td>
                     <td>
                       <div class="col-xs-3 " style="width:50%; padding:0">
                         <div class="deleteItem">
-                        <a href="#">
-                          <span class="glyphicon glyphicon-remove"></span>
-                        </a>
+                          <span style="cursor: pointer"  class="glyphicon glyphicon-remove"></span>
                         <div>
                       </div>
                     </td>
