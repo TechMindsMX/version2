@@ -17,7 +17,9 @@
         </g:link>
         </div>
         <div class="col-md-3 text-center">
-          <button class="btn btn-primary">Sin Factura</button>
+          <g:link class="btn btn-primary" controller="conciliation" action="conciliationWithoutInvoice" id="${payment.id}">
+            Sin Factura
+          </g:link>
         </div>
       </td>
     </tr>
