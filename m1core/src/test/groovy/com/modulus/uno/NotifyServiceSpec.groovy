@@ -6,15 +6,17 @@ import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(NotifyService)
-@Mock([User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, DepositOrder, PurchaseOrder,Corporate,SaleOrderItem])
+@Mock([GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, DepositOrder, PurchaseOrder,Corporate,SaleOrderItem])
 class NotifyServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
   CorporateService corporateService = Mock(CorporateService)
+  RestService restService = Mock(RestService)
 
   def setup(){
     service.grailsApplication = grailsApplication
     service.corporateService = corporateService
+    service.restService = restService
   }
 
   @Unroll("Obtain the params when the DEPOSIT ORDER is #status")
@@ -355,6 +357,23 @@ class NotifyServiceSpec extends Specification {
     emailMap == [id:"12345678qwerty", to:"hi@me.com", subject:"Mensaje de Modulus Uno", params:["a":1] ]
   }
 
+  void "Send emails notifications for a group"(){
+    given:"A group notification"
+    def group = new GroupNotification(name:"Contadores", notificationId:"notificationId123", users:usersToNotify()).save(validate:false)
+    and:"a emailer params"
+    def emailerParams = ["tag1":"Emailer test", "tag2":"Message to send"]
+    when:"We want to send email to every user from the group notification"
+    service.sendEmailToGroup(group.id, emailerParams)
+    then:"We should call the rest service for every user to notify  "
+    3 * restService.sendEmailToEmailer(_)
+  }
+
+  private usersToNotify(){
+    (1..3).collect {
+      def u = new User(username:"user$it", profile: new Profile(email:"user$it@modulus.uno")).save(validate:false)
+      u
+    }
+  }
 
 
 }
