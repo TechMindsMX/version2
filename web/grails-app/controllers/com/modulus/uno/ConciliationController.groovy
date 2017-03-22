@@ -59,4 +59,17 @@ class ConciliationController {
     redirect action:"chooseInvoiceToConciliate", id:payment.id
   }
 
+  @Transactional
+  def cancelConciliation(Payment payment) {
+    log.info "Canceling conciliation for payment: ${payment.id}"
+    conciliationService.cancelConciliationsForPayment(payment)
+    redirect controller:"payment", action:"conciliation"
+  }
+
+  @Transactional
+  def applyConciliationsForPayment(Payment payment) {
+    log.info "Applying conciliations for payment: ${payment.id}"
+    conciliationService.applyConciliationsForPayment(payment)
+    redirect controller:"payment", action:"conciliation"
+  }
 }
