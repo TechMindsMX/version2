@@ -123,6 +123,29 @@ class MachineServiceSpec extends Specification {
       states.size() == 1
   }
 
+  Should "save the complete machine"(){
+    given:
+      Machine machine = new Machine(initialState:new State(name:"Idle"))
+      ArrayList<Transition> transitions = [new Transition(stateFrom:new State(name:"Idle"),
+                                                          stateTo:new State(name:"Active"),
+                                                          actions:["INSERT CARD"]),
+                                           new Transition(stateFrom:new State(name:"Active"),
+                                                          actions:["DONE"],
+                                                          stateTo:new State(name:"Idle")),
+                                           new Transition(stateFrom:new State(name:"Idle"),
+                                                          actions:["SERVICE"],
+                                                          stateTo:new State(name:"Out Of Service")),
+                                           new Transition(stateFrom:new State(name:"Out Of Service"),
+                                                          actions:["FIX"],
+                                                          stateTo:new State(name:"Idle"))]
+      machine.transitions = transitions
+    when:
+      service.saveMachine(machine)
+      ArrayList<Machine> machineList= Machine.list()
+    then:
+      machineList.list().size() == 1 
+  }
+
   void createMachine(){
     ArrayList<String> actions = ["Service","Insert Card","Cancel","Fix","Finish"]
     ArrayList<String> states = ["Idle","Out Of Service","Active"]
