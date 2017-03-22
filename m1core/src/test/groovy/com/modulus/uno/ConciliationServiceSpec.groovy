@@ -118,7 +118,7 @@ class ConciliationServiceSpec extends Specification {
     then:
       service.getConciliationsToApplyForPayment(payment) == []
       service.getConciliationsAppliedForPayment(payment) == conciliations
-      2 * saleOrderService.addPaymentToSaleOrder(_, _)
+      2 * saleOrderService.addPaymentToSaleOrder(_, _, _)
       1 * paymentService.conciliatePayment(_)
   }
 
