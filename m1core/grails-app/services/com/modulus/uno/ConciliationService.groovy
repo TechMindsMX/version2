@@ -63,7 +63,7 @@ class ConciliationService {
  }
 
   private applyConciliation(Conciliation conciliation) {
-    saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount)
+    saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
     conciliation.status = ConciliationStatus.APPLIED
     conciliation.save()
   }
