@@ -7,6 +7,7 @@ class PaymentService {
 
   def modulusUnoService
   def emailSenderService
+  def businessEntityService
 
   def getPaymentStatus(String status){
     def listPaymentStatus = []
@@ -45,6 +46,26 @@ class PaymentService {
     } else {
       throw new BusinessException("Error al conciliar la orden...")
     }
+    payment
+  }
+
+  Map findReferencedPaymentsForCompany(Company company) {
+    Map payments = [:]
+    List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNotNull(company, PaymentStatus.PENDING)
+    if (paymentsList) {
+      List<BusinessEntity> companyClients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
+      List<BusinessEntity> businessEntities = paymentsList.collect { pay ->
+        companyClients.find { client -> pay.rfc == client.rfc }
+      }
+      payments.list = paymentsList
+      payments.clients = businessEntities
+    }
+    payments
+  }
+
+  Payment conciliatePayment(Payment payment) {
+    payment.status = PaymentStatus.CONCILIATED
+    payment.save()
     payment
   }
 

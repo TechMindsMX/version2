@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import grails.web.servlet.mvc.GrailsParameterMap
 
 @TestFor(SaleOrderService)
-@Mock([BusinessEntity, SaleOrder, SaleOrderItem, Company, User, Address,Authorization, Commission])
+@Mock([BusinessEntity, SaleOrder, SaleOrderItem, Company, User, Address,Authorization, Commission, SaleOrderPayment])
 class SaleOrderServiceSpec extends Specification {
 
   def items = []
@@ -181,6 +181,45 @@ class SaleOrderServiceSpec extends Specification {
       fechaCobro    | originalDate  | sendDate      | fechaCobroOriginal
       new Date()    | null          | new Date()+4  | new Date()
       new Date()+12 | new Date()+40 | new Date()+40 | new Date()+40
+  }
+
+  @Unroll
+  void "Should add payment to sale order in MXN when amount is #amount then amountToPay is #amountToPay and status is #status"() {
+    given:"A sale order"
+      SaleOrder saleOrder = new SaleOrder(currency:"MXN", status:SaleOrderStatus.EJECUTADA)
+    and:"Item"
+      SaleOrderItem item = new SaleOrderItem(price:100, ieps:0, iva:0, quantity:1).save(validate:false)
+      saleOrder.addToItems(item)
+      saleOrder.save(validate:false)
+    when:
+      def result = service.addPaymentToSaleOrder(saleOrder, amount, 0)
+    then:
+      result.amountToPay == amountToPay
+      result.status == status
+    where:
+    amount    ||  amountToPay   |   status
+    20        ||  80            | SaleOrderStatus.EJECUTADA
+    100       ||  0             | SaleOrderStatus.PAGADA
+  }
+
+  @Unroll
+  void "Should add payment to sale order in USD when amountMxn is #amountMxn then amountToPay is #amountToPay and status is #status"() {
+    given:"A sale order"
+      SaleOrder saleOrder = new SaleOrder(currency:"USD", status:SaleOrderStatus.EJECUTADA)
+    and:"Item"
+      SaleOrderItem item = new SaleOrderItem(price:100, ieps:0, iva:0, quantity:1).save(validate:false)
+      saleOrder.addToItems(item)
+      saleOrder.save(validate:false)
+    when:
+      def result = service.addPaymentToSaleOrder(saleOrder, amountMxn, 20)
+    then:
+      result.amountToPay == amountToPay
+      result.status == status
+      result.payments.first().amount == amountUsd
+    where:
+    amountMxn    ||  amountToPay   |   status                   | amountUsd
+    400          ||  80            | SaleOrderStatus.EJECUTADA  | 20
+    2000         ||  0             | SaleOrderStatus.PAGADA     | 100
   }
 
 }

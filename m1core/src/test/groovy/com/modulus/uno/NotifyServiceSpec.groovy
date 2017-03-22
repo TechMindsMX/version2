@@ -66,6 +66,7 @@ class NotifyServiceSpec extends Specification {
       def saleOrder = new SaleOrder(rfc:"MDE130712JA6", clientName:"PatitoAC" ,rejectReason: RejectReason.DOCUMENTO_INVALIDO, comments:"fake")
       def item = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS)
       saleOrder.addToItems(item)
+      saleOrder.payments = []
       saleOrder.save(validate:false)
     and:
       def company = new Company().save(validate:false)

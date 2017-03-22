@@ -21,4 +21,6 @@ databaseChangeLog = {
   include file: 'removing-state-relation-with-log.groovy'
   include file: 'adding-uuid-to-machine.groovy'
   include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
+  include file: 'create-domain-sale-order-payment.groovy'
+    include file: 'create-domain-conciliation.groovy'
 }
