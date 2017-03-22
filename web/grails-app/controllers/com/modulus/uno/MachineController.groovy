@@ -50,26 +50,27 @@ class MachineController {
 
   @Transactional
   def save(MachineCommand machine){
-    String initialState = machine.initialState
-    TransitionCommand initialTransition = machine.transitions.find{ it.stateFrom == initialState }
-    ArrayList<TransitionCommand> stateTransitions = machine.transitions.findAll{ transition -> (transition.stateFrom != initialTransition.stateFrom || transition.stateTo != initialTransition.stateTo) }
+    Machine currentMachine = machine.getMachine()
+    State initialState = currentMachine.initialState
+    Transition initialTransition = currentMachine.transitions.find{ it.stateFrom.name == initialState.name }
+    ArrayList<Transition> stateTransitions = currentMachine.transitions.findAll{ transition -> (transition.stateFrom.name != initialTransition.stateFrom.name || transition.stateTo.name != initialTransition.stateTo.name) }
 
-    //TODO: Move BFS to Service
     if(initialTransition){
-
-      Machine newMachine = machineService.createMachineWithActions(initialTransition.stateFrom,initialTransition.stateTo,initialTransition.actions)
-      ArrayList<String> states = [initialState,initialTransition.stateTo]//Q
-      ArrayList<TransitionCommand> transitionsToSave = []
+      ArrayList<String> actions = []
+      actions.addAll(0,initialTransition.actions)
+      Machine newMachine = machineService.createMachineWithActions(initialTransition.stateFrom.name,initialTransition.stateTo.name,actions)
+      ArrayList<State> states = [initialState,initialTransition.stateTo]
+      ArrayList<Transition> transitionsToSave = []
 
       while(states){
-        String s = states.remove(0)
-        State state = newMachine.states.find{ it.name.toUpperCase() == s }
-        transitionsToSave = stateTransitions.findAll{ it.stateFrom == s }
-        stateTransitions.removeAll{ it.stateFrom == s }  
-
+        State s = states.remove(0)
+        State state = newMachine.states.find{ it.name.toUpperCase() == s.name }
+        transitionsToSave = stateTransitions.findAll{ it.stateFrom.name == s.name }
+        stateTransitions.removeAll{ it.stateFrom.name == s.name }
+        
         transitionsToSave.each{ transition ->
           transition.actions.each{ action ->
-            machineService.createTransition(state.id,transition.stateTo,action)
+            machineService.createTransition(state.id,transition.stateTo.name,action)
           }
           states << transition.stateTo
         }
