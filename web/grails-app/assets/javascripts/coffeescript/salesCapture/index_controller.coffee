@@ -19,6 +19,13 @@ class App.IndexController
     quantity: '.inputsQuantity'
     price: '.inputsPrice'
     amount: '.inputsAmount'
+  selectorsTableHours:
+    hours:''
+    price:''
+    amount:''
+  selectorsTableOnlyImport:
+    amount:''
+
 
   constructor: ->
 
@@ -27,7 +34,6 @@ class App.IndexController
     @datetimepicker()
     @tooltip()
     @getNumberAttribute()
-    @calculationOfAmount()
 
   datetimepicker: () ->
     $('#datetimepicker1').datetimepicker({format: 'DD/MM/YYYY', locale: 'en' })
@@ -90,12 +96,12 @@ class App.IndexController
     r = $('#articles-table').children('tbody')
     r.length + countertbody
 
-  calculationOfAmount: () ->
-    quantity = $(@selectorsTablaCount.quantity).val()
-    price = $(@selectorsTablaCount.price).val()
+  calculationOfAmount: (event) =>
+    quantity = $(event.target).parents("tr").find(@selectorsTablaCount.quantity).val()
+    price = $(event.target).parents("tr").find(@selectorsTablaCount.price).val()
     tax =  (quantity * price)*0.16
     amount = (quantity * price) + tax
-    $(@selectorsTablaCount.amount).val("$ "+ amount)
+    $(event.target).parents("tr").find(@selectorsTablaCount.amount).val("$ #{amount}")
 
 
   bindEvents: () ->
@@ -107,6 +113,8 @@ class App.IndexController
     $('#selectDate').change => @specifyDate(); @datetimepicker()
     $('#buttonPreview').click => @getNumberAttribute(); @findNumberOftbody()
     $('body').on('click',@selectors.deleteItem,(e) -> $(e.currentTarget).parents("tbody").remove(); countertbody++ )
+    $('body').on("keyup",@selectorsTablaCount.quantity, @calculationOfAmount)
+    $('body').on("keyup#{@selectorsTablaCount.price}", @calculationOfAmount)
 
 
 new App.IndexController().start()
