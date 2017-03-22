@@ -10,6 +10,7 @@ class ModulusUnoService {
   def corporateService
   def grailsApplication
   StpService stpService
+  TransactionService transactionService
 
   static final feeType = [
     SaleOrder : "SALE_FEE",
@@ -80,6 +81,8 @@ class ModulusUnoService {
   }
 
   def approveCashOutOrder(CashOutOrder cashOutOrder) {
+    //TODO Todo esto deberia de estar en otro servicio que no sea este ya que seria el que orqueteste
+    //todas las llamadas
     FeeCommand feeCommand = createFeeCommandFromOrder(cashOutOrder)
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
@@ -90,7 +93,7 @@ class ModulusUnoService {
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
       fechaDeOperacion: new Date().format("yyyyMMdd"),  
       folioOrigen: "",
-      claveDeRastreo: new Date().toTimestamp(),
+      claveDeRastreo: new Date().getTime().toString(),
       institucionOperante: grailsApplication.config.stp.institutionOperation,
       montoDelPago: amount,
       tipoDelPago: "1",
@@ -121,7 +124,13 @@ class ModulusUnoService {
       prioridad: "",
       iva: ""
     ]
-    stpService.sendPayOrder(data)
+    String keyTransaction = stpService.sendPayOrder(data)
+    Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
+    amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:cashOutOrder.account.clabe,
+    referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
+    transactionStatus:TransactionStatus.AUTHORIZED]
+    Transaction transaction = new Transaction(parameters)
+    transactionService.saveTransaction(transaction)
   }
 
   private String getMailFromLegalRepresentatitveCompany(Company company) {
