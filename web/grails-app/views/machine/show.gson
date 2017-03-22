@@ -1,4 +1,4 @@
-import com.modulus.uno.machine.Machine
+import com.modulus.uno.machine.Transition
 
 model {
   ArrayList<Transition> transitionList
