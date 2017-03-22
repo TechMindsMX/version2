@@ -1,4 +1,5 @@
 class App.IndexController
+  countertbody=0
   selectors:
     partialPayment:'#partialPayment'
     addNewItem: '.addMoreItem'
@@ -14,6 +15,10 @@ class App.IndexController
     specifyDateTemplate: '#specifyDateTemplate'
     destinationnyDateTemplate: '#divVencimiento'
     deleteItem: '.deleteItem'
+  selectorsTablaCount:
+    quantity: '.inputsQuantity'
+    price: '.inputsPrice'
+    amount: '.inputsAmount'
 
   constructor: ->
 
@@ -22,6 +27,7 @@ class App.IndexController
     @datetimepicker()
     @tooltip()
     @getNumberAttribute()
+    @calculationOfAmount()
 
   datetimepicker: () ->
     $('#datetimepicker1').datetimepicker({format: 'DD/MM/YYYY', locale: 'en' })
@@ -77,14 +83,20 @@ class App.IndexController
    attribute =  $('body #itemName_0').attr 'name'
    regularExpresion = /\d/
    index = parseInt(regularExpresion.exec(attribute))
-   console.log(index)
    index = index+1
    @findNumberOftbody()
 
   findNumberOftbody:() ->
     r = $('#articles-table').children('tbody')
-    console.log(r.length)
-    r.length
+    r.length + countertbody
+
+  calculationOfAmount: () ->
+    quantity = $(@selectorsTablaCount.quantity).val()
+    price = $(@selectorsTablaCount.price).val()
+    tax =  (quantity * price)*0.16
+    amount = (quantity * price) + tax
+    $(@selectorsTablaCount.amount).val("$ "+ amount)
+
 
   bindEvents: () ->
     $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
@@ -94,7 +106,7 @@ class App.IndexController
     @wordCounter()
     $('#selectDate').change => @specifyDate(); @datetimepicker()
     $('#buttonPreview').click => @getNumberAttribute(); @findNumberOftbody()
-    $('body').on('click',@selectors.deleteItem,(e) -> console.log($(e.currentTarget).parents("tbody").remove()) )
+    $('body').on('click',@selectors.deleteItem,(e) -> $(e.currentTarget).parents("tbody").remove(); countertbody++ )
 
 
 new App.IndexController().start()
