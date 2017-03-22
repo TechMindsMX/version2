@@ -72,4 +72,9 @@ class ConciliationController {
     conciliationService.applyConciliationsForPayment(payment)
     redirect controller:"payment", action:"conciliation"
   }
+
+  def conciliationWithoutInvoice(Payment payment) {
+    log.info "Payment to conciliate without invoice: ${payment.dump()}"
+    [payment:payment, toApply:new BigDecimal(0)]
+  }
 }
