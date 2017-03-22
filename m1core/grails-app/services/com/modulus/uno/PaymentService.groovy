@@ -63,6 +63,13 @@ class PaymentService {
     payments
   }
 
+  Map findNotReferencedPaymentsForCompany(Company company) {
+    Map payments = [:]
+    List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNull(company, PaymentStatus.PENDING)
+    payments.list = paymentsList
+    payments
+  }
+
   Payment conciliatePayment(Payment payment) {
     payment.status = PaymentStatus.CONCILIATED
     payment.save()
