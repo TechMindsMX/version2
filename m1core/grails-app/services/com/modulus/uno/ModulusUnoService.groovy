@@ -131,6 +131,7 @@ class ModulusUnoService {
     transactionStatus:TransactionStatus.AUTHORIZED]
     Transaction transaction = new Transaction(parameters)
     transactionService.saveTransaction(transaction)
+    transaction
   }
 
   private String getMailFromLegalRepresentatitveCompany(Company company) {
