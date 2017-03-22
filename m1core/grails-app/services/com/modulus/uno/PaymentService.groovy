@@ -62,4 +62,11 @@ class PaymentService {
     }
     payments
   }
+
+  Payment conciliatePayment(Payment payment) {
+    payment.status = PaymentStatus.CONCILIATED
+    payment.save()
+    payment
+  }
+
 }
