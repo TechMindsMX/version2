@@ -46,6 +46,7 @@ class CashOutOrderController {
 
     @Transactional
     def executeCashOutOrder(CashOutOrder cashOutOrder) {
+      //TODO Esto va en un servicio
       String messageSuccess = message(code:"cashOutOrder.already.executed")
       if (companyService.enoughBalanceCompany(cashOutOrder.company, cashOutOrder.amount)){
         if (cashOutOrder.status == CashOutOrderStatus.AUTHORIZED) {
