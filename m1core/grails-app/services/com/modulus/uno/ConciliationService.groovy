@@ -59,11 +59,11 @@ class ConciliationService {
     conciliations.each { conciliation ->
       applyConciliation(conciliation)
     }
-  }
+    paymentService.conciliatePayment(payment)
+ }
 
   private applyConciliation(Conciliation conciliation) {
     saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount)
-    //****paymentService.conciliatePayment(payment)
     conciliation.status = ConciliationStatus.APPLIED
     conciliation.save()
   }
