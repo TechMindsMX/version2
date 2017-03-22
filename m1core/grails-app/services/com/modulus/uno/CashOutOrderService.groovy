@@ -5,10 +5,7 @@ import grails.transaction.Transactional
 @Transactional
 class CashOutOrderService {
 
-	def restService
-  def grailsApplication
   def modulusUnoService
-	def companyService
 
 	def addAutorizationToCashoutOrder(CashOutOrder cashOutOrder, User user) {
 		def authorization = new Authorization(user: user)
