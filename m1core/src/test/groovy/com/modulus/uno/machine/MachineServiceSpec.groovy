@@ -141,9 +141,9 @@ class MachineServiceSpec extends Specification {
       machine.transitions = transitions
     when:
       service.saveMachine(machine)
-      ArrayList<Machine> machineList= Machine.list()
+      ArrayList<Machine> machineList = Machine.list()
     then:
-      machineList.list().size() == 1 
+      machineList.size() == 1 
   }
 
   void createMachine(){
