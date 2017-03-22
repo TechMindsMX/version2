@@ -31,12 +31,6 @@ class EmailerClientService {
     emailerFound.content
   }
 
-  def sendNotifyToGroup(def idGroup, def paramsEmailer){
-    GroupNotification group = GroupNotification.findById(idGroup)
-    def userEmails =   emailerDataService.obtainEmailList(group.users)
-    notifyService.sendEmailNotifications(userEmails, group.notificationId, paramsEmailer)
-  }
-
 //TODO: Externalizar URL
   private obtainEmailerStorage(){
     wsliteRequestService.doRequest("http://emailerv2.modulusuno.com"){
