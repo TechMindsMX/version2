@@ -6,8 +6,16 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(ConciliationService)
-@Mock([Conciliation, Payment, SaleOrder, SaleOrderPayment, SaleOrderItem])
+@Mock([Conciliation, Payment, SaleOrder, SaleOrderPayment, SaleOrderItem, Company])
 class ConciliationServiceSpec extends Specification {
+
+  SaleOrderService saleOrderService = Mock(SaleOrderService)
+  PaymentService paymentService = Mock(PaymentService)
+
+  def setup() {
+    service.saleOrderService = saleOrderService
+    service.paymentService = paymentService
+  }
 
   void "Should get 1000 to apply for payment with amount 1000 and conciliations is empty"() {
     given:"A payment"
@@ -82,6 +90,34 @@ class ConciliationServiceSpec extends Specification {
       service.cancelConciliationsForPayment(payment)
     then:
       service.getConciliationsToApplyForPayment(payment) == []
+  }
+
+  void "Should apply conciliations for a payment"() {
+    given:"A payment"
+      Payment payment = new Payment(amount:5000).save(validate:false)
+    and:"The sale orders"
+      SaleOrder saleOrder1 = new SaleOrder()
+      SaleOrderItem item1 = new SaleOrderItem(price:3000, quantity:1, ieps:0, iva:0, discount:0).save(validate:false)
+      saleOrder1.addToItems(item1)
+      saleOrder1.save(validate:false)
+      SaleOrder saleOrder2 = new SaleOrder()
+      SaleOrderItem item2 = new SaleOrderItem(price:2000, quantity:1, ieps:0, iva:0, discount:0).save(validate:false)
+      saleOrder2.addToItems(item2)
+      saleOrder2.save(validate:false)
+    and:"A company"
+      Company company = new Company().save(validate:false)
+    and:"A user"
+      User user = Mock(User)
+    and:"The existing conciliations to apply for payment"
+      Conciliation conciliation1 = new Conciliation(amount:3000, payment:payment, status:ConciliationStatus.TO_APPLY, saleOrder:saleOrder1, company:company, user:user, changeType:0).save(validate:false)
+      Conciliation conciliation2 = new Conciliation(amount:2000, payment:payment, status:ConciliationStatus.TO_APPLY, saleOrder:saleOrder2, company:company, user:user, changeType:0).save(validate:false)
+      def conciliations = [conciliation1, conciliation2]
+      service.getConciliationsToApplyForPayment(payment) >> conciliations
+    when:
+      service.applyConciliationsForPayment(payment)
+    then:
+      service.getConciliationsToApplyForPayment(payment) == []
+      service.getConciliationsAppliedForPayment(payment) == conciliations
   }
 
 }
