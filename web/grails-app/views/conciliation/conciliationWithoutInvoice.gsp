@@ -21,15 +21,15 @@
 
               <g:render template="dataPayment"/>
               <hr>
-              <g:form action="applyConciliationWithoutInvoice" method="POST">
+              <g:form action="applyConciliationWithoutInvoice">
                 <g:hiddenField name="paymentId" value="${payment.id}"/>
                 <g:hiddenField name="changeType" value="0"/>
                 <g:hiddenField name="amountToApply" value="${payment.amount}"/>
 
               <div class="row">
                 <div class="form-group">
-                  <label>Especifique el concepto del pago a conciliar:</label>
-                  <input class="form-control" name="comment" type="text" maxLength="255" required="true"/>
+                  <label>Especifique el concepto del pago a conciliar <font color="red">*</font>:</label>
+                  <input class="form-control" name="comment" type="text" maxLength="255" required="true" oninvalid="this.setCustomValidity('Debe ingresar el concepto del pago a conciliar')"/>
                 </div>
               </div>
               <hr>
