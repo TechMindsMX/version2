@@ -112,11 +112,17 @@ class App.IndexController
     tax =  (quantity * price)*0.16
     amount = (quantity * price) + tax
     $(event.target).parents("tr").find(@selectorsTablaCount.amount).val("$ #{amount}")
+    @calculationTotal()
 
   calculationTotal: () =>
     switch $('#typeOfOrden option:selected').text()
       when "Cantidad"
+        sumAmount = 0
         console.log("Cantidad")
+        regularExpresion = /\$ /
+        $.each $(@selectorsTablaCount.amount), (index, input) ->
+            sumAmount = sumAmount + parseFloat($(input).val().replace(regularExpresion, ''))
+        $(@selectorOfCalculationTotal.subtotal).val(sumAmount.toFixed(2))
       when "Horas"
         console.log("Horas")
       when "Solo importe"
