@@ -122,7 +122,16 @@ class App.IndexController
         regularExpresion = /\$ /
         $.each $(@selectorsTablaCount.amount), (index, input) ->
             sumAmount = sumAmount + parseFloat($(input).val().replace(regularExpresion, ''))
-        $(@selectorOfCalculationTotal.subtotal).val(sumAmount.toFixed(2))
+        $(@selectorOfCalculationTotal.subtotal).val("$ #{sumAmount.toFixed(2)}")
+        discount = $(@selectorOfCalculationTotal.discountPayment).val()
+        console.log(discount)
+        if $('#selectorTypeDiscount option:selected').text()=="$" then discount = discount
+        if $('#selectorTypeDiscount option:selected').text()=="%" then discount = sumAmount*(discount/100); console.log(discount)
+        $(@selectorOfCalculationTotal.discount).val("$ #{discount}")
+        sendPayment=parseFloat( $(@selectorOfCalculationTotal.shippingCost).val())
+        $(@selectorOfCalculationTotal.shippingPayment).val("$ #{sendPayment}")
+        totalPayment = sumAmount - discount + sendPayment
+        $(@selectorOfCalculationTotal.totalSale).val("$ #{totalPayment}")
       when "Horas"
         console.log("Horas")
       when "Solo importe"
