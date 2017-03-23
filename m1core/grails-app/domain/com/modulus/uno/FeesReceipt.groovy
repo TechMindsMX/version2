@@ -9,6 +9,7 @@ class FeesReceipt {
   BigDecimal isr = 0.00
   BigDecimal ivaWithHolding = 0.00
   BankAccount bankAccount
+  Transaction transaction
 
   FeesReceiptStatus status = FeesReceiptStatus.CREADA
   RejectReason rejectReason
@@ -26,6 +27,7 @@ class FeesReceipt {
     comments nullable:true
     bankAccount nullable:true
     collaboratorName nullable:true
+    transaction nullable:true
   }
 
   void setAmount(BigDecimal amount){

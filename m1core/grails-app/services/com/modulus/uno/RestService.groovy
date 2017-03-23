@@ -6,7 +6,6 @@ import wslite.rest.*
 class RestService {
 
   def grailsApplication
-
   WsliteRequestService wsliteRequestService
 
   String facturacionUrl = H.grailsApplication.config.modulus.facturacionUrl
@@ -41,7 +40,7 @@ class RestService {
     wsliteRequestService.doRequest(grailsApplication.config.emailer.urlEmailer){
       method HTTPMethod.POST
       callback { json message }
-    }.doit()?.json
+    }.doit()
   }
 
   def sendCommandWithAuth(MessageCommand message, String template){

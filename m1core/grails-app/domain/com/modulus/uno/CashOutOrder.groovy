@@ -10,6 +10,8 @@ class CashOutOrder {
   String comments
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
 
+  Transaction transaction
+
   CashOutOrderStatus status = CashOutOrderStatus.CREATED
 
   Date dateCreated
@@ -26,5 +28,6 @@ class CashOutOrder {
     timoneUuid nullable:false,blank:false
     rejectReason nullable:true
     comments nullable:true
+    transaction nullable:true
   }
 }

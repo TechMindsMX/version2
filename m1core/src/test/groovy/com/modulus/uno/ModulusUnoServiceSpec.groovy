@@ -8,17 +8,22 @@ import java.math.RoundingMode
 import java.lang.Void as Should
 
 @TestFor(ModulusUnoService)
-@Mock([User,Role,UserRoleCompany,Profile,Company,DepositOrder,ModulusUnoAccount,Commission,SaleOrder,SaleOrderItem, CashOutOrder])
+//TODO esto es demasiado para un servicio posible refactor
+@Mock([User,Role,UserRoleCompany,Profile,Company,DepositOrder,ModulusUnoAccount,Commission,SaleOrder,SaleOrderItem, CashOutOrder, Transaction])
 class ModulusUnoServiceSpec extends Specification {
 
   def restService = Mock(RestService)
   def corporateService = Mock(CorporateService)
-  def grailsApplication = new GrailsApplicationMock()
+  def stpService = Mock(StpService)
+  def transactionService = Mock(TransactionService)
 
   def setup() {
     service.restService = restService
+    service.stpService = stpService
+    service.transactionService = transactionService
     service.corporateService = corporateService
-    service.grailsApplication = grailsApplication
+    grailsApplication.config.stp.typeAccount = "some"
+    grailsApplication.config.stp.institutionOperation = "some"
   }
 
   Should "create an user with main stp account"() {
@@ -32,6 +37,9 @@ class ModulusUnoServiceSpec extends Specification {
       user.password = "1234567890AS"
       user.profile = profile
       user.save()
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     and:
       def company = new Company()
       company.bussinessName = "apple"
@@ -67,6 +75,9 @@ class ModulusUnoServiceSpec extends Specification {
       def commission = new Commission(fee:0.0, percentage:10, type:CommissionType.DEPOSITO)
       company.addToCommissions(commission)
       company.save(validate:false)
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     and:
       def order = new DepositOrder()
       order.amount = 1200
@@ -161,9 +172,10 @@ class ModulusUnoServiceSpec extends Specification {
       user.save(validate:false)
       corporateService.findLegalRepresentativesOfCompany(_) >> [user]
     when:
-      CashoutCommand command = service.approveCashOutOrder(order)
+       service.approveCashOutOrder(order)
     then:
-      1 * restService.sendCommandWithAuth(_ as CashoutCommand, 'cashout')
+      1 * stpService.sendPayOrder(_)
+      1 * transactionService.saveTransaction(_)
   }
 
   void "Should get transactions of account"() {
@@ -178,6 +190,9 @@ class ModulusUnoServiceSpec extends Specification {
   void "Should get transactions of integrator"() {
     given:
       AccountStatementCommand command = Mock(AccountStatementCommand)
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     when:
       def result = service.getTransactionsInPeriodOfIntegrator(command)
     then:
@@ -189,6 +204,9 @@ class ModulusUnoServiceSpec extends Specification {
       CreateAccountCommand command = new CreateAccountCommand(payerAccount:"thePayerAccount",
                                                               uuid:"theUuid",
                                                               name:"theClientName")
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     when:"We create an account"
       def result = service.generateSubAccountStpForClient(command)
     then:"We expect service was called"

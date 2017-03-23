@@ -8,21 +8,27 @@ import grails.converters.JSON
 @Api
 class STPController {
 
+  StpDepositService stpDepositService
+
   static allowedMethods = [stpDepositNotification:"POST"]
 
-  def stpDepositService
-
-  @SwaggySave(extraParams = [
-    @ApiImplicitParam(name = 'notification', value = '', dataType = 'string',paramType = 'query')
+  @ApiOperation(value = "Notify deposit",
+    response = StpDepositSwagger, hidden=true)
+  @ApiResponses([
+    @ApiResponse(code = 422, message = 'Bad Entity Received'),
+    @ApiResponse(code = 201, message = 'Created')
   ])
-  def stpDepositNotification() {
+  @ApiImplicitParams([
+    @ApiImplicitParam(name = 'body', paramType = 'body', required = true, dataType = 'StpDepositSwagger')
+  ])
+  def stpDepositNotification(StpDepositSwagger stpDepositSwagger) {
     try {
-      log.info "Receiving notificaction: ${params.notification}"
-      def result = stpDepositService.notificationDepositFromStp(params.notification)
+      StpDeposit stpDeposit = stpDepositSwagger.createStpDeposit()
+      log.info "Receiving notificaction: ${stpDeposit.dump()}"
+      def result = stpDepositService.notificationDepositFromStp(stpDeposit)
       respond result, status: 201, formats: ['json']
-    } catch (Exception ex) {
+    }catch (Exception ex) {
       response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
     }
   }
-
-}
+} 
