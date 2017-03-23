@@ -141,10 +141,8 @@ class ModulusUnoService {
   }
 
   def consultBalanceOfAccount(String account) {
-    def command = new BalanceIntegratedCommand()
-    command.uuid = account
-    def response = restService.getOnModulus(command, grailsApplication.config.modulus.users)
-    [response.balance, response.usd]
+    //TODO: Reimplementar consultando en el domain de transacciones nuevo
+    [new BigDecimal(0), new BigDecimal(0)]
   }
 
   def consultBalanceIntegratorOfType(String type) {
