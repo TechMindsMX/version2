@@ -19,4 +19,5 @@ databaseChangeLog = {
   include file: 'adding-column-discount-to-sale-order-item.groovy'
   include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
   include file: 'create-transactions.groovy'
+  include file: 'adding-relation-transaction.groovy'
 }
