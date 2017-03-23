@@ -11,6 +11,7 @@ class ModulusUnoService {
   def grailsApplication
   StpService stpService
   TransactionService transactionService
+  def stpClabeService
 
   static final feeType = [
     SaleOrder : "SALE_FEE",
@@ -91,7 +92,7 @@ class ModulusUnoService {
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
-      fechaDeOperacion: new Date().format("yyyyMMdd"),  
+      fechaDeOperacion: new Date().format("yyyyMMdd"),
       folioOrigen: "",
       claveDeRastreo: new Date().getTime().toString(),
       institucionOperante: grailsApplication.config.stp.institutionOperation,
@@ -194,7 +195,7 @@ class ModulusUnoService {
     def data = [
         institucionContraparte: order.bankAccount.banco.bankingCode,
         empresa: order.company.accounts?.first()?.aliasStp,
-        fechaDeOperacion: new Date().format("yyyyMMdd"),  
+        fechaDeOperacion: new Date().format("yyyyMMdd"),
         folioOrigen: "",
         claveDeRastreo: new Date().toTimestamp(),
         institucionOperante: grailsApplication.config.stp.institutionOperation,
@@ -238,8 +239,7 @@ class ModulusUnoService {
   }
 
   def generedModulusUnoAccountByCompany(Company company, String email) {
-    def accountInfo = createAccount(company,email)
-    def modulusUnoAccount = saveAccountOfModulusUnoOfIntegrated(accountInfo,company)
+    def modulusUnoAccount = saveAccountOfModulusUnoOfIntegrated(company)
     modulusUnoAccount
   }
 
@@ -251,13 +251,13 @@ class ModulusUnoService {
     restService.getTransactionsIntegrator(command, grailsApplication.config.modulus.integratorTransactions)
   }
 
-  def saveAccountOfModulusUnoOfIntegrated(def accountInformationJson,company) {
+  def saveAccountOfModulusUnoOfIntegrated(Company company) {
     ModulusUnoAccount account = new ModulusUnoAccount()
-    account.account = accountInformationJson.account
-    account.balance = accountInformationJson.balance
-    account.integraUuid = accountInformationJson.integraUuid
-    account.stpClabe = accountInformationJson.stpClabe
-    account.timoneUuid = accountInformationJson.timoneUuid
+    account.account = ""
+    account.balance = ""
+    account.integraUuid = company.uuid
+    account.stpClabe = stpClabeService.generateSTPMainAccount(grailsApplication.config.modulus.stpPayerAccount, 3)
+    account.timoneUuid = ""
     account.company = company
     account.save(failOnError:true)
   }
