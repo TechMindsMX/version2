@@ -371,7 +371,7 @@
               <div class="row total">
                 <div class="col-xs-12 left-indent">
                   <div align="right">
-                    <table class="table table-bordered table-responsive" style="width:50%;">
+                    <table class="table table-bordered table-responsive" style="width:50%;" id="tableCalculationTotal">
                       <tbody>
                         <tr>
                           <th colspan="3"style="background:#E6E6E6" >Subtotal</th>
@@ -379,15 +379,15 @@
                         </tr>
                         <tr>
                           <th >Descuento</th>
-                          <td style="width:30%;"><input id="inputDiscountPayment" style="text-align:right;" type="text" class="form-control" placeholder="$0.00"></td>
+                          <td style="width:30%;"><input id="inputDiscountPayment" value="0" style="text-align:right;" type="text" class="form-control" placeholder="$0.00"></td>
                           <td style="width:30%;"><select id="selectorTypeDiscount" class="form-control" style="text-align-last:right;"><option>$</option><option>%</option></select></td>
                           <td style="width:30%;"><input id="inputTotalDiscount" disabled style="text-align:right;" type="text" class="form-control" placeholder="$0.00"></td>
 
                         </tr>
                         <tr>
                           <th>Envió</th>
-                          <td colspan="2"style="width:30%;"><input id="inputShippingCost" style="text-align:right;" type="text" class="form-control" placeholder="$0.00"></td>
-                          <td style="width:30%;"><input id="inputShippingPayment" disabled style="text-align:right;" type="text" class="form-control" placeholder="$0.00"></td>
+                          <td colspan="2"style="width:30%;"><input id="inputShippingCost" value="0" style="text-align:right;" type="text" class="form-control" placeholder="$0.00"></td>
+                          <td style="width:30%;"><input id="inputShippingPayment" disabled  style="text-align:right;" type="text" class="form-control" placeholder="$0.00"></td>
                         </tr>
                         <tr>
                           <th colspan="3" style="background:#E6E6E6" >Total</th>
