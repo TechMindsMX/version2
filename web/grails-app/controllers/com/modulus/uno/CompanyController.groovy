@@ -41,9 +41,6 @@ class CompanyController {
         }
       }
       def isAvailable = companyService.isEnableToSendNotificationIntegrated(company)
-        /*def legalRepresentativesWithDocuments = true
-        if (company.taxRegime == CompanyTaxRegime.MORAL)
-          legalRepresentativesWithDocuments = userService.containsUsersWithDocumentsByCompany(company.legalRepresentatives,company)*/
 
       respond company, model:[ clients:clientService.getClientsFromCompany(company),providers:providerService.getProvidersFromCompany(company),available:isAvailable,balance:balance,usd:usd,documents:documents]
     }
