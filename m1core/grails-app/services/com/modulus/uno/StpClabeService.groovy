@@ -31,6 +31,37 @@ class StpClabeService {
     userId.toString().padLeft(sizePrefix, "0")
   }
 
+  String generateSTPSubAccount(String mainAccount, Integer sizePrefix) {
+    String stpSubAccount = ""
+    String prefix = mainAccount.substring(0,(10+(sizePrefix==3?4:3)))
+    Integer subAccountId = calculateSerialForNewSubAccountAtMainAccount(prefix, sizePrefix)
+    String serialAccount = convertSubAccountIdToSerial(subAccountId, sizePrefix)
+    stpSubAccount = "${prefix}${serialAccount}"
+    Integer verifiedDigit = getVerifiedDigit(stpSubAccount)
+    stpSubAccount = "${stpSubAccount}${verifiedDigit}"
+    stpSubAccount
+  }
+
+  private Integer calculateSerialForNewSubAccountAtMainAccount(String mainAccount, Integer sizePrefix) {
+    List<ClientLink> clientsExisting = ClientLink.findAllByStpClabeLike("${mainAccount}%")
+    if (clientsExisting) {
+      String lastStpClabe = (clientsExisting.sort {it.stpClabe}).last().stpClabe
+      String lastSerial = lastStpClabe.substring(10+(sizePrefix==3?4:3),17)
+      Integer newSerial = Integer.parseInt(lastSerial)+1
+    } else {
+      new Integer(1)
+    }
+  }
+
+  private String convertSubAccountIdToSerial(Integer subAccountId, Integer sizePrefix) {
+    if (subAccountId > (sizePrefix==3?999:9999)) {
+      throw new BusinessException("El rango de clabes para clientes de la empresa ha sido excedido")
+    }
+
+    subAccountId.toString().padLeft(sizePrefix, "0")
+  }
+
+
   private Integer getVerifiedDigit(String clabe){
     int[] ponderacion = [3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7] as int[]
 
