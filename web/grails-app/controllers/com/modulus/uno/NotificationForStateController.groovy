@@ -17,11 +17,11 @@ class NotificationForStateController {
   }
 
   def index(){
-    def notificationsBody = notificationForStateService.findBodyNotifications(State.findAll())
-    [
-      machines: Machine.findAll(),
-      notifications:notificationsBody
-    ]
+    [notifications:notificationForStateService.findBodyNotifications(State.findAll())]
+  }
+
+  def register(){
+    [machines: Machine.findAll()]
   }
 
   //TODO: OrderClass doesn't exist
