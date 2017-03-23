@@ -28,6 +28,7 @@ var MachineListController = (function(){
 
   start = function(){
     bindEvents();
+    $(selectors.entitySelector).trigger('change');
   };
 
   return {

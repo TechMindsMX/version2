@@ -48,3 +48,11 @@ label {
 .error {
   color: red;
 }
+
+form[name=machineForm] {
+  min-height: 200px; 
+}
+
+.btn.save{
+  margin-top:44px;
+}

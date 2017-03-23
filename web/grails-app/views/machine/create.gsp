@@ -41,12 +41,6 @@
                 </div>
 
                 <div class="form-group col-sm-6">
-                </div>
-              </div>
-              <!-- END OF ROW -->
-              <!-- BEGIN ROW -->
-              <div class="row">
-                <div class="form-group col-sm-12">
                   <g:submitButton name="create" class="save btn btn-primary" value="Agregar" />
                 </div>
               </div>
@@ -73,7 +67,7 @@
     <!-- END OF PORTLET -->
 
     <script id="transitions-form-template" type="text/x-handlebars-template">
-      <div class="form-group col-sm-4">
+      <div class="form-group col-sm-3">
         <label for="actionFrom">
           ${message(code:'machine.initial.state')}
         </label>
@@ -92,11 +86,15 @@
         <input type="text" name="action" class="form-control" />
       </div>
 
-      <div class="form-group col-sm-4">
+      <div class="form-group col-sm-3">
         <label for="actionFrom">
           ${message(code:'machine.state.to')}
         </label>
         <input type="text" name="stateTo" class="form-control" />
+      </div>
+      
+      <div class="form-group col-sm-2">
+        <g:submitButton name="create" class="save btn btn-primary" value="Agregar" />
       </div>
     </script>
 

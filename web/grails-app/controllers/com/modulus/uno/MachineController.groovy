@@ -30,6 +30,15 @@ class MachineController {
     respond (transitionService.getMachineTransitions(machine.id))
   }
 
+  def edit(String id){
+    Machine machine = Machine.findByUuid(id)
+    if(!machine)
+      return response.sendError(404)
+
+    [transitions:transitionService.getMachineTransitions(machine.id),
+     states:machine.states]
+  }
+
   def register(){
     User user =  springSecurityService.currentUser
     Corporate corporate = corporateService.findCorporateOfUser(user)
@@ -50,32 +59,7 @@ class MachineController {
 
   @Transactional
   def save(MachineCommand machine){
-    String initialState = machine.initialState
-    TransitionCommand initialTransition = machine.transitions.find{ it.stateFrom == initialState }
-    ArrayList<TransitionCommand> stateTransitions = machine.transitions.findAll{ transition -> (transition.stateFrom != initialTransition.stateFrom || transition.stateTo != initialTransition.stateTo) }
-
-    //TODO: Move BFS to Service
-    if(initialTransition){
-
-      Machine newMachine = machineService.createMachineWithActions(initialTransition.stateFrom,initialTransition.stateTo,initialTransition.actions)
-      ArrayList<String> states = [initialState,initialTransition.stateTo]//Q
-      ArrayList<TransitionCommand> transitionsToSave = []
-
-      while(states){
-        String s = states.remove(0)
-        State state = newMachine.states.find{ it.name.toUpperCase() == s }
-        transitionsToSave = stateTransitions.findAll{ it.stateFrom == s }
-        stateTransitions.removeAll{ it.stateFrom == s }  
-
-        transitionsToSave.each{ transition ->
-          transition.actions.each{ action ->
-            machineService.createTransition(state.id,transition.stateTo,action)
-          }
-          states << transition.stateTo
-        }
-      }
-    }
-
+    machineService.saveMachine(machine.getMachine())
     redirect(action:"index")
   }
 
