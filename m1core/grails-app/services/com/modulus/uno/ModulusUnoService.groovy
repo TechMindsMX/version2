@@ -126,7 +126,7 @@ class ModulusUnoService {
     ]
     String keyTransaction = stpService.sendPayOrder(data)
     Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
-    amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:cashOutOrder.account.clabe,
+    amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:cashOutOrder.company.accounts?.first()?.stpClabe,
     referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
     transactionStatus:TransactionStatus.AUTHORIZED]
     Transaction transaction = new Transaction(parameters)
@@ -227,7 +227,14 @@ class ModulusUnoService {
         prioridad: "",
         iva: ""
     ]
-    stpService.sendPayOrder(data)
+    String keyTransaction = stpService.sendPayOrder(data)
+    Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
+    amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:order.company.accounts?.first()?.stpClabe,
+    referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
+    transactionStatus:TransactionStatus.AUTHORIZED]
+    Transaction transaction = new Transaction(parameters)
+    transactionService.saveTransaction(transaction)
+    transaction
   }
 
   def generedModulusUnoAccountByCompany(Company company, String email) {
