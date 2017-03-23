@@ -120,7 +120,7 @@ class PurchaseOrderController {
     if (companyService.enoughBalanceCompany(order.company, order.total)){
       PaymentToPurchase payment = new PaymentToPurchase(amount:amount)
       if (purchaseOrderIsInStatus(order, PurchaseOrderStatus.AUTORIZADA)) {
-        purchaseOrderService.payPurchaseOrder(order,payment)
+        payment = purchaseOrderService.payPurchaseOrder(order,payment)
         messageSuccess = message(code:"purchaseOrder.executed.message")
       }
       purchaseOrderService.addingPaymentToPurchaseOrder(payment, order)
