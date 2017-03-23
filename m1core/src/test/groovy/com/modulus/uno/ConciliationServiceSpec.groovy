@@ -141,4 +141,24 @@ class ConciliationServiceSpec extends Specification {
       1 * paymentService.conciliatePayment(_)
   }
 
+  void "Should apply conciliation without payment"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+    and:"A sale order"
+      SaleOrder saleOrder = new SaleOrder()
+      SaleOrderItem item = new SaleOrderItem(price:3000, quantity:1, ieps:0, iva:0, discount:0).save(validate:false)
+      saleOrder.addToItems(item)
+      saleOrder.save(validate:false)
+    and:"The conciliation"
+      Conciliation conciliation = new Conciliation(amount:2000, comment:"Conciliation without payment test", saleOrder:saleOrder)
+    and:
+      User user = Mock(User)
+      springSecurityService.currentUser >> user
+    when:
+      service.applyConciliationWithoutPayment(conciliation)
+    then:
+      conciliation.status == ConciliationStatus.APPLIED
+      1 * saleOrderService.addPaymentToSaleOrder(_, _, _)
+  }
+
 }
