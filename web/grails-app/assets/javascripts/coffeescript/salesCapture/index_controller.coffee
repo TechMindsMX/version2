@@ -25,7 +25,7 @@ class App.IndexController
     price:''
     amount:''
   selectorsTableOnlyImport:
-    amount:''
+    amount:'hola'
 
   selectorOfCalculationTotal:
     subtotal: '#inputSubtotal'
@@ -107,12 +107,18 @@ class App.IndexController
     r.length + countertbody
 
   calculationOfAmount: (event) =>
-    quantity = $(event.target).parents("tr").find(@selectorsTablaCount.quantity).val()
-    price = $(event.target).parents("tr").find(@selectorsTablaCount.price).val()
-    tax =  (quantity * price)*0.16
-    amount = (quantity * price) + tax
-    $(event.target).parents("tr").find(@selectorsTablaCount.amount).val("$ #{amount}")
-    @calculationTotal()
+    switch $('#typeOfOrden option:selected').text()
+      when "Cantidad"
+        quantity = $(event.target).parents("tr").find(@selectorsTablaCount.quantity).val()
+        price = $(event.target).parents("tr").find(@selectorsTablaCount.price).val()
+        tax =  (quantity * price)*0.16
+        amount = (quantity * price) + tax
+        $(event.target).parents("tr").find(@selectorsTablaCount.amount).val("$ #{amount}")
+        @calculationTotal()
+      when "Horas"
+        console.log("Horas De la tabla")
+      when "Solo importe"
+        console.log("Solo importe de la tabla")
 
   calculationTotal: () =>
     switch $('#typeOfOrden option:selected').text()
