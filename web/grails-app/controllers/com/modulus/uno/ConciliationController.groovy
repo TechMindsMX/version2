@@ -101,4 +101,20 @@ class ConciliationController {
     [saleOrder:saleOrder]
   }
 
+  @Transactional
+  def applyConciliationWithoutPayment(ConciliationCommand command) {
+    log.info "Applying conciliation without payment: ${command.dump()}"
+
+    if (command.hasErrors()){
+      transactionStatus.setRollbackOnly()
+      render view:"conciliateInvoiceWithoutPayment", model:[saleOrder:command.saleOrder, errors:command.errors]
+      return
+    }
+
+    Conciliation conciliation = command.createConciliation()
+    conciliationService.applyConciliationWithoutPayment(conciliation)
+
+    redirect controller:"payment", action:"conciliation"
+  }
+
 }
