@@ -146,6 +146,33 @@ class MachineServiceSpec extends Specification {
       machineList.size() == 1 
   }
 
+  Should "edit a machine"(){
+    given:"the existent machine"
+      createMachine();
+    and:"the new Machine"
+      Machine updatedMachine = new Machine(initialState:new State(name:"Initial_State"))
+      ArrayList<Transition> transitions = [new Transition(stateFrom:new State(name:"Initial_State"),
+                                                          stateTo:new State(name:"Active"),
+                                                          actions:["INSERT CARD"]),
+                                           new Transition(stateFrom:new State(name:"Initial_State"),
+                                                          stateTo:new State(name:"Inactive"),
+                                                          actions:["REMOVE CARD"]),
+                                           new Transition(stateFrom:new State(name:"Initial_State"),
+                                                          stateTo:new State(name:"Out Of Service"),
+                                                          actions:["SERVICE"])]
+      
+      transitions.each{ transition ->
+        updatedMachine.addToTransitions(transition)
+      }
+
+    when:
+      service.updateMachine(1,updatedMachine)
+      Machine machine = Machine.list().first()
+    then:
+      machine.initialState.name == "INITIAL_STATE"
+      machine.transitions.size() == 3
+  }
+
   void createMachine(){
     ArrayList<String> actions = ["Service","Insert Card","Cancel","Fix","Finish"]
     ArrayList<String> states = ["Idle","Out Of Service","Active"]
