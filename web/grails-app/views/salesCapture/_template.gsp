@@ -134,7 +134,7 @@
                   <tr>
                     <td><input type="text" name="articles[0].name"   class="form-control"placeholder="Nombre del artículo" ></input></td>
                     <td><input type="text" name="articles[0].tax"    class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" name="articles[0].amount" class="form-control" placeholder="$ 0.00" ></input></td>
+                    <td><input type="text" name="articles[0].amount" class="form-control inputsAmount" placeholder="$ 0.00" ></input></td>
                     <td><div class="col-xs-3" style="width:50%; padding:0"><div class="deleteItem"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></div></div></td>
                   </tr>
                   <tr>
@@ -155,7 +155,7 @@
                   <tr id="{{named}}">
                     <td><input type="text"  name="articles[{{index}}].name"  class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
                     <td><input type="text"  name="articles[{{index}}].tax"   class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text"  name="articles[{{index}}].amount"class="form-control" placeholder="$ 0.00" ></input></td>
+                    <td><input type="text"  name="articles[{{index}}].amount"class="form-control inputsAmount" placeholder="$ 0.00" ></input></td>
   <td><div class="col-xs-3" style="width:50%; padding:0"><div class="deleteItem"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></div></div></td>
 
                   </tr>
