@@ -152,17 +152,6 @@ class ModulusUnoService {
     [balance.balance, balance.usd]
   }
 
-  def createAccount(Company company,String email) {
-    def command = new CreateAccountCommand(payerAccount:grailsApplication.config.modulus.stpPayerAccount,
-                                           uuid:company.uuid,
-                                           name:company.bussinessName,
-                                           email:email)
-
-
-    def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.users)?.json
-    accountResult
-  }
-
   def generateACashinForIntegrated(DepositOrder order) {
     FeeCommand feeCommand = createFeeCommandFromOrder(order)
     if (!feeCommand){
@@ -238,9 +227,16 @@ class ModulusUnoService {
     transaction
   }
 
-  def generedModulusUnoAccountByCompany(Company company, String email) {
-    def modulusUnoAccount = saveAccountOfModulusUnoOfIntegrated(company)
-    modulusUnoAccount
+  def generedModulusUnoAccountByCompany(Company company) {
+    ModulusUnoAccount account = new ModulusUnoAccount()
+    account.account = ""
+    account.balance = ""
+    account.integraUuid = company.uuid
+    account.stpClabe = stpClabeService.generateSTPMainAccount(grailsApplication.config.modulus.stpPayerAccount, 3)
+    account.timoneUuid = ""
+    account.company = company
+    account.save()
+    account
   }
 
   def getTransactionsInPeriodOfIntegrated(AccountStatementCommand command){
@@ -249,17 +245,6 @@ class ModulusUnoService {
 
   def getTransactionsInPeriodOfIntegrator(AccountStatementCommand command){
     restService.getTransactionsIntegrator(command, grailsApplication.config.modulus.integratorTransactions)
-  }
-
-  def saveAccountOfModulusUnoOfIntegrated(Company company) {
-    ModulusUnoAccount account = new ModulusUnoAccount()
-    account.account = ""
-    account.balance = ""
-    account.integraUuid = company.uuid
-    account.stpClabe = stpClabeService.generateSTPMainAccount(grailsApplication.config.modulus.stpPayerAccount, 3)
-    account.timoneUuid = ""
-    account.company = company
-    account.save(failOnError:true)
   }
 
   def generateSubAccountStpForClient(CreateAccountCommand command) {
