@@ -31,4 +31,10 @@ class NotificationForStateService {
     notificationForStatesBody
   }
 
+  def findByState(Long state){
+    NotificationForState notify = NotificationForState.find{ stateMachine == state }
+    println notify.dump()
+      notify
+  }
+
 }

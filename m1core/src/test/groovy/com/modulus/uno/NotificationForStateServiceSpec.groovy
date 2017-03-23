@@ -65,4 +65,15 @@ class NotificationForStateServiceSpec extends Specification {
       contentNotification == [[id:1, stateName:"State2", groupName:"Group1"], [id:2, stateName:"State4", groupName:"Group2"]]
   }
 
+  void "Find the notification by state id"(){
+    given:"A state id"
+      def notification = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      Long state = 2
+    when:"I want to know the notification"
+      def notify = service.findByState(state)
+    then:"We should get the notification for our state"
+      notify.stateMachine == 2
+      notify.groupNotification == 1
+  }
+
  }
