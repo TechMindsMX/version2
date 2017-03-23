@@ -1,4 +1,5 @@
 class App.IndexController
+  stateOfTable=1
   countertbody=0
   selectors:
     partialPayment:'#partialPayment'
@@ -25,6 +26,15 @@ class App.IndexController
     amount:''
   selectorsTableOnlyImport:
     amount:''
+
+  selectorOfCalculationTotal:
+    subtotal: '#inputSubtotal'
+    discount: '#inputTotalDiscount'
+    discountPayment: '#inputDiscountPayment'
+    typeOfDiscount: '#selectorTypeDiscount'
+    shippingCost: '#inputShippingCost'
+    totalSale: '#inputTotalSale'
+    shippingPayment: '#inputShippingPayment'
 
 
   constructor: ->
@@ -103,11 +113,19 @@ class App.IndexController
     amount = (quantity * price) + tax
     $(event.target).parents("tr").find(@selectorsTablaCount.amount).val("$ #{amount}")
 
+  calculationTotal: () =>
+    switch $('#typeOfOrden option:selected').text()
+      when "Cantidad"
+        console.log("Cantidad")
+      when "Horas"
+        console.log("Horas")
+      when "Solo importe"
+        console.log("Solo importe")
 
   bindEvents: () ->
     $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
     $("body").on('click',@selectors.addNewItem,@addNewItemBox)
-    $('#typeOfOrden').change => @typeOfTable()
+    $('#typeOfOrden').change => @typeOfTable(); @calculationTotal()
     $('#hiddeAddress').click -> $('#mainAddress').toggle 'slow'
     @wordCounter()
     $('#selectDate').change => @specifyDate(); @datetimepicker()
