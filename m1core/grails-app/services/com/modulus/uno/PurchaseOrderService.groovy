@@ -167,7 +167,7 @@ class PurchaseOrderService {
       order.save()
     }
     emailSenderService.notifyPurchaseOrderChangeStatus(order)
-    payment
+    [payment:payment,order:order]
   }
 
   def requestAuthorizationForTheOrder(PurchaseOrder purchaseOrder){

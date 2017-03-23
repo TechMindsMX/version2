@@ -11,7 +11,9 @@ import java.lang.Void as Should
 
   Should "save new transition"(){
     given:"the transaction"
-    Map parameters = [keyTransaction:"123123",trackingKey:"123123",amount:12.12,paymentConcept:"Prestamo",keyAccount:"646180132408900006",referenceNumber:"201703100010"]
+    Map parameters = [keyTransaction:"123123",trackingKey:"123123",amount:12.12,
+    paymentConcept:"Prestamo",keyAccount:"646180132408900006",referenceNumber:"201703100010",
+    transactionType:TransactionType.WITHDRAW,transactionStatus:TransactionStatus.AUTHORIZED]
       Transaction transaction = new Transaction(parameters)
     when:
       transaction = service.saveTransaction(transaction)
