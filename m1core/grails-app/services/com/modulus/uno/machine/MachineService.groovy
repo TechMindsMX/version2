@@ -155,4 +155,46 @@ class MachineService {
     }
   }
 
+  void updateMachine(Long machineId,Machine machine){
+    Machine machineToUpdate = Machine.get(machineId)
+    machineToUpdate.initialState.name = machine.initialState.name.toUpperCase()
+    machineToUpdate.initialState.save()
+
+    ArrayList<Transition> transitions = machineToUpdate.transitions 
+
+    transitions.each{ transition ->
+      machineToUpdate.removeFromTransitions(transition)
+    }
+
+    transitions*.delete()
+    State initialState = machineToUpdate.initialState
+    
+    ArrayList<State> previousStates = machineToUpdate.states.findAll{ it.name != initialState.name }
+
+    previousStates.each{ state ->
+      machineToUpdate.removeFromStates(state)
+    } 
+
+    previousStates*.delete() 
+    machineToUpdate.save()
+    
+    ArrayList<State> states = [initialState]
+    ArrayList<Transition> transitionsToSave = []
+
+    while(states){
+      State s = states.remove(0)
+      State state = machineToUpdate.states.find{ it.name == s.name.toUpperCase() }
+      transitionsToSave = machine.transitions.findAll{ it.stateFrom.name.toUpperCase() == s.name }
+      machine.transitions.removeAll{ it.stateFrom.name == s.name }
+
+      transitionsToSave.each{ transition ->
+        transition.actions.each{ action ->
+          createTransition(state.id,transition.stateTo.name.toUpperCase(),action)
+        }
+        states << transition.stateTo
+      }
+    }
+
+  }
+
 }
