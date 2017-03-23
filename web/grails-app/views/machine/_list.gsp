@@ -6,6 +6,7 @@
         <th>Uuid</th>
         <th>Fecha de Creación</th>
         <th></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -15,6 +16,9 @@
         <th>{{dateCreated}}</th>
         <th>
           <a class="btn btn-primary" href="${createLink(controller:'machine',action:'show')}/{{uuid}}">Ver</a>
+        </th>
+        <th>
+          <a class="btn btn-primary" href="${createLink(controller:'machine',action:'edit')}/{{uuid}}">Editar</a>
         </th>
       </tr>
       {{/each}}
