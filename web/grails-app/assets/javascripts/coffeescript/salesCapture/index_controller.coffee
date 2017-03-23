@@ -136,7 +136,7 @@ class App.IndexController
     @wordCounter()
     $('#selectDate').change => @specifyDate(); @datetimepicker()
     $('#buttonPreview').click => @getNumberAttribute(); @findNumberOftbody()
-    $('body').on('click',@selectors.deleteItem,(e) -> $(e.currentTarget).parents("tbody").remove(); countertbody++ )
+    $('body').on('click',@selectors.deleteItem,(e) => $(e.currentTarget).parents("tbody").remove(); countertbody++; @calculationTotal() )
     $('body').on("keyup",@selectorsTablaCount.quantity, @calculationOfAmount)
     $('body').on("keyup#{@selectorsTablaCount.price}", @calculationOfAmount)
 
