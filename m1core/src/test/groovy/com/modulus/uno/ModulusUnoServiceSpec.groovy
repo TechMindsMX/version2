@@ -15,55 +15,37 @@ class ModulusUnoServiceSpec extends Specification {
   def restService = Mock(RestService)
   def corporateService = Mock(CorporateService)
   def stpService = Mock(StpService)
+  def stpClabeService = Mock(StpClabeService)
   def transactionService = Mock(TransactionService)
 
   def setup() {
     service.restService = restService
     service.stpService = stpService
+    service.stpClabeService = stpClabeService
     service.transactionService = transactionService
     service.corporateService = corporateService
     grailsApplication.config.stp.typeAccount = "some"
     grailsApplication.config.stp.institutionOperation = "some"
   }
 
-  Should "create an user with main stp account"() {
+  Should "create a m1 account for a company"() {
     given:
-      Profile profile = new Profile(name:"Gamaliel",
-                                    email:"egjimenezg@gmail.com")
-      profile.save()
-    and:
-      def user = new User()
-      user.username = "sergio"
-      user.password = "1234567890AS"
-      user.profile = profile
-      user.save()
-    and:
-      def grailsApplication = new GrailsApplicationMock()
-      service.grailsApplication = grailsApplication
-    and:
-      def company = new Company()
+      Company company = new Company()
       company.bussinessName = "apple"
       company.rfc = "ROD861224NHA"
       company.employeeNumbers = 5
       company.grossAnnualBilling = 23000.00
       company.save()
-    and:"the role"
-      ArrayList<Role> roles = [new Role(authority:"ROLE_LEGAL_REPRESENTATIVE_VISOR"),
-                               new Role(authority:"ROLE_LEGAL_REPRESENTATIVE_EJECUTOR")]
-    and:"the user role company"
-      UserRoleCompany userRoleCompany = new UserRoleCompany(user:user,
-                                                            company:company)
-
-      roles.each{ role ->
-        userRoleCompany.addToRoles(role)
-        role.save(validate:false)
-      }
-
-      userRoleCompany.save()
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
+    and:
+      stpClabeService.generateSTPMainAccount(_, _) >> "stpClabeForCompany"
     when:"We create an account"
-      service.createAccount(company, "email")
-    then:"We expect service was called"
-    1 * restService.sendCommandWithAuth(_ as CreateAccountCommand, 'users')
+      def account = service.generedModulusUnoAccountByCompany(company)
+    then:"We expect account created"
+      account
+      account.stpClabe
   }
 
   void "generate a cashin to a integrate"() {
