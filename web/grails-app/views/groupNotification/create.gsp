@@ -63,7 +63,7 @@
             <div class="input-group col-md-4">
                 <div class="px-2">
                    <g:actionSubmit class="save btn btn-default" value="Save"/>
-                   <g:link resource="groupNotification" action="index" class="save btn btn-default">Regresar</g:link></div>
+                   <g:link controller="notificationForState" action="index" class="save btn btn-default">Regresar</g:link></div>
           </g:form>
             </div>
           </div>
