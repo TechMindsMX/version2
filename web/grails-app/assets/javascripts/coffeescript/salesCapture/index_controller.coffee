@@ -25,7 +25,7 @@ class App.IndexController
     rate:'.inputsRate'
     amount:'.inputsAmount'
   selectorsTableOnlyImport:
-    amount:'hola'
+    amount:'.inputsAmount'
 
   selectorOfCalculationTotal:
     subtotal: '#inputSubtotal'
@@ -123,32 +123,47 @@ class App.IndexController
         console.log(tax)
         amount = (hours * rate) + tax
         $(event.target).parents("tr").find(@selectorsTableHours.amount).val("$ #{amount}")
+        @calculationTotal()
 
       when "Solo importe"
         console.log("Solo importe de la tabla")
+        @calculationTotal()
 
   calculationTotal: () =>
+    regularExpresion = /\$ /
     switch $('#typeOfOrden option:selected').text()
       when "Cantidad"
         sumAmount = 0
         console.log("Cantidad")
-        regularExpresion = /\$ /
         $.each $(@selectorsTablaCount.amount), (index, input) ->
             sumAmount = sumAmount + parseFloat($(input).val().replace(regularExpresion, ''))
-        $(@selectorOfCalculationTotal.subtotal).val("$ #{sumAmount.toFixed(2)}")
-        discount = $(@selectorOfCalculationTotal.discountPayment).val()
-        console.log(discount)
-        if $('#selectorTypeDiscount option:selected').text()=="$" then discount = discount
-        if $('#selectorTypeDiscount option:selected').text()=="%" then discount = sumAmount*(discount/100); console.log(discount)
-        $(@selectorOfCalculationTotal.discount).val("$ #{discount}")
-        sendPayment=parseFloat( $(@selectorOfCalculationTotal.shippingCost).val())
-        $(@selectorOfCalculationTotal.shippingPayment).val("$ #{sendPayment}")
-        totalPayment = sumAmount - discount + sendPayment
-        $(@selectorOfCalculationTotal.totalSale).val("$ #{totalPayment}")
+
       when "Horas"
         console.log("Horas")
+        sumAmount = 0
+        console.log("Cantidad")
+        $.each $(@selectorsTableHours.amount), (index, input) ->
+            sumAmount = sumAmount + parseFloat($(input).val().replace(regularExpresion, ''))
+
       when "Solo importe"
         console.log("Solo importe")
+        sumAmount = 0
+        console.log("Cantidad")
+        $.each $(@selectorsTableOnlyImport.amount), (index, input) ->
+            sumAmount = sumAmount + parseFloat($(input).val().replace(regularExpresion, ''))
+        sumAmount = sumAmount + (sumAmount*0.16)
+        console.log(sumAmount)
+
+    $(@selectorOfCalculationTotal.subtotal).val("$ #{sumAmount.toFixed(2)}")
+    discount = $(@selectorOfCalculationTotal.discountPayment).val()
+    console.log(discount)
+    if $('#selectorTypeDiscount option:selected').text()=="$" then discount = discount
+    if $('#selectorTypeDiscount option:selected').text()=="%" then discount = sumAmount*(discount/100); console.log(discount)
+    $(@selectorOfCalculationTotal.discount).val("$ #{discount}")
+    sendPayment=parseFloat( $(@selectorOfCalculationTotal.shippingCost).val())
+    $(@selectorOfCalculationTotal.shippingPayment).val("$ #{sendPayment}")
+    totalPayment = sumAmount - discount + sendPayment
+    $(@selectorOfCalculationTotal.totalSale).val("$ #{totalPayment}")
 
   bindEvents: () ->
     $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
