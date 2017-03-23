@@ -21,9 +21,9 @@ class App.IndexController
     price: '.inputsPrice'
     amount: '.inputsAmount'
   selectorsTableHours:
-    hours:''
-    price:''
-    amount:''
+    hours:'.inputsHours'
+    rate:'.inputsRate'
+    amount:'.inputsAmount'
   selectorsTableOnlyImport:
     amount:'hola'
 
@@ -117,6 +117,13 @@ class App.IndexController
         @calculationTotal()
       when "Horas"
         console.log("Horas De la tabla")
+        hours = $(event.target).parents("tr").find(@selectorsTableHours.hours).val()
+        rate = $(event.target).parents("tr").find(@selectorsTableHours.rate).val()
+        tax =  (hours * rate)*0.16
+        console.log(tax)
+        amount = (hours * rate) + tax
+        $(event.target).parents("tr").find(@selectorsTableHours.amount).val("$ #{amount}")
+
       when "Solo importe"
         console.log("Solo importe de la tabla")
 
