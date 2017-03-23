@@ -30,6 +30,15 @@ class MachineController {
     respond (transitionService.getMachineTransitions(machine.id))
   }
 
+  def edit(String id){
+    Machine machine = Machine.findByUuid(id)
+    if(!machine)
+      return response.sendError(404)
+
+    [transitions:transitionService.getMachineTransitions(machine.id),
+     states:machine.states]
+  }
+
   def register(){
     User user =  springSecurityService.currentUser
     Corporate corporate = corporateService.findCorporateOfUser(user)
