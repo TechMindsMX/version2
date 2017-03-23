@@ -5,7 +5,7 @@ import grails.transaction.Transactional
 @Transactional
 class StpDepositService {
 
-  def modulusUnoService
+  TransactionService transactionService
 
   def notificationDepositFromStp(StpDeposit stpDeposit) {
     stpDeposit = saveNotification(stpDeposit)
@@ -31,7 +31,7 @@ class StpDepositService {
     DepositOrder depositOrder = new DepositOrder()
     depositOrder.amount = stpDeposit.amount
     depositOrder.company = m1Account ? m1Account.company : client.company
-    modulusUnoService.generateACashinForIntegrated(depositOrder)
+    //modulusUnoService.generateACashinForIntegrated(depositOrder)
 
     stpDeposit.status = StpDepositStatus.APLICADO
     stpDeposit.save()
@@ -42,6 +42,7 @@ class StpDepositService {
     Payment payment = new Payment(amount:stpDeposit.amount)
     payment.rfc = client ? client.clientRef : null
     payment.company = m1Account ? m1Account.company : client.company
+    payment.transaction = createAndSaveTransaction(stpDeposit)
     payment.save()
     log.info "Payment was generated: ${payment?.dump()}"
   }
@@ -71,6 +72,18 @@ class StpDepositService {
     stpDeposit.save()
     log.info "Defined status:${stpDeposit.status}"
     status
+  }
+
+  private Transaction createAndSaveTransaction(StpDeposit stpDeposit){
+    Map parameters = [keyTransaction:"${stpDeposit.operationNumber}",
+                      trackingKey:stpDeposit.tracingKey,
+                      amount:stpDeposit.amount,
+                      paymentConcept:stpDeposit.paymentConcept,
+                      keyAccount:stpDeposit.accountBeneficiary,
+                      referenceNumber:"${stpDeposit.numericalReference}",
+                      transactionType:TransactionType.DEPOSIT,
+                      transactionStatus:TransactionStatus.AUTHORIZED]
+    transactionService.saveTransaction(new Transaction(parameters))
   }
 
 }
