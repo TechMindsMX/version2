@@ -48,6 +48,8 @@
               </li>
               </g:each>
             </ul>
+
+            <br><g:link controller="notificationForState" action="index" class="save btn btn-default">Regresar</g:link></div>
             </div>
            </div>
 

@@ -10,12 +10,19 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-envelope fa-3x"></i>
-          Notificaciones existentes
+          Notificaciones
+          <small>Registro</small>
       </h1>
     </div>
 
+    <div class="row">
+    <ul class="nav nav-tabs navbar-right">
+        <li role="presentation"><g:link controller="notificationForState" action="register"> <i class="fa fa-plus fa-1"></i> &nbsp; Nueva Notificación</g:link></li>
+        <li role="presentation"><g:link controller="groupNotification" action="index"><i class="fa fa-users fa-1"></i> &nbsp; Grupos a Notificar</g:link></li>
+        <li role="presentation"><g:link controller="groupNotification" action="create"><i class="fa fa-user-plus fa-1"></i> &nbsp; Añadir Grupo</g:link></li>
+    </ul>
+    </div>
 
-<!-- BEGIN PAGE TITLE -->
     <!-- BEGIN PORTLET -->
     <div class="portlet portlet-blue">
       <!-- BEGIN BLUE-PORTLET -->
@@ -26,21 +33,7 @@
           <div class="content scaffold-create">
               <fieldset class="form">
                 <div class="row text-center">
-                  <label> NOTIFICACIONES</label><br><br>
-                </div>
-
-                <div class="row center-block">
-                  <div class="col-md-4"></div>
-                  <div class="col-md-4 text-center" border="solid">
-                    <g:form action="create" class="form-inline" method="POST">
-                    <div class="form-group">
-                      <label for="machine">Máquina</label>
-                      <g:select optionKey="id" optionValue="id" name="machineId"  from="${machines}" class="center-block"/>
-                    </div>
-                    <g:submitButton name="create" class="btn btn-default" value="Nueva Notificación"/>
-                    <br>
-                    </g:form>
-                  </div>
+                  <label>NOTIFICACIONES REGISTRADAS</label>
                 </div>
 
                 <div class="row">
@@ -48,7 +41,6 @@
                   <div class="form-group col-sm-8">
                     <table class="table text-center">
                       <tr><td><strong>Grupo a notificar</strong></td><td><strong>Estado de la máquina</strong></td><td colspan=2><strong>Opciones</strong></td></tr>
-
 
                       <g:each var="notify" in="${notifications}">
                         <tr>
@@ -61,7 +53,6 @@
                          </g:form>
                         </tr>
                       </g:each>
-
 
                     </table>
                   </div>
