@@ -222,7 +222,7 @@ class SaleOrderService {
     SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amountPayment)
     saleOrder.addToPayments(saleOrderPayment)
     saleOrder.save()
-    if (saleOrder.amountToPay == 0) {
+    if (saleOrder.amountToPay <= 0) {
       saleOrder.status = SaleOrderStatus.PAGADA
       saleOrder.save()
     }
