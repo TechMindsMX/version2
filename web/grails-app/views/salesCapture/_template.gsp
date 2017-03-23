@@ -28,18 +28,16 @@
               <script id="article-info-row-hours" type="text/x-handlebars-template">
                 <tbody>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="Horas" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="0.00" ></input></td>
-                    <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
-  <td><div class="col-xs-3" style="width:50%; padding:0"><a href="#">
-                          <span class="glyphicon glyphicon-remove"></span>
-                    </a></div></td>
+                    <td><input type="text" name="articles[{{index}}].name"  class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].hours" class="form-control" placeholder="Horas" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].rate"  class="form-control" placeholder="0.00" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].tax"   class="form-control" value="IVA: 16%" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].amount"class="form-control" placeholder="$ 0.00" ></input></td>
+  <td><div class="col-xs-3" style="width:50%; padding:0"><div class="deleteItem"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></div></div></td>
 
                   </tr>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].description" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
               </script>
@@ -58,17 +56,15 @@
 
                 <tbody>
                   <tr>
-                    <td><input type="text" name="name" class="form-control"placeholder="Nombre del artículo" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="Horas" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="0.00" ></input></td>
-                    <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
-                    <td><div class="col-xs-3" style="width:50%; padding:0"><a href="#">
-                          <span class="glyphicon glyphicon-remove"></span>
-                    </a></div></td>
+                    <td><input type="text" name="articles[0].name"   class="form-control"placeholder="Nombre del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].hours"  class="form-control" placeholder="Horas" ></input></td>
+                    <td><input type="text" name="articles[0].rate"   class="form-control" placeholder="0.00" ></input></td>
+                    <td><input type="text" name="articles[0].tax"    class="form-control" value="IVA: 16%" ></input></td>
+                    <td><input type="text" name="articles[0].amount" class="form-control" placeholder="$ 0.00" ></input></td>
+                    <td><div class="col-xs-3" style="width:50%; padding:0"><div class="deleteItem"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></div></div></td>
                   </tr>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].description" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
                 <tfoot>
@@ -136,15 +132,13 @@
 
                 <tbody>
                   <tr>
-                    <td><input type="text" name="name" class="form-control"placeholder="Nombre del artículo" ></input></td>
-                    <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
-                    <td><div class="col-xs-3" style="width:50%; padding:0"><a href="#">
-                          <span class="glyphicon glyphicon-remove"></span>
-                    </a></div></td>
+                    <td><input type="text" name="articles[0].name"   class="form-control"placeholder="Nombre del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].tax"    class="form-control" value="IVA: 16%" ></input></td>
+                    <td><input type="text" name="articles[0].amount" class="form-control" placeholder="$ 0.00" ></input></td>
+                    <td><div class="col-xs-3" style="width:50%; padding:0"><div class="deleteItem"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></div></div></td>
                   </tr>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
+                    <td><input type="text" name="articles[0].description" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
                 <tfoot>
@@ -159,16 +153,14 @@
             <script id="tbodyOnlyAmount" type="text/x-handlebars-template">
               <tbody>
                   <tr id="{{named}}">
-                    <td><input type="text" class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
-                    <td><input type="text" class="form-control" value="IVA: 16%" ></input></td>
-                    <td><input type="text" class="form-control" placeholder="$ 0.00" ></input></td>
-  <td><div class="col-xs-3" style="width:50%; padding:0"><a href="#">
-                          <span class="glyphicon glyphicon-remove"></span>
-                    </a></div></td>
+                    <td><input type="text"  name="articles[{{index}}].name"  class="form-control"placeholder="Nombre del artículo" style="width:100%;" ></input></td>
+                    <td><input type="text"  name="articles[{{index}}].tax"   class="form-control" value="IVA: 16%" ></input></td>
+                    <td><input type="text"  name="articles[{{index}}].amount"class="form-control" placeholder="$ 0.00" ></input></td>
+  <td><div class="col-xs-3" style="width:50%; padding:0"><div class="deleteItem"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></div></div></td>
 
                   </tr>
                   <tr>
-                    <td><input type="text" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
+                    <td><input type="text" name="articles[{{index}}].description" class="form-control"placeholder="Ingrese una descripción del artículo" ></input></td>
                   </tr>
                 </tbody>
               </script>
