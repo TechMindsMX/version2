@@ -80,6 +80,7 @@ class ConciliationController {
     [payment:payment, toApply:new BigDecimal(0)]
   }
 
+  @Transactional
   def applyConciliationWithoutInvoice(ConciliationCommand command) {
     log.info "Applying conciliation without invoice: ${command.dump()}"
 
@@ -93,6 +94,11 @@ class ConciliationController {
     conciliationService.applyConciliationWithoutInvoice(conciliation)
 
     redirect controller:"payment", action:"conciliation"
+  }
+
+  def conciliateInvoiceWithoutPayment(SaleOrder saleOrder) {
+    log.info "SaleOrder to conciliate without payment: ${saleOrder.dump()}"
+    [saleOrder:saleOrder]
   }
 
 }
