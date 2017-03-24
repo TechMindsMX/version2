@@ -64,7 +64,60 @@
             <!-- BEGIN ROW -->
             <div class="row">
               <div id="transitionsTableContainer" class="col-lg-12">
+                <g:if test="${transitions}">
+                  <g:form name="editMachineForm" controller="machine" action="update" method="POST">
+                    <!-- BEGIN TABLE-RESPONSIVE -->
+                    <div class="table-responsive">
+                      <!-- BEGIN TABLE -->
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Estado Inicial</th>
+                            <th>Acción</th>
+                            <th>Estado Final</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <g:each var="transition" status="i" in="${transitions}">
+                            <input type="hidden" name="transitions[${i}].stateFrom" value="${transition.stateFrom.name}" />
+                            <input type="hidden" name="transitions[${i}].stateTo" value="${transition.stateTo.name}" />
 
+                            <g:each var="action" status="j" in="${transition.actions}">
+                              <tr>
+                                <td class="state-from-column">
+                                  ${transition.stateFrom.name}
+                                </td>
+                                <td>
+                                  ${action}
+                                  <input type="hidden" name="transitions[${i}].actions[${j}]" value="${action}">
+                                </td>
+                                <td class="state-to-column">
+                                  ${transition.stateTo.name}
+                                </td>
+                                <td>
+                                  <button type="button" class="btn btn-red delete-transition">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </g:each>
+                          </g:each>
+                        </tbody>  
+                      </table>
+                      <!-- END OF TABLE -->
+                    </div>
+                    <!-- END OF TABLE RESPONSIVE -->
+                    <!-- BEGIN ROW -->
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <input type="hidden" name="initialState" value="${transitions[0].stateFrom.name}"/>
+                        <button type="submit" class="btn btn-default">Guardar</button>
+                      </div>
+                    </div>
+                    <!-- END OF ROW -->
+                  </g:form>
+                </g:if>
               </div>
             </div>
             <!-- END OF ROW -->
