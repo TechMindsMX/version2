@@ -165,9 +165,10 @@
                 </tbody>
               </script>
               <script id="specifyDateTemplate" type="text/x-handlebars-template">
+              <div class="row">
                 <div  align="right" id="divDataTimer">
                 <div class="col-md-4"></div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                   <div class="form-group">
                     <div class='input-group date' id='datetimepicker2'>
                       <input type='text' class="form-control" />
@@ -177,6 +178,7 @@
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
 
 </script>
