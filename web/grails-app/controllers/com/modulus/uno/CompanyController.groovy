@@ -157,6 +157,8 @@ class CompanyController {
     def company = Company.get(session.company.toLong())
     String startDate = params.startDate ? new SimpleDateFormat("dd-MM-yyyy").format(params.startDate) : ""
     String endDate = params.endDate ? new SimpleDateFormat("dd-MM-yyyy").format(params.endDate) : ""
+    log.info "StartDate: ${startDate}"
+    log.info "EndDate: ${endDate}"
     AccountStatement accountStatement = companyService.getAccountStatementOfCompany(company, startDate, endDate)
 
     respond accountStatement
@@ -176,8 +178,8 @@ class CompanyController {
     String endDate = params.endDate ? new SimpleDateFormat("dd-MM-yyyy").format(new Date(params.endDate)) : ""
     AccountStatement accountStatement = companyService.getAccountStatementOfCompany(company, startDate, endDate)
 
-    def headers = ['Fecha', 'Tipo', 'Id. Transacción', 'Abono', 'Cargo', 'Saldo']
-    def withProperties = ['date', 'type', 'id', 'credit', 'debit', 'balance']
+    def headers = ['Fecha', 'Concepto', 'Id. Transacción', 'Abono', 'Cargo', 'Saldo']
+    def withProperties = ['date', 'concept', 'id', 'credit', 'debit', 'balance']
     def formattedTransactions = companyService.formattingTransactionsForXls(accountStatement.transactions)
     println "Transacciones: ${formattedTransactions}"
     new WebXlsxExporter().with {
