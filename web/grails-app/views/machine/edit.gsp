@@ -117,6 +117,10 @@
                     </div>
                     <!-- END OF ROW -->
                   </g:form>
+
+                  <input type="hidden" id="machineShowURL" value="${createLink(controller:'machine',action:'show')}"/>
+                  <input type="hidden" id="machineUuid" value="${transitions?.getAt(0)?.machine?.uuid}" />
+
                 </g:if>
               </div>
             </div>
@@ -124,7 +128,7 @@
           </div>
           <!-- END OF COL-LG-6 -->
 
-          <div id="graphDiv" class="col-lg-6">
+          <div class="col-lg-6 graphDiv">
             <svg id="svg" width="100%"></svg>
           </div>
         </div>
