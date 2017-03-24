@@ -99,7 +99,18 @@
     </script>
 
     <script id="transitionsTable" type="text/x-handlebars-template">
-      <g:render template="transitionList"  />
+      {{#if transitions}}
+      <g:form name="newMachineForm" controller="machine" action="save" method="POST">
+        <g:render template="transitionList"  />
+        <!-- BEGIN ROW -->
+        <div class="row">
+          <div class="col-lg-12">
+            <button type="submit" class="btn btn-default">Guardar</button>
+          </div>
+        </div>
+        <!-- END OF ROW -->
+      </g:form>
+      {{/if}}
     </script>
   </body>
 </html>
