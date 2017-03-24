@@ -141,7 +141,7 @@
                         </span>
                       </g:else>
                     </td>
-                    <td>${modulusuno.formatPrice(number: 0)}</td>
+                    <td>${modulusuno.formatPrice(number: mov.balance)}</td>
                   </tr>
                 </g:each>
               </table>
