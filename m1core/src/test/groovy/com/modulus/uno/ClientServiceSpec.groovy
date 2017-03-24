@@ -14,11 +14,11 @@ import com.modulus.uno.BusinessException
 class ClientServiceSpec extends Specification {
 
   def emailSenderService = Mock(EmailSenderService)
-  def modulusUnoService = Mock(ModulusUnoService)
+  def stpClabeService = Mock(StpClabeService)
 
   def setup(){
     service.emailSenderService = emailSenderService
-    service.modulusUnoService = modulusUnoService
+    service.stpClabeService = stpClabeService
     messageSource.addMessage('exception.client.already.exist', LCH.getLocale(), 'A client with same RFC already exist for this company')
   }
 
@@ -69,24 +69,19 @@ class ClientServiceSpec extends Specification {
 
   @Ignore
   void "Should generate a subaccount stp to client"() {
-    given:"A client link"
-    and: "A business entity"
-      def businessName = new ComposeName(value:'Imaginn',type:NameType.RAZON_SOCIAL)
-      def businessEntity = new BusinessEntity(rfc:"AAA010101XYZ", type:BusinessEntityType.MORAL, uuid:"uuidBusinessEntity", names:[businessName]).save(validate:false)
-    and: "A company"
+    given: "A company"
       def company = new Company(accounts:[], legalRepresentatives:[]).save(validate:false)
       ModulusUnoAccount modulusUnoAccount = new ModulusUnoAccount(integraUuid:"uuidCompany", stpClabe:"646180111900010007").save(validate:false)
-      User legalRepresentative = new User(profile: new Profile(email:"email@legal.com")).save(validate:false)
       company.accounts << modulusUnoAccount
-      company.legalRepresentatives << legalRepresentative
       company.save(validate:false)
+    and:"A client link"
       ClientLink clientLink = new ClientLink(type:'CLIENTE',clientRef:"cliente",company:company).save()
       clientLink.company = new Company()
       clientLink.save(validate:false)
     and:
-      modulusUnoService.generateSubAccountStpForClient(_) >> "TheSubAccountStp"
+      stpClabeService.generateSTPSubAccount(_, _) >> "TheSubAccountStp"
     when: "Generate the subaccount"
-      def result = service.generateSubAccountStp(clientLink, businessEntity)
+      def result = service.generateSubAccountStp(clientLink)
     then:
       result.stpClabe == "TheSubAccountStp"
   }
