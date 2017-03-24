@@ -11,9 +11,12 @@ class Transaction {
   String referenceNumber
   TransactionType transactionType
   TransactionStatus transactionStatus
+  BigDecimal balance
 
   Date dateCreated
   Date lastUpdated
+
+  static transients = ['balance']
 
   static constraints = {
     keyTransaction()
