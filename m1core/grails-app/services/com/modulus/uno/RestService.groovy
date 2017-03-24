@@ -68,13 +68,6 @@ class RestService {
     callingFacturaService(message,template,token)
   }
 
-  def getTransactionsAccount(MessageCommand command){
-    log.info "Calling Service : services/integra/tx/getTransactions"
-    wsliteRequestService.doRequest(modulusunoUrl){
-      endpointUrl "services/integra/tx/getTransactions/${command.uuid}/${command.begin}/${command.end}"
-    }.doit()?.json
-  }
-
   //TODO Metodo que no se usa, pero que se usara, pero se tendra que ajustar,
   //     falta agregar cuenta concentradora (PD no se si jala por cambio de peticion)
   def getTransactionsIntegrator(MessageCommand command, String template){
