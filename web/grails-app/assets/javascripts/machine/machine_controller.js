@@ -8,6 +8,7 @@ var MachineController = (function(){
     stateTo:'input[name=stateTo]',
     machineForm:'form[name=machineForm]',
     machineUuid:'#machineUuid',
+    transitionsTable:'#transitionsTable',
     transitionsTableContainer:'#transitionsTableContainer',
     machineShowURL:'#machineShowURL'
   },
@@ -50,6 +51,8 @@ var MachineController = (function(){
         
         GraphView.renderGraph(machine.getGraph());
         updateAutocomplete();
+        
+
       },
       error: function(data){
         console.log(data);
@@ -84,7 +87,15 @@ var MachineController = (function(){
                              stateTo:$(selectors.stateTo).val(),
                              action:$(selectors.action).val()});
       updateFromSelect();
+      updateAutocomplete();
+      GraphView.renderGraph(machine.getGraph());
+      renderTransitionsTable();
     }
+  },
+
+  renderTransitionsTable = function(){
+    MachineView.render(selectors.transitionsTable,selectors.transitionsTableContainer,{transitions:machine.getTransitions(),
+                                                                                       initialState:machine.getInitialState()});
   },
 
   start = function(){
