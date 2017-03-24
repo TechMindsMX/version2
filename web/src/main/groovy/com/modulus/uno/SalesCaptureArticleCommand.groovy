@@ -7,5 +7,5 @@ class SalesCaptureArticleCommand implements Validateable {
   Integer quantity
   BigDecimal price
   Integer tax
-  BigDecimal amount
+  def  amount
 }
