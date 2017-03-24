@@ -117,7 +117,7 @@ class CompanyService {
     BigDecimal balance = 0
     BigDecimal usd = 0
     if (company.status == CompanyStatus.ACCEPTED && company.accounts) {
-      (balance, usd) = modulusUnoService.consultBalanceOfAccount(company?.accounts?.first()?.timoneUuid)
+      balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
     }
     new Balance(balance:balance, usd:usd)
   }
