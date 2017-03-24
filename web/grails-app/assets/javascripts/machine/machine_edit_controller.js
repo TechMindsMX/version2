@@ -3,44 +3,26 @@
 //= require machine/machine.js
 //= require machine/machine_view.js
 //= require machine/graph_view.js
+//= require machine/machine_controller.js
 
 var MachineEditController = (function(){
 
   var selectors = {
+    stateFrom:'select[name=stateFrom]',
+    stateTo:'input[name=stateTo]',
+    action:'input[name=action]',
     machineForm:'form[name=machineForm]',
-    machineShowURL:'#machineShowURL',
     machineUuid:'#machineUuid'
   },
-  machine = null,
 
-  loadMachine = function(){
-    $.ajax({
-      url:$(selectors.machineShowURL).val()+".json",
-      headers:{
-        Accept: "application/json"
-      },
-      type:'GET',
-      data:{id:$(selectors.machineUuid).val()},
-      success:function(result){
-        if(result.transitions.length > 0){
-          machine.addInitialState(result.transitions[0].stateFrom.name);
-
-          result.transitions.forEach(function(transition){
-            transition.actions.forEach(function(action){
-              machine.addTransition({stateFrom:transition.stateFrom.name,
-                                     stateTo:transition.stateTo.name,
-                                     action:action.name});
-            });
-          });
-        }
-        
-        GraphView.renderGraph(machine.getGraph());
-      },
-      error: function(data){
-        console.log(data);
-      }
+  updateAutocomplete = function(){
+    var stateNames = [];
+    $.each(machine.getStates(),function(index,state){
+      stateNames.push(state.name);
     });
-
+    
+    var options = {data:stateNames,theme:'blue-light'};
+    $(selectors.stateTo).easyAutocomplete(options);
   },
 
   initValidations = function(){
@@ -64,12 +46,16 @@ var MachineEditController = (function(){
       }
     })
   },
+  
+  bindEvents = function(){
+    $(selectors.machineForm).on('submit',MachineController.addNewTransition);
+  },
 
   start = function(){
-    machine = Machine.create();
-    GraphView.initView();
+    MachineController.start();
     initValidations();
-    loadMachine();
+    bindEvents();
+    MachineController.loadMachine();
   };
 
   return{
