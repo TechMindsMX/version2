@@ -15,7 +15,13 @@ var MachineEditController = (function(){
       rules:{
         stateFrom:{
           required:true
-        }
+        },
+        stateTo:{
+          required:true
+        },
+        action:{
+          required:true
+        } 
       },
       errorPlacement: function(error,element){
         $(element).parent('div').addClass('has-error');
