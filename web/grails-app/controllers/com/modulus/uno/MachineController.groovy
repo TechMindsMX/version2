@@ -27,7 +27,10 @@ class MachineController {
     if(!machine)
       return response.sendError(404)
 
-    respond (transitionService.getMachineTransitions(machine.id))
+    ArrayList<State> states = []
+    states.addAll(0,machine.states)
+
+    respond ([transitionList:transitionService.getMachineTransitions(machine.id),stateList:states])
   }
 
   def edit(String id){
