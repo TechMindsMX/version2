@@ -173,12 +173,11 @@ class CompanyService {
     List formattedTransactions = []
     transactions.each { mov ->
       Map transaction = [:]
-      transaction.date = new Date(mov.timestamp)
-      String typeTransaction =
-      transaction.type = messageSource.getMessage("company.accountStatement.TransactionType.${mov.transactionType}", null, "${mov.transactionType}", LCH.getLocale())
-      transaction.id = mov.reference ?: ""
-      transaction.credit = mov.type=="CREDIT"?mov.amount:""
-      transaction.debit = mov.type=="DEBIT"?mov.amount:""
+      transaction.date = mov.dateCreated
+      transaction.concept = mov.paymentConcept
+      transaction.id = mov.keyTransaction ?: ""
+      transaction.credit = mov.transactionType == TransactionType.DEPOSIT ? mov.amount : ""
+      transaction.debit = mov.transactionType == TransactionType.WITHDRAW ? mov.amount : ""
       transaction.balance = mov.balance
       formattedTransactions << transaction
     }
