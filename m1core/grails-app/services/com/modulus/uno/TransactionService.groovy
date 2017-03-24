@@ -11,4 +11,26 @@ class TransactionService {
     transaction
   }
 
+  BigDecimal getBalanceByKeyAccountPriorToDate(String keyAccount, Date date) {
+    def totalDeposits = getTransactionsSumByKeyAccountAndTransactionTypePriorToDate(keyAccount, TransactionType.DEPOSIT, date) ?: new BigDecimal(0)
+    def totalWithDrawals = getTransactionsSumByKeyAccountAndTransactionTypePriorToDate(keyAccount, TransactionType.WITHDRAW, date) ?: new BigDecimal(0)
+    totalDeposits - totalWithDrawals
+  }
+
+  BigDecimal getTransactionsSumByKeyAccountAndTransactionTypePriorToDate(String keyAccount, TransactionType transactionType, Date date) {
+    BigDecimal total = Transaction.createCriteria().get {
+      and {
+        eq("keyAccount", keyAccount)
+        eq("transactionType", transactionType)
+        ne("transactionStatus", TransactionStatus.REJECTED)
+        lt("dateCreated", date)
+      }
+      projections {
+        sum "amount"
+      }
+    }
+    log.info "Total for ${transactionType}: ${total}"
+    total
+  }
+
 }
