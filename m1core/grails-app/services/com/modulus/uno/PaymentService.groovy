@@ -33,22 +33,6 @@ class PaymentService {
     payments
   }
 
-  Payment concilationForSaleOrderWithPayment(Long saleOrderId, Long paymentId){
-    Payment payment = Payment.get(paymentId)
-    SaleOrder order = SaleOrder.get(saleOrderId)
-    if(order){
-      payment.saleOrder = order
-      payment.status = PaymentStatus.CONCILIATED
-      order.status = SaleOrderStatus.PAGADA
-      payment.save()
-      order.save()
-      emailSenderService.notifySaleOrderChangeStatus(order)
-    } else {
-      throw new BusinessException("Error al conciliar la orden...")
-    }
-    payment
-  }
-
   Map findReferencedPaymentsForCompany(Company company) {
     Map payments = [:]
     List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNotNull(company, PaymentStatus.PENDING)
