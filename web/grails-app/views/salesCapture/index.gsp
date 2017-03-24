@@ -3,7 +3,6 @@
   <head>
     <meta name="layout" content="main" />
     <asset:javascript src="third-party/handlebars/handlebars.js" />
-
     </head>
     <body>
       <div class="page-title">
@@ -22,7 +21,17 @@
               <div class="row">
               <div class="col-md-12" align="center">
   <div class="col-md-6">
-    <img src="https://image.freepik.com/iconos-gratis/plataforma-macos_318-33076.jpg" style="margin-bottom: 100px;" class="img-responsive" alt="Cinque Terre" width="100" height="400">
+    <div class="row">
+    <img src="https://image.freepik.com/iconos-gratis/plataforma-macos_318-33076.jpg" id="img_destino" style="margin-bottom: 100px;" class="img-responsive" alt="Cinque Terre" width="100" height="400">
+    </div>
+    <div class="row">
+      <output id="list"></output>
+    </div>
+    <div class="row">
+      <label class="btn btn-default btn-file">
+       Subir logo... <input id="file_url" type="file" name="foto" style="display: none;">
+</label>
+    </div>
   </div>
   <div class="col-md-6" id="formDate">
     <div class="row">
@@ -430,6 +439,7 @@
         </div>
       </div>
       <script>
+
       </script>
       <g:render template="template"/>
         <asset:javascript src="compiled-coffee-script/salesCapture/app.js" />

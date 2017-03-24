@@ -56,6 +56,13 @@ class App.IndexController
     if $('#partialPayment').is(':checked') then new App.IndexViewController().append(@selectors.partialPaymentTemplate,@selectors.checkBoxPartialPayment,{})
     else  $('#rowPartialPayment').remove()
 
+  loadImageLogo: (input) ->
+    console.log(input.input)
+    if input.files and input.files[0]
+      reader = new FileReader
+      reader.onload = (e) ->
+      $('#img_destino').attr 'src', e.target.result
+      reader.readAsDataURL input.files[0]
 
   addNewItemBox: (event) =>
     event.preventDefault()
@@ -176,6 +183,7 @@ class App.IndexController
     $('body').on('click',@selectors.deleteItem,(e) => $(e.currentTarget).parents("tbody").remove(); countertbody++; @calculationTotal() )
     $('body').on("keyup",@selectorsTablaCount.quantity, @calculationOfAmount)
     $('body').on("keyup#{@selectorsTablaCount.price}", @calculationOfAmount)
+    $('#file_url').on("change", @loadImageLogo)
 
 
 new App.IndexController().start()
