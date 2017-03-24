@@ -92,7 +92,7 @@ var MachineController = (function(){
     }
   },
 
-  deleteMachineTransition = function(eent){
+  deleteMachineTransition = function(event){
     var element = $(event.currentTarget);
     var row = element.parent().parent();
     var stateFrom = $(row).find('.state-from-column').text().trim(),
@@ -121,6 +121,7 @@ var MachineController = (function(){
 
   return{
     addNewTransition:addNewTransition,
+    deleteMachineTransition:deleteMachineTransition,
     loadMachine:loadMachine,
     start:start
   };

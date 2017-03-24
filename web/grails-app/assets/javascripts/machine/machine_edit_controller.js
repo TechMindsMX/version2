@@ -12,7 +12,9 @@ var MachineEditController = (function(){
     stateTo:'input[name=stateTo]',
     action:'input[name=action]',
     machineForm:'form[name=machineForm]',
-    machineUuid:'#machineUuid'
+    machineUuid:'#machineUuid',
+    transitionsTableContainer:'#transitionsTableContainer',
+    deleteTransition:'.delete-transition'
   },
 
   updateAutocomplete = function(){
@@ -49,6 +51,7 @@ var MachineEditController = (function(){
   
   bindEvents = function(){
     $(selectors.machineForm).on('submit',MachineController.addNewTransition);
+    $(selectors.transitionsTableContainer).on('click',selectors.deleteTransition,MachineController.deleteMachineTransition);
   },
 
   start = function(){
