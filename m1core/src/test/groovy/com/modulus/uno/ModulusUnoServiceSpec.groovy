@@ -160,15 +160,6 @@ class ModulusUnoServiceSpec extends Specification {
       1 * transactionService.saveTransaction(_)
   }
 
-  void "Should get transactions of account"() {
-    given:
-      AccountStatementCommand command = Mock(AccountStatementCommand)
-    when:
-      service.getTransactionsInPeriodOfIntegrated(command)
-    then:
-      1 * restService.getTransactionsAccount(_ as AccountStatementCommand)
-  }
-
   void "Should get transactions of integrator"() {
     given:
       AccountStatementCommand command = Mock(AccountStatementCommand)

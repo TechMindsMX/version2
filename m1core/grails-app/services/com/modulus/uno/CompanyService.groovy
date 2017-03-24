@@ -20,6 +20,7 @@ class CompanyService {
   def restService
   def corporateService
   DirectorService directorService
+  TransactionService transactionService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -104,8 +105,7 @@ class CompanyService {
     accountStatement.balanceSubjectToCollection = getBalanceSubjectToCollection(company)
     accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(beginDate)
     accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate)
-    accountStatement.transactions = modulusUnoService.getTransactionsInPeriodOfIntegrated(command)
-
+    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
     accountStatement
   }
 

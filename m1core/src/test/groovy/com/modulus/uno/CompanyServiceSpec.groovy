@@ -24,6 +24,7 @@ class CompanyServiceSpec extends Specification {
   CollaboratorService collaboratorService = Mock(CollaboratorService)
   DirectorService directorService = Mock(DirectorService)
   RestService restService = Mock(RestService)
+  TransactionService transactionService = Mock(TransactionService)
 
   def setup(){
     service.modulusUnoService = modulusUnoService
@@ -36,6 +37,7 @@ class CompanyServiceSpec extends Specification {
     service.collaboratorService = collaboratorService
     service.directorService = directorService
     service.restService = restService
+    service.transactionService = transactionService
   }
 
   Should "create a direction for a Company"(){
@@ -344,7 +346,7 @@ and:
     then:
       accountStatement.balance.balance == 0
       accountStatement.balanceTransiting == 0
-      1 * modulusUnoService.getTransactionsInPeriodOfIntegrated(_ as AccountStatementCommand)
+      1 * transactionService.getTransactionsAccountForPeriod(_,_,_)
   }
 
   @Unroll
