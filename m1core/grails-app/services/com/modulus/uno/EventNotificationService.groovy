@@ -14,8 +14,8 @@ class EventNotificationService implements MachineEventImplementer {
     Class clazz = grailsApplication.domainClasses.find { it.clazz.simpleName == className }.clazz
     def instance = clazz.findById(instanceId)
     def state = machineService.getCurrentStateOfInstance(instance)
-    NotificationForState notify = notificationForStateService.findByState(state.id)
-    notifyService.sendEmailToGroup(notify.groupNotification, instance.getNotificationData())
+    ArrayList<NotificationForState> notifys = notificationForStateService.findByState(state.id)
+    notifyService.sendEmailToGroup(notifys, instance.getNotificationData())
   }
 
 }

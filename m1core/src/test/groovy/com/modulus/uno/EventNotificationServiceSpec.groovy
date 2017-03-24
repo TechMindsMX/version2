@@ -24,14 +24,16 @@ class EventNotificationServiceSpec extends Specification {
       GroupNotification group = new GroupNotification(notificationId:"123456qwer", name:"Contadores").save(validate:false)
       def order = new PurchaseOrder(providerName:"ProviderName").save(validate:false)
       State firstState = new State(name:"machine state", finalState:true).save(validate:false)
-      NotificationForState notify = new NotificationForState(groupNotification:1, stateMachine:1).save(validate:false)
+      NotificationForState notifyOne = new NotificationForState(groupNotification:1, stateMachine:1).save(validate:false)
+      NotificationForState notifyTwo = new NotificationForState(groupNotification:1, stateMachine:1).save(validate:false)
+      ArrayList<NotificationForState> notifys = [notifyOne, notifyTwo]
 
     when:"we want to notify a group"
       service.executeEvent(order.class.simpleName, 1)
 
     then:"We should call the services"
       1 * machineService.getCurrentStateOfInstance(_) >> firstState
-      1 * notificationForStateService.findByState(_) >> notify
+      1 * notificationForStateService.findByState(_) >> notifys
       1 * notifyService.sendEmailToGroup(_, _)
   }
 
