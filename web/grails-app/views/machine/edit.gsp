@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="layout" content="main" />
     <title>Modulus UNO | </title>
+    <asset:javascript src="third-party/handlebars/handlebars.js"/>
+    <asset:javascript src="machine/machine_edit_controller.js"/>
     <asset:stylesheet src="machine/style.css" />
   </head>
   <body>
@@ -32,7 +34,7 @@
               <!-- BEGIN ROW -->
               <div class="row" id="transitionsDiv">
                 <div class="form-group col-lg-3">
-                  <label for="actionFrom">
+                  <label for="stateFrom">
                     ${message(code:'machine.initial.state')}
                   </label>
                   <g:select name="stateFrom" class="form-control" from="${states}" optionKey="name" optionValue="name" noSelection="['':'-SELECCIONAR-']"/>
@@ -46,10 +48,14 @@
                 </div>
 
                 <div class="form-group col-lg-3">
-                  <label for="actionForm">
+                  <label for="stateTo">
                     ${message(code:'machine.state.to')}
                   </label>
                   <input type="text" name="stateTo" class="form-control">
+                </div>
+                
+                <div class="form-group col-sm-2">
+                  <g:submitButton name="create" class="save btn btn-primary" value="Agregar" />
                 </div>
               </div>
               <!-- END OF ROW -->

@@ -12,6 +12,10 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-cog fa-3x"></i>
+        <g:message code="machine.show" args="[entity]" />
+        <small>
+          <g:message code="machine.detail" args="[entity]" />
+        </small>
       </h1>
     </div>
     <!-- END OF PAGE-TITLE -->
