@@ -6,6 +6,7 @@
     <title>Modulus UNO | </title>
     <asset:javascript src="third-party/handlebars/handlebars.js"/>
     <asset:javascript src="machine/machine_edit_controller.js"/>
+    <asset:stylesheet src="third-party/EasyAutocomplete/dist/easy-autocomplete.css" />
     <asset:stylesheet src="machine/style.css" />
   </head>
   <body>
@@ -137,5 +138,9 @@
       <!-- END PORTLET-BODY -->
     </div>
     <!-- END OF PORTLET -->
+
+    <script id="transitionsTable" type="text/x-handlebars-template">
+      <g:render template="transitionList"  />
+    </script>
   </body>
 </html>
