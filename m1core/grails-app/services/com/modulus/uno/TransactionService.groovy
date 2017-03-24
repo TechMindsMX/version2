@@ -11,4 +11,8 @@ class TransactionService {
     transaction
   }
 
+  List<Transaction> getTransactionsAccountForPeriod(keyAccount, startDate, endDate) {
+    Transaction.findAllByKeyAccountAndDateCreatedBetween(keyAccount,startDate,endDate)
+  }
+
 }
