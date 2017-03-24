@@ -32,7 +32,7 @@ class NotificationForStateService {
   }
 
   def findByState(Long state){
-   NotificationForState.find{ stateMachine == state }
+    NotificationForState.findAllByStateMachine(state)
   }
 
 }

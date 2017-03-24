@@ -71,9 +71,21 @@ class NotificationForStateServiceSpec extends Specification {
       Long state = 2
     when:"I want to know the notification"
       def notify = service.findByState(state)
-    then:"We should get the notification for our state"
-      notify.stateMachine == 2
-      notify.groupNotification == 1
+    then:"We should get a list with the notification"
+      notify.size == 1
+      notify[0].stateMachine == 2
+      notify[0].groupNotification == 1
   }
 
+  void "Find all  notifications with a state id"(){
+    given:"A state id"
+      def notification = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def notification2 = new NotificationForState(groupNotification:2, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def notification3 = new NotificationForState(groupNotification:3, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      Long state = 2
+    when:"I want to know the notification"
+      def notify = service.findByState(state)
+    then:"We should get a list with the notification"
+      notify.size == 3
+  }
  }
