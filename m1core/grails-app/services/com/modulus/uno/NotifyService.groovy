@@ -312,11 +312,13 @@ class NotifyService {
     def paramsMap = ['user': user.username]
   }
 
-  def sendEmailToGroup(Long groupId, def emailerParams){
-    GroupNotification group = GroupNotification.findById(groupId)
-    group.users.each{ user ->
-      log.info user.profile.email
-      sendNotify(buildEmailerMap(group.notificationId, user.profile.email, emailerParams))
+  def sendEmailToGroup(ArrayList<NotificationForState> notifys, def emailerParams){
+    notifys.each{ notify ->
+      GroupNotification group = GroupNotification.findById(notify.groupNotification)
+        group.users.each{ user ->
+          log.info "Sending email to ${user.profile.email}"
+          sendNotify(buildEmailerMap(group.notificationId, user.profile.email, emailerParams))
+        }
     }
   }
 
