@@ -37,12 +37,12 @@ class CompanyController {
       if (company.status == CompanyStatus.ACCEPTED) {
         documents = companyService.isAvailableForGenerateInvoices(company.rfc)
         if (company.accounts){
-          (balance, usd) = modulusUnoService.consultBalanceOfAccount(company?.accounts?.first()?.timoneUuid)
+          balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
         }
       }
       def isAvailable = companyService.isEnableToSendNotificationIntegrated(company)
 
-      respond company, model:[ clients:clientService.getClientsFromCompany(company),providers:providerService.getProvidersFromCompany(company),available:isAvailable,balance:balance,usd:usd,documents:documents]
+      respond company, model:[ clients:clientService.getClientsFromCompany(company),providers:providerService.getProvidersFromCompany(company),available:isAvailable,balance:balance,usd:new BigDecimal(0),documents:documents]
     }
   }
 
