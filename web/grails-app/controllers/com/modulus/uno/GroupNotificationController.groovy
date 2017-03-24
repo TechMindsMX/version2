@@ -45,6 +45,7 @@ class GroupNotificationController {
     def update (GroupNotificationCommand command){
       def groupUpdated = command.toGroupNotificationUpdated()
       groupUpdated.users = User.findAllByIdInList(command.userList)
+      groupUpdated.id = command.idGroup
       groupNotificationService.updateGroup(groupUpdated)
       redirect action:"index", method:"GET"
     }
