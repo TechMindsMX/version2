@@ -1,7 +1,12 @@
 import com.modulus.uno.machine.Transition
+import com.modulus.uno.machine.State
 
 model {
   ArrayList<Transition> transitionList
+  ArrayList<State> stateList 
 }
 
-json tmpl.'transition/transition'(transitionList)
+json {
+  transitions g.render(template:"/machine/transition/transition", collection: transitionList, var:'transition')
+  states g.render(template:"/machine/state/state", collection: stateList, var:'machineState')
+}
