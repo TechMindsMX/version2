@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%! import com.modulus.uno.TransactionType %>
 <html>
   <head>
     <meta name="layout" content="main" />
@@ -98,58 +99,57 @@
             </table>
           </div>
           <div class="portlet-body">
-              <div class="table-responsive">
-                <table class="table">
-                     <tr>
-                       <th>Fecha</th>
-                       <th>Tipo</th>
-                       <th>Id de Transacción</th>
-                       <th>Abono</th>
-                       <th>Cargo</th>
-                       <th></th>
-                       <th>Saldo</th>
-                     </tr>
-                     <g:each in="${accountStatement.transactions}" var="mov">
-                      <tr>
-                        <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${new Date(mov.timestamp)}"/></td>
-                        <td>
-                          <g:message code="company.accountStatement.TransactionType.${mov.transactionType}" default="${mov.transactionType}"/>
-                        </td>
-                        <td>${mov.reference?:""}</td>
-                        <td>
-                          <g:if test="${mov.type.equals('CREDIT')}">
-                            ${modulusuno.formatPrice(number: mov.amount)}
-                          </g:if>
-                        </td>
-                        <td>
-                          <g:if test="${mov.type.equals('DEBIT')}">
-                            ${modulusuno.formatPrice(number: mov.amount)}
-                          </g:if>
-                        </td>
-                        <td>
-                          <g:if test="${mov.type.equals('CREDIT')}">
-                <span class="label label-success">
-                  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
-                </span>
-                          </g:if>
-                          <g:else>
-                <span class="label label-danger">
-                  <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-                </span>
-                         </g:else>
-                        </td>
-                        <td>${modulusuno.formatPrice(number: mov.balance)}</td>
-                      </tr>
-                     </g:each>
-                   </table>
-              </div>
+            <div class="table-responsive">
+              <table class="table">
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Id de Transacción</th>
+                  <th>Abono</th>
+                  <th>Cargo</th>
+                  <th></th>
+                  <th>Saldo</th>
+                </tr>
+                <g:each in="${accountStatement.transactions}" var="mov">
+                  <tr>
+                    <td>
+                      <g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.dateCreated}"/>
+                    </td>
+                    <td>
+                      <g:message code="company.accountStatement.TransactionType.${mov.transactionType}" default="${mov.transactionType}"/>
+                    </td>
+                    <td>${mov.keyTransaction ?: ""}</td>
+                    <td>
+                      <g:if test="${mov.transactionType == TransactionType.DEPOSIT}">
+                        ${modulusuno.formatPrice(number: mov.amount)}
+                      </g:if>
+                    </td>
+                    <td>
+                      <g:if test="${mov.transactionType == TransactionType.WITHDRAW}">
+                        ${modulusuno.formatPrice(number: mov.amount)}
+                      </g:if>
+                    </td>
+                    <td>
+                      <g:if test="${mov.transactionType == TransactionType.DEPOSIT}">
+                        <span class="label label-success">
+                          <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+                        </span>
+                      </g:if>
+                      <g:else>
+                        <span class="label label-danger">
+                          <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                        </span>
+                      </g:else>
+                    </td>
+                    <td>${modulusuno.formatPrice(number: 0)}</td>
+                  </tr>
+                </g:each>
+              </table>
+            </div>
           </div>
         </div>
      </div>
    </div>
-
-
-
 </body>
 </html>
 
