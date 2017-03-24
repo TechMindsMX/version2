@@ -14,7 +14,7 @@ class App.IndexController
     tableTemplateOnlyImport: '#tableOnlyImport'
     tbodyTemplateOnlyAmount: '#tbodyOnlyAmount'
     specifyDateTemplate: '#specifyDateTemplate'
-    destinationnyDateTemplate: '#divVencimiento'
+    destinationnyDateTemplate: '#formDate'
     deleteItem: '.deleteItem'
   selectorsTablaCount:
     quantity: '.inputsQuantity'
