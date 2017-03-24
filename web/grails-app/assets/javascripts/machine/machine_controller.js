@@ -10,7 +10,8 @@ var MachineController = (function(){
     machineUuid:'#machineUuid',
     transitionsTable:'#transitionsTable',
     transitionsTableContainer:'#transitionsTableContainer',
-    machineShowURL:'#machineShowURL'
+    machineShowURL:'#machineShowURL',
+    deleteTransition:'.delete-transition'
   },
   machine = null,
 
@@ -51,8 +52,6 @@ var MachineController = (function(){
         
         GraphView.renderGraph(machine.getGraph());
         updateAutocomplete();
-        
-
       },
       error: function(data){
         console.log(data);
@@ -91,6 +90,23 @@ var MachineController = (function(){
       GraphView.renderGraph(machine.getGraph());
       renderTransitionsTable();
     }
+  },
+
+  deleteMachineTransition = function(eent){
+    var element = $(event.currentTarget);
+    var row = element.parent().parent();
+    var stateFrom = $(row).find('.state-from-column').text().trim(),
+    action = row.find('.action-column').text().trim(),
+    stateTo = row.find('.state-to-column').text().trim();
+
+    machine.removeTransition({stateFrom:stateFrom,
+                              stateTo:stateTo,
+                              action:action});
+
+    updateFromSelect();
+    updateAutocomplete();
+    GraphView.renderGraph(machine.getGraph());
+    renderTransitionsTable();
   },
 
   renderTransitionsTable = function(){
