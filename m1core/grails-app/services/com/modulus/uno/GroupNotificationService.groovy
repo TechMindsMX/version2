@@ -6,6 +6,7 @@ import grails.transaction.Transactional
 class GroupNotificationService {
 
   def corporateService
+  def notificationForStateService
 
   def saveNewGroup(GroupNotification group){
     group.save()
@@ -22,6 +23,7 @@ class GroupNotificationService {
 
   def deleteGroup(def groupId){
     GroupNotification groupNotification = GroupNotification.findById(groupId)
+    notificationForStateService.deleteGroupNotifications(groupId)
     groupNotification.delete()
   }
 

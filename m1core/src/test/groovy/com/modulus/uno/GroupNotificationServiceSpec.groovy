@@ -8,7 +8,13 @@ import grails.test.mixin.Mock
 @Mock([GroupNotification, User])
 class GroupNotificationServiceSpec extends Specification {
 
- def "Update a GroupNotification"(){
+  NotificationForStateService notificationForStateService= Mock(NotificationForStateService)
+
+  def setup(){
+    service.notificationForStateService = notificationForStateService
+  }
+
+  def "Update a GroupNotification"(){
     given: "An existent notification group"
     def oldGroup = createGroup()
     def oldGroupName = oldGroup.name
@@ -45,6 +51,7 @@ class GroupNotificationServiceSpec extends Specification {
       service.deleteGroup(firstGroup.id)
     then:"We shouldn't have any group notification"
       !GroupNotification.findById(firstGroup.id)
+      1 * notificationForStateService.deleteGroupNotifications(_)
   }
 
   private createGroup(){
