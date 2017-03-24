@@ -22,6 +22,13 @@ class NotificationForStateService {
     notify.delete()
   }
 
+  def deleteGroupNotifications(Long groupId){
+    ArrayList<NotificationForState> notifysToDelete = NotificationForState.findAllByGroupNotification(groupId)
+    notifysToDelete.each{ notify ->
+      notify.delete()
+    }
+  }
+
   def findBodyNotifications(ArrayList<State> states){
     def notifications = NotificationForState.findAllByStateMachineInList(states*.id)
     ArrayList<Map> notificationForStatesBody = []

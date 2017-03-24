@@ -88,4 +88,19 @@ class NotificationForStateServiceSpec extends Specification {
     then:"We should get a list with the notification"
       notify.size == 3
   }
+
+  void "Delete group notifications associate"(){
+    given:"A group id"
+      Long group = 1
+    and:"a notifications"
+      def notification1 = new NotificationForState(groupNotification:1, stateMachine:1, orderClass:"SaleOrder").save(validate:false)
+      def notification2 = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def notification3 = new NotificationForState(groupNotification:1, stateMachine:3, orderClass:"SaleOrder").save(validate:false)
+    when:"We want to delete the notifications with the same group"
+      service.deleteGroupNotifications(group)
+    then:"We couldn't found the notifications"
+      !NotificationForState.findById(1)
+      !NotificationForState.findById(2)
+      !NotificationForState.findById(3)
+  }
  }
