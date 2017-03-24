@@ -51,7 +51,7 @@ class GroupNotificationController {
     }
 
     def delete(){
-      groupNotificationService.deleteGroup(params.id)
+      groupNotificationService.deleteGroup(params.id.toLong())
       redirect action:"index", method:"GET"
     }
 
