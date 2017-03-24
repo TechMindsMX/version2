@@ -243,10 +243,6 @@ class ModulusUnoService {
     modulusUnoAccount
   }
 
-  def getTransactionsInPeriodOfIntegrated(AccountStatementCommand command){
-    restService.getTransactionsAccount(command)
-  }
-
   def getTransactionsInPeriodOfIntegrator(AccountStatementCommand command){
     restService.getTransactionsIntegrator(command, grailsApplication.config.modulus.integratorTransactions)
   }
