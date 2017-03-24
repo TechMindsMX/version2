@@ -69,7 +69,7 @@ class MachineController {
   @Transactional
   def update(MachineCommand machineCommand){
     Machine machine = Machine.findByUuid(params.uuid)
-    machineService.updateMachine(machine.id,machineCommand)
+    machineService.updateMachine(machine.id,machineCommand.getMachine())
     redirect(action:"index")
   }
 

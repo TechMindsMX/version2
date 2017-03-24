@@ -121,7 +121,6 @@
 
                   <input type="hidden" id="machineShowURL" value="${createLink(controller:'machine',action:'show')}"/>
                   <input type="hidden" id="machineUuid" value="${transitions?.getAt(0)?.machine?.uuid}" />
-
                 </g:if>
               </div>
             </div>
@@ -141,8 +140,9 @@
 
     <script id="transitionsTable" type="text/x-handlebars-template">
       {{#if transitions}}
-      <g:form name="newMachineForm" controller="machine" action="save" method="POST">
+      <g:form name="newMachineForm" controller="machine" action="update" method="POST">
         <g:render template="transitionList"  />
+        <input type="text" name="uuid" value="${transitions?.getAt(0)?.machine?.uuid}" />
         <!-- BEGIN ROW -->
         <div class="row">
           <div class="col-lg-12">
