@@ -20,36 +20,36 @@
               </div>
               <hr>
               <div class="row">
-                <div align= "center">
-                  <div class= "col-md-4" style="margin-left:3em">
-                    <img src="https://image.freepik.com/iconos-gratis/plataforma-macos_318-33076.jpg" style="margin-bottom: 100px;" class="img-responsive" alt="Cinque Terre" width="100" height="400">
-                  </div>
-                </div>
-                <div align="right">
+              <div class="col-md-12" align="center">
+  <div class="col-md-6">
+    <img src="https://image.freepik.com/iconos-gratis/plataforma-macos_318-33076.jpg" style="margin-bottom: 100px;" class="img-responsive" alt="Cinque Terre" width="100" height="400">
+  </div>
+  <div class="col-md-6" id="formDate">
+    <div class="row">
                   <div class="col-md-4">Nº de Formato</div>
-                  <div class="col-md-2 form-group"><input type="text" class="form-control"></div>
-                  <div class="col-md-1" ><span class="glyphicon glyphicon-question-sign"></span></div>
+                  <div class="col-md-4 form-group"><input type="text" class="form-control"></div>
+                  <div class="col-md-1"><span class="glyphicon glyphicon-question-sign"></span></div>
                 </div>
-                <div align="right" class"p-3">
+    <div class="row" class"p-3"="">
                   <div class="col-md-4">Fecha del  Formato</div>
-                  <div class="col-md-2"><div class="form-group">
-                      <div class='input-group date' id='datetimepicker1'>
-                        <input type='text' class="form-control" />
+                  <div class="col-md-4"><div class="form-group">
+                      <div class="input-group date" id="datetimepicker1">
+                        <input type="text" class="form-control">
                         <span class="input-group-addon">
                           <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                       </div>
                   </div></div>
-                  <div class="col-md-1" ><span class="glyphicon glyphicon-question-sign"></span></div>
+                  <div class="col-md-1"><span class="glyphicon glyphicon-question-sign"></span></div>
                 </div>
-                <div align="right">
+    <div class="row" align="right">
                   <div class="col-md-4">Referencia</div>
-                  <div class="col-sm-2 form-group"><input type="text" class="form-control"placeholder="Ej. Nº de pedido"></div>
+                  <div class="col-sm-4 form-group"><input type="text" class="form-control" placeholder="Ej. Nº de pedido"></div>
                   <div class="col-sm-1 nopmargin"><span class="glyphicon glyphicon-question-sign"></span></div>
                 </div>
-                <div align="right" id="divVencimiento">
+    <div class="row" align="right" id="divVencimiento">
                   <div class="col-md-4">Vencimiento</div>
-                  <div class="col-md-2"><select class="form-control" id="selectDate">
+                  <div class="col-md-4"><select class="form-control" id="selectDate">
                       <option value="noduedate">Sin fecha de vencimiento</option>
                       <option value="receipt" selected="">Al recibir el formato de pago</option>
                       <option value="specified">En la fecha especificada</option>
@@ -61,6 +61,8 @@
                   </select></div>
                   <div class="col-md-1"><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Hooray!"></span></div>
                 </div>
+  </div>      
+</div> 
               </div>
               <div class="row">
                 <h1>Información de mi empresa</h1>
