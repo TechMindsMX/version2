@@ -8,7 +8,7 @@ import grails.converters.JSON
 @Transactional(readOnly=true)
 class MachineController {
 
-  static allowedMethods = [save: "POST", update: "PUT",delete:"DELETE"]
+  static allowedMethods = [save: "POST", update: "POST",delete:"DELETE"]
 
   MachineryLinkService machineryLinkService
   CompanyService companyService
@@ -63,6 +63,13 @@ class MachineController {
   @Transactional
   def save(MachineCommand machine){
     machineService.saveMachine(machine.getMachine())
+    redirect(action:"index")
+  }
+
+  @Transactional
+  def update(MachineCommand machineCommand){
+    Machine machine = Machine.findByUuid(params.uuid)
+    machineService.updateMachine(machine.id,machineCommand)
     redirect(action:"index")
   }
 
