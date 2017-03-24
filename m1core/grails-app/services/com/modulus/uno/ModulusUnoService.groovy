@@ -141,8 +141,7 @@ class ModulusUnoService {
   }
 
   def consultBalanceOfAccount(String account) {
-    //TODO: Reimplementar consultando en el domain de transacciones nuevo
-    [new BigDecimal(0), new BigDecimal(0)]
+    transactionService.getBalanceByKeyAccountPriorToDate(account, new Date())
   }
 
   def consultBalanceIntegratorOfType(String type) {
