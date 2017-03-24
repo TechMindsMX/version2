@@ -19,9 +19,10 @@ var MachineShowController = (function(){
       type:'GET',
       data:{id:$(selectors.machineUuid).val()},
       success: function(result){
-        if(result.length > 0){
-          machine.addInitialState(result[0].stateFrom.name); 
-          result.forEach(function(transition){
+        if(result.transitions.length > 0){
+          machine.addInitialState(result.transitions[0].stateFrom.name); 
+
+          result.transitions.forEach(function(transition){
             transition.actions.forEach(function(action){
               machine.addTransition({stateFrom:transition.stateFrom.name,
                                      stateTo:transition.stateTo.name,
