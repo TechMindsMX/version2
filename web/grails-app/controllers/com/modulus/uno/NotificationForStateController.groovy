@@ -33,10 +33,11 @@ class NotificationForStateController {
   }
 
   def edit(){
+    def notify = NotificationForState.get(params.id.toLong())
     def state = State.findById(notify.stateMachine)
     [
       groups: GroupNotification.findAll(),
-      notification: NotificationForState.get(params.id.toLong()),
+      notification: notify,
       states: state.machine.states
     ]
   }
