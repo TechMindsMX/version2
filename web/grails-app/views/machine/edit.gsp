@@ -89,7 +89,7 @@
                                 <td class="state-from-column">
                                   ${transition.stateFrom.name}
                                 </td>
-                                <td>
+                                <td class="action-column">
                                   ${action}
                                   <input type="hidden" name="transitions[${i}].actions[${j}]" value="${action}">
                                 </td>
@@ -142,7 +142,7 @@
       {{#if transitions}}
       <g:form name="newMachineForm" controller="machine" action="update" method="POST">
         <g:render template="transitionList"  />
-        <input type="text" name="uuid" value="${transitions?.getAt(0)?.machine?.uuid}" />
+        <input type="hidden" name="uuid" value="${transitions?.getAt(0)?.machine?.uuid}" />
         <!-- BEGIN ROW -->
         <div class="row">
           <div class="col-lg-12">
