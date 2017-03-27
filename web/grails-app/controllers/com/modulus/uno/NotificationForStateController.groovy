@@ -24,10 +24,8 @@ class NotificationForStateController {
     [machines: Machine.findAll()]
   }
 
-  //TODO: OrderClass doesn't exist
   def save(NotificationForStateCommand command){
     NotificationForState notification = command.toNotification()
-    notification.orderClass="ClassEmpty"
     notificationForStateService.createNotification(notification)
     redirect action:"index", method:"GET"
   }
@@ -50,7 +48,7 @@ class NotificationForStateController {
   }
 
   def delete(){
-    notificationForStateService.deleteNotification(params.id)
+    notificationForStateService.deleteNotification(params.id.toLong())
     redirect action:"index", method:"GET"
   }
 }
