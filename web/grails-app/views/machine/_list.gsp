@@ -24,5 +24,10 @@
       {{/each}}
     </tbody>
   </table>
+{{else}}
+<div class="alert alert-info">
+  No hay máquinas registradas aún.
+</div>
 {{/if}}
+
 </script>

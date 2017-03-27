@@ -8,7 +8,7 @@ import grails.converters.JSON
 @Transactional(readOnly=true)
 class MachineController {
 
-  static allowedMethods = [save: "POST", update: "PUT",delete:"DELETE"]
+  static allowedMethods = [save: "POST", update: "POST",delete:"DELETE"]
 
   MachineryLinkService machineryLinkService
   CompanyService companyService
@@ -27,7 +27,10 @@ class MachineController {
     if(!machine)
       return response.sendError(404)
 
-    respond (transitionService.getMachineTransitions(machine.id))
+    ArrayList<State> states = []
+    states.addAll(0,machine.states)
+
+    respond ([transitionList:transitionService.getMachineTransitions(machine.id),stateList:states])
   }
 
   def edit(String id){
@@ -60,6 +63,13 @@ class MachineController {
   @Transactional
   def save(MachineCommand machine){
     machineService.saveMachine(machine.getMachine())
+    redirect(action:"index")
+  }
+
+  @Transactional
+  def update(MachineCommand machineCommand){
+    Machine machine = Machine.findByUuid(params.uuid)
+    machineService.updateMachine(machine.id,machineCommand.getMachine())
     redirect(action:"index")
   }
 
