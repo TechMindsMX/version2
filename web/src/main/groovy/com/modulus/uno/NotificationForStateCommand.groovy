@@ -6,7 +6,6 @@ class NotificationForStateCommand implements Validateable{
 
   Long notification
   Long state
-  def orderClass
   Long groupId
 
   NotificationForState toNotification(){
