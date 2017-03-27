@@ -146,7 +146,7 @@
         <!-- BEGIN ROW -->
         <div class="row">
           <div class="col-lg-12">
-            <button type="submit" class="btn btn-default">Editar</button>
+            <button type="submit" class="btn btn-default">Actualizar</button>
           </div>
         </div>
         <!-- END OF ROW -->
