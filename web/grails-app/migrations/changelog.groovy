@@ -21,4 +21,5 @@ databaseChangeLog = {
   include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
   include file: 'create-transactions.groovy'
   include file: 'adding-relation-transaction.groovy'
+    include file: 'droping-columns-timone-from-cashout-order.groovy'
 }
