@@ -72,7 +72,13 @@ var Machine = {
     var transitionIndex = this.findIndexOfTransition(data.stateFrom,data.stateTo);
 
     if(transitionIndex >= 0){
-      this.transitions.splice(transitionIndex,1);
+      
+      if(this.transitions[transitionIndex].actions.length > 1){
+        var actionIndex = this.transitions[transitionIndex].actions.indexOf(data.action);
+        this.transitions[transitionIndex].actions.splice(actionIndex,1);
+      }
+      else
+        this.transitions.splice(transitionIndex,1);
 
       if(data.stateTo != this.initialState.name)
         this.removeState(data.stateTo);
@@ -83,9 +89,10 @@ var Machine = {
   removeState:function(destinyState){
     var states = [destinyState];
     var that = this;
+
     while(states.length > 0){
-      var currentState = states.splice(0,1); 
-      
+      var currentState = states.splice(0,1)[0]; 
+
       var transitionsToDestinyState = $.grep(this.transitions,function(transition,index){
         return transition.stateTo.name == currentState;
       });

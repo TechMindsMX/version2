@@ -45,14 +45,14 @@
                   <label for="">
                     ${message(code:'machine.action')}
                   </label>   
-                  <input type="text" name="action" class="form-control"/>
+                  <input type="text" name="action" class="form-control" autocomplete="off"/>
                 </div>
 
                 <div class="form-group col-lg-3">
                   <label for="stateTo">
                     ${message(code:'machine.state.to')}
                   </label>
-                  <input type="text" name="stateTo" class="form-control">
+                  <input type="text" name="stateTo" class="form-control" autocomplete="off">
                 </div>
                 
                 <div class="form-group col-sm-2">
