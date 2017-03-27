@@ -57,12 +57,12 @@ class App.IndexController
     else  $('#rowPartialPayment').remove()
 
   loadImageLogo: (input) ->
-    console.log(input.input)
-    if input.files and input.files[0]
+    console.log(input.target)
+    if input.target.files and input.target.files[0]
       reader = new FileReader
       reader.onload = (e) ->
       $('#img_destino').attr 'src', e.target.result
-      reader.readAsDataURL input.files[0]
+      reader.readAsDataURL input.target.files[0]
 
   addNewItemBox: (event) =>
     event.preventDefault()
@@ -172,6 +172,20 @@ class App.IndexController
     totalPayment = sumAmount - discount + sendPayment
     $(@selectorOfCalculationTotal.totalSale).val("$ #{totalPayment}")
 
+  typePerson: () ->
+    if $('#type_person option:selected').text()=="FISICA" then $('#divLastName').show()
+    if $('#type_person option:selected').text()=="MORAL" then $('#divLastName').hide()
+
+  entityType: (event) ->
+    console.log(event.target)
+    console.log($(event.target).val())
+    if $(event.target).val()== "EMPLEADO"
+      $('#divPerson').hide()
+      $('#divSite').hide()
+    else
+      $('#divPerson').show()
+      $('#divSite').hide()
+
   bindEvents: () ->
     $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
     $("body").on('click',@selectors.addNewItem,@addNewItemBox)
@@ -183,7 +197,10 @@ class App.IndexController
     $('body').on('click',@selectors.deleteItem,(e) => $(e.currentTarget).parents("tbody").remove(); countertbody++; @calculationTotal() )
     $('body').on("keyup",@selectorsTablaCount.quantity, @calculationOfAmount)
     $('body').on("keyup#{@selectorsTablaCount.price}", @calculationOfAmount)
+    $('#type_person').change => @typePerson()
     $('#file_url').on("change", @loadImageLogo)
+    $('.radio1').on("click", @entityType)
+    $('#hiddeBank').on("click", -> $('#generarAcount').toggle 'slow')
 
 
 new App.IndexController().start()
