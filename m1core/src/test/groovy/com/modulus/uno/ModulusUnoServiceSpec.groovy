@@ -141,7 +141,6 @@ class ModulusUnoServiceSpec extends Specification {
       bankAccount.clabe >> '1234567890'
       def order = new CashOutOrder()
       order.amount = 100
-      order.timoneUuid = company.accounts.first().timoneUuid
       order.account = bankAccount
       order.company = company
       order.save()
