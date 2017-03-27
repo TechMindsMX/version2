@@ -5,10 +5,7 @@ import grails.transaction.Transactional
 @Transactional
 class CashOutOrderService {
 
-	def restService
-  def grailsApplication
   def modulusUnoService
-	def companyService
 
 	def addAutorizationToCashoutOrder(CashOutOrder cashOutOrder, User user) {
 		def authorization = new Authorization(user: user)
@@ -18,7 +15,6 @@ class CashOutOrderService {
 
 	def authorizeAndDoCashOutOrder(CashOutOrder cashOutOrder) {
 		modulusUnoService.approveCashOutOrder(cashOutOrder)
-		cashOutOrder
 	}
 
   BigDecimal getTotalOrdersAuthorizedOfCompany(Company company){

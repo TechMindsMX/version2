@@ -32,7 +32,6 @@
               <f:display bean="cashOutOrder" property="id"  wrapper="describe"/>
               <f:display bean="cashOutOrder" property="amount"  wrapper="describePrice"/>
               <f:display bean="cashOutOrder" property="account"  wrapper="describe"/>
-              <f:display bean="cashOutOrder" property="timoneAccount"  wrapper="describe"/>
               <f:display bean="cashOutOrder" property="company"  wrapper="describe"/>
               <div class="form-group">
                 <label id="status-label" class="col-sm-5 control-label"><g:message code="cashOutOrder.status" /></label>

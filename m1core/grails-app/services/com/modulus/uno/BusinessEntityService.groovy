@@ -160,7 +160,7 @@ class BusinessEntityService {
 
   def generateSubAccountStp(Company company, BusinessEntity businessEntity) {
     ClientLink client = ClientLink.findByCompanyAndClientRef(company, businessEntity.rfc)
-    client = clientService.generateSubAccountStp(client, businessEntity)
+    client = clientService.generateSubAccountStp(client)
     client
   }
 

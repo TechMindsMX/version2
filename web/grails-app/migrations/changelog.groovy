@@ -22,5 +22,8 @@ databaseChangeLog = {
   include file: 'adding-uuid-to-machine.groovy'
   include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
   include file: 'create-domain-sale-order-payment.groovy'
-    include file: 'create-domain-conciliation.groovy'
+  include file: 'create-domain-conciliation.groovy'
+  include file: 'create-transactions.groovy'
+  include file: 'adding-relation-transaction.groovy'
+  include file: 'droping-columns-timone-from-cashout-order.groovy'
 }

@@ -6,7 +6,6 @@ import wslite.rest.*
 class RestService {
 
   def grailsApplication
-
   WsliteRequestService wsliteRequestService
 
   String facturacionUrl = H.grailsApplication.config.modulus.facturacionUrl
@@ -41,7 +40,7 @@ class RestService {
     wsliteRequestService.doRequest(grailsApplication.config.emailer.urlEmailer){
       method HTTPMethod.POST
       callback { json message }
-    }.doit()?.json
+    }.doit()
   }
 
   def sendCommandWithAuth(MessageCommand message, String template){
@@ -67,13 +66,6 @@ class RestService {
     log.info "CALLING Modulusuno facturacion service: ${template}"
     String token = obtainingFacturaToken()
     callingFacturaService(message,template,token)
-  }
-
-  def getTransactionsAccount(MessageCommand command){
-    log.info "Calling Service : services/integra/tx/getTransactions"
-    wsliteRequestService.doRequest(modulusunoUrl){
-      endpointUrl "services/integra/tx/getTransactions/${command.uuid}/${command.begin}/${command.end}"
-    }.doit()?.json
   }
 
   //TODO Metodo que no se usa, pero que se usara, pero se tendra que ajustar,

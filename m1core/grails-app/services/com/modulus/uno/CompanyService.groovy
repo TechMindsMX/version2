@@ -20,6 +20,7 @@ class CompanyService {
   def restService
   def corporateService
   DirectorService directorService
+  TransactionService transactionService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -104,8 +105,7 @@ class CompanyService {
     accountStatement.balanceSubjectToCollection = getBalanceSubjectToCollection(company)
     accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(beginDate)
     accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate)
-    accountStatement.transactions = modulusUnoService.getTransactionsInPeriodOfIntegrated(command)
-
+    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
     accountStatement
   }
 
@@ -117,7 +117,7 @@ class CompanyService {
     BigDecimal balance = 0
     BigDecimal usd = 0
     if (company.status == CompanyStatus.ACCEPTED && company.accounts) {
-      (balance, usd) = modulusUnoService.consultBalanceOfAccount(company?.accounts?.first()?.timoneUuid)
+      balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
     }
     new Balance(balance:balance, usd:usd)
   }
@@ -173,12 +173,11 @@ class CompanyService {
     List formattedTransactions = []
     transactions.each { mov ->
       Map transaction = [:]
-      transaction.date = new Date(mov.timestamp)
-      String typeTransaction =
-      transaction.type = messageSource.getMessage("company.accountStatement.TransactionType.${mov.transactionType}", null, "${mov.transactionType}", LCH.getLocale())
-      transaction.id = mov.reference ?: ""
-      transaction.credit = mov.type=="CREDIT"?mov.amount:""
-      transaction.debit = mov.type=="DEBIT"?mov.amount:""
+      transaction.date = mov.dateCreated
+      transaction.concept = mov.paymentConcept
+      transaction.id = mov.keyTransaction ?: ""
+      transaction.credit = mov.transactionType == TransactionType.DEPOSIT ? mov.amount : ""
+      transaction.debit = mov.transactionType == TransactionType.WITHDRAW ? mov.amount : ""
       transaction.balance = mov.balance
       formattedTransactions << transaction
     }

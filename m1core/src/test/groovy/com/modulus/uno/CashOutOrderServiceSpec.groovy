@@ -20,8 +20,6 @@ class CashOutOrderServiceSpec extends Specification {
     and:
       def cashout = new CashOutOrder()
       cashout.amount = 100
-      cashout.timoneUuid = "12qw34er56ty78ui90op"
-      cashout.timoneAccount = "1630000002"
       cashout.account = new BankAccount().save(validate:false)
       cashout.company = company
       cashout.save()
@@ -38,7 +36,6 @@ class CashOutOrderServiceSpec extends Specification {
     given:
       def cashOutOrder = new CashOutOrder()
       cashOutOrder.amount = 100
-      cashOutOrder.timoneUuid = "123er567fgh89kjhg"
       cashOutOrder.account = new BankAccount().save(validate:false)
       cashOutOrder.company = new Company(numberOfAuthorizations:1).save(validate:false)
       cashOutOrder.save()
@@ -53,8 +50,6 @@ class CashOutOrderServiceSpec extends Specification {
       def company = new Company().save(validate:false)
       def cashout = new CashOutOrder()
       cashout.amount = 100
-      cashout.timoneUuid = "12qw34er56ty78ui90op"
-      cashout.timoneAccount = "1630000002"
       cashout.account = new BankAccount().save(validate:false)
       cashout.company = company
       cashout.save()

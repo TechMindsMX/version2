@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%! import com.modulus.uno.TransactionType %>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -30,7 +31,7 @@
     <table>
      <tr>
        <th style="width:20%">Fecha</th>
-       <th style="width:25%">Tipo</th>
+       <th style="width:25%">Concepto</th>
        <th style="width:5%">Id de Transacción</th>
        <th style="width:15%">Abono</th>
        <th style="width:15%">Cargo</th>
@@ -38,18 +39,18 @@
      </tr>
      <g:each in="${accountStatement.transactions}" var="mov">
       <tr>
-        <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${new Date(mov.timestamp)}"/></td>
+        <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.dateCreated}"/></td>
         <td>
-          <g:message code="company.accountStatement.TransactionType.${mov.transactionType}" default="${mov.transactionType}"/>
+          ${mov.paymentConcept}
         </td>
-        <td style="text-align:center">${mov.reference?:""}</td>
+        <td style="text-align:center">${mov.keyTransaction?:""}</td>
         <td style="text-align:right">
-          <g:if test="${mov.type.equals('CREDIT')}">
+          <g:if test="${mov.transactionType == TransactionType.DEPOSIT}">
             ${modulusuno.formatPrice(number: mov.amount)}
           </g:if>
         </td>
         <td style="text-align:right">
-          <g:if test="${mov.type.equals('DEBIT')}">
+          <g:if test="${mov.transactionType == TransactionType.WITHDRAW}">
             ${modulusuno.formatPrice(number: mov.amount)}
           </g:if>
         </td>

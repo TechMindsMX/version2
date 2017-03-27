@@ -7,17 +7,13 @@ class CashOutOrderCommand implements Validateable{
 
   String id
   String amount
-  String timoneAccount
-  String timoneUuid
   BankAccount account
 
 
   CashOutOrder createCashOutOrder(){
     new CashOutOrder(
       amount:getValueInBigDecimal(this.amount),
-      timoneUuid:this.timoneUuid,
       account:this.account,
-      timoneAccount:this.timoneAccount
     )
   }
 

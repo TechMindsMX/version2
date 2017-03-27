@@ -5,10 +5,10 @@ import grails.transaction.Transactional
 @Transactional
 class StpDepositService {
 
-  def modulusUnoService
+  TransactionService transactionService
 
-  def notificationDepositFromStp(String xmlNotif) {
-    StpDeposit stpDeposit = saveNotification(xmlNotif)
+  def notificationDepositFromStp(StpDeposit stpDeposit) {
+    stpDeposit = saveNotification(stpDeposit)
     StpDepositStatus status = defineStpDepositStatus(stpDeposit)
     if (status == StpDepositStatus.ACEPTADO) {
       processStpDeposit(stpDeposit)
@@ -31,7 +31,7 @@ class StpDepositService {
     DepositOrder depositOrder = new DepositOrder()
     depositOrder.amount = stpDeposit.amount
     depositOrder.company = m1Account ? m1Account.company : client.company
-    modulusUnoService.generateACashinForIntegrated(depositOrder)
+    //modulusUnoService.generateACashinForIntegrated(depositOrder)
 
     stpDeposit.status = StpDepositStatus.APLICADO
     stpDeposit.save()
@@ -42,42 +42,15 @@ class StpDepositService {
     Payment payment = new Payment(amount:stpDeposit.amount)
     payment.rfc = client ? client.clientRef : null
     payment.company = m1Account ? m1Account.company : client.company
+    payment.transaction = createAndSaveTransaction(stpDeposit)
     payment.save()
     log.info "Payment was generated: ${payment?.dump()}"
   }
 
-  private StpDeposit saveNotification(String xml) {
-    def notification
-    try {
-      notification = new XmlSlurper().parseText(xml)
-    } catch (Exception ex) {
-      log.error "Excpetion in parsing: ${ex.message}"
-      throw new BusinessException ("Error parsing xml: ${ex.message}")
-    }
-    StpDepositCommand command = createStpDepositCommand(notification)
-    StpDeposit stpDeposit = command.createStpDeposit()
+  private StpDeposit saveNotification(StpDeposit stpDeposit) {
     log.info "Recording deposit: ${stpDeposit.dump()}"
     stpDeposit.save()
     stpDeposit
-  }
-
-  private StpDepositCommand createStpDepositCommand(def notification) {
-     StpDepositCommand command = new StpDepositCommand(
-      clave:notification.Clave,
-      fechaOperacion:notification.FechaOperacion,
-      institucionOrdenante:notification.InstitucionOrdenante.@clave,
-      institucionBeneficiaria:notification.InstitucionBeneficiaria.@clave,
-      claveRastreo:notification.ClaveRastreo,
-      monto:notification.Monto,
-      nombreOrdenante:notification.NombreOrdenante ?: "",
-      nombreBeneficiario:notification.NombreBeneficiario,
-      tipoCuentaBeneficiario:notification.TipoCuentaBeneficiario.@clave,
-      cuentaBeneficiario:notification.CuentaBeneficiario,
-      rfcCurpBeneficiario:notification.RfcCurpBeneficiario,
-      conceptoPago:notification.ConceptoPago,
-      referenciaNumerica:notification.ReferenciaNumerica,
-      empresa:notification.Empresa
-    )
   }
 
   private StpDepositStatus defineStpDepositStatus(StpDeposit stpDeposit) {
@@ -99,6 +72,18 @@ class StpDepositService {
     stpDeposit.save()
     log.info "Defined status:${stpDeposit.status}"
     status
+  }
+
+  private Transaction createAndSaveTransaction(StpDeposit stpDeposit){
+    Map parameters = [keyTransaction:"${stpDeposit.operationNumber}",
+                      trackingKey:stpDeposit.tracingKey,
+                      amount:stpDeposit.amount,
+                      paymentConcept:stpDeposit.paymentConcept,
+                      keyAccount:stpDeposit.accountBeneficiary,
+                      referenceNumber:"${stpDeposit.numericalReference}",
+                      transactionType:TransactionType.DEPOSIT,
+                      transactionStatus:TransactionStatus.AUTHORIZED]
+    transactionService.saveTransaction(new Transaction(parameters))
   }
 
 }
