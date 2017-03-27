@@ -52,7 +52,7 @@
            <label for="">Usuarios que serán notificados</label>
             <div class="input-group col-md-4">
                <g:each var="user" in="${users}">
-               <g:checkBox name="userList" value="${user.id}" checked="false" />
+               <g:checkBox name="userList" value="${user.id}" checked="true" />
                   ${user.username}
                   <br>
                   </g:each>

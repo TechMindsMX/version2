@@ -37,19 +37,19 @@
 
                 <div class="row">
                   <div class="col-md-2 text-right">
-                    <label>Estado de la Máquina</label>
+                    <br><label>Estado de la Máquina</label>
                   </div>
                   <div class="col-md-2">
-                    <g:select optionKey="id" optionValue="name"
+                    <br><g:select optionKey="id" optionValue="name"
                                                name="state" from="${states}" />
+                    <br>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-md-2"></div>
                   <div class="col-md-2 center-block">
-                    <br>
-                    <g:submitButton name="create" class="save btn btn-default" value="Añadir Notificación" />
+                    <br><g:submitButton name="create" class="save btn btn-default" value="Añadir Notificación" />
                   </div>
                 </div>
                </g:form>
