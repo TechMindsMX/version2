@@ -17,7 +17,7 @@ class NotificationForStateService {
     notification.save()
   }
 
-  def deleteNotification(def notifyId){
+  def deleteNotification(Long notifyId){
     NotificationForState notify = NotificationForState.findById(notifyId)
     notify.delete()
   }
@@ -30,11 +30,11 @@ class NotificationForStateService {
   }
 
   def findBodyNotifications(ArrayList<State> states){
-    def notifications = NotificationForState.findAllByStateMachineInList(states*.id)
+    def notifications = states*.id ? NotificationForState.findAllByStateMachineInList(states*.id) : []
     ArrayList<Map> notificationForStatesBody = []
-      notifications.each{ notify ->
-        notificationForStatesBody << [id:notify.id ,stateName:  states.find{ it.id == notify.stateMachine }.name, groupName: GroupNotification.findById(notify.groupNotification).name]
-      }
+    notifications.each{ notify ->
+      notificationForStatesBody << [id:notify.id ,stateName:  states.find{ it.id == notify.stateMachine }.name, groupName: GroupNotification.findById(notify.groupNotification).name]
+    }
     notificationForStatesBody
   }
 
