@@ -14,20 +14,19 @@ class NotificationForStateServiceSpec extends Specification {
 
   void "Create a new notification per State"(){
     given:"A new notification per state from machine"
-      def newNotification = new NotificationForState(groupNotification:10, stateMachine:6, orderClass: "saleOrder")
+      def newNotification = new NotificationForState(groupNotification:10, stateMachine:6)
     when:"We want to save the new notification"
       def notify = service.createNotification(newNotification)
     then:"We should get 1 notification"
       notify.groupNotification == 10
       notify.stateMachine == 6
-      notify.orderClass == "saleOrder"
   }
 
   void "Modify a state machine from existing notification"(){
     given:"A notification"
-      def oldNotification = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def oldNotification = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
     and:"A new notification for update"
-      def notificationForUpdate = new NotificationForState(id:1, groupNotification:2, stateMachine:3, orderClass:"SaleOrderUpdated")
+      def notificationForUpdate = new NotificationForState(id:1, groupNotification:2, stateMachine:3)
     when:"We want to update the state from the notification"
       def updatedNotification = service.updateNotification(notificationForUpdate)
     then:"We should get the notification updated"
@@ -40,7 +39,7 @@ class NotificationForStateServiceSpec extends Specification {
 
   void "Delete an existing notification"(){
     given:"An existing notification"
-      def notification = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def notification = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
     when:"We delete the notification"
       service.deleteNotification(notification.id)
     then:"We shouldn't have the notification"
@@ -67,7 +66,7 @@ class NotificationForStateServiceSpec extends Specification {
 
   void "Find the notification by state id"(){
     given:"A state id"
-      def notification = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def notification = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
       Long state = 2
     when:"I want to know the notification"
       def notify = service.findByState(state)
@@ -79,9 +78,9 @@ class NotificationForStateServiceSpec extends Specification {
 
   void "Find all  notifications with a state id"(){
     given:"A state id"
-      def notification = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
-      def notification2 = new NotificationForState(groupNotification:2, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
-      def notification3 = new NotificationForState(groupNotification:3, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def notification = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
+      def notification2 = new NotificationForState(groupNotification:2, stateMachine:2).save(validate:false)
+      def notification3 = new NotificationForState(groupNotification:3, stateMachine:2).save(validate:false)
       Long state = 2
     when:"I want to know the notification"
       def notify = service.findByState(state)
@@ -93,9 +92,9 @@ class NotificationForStateServiceSpec extends Specification {
     given:"A group id"
       Long group = 1
     and:"a notifications"
-      def notification1 = new NotificationForState(groupNotification:1, stateMachine:1, orderClass:"SaleOrder").save(validate:false)
-      def notification2 = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
-      def notification3 = new NotificationForState(groupNotification:1, stateMachine:3, orderClass:"SaleOrder").save(validate:false)
+      def notification1 = new NotificationForState(groupNotification:1, stateMachine:1).save(validate:false)
+      def notification2 = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
+      def notification3 = new NotificationForState(groupNotification:1, stateMachine:3).save(validate:false)
     when:"We want to delete the notifications with the same group"
       service.deleteGroupNotifications(group)
     then:"We couldn't found the notifications"

@@ -361,8 +361,8 @@ class NotifyServiceSpec extends Specification {
     given:"A group notification"
       def group = new GroupNotification(name:"Contadores", notificationId:"notificationId123", users:usersToNotify()).save(validate:false)
     and:"A list of notifications"
-      def notification1 = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
-      def notification2 = new NotificationForState(groupNotification:1, stateMachine:2, orderClass:"SaleOrder").save(validate:false)
+      def notification1 = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
+      def notification2 = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
       def notifys = [notification1, notification2]
     and:"a emailer params"
       def emailerParams = ["tag1":"Emailer test", "tag2":"Message to send"]
