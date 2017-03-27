@@ -83,9 +83,10 @@ var Machine = {
   removeState:function(destinyState){
     var states = [destinyState];
     var that = this;
+
     while(states.length > 0){
-      var currentState = states.splice(0,1); 
-      
+      var currentState = states.splice(0,1)[0]; 
+
       var transitionsToDestinyState = $.grep(this.transitions,function(transition,index){
         return transition.stateTo.name == currentState;
       });
