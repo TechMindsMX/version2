@@ -1,5 +1,5 @@
 databaseChangeLog = {
-  changeSet(author: "makingdevs (generated)", id: "1489612158486-1") {
+  changeSet(author: "makingdevs (generated)", id: "1490631034478-43") {
     createTable(tableName: "notification_for_state") {
       column(autoIncrement: "true", name: "id", type: "BIGINT") {
         constraints(primaryKey: "true", primaryKeyName: "notification_for_statePK")
@@ -10,10 +10,6 @@ databaseChangeLog = {
       }
 
       column(name: "group_notification", type: "BIGINT") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "order_class", type: "VARCHAR(255)") {
         constraints(nullable: "false")
       }
 
