@@ -30,8 +30,13 @@
                     <label class="text-right">Grupo de usuarios a notificar</label>
                   </div>
                   <div class="col-md-2">
+                     <g:if test="${groups}">
                      <g:select optionKey="id" optionValue="name"
                                              name="groupId" from="${groups}" />
+                     </g:if>
+                     <g:else>
+                        Favor de añadir un grupo de usuarios.
+                     </g:else>
                   </div>
                 </div>
 

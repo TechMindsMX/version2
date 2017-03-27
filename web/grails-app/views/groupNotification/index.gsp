@@ -43,11 +43,14 @@
                   <div class="form-group col-md-4">
                     <table class="table text-center">
                       <tr><td><strong>Nombre del Grupo</strong></td><td><strong>Opciones</strong></td></tr>
+
+                      <g:if test="${groups}">
                       <g:each var="group" in="${groups}">
                       <tr><td>${group.name}</td>
                         <td><g:link controller="groupNotification" action="edit" id="${group.id}"><i class="fa fa-pencil"></i>&nbsp; Actualizar</g:link>
                         &nbsp; &nbsp;<g:link controller="groupNotification" action="delete" id="${group.id}"><i class="fa fa-close"></i>&nbsp; Eliminar</g:link> </td>
                       </g:each>
+                      </g:if>
                     </table>
                   </div>
                 </div>

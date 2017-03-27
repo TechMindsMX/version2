@@ -27,7 +27,13 @@
                     <g:form action="create" method="POST">
                     <div class="form-group">
                       <label for="machine">Selecciona una máquina de estados</label>
+
+                      <g:if test="${machines}">
                       <g:select optionKey="id" optionValue="id" name="machineId"  from="${machines}" class="center-block"/>
+                      </g:if>
+                      <g:else>
+                      <small>Agrega la primera máquina de estados</small>
+                      </g:else>
                     </div>
                     <g:submitButton name="create" class="btn btn-default" value="Agregar"/>
                     </g:form>

@@ -36,7 +36,7 @@
            <div class="form-group">
            <label for="">Nombre del grupo de usuarios a notificar</label>
             <div class="input-group col-md-4">
-            <input type="text" class="form-control" id="" name="nameGroup" placeholder=""/>
+            <input type="text" class="form-control" id="" name="nameGroup" required placeholder=""/>
             </div>
            </div>
 
@@ -51,11 +51,16 @@
            <div class="form-group">
            <label for="">Usuarios que serán notificados</label>
             <div class="input-group col-md-4">
+              <g:if test="${users}">
                <g:each var="user" in="${users}">
                <g:checkBox name="userList" value="${user.id}" checked="true" />
                   ${user.username}
                   <br>
                   </g:each>
+               </g:if>
+               <g:else>
+                  No hay usuarios registrados para crear un grupo.
+               </g:else>
             </div>
            </div>
 

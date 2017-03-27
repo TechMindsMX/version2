@@ -42,6 +42,7 @@
                     <table class="table text-center">
                       <tr><td><strong>Grupo a notificar</strong></td><td><strong>Estado de la máquina</strong></td><td colspan=2><strong>Opciones</strong></td></tr>
 
+                      <g:if test="${notifications}">
                       <g:each var="notify" in="${notifications}">
                         <tr>
                          <g:form controller="notificationForState" action="update">
@@ -53,7 +54,12 @@
                          </g:form>
                         </tr>
                       </g:each>
-
+                      </g:if>
+                      <g:else>
+                        <tr>
+                          <td colspan=3><br><br>No has registrado ninguna notificación. Recuerda agregar grupos de usuarios y una máquina de estados.</td>
+                        </tr>
+                      </g:else>
                     </table>
                   </div>
                 </div>
