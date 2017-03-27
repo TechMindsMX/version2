@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import static org.springframework.http.HttpStatus.*
+import grails.converters.JSON
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
@@ -26,6 +27,16 @@ class BusinessEntityController {
     def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
 
     respond businessEntityList, model:[businessEntityList:businessEntityList, businessEntityCount: total]
+  }
+
+  def list(){
+    log.info "${session.company}"
+    def companyId = session.company.toLong()
+    log.info "${companyId}"
+    def company = Company.findById(companyId)
+    log.info "${company}"
+    def clients = clientService.getClientsFromCompany(company)
+    render clients as JSON
   }
 
   def show(BusinessEntity businessEntity) {
