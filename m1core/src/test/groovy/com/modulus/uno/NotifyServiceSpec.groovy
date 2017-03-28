@@ -6,7 +6,7 @@ import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(NotifyService)
-@Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, DepositOrder, PurchaseOrder,Corporate,SaleOrderItem])
+@Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, PurchaseOrder,Corporate,SaleOrderItem])
 class NotifyServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
@@ -19,47 +19,6 @@ class NotifyServiceSpec extends Specification {
     service.grailsApplication = grailsApplication
     service.corporateService = corporateService
     service.restService = restService
-  }
-
-  @Unroll("Obtain the params when the DEPOSIT ORDER is #status")
-  void "get params for Deposit Order"() {
-  given:"a deposit order"
-    def depositOrder = new DepositOrder(amount:10000, rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO)
-    depositOrder.save(validate:false)
-  and:
-    def company = new Company().save(validate:false)
-    depositOrder.company = company
-    depositOrder.save(validate:false)
-  and:
-    Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
-    corporate.addToCompanies(company)
-    corporate.save()
-  and:
-    corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
-  when:"we extract the params"
-    def params = service.parametersForDepositOrder(depositOrder, status)
-  then:"we should get"
-    params == expectedParams
-  where:
-    status << [
-      DepositOrderStatus.CREATED,
-      DepositOrderStatus.VALIDATE,
-      DepositOrderStatus.AUTHORIZED,
-      DepositOrderStatus.REJECTED,
-      DepositOrderStatus.EXECUTED,
-      DepositOrderStatus.CANCELED,
-      DepositOrderStatus.CONCILIATED
-      ]
-
-  expectedParams <<[
-    [id:"1", amount:"10000", status:"CREADA", url:URL],
-    [id:"1", amount:"10000", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:URL],
-    [id:"1", amount:"10000", status:"AUTORIZADA", url:URL ],
-    [id:"1", amount:"10000", status:"RECHAZADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
-    [id:"1", amount:"10000", status:"EJECUTADA", url:URL],
-    [id:"1", amount:"10000", status:"CANCELADA", rejectComment:"Fake", rejectReason: RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
-    [id:"1", amount:"10000", status:"CONCILIADA", url:URL]
-  ]
   }
 
   @Unroll("Obtain the params when the SALEORDER is #status")

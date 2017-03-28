@@ -1,7 +1,0 @@
-package com.modulus.uno
-
-enum DepositOrderStatus {
-
-  CREATED,VALIDATE,AUTHORIZED,REJECTED,EXECUTED,CANCELED,CONCILIATED
-
-}
