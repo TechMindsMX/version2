@@ -124,7 +124,7 @@ class ModulusUnoServiceSpec extends Specification {
 
   void "generate a cashout to a integrate"() {
     given:
-      def account = new ModulusUnoAccount(timoneUuid:"qwer23456rty567ty").save(validate:false)
+      def account = new ModulusUnoAccount(stpClabe:"stpClabe", aliasStp:"aliasStp").save(validate:false)
     and:
       def company = new Company(bussinessName:"CompanyName").save(validate:false)
       company.addToAccounts(account)
