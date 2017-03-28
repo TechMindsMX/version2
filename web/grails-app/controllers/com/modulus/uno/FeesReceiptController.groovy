@@ -70,7 +70,7 @@ class FeesReceiptController {
   }
 
   def list(Integer max){
-    params.max = Math.min(max ?: 10, 100)
+    params.max = Math.min(max ?: 25, 100)
     Company company = Company.get(session.company ?: params.company)
     if(params.status) {
       respond FeesReceipt.findAllByStatusAndCompany(FeesReceiptStatus."${params.status}", company)
