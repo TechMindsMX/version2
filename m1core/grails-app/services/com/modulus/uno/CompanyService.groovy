@@ -261,4 +261,9 @@ class CompanyService {
     m1.aliasStp = alias
     m1.save()
   }
+
+  Boolean companyIsEnabledToPay(Company company) {
+    company.accounts.first().aliasStp && company.commissions.find { it.type == CommissionType.PAGO }
+  }
+
 }

@@ -11,7 +11,7 @@ import spock.lang.Unroll
 import spock.lang.Ignore
 
 @TestFor(CompanyService)
-@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile])
+@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission])
 class CompanyServiceSpec extends Specification {
 
   ModulusUnoService modulusUnoService = Mock(ModulusUnoService)
@@ -276,7 +276,7 @@ and:
       Company company = createCompany()
       company.status = CompanyStatus.ACCEPTED
     and:"An account"
-      ModulusUnoAccount account = Mock(ModulusUnoAccount)
+      ModulusUnoAccount account = new ModulusUnoAccount()
       account.stpClabe >> "1234567890"
       account.save(validate:false)
       company.accounts = [account]
@@ -332,7 +332,7 @@ and:
     given:"A company"
       Company company = createCompany()
     and:"An account"
-      ModulusUnoAccount account = Mock(ModulusUnoAccount)
+      ModulusUnoAccount account = new ModulusUnoAccount()
       account.timoneUuid >> "1234567890"
       account.save(validate:false)
       company.accounts = [account]
@@ -354,7 +354,7 @@ and:
     given:"A company"
       Company company = createCompany()
     and:"An account"
-      ModulusUnoAccount account = Mock(ModulusUnoAccount)
+      ModulusUnoAccount account = new ModulusUnoAccount()
       account.stpClabe   = "1234567890"
       account.save(validate:false)
       company.accounts = [account]
@@ -480,7 +480,7 @@ and:
     given:"A company"
       Company company = createCompany()
     and:"An account"
-      ModulusUnoAccount account = Mock(ModulusUnoAccount)
+      ModulusUnoAccount account = new ModulusUnoAccount()
       account.timoneUuid   = "1234567890"
       account.save(validate:false)
       company.accounts = [account]
@@ -491,7 +491,31 @@ and:
     when:
       service.assignAliasStpToCompany(company, alias)
     then:
-      1 * account.save()
+      account.aliasStp
+  }
+
+  @Unroll
+  void "Should return #expected when company has alias stp #aliasStp and type commission #typeCommission"() {
+    given:"A company without data needed for pay"
+      Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
+    and:"A modulus uno account"
+      ModulusUnoAccount account = new ModulusUnoAccount(stpClabe:"646180191900100010", aliasStp:aliasStp).save(validate:false)
+      company.addToAccounts(account)
+      company.save(validate:false)
+    and:"Commission for pay"
+      Commission commission = new Commission(type:typeCommission, fee:new BigDecimal(10)).save(validate:false)
+      company.addToCommissions(commission)
+      company.save(validate:false)
+    when:
+      Boolean result = service.companyIsEnabledToPay(company)
+    then:
+      result == expected
+    where:
+    aliasStp         | typeCommission          || expected
+    null             | CommissionType.FACTURA   || false
+    "alias"          | CommissionType.FACTURA   || false
+    ""               | CommissionType.PAGO      || false
+    "alias"          | CommissionType.PAGO      || true
   }
 
 }

@@ -11,26 +11,14 @@
     <g:set var="messageBusinessEntityOrder" value="Empleado"/>
   </g:if><g:else>
     <g:set var="messageOrder" value="Compra"/>
-    <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
-      <g:set var="messageOrder" value="Pago"/>
-    </sec:ifAnyGranted>
     <g:set var="messageBusinessEntityOrder" value="Proveedor"/>
   </g:else>
 
   <div class="page-title">
     <h1>
-      <i class="icon-proveedor fa-3x"></i>
-      <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
-        Orden de Pago<small>Listado de Órdenes de ${messageOrder}</small>
-      </sec:ifAnyGranted>
-      <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR">
-        Operaciones / Orden de Compra<small>Listado de Órdenes de ${messageOrder}</small>
-      </sec:ifAnyGranted>
+      <i class="fa fa-shopping-basket fa-3x"></i>
+      Operaciones / Orden de ${messageOrder}<small>Listado de Órdenes de ${messageOrder}</small>
     </h1>
-    <ol class="breadcrumb">
-      <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-      <li class="active">Listado de Órdenes de ${messageOrder}</li>
-    </ol>
   </div>
 <div id="edit-address" class="content scaffold-edit" role="main">
   <div class="portlet portlet-blue">
