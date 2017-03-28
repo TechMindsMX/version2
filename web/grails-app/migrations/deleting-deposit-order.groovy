@@ -20,10 +20,6 @@ databaseChangeLog = {
     dropForeignKeyConstraint(baseTableName: "deposit_order", constraintName: "FK_qxtq9xmyhwqmc3b2o4ty4ge8g")
   }
 
-  changeSet(author: "cggg88jorge (generated)", id: "1490652708746-6") {
-    dropForeignKeyConstraint(baseTableName: "deposit_order", constraintName: "FKfp1oqpo5o30dv4ie1vuldx3ks")
-  }
-
   changeSet(author: "cggg88jorge (generated)", id: "1490652708746-7") {
     dropTable(tableName: "deposit_order")
   }
