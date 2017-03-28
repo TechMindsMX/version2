@@ -11,7 +11,6 @@ class CompanyService {
   def purchaseOrderService
   def cashOutOrderService
   def saleOrderService
-  def depositOrderService
   def modulusUnoService
   def loanOrderHelperService
   def feesReceiptService
@@ -132,8 +131,7 @@ class CompanyService {
 
   def getBalanceSubjectToCollection(Company company){
     def balanceToCollectionSaleOrders = saleOrderService.getTotalSaleOrderAuthorizedOfCompany(company)
-    def balanceToCollectionDepositOrders = depositOrderService.getTotalDepositOrderAuthorizedOfCompany(company)
-    (balanceToCollectionSaleOrders ?: 0.0f) + (balanceToCollectionDepositOrders ?: 0.0f)
+    (balanceToCollectionSaleOrders ?: 0.0f)
   }
 
   def getNumberOfAuthorizersMissingForThisCompany(Company company) {
