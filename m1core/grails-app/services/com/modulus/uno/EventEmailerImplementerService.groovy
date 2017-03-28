@@ -4,7 +4,7 @@ import grails.transaction.Transactional
 import com.modulus.uno.machine.MachineEventImplementer
 
 @Transactional
-class EventNotificationService implements MachineEventImplementer {
+class EventEmailerImplementerService implements MachineEventImplementer {
   
   NotificationForStateService notificationForStateService
   def notifyService

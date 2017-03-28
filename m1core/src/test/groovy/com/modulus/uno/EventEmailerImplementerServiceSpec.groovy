@@ -5,7 +5,7 @@ import spock.lang.Specification
 import grails.test.mixin.Mock
 import com.modulus.uno.machine.*
 
-@TestFor(EventNotificationService)
+@TestFor(EventEmailerImplementerService)
 @Mock([PurchaseOrder, State, User, GroupNotification, NotificationForState])
 class EventNotificationServiceSpec extends Specification {
 
