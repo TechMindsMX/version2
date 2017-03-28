@@ -25,4 +25,5 @@ databaseChangeLog = {
   include file: 'adding-relation-transaction.groovy'
   include file: 'droping-columns-timone-from-cashout-order.groovy'
   include file: 'adding-dates-created-and-updated-to-fees-receipt.groovy'
+    include file: 'adding-column-reconcilable-to-transactions-banks.groovy'
 }
