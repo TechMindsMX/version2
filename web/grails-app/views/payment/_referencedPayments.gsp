@@ -1,7 +1,7 @@
 <div class="table-responsive">
   <table class="table">
     <tr>
-      <th>Fecha del Pago</th>
+      <th>Fecha</th>
       <th>Monto</th>
       <th>Cliente</th>
       <th></th>
