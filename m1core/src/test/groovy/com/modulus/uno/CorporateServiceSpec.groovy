@@ -125,4 +125,19 @@ class CorporateServiceSpec extends Specification {
       "ROLE_CORPORATIVE" | 2
   }
 
+  Should "get corporate in base of company"() {
+    given:
+      Corporate corporate = new Corporate(nameCorporate: "makingdevs", corporateUrl:"makingdevs").save()
+    and:
+      Company company = new Company().save(validate:false)
+    and:
+      corporate.addToCompanies(company)
+      corporate.save()
+    when:
+      def response = service.findCorporateByCompanyId(company.id)
+    then:
+      response == "makingdevs-qa.modulusuno.com"
+      println response
+  }
+
 }

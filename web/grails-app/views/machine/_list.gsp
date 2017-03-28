@@ -29,5 +29,4 @@
   No hay máquinas registradas aún.
 </div>
 {{/if}}
-
 </script>

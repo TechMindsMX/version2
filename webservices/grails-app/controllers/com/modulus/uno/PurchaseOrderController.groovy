@@ -42,8 +42,6 @@ class PurchaseOrderController {
     }
     purchaseOrderService.requestAuthorizationForTheOrder(purchaseOrder)
 
-    purchaseOrderService.requestAuthorizationForTheOrder(purchaseOrder)
-
     if (purchaseOrder.id)
       respond purchaseOrder, status: 201, formats: ['json']
     else

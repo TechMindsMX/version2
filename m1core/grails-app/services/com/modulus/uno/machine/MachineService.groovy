@@ -21,7 +21,6 @@ class MachineService {
 
     Transition transition = new Transition(stateFrom:initialState,
                                            stateTo:finalState)
-
     actions.each{ action ->
       transition.addToActions(action)
     }

@@ -14,6 +14,7 @@ databaseChangeLog = {
   include file: 'adding-unique-to-variable-of-corporate.groovy'
   include file: 'adding-columns-dates-and-status-to-stp-deposit.groovy'
   include file: 'adding-column-payment-method-to-sale-order.groovy'
+  include file: 'adding-group-notification.groovy'
   include file: 'adding-column-discount-to-sale-order-item.groovy'
   include file: 'add-machine-state-domain-classes.groovy'
   include file: 'updating-machinery-link-class.groovy'
@@ -22,4 +23,5 @@ databaseChangeLog = {
   include file: 'updating-transition-actions-relation.groovy'
   include file: 'removing-state-relation-with-log.groovy'
   include file: 'adding-uuid-to-machine.groovy'
+  include file: 'adding-notification-for-state.groovy'
 }

@@ -17,4 +17,5 @@ class MachineCommand implements Validateable {
     machine.transitions = machineTransitions
     return machine
   } 
+
 }

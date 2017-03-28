@@ -104,6 +104,15 @@ class CorporateService {
     corporate
   }
 
+  String findCorporateByCompanyId(def companyId) {
+    def corporateList = Corporate.withCriteria {
+      companies {
+        eq("id", companyId)
+      }
+    }
+    "${corporateList.first().corporateUrl}${System.env['DOMAIN_BASE_URL']}"
+  }
+
   private def copyAndReplaceTextInFile(source, dest, Closure replaceText) {
     dest.write(replaceText(source.text))
   }
