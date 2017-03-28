@@ -23,19 +23,10 @@ class StpDepositService {
     log.info "Accoun company: ${m1Account}"
     log.info "Account client: ${client}"
 
-    executeCashinIntoAccountM1(m1Account, client, stpDeposit)
-    generatePaymentToConciliateBill(m1Account, client, stpDeposit)
-  }
-
-  private def executeCashinIntoAccountM1(ModulusUnoAccount m1Account, ClientLink client, StpDeposit stpDeposit) {
-    DepositOrder depositOrder = new DepositOrder()
-    depositOrder.amount = stpDeposit.amount
-    depositOrder.company = m1Account ? m1Account.company : client.company
-    //modulusUnoService.generateACashinForIntegrated(depositOrder)
-
     stpDeposit.status = StpDepositStatus.APLICADO
     stpDeposit.save()
-    log.info "Deposit was applicated: ${stpDeposit.dump()}"
+    
+    generatePaymentToConciliateBill(m1Account, client, stpDeposit)
   }
 
   private def generatePaymentToConciliateBill(ModulusUnoAccount m1Account, ClientLink client, StpDeposit stpDeposit) {
