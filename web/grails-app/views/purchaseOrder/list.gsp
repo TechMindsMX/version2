@@ -57,7 +57,7 @@
               <g:message code="purchaseOrder.list.empty"/>
             </div>
           </g:if>
-        <g:each in="${purchaseOrder.sort{-it.id}}" var="purch">
+        <g:each in="${purchaseOrder}" var="purch">
           <tr class="${message(code: 'purchaseOrder.style.background.'+purch.status)}">
             <td class="text-center"><g:link action="show" id="${purch.id}">${purch.id}</g:link></td>
             <td>${purch.providerName}</td>
