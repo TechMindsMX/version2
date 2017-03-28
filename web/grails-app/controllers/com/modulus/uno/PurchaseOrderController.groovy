@@ -158,12 +158,17 @@ class PurchaseOrderController {
 
   def list() {
     params.max = params.max ?: 25
+    params.sort = "dateCreated"
+    params.order = "desc"
     def purchaseOrders = purchaseOrderService.getPurchaseOrdersToList(session.company ? session.company.toLong() : session.company, params)
 
     [purchaseOrder: purchaseOrders.list, purchaseOrderCount: purchaseOrders.items, messageSuccess:params.messageSuccess]
   }
 
   def listMoneyBackOrders(){
+    params.max = params.max ?: 25
+    params.sort = "dateCreated"
+    params.order = "desc"
     def purchaseOrders = purchaseOrderService.getMoneyBackOrdersToList(session.company ? session.company.toLong() : session.company, params)
 
     render view:'list', model:[purchaseOrder: purchaseOrders.list, purchaseOrderCount: purchaseOrders.items, isMoneyBackOrder:true, messageSuccess:params.messageSuccess]
