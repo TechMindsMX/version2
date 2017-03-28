@@ -184,7 +184,7 @@ class App.IndexController
       $('#divSite').hide()
     else
       $('#divPerson').show()
-      $('#divSite').hide()
+      $('#divSite').show()
 
   bindEvents: () ->
     $("body").on('click',@selectors.partialPayment,@partialPaymentMethod)
