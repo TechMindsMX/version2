@@ -9,6 +9,8 @@ class PaymentController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def paymentService
+  def saleOrderService
+  def conciliationService
 
   @Transactional(readOnly = true)
   def index(Integer max) {
@@ -109,29 +111,34 @@ class PaymentController {
     }
   }
 
-  def reconcile() {
-    Company company = Company.get(session.company)
-    def payments = Payment.findAllByCompanyAndStatus(company, PaymentStatus.PENDING)
-    def saleOrders = SaleOrder.findAllByCompanyAndStatus(company, SaleOrderStatus.EJECUTADA)
-    [payments:payments, saleOrders: saleOrders, company:company]
-  }
-
-  def tieOrderWithPayment(){
-    try {
-      def p = paymentService.concilationForSaleOrderWithPayment(params.long("saleOrder.id"),params.long('id'))
-      flash.message = """\
-        El pago por \$ ${p.amount} se concilió con la orden para el cliente '${p.saleOrder.clientName}' por un monto de \$ ${p.saleOrder.total.setScale(2, RoundingMode.HALF_UP)}
-      """
-    }catch(e){
-      flash.message = e.message
-    }
-    redirect action:'reconcile'
-  }
-
   def cancelPayment(Payment payment){
     payment.status = PaymentStatus.CANCELED
     payment.save()
     redirect action:'index'
+  }
+
+  def conciliation() {
+  }
+
+  def referencedPayments() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabInvoiceWithoutPayment:""]
+    Map payments = paymentService.findReferencedPaymentsForCompany(company)
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
+  }
+
+  def notReferencedPayments() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabInvoiceWithoutPayment:""]
+    Map payments = paymentService.findNotReferencedPaymentsForCompany(company)
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
+  }
+
+  def conciliateInvoicesWithoutPayments() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabInvoiceWithoutPayment:"active"]
+    List<SaleOrder> saleOrders = saleOrderService.getSaleOrdersToConciliateFromCompany(company)
+    render view:"conciliation", model:[saleOrders:saleOrders, styleClasses:styleClasses]
   }
 
 }

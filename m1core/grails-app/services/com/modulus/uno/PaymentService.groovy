@@ -7,6 +7,7 @@ class PaymentService {
 
   def modulusUnoService
   def emailSenderService
+  def businessEntityService
 
   def getPaymentStatus(String status){
     def listPaymentStatus = []
@@ -32,19 +33,30 @@ class PaymentService {
     payments
   }
 
-  Payment concilationForSaleOrderWithPayment(Long saleOrderId, Long paymentId){
-    Payment payment = Payment.get(paymentId)
-    SaleOrder order = SaleOrder.get(saleOrderId)
-    if(order){
-      payment.saleOrder = order
-      payment.status = PaymentStatus.CONCILIATED
-      order.status = SaleOrderStatus.PAGADA
-      payment.save()
-      order.save()
-      emailSenderService.notifySaleOrderChangeStatus(order)
-    } else {
-      throw new BusinessException("Error al conciliar la orden...")
+  Map findReferencedPaymentsForCompany(Company company) {
+    Map payments = [:]
+    List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNotNull(company, PaymentStatus.PENDING)
+    if (paymentsList) {
+      List<BusinessEntity> companyClients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
+      List<BusinessEntity> businessEntities = paymentsList.collect { pay ->
+        companyClients.find { client -> pay.rfc == client.rfc }
+      }
+      payments.list = paymentsList
+      payments.clients = businessEntities
     }
+    payments
+  }
+
+  Map findNotReferencedPaymentsForCompany(Company company) {
+    Map payments = [:]
+    List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNull(company, PaymentStatus.PENDING)
+    payments.list = paymentsList
+    payments
+  }
+
+  Payment conciliatePayment(Payment payment) {
+    payment.status = PaymentStatus.CONCILIATED
+    payment.save()
     payment
   }
 

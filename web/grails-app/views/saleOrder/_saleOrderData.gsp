@@ -42,6 +42,8 @@
         <dd>${modulusuno.formatPrice(number:saleOrder.totalIEPS)}</dd>
         <dt>Total</dt>
         <dd>${modulusuno.formatPrice(number:saleOrder.total)}</dd>
+        <dt>Por pagar</dt>
+        <dd>${modulusuno.formatPrice(number:saleOrder.amountToPay > 0 ? saleOrder.amountToPay : 0)}</dd>
         <dt>Estado</dt>
         <dd><g:message code="saleOrder.status.${saleOrder.status}" default="${saleOrder.status}"/></dd>
         <dt>Notas</dt>

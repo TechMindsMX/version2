@@ -269,4 +269,12 @@ class SaleOrderController {
   def applyDiscount(SaleOrder saleOrder) {
     redirect action:"show", id:saleOrder.id
   }
+
+  def getCurrencyOfSaleOrder(){
+    log.info "Get the currency of sale order ${params.saleOrderId}"
+    SaleOrder saleOrder = SaleOrder.get(params.saleOrderId)
+    Map model = [currency:saleOrder.currency]
+    render model as JSON
+  }
+
 }

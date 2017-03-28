@@ -208,4 +208,35 @@ class SaleOrderService {
     sql.execute("delete from sale_order_address where sale_order_addresses_id=${saleOrder.id}")
     saleOrder.delete()
   }
+
+  List<SaleOrder> findOrdersToConciliateForCompanyAndClient(Company company, String rfc) {
+    SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
+  }
+
+  List<SaleOrder> findOrdersToConciliateForCompany(Company company) {
+    SaleOrder.findAllByCompanyAndStatus(company, SaleOrderStatus.EJECUTADA)
+  }
+
+  SaleOrder addPaymentToSaleOrder(SaleOrder saleOrder, BigDecimal amount, BigDecimal changeType) {
+    BigDecimal amountPayment = saleOrder.currency == "MXN" ? amount : amount/changeType
+    SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amountPayment)
+    saleOrder.addToPayments(saleOrderPayment)
+    saleOrder.save()
+    if (saleOrder.amountToPay <= 0) {
+      saleOrder.status = SaleOrderStatus.PAGADA
+      saleOrder.save()
+    }
+    saleOrder
+  }
+
+  List<SaleOrder> getSaleOrdersToConciliateFromCompany(Company company) {
+    List<SaleOrder> saleOrders = findOrdersToConciliateForCompany(company)
+    List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
+    List<SaleOrder> saleOrdersFiltered = saleOrders.findAll { saleOrder ->
+      if (!conciliations.find { conciliation -> conciliation.saleOrder.id == saleOrder.id }){
+        saleOrder
+      }
+    }
+    saleOrdersFiltered
+  }
 }

@@ -19,8 +19,10 @@ databaseChangeLog = {
   include file: 'adding-column-discount-to-sale-order-item.groovy'
   include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
   include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
+  include file: 'create-domain-sale-order-payment.groovy'
+  include file: 'create-domain-conciliation.groovy'
   include file: 'create-transactions.groovy'
   include file: 'adding-relation-transaction.groovy'
-    include file: 'droping-columns-timone-from-cashout-order.groovy'
-    include file: 'adding-dates-created-and-updated-to-fees-receipt.groovy'
+  include file: 'droping-columns-timone-from-cashout-order.groovy'
+  include file: 'adding-dates-created-and-updated-to-fees-receipt.groovy'
 }
