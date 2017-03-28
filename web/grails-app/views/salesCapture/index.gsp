@@ -70,8 +70,8 @@
                       </select></div>
                     <div class="col-md-1"><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Hooray!"></span></div>
                   </div>
-                </div>      
-              </div> 
+                </div>
+              </div>
             </div>
             <div class="row">
               <h1>Información de mi empresa</h1>
@@ -187,198 +187,7 @@
               <div align="left">
                 <div class="col-md-2" style="width:100px" >Enviar a: </div>
                 <div class="col-md-8"><input type="email" placeholder="email@dominio.com"name="email"required> <a href="#" data-toggle="modal" data-target="#modalClient"><span class="label label-primary">Prueba Modal</span></a></div>
-                <!--Modal -->
-                <div class="modal fade" id="modalClient" role="dialog">
-                  <div class="modal-dialog">
-                    <!--Modal content -->
-                    <div class="modal-content">
-                      <div class="modal-header" align="center">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Información del Cliente</h4>
-                      </div>
-                      <div class="modal-body" align="left">
-                        <div class="row">
-                          <div class="col-md-12">
-                            <label>Tipo de Entidad<span class="required-indicator">*</span></label>
-                            <!-- TODO : Muy elaborado, puede ser un solo radio con los valores del enum -->
-                            <input type="radio" name="clientProviderType" class="radio1" checked="checked" value="CLIENTE" id="clientProviderType" class="form-group" required=""> Cliente
-                            <input type="radio" name="clientProviderType" class="radio1" value="PROVEEDOR" id="clientProviderType"> Proveedor
-                            <input type="radio" name="clientProviderType" class="radio1" value="CLIENTE_PROVEEDOR" id="clientProviderType"> Cliente/Proveedor
-                            <input type="radio" name="clientProviderType" class="radio1" value="EMPLEADO" id="clientProviderType"> Emp/Colaborador
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-xs-12">
-                            <div class="row">
-                              <div class="col-xs-6"id="divPerson">
-                                <div class="form-group">
-                                  <div  style="display: block;">
-                                    <label>Tipo de Persona</label>
-                                    <select name="type" class="form-control" id="type_person">
-                                      <option value="FISICA">FISICA</option>
-                                      <option value="MORAL">MORAL</option>
-                                    </select>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_RFC">RFC</label>
-                                  <input type="text" class="form-control" id="businfo_business_rfc" name="businfo_business_rfc" placeholder="Empresarial" value="">
-                                </div>
-                              </div>
 
-                            </div>
-                            <div class="row">
-                              <div class="col-xs-6" id="divSite">
-                                <div class="form-group">
-                                  <label for="businfo_business_name">Sitio Web</label>
-                                  <input type="text" class="form-control" id="businfo_business_site" name="businfo_business_site" placeholder="Dominio" value="">
-                                </div>
-                              </div>
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_business_name">Nombre</label>
-                                  <input type="text" class="form-control" id="businfo_business_name" name="businfo_business_name" placeholder="Nombre" value="">
-                                </div>
-                              </div>
-
-                            </div>
-                            <div class="row" style="display:Block" id="divLastName">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_business_name">Apellido Paterno</label>
-                                  <input type="text" class="form-control" id="businfo_business_phone" name="businfo_business_phone" placeholder="Obligatorio" value="">
-                                </div>
-                              </div>
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_business_name">Apellido Materno</label>
-                                  <input type="text" class="form-control" id="businfo_business_phone" name="businfo_business_phone" placeholder="Obligatorio" value="">
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row" style="display:none">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_business_name">Razón Social</label>
-                                  <input type="text" class="form-control" id="businfo_business_phone" name="businfo_business_phone" placeholder="Obligatorio" value="">
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label><input type="checkbox" value=true  id="saveUser">    Guardar Usuario en la lista de direcciones  <span  data-toggle="tooltip" data-placement="top" title="El cliente podra ingresar un pago "class="glyphicon glyphicon-question-sign"></span></label>
-                                </div>
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                        <div class="row">
-                          <label id="hiddeAddress" style="cursor:pointer" class="col-xs-6"><span class="glyphicon glyphicon-circle-arrow-down"></span>  Dirección de facturación</label>
-                          <div class="col-xs-12" id="mainAddress" style="display:none">
-                            <div class="row">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Calle</label>
-                                  <input type="text" class="form-control" id="businfo_street" name="businfo_street" placeholder="Nombre" value="México">
-                                </div>
-                              </div>
-                              <div class="col-xs-3">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Nº Interior</label>
-                                  <input type="text" class="form-control" id="businfo_outdoorNumber" name="businfo_OutdoorNumbre" placeholder="Nombre" value="México">
-                                </div>
-                              </div>
-                              <div class="col-xs-3">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Nº Exterior</label>
-                                  <input type="text" class="form-control" id="businfo_InteriorNumber" name="businfo_InteriorNumber" placeholder="Número">
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Código postal</label>
-                                  <input type="text" class="form-control" id="businfo_address" name="businfo_contry" placeholder="Dirección">
-                                </div>
-                              </div>
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Colonia</label>
-                                  <input type="text" class="form-control" id="businfo_colony" name="businfo_contry" placeholder="Colonia">
-                                </div>
-                              </div>
-
-                            </div>
-                            <div class="row">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Delegación/Municipio</label>
-                                  <input type="text" class="form-control" id="businfo_city" name="businfo_city" placeholder="CD">
-                                </div>
-                              </div>
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">País</label>
-                                  <input type="text" class="form-control" id="businfo_state" name="businfo_state" placeholder="Colonia">
-                                </div>
-                              </div>
-
-                            </div>
-                            <div class="row">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Código postal</label>
-                                  <input type="text" class="form-control" id="businfo_code_pass" name="businfo_code_pass" placeholder="CP">
-                                </div>
-                              </div>
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Entidad Federativa</label>
-                                  <input type="text" class="form-control" id="businfo_code_pass" name="businfo_code_pass" placeholder="CP">
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-xs-6">
-                                <div class="form-group">
-                                  <label for="businfo_contry">Tipo de Dirección</label>
-                                  <select name="addressType" class="form-control" id="addressType">
-                                    <option value="FISCAL">Fiscal</option>
-                                    <option value="SOCIAL">Social</option>
-                                    <option value="COMERCIAL">Comercial</option>
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-
-
-                          </div>
-                        </div>
-                        <div class="row">
-                          <label id="hiddeBank" style="cursor:pointer" class="col-xs-6"><span class="glyphicon glyphicon-circle-arrow-down"></span>  Generar Cuenta</label>
-                          <div class="col-xs-12" id="generarAcount" style="display:none">
-                            <div class="form-group">
-                              <input type="text" value="00000000"/>
-                            </div>
-                          </div>
-                        </div>
-
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal">Guardar</button>
-                      </div>
-
-                    </div>
-                    <!--Fin modal Content -->
-                  </div>
-                </div>
-                <!--Fin Modal -->
                 <br/>
                 <br/>
                 <div class="col-md-2" style="width:100px">Cc:  </div>
@@ -503,6 +312,204 @@
           </div>
         </div>
       </g:form>
+       <g:form action="save">
+      <!--Modal -->
+      <div class="modal fade" id="modalClient" role="dialog">
+        <div class="modal-dialog">
+          <!--Modal content -->
+          <div class="modal-content">
+            <div class="modal-header" align="center">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Información del Cliente</h4>
+            </div>
+            <div class="modal-body" align="left">
+              <div class="row">
+                <div class="col-md-12">
+                  <label>Tipo de Entidad<span class="required-indicator">*</span></label>
+                  <!-- TODO : Muy elaborado, puede ser un solo radio con los valores del enum -->
+                  <input type="radio" name="clientProviderType" class="radio1" checked="checked" value="CLIENTE" id="clientProviderType" class="form-group" required=""> Cliente
+                  <input type="radio" name="clientProviderType" class="radio1" value="PROVEEDOR" id="clientProviderType"> Proveedor
+                  <input type="radio" name="clientProviderType" class="radio1" value="CLIENTE_PROVEEDOR" id="clientProviderType"> Cliente/Proveedor
+                  <input type="radio" name="clientProviderType" class="radio1" value="EMPLEADO" id="clientProviderType"> Emp/Colaborador
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="row">
+                    <div class="col-xs-6"id="divPerson">
+                      <div class="form-group">
+                        <div  style="display: block;">
+                          <label>Tipo de Persona</label>
+                          <select name="type" class="form-control" id="type_person">
+                            <option value="FISICA">FISICA</option>
+                            <option value="MORAL">MORAL</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_RFC">RFC</label>
+                        <input type="text" class="form-control" id="businfo_business_rfc" name="businfo_business_rfc" placeholder="Empresarial" value="">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6" id="divSite">
+                      <div class="form-group">
+                        <label for="businfo_business_name">Sitio Web</label>
+                        <input type="text" class="form-control" id="businfo_business_site" name="businfo_business_site" placeholder="Dominio" value="">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_business_name">Nombre</label>
+                        <input type="text" class="form-control" id="businfo_business_name" name="businfo_business_name" placeholder="Nombre" value="">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row" style="display:Block" id="divLastName">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_business_name">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="businfo_business_phone" name="businfo_business_phone" placeholder="Obligatorio" value="">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_business_name">Apellido Materno</label>
+                        <input type="text" class="form-control" id="businfo_business_phone" name="businfo_business_phone" placeholder="Obligatorio" value="">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" style="display:none">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_business_name">Razón Social</label>
+                        <input type="text" class="form-control" id="businfo_business_phone" name="businfo_business_phone" placeholder="Obligatorio" value="">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label><input type="checkbox" value=true  id="saveUser">    Guardar Usuario en la lista de direcciones  <span  data-toggle="tooltip" data-placement="top" title="El cliente podra ingresar un pago "class="glyphicon glyphicon-question-sign"></span></label>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="row">
+                <label id="hiddeAddress" style="cursor:pointer" class="col-xs-6"><span class="glyphicon glyphicon-circle-arrow-down"></span>  Dirección de facturación</label>
+                <div class="col-xs-12" id="mainAddress" style="display:none">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">Calle</label>
+                        <input type="text" class="form-control" id="businfo_street" name="businfo_street" placeholder="Calle">
+                      </div>
+                    </div>
+                    <div class="col-xs-3">
+                      <div class="form-group">
+                        <label for="businfo_contry">Nº Interior</label>
+                        <input type="text" class="form-control" id="businfo_outdoorNumber" name="businfo_OutdoorNumbre" placeholder="Número">
+                      </div>
+                    </div>
+                    <div class="col-xs-3">
+                      <div class="form-group">
+                        <label for="businfo_contry">Nº Exterior</label>
+                        <input type="text" class="form-control" id="businfo_InteriorNumber" name="businfo_InteriorNumber" placeholder="Número">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">Código postal</label>
+                        <input type="text" class="form-controlzipCodee" id ="zipCode" name="businfo_code" placeholder="Dirección">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">Colonia</label>
+                        <select name="colony" class="form-control" id="colony">
+                          <option value="">-Selecciona tu colonia-</option>
+                        </select>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">Delegación/Municipio</label>
+                        <input type="text" class="form-control" id="town" name="businfo_city" placeholder="D / M">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">País</label>
+                        <input type="text" class="form-control" id="country" name="businfo_contry" placeholder="País">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">Ciudad</label>
+                        <input type="text" class="form-control" id="city" name="businfo_city" placeholder="CD">
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">Entidad Federativa</label>
+                        <input type="text" class="form-control" id="federalEntity" name="businfo_entityFederativa" placeholder="CP">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="form-group">
+                        <label for="businfo_contry">Tipo de Dirección</label>
+                        <select name="addressType" class="form-control" id="addressType">
+                          <option value="FISCAL">Fiscal</option>
+                          <option value="SOCIAL">Social</option>
+                          <option value="COMERCIAL">Comercial</option>
+                        </select>
+                        <input type="hidden" value="https://sepomex.modulusuno.com/sepomex/" id="sepomexUrl">
+                        <input type="hidden" value="" id="currentColony">
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+              <div class="row">
+                <label id="hiddeBank" style="cursor:pointer" class="col-xs-6"><span class="glyphicon glyphicon-circle-arrow-down"></span>  Generar Cuenta</label>
+                <div class="col-xs-12" id="generarAcount" style="display:none">
+                  <div class="form-group">
+                    <input type="text" value="00000000"/>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-success" data-dismiss="modal">Guardar</button>
+            </div>
+
+          </div>
+          <!--Fin modal Content -->
+        </div>
+      </div>
+      <!--Fin Modal -->
+      </g:form>
     </div>
     </div>
   <script>
@@ -526,6 +533,7 @@
   <asset:javascript src="compiled-coffee-script/salesCapture/app.js" />
   <asset:javascript src="compiled-coffee-script/salesCapture/index_view_controller.js" />
   <asset:javascript src="compiled-coffee-script/salesCapture/index_controller.js" />
+  <asset:javascript src="sepomex.js" />
   </body>
 </html>
 
