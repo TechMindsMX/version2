@@ -24,4 +24,5 @@ databaseChangeLog = {
   include file: 'removing-state-relation-with-log.groovy'
   include file: 'adding-uuid-to-machine.groovy'
   include file: 'adding-notification-for-state.groovy'
+  include file: 'adding-mock-machine-class.groovy'
 }
