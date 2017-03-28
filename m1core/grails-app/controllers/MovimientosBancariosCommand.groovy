@@ -11,6 +11,7 @@ class MovimientosBancariosCommand implements Validateable {
   String type
   String debito
   String credito
+  Boolean reconcilable = false
 
   MovimientosBancarios createObject() {
     new MovimientosBancarios(
@@ -19,6 +20,7 @@ class MovimientosBancariosCommand implements Validateable {
       amount: getValueInBigDecimal(this.amount),
       type:MovimientoBancarioType."${this.type}",
       dateEvent: Date.parse('dd/MM/yyyy',this.dateEvent)
+      reconcilable: this.reconcilable
     )
   }
 
