@@ -1,4 +1,5 @@
 databaseChangeLog = {
+
   include file: 'initial-structure.groovy'
   include file: 'create-m1-roles.groovy'
   include file: 'adding-user-admin-production.groovy'
@@ -21,5 +22,7 @@ databaseChangeLog = {
   include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
   include file: 'create-transactions.groovy'
   include file: 'adding-relation-transaction.groovy'
-    include file: 'droping-columns-timone-from-cashout-order.groovy'
+  include file: 'droping-columns-timone-from-cashout-order.groovy'
+  include file: 'deleting-deposit-order.groovy'
+
 }
