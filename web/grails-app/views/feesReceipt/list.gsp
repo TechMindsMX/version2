@@ -29,7 +29,7 @@
               <g:if test="${messageSuccess}">
                 <div class="well well-sm alert-success">${messageSuccess}</div>
               </g:if>
-             <g:render template="table" model="[feesReceiptList:feesReceiptList, feesReceiptCount:feesReceiptCount]"/>
+              <g:render template="table" model="[feesReceiptList:feesReceiptList.sort{-it.id}, feesReceiptCount:feesReceiptCount]"/>
             </div>
           </div>
         </div>
