@@ -48,7 +48,7 @@
                     <g:message code="cashOutOrder.list.empty"/>
                   </div>
                 </g:if>
-                <g:each in="${cashOutOrderList}" var="cashoutOrder">
+                <g:each in="${cashOutOrderList.sort{-it.id}}" var="cashoutOrder">
                 <tr class="${message(code: 'cashOutOrder.style.background.'+cashoutOrder.status)}">
                   <td class="text-center">
                     <g:link action="show" id="${cashoutOrder.id}" params="[company:"${cashoutOrder.company.id}"]">
