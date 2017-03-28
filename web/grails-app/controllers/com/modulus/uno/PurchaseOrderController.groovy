@@ -157,7 +157,7 @@ class PurchaseOrderController {
   }
 
   def list() {
-    params.max = params.max ?: 10
+    params.max = params.max ?: 25
     def purchaseOrders = purchaseOrderService.getPurchaseOrdersToList(session.company ? session.company.toLong() : session.company, params)
 
     [purchaseOrder: purchaseOrders.list, purchaseOrderCount: purchaseOrders.items, messageSuccess:params.messageSuccess]
