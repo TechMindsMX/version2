@@ -6,17 +6,19 @@ import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(NotifyService)
-@Mock([User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, DepositOrder, PurchaseOrder,Corporate,SaleOrderItem])
+@Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, DepositOrder, PurchaseOrder,Corporate,SaleOrderItem])
 class NotifyServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
   CorporateService corporateService = Mock(CorporateService)
+  RestService restService = Mock(RestService)
 
   static final URL = "makingdevs-qa.modulusuno.com"
 
   def setup(){
     service.grailsApplication = grailsApplication
     service.corporateService = corporateService
+    service.restService = restService
   }
 
   @Unroll("Obtain the params when the DEPOSIT ORDER is #status")
@@ -271,22 +273,22 @@ class NotifyServiceSpec extends Specification {
   @Unroll("Obtain the params when the Fees Receipt is #status")
   void "obtain the params for Fees Receipt Status to populate the email"(){
     given:"a company"
-    def company = new Company("rfc":"qwerty123456", "bussinessName":"apple")
-    company.save(validate:false)
+      def company = new Company("rfc":"qwerty123456", "bussinessName":"apple")
+      company.save(validate:false)
     and:
-    Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
-    corporate.addToCompanies(company)
-    corporate.save()
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
     and: "a fees Receipt"
-    def feesReceipt = new FeesReceipt(rejectReason:RejectReason.DOCUMENTO_INVALIDO, comments:"fake")
-    feesReceipt.company = company
-    feesReceipt.save(validate:false)
+      def feesReceipt = new FeesReceipt(rejectReason:RejectReason.DOCUMENTO_INVALIDO, comments:"fake")
+      feesReceipt.company = company
+      feesReceipt.save(validate:false)
     and:
       corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
     when:"we extract the params"
-    def params = service.parametersForFeesReceipt(feesReceipt, status, company)
+      def params = service.parametersForFeesReceipt(feesReceipt, status, company)
     then:"we should get"
-    params == expectedParams
+      params == expectedParams
     where:
     status << [
     FeesReceiptStatus.CREADA,
@@ -308,15 +310,15 @@ class NotifyServiceSpec extends Specification {
 
   void "Get parameters for build params of Email when add a Provider, a Client, and Employee"(){
     given:"A new Provider, new Client and new Employee"
-    def provider = new BusinessEntity( rfc:'abc123456', name:'patitoABC')
-    def client = new BusinessEntity( rfc:'pasc123456', name:'carlo')
-    def employee = new BusinessEntity( rfc:'sara123456', name:'karlo')
-    provider.save(validate:false)
-    client.save(validate:false)
-    employee.save(validate:false)
+      def provider = new BusinessEntity( rfc:'abc123456', name:'patitoABC')
+      def client = new BusinessEntity( rfc:'pasc123456', name:'carlo')
+      def employee = new BusinessEntity( rfc:'sara123456', name:'karlo')
+      provider.save(validate:false)
+      client.save(validate:false)
+      employee.save(validate:false)
     and: " A company"
-    def company = new Company('rfc':'qwerty123456', 'bussinessName':'PAtitoABC')
-    company.save(validate:false)
+      def company = new Company('rfc':'qwerty123456', 'bussinessName':'PAtitoABC')
+      company.save(validate:false)
     and:
       Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
       corporate.addToCompanies(company)
@@ -335,29 +337,49 @@ class NotifyServiceSpec extends Specification {
 
   void "Get parameters for build params when we need confirm account or password recovery"(){
     given:"A string token"
-    String token = "www.token.com/integradora/here/pick/me"
+      String token = "www.token.com/integradora/here/pick/me"
     and: "A map"
-    def message=[:]
-    message.token = token
+      def message=[:]
+      message.token = token
     when:"We need the email with tokenURL"
-    def params = service.parametersForRecoveryToken(message)
+      def params = service.parametersForRecoveryToken(message)
     then:"We should get the next map of params"
-    params == [token:"www.token.com/integradora/here/pick/me"]
+      params == [token:"www.token.com/integradora/here/pick/me"]
   }
 
   void "Build email Map without receivers, with: id template and a map of params"(){
     given:"A map of params"
-    def params = ["a":1]
+      def params = ["a":1]
     and: "Emailer Id"
-    def idEmailer= "12345678qwerty"
+      def idEmailer= "12345678qwerty"
     and: "Email to send"
-    def toSend="hi@me.com"
+      def toSend="hi@me.com"
     when:"Build the email map to send to EmailerApp v2"
-    def emailMap = service.buildEmailerMap(idEmailer, toSend,  params)
+      def emailMap = service.buildEmailerMap(idEmailer, toSend,  params)
     then:"We should get a map"
-    emailMap == [id:"12345678qwerty", to:"hi@me.com", subject:"Mensaje de Modulus Uno", params:["a":1] ]
+      emailMap == [id:"12345678qwerty", to:"hi@me.com", subject:"Mensaje de Modulus Uno", params:["a":1] ]
   }
 
+  void "Send emails notifications for a group"(){
+    given:"A group notification"
+      def group = new GroupNotification(name:"Contadores", notificationId:"notificationId123", users:usersToNotify()).save(validate:false)
+    and:"A list of notifications"
+      def notification1 = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
+      def notification2 = new NotificationForState(groupNotification:1, stateMachine:2).save(validate:false)
+      def notifys = [notification1, notification2]
+    and:"a emailer params"
+      def emailerParams = ["tag1":"Emailer test", "tag2":"Message to send"]
+    when:"We want to send email to every user from the group notification"
+      service.sendEmailToGroup(notifys, emailerParams)
+    then:"We should call the rest service for every user to notify  "
+      4 * restService.sendEmailToEmailer(_)
+  }
 
+  private usersToNotify(){
+    (1..2).collect {
+      def u = new User(username:"user$it", profile: new Profile(email:"user$it@modulus.uno")).save(validate:false)
+      u
+    }
+  }
 
 }
