@@ -111,7 +111,7 @@ class CashOutOrderController {
     }
 
     def list() {
-      params.max = params.max ?: 10
+      params.max = params.max ?: 25
       def cashoutOrders = [:]
       cashoutOrders = cashOutOrderService.getCashoutOrdersToList(session.company as Long, params)
 
