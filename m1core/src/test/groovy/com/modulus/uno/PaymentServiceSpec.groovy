@@ -17,18 +17,6 @@ class PaymentServiceSpec extends Specification {
     service.modulusUnoService = modulusUnoService
   }
 
-  void "Should conciliate a sale order with payment"() {
-    given:"A Sale Order"
-      SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.EJECUTADA).save(validate:false)
-    and:"A payment"
-      Payment payment = new Payment(status:PaymentStatus.PENDING).save(validate:false)
-    when:"We conciliate the payment"
-      def result = service.concilationForSaleOrderWithPayment(saleOrder.id, payment.id)
-    then:"We expect payment conciliated"
-      result.status == PaymentStatus.CONCILIATED
-      1 * emailSenderService.notifySaleOrderChangeStatus(_)
-  }
-
   void "Should conciliate a payment"() {
     given:"A payment"
       Payment payment = new Payment(amount:1000, status:PaymentStatus.PENDING, company: new Company().save(validate:false)).save(validate:false)
