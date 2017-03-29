@@ -14,13 +14,16 @@ class MovimientosBancariosController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", multiMovimientosBancarios: "POST"]
 
     def index() {
-      def bankAccountsOfCompany = Company.findById(session.company.toLong()).banksAccounts
+      def bankAccountsOfCompany = Company.findById(session.company.toLong()).banksAccounts.sort{it.id}
       [bankAccountsOfCompany:bankAccountsOfCompany]
     }
 
     def show(BankAccount bankAccount) {
-      def movimientosBancarios = MovimientosBancarios.findAllByCuenta(bankAccount)
-      [movimientosBancarios:movimientosBancarios, bankAccount:bankAccount]
+      params.max = 25
+      params.sort = "dateEvent"
+      params.order = "desc"
+      def movimientosBancarios = MovimientosBancarios.findAllByCuenta(bankAccount, params)
+      [movimientosBancarios:movimientosBancarios, movimientosCount:MovimientosBancarios.countByCuenta(bankAccount), bankAccount:bankAccount]
     }
 
     def create() {
