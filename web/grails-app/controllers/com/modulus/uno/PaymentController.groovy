@@ -9,6 +9,8 @@ class PaymentController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def paymentService
+  def saleOrderService
+  def conciliationService
 
   @Transactional(readOnly = true)
   def index(Integer max) {
@@ -132,6 +134,26 @@ class PaymentController {
     payment.status = PaymentStatus.CANCELED
     payment.save()
     redirect action:'index'
+  }
+
+  def conciliation() {
+  }
+
+  def referencedPayments() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabInvoiceWithoutPayment:""]
+    Map payments = paymentService.findReferencedPaymentsForCompany(company)
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
+  }
+
+  def notReferencedPayments() {
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabInvoiceWithoutPayment:""]
+    render view:"conciliation", model:[styleClasses:styleClasses]
+  }
+
+  def conciliateInvoicesWithoutPayments() {
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabInvoiceWithoutPayment:"active"]
+    render view:"conciliation", model:[styleClasses:styleClasses]
   }
 
 }

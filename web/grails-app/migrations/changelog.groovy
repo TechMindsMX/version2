@@ -19,4 +19,6 @@ databaseChangeLog = {
   include file: 'adding-column-discount-to-sale-order-item.groovy'
   include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
   include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
+  include file: 'create-domain-sale-order-payment.groovy'
+    include file: 'create-domain-conciliation.groovy'
 }
