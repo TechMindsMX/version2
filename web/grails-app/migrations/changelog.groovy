@@ -36,4 +36,5 @@ databaseChangeLog = {
   include file: 'adding-notification-for-state.groovy'
   include file: 'deleting-deposit-order.groovy'
   include file: 'adding-dates-created-and-updated-to-fees-receipt.groovy'
+  include file: 'adding-mock-machine-class.groovy'
 }
