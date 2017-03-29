@@ -222,11 +222,21 @@ class SaleOrderService {
     SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amountPayment)
     saleOrder.addToPayments(saleOrderPayment)
     saleOrder.save()
-    if (saleOrder.amountToPay == 0) {
+    if (saleOrder.amountToPay <= 0) {
       saleOrder.status = SaleOrderStatus.PAGADA
       saleOrder.save()
     }
     saleOrder
   }
 
+  List<SaleOrder> getSaleOrdersToConciliateFromCompany(Company company) {
+    List<SaleOrder> saleOrders = findOrdersToConciliateForCompany(company)
+    List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
+    List<SaleOrder> saleOrdersFiltered = saleOrders.findAll { saleOrder ->
+      if (!conciliations.find { conciliation -> conciliation.saleOrder.id == saleOrder.id }){
+        saleOrder
+      }
+    }
+    saleOrdersFiltered
+  }
 }

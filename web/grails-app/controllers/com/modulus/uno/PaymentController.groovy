@@ -154,8 +154,10 @@ class PaymentController {
   }
 
   def conciliateInvoicesWithoutPayments() {
+    Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabInvoiceWithoutPayment:"active"]
-    render view:"conciliation", model:[styleClasses:styleClasses]
+    List<SaleOrder> saleOrders = saleOrderService.getSaleOrdersToConciliateFromCompany(company)
+    render view:"conciliation", model:[saleOrders:saleOrders, styleClasses:styleClasses]
   }
 
 }

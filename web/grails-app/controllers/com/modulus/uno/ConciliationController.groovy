@@ -80,6 +80,7 @@ class ConciliationController {
     [payment:payment, toApply:new BigDecimal(0)]
   }
 
+  @Transactional
   def applyConciliationWithoutInvoice(ConciliationCommand command) {
     log.info "Applying conciliation without invoice: ${command.dump()}"
 
@@ -91,6 +92,27 @@ class ConciliationController {
 
     Conciliation conciliation = command.createConciliation()
     conciliationService.applyConciliationWithoutInvoice(conciliation)
+
+    redirect controller:"payment", action:"conciliation"
+  }
+
+  def conciliateInvoiceWithoutPayment(SaleOrder saleOrder) {
+    log.info "SaleOrder to conciliate without payment: ${saleOrder.dump()}"
+    [saleOrder:saleOrder]
+  }
+
+  @Transactional
+  def applyConciliationWithoutPayment(ConciliationCommand command) {
+    log.info "Applying conciliation without payment: ${command.dump()}"
+
+    if (command.hasErrors()){
+      transactionStatus.setRollbackOnly()
+      render view:"conciliateInvoiceWithoutPayment", model:[saleOrder:command.saleOrder, errors:command.errors]
+      return
+    }
+
+    Conciliation conciliation = command.createConciliation()
+    conciliationService.applyConciliationWithoutPayment(conciliation)
 
     redirect controller:"payment", action:"conciliation"
   }
