@@ -75,11 +75,13 @@ class StpDepositService {
   }
 
   private Transaction createAndSaveTransaction(StpDeposit stpDeposit){
+    String keyAccountCompany = "${stpDeposit.accountBeneficiary}".substring(0,13)
+    ModulusUnoAccount modulusUnoAccount = ModulusUnoAccount.findByStpClabeLike("${keyAccountCompany}%")
     Map parameters = [keyTransaction:"${stpDeposit.operationNumber}",
                       trackingKey:stpDeposit.tracingKey,
                       amount:stpDeposit.amount,
                       paymentConcept:stpDeposit.paymentConcept,
-                      keyAccount:stpDeposit.accountBeneficiary,
+                      keyAccount:modulusUnoAccount.stpClabe,
                       referenceNumber:"${stpDeposit.numericalReference}",
                       transactionType:TransactionType.DEPOSIT,
                       transactionStatus:TransactionStatus.AUTHORIZED]
