@@ -19,7 +19,7 @@ class MovimientosBancariosCommand implements Validateable {
       reference:this.reference ?: "",
       amount: getValueInBigDecimal(this.amount),
       type:MovimientoBancarioType."${this.type}",
-      dateEvent: Date.parse('dd/MM/yyyy',this.dateEvent)
+      dateEvent: Date.parse('dd/MM/yyyy',this.dateEvent),
       reconcilable: this.reconcilable
     )
   }
