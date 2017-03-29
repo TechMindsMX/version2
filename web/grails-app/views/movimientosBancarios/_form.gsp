@@ -1,24 +1,42 @@
-<div class="form-group">
-  <label>Concepto del Movimiento</label>
-  <input type"text" name="concept" class="form-control" required="required"/>
+<div class="row">
+  <div class="col-md-12">
+    <div class="form-group">
+      <label>Concepto:</label>
+      <input type"text" name="concept" class="form-control" required="required"/>
+    </div>
+  </div>
 </div>
-<div class="form-group">
-  <label>Referencia</label>
-  <input type"text" name="reference" class="form-control" />
+<div class="row">
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Referencia:</label>
+      <input type"text" name="reference" class="form-control" />
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Monto:</label>
+      <input type="text" name="amount" class="form-control"  required="required"/>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Fecha:</label>
+      <input class="form-control" type="text" id="datepicker" name="dateEvent" required="required">
+    </div>
+  </div>
 </div>
-<div class="form-group">
-  <label>Monto del Movimiento</label>
-  <input type="text" name="amount" class="form-control"  required="required"/>
-</div>
-<div class="form-group">
-  <label>Fecha del movimiento</label>
-  <input type="text" id="datepicker" name="dateEvent" required="required">
-</div>
-<div class="form-group">
-  <label>Tipo de transaccion</label>
-  <g:select name="type" from="${com.modulus.uno.MovimientoBancarioType.values()}" class="form-control" />
-</div>
-<div class="form-group">
-  <label>Cuenta</label>
-  <b>${movimientosBancarios.cuenta}</b>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Tipo:</label>
+      <g:select id="type" name="type" from="${com.modulus.uno.MovimientoBancarioType.values()}" class="form-control" />
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group" id="reconcilable" style="display:none">
+      <label>Es conciliable:</label>
+      <g:checkBox class="form-control" name="reconcilable" value="${false}" />
+    </div>
+  </div>
 </div>
