@@ -7,7 +7,7 @@ class MovimientosBancarios {
   BigDecimal amount
   Date dateEvent
   MovimientoBancarioType type
-
+  Boolean reconcilable = false
 
   Date dateCreated
   Date lastUpdated
