@@ -24,4 +24,8 @@ class MovimientosBancariosService {
       return true
   }
 
+  List<MovimientosBancarios> findBankingsTransactionsToConciliateForCompany(Company company) {
+    MovimientosBancarios.findAllReconcilableByCuentaInListAndConciliationStatus(company.banksAccounts, ConciliationStatus.TO_APPLY, [sort:"dateEvent", order:"desc"])
+  }
+
 }
