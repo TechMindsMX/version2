@@ -42,7 +42,6 @@
                   <th>Cuenta Destino</th>
                   <th>Empresa</th>
                   <th>Estatus</th>
-                  <th>Cuenta Origen</th>
                 </tr>
                 <g:if test="${cashOutOrderList.isEmpty()}">
                   <div class="alert alert-danger" role="alert">
@@ -66,7 +65,6 @@
                     ${cashoutOrder.company}
                   </td>
                   <td><g:message code="cashOutOrder.status.${cashoutOrder.status}" default="${cashoutOrder.status}"/></td>
-                  <td>${cashoutOrder.timoneAccount}</td>
                 </tr>
                 </g:each>
                 </table>

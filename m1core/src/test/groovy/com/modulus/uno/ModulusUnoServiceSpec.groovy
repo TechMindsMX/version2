@@ -141,7 +141,6 @@ class ModulusUnoServiceSpec extends Specification {
       bankAccount.clabe >> '1234567890'
       def order = new CashOutOrder()
       order.amount = 100
-      order.timoneUuid = company.accounts.first().timoneUuid
       order.account = bankAccount
       order.company = company
       order.save()
@@ -158,15 +157,6 @@ class ModulusUnoServiceSpec extends Specification {
     then:
       1 * stpService.sendPayOrder(_)
       1 * transactionService.saveTransaction(_)
-  }
-
-  void "Should get transactions of account"() {
-    given:
-      AccountStatementCommand command = Mock(AccountStatementCommand)
-    when:
-      service.getTransactionsInPeriodOfIntegrated(command)
-    then:
-      1 * restService.getTransactionsAccount(_ as AccountStatementCommand)
   }
 
   void "Should get transactions of integrator"() {

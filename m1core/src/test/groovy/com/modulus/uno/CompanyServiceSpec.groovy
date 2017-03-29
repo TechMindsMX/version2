@@ -24,6 +24,7 @@ class CompanyServiceSpec extends Specification {
   CollaboratorService collaboratorService = Mock(CollaboratorService)
   DirectorService directorService = Mock(DirectorService)
   RestService restService = Mock(RestService)
+  TransactionService transactionService = Mock(TransactionService)
 
   def setup(){
     service.modulusUnoService = modulusUnoService
@@ -36,6 +37,7 @@ class CompanyServiceSpec extends Specification {
     service.collaboratorService = collaboratorService
     service.directorService = directorService
     service.restService = restService
+    service.transactionService = transactionService
   }
 
   Should "create a direction for a Company"(){
@@ -275,12 +277,12 @@ and:
       company.status = CompanyStatus.ACCEPTED
     and:"An account"
       ModulusUnoAccount account = Mock(ModulusUnoAccount)
-      account.timoneUuid >> "1234567890"
+      account.stpClabe >> "1234567890"
       account.save(validate:false)
       company.accounts = [account]
       company.save(validate:false)
     and:
-      modulusUnoService.consultBalanceOfAccount(company.accounts.first().timoneUuid) >> [100.00,0.00]
+      modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe) >> 100
     when:"Get Balance of company"
       Balance balances = service.getBalanceOfCompany(company)
     then:"Expect a balance and usd amount"
@@ -344,7 +346,7 @@ and:
     then:
       accountStatement.balance.balance == 0
       accountStatement.balanceTransiting == 0
-      1 * modulusUnoService.getTransactionsInPeriodOfIntegrated(_ as AccountStatementCommand)
+      1 * transactionService.getTransactionsAccountForPeriod(_,_,_)
   }
 
   @Unroll
@@ -353,13 +355,13 @@ and:
       Company company = createCompany()
     and:"An account"
       ModulusUnoAccount account = Mock(ModulusUnoAccount)
-      account.timoneUuid   = "1234567890"
+      account.stpClabe   = "1234567890"
       account.save(validate:false)
       company.accounts = [account]
       company.status = CompanyStatus.ACCEPTED
       company.save(validate:false)
     and:
-      modulusUnoService.consultBalanceOfAccount(company.accounts.first().timoneUuid) >> [totalBalance,0]
+      modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe) >> totalBalance
     when:"we check balance to solve amount"
       Boolean result = service.enoughBalanceCompany(company, amount)
     then:
