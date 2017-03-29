@@ -68,4 +68,13 @@ class ConciliationService {
     conciliation.save()
   }
 
+  void applyConciliationWithoutInvoice(Conciliation conciliation) {
+    conciliation.company = conciliation.payment.company
+    conciliation.user = springSecurityService.currentUser
+    conciliation.status = ConciliationStatus.APPLIED
+    log.info "Saving applied conciliation: ${conciliation.dump()}"
+    conciliation.save()
+    paymentService.conciliatePayment(conciliation.payment)
+  }
+
 }
