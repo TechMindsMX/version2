@@ -9,7 +9,7 @@ class PaymentController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def paymentService
-  def saleOrderService
+  def movimientosBancariosService
   def conciliationService
 
   @Transactional(readOnly = true)
@@ -137,8 +137,8 @@ class PaymentController {
   def conciliateBankTransactions() {
     Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankTransactions:"active"]
-    List<SaleOrder> saleOrders = saleOrderService.getSaleOrdersToConciliateFromCompany(company)
-    render view:"conciliation", model:[saleOrders:saleOrders, styleClasses:styleClasses]
+    List<MovimientosBancarios> bankingsTransactions = movimientosBancariosService.findBankingsTransactionsToConciliateForCompany(company)
+    render view:"conciliation", model:[bankingsTransactions:bankingsTransactions, styleClasses:styleClasses]
   }
 
 }
