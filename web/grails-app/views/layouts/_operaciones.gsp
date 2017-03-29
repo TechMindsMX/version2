@@ -1,25 +1,6 @@
 
 <ul class="collapse nav" id="operaciones-${action}">
   <li>
-    <a href="javascript:;" data-parent="#operaciones" data-toggle="collapse" class="accordion-toggle" data-target="#ordenesDeposito-${action}">
-      Depósitos <i class="fa fa-caret-down"></i>
-    </a>
-      <li>
-        <ul class="collapse nav" id="ordenesDeposito-${action}" style="padding-left:2em;">
-          <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
-          <li>
-            <g:link controller="depositOrder" action="create">Nueva</g:link>
-          </li>
-          </sec:ifAnyGranted>
-          <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_OPERATOR_VISOR">
-          <li>
-            <g:link controller="depositOrder" action="list"> Listado</g:link>
-          </li>
-          </sec:ifAnyGranted>
-        </ul>
-      </li>
-  </li>
-  <li>
   <li>
     <a href="javascript:;" data-parent="#operaciones" data-toggle="collapse" class="accordion-toggle" data-target="#cashoutOrder-${action}">
       Retiros <i class="fa fa-caret-down"></i>

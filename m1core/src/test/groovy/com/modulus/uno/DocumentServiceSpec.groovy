@@ -13,7 +13,7 @@ import spock.lang.Ignore
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(DocumentService)
-@Mock([S3Asset,LegalRepresentativesAssets,Company,DepositOrder,User])
+@Mock([S3Asset,LegalRepresentativesAssets,Company,User])
 class DocumentServiceSpec extends Specification {
 
   def s3AssetService = Mock(S3AssetService)
@@ -62,7 +62,7 @@ class DocumentServiceSpec extends Specification {
     given:
       def asset = new S3Asset()
     and:
-      DepositOrder.metaClass.addToDocuments = {
+      FeesReceipt.metaClass.addToDocuments = {
         s3Asset ->
           documents.add(asset)
       }
@@ -74,13 +74,13 @@ class DocumentServiceSpec extends Specification {
     and:
       Company company = new Company().save(validate:false)
     and:
-      def depositOrder = Mock(DepositOrder)
+      def feesReceipt = Mock(FeesReceipt)
     when:
-      service.uploadDocumentForOrder(file,type,depositOrder)
+      service.uploadDocumentForOrder(file,type,feesReceipt)
     then:
       1 * s3AssetService.createTempFilesOfMultipartsFiles(file,type)
       documents.get(0) instanceof S3Asset
-      1 * depositOrder.save()
+      1 * feesReceipt.save()
   }
 
 }

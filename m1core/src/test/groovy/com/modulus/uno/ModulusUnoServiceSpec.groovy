@@ -9,7 +9,7 @@ import java.lang.Void as Should
 
 @TestFor(ModulusUnoService)
 //TODO esto es demasiado para un servicio posible refactor
-@Mock([User,Role,UserRoleCompany,Profile,Company,DepositOrder,ModulusUnoAccount,Commission,SaleOrder,SaleOrderItem, CashOutOrder, Transaction])
+@Mock([User,Role,UserRoleCompany,Profile,Company,ModulusUnoAccount,Commission,SaleOrder,SaleOrderItem, CashOutOrder, Transaction])
 class ModulusUnoServiceSpec extends Specification {
 
   def restService = Mock(RestService)
@@ -47,53 +47,6 @@ class ModulusUnoServiceSpec extends Specification {
       account
       account.stpClabe
   }
-
-  void "generate a cashin to a integrate"() {
-    given:
-      def account = new ModulusUnoAccount(timoneUuid:"qwer23456rty567ty").save(validate:false)
-    and:
-      def company = new Company().save(validate:false)
-      company.addToAccounts(account)
-      def commission = new Commission(fee:0.0, percentage:10, type:CommissionType.DEPOSITO)
-      company.addToCommissions(commission)
-      company.save(validate:false)
-    and:
-      def grailsApplication = new GrailsApplicationMock()
-      service.grailsApplication = grailsApplication
-    and:
-      def order = new DepositOrder()
-      order.amount = 1200
-      order.company = company
-      order.save()
-    when:
-      service.generateACashinForIntegrated(order)
-    then:
-      1 * restService.sendCommandWithAuth(_ as CashinWithCommissionCommand, 'cashin')
-  }
-
-  @Unroll
-  void "should apply fee to order with amount=#amountOrder, fee-commission=#fee, percentage-commission=#percentage and order is not a SaleOrder"() {
-    given:
-       def account = new ModulusUnoAccount(timoneUuid:"qwer23456rty567ty").save(validate:false)
-    and:
-      def commission = new Commission(fee:fee, percentage:percentage, type:CommissionType.DEPOSITO)
-    and:
-      def company = new Company().save(validate:false)
-      company.addToAccounts(account)
-      company.addToCommissions(commission)
-      company.save(validate:false)
-    and:
-      def order = new DepositOrder(company:company, amount:amountOrder)
-      order.save(validate:false)
-    when:
-      FeeCommand feeCommand = service.createFeeCommandFromOrder(order)
-    then:
-      feeCommand.amount == result
-    where:
-      amountOrder | fee | percentage  |  result
-      5000        | 0.0 | 3.0         | 150.00
-      5000        | 5.0 | 0.0         | 5.00
- }
 
  @Unroll
  void "should apply fee to order with fee-commission=#fee, percentage-commission=#percentage and order is a SaleOrder"() {

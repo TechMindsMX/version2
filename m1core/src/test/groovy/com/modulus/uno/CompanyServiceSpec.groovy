@@ -20,7 +20,6 @@ class CompanyServiceSpec extends Specification {
   LoanOrderHelperService loanOrderHelperService = Mock(LoanOrderHelperService)
   FeesReceiptService feesReceiptService = Mock(FeesReceiptService)
   SaleOrderService saleOrderService = Mock(SaleOrderService)
-  DepositOrderService depositOrderService = Mock(DepositOrderService)
   CollaboratorService collaboratorService = Mock(CollaboratorService)
   DirectorService directorService = Mock(DirectorService)
   RestService restService = Mock(RestService)
@@ -33,7 +32,6 @@ class CompanyServiceSpec extends Specification {
     service.loanOrderHelperService = loanOrderHelperService
     service.feesReceiptService = feesReceiptService
     service.saleOrderService = saleOrderService
-    service.depositOrderService = depositOrderService
     service.collaboratorService = collaboratorService
     service.directorService = directorService
     service.restService = restService
@@ -309,11 +307,10 @@ and:
       Company company = createCompany()
     and:
       saleOrderService.getTotalSaleOrderAuthorizedOfCompany(company) >> 100
-      depositOrderService.getTotalDepositOrderAuthorizedOfCompany(company) >> 100
     when:
       def result = service.getBalanceSubjectToCollection(company)
     then:
-      result == 200
+      result == 100
   }
 
   void "Should throw a BusinessException when account statement period is not valid"(){

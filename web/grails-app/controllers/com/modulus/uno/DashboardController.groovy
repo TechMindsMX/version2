@@ -28,7 +28,6 @@ class DashboardController {
   def jobs() {
     Company company = Company.get(session.company)
     [
-    depositOrderAuthorizedCount : DepositOrder.countByStatusAndCompany(DepositOrderStatus.AUTHORIZED, company),
     cashOutOrderAuthorizedCount : CashOutOrder.countByStatusAndCompany(CashOutOrderStatus.AUTHORIZED, company),
     saleOrderAuthorizedCount : SaleOrder.countByStatusAndCompany(SaleOrderStatus.AUTORIZADA, company),
     saleOrderToCancelBillForExecuteCount : SaleOrder.countByStatusAndCompany(SaleOrderStatus.CANCELACION_AUTORIZADA, company),
@@ -45,7 +44,6 @@ class DashboardController {
   def authorizations() {
     Company company = Company.get(session.company)
     render view:'jobs', model:[
-      depositOrderToAuthorizeCount : DepositOrder.countByStatusAndCompany(DepositOrderStatus.VALIDATE, company),
       cashOutOrderToAuthorizeCount : CashOutOrder.countByStatusAndCompany(CashOutOrderStatus.TO_AUTHORIZED, company),
       saleOrderToAuthorizeCount : SaleOrder.countByStatusAndCompany(SaleOrderStatus.POR_AUTORIZAR, company),
       saleOrderToCancelBillForAuthorizeCount : SaleOrder.countByStatusAndCompany(SaleOrderStatus.CANCELACION_POR_AUTORIZAR, company),
