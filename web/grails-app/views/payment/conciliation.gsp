@@ -37,7 +37,9 @@
                 <div role="tabpanel" class="tab-pane ${styleClasses?.tabReferenced}" id="referenced">
                   <g:render template="referencedPayments"/>
                 </div>
-                <div role="tabpanel" class="tab-pane ${styleClasses?.tabNotReferenced}" id="notReferenced">Pagos no referenciados</div>
+                <div role="tabpanel" class="tab-pane ${styleClasses?.tabNotReferenced}" id="notReferenced">
+                  <g:render template="notReferencedPayments"/>
+                </div>
                 <div role="tabpanel" class="tab-pane ${styleClasses?.tabInvoiceWithoutPayment}" id="invoiceWithoutPayment">Conciliar Factura sin pago</div>
               </div>
 

@@ -213,6 +213,10 @@ class SaleOrderService {
     SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
   }
 
+  List<SaleOrder> findOrdersToConciliateForCompany(Company company) {
+    SaleOrder.findAllByCompanyAndStatus(company, SaleOrderStatus.EJECUTADA)
+  }
+
   SaleOrder addPaymentToSaleOrder(SaleOrder saleOrder, BigDecimal amount, BigDecimal changeType) {
     BigDecimal amountPayment = saleOrder.currency == "MXN" ? amount : amount/changeType
     SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amountPayment)
