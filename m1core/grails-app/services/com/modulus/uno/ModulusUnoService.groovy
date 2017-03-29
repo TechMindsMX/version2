@@ -88,6 +88,11 @@ class ModulusUnoService {
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
     }
+    if (!cashOutOrder.company.accounts.first().aliasStp){
+      throw new BusinessException("No se puede procesar el pago porque la cuenta de la empresa aún no está dada de alta en STP")
+    }
+
+
     BigDecimal amount = cashOutOrder.amount.setScale(2, RoundingMode.HALF_UP)
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
@@ -176,6 +181,11 @@ class ModulusUnoService {
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
     }
+
+    if (!order.company.accounts.first().aliasStp){
+      throw new BusinessException("No se puede procesar el pago porque la cuenta de la empresa aún no está dada de alta en STP")
+    }
+
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
     String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
     def data = [

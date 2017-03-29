@@ -20,11 +20,10 @@
     </g:else>
 
     <div class="page-title">
-      <h1>Detalle de la ${messageOrder}</h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-        <li class="active">Detalle de la ${messageOrder} </li>
-      </ol>
+      <h1>
+        <i class="fa fa-shopping-basket fa-3x"></i>
+        Detalle de la ${messageOrder}
+      </h1>
     </div>
 
 

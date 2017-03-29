@@ -17,14 +17,10 @@
 
     <div class="page-title">
       <h1>
-        <i class="icon-proveedor fa-3x"></i>
-        Operaciones / Orden de Compra
+        <i class="fa fa-shopping-basket fa-3x"></i>
+        Operaciones / ${messageOrder}
         <small>Creación de una ${messageOrder}</small>
       </h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> ${company}</li>
-        <li class="active">Crear una ${messageOrder}</li>
-      </ol>
     </div>
 
     <div class="row">
