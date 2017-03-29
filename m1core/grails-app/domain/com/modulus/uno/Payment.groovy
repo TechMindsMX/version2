@@ -7,6 +7,8 @@ class Payment {
   SaleOrder saleOrder
   String rfc
 
+  Transaction transaction
+
   Date dateCreated
   Date lastUpdated
 
@@ -16,5 +18,6 @@ class Payment {
     amount nullable:false
     saleOrder nullable:true
     rfc nullable:true
+    transaction nullable:true
   }
 }

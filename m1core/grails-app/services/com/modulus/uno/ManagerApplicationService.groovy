@@ -15,7 +15,7 @@ class ManagerApplicationService {
 
   def acceptingCompanyToIntegrate(Long companyId, String email) {
     Company company = Company.findById(companyId)
-    ModulusUnoAccount account = modulusUnoService.generedModulusUnoAccountByCompany(company, email)
+    ModulusUnoAccount account = modulusUnoService.generedModulusUnoAccountByCompany(company)
     company.status = CompanyStatus.ACCEPTED
     company.save()
     company

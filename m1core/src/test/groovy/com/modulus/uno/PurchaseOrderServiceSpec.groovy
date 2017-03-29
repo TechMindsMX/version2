@@ -6,7 +6,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(PurchaseOrderService)
-@Mock([BankAccount, BusinessEntity, PurchaseOrder, Company, User, Address, Authorization,PaymentToPurchase, PurchaseOrderItem])
+@Mock([BankAccount, BusinessEntity, PurchaseOrder, Company, User, Address, Authorization,PaymentToPurchase, PurchaseOrderItem, Transaction])
 class PurchaseOrderServiceSpec extends Specification {
 
   def emailSenderService = Mock(EmailSenderService)
@@ -185,7 +185,7 @@ class PurchaseOrderServiceSpec extends Specification {
     when:
       def response = service.payPurchaseOrder(purchaseOrder, PaymentToPurchase.get(1))
     then:
-      response.status == status
+      response.order.status == status
       1 * emailSenderService.notifyPurchaseOrderChangeStatus(purchaseOrder)
       1 * modulusUnoService.payPurchaseOrder(purchaseOrder, PaymentToPurchase.findById(1))
     where:

@@ -6,9 +6,10 @@ import grails.transaction.Transactional
 class FeesReceiptService {
 
   DocumentService documentService
-  RestService restService
+  StpService stpService
   def emailSenderService
   def grailsApplication
+  TransactionService transactionService
 
   def addAuthorizationToFeesReceipt(FeesReceipt feesReceipt, User user){
     Authorization authorization = new Authorization(user:user)
@@ -36,9 +37,54 @@ class FeesReceiptService {
   }
 
   def executeFeesReceipt(FeesReceipt feesReceipt){
-    def command = createFeesReceiptCommand(feesReceipt)
-    restService.sendCommandWithAuth(command, grailsApplication.config.modulus.receiptCreate)
+    String fullConcept = "HONORARIOS ID:${feesReceipt.id}, ${feesReceipt.collaboratorName}"
+    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
+    def data = [
+        institucionContraparte: feesReceipt.bankAccount.banco.bankingCode,
+        empresa: feesReceipt.company.accounts.first().aliasStp,
+        fechaDeOperacion: new Date().format("yyyyMMdd"),  
+        folioOrigen: "",
+        claveDeRastreo: new Date().toTimestamp(),
+        institucionOperante: grailsApplication.config.stp.institutionOperation,
+        montoDelPago: feesReceipt.amount + feesReceipt.iva - feesReceipt.ivaWithHolding - feesReceipt.isr,
+        tipoDelPago: "1",
+        tipoDeLaCuentaDelOrdenante: "",
+        nombreDelOrdenante: feesReceipt.company.bussinessName,
+        cuentaDelOrdenante: "",
+        rfcCurpDelOrdenante: "",
+        tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
+        nombreDelBeneficiario: feesReceipt.collaboratorName,
+        cuentaDelBeneficiario: feesReceipt.bankAccount.clabe,
+        rfcCurpDelBeneficiario: "NA",
+        emailDelBeneficiario: "mailBeneficiary@mail.com",
+        tipoDeCuentaDelBeneficiario2: "",
+        nombreDelBeneficiario2: "",
+        cuentaDelBeneficiario2: "",
+        rfcCurpDelBeneficiario2: "",
+        conceptoDelPago: adjustConcept,
+        conceptoDelPago2: "",
+        claveDelCatalogoDeUsuario1: "",
+        claveDelCatalogoDeUsuario2: "",
+        claveDelPago: "",
+        referenciaDeCobranza: "",
+        referenciaNumerica: "1${new Date().format("yyMMdd")}",
+        tipoDeOperación: "",
+        topologia: "",
+        usuario: "",
+        medioDeEntrega: "",
+        prioridad: "",
+        iva: ""
+    ]
+    String keyTransaction = stpService.sendPayOrder(data)
+    Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
+    amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:feesReceipt.company.accounts.first().stpClabe,
+    referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
+    transactionStatus:TransactionStatus.AUTHORIZED]
+    Transaction transaction = new Transaction(parameters)
+    transactionService.saveTransaction(transaction)
     feesReceipt.status = FeesReceiptStatus.EJECUTADA
+    feesReceipt.transaction = transaction
+    //TODO Esto no deberia de ser flush true
     feesReceipt.save flush:true
     emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
     feesReceipt
@@ -49,22 +95,5 @@ class FeesReceiptService {
     feesReceipt.save flush:true
     emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
   }
-
-  private def createFeesReceiptCommand(FeesReceipt feesReceipt){
-    String fullConcept = "HONORARIOS ID:${feesReceipt.id}, ${feesReceipt.collaboratorName}"
-    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
-    new FeesReceiptModulusunoCommand(
-      uuid:feesReceipt.company.accounts.first().timoneUuid,
-      clabe:feesReceipt.bankAccount.clabe,
-      bankCode:feesReceipt.bankAccount.banco.bankingCode,
-      amount: feesReceipt.amount + feesReceipt.iva - feesReceipt.ivaWithHolding - feesReceipt.isr,
-      iva:feesReceipt.ivaWithHolding,
-      isr:feesReceipt.isr,
-      beneficiary:feesReceipt.collaboratorName,
-      concept:adjustConcept,
-      payerName:feesReceipt.company.accounts.first().aliasStp,
-      payerClabe:feesReceipt.company.accounts.first().stpClabe
-    )
-  }
-
+  
 }
