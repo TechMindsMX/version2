@@ -1,22 +1,22 @@
 <div class="table-responsive">
   <table class="table">
     <tr>
-      <th>Folio</th>
-      <th>Cliente</th>
-      <th>Total</th>
-      <th>Por pagar</th>
-      <th>Moneda</th>
+      <th>Fecha</th>
+      <th>Cuenta Bancaria</th>
+      <th>Concepto</th>
+      <th>Referencia</th>
+      <th>Monto</th>
       <th></th>
     </tr>
-    <g:each in="${saleOrders}" var="saleOrder">
+    <g:each in="${bankingsTransactions}" var="transaction">
     <tr>
-      <td>${saleOrder.id}</td>
-      <td>${saleOrder.clientName}</td>
-      <td>${modulusuno.formatPrice(number: saleOrder.total)}</td>
-      <td>${modulusuno.formatPrice(number: saleOrder.amountToPay)}</td>
-      <td>${saleOrder.currency}</td>
+      <td><g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/></td>
+      <td>${transaction.cuenta}</td>
+      <td>${transaction.concept}</td>
+      <td>${transaction.reference}</td>
+      <td>${modulusuno.formatPrice(number: transaction.amount)}</td>
       <td class="text-center">
-        <g:link class="btn btn-primary" controller="conciliation" action="conciliateInvoiceWithoutPayment" id="${saleOrder.id}">Conciliar</g:link>
+        <g:link class="btn btn-primary" controller="conciliation" action="conciliateBankingTransaction" id="${transaction.id}">Elegir Factura</g:link>
       </td>
     </tr>
     </g:each>
