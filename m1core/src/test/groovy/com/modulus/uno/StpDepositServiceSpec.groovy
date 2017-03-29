@@ -26,6 +26,7 @@ class StpDepositServiceSpec extends Specification {
       ModulusUnoAccount m1Account = Mock(ModulusUnoAccount)
       m1Account.save(validate:false)
       ModulusUnoAccount.metaClass.static.findByStpClabe = { m1Account }
+      ModulusUnoAccount.metaClass.static.findByStpClabeLike = { [stpClabe:"646180132400800007"] }
     and:
       ClientLink.metaClass.static.findByStpClabe = { null }
     when:"We process the notification"
@@ -44,6 +45,7 @@ class StpDepositServiceSpec extends Specification {
       StpDeposit.metaClass.static.findAllByOperationNumberAndTracingKeyAndIdNotEqualAndStatusNotEqual = { [] }
     and:
       ModulusUnoAccount.metaClass.static.findByStpClabe = { null }
+      ModulusUnoAccount.metaClass.static.findByStpClabeLike = { [stpClabe:"646180132400800007"] }
     and:
       ClientLink client = Mock(ClientLink)
       client.save(validate:false)
@@ -64,6 +66,7 @@ class StpDepositServiceSpec extends Specification {
       StpDeposit.metaClass.static.findAllByOperationNumberAndTracingKeyAndIdNotEqualAndStatusNotEqual = { [] }
     and:
       ModulusUnoAccount.metaClass.static.findByStpClabe = { null }
+      ModulusUnoAccount.metaClass.static.findByStpClabeLike = { [stpClabe:"646180132400800007"] }
     and:
       ClientLink.metaClass.static.findByStpClabe = { null }
     when:"We process the notification"
@@ -83,7 +86,7 @@ class StpDepositServiceSpec extends Specification {
       payerName: "Makingdevs",
       beneficiaryName: "Techminds",
       typeAccountBeneficiary: "40".toLong(),
-      accountBeneficiary: "clabe",
+      accountBeneficiary: "${clabe}",
       rfcCurpBeneficiary: "RFC121212ABC",
       paymentConcept: "prueba concepto",
       numericalReference: "2".toLong(),
