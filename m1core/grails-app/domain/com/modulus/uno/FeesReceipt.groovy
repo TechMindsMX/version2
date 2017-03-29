@@ -15,6 +15,9 @@ class FeesReceipt {
   RejectReason rejectReason
   String comments
 
+  Date dateCreated
+  Date lastUpdated
+
   static belongsTo = [company:Company]
   static hasMany = [documents:S3Asset, authorizations: Authorization]
 
