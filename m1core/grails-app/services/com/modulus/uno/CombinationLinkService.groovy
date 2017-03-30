@@ -5,7 +5,7 @@ import grails.transaction.Transactional
 @Transactional
 class CombinationLinkService {
 
-  CombinationLink createCombinationLinkForThisInstance(def instance,Combination combination){
+  CombinationLink createCombinationLinkForInstance(def instance,Combination combination){
     if(!Linker.class.isAssignableFrom(instance.class)){
       throw new RuntimeException("Linker is not assignable from ${instance.class.simpleName}")
     }

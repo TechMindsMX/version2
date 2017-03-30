@@ -126,35 +126,35 @@ class MachineService {
     transitions*.stateTo
   }
 
-  void saveMachine(Machine machine){
+  Machine saveMachine(Machine machine){
     State initialState = machine.initialState
     Transition initialTransition = machine.transitions.find{ it.stateFrom.name == initialState.name }
     ArrayList<Transition> stateTransitions = machine.transitions.findAll{ transition -> (transition.stateFrom.name != initialTransition.stateFrom.name || transition.stateTo.name != initialTransition.stateTo.name) }
 
-    if(initialTransition){
-      ArrayList<String> actions = []
-      actions.addAll(0,initialTransition.actions)
-      Machine newMachine = createMachineWithActions(initialTransition.stateFrom.name.toUpperCase(),initialTransition.stateTo.name.toUpperCase(),actions)
-      ArrayList<State> states = [initialState,initialTransition.stateTo]
-      ArrayList<Transition> transitionsToSave = []
+    ArrayList<String> actions = []
+    actions.addAll(0,initialTransition.actions)
+    Machine newMachine = createMachineWithActions(initialTransition.stateFrom.name.toUpperCase(),initialTransition.stateTo.name.toUpperCase(),actions)
+    ArrayList<State> states = [initialState,initialTransition.stateTo]
+    ArrayList<Transition> transitionsToSave = []
 
-      while(states){
-        State s = states.remove(0)
-        State state = newMachine.states.find{ it.name == s.name.toUpperCase() }
-        transitionsToSave = stateTransitions.findAll{ it.stateFrom.name == s.name }
-        stateTransitions.removeAll{ it.stateFrom.name == s.name }
-        
-        transitionsToSave.each{ transition ->
-          transition.actions.each{ action ->
-            createTransition(state.id,transition.stateTo.name.toUpperCase(),action)
-          }
-          states << transition.stateTo
+    while(states){
+      State s = states.remove(0)
+      State state = newMachine.states.find{ it.name == s.name.toUpperCase() }
+      transitionsToSave = stateTransitions.findAll{ it.stateFrom.name == s.name }
+      stateTransitions.removeAll{ it.stateFrom.name == s.name }
+      
+      transitionsToSave.each{ transition ->
+        transition.actions.each{ action ->
+          createTransition(state.id,transition.stateTo.name.toUpperCase(),action)
         }
+        states << transition.stateTo
       }
     }
+
+    machine
   }
 
-  void updateMachine(Long machineId,Machine machine){
+  Machine updateMachine(Long machineId,Machine machine){
     Machine machineToUpdate = Machine.get(machineId)
     machineToUpdate.initialState.name = machine.initialState.name.toUpperCase()
     machineToUpdate.initialState.save()
@@ -194,6 +194,7 @@ class MachineService {
       }
     }
 
+    machineToUpdate
   }
 
   ArrayList<Transition> findTransitionsForStates(ArrayList<State> states){
