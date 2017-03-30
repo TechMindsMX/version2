@@ -9,6 +9,7 @@ class ConciliationService {
   def springSecurityService
   def saleOrderService
   def paymentService
+  def movimientosBancariosService
 
   def getTotalToApplyForPayment(Payment payment) {
     def conciliations = getConciliationsToApplyForPayment(payment)
@@ -60,6 +61,13 @@ class ConciliationService {
     }
   }
 
+  void cancelConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    List<Conciliation> conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    conciliations.each {
+      deleteConciliation(it)
+    }
+  }
+
   List<Conciliation> getConciliationsAppliedForPayment(Payment payment) {
     Conciliation.findAllByPaymentAndStatus(payment, ConciliationStatus.APPLIED)
   }
@@ -70,7 +78,15 @@ class ConciliationService {
       applyConciliation(conciliation)
     }
     paymentService.conciliatePayment(payment)
- }
+  }
+
+  void applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    List<Conciliation> conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    conciliations.each { conciliation ->
+      applyConciliation(conciliation)
+    }
+    movimientosBancariosService.conciliateBankingTransaction(bankingTransaction)
+  }
 
   private applyConciliation(Conciliation conciliation) {
     saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
