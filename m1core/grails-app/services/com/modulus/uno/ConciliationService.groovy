@@ -72,6 +72,10 @@ class ConciliationService {
     Conciliation.findAllByPaymentAndStatus(payment, ConciliationStatus.APPLIED)
   }
 
+  List<Conciliation> getConciliationsAppliedForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    Conciliation.findAllByBankingTransactionAndStatus(bankingTransaction, ConciliationStatus.APPLIED)
+  }
+
   void applyConciliationsForPayment(Payment payment) {
     List<Conciliation> conciliations = getConciliationsToApplyForPayment(payment)
     conciliations.each { conciliation ->
