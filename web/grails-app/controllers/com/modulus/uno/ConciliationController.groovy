@@ -96,9 +96,25 @@ class ConciliationController {
     redirect controller:"payment", action:"conciliation"
   }
 
-  def conciliateInvoiceWithoutPayment(SaleOrder saleOrder) {
-    log.info "SaleOrder to conciliate without payment: ${saleOrder.dump()}"
-    [saleOrder:saleOrder]
+  private List<SaleOrder> getSaleOrdersToListForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    Company company = Company.get(session.company)
+    List<SaleOrder> saleOrders = saleOrderService.findOrdersToConciliateForCompany(company)
+    List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
+    List<SaleOrder> saleOrdersFiltered = saleOrders.findAll { saleOrder ->
+      if (!conciliations.find { conciliation -> conciliation.saleOrder.id == saleOrder.id }){
+        saleOrder
+      }
+    }
+    saleOrdersFiltered
+  }
+
+  def chooseInvoiceToConciliateWithBankingTransaction(MovimientosBancarios bankingTransaction) {
+    log.info "Banking Transaction to conciliate: ${bankingTransaction.dump()}"
+    BigDecimal toApply = conciliationService.getTotalToApplyForBankingTransaction(bankingTransaction)
+    List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    List<SaleOrder> saleOrders = getSaleOrdersToListForBankingTransaction(bankingTransaction)
+
+    [bankingTransaction:bankingTransaction, saleOrders:saleOrders, toApply:toApply, conciliations:conciliations]
   }
 
   @Transactional
