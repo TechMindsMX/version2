@@ -20,7 +20,7 @@ class CombinationLinkServiceSpec extends Specification {
                                                 classRight:machine.class.simpleName,
                                                 rightInstanceId:machine.id)
     when:
-      CombinationLink combinationLink = service.createCombinationLinkForThisInstance(instance,combination)
+      CombinationLink combinationLink = service.createCombinationLinkForInstance(instance,combination)
     then:
       combinationLink.type == instance.class.simpleName
       combinationLink.instanceRef == instance.id
@@ -34,7 +34,7 @@ class CombinationLinkServiceSpec extends Specification {
     and:"the combination"
       Combination combination = createCombination()
     when:
-      CombinationLink combinationLink = service.createCombinationLinkForThisInstance(instance,combination)
+      CombinationLink combinationLink = service.createCombinationLinkForInstance(instance,combination)
     then:
       !combinationLink.id
   }
