@@ -8,6 +8,7 @@ class Address {
   String suite
   String zipCode
   String colony
+  String neighboorhood
   String country
   String city
   String town
@@ -21,7 +22,8 @@ class Address {
     streetNumber blank:false,nullable:false
     suite nullable:true
     zipCode blank:false,nullable:false
-    colony blank:false,nullable:false
+    colony blank:true,nullable:true
+    neighboorhood blank:true,nullable:true
     country blank:false,nullable:false
     city blank:false,nullable:false
     federalEntity blank:false,nullable:false
@@ -33,7 +35,7 @@ class Address {
   }
 
   String info(){
-    "$street  $streetNumber Col. $colony  $country  $city  $town C.P $zipCode  $federalEntity Tipo:$addressType"
+    "$street  $streetNumber Col. ${neighboorhood ?: colony}  $country  $city  $town C.P $zipCode  $federalEntity Tipo:$addressType"
   }
 
 
@@ -46,6 +48,7 @@ class Address {
        suite: m.suite,
        zipCode: m.zipCode,
        colony: m.colony,
+       neighboorhood: m.neighboorhood,
        country: m.country,
        city: m.city,
        town: m.town,
