@@ -35,5 +35,6 @@ databaseChangeLog = {
   include file: 'droping-columns-timone-from-cashout-order.groovy'
   include file: 'adding-notification-for-state.groovy'
   include file: 'deleting-deposit-order.groovy'
+  include file: 'adding-neighboorhood-to-address.groovy'
 
 }

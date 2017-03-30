@@ -27,7 +27,7 @@ class InvoiceService {
     command.emisor.datosFiscales.pais = address.country
     command.emisor.datosFiscales.ciudad = address.city
     command.emisor.datosFiscales.delegacion = address.town
-    command.emisor.datosFiscales.colonia = address.colony
+    command.emisor.datosFiscales.colonia = address.neighboorhood ?: address.colony
     command.emisor.datosFiscales.calle = address.street
     command.emisor.datosFiscales.noExterior = address.streetNumber
     command.emisor.datosFiscales.noInterior = address.suite ?: "SN"
