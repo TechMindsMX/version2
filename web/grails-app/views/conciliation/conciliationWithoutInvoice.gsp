@@ -8,8 +8,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-usd fa-3x"></i>
-        Conciliación de Pago
-        <small>Conciliar pago sin factura</small>
+        Conciliación de Cobros
+        <small>Conciliar cobro sin factura</small>
       </h1>
     </div>
 
