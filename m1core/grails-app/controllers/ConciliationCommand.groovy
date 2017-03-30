@@ -23,7 +23,7 @@ class ConciliationCommand implements Validateable {
     new Conciliation(
       payment:this.paymentId ? Payment.get(this.paymentId) : null,
       saleOrder:this.saleOrderId ? SaleOrder.get(this.saleOrderId) : null,
-      bankingTransaciont:this.bankingTransaciontId ? MovimientosBancarios.get(this.bankingTransaciontId) : null,
+      bankingTransaction:this.bankingTransactionId ? MovimientosBancarios.get(this.bankingTransactionId) : null,
       changeType:getValueInBigDecimal(this.changeType),
       amount:getValueInBigDecimal(this.amountToApply),
       comment:this.comment
