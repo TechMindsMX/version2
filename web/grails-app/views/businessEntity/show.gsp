@@ -86,7 +86,7 @@
               <ul>
                 <g:each var="address" in="${businessEntity.addresses.sort{it.id}}">
                 <g:link controller="address" action="edit" id="${address.id}" params="[relation:relation, businessEntityId:businessEntity.id]">
-                <li class="subList">${address.addressType}: ${address.street} #${address.streetNumber} - ${address.suite} CP ${address.zipCode}, ${address.colony}, ${address.city}, ${address.town}. ${address.federalEntity}, ${address.country}</li>
+                <li class="subList">${address.addressType}: ${address.street} #${address.streetNumber} - ${address.suite} CP ${address.zipCode}, ${address.neighboorhood ?: address.colony}, ${address.city}, ${address.town}. ${address.federalEntity}, ${address.country}</li>
                   </g:link>
                 </g:each>
               </ul>
