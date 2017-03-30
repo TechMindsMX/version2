@@ -196,4 +196,8 @@ class MachineService {
 
   }
 
+  ArrayList<Transition> findTransitionsForStates(ArrayList<State> states){
+    states ? Transition.findAllByStateFromInList(states) : []
+  }
+
 }

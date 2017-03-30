@@ -3,7 +3,8 @@ package com.modulus.uno
 import grails.transaction.Transactional
 import com.modulus.uno.machine.MachineEventImplementer
 
-class EventNotificationService implements MachineEventImplementer {
+@Transactional
+class EventEmailerImplementerService implements MachineEventImplementer {
   
   NotificationForStateService notificationForStateService
   def notifyService
@@ -14,6 +15,7 @@ class EventNotificationService implements MachineEventImplementer {
     Class clazz = grailsApplication.domainClasses.find { it.clazz.simpleName == className }.clazz
     def instance = clazz.findById(instanceId)
     def state = machineService.getCurrentStateOfInstance(instance)
+    
     ArrayList<NotificationForState> notifys = notificationForStateService.findByState(state.id)
     notifyService.sendEmailToGroup(notifys, instance.getNotificationData())
   }

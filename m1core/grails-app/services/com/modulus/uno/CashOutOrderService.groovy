@@ -41,11 +41,11 @@ class CashOutOrderService {
     def statusOrders = getCashoutOrderStatus(params.status)
     def cashoutOrders = [:]
     if(company){
-      cashoutOrders.list = CashOutOrder.findAllByCompanyAndStatusInList(Company.get(company), statusOrders)
-      cashoutOrders.items = CashOutOrder.countByCompanyAndStatusInList(Company.get(company), statusOrders)
+      cashoutOrders.list = CashOutOrder.findAllByCompanyAndStatusInList(Company.get(company), statusOrders, params)
+      cashoutOrders.items = CashOutOrder.countByCompanyAndStatusInList(Company.get(company), statusOrders, params)
     } else{
-      cashoutOrders.list = CashOutOrder.findAllByStatusInList(statusOrders)
-      cashoutOrders.items = CashOutOrder.countByStatusInList(statusOrders)
+      cashoutOrders.list = CashOutOrder.findAllByStatusInList(statusOrders, params)
+      cashoutOrders.items = CashOutOrder.countByStatusInList(statusOrders, params)
     }
     cashoutOrders
   }

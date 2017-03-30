@@ -8,6 +8,6 @@
         <i class="fa fa-book"></i> Ejecuciones
       </g:link>
     </li>
-    <li><g:link controller="payment" action="conciliation">Conciliación de Pagos</g:link></li>
+    <li><g:link controller="payment" action="conciliation">Conciliación de Cobros</g:link></li>
   </ul>
 </li>

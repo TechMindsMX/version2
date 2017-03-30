@@ -173,6 +173,21 @@ class MachineServiceSpec extends Specification {
       machine.transitions.size() == 3
   }
 
+  Should "Get the transitions for the states"(){
+    given:"the states"
+      ArrayList<State> states = [new State(name:"created").save(validate:false),new State(name:"waitingForAuthorization").save(validate:false),
+        new State(name:"canceled").save(validate:false),new State(name:"authorized").save(validate:false)]
+    and:"the transitions"
+      ArrayList<Transition> transitions = [new Transition(stateFrom: State.findByName("created"), stateTo:State.findByName("waitingForAuthorization"), actions: ["ASK FOR AUTHORIZATION"]), 
+                                            new Transition(stateFrom: State.findByName("waitingForAuthorization"), stateTo:State.findByName("canceled"), actions: ["CANCEL"]),
+                                            new Transition(stateFrom: State.findByName("waitingForAuthorization"), stateTo:State.findByName("authorized"), actions: ["AUTHORIZE"])]
+      transitions*.save(validate:false)
+    when:
+      ArrayList<Transition> stateTransitions = service.findTransitionsForStates([states[0], states[3]])
+    then:
+      stateTransitions.size() == 1
+  }
+
   void createMachine(){
     ArrayList<String> actions = ["Service","Insert Card","Cancel","Fix","Finish"]
     ArrayList<String> states = ["Idle","Out Of Service","Active"]

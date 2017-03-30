@@ -9,7 +9,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-usd fa-3x"></i>
-        Conciliación de Pagos
+        Conciliación de Cobros
       </h1>
     </div>
 
@@ -22,10 +22,10 @@
               <!-- Nav tabs -->
               <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="${styleClasses?.tabReferenced}">
-                  <g:link action="referencedPayments">Pagos Referenciados</g:link>
+                  <g:link action="referencedPayments">Cobros Referenciados</g:link>
                 </li>
                 <li role="presentation" class="${styleClasses?.tabNotReferenced}">
-                  <g:link action="notReferencedPayments">Pagos no Referenciados</g:link>
+                  <g:link action="notReferencedPayments">Cobros no Referenciados</g:link>
                 </li>
                 <li role="presentation" class="${styleClasses?.tabInvoiceWithoutPayment}">
                   <g:link action="conciliateInvoicesWithoutPayments">Conciliar Facturas sin pago</g:link>
