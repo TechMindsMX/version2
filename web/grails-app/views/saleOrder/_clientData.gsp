@@ -19,7 +19,7 @@
         <dd>
         ${address.street}<br>
         ${address.streetNumber} ${address.suite}<br>
-        ${address.colony}<br>
+        ${address.neighboorhood ?: address.colony}<br>
         ${address.country}, ${address.federalEntity}<br>
         ${address.zipCode}<br>
         ${address.city}, ${address.town}<br>

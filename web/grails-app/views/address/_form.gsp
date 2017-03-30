@@ -8,7 +8,7 @@
     <g:select name="colony" from="${[]}" class="form-control" noSelection="['':'-Selecciona tu colonia-']"/>
   <br/>
   <strong>¿No está tu colonia?, escribela aquí:</strong>
-  &nbsp;<input type="text" class="text" name="neighboorhood" id="neighboorhood"/>
+  &nbsp;<input type="text" value="${address.neighboorhood}" class="text" name="neighboorhood" id="neighboorhood"/>
   <br/><br/>
   <f:field property="town" label="${message(code:"address.town")}" wrapper="home"/>
   <f:field property="country" wrapper="home" label="${message(code:"address.country")}" value="${message(code:"address.country.value")}"/>
