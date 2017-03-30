@@ -25,4 +25,5 @@ databaseChangeLog = {
   include file: 'adding-uuid-to-machine.groovy'
   include file: 'adding-notification-for-state.groovy'
   include file: 'adding-mock-machine-class.groovy'
+  include file: 'adding-the-linker-structure.groovy'
 }
