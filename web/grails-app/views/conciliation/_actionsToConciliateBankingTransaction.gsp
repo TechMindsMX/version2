@@ -18,7 +18,7 @@
             ¿Está seguro de cancelar la conciliación (se eliminarán los datos seleccionados)?
           </div>
           <div class="modal-footer">
-            <g:link action="cancelConciliation" id="${payment.id}" class="btn btn-primary">
+            <g:link action="cancelConciliationBankingTransaction" id="${bankingTransaction.id}" class="btn btn-primary">
             Sí
             </g:link>
             <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
@@ -30,7 +30,7 @@
   </div>
   <div class="col-md-4 text-center">
     <g:if test="${conciliations && toApply == 0}">
-      <g:link action="applyConciliationsForPayment" id="${payment.id}" class="btn btn-success">Aplicar</g:link>
+      <g:link action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}" class="btn btn-success">Aplicar</g:link>
     </g:if>
     <g:if test="${!conciliations}">
     <div class="alert alert-warning" role="alert">No ha agregado facturas</div>

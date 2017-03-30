@@ -19,7 +19,7 @@
           <div class="panel-body">
             <div class="container-fluid">
 
-              <g:render template="dataPayment"/>
+              <g:render template="dataBankingTransaction"/>
               <hr>
               <g:if test="${toApply > 0}">
                 <g:if test="${flash.message}">
@@ -27,7 +27,7 @@
                 </g:if>
 
                 <g:form action="addSaleOrderToConciliate">
-                  <g:render template="addInvoiceToConciliate"/>
+                  <g:render template="addInvoiceToConciliateBankingTransaction"/>
                 </g:form>
                 <hr>
               </g:if>
@@ -67,7 +67,7 @@
               <hr>
               </g:if>
 
-              <g:render template="actions"/>
+              <g:render template="actionsToConciliateBankingTransaction"/>
 
             </div>
           </div>

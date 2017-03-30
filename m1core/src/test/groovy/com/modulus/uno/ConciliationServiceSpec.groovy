@@ -6,17 +6,19 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(ConciliationService)
-@Mock([Conciliation, Payment, SaleOrder, SaleOrderPayment, SaleOrderItem, Company])
+@Mock([Conciliation, Payment, SaleOrder, SaleOrderPayment, SaleOrderItem, Company, MovimientosBancarios])
 class ConciliationServiceSpec extends Specification {
 
   SaleOrderService saleOrderService = Mock(SaleOrderService)
   PaymentService paymentService = Mock(PaymentService)
+  MovimientosBancariosService movimientosBancariosService = Mock(MovimientosBancariosService)
   def springSecurityService = [currentUser:Mock(User)]
 
   def setup() {
     service.saleOrderService = saleOrderService
     service.paymentService = paymentService
     service.springSecurityService = springSecurityService
+    service.movimientosBancariosService = movimientosBancariosService
   }
 
   void "Should get 1000 to apply for payment with amount 1000 and conciliations is empty"() {
@@ -159,6 +161,91 @@ class ConciliationServiceSpec extends Specification {
     then:
       conciliation.status == ConciliationStatus.APPLIED
       1 * saleOrderService.addPaymentToSaleOrder(_, _, _)
+  }
+
+  void "Should get 1000 to apply for banking transaction with amount 1000 and conciliations is empty"() {
+    given:"A banking transaction"
+      MovimientosBancarios bankingTransaction = new MovimientosBancarios(amount:1000)
+      bankingTransaction.save(validate:false)
+    and:"The existing conciliations to apply for banking transaction"
+      service.getConciliationsToApplyForBankingTransaction(_) >> []
+    when:
+      def totalToApply = service.getTotalToApplyForBankingTransaction(bankingTransaction)
+    then:
+      totalToApply == 1000
+  }
+
+  void "Should get 0 to apply for banking transaction with amount 1000 and conciliations sum is 1000"() {
+    given:"A banking transaction"
+      MovimientosBancarios bankingTransaction = new MovimientosBancarios(amount:1000)
+      bankingTransaction.save(validate:false)
+    and:"The existing conciliations to apply for banking transaction"
+      Conciliation conciliation = new Conciliation(amount:1000, bankingTransaction:bankingTransaction).save(validate:false)
+      def conciliations = [conciliation]
+      service.getConciliationsToApplyForBankingTransaction(_) >> conciliations
+    when:
+      def totalToApply = service.getTotalToApplyForBankingTransaction(bankingTransaction)
+    then:
+      totalToApply == 0
+  }
+
+  void "Should get 500 to apply for banking transaction with amount 1000 and conciliations sum is 500"() {
+    given:"A banking transaction"
+      MovimientosBancarios bankingTransaction = new MovimientosBancarios(amount:1000)
+      bankingTransaction.save(validate:false)
+    and:"The existing conciliations to apply for banking transaction"
+      Conciliation conciliation1 = new Conciliation(amount:300, bankingTransaction:bankingTransaction).save(validate:false)
+      Conciliation conciliation2 = new Conciliation(amount:200, bankingTransaction:bankingTransaction).save(validate:false)
+      def conciliations = [conciliation1, conciliation2]
+      service.getConciliationsToApplyForBankingTransaction(_) >> conciliations
+    when:
+      def totalToApply = service.getTotalToApplyForBankingTransaction(bankingTransaction)
+    then:
+      totalToApply == 500
+  }
+
+  void "Should delete all conciliations for a banking transaction"() {
+    given:"A banking transaction"
+      MovimientosBancarios bankingTransaction = new MovimientosBancarios(amount:1000).save(validate:false)
+    and:"The existing conciliations to apply for banking transaction"
+      Conciliation conciliation1 = new Conciliation(amount:300, bankingTransaction:bankingTransaction).save(validate:false)
+      Conciliation conciliation2 = new Conciliation(amount:200, bankingTransaction:bankingTransaction).save(validate:false)
+      def conciliations = [conciliation1, conciliation2]
+      service.getConciliationsToApplyForBankingTransaction(bankingTransaction) >> conciliations
+    when:
+      service.cancelConciliationsForBankingTransaction(bankingTransaction)
+    then:
+      service.getConciliationsToApplyForBankingTransaction(bankingTransaction) == []
+  }
+
+  void "Should apply conciliations for a banking transaction"() {
+   given:"A company"
+      Company company = new Company().save(validate:false)
+   and:"A banking transaction"
+      MovimientosBancarios bankingTransaction = new MovimientosBancarios(amount:5000).save(validate:false)
+    and:"The sale orders"
+      SaleOrder saleOrder1 = new SaleOrder()
+      SaleOrderItem item1 = new SaleOrderItem(price:3000, quantity:1, ieps:0, iva:0, discount:0).save(validate:false)
+      saleOrder1.addToItems(item1)
+      saleOrder1.save(validate:false)
+      SaleOrder saleOrder2 = new SaleOrder()
+      SaleOrderItem item2 = new SaleOrderItem(price:2000, quantity:1, ieps:0, iva:0, discount:0).save(validate:false)
+      saleOrder2.addToItems(item2)
+      saleOrder2.save(validate:false)
+    and:"A user"
+      User user = Mock(User)
+    and:"The existing conciliations to apply for payment"
+      Conciliation conciliation1 = new Conciliation(amount:3000, bankingTransaction:bankingTransaction, status:ConciliationStatus.TO_APPLY, saleOrder:saleOrder1, company:company, user:user, changeType:0).save(validate:false)
+      Conciliation conciliation2 = new Conciliation(amount:2000, bankingTransaction:bankingTransaction, status:ConciliationStatus.TO_APPLY, saleOrder:saleOrder2, company:company, user:user, changeType:0).save(validate:false)
+      def conciliations = [conciliation1, conciliation2]
+      service.getConciliationsToApplyForBankingTransaction(bankingTransaction) >> conciliations
+    when:
+      service.applyConciliationsForBankingTransaction(bankingTransaction)
+    then:
+      service.getConciliationsToApplyForBankingTransaction(bankingTransaction) == []
+      service.getConciliationsAppliedForBankingTransaction(bankingTransaction) == conciliations
+      2 * saleOrderService.addPaymentToSaleOrder(_, _, _)
+      1 * movimientosBancariosService.conciliateBankingTransaction(_)
   }
 
 }

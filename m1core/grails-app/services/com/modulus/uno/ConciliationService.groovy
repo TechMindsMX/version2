@@ -9,6 +9,7 @@ class ConciliationService {
   def springSecurityService
   def saleOrderService
   def paymentService
+  def movimientosBancariosService
 
   def getTotalToApplyForPayment(Payment payment) {
     def conciliations = getConciliationsToApplyForPayment(payment)
@@ -16,8 +17,18 @@ class ConciliationService {
     payment.amount - applied
   }
 
+  def getTotalToApplyForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    def conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    BigDecimal applied = conciliations ? conciliations*.amount.sum() : new BigDecimal(0)
+    bankingTransaction.amount - applied
+  }
+
   List<Conciliation> getConciliationsToApplyForPayment(Payment payment) {
     Conciliation.findAllByPaymentAndStatus(payment, ConciliationStatus.TO_APPLY)
+  }
+
+  List<Conciliation> getConciliationsToApplyForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    Conciliation.findAllByBankingTransactionAndStatus(bankingTransaction, ConciliationStatus.TO_APPLY)
   }
 
   void saveConciliationForCompany(Conciliation conciliation, Company company) {
@@ -50,8 +61,19 @@ class ConciliationService {
     }
   }
 
+  void cancelConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    List<Conciliation> conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    conciliations.each {
+      deleteConciliation(it)
+    }
+  }
+
   List<Conciliation> getConciliationsAppliedForPayment(Payment payment) {
     Conciliation.findAllByPaymentAndStatus(payment, ConciliationStatus.APPLIED)
+  }
+
+  List<Conciliation> getConciliationsAppliedForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    Conciliation.findAllByBankingTransactionAndStatus(bankingTransaction, ConciliationStatus.APPLIED)
   }
 
   void applyConciliationsForPayment(Payment payment) {
@@ -60,7 +82,15 @@ class ConciliationService {
       applyConciliation(conciliation)
     }
     paymentService.conciliatePayment(payment)
- }
+  }
+
+  void applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    List<Conciliation> conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    conciliations.each { conciliation ->
+      applyConciliation(conciliation)
+    }
+    movimientosBancariosService.conciliateBankingTransaction(bankingTransaction)
+  }
 
   private applyConciliation(Conciliation conciliation) {
     saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
