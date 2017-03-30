@@ -6,6 +6,7 @@ import grails.validation.Validateable
 class ConciliationCommand implements Validateable {
 
   String paymentId
+  String bankingTransactionId
   String saleOrderId
   String changeType
   String amountToApply
@@ -13,6 +14,7 @@ class ConciliationCommand implements Validateable {
 
   static constraints = {
     paymentId nullable:true
+    bankingTransactionId nullable:true
     saleOrderId nullable:true
     comment nullable:true
   }
@@ -21,6 +23,7 @@ class ConciliationCommand implements Validateable {
     new Conciliation(
       payment:this.paymentId ? Payment.get(this.paymentId) : null,
       saleOrder:this.saleOrderId ? SaleOrder.get(this.saleOrderId) : null,
+      bankingTransaciont:this.bankingTransaciontId ? MovimientosBancarios.get(this.bankingTransaciontId) : null,
       changeType:getValueInBigDecimal(this.changeType),
       amount:getValueInBigDecimal(this.amountToApply),
       comment:this.comment
