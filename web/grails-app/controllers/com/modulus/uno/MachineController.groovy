@@ -17,7 +17,7 @@ class MachineController {
   MachineryLinkService machineryLinkService
   TransitionService transitionService
   CombinationService combinationService 
-
+  CombinationLinkService combinationLinkService
 
   def index(){
     [entities:machineryLinkService.getClassesWithMachineryInterface()]

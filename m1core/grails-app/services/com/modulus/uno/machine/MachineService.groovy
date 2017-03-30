@@ -151,7 +151,7 @@ class MachineService {
       }
     }
 
-    machine
+    newMachine
   }
 
   Machine updateMachine(Long machineId,Machine machine){
