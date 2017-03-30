@@ -17,4 +17,5 @@ databaseChangeLog = {
   include file: 'updating-type-venta-to-factura-in-commission.groovy'
   include file: 'adding-column-alias-stp-to-modulus-uno-account.groovy'
   include file: 'adding-column-discount-to-sale-order-item.groovy'
+  include file: 'adding-neighboorhood-to-address.groovy'
 }
