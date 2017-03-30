@@ -26,7 +26,7 @@ class CombinationLinkServiceSpec extends Specification {
       combinationLink.instanceRef == instance.id
   }
   
-  @FailsWith((RuntimeException)
+  @FailsWith(RuntimeException)
   Should "fail while trying to create a combination for an instance without implements"(){
     given:"the instance"
       Bank instance = new Bank()
