@@ -105,6 +105,8 @@
         <!-- BEGIN ROW -->
         <div class="row">
           <div class="col-lg-12">
+            <input type="text" name="entity" value="${entityName}" />
+            <input type="text" name="company" value="${companyId}" />
             <button type="submit" class="btn btn-default">Guardar</button>
           </div>
         </div>
