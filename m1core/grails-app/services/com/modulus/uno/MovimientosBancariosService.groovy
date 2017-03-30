@@ -28,4 +28,8 @@ class MovimientosBancariosService {
     MovimientosBancarios.findAllReconcilableByCuentaInListAndConciliationStatus(company.banksAccounts, ConciliationStatus.TO_APPLY, [sort:"dateEvent", order:"desc"])
   }
 
+  void conciliateBankingTransaction(MovimientosBancarios bankingTransaction) {
+    bankingTransaction.conciliationStatus = ConciliationStatus.APPLIED
+    bankingTransaction.save()
+  }
 }
