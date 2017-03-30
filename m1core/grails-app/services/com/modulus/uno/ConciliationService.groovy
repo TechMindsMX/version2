@@ -16,8 +16,18 @@ class ConciliationService {
     payment.amount - applied
   }
 
+  def getTotalToApplyForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    def conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    BigDecimal applied = conciliations ? conciliations*.amount.sum() : new BigDecimal(0)
+    bankingTransaction.amount - applied
+  }
+
   List<Conciliation> getConciliationsToApplyForPayment(Payment payment) {
     Conciliation.findAllByPaymentAndStatus(payment, ConciliationStatus.TO_APPLY)
+  }
+
+  List<Conciliation> getConciliationsToApplyForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    Conciliation.findAllByBankingTransactionAndStatus(bankingTransaction, ConciliationStatus.TO_APPLY)
   }
 
   void saveConciliationForCompany(Conciliation conciliation, Company company) {
