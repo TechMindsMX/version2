@@ -8,7 +8,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-usd fa-3x"></i>
-        Conciliación de Pago
+        Conciliación de Cobro
         <small>Elegir factura(s)</small>
       </h1>
     </div>
