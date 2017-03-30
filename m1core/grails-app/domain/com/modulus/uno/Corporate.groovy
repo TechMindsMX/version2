@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import com.modulus.uno.machine.Machinery
+
 class Corporate {
 
   String nameCorporate
