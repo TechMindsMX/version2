@@ -1,6 +1,10 @@
 <div class="row">
-  <div class="col-md-6 text-center">
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm">
+  <div class="col-md-4 text-center">
+    <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
+  </div>
+  <div class="col-md-4 text-center">
+    <g:if test="${conciliations}">
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm" title="Al cancelar se borrarán las facturas seleccionadas">
       Cancelar
     </button>
     <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -22,8 +26,9 @@
         </div>
       </div>
     </div>
+    </g:if>
   </div>
-  <div class="col-md-6 text-center">
+  <div class="col-md-4 text-center">
     <g:if test="${conciliations && toApply == 0}">
       <g:link action="applyConciliationsForPayment" id="${payment.id}" class="btn btn-success">Aplicar</g:link>
     </g:if>
