@@ -1,11 +1,13 @@
 package com.modulus.uno
 
 import grails.test.mixin.TestFor
+import grails.test.mixin.Mock
 import spock.lang.Specification
 import java.lang.Void as Should
 import com.modulus.uno.machine.Machine
 
 @TestFor(CombinationLinkService)
+@Mock([Machine,Company,Combination])
 class CombinationLinkServiceSpec extends Specification {
 
   Should "create a combination for an instance"(){
