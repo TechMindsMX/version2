@@ -48,17 +48,30 @@ class ConciliationController {
       flash.message = ex.message
     }
 
-    redirect action:"chooseInvoiceToConciliate", id:command.paymentId
+    if (conciliation.payment) {
+      redirect action:"chooseInvoiceToConciliate", id:command.paymentId
+      return
+    } else if (conciliation.bankingTransaction) {
+      redirect action:"chooseInvoiceToConciliateWithBankingTransaction", id:command.bankingTransactionId
+      return
+    }
   }
 
   @Transactional
   def deleteConciliation(Conciliation conciliation) {
     log.info "Deleting conciliation to apply: ${conciliation.dump()}"
     Payment payment = conciliation.payment
+    MovimientosBancarios bankingTransaction = conciliation.bankingTransaction
 
     conciliationService.deleteConciliation(conciliation)
 
-    redirect action:"chooseInvoiceToConciliate", id:payment.id
+    if (payment) {
+      redirect action:"chooseInvoiceToConciliate", id:payment.id
+      return
+    } else if (bankingTransaction) {
+      redirect action:"chooseInvoiceToConciliateWithBankingTransaction", id:bankingTransaction.id
+      return
+    }
   }
 
   @Transactional
@@ -69,9 +82,23 @@ class ConciliationController {
   }
 
   @Transactional
+  def cancelConciliationBankingTransaction(MovimientosBancarios bankingTransaction) {
+    log.info "Canceling conciliation for bankingTransaction: ${bankingTransaction.id}"
+    conciliationService.cancelConciliationsForBankingTransaction(bankingTransaction)
+    redirect controller:"payment", action:"conciliation"
+  }
+
+  @Transactional
   def applyConciliationsForPayment(Payment payment) {
     log.info "Applying conciliations for payment: ${payment.id}"
     conciliationService.applyConciliationsForPayment(payment)
+    redirect controller:"payment", action:"conciliation"
+  }
+
+  @Transactional
+  def applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    log.info "Applying conciliations for banking transaction: ${bankingTransaction.id}"
+    conciliationService.applyConciliationsForBankingTransaction(bankingTransaction)
     redirect controller:"payment", action:"conciliation"
   }
 
