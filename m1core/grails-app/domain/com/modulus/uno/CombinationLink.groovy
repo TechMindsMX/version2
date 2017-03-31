@@ -8,7 +8,7 @@ class CombinationLink {
   Date dateCreated
   Date lastUpdated
 
-  static hasMany = [combinations:Combination]
+  Combination combination
 
   static constraints = {
     type nullable:false, blank:false
