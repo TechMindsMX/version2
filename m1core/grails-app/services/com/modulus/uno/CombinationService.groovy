@@ -6,9 +6,10 @@ import grails.transaction.Transactional
 class CombinationService {
 
   Combination createCombinationOfInstanceWithClass(def instance,String className){
-    new Combination(classLeft:className,
-                    classRight:instance.class.simpleName,
-                    rightInstanceId:instance.id).save()
+    Combination combination = new Combination(classLeft:className,
+                                              classRight:instance.class.simpleName,
+                                              rightInstanceId:instance.id).save()
+    combination
   }
 
 }

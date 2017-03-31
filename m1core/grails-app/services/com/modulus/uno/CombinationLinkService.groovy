@@ -12,7 +12,8 @@ class CombinationLinkService {
 
     CombinationLink combinationLink = CombinationLink.findByTypeAndInstanceRef(instance.class.simpleName,instance.id) ?: new CombinationLink(type:instance.class.simpleName,
                                                                                                                                              instanceRef:instance.id)
-    combinationLink.combination = combination
+
+    combinationLink.addToCombinations(combination)
     combinationLink.save()
     combinationLink
   }
