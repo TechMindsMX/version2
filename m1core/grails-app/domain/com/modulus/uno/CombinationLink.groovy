@@ -5,10 +5,10 @@ class CombinationLink {
   String type
   Long instanceRef
 
-  Combination combination
-
   Date dateCreated
   Date lastUpdated
+
+  static hasMany = [combinations:Combination]
 
   static constraints = {
     type nullable:false, blank:false
