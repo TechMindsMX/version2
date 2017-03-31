@@ -39,6 +39,17 @@ class CombinationLinkServiceSpec extends Specification {
       !combinationLink.id
   }
 
+  Should "get the combination links for an instance"(){
+    given:"the combination link of an instance"
+      Company instance = new Company(bussinessName:"Company 1").save(validate:false)
+      Combination combination = createCombination()
+      CombinationLink combinationLink = service.createCombinationLinkForInstance(instance,combination)
+    when:
+      ArrayList<CombinationLink> combinationLinks = service.findCombinationLinksForInstance(instance)
+    then:
+      combinationLinks.size() == 1
+  }
+
   private Combination createCombination(){
     Machine machine = new Machine().save(validate:false)
     Combination combination = new Combination(classLeft:"PurchaseOrder",
