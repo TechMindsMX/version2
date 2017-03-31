@@ -13,7 +13,11 @@ class CompanyMachineService {
     Company company = Company.get(companyId)
     ArrayList<CombinationLink> combinationLinks = combinationLinkService.findCombinationLinksForInstance(company)
     combinationLinks = combinationLinks.findAll{ combinationLink -> combinationLink.combination.classLeft == entity && combinationLink.combination.classRight == Machine.class.simpleName }
-    ArrayList<Long> machineIds =  combinationLinks*.combination*.rightInstanceId
+    ArrayList<Long> machineIds = []
+    combinationLinks.each{ combinationLink -> 
+      machineIds << combinationLink.combinations*.rightInstanceId
+    }
+
     Machine.getAll(machineIds)
   }
 
