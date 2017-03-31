@@ -7,23 +7,30 @@ var MachineListController = (function(){
     entitySelector:'select[name=entity]',
     actionListURL:'#actionListURL',
     machineListDiv:'#machine-list',
-    machineListTemplate:'#machine-list-template'
+    machineListTemplate:'#machine-list-template',
+    entitySelect:'select[name=entity]',
+    companySelect:'select[name=company]',
+    searchMachinesButton:'#searchMachinesButton'
   },
 
   showMachines = function(event){
-    var select = $(event.currentTarget);
+    var entitySelect = $(selectors.entitySelect),
+    companySelect = $(selectors.companySelect);
+
     var machines = [];
-    $.get($(selectors.actionListURL).val(),{className:select.val()},function(data){
+    
+    $.get($(selectors.actionListURL).val(),{className:entitySelect.val(),
+                                            company:companySelect.val()},function(data){
       data.forEach(function(machine){
-        machines.push(machine); 
+        machines.push(machine);
       });
 
       MachineView.render(selectors.machineListTemplate,selectors.machineListDiv,{machines:machines});
     });
   },
-
+  
   bindEvents = function(){
-    $(selectors.entitySelector).on('change',showMachines);
+    $(selectors.searchMachinesButton).on('click',showMachines);
   },
 
   start = function(){
