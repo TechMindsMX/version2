@@ -1,5 +1,6 @@
 //= require machine/machine.js
 //= require machine/machine_view.js
+//= require third-party/jquery-validation/dist/jquery.validate.js
 
 var MachineListController = (function(){
 
@@ -10,10 +11,35 @@ var MachineListController = (function(){
     machineListTemplate:'#machine-list-template',
     entitySelect:'select[name=entity]',
     companySelect:'select[name=company]',
-    searchMachinesButton:'#searchMachinesButton'
+    searchMachinesButton:'#searchMachinesButton',
+    machineSearchForm:'form[name=machineSearch]'
+  },
+
+  initValidations = function(){
+    $(selectors.machineSearchForm).validate({
+      rules:{
+        entity:{
+          required:true
+        },
+        company:{
+          required:true    
+        }    
+      },
+      
+      errorPlacement: function(error,element){
+        $(element).parent('div').addClass('has-error');
+      },
+      
+      success:function(label,element){
+        $(element).parent('div').removeClass('has-error');
+      }
+
+    });
   },
 
   showMachines = function(event){
+    event.preventDefault();
+
     var entitySelect = $(selectors.entitySelect),
     companySelect = $(selectors.companySelect);
 
@@ -30,12 +56,13 @@ var MachineListController = (function(){
   },
   
   bindEvents = function(){
-    $(selectors.searchMachinesButton).on('click',showMachines);
+    $(selectors.machineSearchForm).on('submit',showMachines);
   },
 
   start = function(){
+    initValidations();
     bindEvents();
-    $(selectors.entitySelector).trigger('change');
+    
   };
 
   return {
