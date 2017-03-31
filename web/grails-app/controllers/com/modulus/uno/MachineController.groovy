@@ -18,9 +18,15 @@ class MachineController {
   TransitionService transitionService
   CombinationService combinationService 
   CombinationLinkService combinationLinkService
+  CompanyMachineService companyMachineService
 
   def index(){
-    [entities:machineryLinkService.getClassesWithMachineryInterface()]
+    User user =  springSecurityService.currentUser
+    Corporate corporate = corporateService.findCorporateOfUser(user)
+    ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
+
+    [entities:machineryLinkService.getClassesWithMachineryInterface(),
+     companies:companies]
   }
 
   def show(String id){
@@ -81,7 +87,7 @@ class MachineController {
   }
 
   def list(){
-    ArrayList<Machine> machines = Machine.list()
+    ArrayList<Machine> machines = companyMachineService.getCompanyMachinesForEntity(params.long('company'),params.className)
     [machines:machines]
   }
 
