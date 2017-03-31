@@ -17,4 +17,15 @@ class CombinationLinkService {
     combinationLink
   }
 
+  ArrayList<CombinationLink> findCombinationLinksForInstance(def instance){
+    def criteria = CombinationLink.createCriteria()
+
+    ArrayList<CombinationLink> combinationLinks =  criteria.list{
+      eq("type",instance.class.simpleName)
+      eq("instanceRef",instance.id)
+    } ?: []
+
+    combinationLinks
+  }
+
 }

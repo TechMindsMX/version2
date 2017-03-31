@@ -4,7 +4,7 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
 import java.lang.Void as Should
-import com.modulus.uno.Machine
+import com.modulus.uno.machine.Machine
 
 @TestFor(CombinationService)
 @Mock([Combination])
