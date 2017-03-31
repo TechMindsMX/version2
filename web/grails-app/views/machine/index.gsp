@@ -34,19 +34,21 @@
 
         <!-- BEGIN ROW -->
         <div class="row">
-          <!-- BEGIN COL-SM-3 -->
-          <div class="form-group col-lg-4">
-            <g:select name="entity" class="form-control" from="${entities}" optionKey="key" optionValue="value" noSelection="${['':'-Seleccionar-']}"></g:select>
-          </div>
-          <!-- END OF COL-SM-3 -->
-          <!-- BEGIN COL-SM-3 -->
-          <div class="form-group col-lg-4">
-            <g:select name="company" class="form-control" from="${companies}" optionKey="id" optionValue="bussinessName" noSelection="${['':'-Seleccionar empresa-']}"></g:select>
-          </div>
-          <!-- END OF COL-SM-3 -->
-          <div class="form-group col-lg-2">
-            <button class="btn btn-default" id="searchMachinesButton">Buscar</button>
-          </div>
+          <form name="machineSearch">
+            <!-- BEGIN COL-SM-3 -->
+            <div class="form-group col-lg-3">
+              <g:select name="entity" class="form-control" from="${entities}" optionKey="key" optionValue="value" noSelection="${['':'-Seleccionar-']}"></g:select>
+            </div>
+            <!-- END OF COL-SM-3 -->
+            <!-- BEGIN COL-SM-3 -->
+            <div class="form-group col-lg-3">
+              <g:select name="company" class="form-control" from="${companies}" optionKey="id" optionValue="bussinessName" noSelection="${['':'-Seleccionar empresa-']}"></g:select>
+            </div>
+            <!-- END OF COL-SM-3 -->
+            <div class="form-group col-lg-3">
+              <g:submitButton name="searchMachinesButton" class="btn btn-default" value="Buscar" />
+            </div>
+          </form>
         </div>
         <!-- END OF ROW -->
 
