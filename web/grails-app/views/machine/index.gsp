@@ -55,7 +55,7 @@
         <!-- BEGIN ROW -->
         <div class="row">
           <!-- BEGIN COL-SM-6 -->
-          <div class="form-group col-lg-10" id="machine-list">
+          <div class="form-group col-lg-6" id="machine-list">
 
           </div>
           <!-- END OF COL-SM-6 -->
