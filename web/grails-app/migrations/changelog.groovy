@@ -41,4 +41,5 @@ databaseChangeLog = {
   include file: 'adding-column-reconcilable-to-transactions-banks.groovy'
   include file: 'adding-conciliation-status-to-bankings-transactions.groovy'
   include file: 'adding-column-banking-transaction-to-conciliation.groovy'
+
 }

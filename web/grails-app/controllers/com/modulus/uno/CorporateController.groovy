@@ -8,7 +8,7 @@ class CorporateController {
   OrganizationService organizationService
   def springSecurityService
   def managerApplicationService
-  def awsRoute53Service
+  def recoveryService
 
   def create(){
     respond new Corporate()
@@ -103,6 +103,7 @@ class CorporateController {
 
     ArrayList<Role> roles = springSecurityService.getPrincipal().getAuthorities()
     corporateService.addUserToCorporate(corporateId,user)
+    recoveryService.sendConfirmationAccountToken(user)
 
     if(roles[0].authority == "ROLE_M1"){
       userService.setAuthorityToUser(user,'ROLE_CORPORATIVE')

@@ -6,11 +6,9 @@ import grails.util.Holders as H
 @Transactional
 class CorporateService {
 
-  RecoveryService recoveryService
   def grailsApplication
   def springSecurityService
   def awsRoute53Service
-  def grailsResourceLocator
 
   private final String VALUE_HOST_IP = H.grailsApplication.config.grails.plugin.awssdk.value.host.ip
   private final String DOMAIN_BASE_URL = H.grailsApplication.config.grails.plugin.awssdk.domain.base.url
@@ -102,6 +100,15 @@ class CorporateService {
     corporate.addToCommissions(commission)
     corporate.save()
     corporate
+  }
+  
+  String findUrlCorporateOfUser(User user){
+    Corporate corporate = Corporate.createCriteria().get {
+      users {
+        eq 'username', user.username
+      }
+    }
+    "${corporate.corporateUrl}${DOMAIN_BASE_URL}"
   }
 
   String findCorporateByCompanyId(def companyId) {

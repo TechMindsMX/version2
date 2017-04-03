@@ -13,16 +13,12 @@ import java.lang.Void as Should
 @Mock([Company,User,Role,UserRoleCompany,Profile,CompanyRejectedLog,FirstAccessToLegalRepresentatives])
 class ManagerApplicationServiceSpec extends Specification {
 
-  def restService = Mock(RestService)
   def modulusUnoService = Mock(ModulusUnoService)
   def collaboratorService = Mock(CollaboratorService)
-  def directorService = Mock(DirectorService)
 
   def setup() {
-    service.restService = restService
     service.modulusUnoService = modulusUnoService
     service.collaboratorService = collaboratorService
-    service.directorService = directorService
   }
 
   Should "accept a company to integrate"(){
@@ -139,59 +135,6 @@ class ManagerApplicationServiceSpec extends Specification {
       companyRejected.first().companyId == company.id
       companyRejected.first().reason == "tu mama"
       companyRejected.first().status == true
-  }
-
-  void "create new password and locked user"() {
-    given:
-      Company company = new Company()
-      company.bussinessName = "Making Devs"
-      company.rfc = "SRG861226KFB"
-      company.employeeNumbers = 2
-      company.grossAnnualBilling = 12344.00
-      company.save(validate:false)
-    and:
-      Profile profile = new Profile()
-      profile.name = "sergio"
-      profile.lastName = "rodri"
-      profile.motherLastName = "duran"
-      profile.email = "sergio+123@makingdevs.com"
-      profile.rfc = "RODS861224NHA"
-      profile.save(validate:false)
-    and:
-      User user = new User()
-      user.username = "sergio123"
-      user.password = "Password123"
-      user.profile = profile
-      user.save(validate:false)
-      def userBefore = user.password
-    and:
-      Role role = new Role(authority:"ROLE_LEGAL_REPRESENTATIVE")
-      role.save(validate:false)
-      UserRoleCompany userRole = new UserRoleCompany(user:user,
-                                                     company:company)
-      userRole.addToRoles(role)
-      userRole.save(validate:false)
-    and:
-      directorService.findUsersOfCompanyByRole(_,_) >> [user]
-    when:
-      service.createNewPasswordForLegalRepresentatives(company)
-    then:
-      user.password == "MakingDevsRODS861224NHA"
-  }
-
-  void "create row of first access for user"() {
-    given:
-      Company company = new Company().save(validate:false)
-    and:
-      User user = new User().save(validate:false)
-    and:
-      grailsApplication.config.first.access.register = "www.qa.iecce.mx/"
-    when:
-      def firstAccess = service.createAccessToLegalRepresentative(company,user)
-    then:
-      firstAccess.user == user
-      firstAccess.company == company
-      firstAccess.urlVerification == "www.qa.iecce.mx/${firstAccess.token}"
   }
 
   void "Should thrown a BusinessException for period not valid when get account statement any type of integrator"() {

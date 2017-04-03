@@ -13,9 +13,11 @@ class RecoveryServiceSpec extends Specification {
   def messageSource = new MessageSourceMock()
   def grailsApplication = new GrailsApplicationMock()
   def emailSenderService = Mock(EmailSenderService)
+  def corporateService = Mock(CorporateService)
 
   def setup() {
     service.recoveryCollaboratorService = recoveryCollaboratorService
+    service.corporateService = corporateService
     service.registrationService = registrationService
     service.grailsApplication = grailsApplication
     service.messageSource = messageSource
@@ -23,15 +25,19 @@ class RecoveryServiceSpec extends Specification {
   }
 
   void "should send confirmation account token"(){
-  given:"An email"
-  def email = 'josdem@email.com'
-  and:"A MessageCommand"
-  def message = Mock(MessageCommand)
-  when:"We generate token"
-  service.sendConfirmationAccountToken(email)
-  then:"We expect generate token and send email"
-  recoveryCollaboratorService.generateToken('register', email) >> message
-  1 * emailSenderService.sendEmailForConfirmAccount(message, email)
+    given:"An email"
+      def email = 'josdem@email.com'
+      def user = Mock(User)
+      def profile = new Profile(email:email, firsName:'firsName', motherLastName:'motherLastName', lastName:'lastName')
+      user.profile >> profile
+    and:"A MessageCommand"
+      def message = Mock(MessageCommand)
+    when:"We generate token"
+      service.sendConfirmationAccountToken(user)
+    then:"We expect generate token and send email"
+      recoveryCollaboratorService.generateToken('http://url.comregister', email) >> message
+      1 * emailSenderService.sendEmailForConfirmAccount(message, email)
+      1 * corporateService.findUrlCorporateOfUser(user) >> "http://url.com"
   }
 
   void "should confirm account for token"(){
@@ -56,21 +62,22 @@ class RecoveryServiceSpec extends Specification {
   }
 
   void "should generate registration code for email"() {
-  given: "An email"
-  def email = 'josdem@email.com'
-  and: "User mock"
-  def user = Mock(User)
-  def profile = new Profile(email:email, firsName:'firsName', motherLastName:'motherLastName', lastName:'lastName')
-  def message = Mock(TokenCommand)
-  user.profile >> profile
-  Profile.metaClass.static.findByEmail = { profile }
-  User.metaClass.static.findByProfile = { user }
-  when: "We find user by email"
-  recoveryCollaboratorService.generateToken('forgot', email) >> message
-  user.enabled >> true
-  service.generateRegistrationCodeForEmail(email)
-  then: "We expect send message to the email service"
-  1 * emailSenderService.sendEmailForRegistrationCode(message, email)
+    given: "An email"
+      def email = 'josdem@email.com'
+    and: "User mock"
+      def user = Mock(User)
+      def profile = new Profile(email:email, firsName:'firsName', motherLastName:'motherLastName', lastName:'lastName')
+      def message = Mock(TokenCommand)
+      user.profile >> profile
+      Profile.metaClass.static.findByEmail = { profile }
+      User.metaClass.static.findByProfile = { user }
+    when: "We find user by email"
+      recoveryCollaboratorService.generateToken('http://url.comforgot', email) >> message
+      user.enabled >> true
+      service.generateRegistrationCodeForEmail(email)
+    then: "We expect send message to the email service"
+      1 * corporateService.findUrlCorporateOfUser(_) >> "http://url.com"
+      1 * emailSenderService.sendEmailForRegistrationCode(message, email)
   }
 
 
