@@ -62,7 +62,6 @@ var MachineListController = (function(){
   start = function(){
     initValidations();
     bindEvents();
-    
   };
 
   return {
