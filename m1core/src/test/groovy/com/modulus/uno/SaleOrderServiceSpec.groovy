@@ -222,4 +222,19 @@ class SaleOrderServiceSpec extends Specification {
     2000         ||  0             | SaleOrderStatus.PAGADA     | 100
   }
 
+  void "Should get 000 for all sale orders executed for a client in company"(){
+    given:"A company"
+      Company company = Company.get(2)
+    and:"A rfc client"
+      String rfcClient = "MDE130712JA8"
+    and:"the get criteria method"
+      def myCriteria = new Expando()
+      myCriteria.get = { Closure closure -> 2000 }
+      SaleOrder.metaClass.static.createCriteria = {myCriteria }
+    when:
+      def total = service.getTotalSoldForClient(company, rfcClient)
+    then:
+      total == 2000
+  }
+
 }
