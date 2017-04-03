@@ -14,7 +14,7 @@
         <td>{{uuid}}</th>
         <td>{{dateCreated}}</th>
         <td>
-          <a class="btn btn-primary" href="${createLink(controller:'machine',action:'edit')}/{{uuid}}">Agregar</a>
+          <a class="btn btn-primary" href="${createLink(controller:'notificationForState',action:'create')}/{{uuid}}">Agregar</a>
         </td>
       </tr>
       {{/each}}
