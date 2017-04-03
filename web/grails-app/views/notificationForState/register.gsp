@@ -3,6 +3,7 @@
   <head>
     <meta name="layout" content="main" />
     <title>Modulus UNO | Notificación por Estado </title>
+    <asset:javascript src="third-party/handlebars/handlebars.js" />
     <asset:javascript src="notificationForState/notification_for_state_controller.js" />
   </head>
   <body>
@@ -19,7 +20,7 @@
       <div class="panel-collapse collapse in">
         <!-- BEGIN PORTLET-BODY -->
         <div class="portlet-body">
-          <!-- BEGIN CREATE-ADDRESS -->
+          <!-- BEGIN CONTENT-->
           <div class="content scaffold-create">
             <div class="row center-block">
               <div class="col-lg-12">
@@ -59,16 +60,24 @@
 
               <!-- BEGIN ROW -->
               <div class="row center-block">
-                <div class="col-lg-12">
+                <div class="col-lg-12 form-group">
                   <g:submitButton name="search" class="btn btn-default" value="Buscar" />
                 </div>
               </div>
               <!-- END ROW -->
             </g:form>
-            <input type="hidden" value="${createLink(action:'list')}" id="actionListURL" />
 
+            <div class="row center-block">
+              <div id="machine-list" class="form-group col-lg-6">
+
+              </div>
+            </div>
+            <input type="hidden" value="${createLink(controller:'machine',action:'list')}" id="actionListURL" />
           </div>
-          <!-- END OF CREATE-ADDRESS -->
+          <!-- END OF CONTENT -->
+          
+          <g:render template="/notificationForState/machines" />
+
         </div>
         <!-- END OF PORTLET-BODY -->
       </div>
