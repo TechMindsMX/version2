@@ -1,4 +1,5 @@
 //= require third-party/jquery-validation/dist/jquery.validate.js
+//= require machine/machine_view.js
 
 var NotificationForStateController = (function(){
   
@@ -6,7 +7,9 @@ var NotificationForStateController = (function(){
     notificationForStateForm:'form[name=notificationForStateForm]',
     entitySelect:'select[name=entity]',
     companySelect:'select[name=company]',
-    actionListURL:'#actionListURL'
+    actionListURL:'#actionListURL',
+    machineListDiv:'#machine-list',
+    machineListTemplate:'#machine-list-template'
   },
 
   initValidations = function(){
@@ -41,8 +44,10 @@ var NotificationForStateController = (function(){
       data.forEach(function(machine){
         machines.push(machine);
       });
+  
+      MachineView.render(selectors.machineListTemplate,selectors.machineListDiv,{machines:machines});
 
-    })
+    });
   },
 
   bindEvents = function(){
