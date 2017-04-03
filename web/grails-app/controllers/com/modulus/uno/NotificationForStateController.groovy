@@ -12,12 +12,10 @@ class NotificationForStateController {
   NotificationForStateService notificationForStateService
   MachineryLinkService machineryLinkService
 
-  def create(){
-    def machine = Machine.findById(params.machineId)
-    [
-      groups: GroupNotification.findAll(),
-      states: machine.states
-    ]
+  def create(String id){
+    def machine = Machine.findByUuid(id)
+    [groups: GroupNotification.findAll(),
+     states: machine.states.findAll{ state -> state.id != machine.initialState.id }]
   }
 
   def index(){
@@ -43,10 +41,11 @@ class NotificationForStateController {
   def edit(){
     def notify = NotificationForState.get(params.id.toLong())
     def state = State.findById(notify.stateMachine)
+    Machine machine = state.machine
     [
       groups: GroupNotification.findAll(),
       notification: notify,
-      states: state.machine.states
+      states: machine.states.findAll{ machineState -> machineState.id != machine.initialState.id }
     ]
   }
 
