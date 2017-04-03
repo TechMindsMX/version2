@@ -6,7 +6,11 @@ class NotificationForStateController {
 
   static allowedMethods = [save: "POST"]
 
+  def springSecurityService
+  CompanyService companyService
+  CorporateService corporateService
   NotificationForStateService notificationForStateService
+  MachineryLinkService machineryLinkService
 
   def create(){
     def machine = Machine.findById(params.machineId)
@@ -21,7 +25,13 @@ class NotificationForStateController {
   }
 
   def register(){
-    [machines: Machine.findAll()]
+    User user =  springSecurityService.currentUser
+    Corporate corporate = corporateService.findCorporateOfUser(user)
+    ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
+
+    [entities:machineryLinkService.getClassesWithMachineryInterface(),
+     companies:companies,
+     machines: Machine.findAll()]
   }
 
   def save(NotificationForStateCommand command){
