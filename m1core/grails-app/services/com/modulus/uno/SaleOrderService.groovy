@@ -159,9 +159,9 @@ class SaleOrderService {
     SaleOrder saleOrder = SaleOrder.get(id)
     if (!saleOrder.originalDate)
       saleOrder.originalDate = saleOrder.fechaCobro
-    saleOrder.fechaCobro = chargeDate
-    saleOrder.save()
-    saleOrder
+      saleOrder.fechaCobro = chargeDate
+      saleOrder.save()
+      saleOrder
   }
 
   List<SaleOrder> obtainListPastDuePortfolio(Long idCompany, Integer days) {
@@ -173,30 +173,30 @@ class SaleOrderService {
 
     if (days==120) {
       listResult = saleCriteria.list {
-          eq("company", company)
-          or {
-            and {
-              le("fechaCobro", end)
-              isNull("originalDate")
-            }
-            and {
-              le("originalDate", end)
-            }
+        eq("company", company)
+        or {
+          and {
+            le("fechaCobro", end)
+            isNull("originalDate")
           }
-          eq("status", SaleOrderStatus.EJECUTADA)
+          and {
+            le("originalDate", end)
+          }
+        }
+        eq("status", SaleOrderStatus.EJECUTADA)
       }
     } else {
       Date begin = dateFormat.parse(dateFormat.format(new Date()-(days+30)))
       listResult = saleCriteria.list {
-          eq("company", company)
-          or {
-            and {
-              between("fechaCobro", begin, end)
-              isNull("originalDate")
-            }
-            between("originalDate", begin, end)
+        eq("company", company)
+        or {
+          and {
+            between("fechaCobro", begin, end)
+            isNull("originalDate")
           }
-          eq("status", SaleOrderStatus.EJECUTADA)
+          between("originalDate", begin, end)
+        }
+        eq("status", SaleOrderStatus.EJECUTADA)
       }
     }
     listResult
@@ -239,4 +239,20 @@ class SaleOrderService {
     }
     saleOrdersFiltered
   }
+
+  def getTotalSoldForClient(Company company, String rfc) {
+    def criteria = SaleOrder.createCriteria()
+    def result = criteria.get {
+      eq("rfc", rfc)
+      eq("company", company)
+      'in'("status", [SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA])
+      items {
+        projections {
+          sqlProjection "sum(((price-(price * (discount/100))) + ((price-(price * (discount/100)))*(iva/100)) + ((price-(price * (discount/100)))*(ieps/100)) )* quantity) as total","total",DOUBLE
+        }
+      }
+    }
+  }
+
+
 }
