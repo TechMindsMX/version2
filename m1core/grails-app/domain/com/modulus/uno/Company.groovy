@@ -2,7 +2,7 @@ package com.modulus.uno
 
 import grails.converters.JSON
 
-class Company {
+class Company implements Linker {
 
   String rfc
   String bussinessName

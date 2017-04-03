@@ -10,15 +10,23 @@ class MachineController {
 
   static allowedMethods = [save: "POST", update: "POST",delete:"DELETE"]
 
-  MachineryLinkService machineryLinkService
+  def springSecurityService
   CompanyService companyService
   CorporateService corporateService
-  def springSecurityService
   MachineService machineService
+  MachineryLinkService machineryLinkService
   TransitionService transitionService
+  CombinationService combinationService 
+  CombinationLinkService combinationLinkService
+  CompanyMachineService companyMachineService
 
   def index(){
-    [entities:machineryLinkService.getClassesWithMachineryInterface()]
+    User user =  springSecurityService.currentUser
+    Corporate corporate = corporateService.findCorporateOfUser(user)
+    ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
+
+    [entities:machineryLinkService.getClassesWithMachineryInterface(),
+     companies:companies]
   }
 
   def show(String id){
@@ -53,16 +61,21 @@ class MachineController {
   def create(){
     String entity = params.entity ? "${params.entity[0].toLowerCase()}${params.entity[1..params.entity.size()-1]}" : ""
 
-    if(!entity){
+    if(!entity || !params.company){
       return response.sendError(404)
     }
 
-    render view:"create",model:[entity:g.message(code:"${entity}.name")]
+    render view:"create",model:[entity:g.message(code:"${entity}.name"),
+                                entityName:params.entity,
+                                companyId:params.long("company")]
   }
 
   @Transactional
   def save(MachineCommand machine){
-    machineService.saveMachine(machine.getMachine())
+    Machine savedMachine = machineService.saveMachine(machine.getMachine())
+    Company company = Company.get(params.company)
+    Combination combination = combinationService.createCombinationOfInstanceWithClass(savedMachine,params.entity)
+    combinationLinkService.createCombinationLinkForInstance(company,combination)
     redirect(action:"index")
   }
 
@@ -74,7 +87,7 @@ class MachineController {
   }
 
   def list(){
-    ArrayList<Machine> machines = Machine.list()
+    ArrayList<Machine> machines = companyMachineService.getCompanyMachinesForEntity(params.long('company'),params.className)
     [machines:machines]
   }
 

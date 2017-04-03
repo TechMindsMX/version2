@@ -1,39 +1,33 @@
-//= require machine/machine.js
-//= require machine/machine_view.js
 //= require third-party/jquery-validation/dist/jquery.validate.js
+//= require machine/machine_view.js
 
-var MachineListController = (function(){
-
+var NotificationForStateController = (function(){
+  
   var selectors = {
-    entitySelector:'select[name=entity]',
-    actionListURL:'#actionListURL',
-    machineListDiv:'#machine-list',
-    machineListTemplate:'#machine-list-template',
+    notificationForStateForm:'form[name=notificationForStateForm]',
     entitySelect:'select[name=entity]',
     companySelect:'select[name=company]',
-    searchMachinesButton:'#searchMachinesButton',
-    machineSearchForm:'form[name=machineSearch]'
+    actionListURL:'#actionListURL',
+    machineListDiv:'#machine-list',
+    machineListTemplate:'#machine-list-template'
   },
 
   initValidations = function(){
-    $(selectors.machineSearchForm).validate({
+    $(selectors.notificationForStateForm).validate({
       rules:{
         entity:{
           required:true
         },
         company:{
-          required:true    
-        }    
+          required:true
+        }
       },
-      
       errorPlacement: function(error,element){
         $(element).parent('div').addClass('has-error');
       },
-      
-      success:function(label,element){
+      success: function(label,element){
         $(element).parent('div').removeClass('has-error');
       }
-
     });
   },
 
@@ -44,19 +38,20 @@ var MachineListController = (function(){
     companySelect = $(selectors.companySelect);
 
     var machines = [];
-    
+
     $.get($(selectors.actionListURL).val(),{className:entitySelect.val(),
                                             company:companySelect.val()},function(data){
       data.forEach(function(machine){
         machines.push(machine);
       });
-
+  
       MachineView.render(selectors.machineListTemplate,selectors.machineListDiv,{machines:machines});
+
     });
   },
-  
+
   bindEvents = function(){
-    $(selectors.machineSearchForm).on('submit',showMachines);
+    $(selectors.notificationForStateForm).on('submit',showMachines);
   },
 
   start = function(){
@@ -67,9 +62,9 @@ var MachineListController = (function(){
   return {
     start:start
   };
-  
+
 }());
 
 jQuery(function($){
-  MachineListController.start();
+  NotificationForStateController.start();
 });

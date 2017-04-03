@@ -1,5 +1,4 @@
 databaseChangeLog = {
-
   include file: 'initial-structure.groovy'
   include file: 'create-m1-roles.groovy'
   include file: 'adding-user-admin-production.groovy'
@@ -41,5 +40,5 @@ databaseChangeLog = {
   include file: 'adding-column-reconcilable-to-transactions-banks.groovy'
   include file: 'adding-conciliation-status-to-bankings-transactions.groovy'
   include file: 'adding-column-banking-transaction-to-conciliation.groovy'
-
+  include file: 'adding-the-linker-structure.groovy'
 }

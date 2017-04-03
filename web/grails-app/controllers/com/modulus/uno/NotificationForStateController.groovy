@@ -6,14 +6,16 @@ class NotificationForStateController {
 
   static allowedMethods = [save: "POST"]
 
+  def springSecurityService
+  CompanyService companyService
+  CorporateService corporateService
   NotificationForStateService notificationForStateService
+  MachineryLinkService machineryLinkService
 
-  def create(){
-    def machine = Machine.findById(params.machineId)
-    [
-      groups: GroupNotification.findAll(),
-      states: machine.states
-    ]
+  def create(String id){
+    def machine = Machine.findByUuid(id)
+    [groups: GroupNotification.findAll(),
+     states: machine.states.findAll{ state -> state.id != machine.initialState.id }]
   }
 
   def index(){
@@ -21,7 +23,13 @@ class NotificationForStateController {
   }
 
   def register(){
-    [machines: Machine.findAll()]
+    User user =  springSecurityService.currentUser
+    Corporate corporate = corporateService.findCorporateOfUser(user)
+    ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
+
+    [entities:machineryLinkService.getClassesWithMachineryInterface(),
+     companies:companies,
+     machines: Machine.findAll()]
   }
 
   def save(NotificationForStateCommand command){
@@ -33,10 +41,11 @@ class NotificationForStateController {
   def edit(){
     def notify = NotificationForState.get(params.id.toLong())
     def state = State.findById(notify.stateMachine)
+    Machine machine = state.machine
     [
       groups: GroupNotification.findAll(),
       notification: notify,
-      states: state.machine.states
+      states: machine.states.findAll{ machineState -> machineState.id != machine.initialState.id }
     ]
   }
 

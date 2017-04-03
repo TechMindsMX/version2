@@ -12,6 +12,9 @@ var MachineRegisterController = (function(){
       rules:{
         entity:{
           required:true
+        },
+        company:{
+          required:true
         }
       },
 
