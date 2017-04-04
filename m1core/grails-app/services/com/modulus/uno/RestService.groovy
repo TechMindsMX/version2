@@ -78,7 +78,7 @@ class RestService {
     }.doit()?.json
   }
 
-  def sendFilesForInvoiceM1(def bodyMap, def token) {
+  def sendFilesForInvoiceM1(def bodyMap) {
     log.info "Calling Service : Send Files for Create invoice"
     log.info "Path: ${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.invoice}"
     def endpoint = grailsApplication.config.modulus.invoice
@@ -92,6 +92,7 @@ class RestService {
         multipart "password", bodyMap.password.bytes
         multipart "rfc", bodyMap.rfc.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
+        multipart "serie", bodyMap.serie.bytes
       }
     }.doit()
     response
@@ -156,6 +157,7 @@ class RestService {
         multipart "logo", bodyMap.cer.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
         multipart "password", bodyMap.password.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
+        multipart "serie", bodyMap.serie.bytes
       }
     }.doit()
     response
