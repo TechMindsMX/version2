@@ -7,7 +7,7 @@ import java.lang.Void as Should
 import com.modulus.uno.machine.Machine
 
 @TestFor(CombinationService)
-@Mock([Combination])
+@Mock([Combination, Machine])
 class CombinationServiceSpec extends Specification {
 
   Should "create the combination for an instance with a another class"(){
