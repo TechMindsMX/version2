@@ -48,8 +48,6 @@ class CorporateService {
     def baseUrl = DOMAIN_BASE_URL
     def tempDirectory = FILES_NGINX
     createWebAndApiViHost(corporate, baseUrl, tempDirectory)
-    "sudo service nginx reload".execute()
-
   }
 
   Corporate findCorporateOfUser(User user){
