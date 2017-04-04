@@ -28,6 +28,7 @@ class CorporateController {
     }
     corporateService.saveNewCorporate(corporate)
     corporateService.createAVirtualHostNginx(corporate)
+    log.info "sudo service nginx reload".execute().text
     request.withFormat {
       form multipartForm {
         flash.message = message(code:'default.created.message', args:[message(code: 'corporate.label',
