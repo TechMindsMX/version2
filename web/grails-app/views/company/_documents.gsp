@@ -8,7 +8,7 @@
   </div>
   <div id="defaultPortlet" class="panel-collapse collapse in">
     <div class="portlet-body">
-      <g:if test="${documents}">
+      <g:if test="${!documents.status}">
         <g:form class="form-horizontal" action="sendFilesToCreateInvoice" name="documentsToInvoice" method="POST" enctype="multipart/form-data" >
           <label>Archivo .key</label>
           <input type="file" required="true" class="form-control" name="key" />
@@ -60,6 +60,11 @@
            </span>
            Número de Certificado
          </li>
+         <li class="text-primary">
+           Serie de Facturas: ${documents.currentSerie ?: "SIN SERIE"} &nbsp;
+           <g:link action="changeSerieForInvoices" id="${company.id}" class="btn btn-xs btn-info">Cambiar Serie</g:link>
+         </li>
+
        </ul>
        <div class="text-right">
          <g:link class="btn btn-primary" action="changeStampDocuments" id="${company.id}">Cambiar</g:link>
