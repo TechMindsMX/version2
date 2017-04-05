@@ -247,7 +247,8 @@ class CompanyService {
 
   Boolean isCompanyEnabledToStamp(Company company) {
     Address fiscalAddress = company.addresses.find {it.addressType == AddressType.FISCAL}
-    !(isAvailableForGenerateInvoices(company.rfc)) && fiscalAddress
+    def documents = isAvailableForGenerateInvoices(company.rfc)
+    documents.status && fiscalAddress
   }
 
   List<SaleOrder> getDetailPastDuePortfolio(Long idCompany, Integer days) {
