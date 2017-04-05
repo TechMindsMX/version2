@@ -90,4 +90,7 @@ class InvoiceService {
     restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
   }
 
+  void changeSerieAndInitialFolioToStampInvoiceForEmitter(Map params) {
+    restService.updateSerieForEmitter(params)
+  }
 }

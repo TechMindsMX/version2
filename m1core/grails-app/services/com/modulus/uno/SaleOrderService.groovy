@@ -83,8 +83,7 @@ class SaleOrderService {
   }
 
   private updateSaleOrderFromGeneratedBill(String uuidFolio, SaleOrder saleOrder) {
-    def tokens = uuidFolio.tokenize("_")
-    saleOrder.folio = tokens[0]
+    saleOrder.folio = uuidFolio
     saleOrder.status = SaleOrderStatus.EJECUTADA
     saleOrder.save()
     emailSenderService.notifySaleOrderChangeStatus(saleOrder)

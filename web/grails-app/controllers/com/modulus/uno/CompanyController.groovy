@@ -286,6 +286,11 @@ class CompanyController {
 
   }
 
+  def changeSerieForInvoices(Company company) {
+    companyService.changeSerieForInvoicesOfCompany(company, params.serie, params.folio)
+    redirect action:"show", id:company.id
+  }
+
   private String getAlertColor(Integer days) {
     switch(days) {
       case 30: "info"

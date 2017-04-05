@@ -163,6 +163,22 @@ class RestService {
     response
   }
 
+  def updateSerieForEmitter(Map params) {
+    log.info "Calling Service : Update serie for emitter"
+    def url = grailsApplication.config.modulus.updateSerieForEmitter
+    url = url.replace('#rfc', params.rfc)
+
+    log.info "Path: ${facturacionUrl}${url}"
+    def endpoint = "${url}"
+    def data = [serie:params.serie, folio:params.folio]
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl endpoint
+      method HTTPMethod.POST
+      callback { urlenc data }
+    }.doit()
+    response
+  }
+
   private def callingModulusUno(MessageCommand message,String template,String token) {
     log.info "Calling Modulusuno service: ${template}"
     def response = wsliteRequestService.doRequest(modulusunoUrl){

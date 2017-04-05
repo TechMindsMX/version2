@@ -466,7 +466,7 @@ and:
     given: "A company"
       Company company = new Company(rfc:"XYZ010203ABC").save(validate:false)
     and: "documents to stamp"
-      service.isAvailableForGenerateInvoices(_) >> [:]
+      restService.existEmisorForGenerateInvoice(_) >> [status:true]
     when: "we verify status"
       Boolean result = service.isCompanyEnabledToStamp(company)
     then:

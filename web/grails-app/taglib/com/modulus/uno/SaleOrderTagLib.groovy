@@ -21,14 +21,18 @@ class SaleOrderTagLib {
   }
 
   private def createUrlToShowFile(def attrs) {
-    def file = "${attrs.saleOrder.folio}_${attrs.saleOrder.id}.${attrs.format}"
+    int lengthFolio = attrs.saleOrder.folio.length()
+    String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio}" : "${attrs.saleOrder.folio}_${attrs.saleOrder.id}"
+    def file = "${nameFile}.${attrs.format}"
     def rfc = "${attrs.saleOrder.company.rfc}"
     def url = grailsApplication.config.modulus.showFactura
     url.replace('#rfc',rfc).replace('#file',file)
   }
 
   private def createUrlToShowAccuse(def attrs) {
-    def file = "${attrs.saleOrder.folio}.xml"
+    int lengthFolio = attrs.saleOrder.folio.length()
+    String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio.substring(0,36)}" : "${attrs.saleOrder.folio}"
+    def file = "${nameFile}.xml"
     def rfc = "${attrs.saleOrder.company.rfc}"
     def url = grailsApplication.config.modulus.showAccuse
     url.replace('#rfc',rfc).replace('#file',file)
