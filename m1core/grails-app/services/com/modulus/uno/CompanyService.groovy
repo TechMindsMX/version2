@@ -20,6 +20,7 @@ class CompanyService {
   def corporateService
   DirectorService directorService
   TransactionService transactionService
+  def invoiceService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -263,4 +264,8 @@ class CompanyService {
     company.accounts.first().aliasStp && company.commissions.find { it.type == CommissionType.PAGO }
   }
 
+  void changeSerieForInvoicesOfCompany(Company company, String serie, String folio) {
+    Map newSerie = [rfc:company.rfc, serie:serie, folio:folio]
+    invoiceService.changeSerieAndInitialFolioToStampInvoiceForEmitter(newSerie)
+  }
 }
