@@ -123,6 +123,26 @@ class PurchaseOrderServiceSpec extends Specification {
 
   }
 
+  void "Should recording the payment to purchase order"() {
+    given: "A purchase order"
+      def purchaseOrder = new PurchaseOrder()
+      purchaseOrder.providerName = "prueba"
+      purchaseOrder.status = PurchaseOrderStatus.AUTORIZADA
+      purchaseOrder.save(validate:false)
+    and: "The items of purchase order"
+      def item1 = new PurchaseOrderItem(name:'item1',quantity:1,price:new BigDecimal(1000), unitType:"UNIDADES", purchaseOrder:purchaseOrder )
+      purchaseOrder.addToItems(item1)
+      purchaseOrder.save(validate:false)
+    and: "Amount to pay"
+      BigDecimal amount = new BigDecimal(100)
+    when:
+      def result = service.payPurchaseOrder(purchaseOrder, amount)
+    then:
+      result.totalPayments == amount
+      1 * modulusUnoService.payPurchaseOrder(_, _)
+      1 * emailSenderService.notifyPurchaseOrderChangeStatus(_)
+  }
+
   private PaymentToPurchase createPayment(String amount) {
     new PaymentToPurchase(amount: new BigDecimal(amount)).save()
   }
