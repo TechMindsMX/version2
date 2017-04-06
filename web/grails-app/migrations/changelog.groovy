@@ -28,6 +28,5 @@ databaseChangeLog = {
   include file: 'deleting-deposit-order.groovy'
   include file: 'adding-dates-created-and-updated-to-fees-receipt.groovy'
   include file: 'adding-neighboorhood-to-address.groovy'
-
-    include file: 'creating-commission-transaction-domain.groovy'
+  include file: 'creating-commission-transaction-domain.groovy'
 }
