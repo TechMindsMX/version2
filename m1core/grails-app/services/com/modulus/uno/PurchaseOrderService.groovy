@@ -159,15 +159,15 @@ class PurchaseOrderService {
     (order.authorizations?.size() ?: 0) >= order.company.numberOfAuthorizations
   }
 
-  def payPurchaseOrder(PurchaseOrder order, PaymentToPurchase payment){
-    Transaction transaction = modulusUnoService.payPurchaseOrder(order, payment)
-    payment.transaction = transaction
-    if (amountPaymentIsTotalForPurchaseOrder(order, payment)) {
+  def payPurchaseOrder(PurchaseOrder order, BigDecimal amount){
+    Transaction transaction = modulusUnoService.payPurchaseOrder(order, amount)
+    addingPaymentToPurchaseOrder(order, amount, transaction)
+    if (order.total <= order.totalPayments) {
       order.status = PurchaseOrderStatus.PAGADA
       order.save()
     }
     emailSenderService.notifyPurchaseOrderChangeStatus(order)
-    [payment:payment,order:order]
+    order
   }
 
   def requestAuthorizationForTheOrder(PurchaseOrder purchaseOrder){
@@ -206,25 +206,16 @@ class PurchaseOrderService {
     purchaseOrder
   }
 
-  def addingPaymentToPurchaseOrder(PaymentToPurchase payment, PurchaseOrder purchaseOrder) {
+  def addingPaymentToPurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal amount, Long transactionId) {
+    PaymentToPurchase payment = new PaymentToPurchase(amount:amount, transaction:Transaction.get(transactionId))
     purchaseOrder.addToPayments(payment)
     purchaseOrder.save()
     purchaseOrder
   }
 
-  boolean amountPaymentIsTotalForPurchaseOrder(PurchaseOrder purchaseOrder, PaymentToPurchase payment) {
-    def amountPurchase = purchaseOrder.total
-    def amountPayments = (purchaseOrder.totalPayments + payment.amount)
-    amountPurchase <= amountPayments
-  }
-
   Boolean amountExceedsTotal(def amount, PurchaseOrder order) {
-    def originalAmount = order.total
-    def totalAmountPayments = order.totalPayments
-    if (amount <= originalAmount)
-      if (amount <= (originalAmount - totalAmountPayments))
-        return false
-    return true
+    BigDecimal pendingToPay = order.total - order.totalPayments
+    amount > pendingToPay
   }
 
   def deleteItemFromPurchaseOrder(PurchaseOrderItem item) {
