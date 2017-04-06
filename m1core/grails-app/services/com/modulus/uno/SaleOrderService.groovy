@@ -240,7 +240,16 @@ class SaleOrderService {
     saleOrdersFiltered
   }
 
-  def getTotalSoldForClient(Company company, String rfc) {
+  def getTotalSoldForClient(Company company, String rfc, Date firstDate, Date lastDate) {
+    def salesOrderEjecuted = SaleOrder.createCriteria().list{
+      eq("rfc", rfc)
+      eq("company", company)
+      'in'("status", [SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA])
+      between("dateCreated", firstDate, lastDate)
+    }
+    SalesOrderEjecuted.total.sum()
+  }
+  def getTotalSoldForClientStatusConciliated(Company company, String rfc) {
     def criteria = SaleOrder.createCriteria()
     def result = criteria.get {
       eq("rfc", rfc)
@@ -253,6 +262,7 @@ class SaleOrderService {
       }
     }
   }
+
 
 
 }
