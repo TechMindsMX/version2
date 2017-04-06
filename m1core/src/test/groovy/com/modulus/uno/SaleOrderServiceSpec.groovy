@@ -222,19 +222,36 @@ class SaleOrderServiceSpec extends Specification {
     2000         ||  0             | SaleOrderStatus.PAGADA     | 100
   }
 
-  void "Should get 000 for all sale orders executed for a client in company"(){
+  void "Should get 200 for all sale orders executed for a client in company"(){
     given:"A company"
       Company company = Company.get(2)
     and:"A rfc client"
       String rfcClient = "MDE130712JA8"
+    and: "A between time "
+      Date firstDate = new Date()
+      Date lastDate = new Date()
     and:"the get criteria method"
       def myCriteria = new Expando()
       myCriteria.get = { Closure closure -> 2000 }
       SaleOrder.metaClass.static.createCriteria = {myCriteria }
     when:
-      def total = service.getTotalSoldForClient(company, rfcClient)
+      def total = service.getTotalSoldForClient(company, rfcClient, firstDate, lastDate)
     then:
       total == 2000
   }
+ /* void "Should get for all sale order consiliate "(){
+     given:"A company"
+      Company company = Company.get(2)
+    and:"A rfc client"
+      String rfcClient = "MDE130712JA8"
+        and:"the get criteria method"
+      def myCriteria = new Expando()
+      myCriteria.get = { Closure closure -> 2000 }
+      SaleOrder.metaClass.static.createCriteria = {myCriteria }
+    when:
+      def total = service.getTotalSoldForClientStatusConciliated(company, rfcClient, firstDate, lastDate)
+    then:
+      total == 2000*/
+
 
 }
