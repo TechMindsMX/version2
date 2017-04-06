@@ -60,4 +60,12 @@ class PaymentService {
     payment
   }
 
+  BigDecimal getPaymentsFromClientToPay(){
+    List<Payment> paymentToConciliated = Payment.createCriteria().list{
+      eq("rfc", rfc)
+      eq("company", company)
+      'in'("status", [PaymentStatus.PENDING])
+    }
+     paymentToConciliated.amount.sum()
+  }
 }
