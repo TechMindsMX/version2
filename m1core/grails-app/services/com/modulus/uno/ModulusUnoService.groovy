@@ -45,7 +45,7 @@ class ModulusUnoService {
     command
   }
 
-  private FeeCommand createFeeCommandFromPurchaseOrder(PurchaseOrder order, PaymentToPurchase payment){
+  private FeeCommand createFeeCommandFromPurchaseOrder(PurchaseOrder order, BigDecimal amount){
     def command = null
     Commission commission = order.company.commissions.find { com ->
         com.type == CommissionType."PAGO"
@@ -56,7 +56,7 @@ class ModulusUnoService {
       if (commission.fee){
         amountFee = commission.fee * 1.0
       } else {
-        amountFee = payment.amount * (commission.percentage/100)
+        amountFee = amount * (commission.percentage/100)
       }
       command = new FeeCommand(companyId:order.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type)
     }
@@ -116,7 +116,7 @@ class ModulusUnoService {
       prioridad: "",
       iva: ""
     ]
-    String keyTransaction = "keyTransactionStp"//stpService.sendPayOrder(data)
+    String keyTransaction = stpService.sendPayOrder(data)
     Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
     amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:cashOutOrder.company.accounts?.first()?.stpClabe,
     referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
@@ -153,8 +153,8 @@ class ModulusUnoService {
     cashinResult
   }
 
-  def payPurchaseOrder(PurchaseOrder order, PaymentToPurchase payment) {
-    FeeCommand feeCommand = createFeeCommandFromPurchaseOrder(order, payment)
+  def payPurchaseOrder(PurchaseOrder order, BigDecimal amountToPay) {
+    FeeCommand feeCommand = createFeeCommandFromPurchaseOrder(order, amountToPay)
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
     }
@@ -172,7 +172,7 @@ class ModulusUnoService {
         folioOrigen: "",
         claveDeRastreo: new Date().toTimestamp(),
         institucionOperante: grailsApplication.config.stp.institutionOperation,
-        montoDelPago: payment.amount.setScale(2, RoundingMode.HALF_UP),
+        montoDelPago: amountToPay.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
         nombreDelOrdenante: order.company.bussinessName,
@@ -208,6 +208,8 @@ class ModulusUnoService {
     transactionStatus:TransactionStatus.AUTHORIZED]
     Transaction transaction = new Transaction(parameters)
     transactionService.saveTransaction(transaction)
+    feeCommand.transactionId = transaction.id
+    commissionTransactionService.saveCommissionTransaction(feeCommand)
     transaction
   }
 
