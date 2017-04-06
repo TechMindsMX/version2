@@ -6,8 +6,9 @@ class CommissionTransaction {
   CommissionType type
   BigDecimal amount
   CommissionTransactionStatus status = CommissionTransactionStatus.PENDING
-  String saleOrderOfCharge
+  SaleOrder saleOrderOfCharge
   Company company
+  Transaction transaction
 
   Date dateCreated
   Date lastUpdated
@@ -17,6 +18,7 @@ class CommissionTransaction {
     amount nullable:false, min:0.01
     company nullable:false
     saleOrderOfCharge nullable:true
+    transaction nullable:true
   }
 
 }
