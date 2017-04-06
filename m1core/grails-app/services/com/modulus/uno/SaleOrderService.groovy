@@ -245,22 +245,16 @@ class SaleOrderService {
       eq("rfc", rfc)
       eq("company", company)
       'in'("status", [SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA])
-   //   between("dateCreated", firstDate, lastDate)
+      //   between("dateCreated", firstDate, lastDate)
     }
     salesOrderEjecuted.total.sum()
   }
   def getTotalSoldForClientStatusConciliated(Company company, String rfc) {
-    def criteria = SaleOrder.createCriteria()
-    def result = criteria.get {
+    List<SaleOrder> salesOrderConciliated = SaleOrder.createCriteria().list{
       eq("rfc", rfc)
       eq("company", company)
-      'in'("status", [SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA])
-      items {
-        projections {
-          sqlProjection "sum(((price-(price * (discount/100))) + ((price-(price * (discount/100)))*(iva/100)) + ((price-(price * (discount/100)))*(ieps/100)) )* quantity) as total","total",DOUBLE
-        }
-      }
     }
+    salesOrderConciliated.amountPayed.sum()
   }
 
 
