@@ -161,7 +161,7 @@ class PurchaseOrderService {
 
   def payPurchaseOrder(PurchaseOrder order, BigDecimal amount){
     Transaction transaction = modulusUnoService.payPurchaseOrder(order, amount)
-    addingPaymentToPurchaseOrder(order, amount, transaction)
+    addingPaymentToPurchaseOrder(order, amount, transaction.id)
     if (order.total <= order.totalPayments) {
       order.status = PurchaseOrderStatus.PAGADA
       order.save()
