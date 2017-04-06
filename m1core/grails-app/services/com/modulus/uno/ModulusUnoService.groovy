@@ -12,13 +12,7 @@ class ModulusUnoService {
   StpService stpService
   TransactionService transactionService
   def stpClabeService
-
-  static final feeType = [
-    SaleOrder : "SALE_FEE",
-    LoanOrder : "LOAN_FEE",
-    PurchaseOrder : "PAYMENT_FEE",
-    CashOutOrder : "CASHOUT_FEE"
-  ]
+  def commissionTransactionService
 
   static final commissionType = [
     SaleOrder : "FACTURA",
@@ -39,8 +33,6 @@ class ModulusUnoService {
         com.type == CommissionType."${comType}"
     }
 
-    String fType = feeType."${order.class.simpleName}"
-
     BigDecimal amountFee = 0
     if (commission){
       if (commission.fee){
@@ -48,8 +40,7 @@ class ModulusUnoService {
       } else {
         amountFee = order.class.simpleName == "SaleOrder" ? order.total * (commission.percentage/100) : order.amount * (commission.percentage/100)
       }
-      String uuid = order.company.accounts.first().timoneUuid
-      command = new FeeCommand(uuid:uuid,amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:fType)
+      command = new FeeCommand(companyId:order.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP), type:commission.type)
     }
     command
   }
@@ -60,8 +51,6 @@ class ModulusUnoService {
         com.type == CommissionType."PAGO"
     }
 
-    String fType = feeType."${order.class.simpleName}"
-
     BigDecimal amountFee = 0
     if (commission){
       if (commission.fee){
@@ -69,8 +58,7 @@ class ModulusUnoService {
       } else {
         amountFee = payment.amount * (commission.percentage/100)
       }
-      String uuid = order.company.accounts.first().timoneUuid
-      command = new FeeCommand(uuid:uuid,amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:fType)
+      command = new FeeCommand(companyId:order.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type)
     }
     command
   }
@@ -128,13 +116,15 @@ class ModulusUnoService {
       prioridad: "",
       iva: ""
     ]
-    String keyTransaction = stpService.sendPayOrder(data)
+    String keyTransaction = "keyTransactionStp"//stpService.sendPayOrder(data)
     Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
     amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:cashOutOrder.company.accounts?.first()?.stpClabe,
     referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
     transactionStatus:TransactionStatus.AUTHORIZED]
     Transaction transaction = new Transaction(parameters)
     transactionService.saveTransaction(transaction)
+    feeCommand.transactionId = transaction.id
+    commissionTransactionService.saveCommissionTransaction(feeCommand)
     transaction
   }
 
