@@ -11,10 +11,12 @@ class ConciliationServiceSpec extends Specification {
 
   SaleOrderService saleOrderService = Mock(SaleOrderService)
   PaymentService paymentService = Mock(PaymentService)
+  def springSecurityService = [currentUser:Mock(User)]
 
   def setup() {
     service.saleOrderService = saleOrderService
     service.paymentService = paymentService
+    service.springSecurityService = springSecurityService
   }
 
   void "Should get 1000 to apply for payment with amount 1000 and conciliations is empty"() {
@@ -119,6 +121,23 @@ class ConciliationServiceSpec extends Specification {
       service.getConciliationsToApplyForPayment(payment) == []
       service.getConciliationsAppliedForPayment(payment) == conciliations
       2 * saleOrderService.addPaymentToSaleOrder(_, _, _)
+      1 * paymentService.conciliatePayment(_)
+  }
+
+  void "Should apply conciliation without invoice for payment"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+    and:"A payment"
+      Payment payment = new Payment(amount:5000, company:company).save(validate:false)
+    and:"The conciliation"
+      Conciliation conciliation = new Conciliation(amount:5000, comment:"Conciliation without invoice test", payment:payment)
+    and:
+      User user = Mock(User)
+      springSecurityService.currentUser >> user
+    when:
+      service.applyConciliationWithoutInvoice(conciliation)
+    then:
+      conciliation.status == ConciliationStatus.APPLIED
       1 * paymentService.conciliatePayment(_)
   }
 
