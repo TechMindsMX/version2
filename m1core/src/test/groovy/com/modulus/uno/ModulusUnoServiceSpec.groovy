@@ -13,12 +13,14 @@ class ModulusUnoServiceSpec extends Specification {
 
   def restService = Mock(RestService)
   def corporateService = Mock(CorporateService)
-  def grailsApplication = new GrailsApplicationMock()
+  def stpService = Mock(StpService)
 
   def setup() {
     service.restService = restService
+    service.stpService = stpService
     service.corporateService = corporateService
-    service.grailsApplication = grailsApplication
+    grailsApplication.config.stp.typeAccount = "some"
+    grailsApplication.config.stp.institutionOperation = "some"
   }
 
   Should "create an user with main stp account"() {
@@ -32,6 +34,9 @@ class ModulusUnoServiceSpec extends Specification {
       user.password = "1234567890AS"
       user.profile = profile
       user.save()
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     and:
       def company = new Company()
       company.bussinessName = "apple"
@@ -67,6 +72,9 @@ class ModulusUnoServiceSpec extends Specification {
       def commission = new Commission(fee:0.0, percentage:10, type:CommissionType.DEPOSITO)
       company.addToCommissions(commission)
       company.save(validate:false)
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     and:
       def order = new DepositOrder()
       order.amount = 1200
@@ -163,7 +171,7 @@ class ModulusUnoServiceSpec extends Specification {
     when:
       CashoutCommand command = service.approveCashOutOrder(order)
     then:
-      1 * restService.sendCommandWithAuth(_ as CashoutCommand, 'cashout')
+      1 * stpService.sendPayOrder(_)
   }
 
   void "Should get transactions of account"() {
@@ -178,6 +186,9 @@ class ModulusUnoServiceSpec extends Specification {
   void "Should get transactions of integrator"() {
     given:
       AccountStatementCommand command = Mock(AccountStatementCommand)
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     when:
       def result = service.getTransactionsInPeriodOfIntegrator(command)
     then:
@@ -189,6 +200,9 @@ class ModulusUnoServiceSpec extends Specification {
       CreateAccountCommand command = new CreateAccountCommand(payerAccount:"thePayerAccount",
                                                               uuid:"theUuid",
                                                               name:"theClientName")
+    and:
+      def grailsApplication = new GrailsApplicationMock()
+      service.grailsApplication = grailsApplication
     when:"We create an account"
       def result = service.generateSubAccountStpForClient(command)
     then:"We expect service was called"
