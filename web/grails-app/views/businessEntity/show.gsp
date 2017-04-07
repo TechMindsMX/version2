@@ -51,57 +51,20 @@
                       <div class="alert alert-success" role="alert">${flash.message} - ${relation}
                       </div>
                     </g:if>
-                    <ol class="property-list businessEntity">
-                      <f:display bean="businessEntity" property="rfc" wrapper="show"/>
-                      <g:if test="${!relation.equals('EMPLEADO')}">
-                        <f:display bean="businessEntity" property="website" wrapper="show"/>
-                      </g:if>
 
-                      <g:if test="${businessEntity.type == BusinessEntityType.FISICA}">
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.NOMBRE}">
-                            <li class="fieldcontain">
-                              <span id="name-label" class="property-label">Nombre</span>
-                              <div class="property-value" aria-labelledby="name-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.APELLIDO_PATERNO}">
-                            <li class="fieldcontain">
-                              <span id="lastName-label" class="property-label">Apellido Paterno</span>
-                              <div class="property-value" aria-labelledby="lastName-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.APELLIDO_MATERNO}">
-                            <li class="fieldcontain">
-                              <span id="lastName-label" class="property-label">Apellido Materno</span>
-                              <div class="property-value" aria-labelledby="lastName-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                      </g:if>
-                      <g:if test="${businessEntity.type == BusinessEntityType.MORAL}">
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.RAZON_SOCIAL}">
-                            <li class="fieldcontain">
-                              <span id="name-label" class="property-label">Razón Social</span>
-                              <div class="property-value" aria-labelledby="name-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                      </g:if>
-                    </ol>
+                    <dl class="dl-horizontal">
+                      <dt>RFC</dt>
+                      <dd>${businessEntity.rfc}</dd>
+                      <dt>Sitio web</dt>
+                      <dd>${businessEntity.website ?: 'Sin información'}</dd>
+                      <dt><g:if test="${businessEntity.type == BusinessEntityType.MORAL}">Razón Social</g:if>
+                        <g:if test="${businessEntity.type == BusinessEntityType.FISICA}">Nombre</g:if>
+
+                      </dt>
+                      <dd>
+                        <g:render template="businessName" model="[businessEntity: businessEntity, relation: relation]" />
+                      </dd>
+                    </dl>
 
                   </div>
                   <div class="panel-footer">
