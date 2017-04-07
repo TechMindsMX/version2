@@ -240,7 +240,7 @@ class SaleOrderService {
     saleOrdersFiltered
   }
 
-  def getTotalSoldForClient(Company company, String rfc/*, Date firstDate, Date lastDate*/) {
+  BigDecimal getTotalSoldForClient(Company company, String rfc/*, Date firstDate, Date lastDate*/) {
     def salesOrderEjecuted = SaleOrder.createCriteria().list{
       eq("rfc", rfc)
       eq("company", company)
@@ -249,7 +249,7 @@ class SaleOrderService {
     }
     salesOrderEjecuted.total.sum()
   }
-  def getTotalSoldForClientStatusConciliated(Company company, String rfc) {
+  BigDecimal getTotalSoldForClientStatusConciliated(Company company, String rfc) {
     List<SaleOrder> salesOrderConciliated = SaleOrder.createCriteria().list{
       eq("rfc", rfc)
       eq("company", company)
