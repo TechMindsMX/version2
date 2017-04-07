@@ -10,7 +10,7 @@ class InvoiceService {
   String generateFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
     def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
-    result.str
+    result.text
   }
 
 
@@ -78,11 +78,11 @@ class InvoiceService {
     def factura = createInvoiceFromSaleOrder(saleOrder)
     String file = "previo.pdf"
     String rfc = "${saleOrder.company.rfc}"
-    def url = "${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.showFactura}"
+    def url = grailsApplication.config.modulus.showFactura
     url = url.replace('#rfc',rfc).replace('#file',file)
     def result = restService.sendFacturaCommandWithAuth(factura, url)
     log.info "Preview invoice generated for sale order ${saleOrder.id} with template ${saleOrder.pdfTemplate}"
-    result
+    result.data
   }
 
   void cancelBill(SaleOrder saleOrder) {

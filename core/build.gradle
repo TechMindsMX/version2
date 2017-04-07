@@ -55,8 +55,6 @@ dependencies {
   provided "org.springframework.boot:spring-boot-starter-actuator"
   provided "org.springframework.boot:spring-boot-autoconfigure"
   provided "org.springframework.boot:spring-boot-starter-tomcat"
-  compile 'org.apache.httpcomponents:httpmime:4.5.2'
-  compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
   compile "org.grails.plugins:workspace:0.1"
   compile 'net.sourceforge.jexcelapi:jxl:2.6.12'
   compile 'org.apache.poi:poi:3.13'

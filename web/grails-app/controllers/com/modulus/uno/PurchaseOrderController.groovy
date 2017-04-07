@@ -238,8 +238,10 @@ class PurchaseOrderController {
     def responsePOST = purchaseOrderService.callExternalServiceForInvoice(invoice)
 
     params.remove("file[0]")
-
     flash.dataInvoice = responsePOST
+    //TODO Esto se soluciona con un wrapper o parse a una entidad 
+    responsePOST[0].descuento = responsePOST[0].isNull("descuento") ? "" : responsePOST[0].descuento
+    responsePOST[0].serie = responsePOST[0].isNull("serie") ? "" : responsePOST[0].serie
     def isAExistentProvirder = businessEntityService.findBusinessEntityAndProviderLinkByRFC(responsePOST.emisor.rfc)
     def providerExistent
     def providerBankAccountAndAddress
