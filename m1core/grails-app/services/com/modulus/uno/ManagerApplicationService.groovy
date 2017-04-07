@@ -6,12 +6,9 @@ import java.text.SimpleDateFormat
 @Transactional
 class ManagerApplicationService {
 
-  def restService
-  def grailsApplication
   def documentService
   def modulusUnoService
   def collaboratorService
-  DirectorService directorService
 
   def acceptingCompanyToIntegrate(Long companyId, String email) {
     Company company = Company.findById(companyId)
@@ -121,33 +118,6 @@ class ManagerApplicationService {
       companyRejectedLog.status = true
       companyRejectedLog.save()
     }
-  }
-
-  private def createNewPasswordForLegalRepresentatives(Company company) {
-    ArrayList<User> legalRepresentatives = directorService.findUsersOfCompanyByRole(company.id,['ROLE_LEGAL_REPRESENTATIVE'])
-
-    def bussinesName = company.bussinessName
-    legalRepresentatives.each{ user ->
-      def rfcUser =  user.profile.rfc
-      def newPassword = "${bussinesName}${rfcUser}".replaceAll("\\s","")
-      createAccessToLegalRepresentative(company,user)
-      user.password = newPassword
-      user.accountLocked = true
-      user.save()
-    }
-
-  }
-
-  private def createAccessToLegalRepresentative(company, user) {
-    def token = UUID.randomUUID().toString().replaceAll('-','')
-    def baseUrl = grailsApplication.config.first.access.register
-    def firstAccess = new FirstAccessToLegalRepresentatives()
-    firstAccess.urlVerification = "${baseUrl}${token}"
-    firstAccess.user = user
-    firstAccess.company = company
-    firstAccess.token = token
-    firstAccess.enabled = true
-    firstAccess.save()
   }
 
   private def findCompanyRejectedLogsByStatus(companyId,status) {

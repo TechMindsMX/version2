@@ -4,15 +4,18 @@ import org.springframework.context.i18n.LocaleContextHolder as LCH
 import grails.transaction.Transactional
 
 class RecoveryService {
+  
   def grailsApplication
   def registrationService
   def recoveryCollaboratorService
   def messageSource
   def emailSenderService
+  CorporateService corporateService
 
-  def sendConfirmationAccountToken(String email){
-    def message = recoveryCollaboratorService.generateToken("${grailsApplication.config.recovery.register}", email)
-    emailSenderService.sendEmailForConfirmAccount(message, email)
+  def sendConfirmationAccountToken(User user){
+    String urlCorporate = corporateService.findUrlCorporateOfUser(user)
+    def message = recoveryCollaboratorService.generateToken("${urlCorporate}${grailsApplication.config.recovery.register}", user?.profile?.email)
+    emailSenderService.sendEmailForConfirmAccount(message, user?.profile?.email)
   }
 
   @Transactional
@@ -43,9 +46,10 @@ class RecoveryService {
   def generateRegistrationCodeForEmail(String email) {
     def profile = Profile.findByEmail(email)
     def user = User.findByProfile(profile)
+    String urlCorporate = corporateService.findUrlCorporateOfUser(user)
     if(!user) throw new UserNotFoundException(messageSource.getMessage('exception.user.not.found', null, LCH.getLocale()))
     if(!user.enabled) throw new AccountNoActivatedException(messageSource.getMessage('exception.account.not.activated', null, LCH.getLocale()))
-    def message = recoveryCollaboratorService.generateToken("${grailsApplication.config.recovery.forgot}", email)
+    def message = recoveryCollaboratorService.generateToken("${urlCorporate}${grailsApplication.config.recovery.forgot}", email)
     emailSenderService.sendEmailForRegistrationCode(message, email)
   }
 
