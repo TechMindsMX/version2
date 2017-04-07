@@ -1,79 +1,80 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-    }
-    repositories {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
-    }
-    dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "org.grails.plugins:hibernate:4.3.10.5"
-    }
-}
-
-plugins {
-    id "io.spring.dependency-management" version "0.5.2.RELEASE"
+  repositories {
+    mavenLocal()
+    maven { url "https://repo.grails.org/grails/core" }
+  }
+  dependencies {
+    classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+    classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.9.5"
+    classpath "org.grails.plugins:hibernate5:6.0.7"
+  }
 }
 
 version "0.1"
 group "webservices"
 
-apply plugin: "spring-boot"
-apply plugin: "war"
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: "org.grails.grails-web"
-
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
+apply plugin:"eclipse"
+apply plugin:"idea"
+apply plugin:"war"
+apply plugin:"org.grails.grails-web"
+apply plugin:"org.grails.grails-gsp"
+apply plugin:"asset-pipeline"
 
 repositories {
-    mavenLocal()
-    maven { url "https://repo.grails.org/grails/core" }
+  mavenLocal()
+  maven { url "https://repo.grails.org/grails/core" }
 }
 
 dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
+  imports {
+    mavenBom "org.grails:grails-bom:$grailsVersion"
+  }
+  applyMavenExclusions false
 }
 
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-logging"
-    compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.springframework.boot:spring-boot-starter-tomcat"
-    compile "org.grails:grails-plugin-url-mappings"
-    compile "org.grails:grails-plugin-rest"
-    compile "org.grails:grails-plugin-interceptors"
-    compile "org.grails:grails-plugin-services"
-    compile "org.grails:grails-plugin-datasource"
-    compile "org.grails:grails-plugin-databinding"
-    compile "org.grails:grails-plugin-async"
-    compile "org.grails:grails-web-boot"
-    compile "org.grails:grails-logging"
-    compile "org.grails:grails-dependencies"
+  compile "org.springframework.boot:spring-boot-starter-logging"
+  compile "org.springframework.boot:spring-boot-autoconfigure"
+  compile "org.springframework.boot:spring-boot-starter-actuator"
+  compile "org.springframework.boot:spring-boot-starter-tomcat"
 
-    compile "org.grails.plugins:hibernate"
-    compile "org.grails.plugins:cache"
-    compile "org.hibernate:hibernate-ehcache"
-    compile project(':core')
+  compile "org.grails:grails-core"
+  compile "org.grails:grails-dependencies"
+  compile "org.grails:grails-web-boot"
+  console "org.grails:grails-console"
 
-    compile "mysql:mysql-connector-java:5.1.34"
-    compile "org.grails.plugins:swaggydoc-grails3:0.28.0"
+  profile "org.grails.profiles:web"
 
-    runtime "org.grails.plugins:asset-pipeline"
+  compile "org.grails.plugins:cache"
+  compile "org.grails.plugins:scaffolding"
+  compile "org.grails.plugins:hibernate5"
 
-    testCompile "org.grails:grails-plugin-testing"
-    testCompile "org.grails.plugins:geb"
+  compile "org.hibernate:hibernate-core:5.1.2.Final"
+  compile "org.hibernate:hibernate-ehcache:5.1.2.Final"
 
-    console "org.grails:grails-console"
+  runtime "org.grails.plugins:asset-pipeline"
+
+  testCompile "org.grails:grails-plugin-testing"
+  testCompile "org.grails.plugins:geb"
+  testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
+  testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+
+  compile "mysql:mysql-connector-java:5.1.34"
+  compile "org.grails.plugins:swaggydoc-grails3:0.28.0"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = gradleWrapperVersion
+grails {
+  plugins {
+    compile project(':m1core')
+  }
+}
+
+bootRun {
+  jvmArgs('-Dspring.output.ansi.enabled=always')
+}
+
+
+assets {
+  minifyJs = true
+  minifyCss = true
 }

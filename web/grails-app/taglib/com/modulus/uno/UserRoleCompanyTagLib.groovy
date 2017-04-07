@@ -13,7 +13,7 @@ class UserRoleCompanyTagLib {
     }?.roles
     Boolean checked = rolesForUserAtThisCompany?.contains currentRole ?: false
     out << g.checkBox(
-      name:"companies.${company.uuid}.${currentRole}",
+      name:"companies.${company.uuid}.${currentRole.authority}",
       value:"${checked ? 'on' : ''}",
       checked:"${checked ? 'checked' : ''}")
   }
