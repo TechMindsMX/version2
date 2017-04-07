@@ -45,7 +45,7 @@
               <g:message code="saleOrder.list.empty"/>
             </div>
           </g:if>
-         <g:each in="${saleOrders.sort{it.dateCreated}}" var="sale">
+         <g:each in="${saleOrders}" var="sale">
          <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
             <td class="text-center"><g:link action="show" id="${sale.id}">${sale.id}</g:link></td>
             <td>${sale.rfc}</td>
