@@ -25,5 +25,8 @@
     "jquery-ui": "jqueryui#^1.12.1",
     "jquery-validation": "^1.16.0",
     "dagre-d3": "^0.4.17"
+  },
+  "resolutions": {
+    "lodash": "^3.10.0"
   }
 }

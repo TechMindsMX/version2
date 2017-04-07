@@ -6,7 +6,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(PaymentService)
-@Mock([Payment, SaleOrder])
+@Mock([Payment, SaleOrder, Company])
 class PaymentServiceSpec extends Specification {
 
   def emailSenderService = Mock(EmailSenderService)
@@ -29,4 +29,12 @@ class PaymentServiceSpec extends Specification {
       1 * emailSenderService.notifySaleOrderChangeStatus(_)
   }
 
+  void "Should conciliate a payment"() {
+    given:"A payment"
+      Payment payment = new Payment(amount:1000, status:PaymentStatus.PENDING, company: new Company().save(validate:false)).save(validate:false)
+    when:
+      def result = service.conciliatePayment(payment)
+    then:
+      result.status == PaymentStatus.CONCILIATED
+  }
 }

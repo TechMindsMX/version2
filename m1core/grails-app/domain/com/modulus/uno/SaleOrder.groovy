@@ -28,7 +28,7 @@ class SaleOrder {
 
   static belongsTo = [company:Company]
 
-  static hasMany = [addresses:Address, items:SaleOrderItem,authorizations:Authorization, documents:S3Asset]
+  static hasMany = [addresses:Address, items:SaleOrderItem,authorizations:Authorization, documents:S3Asset, payments:SaleOrderPayment]
 
   static constraints = {
     rfc blank:false,size:10..50
@@ -74,8 +74,12 @@ class SaleOrder {
     items*.appliedDiscount.sum() ?: 0
   }
 
+  BigDecimal getAmountToPay() {
+    getTotal() - (payments*.amount.sum() ?: 0)
+  }
+
   String toString(){
-    "${clientName} / \$ ${total.setScale(2, RoundingMode.HALF_UP)}"
+    "${id} / ${clientName} / ${currency} / Total:\$ ${total.setScale(2, RoundingMode.HALF_UP)} / Por pagar: \$ ${amountToPay.setScale(2, RoundingMode.HALF_UP)}"
   }
 
   static marshaller = {
