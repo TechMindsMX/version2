@@ -143,13 +143,6 @@ class RestService {
     response
   }
 
-  def existEmisorForGenerateInvoice(String rfc) {
-    log.info "CALLING Service: Verify if exist emisor"
-    def result = wsliteConnectionService.get("${grailsApplication.config.modulus.facturacionUrl}",
-                                           "${grailsApplication.config.modulus.invoice}/${rfc}")
-    result ?: [error:false]
-  }
-
   def updateFilesForInvoice(def bodyMap) {
     log.info "Calling Service : Update files to stamp"
     log.info "Path: ${facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
