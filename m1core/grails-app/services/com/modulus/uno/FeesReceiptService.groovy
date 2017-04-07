@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import java.math.RoundingMode
 
 @Transactional
 class FeesReceiptService {
@@ -10,6 +11,7 @@ class FeesReceiptService {
   def emailSenderService
   def grailsApplication
   TransactionService transactionService
+  CommissionTransactionService commissionTransactionService
 
   def addAuthorizationToFeesReceipt(FeesReceipt feesReceipt, User user){
     Authorization authorization = new Authorization(user:user)
@@ -42,7 +44,7 @@ class FeesReceiptService {
     def data = [
         institucionContraparte: feesReceipt.bankAccount.banco.bankingCode,
         empresa: feesReceipt.company.accounts.first().aliasStp,
-        fechaDeOperacion: new Date().format("yyyyMMdd"),  
+        fechaDeOperacion: new Date().format("yyyyMMdd"),
         folioOrigen: "",
         claveDeRastreo: new Date().toTimestamp(),
         institucionOperante: grailsApplication.config.stp.institutionOperation,
@@ -84,8 +86,8 @@ class FeesReceiptService {
     transactionService.saveTransaction(transaction)
     feesReceipt.status = FeesReceiptStatus.EJECUTADA
     feesReceipt.transaction = transaction
-    //TODO Esto no deberia de ser flush true
-    feesReceipt.save flush:true
+    feesReceipt.save()
+    registerCommissionForFeesReceipt(feesReceipt)
     emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
     feesReceipt
   }
@@ -95,5 +97,33 @@ class FeesReceiptService {
     feesReceipt.save flush:true
     emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
   }
-  
+
+  private void registerCommissionForFeesReceipt(FeesReceipt feesReceipt) {
+    FeeCommand feeCommand = createFeeCommand(feesReceipt)
+    commissionTransactionService.saveCommissionTransaction(feeCommand)
+  }
+
+  private FeeCommand createFeeCommand(FeesReceipt feesReceipt) {
+    def command = null
+    Commission commission = feesReceipt.company.commissions.find { com ->
+        com.type == CommissionType."PAGO"
+    }
+
+    if (!commission) {
+      throw new BusinessException("No existe comisión de pago registrada")
+    }
+
+    BigDecimal netAmountFeesReceipt = feesReceipt.amount + feesReceipt.iva - feesReceipt.ivaWithHolding - feesReceipt.isr
+    BigDecimal amountFee = 0
+    if (commission){
+      if (commission.fee){
+        amountFee = commission.fee * 1.0
+      } else {
+        amountFee = netAmountFeesReceipt * (commission.percentage/100)
+      }
+      command = new FeeCommand(companyId:feesReceipt.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type, transactionId:feesReceipt.transaction.id)
+    }
+    command
+  }
+
 }
