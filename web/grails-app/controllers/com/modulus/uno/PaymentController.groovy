@@ -111,25 +111,6 @@ class PaymentController {
     }
   }
 
-  def reconcile() {
-    Company company = Company.get(session.company)
-    def payments = Payment.findAllByCompanyAndStatus(company, PaymentStatus.PENDING)
-    def saleOrders = SaleOrder.findAllByCompanyAndStatus(company, SaleOrderStatus.EJECUTADA)
-    [payments:payments, saleOrders: saleOrders, company:company]
-  }
-
-  def tieOrderWithPayment(){
-    try {
-      def p = paymentService.concilationForSaleOrderWithPayment(params.long("saleOrder.id"),params.long('id'))
-      flash.message = """\
-        El pago por \$ ${p.amount} se concilió con la orden para el cliente '${p.saleOrder.clientName}' por un monto de \$ ${p.saleOrder.total.setScale(2, RoundingMode.HALF_UP)}
-      """
-    }catch(e){
-      flash.message = e.message
-    }
-    redirect action:'reconcile'
-  }
-
   def cancelPayment(Payment payment){
     payment.status = PaymentStatus.CANCELED
     payment.save()
