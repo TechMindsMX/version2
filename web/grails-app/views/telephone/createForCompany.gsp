@@ -7,11 +7,11 @@
     </head>
     <body>
       <div class="page-title">
-        <h1><g:message code="company.new" /></h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-          <li class="active"><g:message code="telephone.company.new"/></li>
-        </ol>
+        <h1>
+          <i class="fa fa-phone fa-3x"></i>
+          <g:message code="telephone.company.new"/>
+          <small>${company}</small>
+        </h1>
       </div>
         <div class="portlet portlet-blue">
             <div class="portlet-heading">
