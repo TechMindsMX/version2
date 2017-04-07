@@ -11,6 +11,7 @@ class ModulusUnoService {
   def grailsApplication
   StpService stpService
   TransactionService transactionService
+  def stpClabeService
 
   static final feeType = [
     SaleOrder : "SALE_FEE",
@@ -91,7 +92,7 @@ class ModulusUnoService {
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
-      fechaDeOperacion: new Date().format("yyyyMMdd"),  
+      fechaDeOperacion: new Date().format("yyyyMMdd"),
       folioOrigen: "",
       claveDeRastreo: new Date().getTime().toString(),
       institucionOperante: grailsApplication.config.stp.institutionOperation,
@@ -140,26 +141,13 @@ class ModulusUnoService {
   }
 
   def consultBalanceOfAccount(String account) {
-    def command = new BalanceIntegratedCommand()
-    command.uuid = account
-    def response = restService.getOnModulus(command, grailsApplication.config.modulus.users)
-    [response.balance, response.usd]
+    //TODO: Reimplementar consultando en el domain de transacciones nuevo
+    [new BigDecimal(0), new BigDecimal(0)]
   }
 
   def consultBalanceIntegratorOfType(String type) {
     def balance = restService.getBalancesIntegrator(type, grailsApplication.config.modulus.integratorBalance)
     [balance.balance, balance.usd]
-  }
-
-  def createAccount(Company company,String email) {
-    def command = new CreateAccountCommand(payerAccount:grailsApplication.config.modulus.stpPayerAccount,
-                                           uuid:company.uuid,
-                                           name:company.bussinessName,
-                                           email:email)
-
-
-    def accountResult = restService.sendCommandWithAuth(command, grailsApplication.config.modulus.users)?.json
-    accountResult
   }
 
   def generateACashinForIntegrated(DepositOrder order) {
@@ -194,7 +182,7 @@ class ModulusUnoService {
     def data = [
         institucionContraparte: order.bankAccount.banco.bankingCode,
         empresa: order.company.accounts?.first()?.aliasStp,
-        fechaDeOperacion: new Date().format("yyyyMMdd"),  
+        fechaDeOperacion: new Date().format("yyyyMMdd"),
         folioOrigen: "",
         claveDeRastreo: new Date().toTimestamp(),
         institucionOperante: grailsApplication.config.stp.institutionOperation,
@@ -237,25 +225,20 @@ class ModulusUnoService {
     transaction
   }
 
-  def generedModulusUnoAccountByCompany(Company company, String email) {
-    def accountInfo = createAccount(company,email)
-    def modulusUnoAccount = saveAccountOfModulusUnoOfIntegrated(accountInfo,company)
-    modulusUnoAccount
+  def generedModulusUnoAccountByCompany(Company company) {
+    ModulusUnoAccount account = new ModulusUnoAccount()
+    account.account = ""
+    account.balance = ""
+    account.integraUuid = company.uuid
+    account.stpClabe = stpClabeService.generateSTPMainAccount(grailsApplication.config.modulus.stpPayerAccount, 3)
+    account.timoneUuid = ""
+    account.company = company
+    account.save()
+    account
   }
 
   def getTransactionsInPeriodOfIntegrator(AccountStatementCommand command){
     restService.getTransactionsIntegrator(command, grailsApplication.config.modulus.integratorTransactions)
-  }
-
-  def saveAccountOfModulusUnoOfIntegrated(def accountInformationJson,company) {
-    ModulusUnoAccount account = new ModulusUnoAccount()
-    account.account = accountInformationJson.account
-    account.balance = accountInformationJson.balance
-    account.integraUuid = accountInformationJson.integraUuid
-    account.stpClabe = accountInformationJson.stpClabe
-    account.timoneUuid = accountInformationJson.timoneUuid
-    account.company = company
-    account.save(failOnError:true)
   }
 
   def generateSubAccountStpForClient(CreateAccountCommand command) {
