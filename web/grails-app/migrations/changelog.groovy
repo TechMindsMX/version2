@@ -24,4 +24,5 @@ databaseChangeLog = {
   include file: 'updating-machine-structure.groovy'
   include file: 'updating-transition-actions-relation.groovy'
   include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
+  include file: 'drop-not-null-constraint-to-change-type-from-sale-order.groovy'
 }
