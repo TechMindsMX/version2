@@ -49,6 +49,5 @@
         </div>
       </div>
     </div>
-    <asset:javascript src="conciliation/chooseInvoice.js"/>
   </body>
 </html>
