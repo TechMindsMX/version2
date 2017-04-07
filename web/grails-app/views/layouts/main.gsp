@@ -47,33 +47,42 @@
           <li>
             &nbsp;&nbsp;&nbsp;&nbsp;
           </li>
-          <li align="center">
-            <sec:ifLoggedIn>
-              <font color="white"> Usuario Logueado: ${modulusuno.userLoggin()}</font>
-            </sec:ifLoggedIn>
+          <li align="right">
+
           </li>
         </ul>
+
+
         <ul class="nav navbar-right">
+
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-user"></i>  <i class="fa fa-caret-down"></i>
             </a>
+
             <ul class="dropdown-menu dropdown-user">
               <li>
                 <g:link controller="user" action="profile" id="${sec.loggedInUserInfo(field: "id")}">
-                <i class="fa fa-user"></i> Mi Perfil
+                  <i class="fa fa-user"></i> Mi Perfil
                 </g:link>
               </li>
               <li class="divider"></li>
               <li>
                 <g:link controller="logout" action="index" class="logout_open">
-                <i class="fa fa-sign-out"></i> Cerrar sesión
+                  <i class="fa fa-sign-out"></i> Cerrar sesión
                 </g:link>
               </li>
+
             </ul>
           </li>
         </ul>
-      </div>
+        <ul class="nav navbar-brand navbar-right">
+          <sec:ifLoggedIn>
+            <font color="white"> Hola: ${modulusuno.userLoggin()}</font>
+          </sec:ifLoggedIn> 
+        </ul> 
+
+      </div>&nbsp;
     </nav>
 
     <nav class="navbar-side" role="navigation">
@@ -102,7 +111,7 @@
 
           <g:if test="${session.company && companyInfo.isAvailableForOperationInThisCompany()}">
             <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-            <g:render template="/layouts/representante_legal" />
+              <g:render template="/layouts/representante_legal" />
             </sec:ifAnyGranted>
             <sec:ifAnyGranted roles="ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
               <g:render template="/layouts/fico" />
