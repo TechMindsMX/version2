@@ -21,6 +21,17 @@ import java.lang.Void as Should
       assert transaction.id
   }
 
+  Should "get balance for key account prior to date without transactions existing"() {
+    given:"A key account"
+      String keyAccount = "stpClabe"
+    and:"the date"
+      Date date = new Date()
+    when:
+      BigDecimal balance = service.getBalanceByKeyAccountPriorToDate(keyAccount, date)
+    then:
+      balance == 0
+  }
+
   Should "get the transactions in period for account"(){
     given:
       (123123..123124).each{

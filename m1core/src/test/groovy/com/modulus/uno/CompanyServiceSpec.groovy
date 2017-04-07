@@ -277,12 +277,12 @@ and:
       company.status = CompanyStatus.ACCEPTED
     and:"An account"
       ModulusUnoAccount account = Mock(ModulusUnoAccount)
-      account.timoneUuid >> "1234567890"
+      account.stpClabe >> "1234567890"
       account.save(validate:false)
       company.accounts = [account]
       company.save(validate:false)
     and:
-      modulusUnoService.consultBalanceOfAccount(company.accounts.first().timoneUuid) >> [100.00,0.00]
+      modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe) >> 100
     when:"Get Balance of company"
       Balance balances = service.getBalanceOfCompany(company)
     then:"Expect a balance and usd amount"
@@ -355,13 +355,13 @@ and:
       Company company = createCompany()
     and:"An account"
       ModulusUnoAccount account = Mock(ModulusUnoAccount)
-      account.timoneUuid   = "1234567890"
+      account.stpClabe   = "1234567890"
       account.save(validate:false)
       company.accounts = [account]
       company.status = CompanyStatus.ACCEPTED
       company.save(validate:false)
     and:
-      modulusUnoService.consultBalanceOfAccount(company.accounts.first().timoneUuid) >> [totalBalance,0]
+      modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe) >> totalBalance
     when:"we check balance to solve amount"
       Boolean result = service.enoughBalanceCompany(company, amount)
     then:

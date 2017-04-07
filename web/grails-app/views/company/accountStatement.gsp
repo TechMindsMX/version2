@@ -103,7 +103,7 @@
               <table class="table">
                 <tr>
                   <th>Fecha</th>
-                  <th>Tipo</th>
+                  <th>Concepto</th>
                   <th>Id de Transacción</th>
                   <th>Abono</th>
                   <th>Cargo</th>
@@ -116,7 +116,7 @@
                       <g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.dateCreated}"/>
                     </td>
                     <td>
-                      <g:message code="company.accountStatement.TransactionType.${mov.transactionType}" default="${mov.transactionType}"/>
+                      ${mov.paymentConcept}
                     </td>
                     <td>${mov.keyTransaction ?: ""}</td>
                     <td>

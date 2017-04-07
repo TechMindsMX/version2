@@ -29,4 +29,5 @@ databaseChangeLog = {
   include file: 'create-domain-conciliation.groovy'
   include file: 'create-transactions.groovy'
   include file: 'adding-relation-transaction.groovy'
+    include file: 'droping-columns-timone-from-cashout-order.groovy'
 }

@@ -3,8 +3,6 @@ package com.modulus.uno
 class CashOutOrder {
 
   BigDecimal amount
-  String timoneUuid
-  String timoneAccount
   BankAccount account
   RejectReason rejectReason
   String comments
@@ -24,8 +22,6 @@ class CashOutOrder {
   static constraints = {
     amount nullable:false
     account nullable:false
-    timoneAccount nullable:false,blank:false
-    timoneUuid nullable:false,blank:false
     rejectReason nullable:true
     comments nullable:true
     transaction nullable:true
