@@ -8,6 +8,7 @@ class RestService {
   def grailsApplication
 
   WsliteRequestService wsliteRequestService
+  StpService stpService
 
   String facturacionUrl = H.grailsApplication.config.modulus.facturacionUrl
   String modulusunoUrl = H.grailsApplication.config.modulus.url
@@ -41,13 +42,48 @@ class RestService {
     wsliteRequestService.doRequest(grailsApplication.config.emailer.urlEmailer){
       method HTTPMethod.POST
       callback { json message }
-    }.doit()?.json
+    }.doit()
   }
 
   def sendCommandWithAuth(MessageCommand message, String template){
     log.info "CALLING Modulusuno service: ${template}"
-    String token = obtainingTokenFromModulusUno()
-    callingModulusUno(message,template,token)
+    def data = [
+        institucionContraparte: message.bankCode,
+        empresa: message.payerName,
+        fechaDeOperacion: new Date().format("yyyyMMdd"),  
+        folioOrigen: "",
+        claveDeRastreo: new Date().toTimestamp(),
+        institucionOperante: grailsApplication.config.stp.institutionOperation,
+        montoDelPago: message.amount,
+        tipoDelPago: "1",
+        tipoDeLaCuentaDelOrdenante: "",
+        nombreDelOrdenante: message.payerBusinessName,
+        cuentaDelOrdenante: "",
+        rfcCurpDelOrdenante: "",
+        tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
+        nombreDelBeneficiario: message.beneficiary,
+        cuentaDelBeneficiario: message.beneficiaryClabe,
+        rfcCurpDelBeneficiario: "NA",
+        emailDelBeneficiario: message.emailBeneficiary,
+        tipoDeCuentaDelBeneficiario2: "",
+        nombreDelBeneficiario2: "",
+        cuentaDelBeneficiario2: "",
+        rfcCurpDelBeneficiario2: "",
+        conceptoDelPago: message.concept,
+        conceptoDelPago2: "",
+        claveDelCatalogoDeUsuario1: "",
+        claveDelCatalogoDeUsuario2: "",
+        claveDelPago: "",
+        referenciaDeCobranza: "",
+        referenciaNumerica: "1${new Date().format("yyMMdd")}",
+        tipoDeOperación: "",
+        topologia: "",
+        usuario: "",
+        medioDeEntrega: "",
+        prioridad: "",
+        iva: ""
+      ]    
+    stpService.sendPayOrder(data)
   }
 
   def obtainingTokenFromModulusUno() {
@@ -193,20 +229,6 @@ class RestService {
         multipart "logo", bodyMap.cer.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
         multipart "password", bodyMap.password.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
-      }
-    }.doit()
-    response
-  }
-
-  private def callingModulusUno(MessageCommand message,String template,String token) {
-    log.info "Calling Modulusuno service: ${template}"
-    def response = wsliteRequestService.doRequest(modulusunoUrl){
-      endpointUrl "${template}"
-      headers Authorization: "Bearer ${token}"
-      method HTTPMethod.POST
-      callback {
-        type ContentType.JSON
-        text groovy.json.JsonOutput.toJson(message)
       }
     }.doit()
     response
