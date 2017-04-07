@@ -15,7 +15,6 @@ class ModulusUnoService {
 
   static final feeType = [
     SaleOrder : "SALE_FEE",
-    DepositOrder : "DEPOSIT_FEE",
     LoanOrder : "LOAN_FEE",
     PurchaseOrder : "PAYMENT_FEE",
     CashOutOrder : "CASHOUT_FEE"
@@ -23,7 +22,6 @@ class ModulusUnoService {
 
   static final commissionType = [
     SaleOrder : "FACTURA",
-    DepositOrder : "DEPOSITO",
     LoanOrder : "PRESTAMO",
     PurchaseOrder : "PAGO",
     CashOutOrder : "PAGO"
@@ -152,17 +150,6 @@ class ModulusUnoService {
   def consultBalanceIntegratorOfType(String type) {
     def balance = restService.getBalancesIntegrator(type, grailsApplication.config.modulus.integratorBalance)
     [balance.balance, balance.usd]
-  }
-
-  def generateACashinForIntegrated(DepositOrder order) {
-    FeeCommand feeCommand = createFeeCommandFromOrder(order)
-    if (!feeCommand){
-      throw new CommissionException("No existe comisión para la operación")
-    }
-
-    CashinWithCommissionCommand command = new CashinWithCommissionCommand(uuid:order.company.accounts.first().timoneUuid,amount:order.amount.setScale(2, RoundingMode.HALF_UP), fee:feeCommand.amount, feeType:feeCommand.type, concept: order.id ? "DEPÓSITO ID:${order.id}" : "DEPÓSITO")
-    def cashinResult = restService.sendCommandWithAuth(command,grailsApplication.config.modulus.cashin)
-    cashinResult
   }
 
   def cashInWithCommissionFromSaleOrder(SaleOrder order){

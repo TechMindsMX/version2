@@ -49,41 +49,6 @@ class EmailSenderService {
     notifyService.sendEmailNotifications(emailList, grailsApplication.config.emailer.newClient, paramsEmailer)
   }
 
-  //DepositOrder
-  //TODO: Status CONCILIATED parece que no se usa, y el CREATED no manda notificación
-  def notifyDepositOrderChangeStatus(DepositOrder order){
-    def emailList
-    def idEmailer
-    def paramsEmailer=notifyService.parametersForDepositOrder(order, order.status)
-    switch(order.status){
-      //case DepositOrderStatus.CREATED:
-      //break
-      case DepositOrderStatus.VALIDATE:
-      idEmailer = grailsApplication.config.emailer.depositOrderAcceptStatus
-      emailList = getEmailList(order.company,["ROLE_AUTHORIZER_VISOR", "ROLE_AUTHORIZER_EJECUTOR"])
-      break
-      case DepositOrderStatus.AUTHORIZED:
-      idEmailer = grailsApplication.config.emailer.depositOrderAcceptStatus
-      emailList = getEmailList(order.company,["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
-      break
-      case DepositOrderStatus.REJECTED:
-      idEmailer = grailsApplication.config.emailer.depositOrderCancelStatus
-      emailList = getEmailList(order.company,["ROLE_OPERATOR_VISOR", "ROLE_OPERATOR_EJECUTOR"])
-      break
-      case DepositOrderStatus.EXECUTED:
-      idEmailer = grailsApplication.config.emailer.depositOrderAcceptStatus
-      emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
-      break
-      case DepositOrderStatus.CANCELED:
-      idEmailer = grailsApplication.config.emailer.depositOrderCancelStatus
-      emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
-      break
-      //case DepositOrderStatus.CONCILIATED:
-      //break
-    }
-    notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
-  }
-
   //SaleOrder, CREADA:Sin correo
   def notifySaleOrderChangeStatus(SaleOrder order){
     def emailList

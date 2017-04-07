@@ -9,46 +9,6 @@ class NotifyService {
   def grailsApplication
   def corporateService
 
-  def parametersForDepositOrder(DepositOrder depositOrder, def status){
-    def paramsMap = [:]
-    def paramsFields
-    def orderStatus
-    switch(status){
-      case DepositOrderStatus.CREATED:
-      paramsFields=["id", "amount"]
-      orderStatus="CREADA"
-      break
-      case DepositOrderStatus.VALIDATE:
-      paramsFields=["id", "amount"]
-      orderStatus="PUESTA EN ESPERA DE SER AUTORIZADA"
-      break
-      case DepositOrderStatus.AUTHORIZED:
-      paramsFields=["id", "amount"]
-      orderStatus="AUTORIZADA"
-      break
-      case DepositOrderStatus.REJECTED:
-      paramsFields=["id", "amount", "rejectComment", "rejectReason"]
-      orderStatus="RECHAZADA"
-      break
-      case DepositOrderStatus.EXECUTED:
-      paramsFields=["id", "amount"]
-      orderStatus="EJECUTADA"
-      break
-      case DepositOrderStatus.CANCELED:
-      paramsFields=["id", "amount", "rejectComment", "rejectReason"]
-      orderStatus="CANCELADA"
-      break
-      case DepositOrderStatus.CONCILIATED:
-      paramsFields=["id", "amount"]
-      orderStatus="CONCILIADA"
-      break
-    }
-    paramsMap = buildParamsEmailMap(depositOrder, paramsFields)
-    paramsMap.status = orderStatus
-    paramsMap.url=corporateService.findCorporateByCompanyId(depositOrder.company.id)
-    paramsMap
-  }
-
   def prepareParametersToSendForSaleOrder(SaleOrder saleOrder, status){
     def paramsMap = [:]
     def paramsFields
