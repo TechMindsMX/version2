@@ -15,7 +15,8 @@ class GrailsApplicationMock  {
   ,noExterior:'80'
   ,noInterior:'B3'
   ,regimen:'Régimen General de Ley Personal Morales']
-  def path = [server:last]
+  def plugin = [awssdk:[domain:[base:[url:"-qa.modulusuno.com"]]]]
+  def path = [server:last, plugin:plugin]
   def config = [emailer:template, recovery:page, modulus:modulus, grails:path, iva:16, speiFee:8.50, folio:saleOrder, factura: datosDeFacturacion]
 
 }
