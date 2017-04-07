@@ -124,7 +124,13 @@
              <div class="container-fluid">
                <div class="row">
                  <div class="col-md-6">
+                   <g:if test="${enabledToPay}">
                    <g:link action="executeCashOutOrder" class="btn btn-success btn-block" id="${cashOutOrder.id}">Ejecutar orden de Retiro</g:link>
+                   </g:if><g:else>
+                    <div class="alert alert-warning">
+                      La empresa no está habilitada para hacer pagos, verifique que tiene configurada la comisión correspondiente y que se encuentre registrada su cuenta STP
+                    </div>
+                   </g:else>
                  </div>
                  <div class="col-md-6">
                    <a data-toggle="collapse" role="button" href="#inputReasonCancellation" class="btn btn-danger btn-block" aria-expanded="false" aria-controls="inputReasonCancellation">Rechazar la orden de retiro</a>

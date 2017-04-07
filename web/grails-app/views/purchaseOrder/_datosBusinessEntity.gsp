@@ -19,14 +19,14 @@
           <dd>${formatDate(date:purchaseOrder.dateCreated, format:'dd-MMMM-yyyy HH:mm')}</dd>
           <dt>Fecha de Pago:</dt>
           <dd>${formatDate(date:purchaseOrder.fechaPago?:purchaseOrder.dateCreated, format:'dd-MMMM-yyyy')}</dd>
+          <dt>Notas </dt>
+          <dd>${purchaseOrder?.note}</dd>
           <g:if test="${purchaseOrder.isAnticipated}">
             <p>
             <div class="alert alert-info" style="text-align:center" >
               Orden de Compra sin Factura
             </div>
           </g:if>
-          <dt>Notas </dt>
-          <dd>${purchaseOrder?.note}</dd>
         </dl>
       </div>
     </div>

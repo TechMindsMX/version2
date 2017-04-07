@@ -172,7 +172,7 @@ class CashOutOrderController {
 
     def show(CashOutOrder cashOutOrder) {
       def company = Company.findById(session.company.toLong())
-      respond cashOutOrder , model:[banksAccounts:company.banksAccounts, user:springSecurityService.currentUser]
+      respond cashOutOrder , model:[banksAccounts:company.banksAccounts, user:springSecurityService.currentUser, enabledToPay:companyService.companyIsEnabledToPay(cashOutOrder.company)]
     }
 
 
