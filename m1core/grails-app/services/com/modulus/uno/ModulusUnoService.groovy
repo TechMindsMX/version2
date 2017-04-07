@@ -97,7 +97,6 @@ class ModulusUnoService {
       payerName:cashOutOrder.company.accounts?.first()?.aliasStp,
       payerClabe:cashOutOrder.company.accounts?.first()?.stpClabe
     )
-
     restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
   }
 
@@ -156,6 +155,7 @@ class ModulusUnoService {
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
     }
+
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
     String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
     CashoutCommand command = new CashoutCommand(
@@ -166,13 +166,12 @@ class ModulusUnoService {
       fee:feeCommand.amount,
       beneficiary:order.providerName,
       //TODO: Registrar el email de los proveedores
-      emailBeneficiary:"",
+      emailBeneficiary:"mailBeneficiary@mail.com",
       concept:adjustConcept,
       feeType:feeCommand.type,
       payerName:order.company.accounts?.first()?.aliasStp,
       payerClabe:order.company.accounts?.first()?.stpClabe
     )
-
     restService.sendCommandWithAuth(command, grailsApplication.config.modulus.cashout)
     command
 

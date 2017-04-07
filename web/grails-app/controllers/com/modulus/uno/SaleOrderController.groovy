@@ -161,7 +161,7 @@ class SaleOrderController {
       return
     }
 
-    SaleOrder saleOrder = saleOrderCommand.createSaleOrder()
+    SaleOrder saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
     if (saleOrder.hasErrors()) {
       transactionStatus.setRollbackOnly()
       flash.message = "No se pudo crear la orden de venta"

@@ -18,5 +18,10 @@ databaseChangeLog = {
   include file: 'adding-column-alias-stp-to-modulus-uno-account.groovy'
   include file: 'adding-column-discount-to-sale-order-item.groovy'
   include file: 'adding-neighboorhood-to-address.groovy'
+  include file: 'add-machine-state-domain-classes.groovy'
+  include file: 'updating-machinery-link-class.groovy'
+  include file: 'adding-actions-to-company.groovy'
+  include file: 'updating-machine-structure.groovy'
+  include file: 'updating-transition-actions-relation.groovy'
   include file: 'adding-columns-currency-and-changetype-to-saleorder.groovy'
 }

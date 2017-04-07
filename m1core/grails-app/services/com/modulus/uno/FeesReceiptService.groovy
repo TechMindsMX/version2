@@ -61,7 +61,7 @@ class FeesReceiptService {
       iva:feesReceipt.ivaWithHolding,
       isr:feesReceipt.isr,
       beneficiary:feesReceipt.collaboratorName,
-      concept:adjustConcept
+      concept:adjustConcept,
       payerName:feesReceipt.company.accounts.first().aliasStp,
       payerClabe:feesReceipt.company.accounts.first().stpClabe
     )
