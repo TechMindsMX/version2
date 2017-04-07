@@ -21,6 +21,7 @@
    <div class="row">
      <div class="col-lg-8 col-md-7 col-sm-12">
    <h2>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h2>
+   <h4>Clabe STP: ${accountStatement.company.accounts?.first().stpClabe}</h4>
    <div class="table-responsive">
       <table class="table table-condensed">
         <tr>
