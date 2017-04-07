@@ -6,7 +6,7 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 
 @TestFor(StpClabeService)
-@Mock([ModulusUnoAccount])
+@Mock([ModulusUnoAccount, ClientLink])
 class StpClabeServiceSpec extends Specification {
 
   @Unroll
@@ -80,6 +80,67 @@ class StpClabeServiceSpec extends Specification {
     "6461801120" |  3           | [new ModulusUnoAccount(stpClabe:"64618011200090000")] || "64618011200100000"
     "6461801120" |  4           | [new ModulusUnoAccount(stpClabe:"64618011200009000")] || "64618011200010000"
   }
+
+  @Unroll
+  def "Obtain first sub-account #subAccount for mainAccount #mainAccount with sizeSubPrefix = #sizeSubPrefix"(){
+    given:"A main account"
+    when:"I calculate the next sub-account"
+    String result = service.generateSTPSubAccount(mainAccount, sizeSubPrefix)
+    then:"I should obtain the sub-account"
+    result.substring(0,17) == subAccount
+    where:"We have the next data "
+    mainAccount         | sizeSubPrefix || subAccount
+    "64618011190001000" | 3             || "64618011190001001"
+    "64618011190010000" | 4             || "64618011190010001"
+    "64618011190002000" | 3             || "64618011190002001"
+    "64618011190020000" | 4             || "64618011190020001"
+    "64618011190003000" | 3             || "64618011190003001"
+    "64618011190030000" | 4             || "64618011190030001"
+  }
+
+  @Unroll
+  def "Should thrown an BusinessException when serial exceed max value for sub account with sizeSubPrefix = #sizeSubPrefix and stpClabe #stpClabe and mainAccount #mainAccount"() {
+    given:
+    ClientLink client = new ClientLink(stpClabe:stpClabe).save(validate:false)
+    ClientLink.metaClass.static.findAllByStpClabeLike = { [client] }
+    when:
+    String result = service.generateSTPSubAccount(mainAccount, sizeSubPrefix)
+    then:
+    thrown BusinessException
+    where:
+    mainAccount           | stpClabe              | sizeSubPrefix
+    "646180111900010007"  | "646180111900019991"  | 3
+    "646180111900100007"  | "646180111900199991"  | 4
+  }
+
+  @Unroll
+  def "Obtain sub account #subAccount for main account #mainAccount with sizeSubPrefix = #sizeSubPrefix"(){
+    given:"A main account with an exist account"
+    ClientLink.metaClass.static.findAllByStpClabeLike = { clientsExisting }
+    when:"I calculate the next account"
+    String result = service.generateSTPSubAccount(mainAccount, sizeSubPrefix)
+    then:"I should obtain the account"
+    result.substring(0,17) == subAccount
+    where:"We have the next data "
+    mainAccount          | clientsExisting                                |  sizeSubPrefix || subAccount
+    "646180111900010001" | []                                             |  3             || "64618011190001001"
+    "646180111900100001" | []                                             |  4             || "64618011190010001"
+    "646180111900010001" | [new ClientLink(stpClabe:"64618011190001001")] |  3             || "64618011190001002"
+    "646180111900100001" | [new ClientLink(stpClabe:"64618011190010001")] |  4             || "64618011190010002"
+    "646180111900010001" | [new ClientLink(stpClabe:"64618011190001002")] |  3             || "64618011190001003"
+    "646180111900100001" | [new ClientLink(stpClabe:"64618011190010002")] |  4             || "64618011190010003"
+    "646180111900020001" | []                                             |  3             || "64618011190002001"
+    "646180111900200001" | []                                             |  4             || "64618011190020001"
+    "646180111900020001" | [new ClientLink(stpClabe:"64618011190002001")] |  3             || "64618011190002002"
+    "646180111900200001" | [new ClientLink(stpClabe:"64618011190020001")] |  4             || "64618011190020002"
+    "646180111900020001" | [new ClientLink(stpClabe:"64618011190002002")] |  3             || "64618011190002003"
+    "646180111900200001" | [new ClientLink(stpClabe:"64618011190020002")] |  4             || "64618011190020003"
+    "646180111900020001" | [new ClientLink(stpClabe:"64618011190002003")] |  3             || "64618011190002004"
+    "646180111900200001" | [new ClientLink(stpClabe:"64618011190020003")] |  4             || "64618011190020004"
+    "646180111900020001" | [new ClientLink(stpClabe:"64618011190002009")] |  3             || "64618011190002010"
+    "646180111900200001" | [new ClientLink(stpClabe:"64618011190020009")] |  4             || "64618011190020010"
+  }
+
 
 }
 

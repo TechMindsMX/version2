@@ -9,7 +9,7 @@ class ClientService {
 
   def messageSource
   def emailSenderService
-  def modulusUnoService
+  def stpClabeService
   def springSecurityService
 
   def addClientToCompany(ClientBusinessEntity client, Company company){
@@ -37,10 +37,8 @@ class ClientService {
     ClientLink.countByTypeAndClientRef(instance.class.simpleName, instance.rfc)
   }
 
-  ClientLink generateSubAccountStp(ClientLink client, BusinessEntity businessEntity) {
-    User user = springSecurityService.currentUser
-    CreateAccountCommand command = new CreateAccountCommand(payerAccount:client.company.accounts.first().stpClabe, uuid:businessEntity.uuid, name:businessEntity.toString(), email:user.profile.email)
-    client.stpClabe = modulusUnoService.generateSubAccountStpForClient(command)
+  ClientLink generateSubAccountStp(ClientLink client) {
+    client.stpClabe = stpClabeService.generateSTPSubAccount(client.company.accounts.first().stpClabe, 4)
     client.save()
     client
   }
