@@ -33,13 +33,10 @@ class BusinessEntityController {
   def show(BusinessEntity businessEntity) {
     Company company = Company.get(session.company)
     params.sepomexUrl = grails.util.Holders.grailsApplication.config.sepomex.url
-    BigDecimal totalSoldForClient = saleOrderService.getTotalSoldForClient(company,businessEntity.rfc)
-    BigDecimal totalSoldForClientStatusConciliated = saleOrderService.getTotalSoldForClientStatusConciliated(company,businessEntity.rfc)
-    BigDecimal paymentsFromClientToPay = paymentService.getPaymentsFromClientToPay(company, businessEntity.rfc)
-    BigDecimal totalPending = 0
-    if(totalSoldForClient && totalSoldForClientStatusConciliated){
-     totalPending= totalSoldForClient - totalSoldForClientStatusConciliated
-    }
+    BigDecimal totalSoldForClient = saleOrderService.getTotalSoldForClient(company,businessEntity.rfc) ?: 0
+    BigDecimal totalSoldForClientStatusConciliated = saleOrderService.getTotalSoldForClientStatusConciliated(company,businessEntity.rfc) ?: 0
+    BigDecimal paymentsFromClientToPay = paymentService.getPaymentsFromClientToPay(company, businessEntity.rfc) ?: 0
+    BigDecimal totalPending =  totalSoldForClient - totalSoldForClientStatusConciliated
     LeadType relation = businessEntityService.getClientProviderType(businessEntity.rfc)
     respond businessEntity, model:[relation:relation.toString(),
                                    clientLink: businessEntityService.getClientLinkOfBusinessEntityAndCompany(businessEntity, company),
