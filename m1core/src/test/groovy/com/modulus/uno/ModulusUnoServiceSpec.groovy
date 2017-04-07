@@ -8,16 +8,19 @@ import java.math.RoundingMode
 import java.lang.Void as Should
 
 @TestFor(ModulusUnoService)
-@Mock([User,Role,UserRoleCompany,Profile,Company,DepositOrder,ModulusUnoAccount,Commission,SaleOrder,SaleOrderItem, CashOutOrder])
+//TODO esto es demasiado para un servicio posible refactor
+@Mock([User,Role,UserRoleCompany,Profile,Company,DepositOrder,ModulusUnoAccount,Commission,SaleOrder,SaleOrderItem, CashOutOrder, Transaction])
 class ModulusUnoServiceSpec extends Specification {
 
   def restService = Mock(RestService)
   def corporateService = Mock(CorporateService)
   def stpService = Mock(StpService)
+  def transactionService = Mock(TransactionService)
 
   def setup() {
     service.restService = restService
     service.stpService = stpService
+    service.transactionService = transactionService
     service.corporateService = corporateService
     grailsApplication.config.stp.typeAccount = "some"
     grailsApplication.config.stp.institutionOperation = "some"
@@ -169,9 +172,10 @@ class ModulusUnoServiceSpec extends Specification {
       user.save(validate:false)
       corporateService.findLegalRepresentativesOfCompany(_) >> [user]
     when:
-      CashoutCommand command = service.approveCashOutOrder(order)
+       service.approveCashOutOrder(order)
     then:
       1 * stpService.sendPayOrder(_)
+      1 * transactionService.saveTransaction(_)
   }
 
   void "Should get transactions of account"() {

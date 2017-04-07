@@ -8,10 +8,10 @@ import grails.test.mixin.Mock
 @Mock([StpDeposit, Payment])
 class StpDepositServiceSpec extends Specification {
 
-  ModulusUnoService modulusUnoService = Mock(ModulusUnoService)
+  TransactionService transactionService = Mock(TransactionService)
 
   def setup() {
-    service.modulusUnoService = modulusUnoService
+    service.transactionService = transactionService
   }
 
   void "Should obtain a accepted status for a stp deposit which account is from company"(){

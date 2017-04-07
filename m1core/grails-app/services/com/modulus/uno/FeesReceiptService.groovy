@@ -9,6 +9,7 @@ class FeesReceiptService {
   StpService stpService
   def emailSenderService
   def grailsApplication
+  TransactionService transactionService
 
   def addAuthorizationToFeesReceipt(FeesReceipt feesReceipt, User user){
     Authorization authorization = new Authorization(user:user)
@@ -74,8 +75,16 @@ class FeesReceiptService {
         prioridad: "",
         iva: ""
     ]
-    stpService.sendPayOrder(data)
+    String keyTransaction = stpService.sendPayOrder(data)
+    Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
+    amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:feesReceipt.company.accounts.first().stpClabe,
+    referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
+    transactionStatus:TransactionStatus.AUTHORIZED]
+    Transaction transaction = new Transaction(parameters)
+    transactionService.saveTransaction(transaction)
     feesReceipt.status = FeesReceiptStatus.EJECUTADA
+    feesReceipt.transaction = transaction
+    //TODO Esto no deberia de ser flush true
     feesReceipt.save flush:true
     emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
     feesReceipt
