@@ -51,6 +51,8 @@ class FeesReceiptService {
   }
 
   private def createFeesReceiptCommand(FeesReceipt feesReceipt){
+    String fullConcept = "HONORARIOS ID:${feesReceipt.id}, ${feesReceipt.collaboratorName}"
+    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
     new FeesReceiptModulusunoCommand(
       uuid:feesReceipt.company.accounts.first().timoneUuid,
       clabe:feesReceipt.bankAccount.clabe,
@@ -59,7 +61,7 @@ class FeesReceiptService {
       iva:feesReceipt.ivaWithHolding,
       isr:feesReceipt.isr,
       beneficiary:feesReceipt.collaboratorName,
-      concept:"HONORARIOS",
+      concept:adjustConcept
       payerName:feesReceipt.company.accounts.first().aliasStp,
       payerClabe:feesReceipt.company.accounts.first().stpClabe
     )
