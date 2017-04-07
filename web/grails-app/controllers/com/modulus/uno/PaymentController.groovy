@@ -147,8 +147,10 @@ class PaymentController {
   }
 
   def notReferencedPayments() {
+    Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabInvoiceWithoutPayment:""]
-    render view:"conciliation", model:[styleClasses:styleClasses]
+    Map payments = paymentService.findNotReferencedPaymentsForCompany(company)
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
   }
 
   def conciliateInvoicesWithoutPayments() {
