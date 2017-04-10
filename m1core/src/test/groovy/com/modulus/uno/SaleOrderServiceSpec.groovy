@@ -129,7 +129,7 @@ class SaleOrderServiceSpec extends Specification {
   then:"We expect new status"
     1 * invoiceService.generateFactura(saleOrder) >> "uuid_folio"
     result instanceof SaleOrder
-    result.folio == 'uuid'
+    result.folio == 'uuid_folio'
   }
 
   @Ignore
