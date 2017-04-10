@@ -5,8 +5,25 @@
         <g:set var="entityName" value="${message(code: 'movimientosBancarios.label', default: 'MovimientosBancarios')}" />
     </head>
     <body>
+      <div class="page-title">
+        <h1>
+          <i class="icon-retiro fa-3x"></i>
+          Cuenta ${movimientosBancarios.cuenta}
+          <small>Crear Movimiento Bancario</small>
+        </h1>
+      </div>
+      <div class="col-lg-12">
+        <div class="portlet portlet-blue">
+          <div class="portlet-heading">
+            <div class="portlet-title">
+              <br /><br />
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="defaultPortlet" class="panel-collapse collapse in">
+            <div class="portlet-body">
+
         <div id="create-movimientosBancarios" class="content scaffold-create" role="main">
-          <h1>Crear Movimiento Bancario para la cuenta ${movimientosBancarios.cuenta}</h1>
             <g:if test="${flash.message}">
             <div class="message" role="status">${flash.message}</div>
             </g:if>
@@ -25,6 +42,12 @@
                     <g:submitButton name="create" class="btn  btn-green" value="${message(code: 'default.button.create.label', default: 'Create')}" />
             </g:form>
         </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
         <asset:javascript src="movimientosBancarios/create.js"/>
     </body>
 </html>
