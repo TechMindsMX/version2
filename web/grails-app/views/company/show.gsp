@@ -15,12 +15,7 @@
       <h1>
         <i class="fa fa-info-circle fa-3x"></i>
         <g:message code="company.show"/>
-        <small>Información de la Compañia</small>
       </h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-        <li class="active"><g:message code="company.show"/></li>
-      </ol>
     </div>
     <!-- END OF PAGE TITLE -->
   </div>

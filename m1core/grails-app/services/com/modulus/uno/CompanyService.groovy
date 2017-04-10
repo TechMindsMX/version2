@@ -183,14 +183,14 @@ class CompanyService {
   }
 
   def sendDocumentsPerInvoice(def params, def rfc) {
-    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert]
-    String token = restService.obtainingTokenFromModulusUno()
-    def result = restService.sendFilesForInvoiceM1(documents,token)
+    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert, serie:params.serie]
+    def result = restService.sendFilesForInvoiceM1(documents)
     result
   }
 
   def updateDocumentsToStamp(def params, def rfc) {
-    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert]
+    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert, serie:params.serie]
+    log.info "Updating documents to stamp: ${documents}"
     def result = restService.updateFilesForInvoice(documents)
     result
   }
