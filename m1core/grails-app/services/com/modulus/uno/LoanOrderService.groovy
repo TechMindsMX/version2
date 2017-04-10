@@ -58,7 +58,7 @@ class LoanOrderService {
 
   def executeLoanOrder(LoanOrder loanOrder){
     Commission commission = loanOrder.creditor.commissions.find {
-      it.type == CommissionType.PRESTAMO
+      it.type == CommissionType.PAGO
     }
 
     if(!commission)
