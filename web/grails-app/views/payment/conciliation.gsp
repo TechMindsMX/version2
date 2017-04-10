@@ -27,8 +27,8 @@
                 <li role="presentation" class="${styleClasses?.tabNotReferenced}">
                   <g:link action="notReferencedPayments">Cobros no Referenciados</g:link>
                 </li>
-                <li role="presentation" class="${styleClasses?.tabInvoiceWithoutPayment}">
-                  <g:link action="conciliateInvoicesWithoutPayments">Conciliar Facturas sin pago</g:link>
+                <li role="presentation" class="${styleClasses?.tabBankTransactions}">
+                  <g:link action="conciliateBankTransactions">Conciliar movimientos bancarios</g:link>
                 </li>
               </ul>
 
@@ -40,8 +40,8 @@
                 <div role="tabpanel" class="tab-pane ${styleClasses?.tabNotReferenced}" id="notReferenced">
                   <g:render template="notReferencedPayments"/>
                 </div>
-                <div role="tabpanel" class="tab-pane ${styleClasses?.tabInvoiceWithoutPayment}" id="invoiceWithoutPayment">
-                  <g:render template="invoicesToConciliateWithoutPayment"/>
+                <div role="tabpanel" class="tab-pane ${styleClasses?.tabBankTransactions}" id="bankTransactions">
+                  <g:render template="bankTransactions"/>
                 </div>
               </div>
 
