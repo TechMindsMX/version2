@@ -1,0 +1,7 @@
+model {
+  String action
+}
+
+json {
+  name action
+}

@@ -26,8 +26,15 @@ class MachineryLinkService {
     ArrayList<Map> machineryClasses= []
     grailsApplication.domainClasses.findAll { Machinery.class.isAssignableFrom(it.clazz) }*.clazz*.simpleName.each{ className ->
       String name = "${className[0].toLowerCase()}${className[1..className.size()-1]}"
-      machineryClasses << [key:className,
-                          value:messageSource.getMessage("${name}.name",null,LCH.getLocale())]
+
+      if(messageSource.resolveCode("${name}.name",LCH.getLocale())){
+        machineryClasses << [key:className,
+                            value:messageSource.getMessage("${name}.name",null,LCH.getLocale())]
+      }
+      else{
+        machineryClasses << [key:className,value:className]
+      }
+      
     }
     machineryClasses
   }

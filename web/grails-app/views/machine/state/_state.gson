@@ -1,0 +1,9 @@
+import com.modulus.uno.machine.State
+
+model {
+  State machineState
+}
+
+json {
+  name machineState?.name
+}

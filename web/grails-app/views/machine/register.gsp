@@ -3,16 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <meta name="layout" content="main" />
-    <title></title>
+    <title>Modulus UNO | Registrar máquina</title>
+    <asset:javascript src="machine/machine_register_controller.js" />
   </head>
   <body>
     <!-- BEGIN PAGE TITLE -->
     <div class="page-title">
       <h1>
         <i class="fa fa-cog fa-3x"></i>
-        <g:message code="machine.index" args="[entityName]" />
+        <g:message code="machine.register" args="[entityName]" />
         <small>
-          <g:message code="machine.list" />
+          <g:message code="machine.register.label" />
         </small>
       </h1>
     </div>
@@ -25,7 +26,7 @@
         <div class="portlet-body">
           <!-- BEGIN CREATE-ADDRESS -->
           <div class="content scaffold-create">
-            <g:form action="create" method="POST">
+            <g:form name="registerForm" action="create" method="POST">
               <fieldset class="form">
                 <div class="row">
                   <div class="form-group col-lg-3">

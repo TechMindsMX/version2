@@ -1,9 +1,9 @@
 //= require third-party/jquery-validation/dist/jquery.validate.js
 //= require third-party/EasyAutocomplete/dist/jquery.easy-autocomplete.js
-//= require third-party/d3/d3.js
 //= require helpers/machine_helpers.js
 //= require machine/machine.js
-//= require machine/machine_create_view.js
+//= require machine/machine_view.js
+//= require machine/graph_view.js
 
 var MachineCreateController = (function(){
 
@@ -66,7 +66,7 @@ var MachineCreateController = (function(){
                              action:$(selectors.action).val()});
       updateFromSelect();
       updateAutocomplete();
-      renderGraph(machine.getGraph());
+      GraphView.renderGraph(machine.getGraph());
       renderTransitionsTable();
     }
   },
@@ -92,12 +92,12 @@ var MachineCreateController = (function(){
   createInitialState = function(event){
     event.preventDefault();
     machine.addInitialState($(selectors.stateFrom).val());
-    MachineCreateView.render('#transitions-form-template','#transitionsDiv',{states:machine.getStates()});
+    MachineView.render('#transitions-form-template','#transitionsDiv',{states:machine.getStates()});
     addNewRules();
     $(selectors.machineForm).unbind('submit');
     $(selectors.machineForm).on('submit',addNewTransition);
     updateAutocomplete();
-    renderGraph(machine.getGraph());
+    GraphView.renderGraph(machine.getGraph());
   },
 
   deleteMachineTransition = function(event){
@@ -113,7 +113,7 @@ var MachineCreateController = (function(){
 
     updateFromSelect();
     updateAutocomplete();
-    renderGraph(machine.getGraph());
+    GraphView.renderGraph(machine.getGraph());
     renderTransitionsTable();
   },
 
@@ -122,23 +122,14 @@ var MachineCreateController = (function(){
     $('#transitionsTableContainer').on('click',selectors.deleteTransition,deleteMachineTransition);
   },
 
-  renderGraph = function(graph){
-    render(inner, graph);
-    var center = ($('svg').width() - graph.graph().width) / 2;
-    inner.attr("transform", "translate(" + center + ", 20)");
-    svg.attr("height", graph.graph().height + 40);
-  },
-
   renderTransitionsTable = function(){
-    MachineCreateView.render('#transitionsTable','#transitionsTableContainer',{transitions:machine.getTransitions(),
-                                                                               initialState:machine.getInitialState()});
+    MachineView.render('#transitionsTable','#transitionsTableContainer',{transitions:machine.getTransitions(),
+                                                                         initialState:machine.getInitialState()});
   },
    
   start = function(){
     machine = Machine.create();
-    svg = d3.select("svg");
-    inner = svg.append("g");
-    render = new dagreD3.render();
+    GraphView.initView();
     initValidations();
     bindEvents();
   };

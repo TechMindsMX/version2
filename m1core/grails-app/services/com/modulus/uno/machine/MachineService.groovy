@@ -1,15 +1,20 @@
 package com.modulus.uno.machine
 
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 @Transactional
 class MachineService {
 
+  MachineEventExecuterService machineEventExecuterService
+
   Machine createMachineWithActions(String startName,String stateToName,ArrayList<String> actions){
     Machine machine = new Machine()
+
     State initialState = new State(name:startName)
     State finalState = new State(name:stateToName,
                                  finalState:true)
+
     machine.addToStates(initialState)
     machine.addToStates(finalState)
     machine.save()
@@ -23,6 +28,7 @@ class MachineService {
     machine.initialState = initialState
     machine.addToTransitions(transition)
     machine.save()
+
     machine
   }
 
@@ -75,22 +81,26 @@ class MachineService {
     currentMachine 
   }
 
+  State moveToActionAndListen(def instance,String action){
+    State currentState = moveToAction(instance,action)
+    machineEventExecuterService.executeEvents(instance)
+    currentState
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   State moveToAction(def instance,String action){
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
     Machine machine = machineryLink.machine
 
     State state = getCurrentStateOfInstance(instance)
 
-    if(!state)
-      state = machine.initialState
-    
     Transition transition = machine.transitions.find{ transition -> transition.stateFrom.id == state.id && transition.actions.contains(action) }
 
     if(!transition)
       throw new StatelessException("There is n't a transition for the action ${action}.")
 
     State newState = transition.stateTo
-    TrackingLog trackingLog = new TrackingLog(state:newState)
+    TrackingLog trackingLog = new TrackingLog(state:newState.name)
     machineryLink.addToTrackingLogs(trackingLog)
     machineryLink.save(failOnError:true)
     newState
@@ -98,7 +108,9 @@ class MachineService {
 
   State getCurrentStateOfInstance(def instance){
     MachineryLink machineryLink = MachineryLink.findByMachineryRefAndType(instance.id,instance.class.simpleName)
-    machineryLink.trackingLogs?.max{ trackingLog -> trackingLog.id }?.state
+    String currentState = machineryLink.trackingLogs?.max{ trackingLog -> trackingLog.id }?.state
+    Machine stateMachine = machineryLink.machine
+    stateMachine.states.find{ state -> state.name == currentState } ?: stateMachine.initialState
   }
 
   ArrayList<State> findNextStatesOfInstance(def instance){
@@ -112,6 +124,81 @@ class MachineService {
     }
 
     transitions*.stateTo
+  }
+
+  Machine saveMachine(Machine machine){
+    State initialState = machine.initialState
+    Transition initialTransition = machine.transitions.find{ it.stateFrom.name == initialState.name }
+    ArrayList<Transition> stateTransitions = machine.transitions.findAll{ transition -> (transition.stateFrom.name != initialTransition.stateFrom.name || transition.stateTo.name != initialTransition.stateTo.name) }
+
+    ArrayList<String> actions = []
+    actions.addAll(0,initialTransition.actions)
+    Machine newMachine = createMachineWithActions(initialTransition.stateFrom.name.toUpperCase(),initialTransition.stateTo.name.toUpperCase(),actions)
+    ArrayList<State> states = [initialState,initialTransition.stateTo]
+    ArrayList<Transition> transitionsToSave = []
+
+    while(states){
+      State s = states.remove(0)
+      State state = newMachine.states.find{ it.name == s.name.toUpperCase() }
+      transitionsToSave = stateTransitions.findAll{ it.stateFrom.name == s.name }
+      stateTransitions.removeAll{ it.stateFrom.name == s.name }
+      
+      transitionsToSave.each{ transition ->
+        transition.actions.each{ action ->
+          createTransition(state.id,transition.stateTo.name.toUpperCase(),action)
+        }
+        states << transition.stateTo
+      }
+    }
+
+    newMachine
+  }
+
+  Machine updateMachine(Long machineId,Machine machine){
+    Machine machineToUpdate = Machine.get(machineId)
+    machineToUpdate.initialState.name = machine.initialState.name.toUpperCase()
+    machineToUpdate.initialState.save()
+
+    ArrayList<Transition> transitions = machineToUpdate.transitions 
+
+    transitions.each{ transition ->
+      machineToUpdate.removeFromTransitions(transition)
+    }
+
+    transitions*.delete()
+    State initialState = machineToUpdate.initialState
+    
+    ArrayList<State> previousStates = machineToUpdate.states.findAll{ it.name != initialState.name }
+
+    previousStates.each{ state ->
+      machineToUpdate.removeFromStates(state)
+    } 
+
+    previousStates*.delete() 
+    machineToUpdate.save()
+    
+    ArrayList<State> states = [initialState]
+    ArrayList<Transition> transitionsToSave = []
+
+    while(states){
+      State s = states.remove(0)
+      State state = machineToUpdate.states.find{ it.name == s.name.toUpperCase() }
+      transitionsToSave = machine.transitions.findAll{ it.stateFrom.name.toUpperCase() == s.name }
+      machine.transitions.removeAll{ it.stateFrom.name == s.name }
+
+      transitionsToSave.each{ transition ->
+        transition.actions.each{ action ->
+          createTransition(state.id,transition.stateTo.name.toUpperCase(),action)
+        }
+        states << transition.stateTo
+      }
+    }
+
+    machineToUpdate
+  }
+
+  ArrayList<Transition> findTransitionsForStates(ArrayList<State> states){
+    states ? Transition.findAllByStateFromInList(states) : []
   }
 
 }
