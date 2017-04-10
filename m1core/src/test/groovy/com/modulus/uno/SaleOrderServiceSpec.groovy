@@ -16,12 +16,14 @@ class SaleOrderServiceSpec extends Specification {
   def emailSenderService = Mock(EmailSenderService)
   def invoiceService = Mock(InvoiceService)
   def companyService = Mock(CompanyService)
+  def commissionTransactionService = Mock(CommissionTransactionService)
 
   def setup(){
     items.removeAll()
     service.emailSenderService = emailSenderService
     service.invoiceService = invoiceService
     service.companyService = companyService
+    service.commissionTransactionService = commissionTransactionService
   }
 
   void "should create an sale order"() {
