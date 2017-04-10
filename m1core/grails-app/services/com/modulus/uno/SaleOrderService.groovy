@@ -14,6 +14,8 @@ class SaleOrderService {
   def companyService
   def springSecurityService
   def dataSource
+  def commissionTransactionService
+
 
   // TODO: Code Review
   def createSaleOrderWithAddress(def params) {
@@ -78,6 +80,7 @@ class SaleOrderService {
   }
 
   def executeSaleOrder(SaleOrder saleOrder){
+    commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
     String uuidFolio = invoiceService.generateFactura(saleOrder)
     updateSaleOrderFromGeneratedBill(uuidFolio, saleOrder)
   }
