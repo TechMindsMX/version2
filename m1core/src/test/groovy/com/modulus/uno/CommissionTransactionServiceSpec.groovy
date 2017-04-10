@@ -2,10 +2,11 @@ package com.modulus.uno
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
+import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(CommissionTransactionService)
-@Mock([CommissionTransaction, Company, Transaction, SaleOrder, Commission])
+@Mock([CommissionTransaction, Company, Transaction, SaleOrder, SaleOrderItem, Commission])
 class CommissionTransactionServiceSpec extends Specification {
 
   void "Should save a commission transaction"() {
@@ -32,6 +33,53 @@ class CommissionTransactionServiceSpec extends Specification {
       def balance = service.getCommissionsPendingBalanceForCompany(company)
     then:
       balance.size() == company.commissions.size()
+  }
+
+  @Unroll
+  void "Should save a invoice commission transaction with amount=#amountExpected when commission fee=#fee and percentage=#percentage and sale order total=#price for a company"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:fee, percentage:percentage, type:CommissionType.FACTURA).save(validate:false)
+      company.addToCommissions(commission)
+    and:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(company:company).save(validate:false)
+      SaleOrderItem saleOrderItem = new SaleOrderItem()
+      saleOrderItem.price = price
+      saleOrderItem.quantity = 1
+      saleOrderItem.save(validate:false)
+      saleOrder.addToItems(saleOrderItem)
+    when:
+      def transaction = service.registerCommissionForSaleOrder(saleOrder)
+    then:
+      transaction.id
+      transaction.amount == amountExpected
+    where:
+    fee   | percentage  | price   ||  amountExpected
+    2     | 0           | 100     ||  2
+    2     | 0           | 50      ||  2
+    0     | 10          | 100     ||  10
+    0     | 5           | 100     ||  5
+    0     | 10          | 50      ||  5
+  }
+
+  void "Should throw exception when company hasn't invoice commission"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:2, percentage:0, type:CommissionType.PAGO).save(validate:false)
+      company.addToCommissions(commission)
+    and:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(company:company).save(validate:false)
+      SaleOrderItem saleOrderItem = new SaleOrderItem()
+      saleOrderItem.price = 100
+      saleOrderItem.quantity = 1
+      saleOrderItem.save(validate:false)
+      saleOrder.addToItems(saleOrderItem)
+    when:
+      def transaction = service.registerCommissionForSaleOrder(saleOrder)
+    then:
+      thrown BusinessException
   }
 
 }
