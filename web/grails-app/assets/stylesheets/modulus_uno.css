@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat:100,300,400,700,800");
+* {
+  box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 100%; }
+  body .mdu-home-content {
+    background: white;
+    padding: 2em 0 3em 0; }
+  body .carousel .item {
+    background: white; }
+  body h1, body h2, body h3, body h4, body h5, body h6 {
+    font-family: "Montserrat", "Helvetica", sans-serif;
+    font-weight: 700; }
+
+.navbar-mdu li a {
+  padding: 1em 2em;
+  color: #3CB4E7;
+  margin: 8px 0;
+  border: solid 1px #3CB4E7;
+  background: transparent;
+  border-radius: 2px;
+  transition: background-color 0.5s; }
+  .navbar-mdu li a:hover {
+    background: #3CB4E7; }
+
+footer {
+  background-color: #3CB4E7;
+  padding: 1em 0;
+  color: white;
+  font-size: 70%; }
+  footer a {
+    color: white; }
+    footer a:hover {
+      color: yellow; }
+
+/*# sourceMappingURL=modulus_uno.css.map */
