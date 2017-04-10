@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%! import com.modulus.uno.TransactionType %>
+<%! import com.modulus.uno.CommissionType %>
 <html>
   <head>
     <meta name="layout" content="main" />
@@ -13,15 +14,14 @@
        <g:message code="Estado de Cuenta"/>
        <small>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</small>
      </h1>
-     <ol class="breadcrumb">
-       <li><i class="fa fa-caret-square-o-up"></i>Compañia</li>
-       <li class="active">Estado de Cuenta</li>
-     </ol>
    </div>
    <div class="row">
+     <h2>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h2>
+     <h4>Clabe STP: ${accountStatement.company.accounts?.first().stpClabe}</h4>
+   </div>
+   <br/>
+   <div class="row">
      <div class="col-lg-8 col-md-7 col-sm-12">
-   <h2>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h2>
-   <h4>Clabe STP: ${accountStatement.company.accounts?.first().stpClabe}</h4>
    <div class="table-responsive">
       <table class="table table-condensed">
         <tr>
@@ -42,6 +42,18 @@
           <td >${modulusuno.formatPrice(number: 0.00)}</td>
           <td >${modulusuno.formatPrice(number: usd)}</td>
         </tr>
+      </table>
+      <table class="table table-condensed">
+        <tr>
+          <th>Comisiones por pagar</th>
+          <th class="text-right"><strong>Total: ${accountStatement.commissionsBalance.balance.sum()}</th>
+        </tr>
+        <g:each in="${accountStatement.commissionsBalance}" var="comm">
+        <tr>
+          <td><strong>${comm.typeCommission}</strong></td>
+          <td class="text-right">${modulusuno.formatPrice(number: comm.balance)}</td>
+        </tr>
+        </g:each>
       </table>
    </div>
      </div>
