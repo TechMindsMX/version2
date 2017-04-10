@@ -5,13 +5,15 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 
 @TestFor(StpDepositService)
-@Mock([StpDeposit, Payment])
+@Mock([StpDeposit, Payment, Company, Commission, Transaction, ModulusUnoAccount, ClientLink])
 class StpDepositServiceSpec extends Specification {
 
   TransactionService transactionService = Mock(TransactionService)
+  CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
 
   def setup() {
     service.transactionService = transactionService
+    service.commissionTransactionService = commissionTransactionService
   }
 
   void "Should obtain a accepted status for a stp deposit which account is from company"(){
@@ -23,12 +25,20 @@ class StpDepositServiceSpec extends Specification {
     and:
       StpDeposit.metaClass.static.findAllByOperationNumberAndTracingKeyAndIdNotEqualAndStatusNotEqual = { [] }
     and:
-      ModulusUnoAccount m1Account = Mock(ModulusUnoAccount)
+      Company company = new Company().save(validate:false)
+      Commission commission = new Commission(fee:10, percentage:0, type:CommissionType.DEPOSITO)
+      company.addToCommissions(commission)
+      company.save(validate:false)
+    and:
+      ModulusUnoAccount m1Account = new ModulusUnoAccount()
+      m1Account.company = company
       m1Account.save(validate:false)
       ModulusUnoAccount.metaClass.static.findByStpClabe = { m1Account }
       ModulusUnoAccount.metaClass.static.findByStpClabeLike = { [stpClabe:"646180132400800007"] }
     and:
       ClientLink.metaClass.static.findByStpClabe = { null }
+    and:
+      transactionService.saveTransaction(_) >> new Transaction().save(validate:false)
     when:"We process the notification"
       def result = service.notificationDepositFromStp(notification)
     then:"We validate"
@@ -47,9 +57,17 @@ class StpDepositServiceSpec extends Specification {
       ModulusUnoAccount.metaClass.static.findByStpClabe = { null }
       ModulusUnoAccount.metaClass.static.findByStpClabeLike = { [stpClabe:"646180132400800007"] }
     and:
-      ClientLink client = Mock(ClientLink)
+      Company company = new Company().save(validate:false)
+      Commission commission = new Commission(fee:10, percentage:0, type:CommissionType.DEPOSITO)
+      company.addToCommissions(commission)
+      company.save(validate:false)
+    and:
+      ClientLink client = new ClientLink()
+      client.company = company
       client.save(validate:false)
       ClientLink.metaClass.static.findByStpClabe = { client }
+    and:
+      transactionService.saveTransaction(_) >> new Transaction().save(validate:false)
     when:"We process the notification"
       def result = service.notificationDepositFromStp(notification)
     then:"We validate"
@@ -74,6 +92,36 @@ class StpDepositServiceSpec extends Specification {
     then:"We validate"
       result.estatus == StpDepositStatus.RECHAZADO
   }
+
+  void "Should thrown business exception when company hasn't commission for deposit"(){
+    given:"A string notification with xml"
+      String clave = "1101"
+      String rastreo = "ABC001"
+      String clabe = "646180132400800007"
+      StpDeposit notification = createNotificationWithData(clave, rastreo, clabe)
+    and:
+      StpDeposit.metaClass.static.findAllByOperationNumberAndTracingKeyAndIdNotEqualAndStatusNotEqual = { [] }
+    and:
+      Company company = new Company().save(validate:false)
+      Commission commission = new Commission(fee:10, percentage:0, type:CommissionType.PAGO)
+      company.addToCommissions(commission)
+      company.save(validate:false)
+    and:
+      ModulusUnoAccount m1Account = new ModulusUnoAccount()
+      m1Account.company = company
+      m1Account.save(validate:false)
+      ModulusUnoAccount.metaClass.static.findByStpClabe = { m1Account }
+      ModulusUnoAccount.metaClass.static.findByStpClabeLike = { [stpClabe:"646180132400800007"] }
+    and:
+      ClientLink.metaClass.static.findByStpClabe = { null }
+    and:
+      transactionService.saveTransaction(_) >> new Transaction().save(validate:false)
+    when:"We process the notification"
+      def result = service.notificationDepositFromStp(notification)
+    then:"We validate"
+      thrown BusinessException
+  }
+
 
   private StpDeposit createNotificationWithData(String clave, String rastreo, String clabe) {
     new StpDeposit(

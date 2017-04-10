@@ -20,6 +20,7 @@ class CompanyService {
   def corporateService
   DirectorService directorService
   TransactionService transactionService
+  CommissionTransactionService commissionTransactionService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -105,6 +106,7 @@ class CompanyService {
     accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(beginDate)
     accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate)
     accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
+    accountStatement.commissionsBalance = commissionTransactionService.getCommissionsPendingBalanceForCompany(company)
     accountStatement
   }
 
