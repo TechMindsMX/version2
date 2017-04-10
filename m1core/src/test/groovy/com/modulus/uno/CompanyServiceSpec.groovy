@@ -24,6 +24,7 @@ class CompanyServiceSpec extends Specification {
   DirectorService directorService = Mock(DirectorService)
   RestService restService = Mock(RestService)
   TransactionService transactionService = Mock(TransactionService)
+  CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
 
   def setup(){
     service.modulusUnoService = modulusUnoService
@@ -36,6 +37,7 @@ class CompanyServiceSpec extends Specification {
     service.directorService = directorService
     service.restService = restService
     service.transactionService = transactionService
+    service.commissionTransactionService = commissionTransactionService
   }
 
   Should "create a direction for a Company"(){
