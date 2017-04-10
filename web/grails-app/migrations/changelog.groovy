@@ -41,4 +41,5 @@ databaseChangeLog = {
   include file: 'adding-column-banking-transaction-to-conciliation.groovy'
   include file: 'adding-mock-machine-class.groovy'
   include file: 'adding-the-linker-structure.groovy'
+  include file: 'creating-commission-transaction-domain.groovy'
 }

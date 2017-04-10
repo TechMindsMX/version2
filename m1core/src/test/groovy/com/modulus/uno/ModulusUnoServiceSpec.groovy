@@ -17,6 +17,7 @@ class ModulusUnoServiceSpec extends Specification {
   def stpService = Mock(StpService)
   def stpClabeService = Mock(StpClabeService)
   def transactionService = Mock(TransactionService)
+  def commissionTransactionService = Mock(CommissionTransactionService)
 
   def setup() {
     service.restService = restService
@@ -26,6 +27,7 @@ class ModulusUnoServiceSpec extends Specification {
     service.corporateService = corporateService
     grailsApplication.config.stp.typeAccount = "some"
     grailsApplication.config.stp.institutionOperation = "some"
+    service.commissionTransactionService = commissionTransactionService
   }
 
   Should "create a m1 account for a company"() {
@@ -110,6 +112,7 @@ class ModulusUnoServiceSpec extends Specification {
     then:
       1 * stpService.sendPayOrder(_)
       1 * transactionService.saveTransaction(_)
+      1 * commissionTransactionService.saveCommissionTransaction(_)
   }
 
   void "Should get transactions of integrator"() {

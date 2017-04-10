@@ -110,6 +110,7 @@ class PurchaseOrderController {
     respond purchaseOrder
   }
 
+  @Transactional
   def executePurchaseOrder(PurchaseOrder order) {
     BigDecimal amount = new BigDecimal(params.amount ?: 0) ?: order.total
     if (purchaseOrderService.amountExceedsTotal(amount, order)) {
@@ -118,13 +119,10 @@ class PurchaseOrderController {
     }
     String messageSuccess = message(code:"purchaseOrder.already.executed")
     if (companyService.enoughBalanceCompany(order.company, order.total)){
-      PaymentToPurchase payment = new PaymentToPurchase(amount:amount)
       if (purchaseOrderIsInStatus(order, PurchaseOrderStatus.AUTORIZADA)) {
-        Map map = purchaseOrderService.payPurchaseOrder(order,payment)
-        payment = map.payment
+        purchaseOrderService.payPurchaseOrder(order, amount)
         messageSuccess = message(code:"purchaseOrder.executed.message")
       }
-      purchaseOrderService.addingPaymentToPurchaseOrder(payment, order)
       if (order.isMoneyBackOrder)
         redirect action:'listMoneyBackOrders', params:[status:PurchaseOrderStatus.AUTORIZADA, messageSuccess:messageSuccess]
       else
