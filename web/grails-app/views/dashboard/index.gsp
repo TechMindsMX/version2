@@ -37,13 +37,23 @@
                     <th>URL</th>
                     <th>No. de Empresas</th>
                     <th></th>
+                    <th></th>
                   </tr>
                   <g:each in="${corporates}" var="corp">
                   <tr>
                     <td><strong>${corp.nameCorporate}</strong></td>
                     <td>${corp.corporateUrl}</td>
                     <td>${corp.companies ? corp.companies.size() : 0}</td>
-                    <td></td>
+                    <td>
+                      <g:link class="btn btn-primary" controller="corporate" action="commissions" id="${corp.id}">
+                        Comisiones
+                      </g:link>
+                    </td>
+                    <td>
+                      <g:link class="btn btn-primary" controller="corporate" action="defineCostCenter" id="${corp.id}">
+                        Centros de Costos
+                      </g:link>
+                    </td>
                   </tr>
                   </g:each>
                 </table>
