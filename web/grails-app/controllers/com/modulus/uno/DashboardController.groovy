@@ -58,16 +58,6 @@ class DashboardController {
     ]
   }
 
-  def listCompanies() {
-     params.max = (params.max ?: 10)
-     [companies:Company.list(params),companiesCount: Company.count()]
-  }
-
-  def defineCostCenters() {
-     params.max = (params.max ?: 10)
-     [companies:Company.list(params), companiesCount:Company.count()]
-  }
-
   @Transactional
   def saveAliasStp() {
     companyService.assignAliasStpToCompany(Company.get(params.company), params.aliasStp)
