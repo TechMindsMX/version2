@@ -163,6 +163,10 @@ class CorporateController {
     [corporate:corporate, companies:corporate.companies.sort{it.bussinessName}]
   }
 
+  def defineCostCenters(Corporate corporate) {
+    [corporate:corporate, companies:corporate.companies.sort{it.bussinessName}]
+  }
+
 }
 
 @groovy.transform.TypeChecked
