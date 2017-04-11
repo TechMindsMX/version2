@@ -95,7 +95,7 @@
               </a>
               <ul class="collapse nav" id="corporativos">
                 <li>
-                  <g:link controller="dashboard" action="index" >Ver Corporativos</g:link>
+                  <g:link controller="dashboard" action="index" >Lista de Corporativos</g:link>
                   <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
                   <g:link controller="dashboard" action="listCompanies" >Agregar Comisiones a Empresas</g:link>
                   <g:link controller="corporate" action="applyFixedCommission" >Cobrar Comisiones Fijas</g:link>
