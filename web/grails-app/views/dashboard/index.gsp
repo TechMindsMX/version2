@@ -50,7 +50,7 @@
                       </g:link>
                     </td>
                     <td>
-                      <g:link class="btn btn-primary" controller="corporate" action="defineCostCenter" id="${corp.id}">
+                      <g:link class="btn btn-primary" controller="corporate" action="defineCostCenters" id="${corp.id}">
                         Centros de Costos
                       </g:link>
                     </td>
