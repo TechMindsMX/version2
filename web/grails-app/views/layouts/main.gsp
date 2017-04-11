@@ -17,12 +17,15 @@
   <body>
     <nav class="navbar-top" role="navigation">
       <div class="navbar-header">
-        <br /><font color="white" size="4">MODULUS UNO</font>
+      <div class="navbar-brand">
+      <img src="${assetPath(src: 'modulusuno-bco.svg')}" alt="MODULUS UNO">
+      <span>MODULUS UNO</span>  
+      </div>
+      
         <button type="button" class="navbar-toggle pull-right" data-toggle="collapse" data-target=".sidebar-collapse">
           <i class="fa fa-bars"></i> Menu
         </button>
-        <div class="navbar-brand">
-        </div>
+        
       </div>
 
       <div class="nav-top">
@@ -33,22 +36,29 @@
             </a>
           </li>
         </ul>
-        <ul class="nav navbar-brand">
-          <li class="tooltip-sidebar-toggle" align="right">
+        <ul class="nav navbar-center">
+          <li class="tooltip-sidebar-toggle" >
             <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR,ROLE_AUTHORIZER_VISOR,ROLE_AUTHORIZER_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR">
               <g:if test="${session.company}">
                 <g:form class="form-group" id="company-selection" url="[action:'setCompanyInSession',controller:'company']" >
-                  <font color="white">Selecciona tu Compañía </font>${companyInfo.selectedCompany()}
-                  <input type="submit" class="btn btn-primary btn-xs" />
+                  <span>Selecciona tu Compañía ${companyInfo.selectedCompany()}
+                  <button class="btn btn-primary" type="submit">CAMBIAR</button>
+                  </span>
                 </g:form>
               </g:if>
             </sec:ifAnyGranted>
           </li>
           <li>
+<<<<<<< HEAD
             &nbsp;&nbsp;&nbsp;&nbsp;
           </li>
           <li align="right">
 
+=======
+            <sec:ifLoggedIn>
+              <span>Usuario Logueado: ${modulusuno.userLoggin()}</span>
+            </sec:ifLoggedIn>
+>>>>>>> feature/244
           </li>
         </ul>
 

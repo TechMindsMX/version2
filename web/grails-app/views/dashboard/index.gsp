@@ -10,7 +10,7 @@
       <h1>
       <i class="fa fa-tachometer fa-3x"></i>
         Tablero principal
-        <small>Administración total</small>
+        <p class="small">Administración total</p>
       </h1>
       <ol class="breadcrumb">
         <li><i class="fa fa-dashboard"></i>  <a href="index.html">Tablero principal</a>
@@ -73,7 +73,13 @@
     </g:if>
     </sec:ifAnyGranted>
     <sec:ifAnyGranted  roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">
-      <h1>Seccion para Operaciones de Modulus UNO</h1>
+      <div class="row">
+        <div class="col-sm-12 text-center">
+          <h2>Sección para Operaciones de Modulus UNO</h2>
+          <img src="${assetPath(src:'modulus_uno.svg')}" alt="MODULUS UNO">
+        </div>
+      </div>
+      
     </sec:ifAnyGranted>
 
   </body>
