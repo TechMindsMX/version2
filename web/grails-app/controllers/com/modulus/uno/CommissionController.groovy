@@ -9,6 +9,7 @@ class CommissionController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def corporateService
+  def commissionTransactionService
 
   def index(Integer max) {
     params.max = Math.min(max ?: 10, 100)
@@ -123,6 +124,12 @@ class CommissionController {
 
   private Commission commissionTypeAlreadyExists(Commission commission) {
     Commission.findByCompanyAndTypeAndIdNotEqual(commission.company, commission.type, commission.id)
+  }
+
+  def charge(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    commissionTransactionService.applyFixedCommissionToCompany(company)
+    redirect controller:'corporate', action:'commissions', id:corporate.id
   }
 
   protected void notFound() {
