@@ -44,7 +44,7 @@
           </g:if>
           <g:else>
             <div class="content scaffold-list">
-              <h1>Ninguna Empresa ha sido Creada</h1>
+              <div class="alert alert-warning">Ninguna Empresa ha sido creada</div>
             </div>
           </g:else>
         </div>
