@@ -82,5 +82,35 @@ class CommissionTransactionServiceSpec extends Specification {
       thrown BusinessException
   }
 
+  @Unroll
+  void "Should save a fixed commission transaction with amount=#amountExpected when commission fee=#fee for a company"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:fee, percentage:0, type:CommissionType.FIJA).save(validate:false)
+      company.addToCommissions(commission)
+    when:
+      def transaction = service.applyFixedCommissionToCompany(company)
+    then:
+      transaction.id
+      transaction.amount == amountExpected
+    where:
+    fee   ||  amountExpected
+    1000  ||  1000
+    2000  ||  2000
+  }
+
+  void "Should throw exception when company hasn't fixed commission"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:2, percentage:0, type:CommissionType.PAGO).save(validate:false)
+      company.addToCommissions(commission)
+    when:
+      def transaction = service.applyFixedCommissionToCompany(company)
+    then:
+      thrown BusinessException
+  }
+
 }
 
