@@ -9,21 +9,17 @@
     <div class="page-title">
       <h1>
       <i class="fa fa-tachometer fa-3x"></i>
-        Tablero principal
-        <small>Administración total</small>
+        ${corporate.nameCorporate}
+        <small>Administrar Comisiones</small>
       </h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-dashboard"></i>  <a href="index.html">Tablero principal</a>
-        </li>
-        <li class="active">Compañias existentes </li>
-      </ol>
     </div>
 
     <sec:ifAnyGranted roles="ROLE_M1">
       <div class="row">
         <div class="col-md-12 col-lg-12">
           <g:if test="${!companies.isEmpty()}">
-            <table class="table table-hover">
+          <div class="table-responsive">
+            <table class="table">
               <tr>
                 <th>Nombre</th>
                 <th>RFC</th>
@@ -44,15 +40,18 @@
               </tr>
               </g:each>
             </table>
-            <div class="pagination">
-              <g:paginate controller="dashboard" action="listCompanies" total="${companiesCount}" />
-            </div>
+          </div>
           </g:if>
           <g:else>
             <div class="content scaffold-list">
               <h1>Ninguna Empresa ha sido Creada</h1>
             </div>
           </g:else>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-md-offset-9">
+          <g:link class="btn btn-primary" controller="dashboard" action="index">Regresar</g:link>
         </div>
       </div>
     </sec:ifAnyGranted>
