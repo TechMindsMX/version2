@@ -3,14 +3,15 @@ $blue2: #447FC1
 $blue3: #1C4387
 $blue4: #003764
 $blue5: #192954
-@import url('https://fonts.googleapis.com/css?family=Montserrat:100,300,400,700,800')
+$textColor: #555
+@import url('https://fonts.googleapis.com/css?family=Montserrat:100,300,400,700,800|Lato:100,400,700')
 
-*
-	box-sizing: border-box
-body
+html,body
 	margin: 0
 	padding: 0
 	font-size: 100%
+	background-color: $blue1
+	color: $textColor
 	.mdu-home-content
 		background: white
 		padding: 2em 0 3em 0
@@ -19,7 +20,26 @@ body
 			background: white
 	h1,h2,h3,h4,h5,h6
 		font-family: 'Montserrat','Helvetica', sans-serif
-		font-weight: 700
+		font-weight: 100
+.navbar-top
+	background-color: $blue1
+	.navbar-center
+		display: inline-block
+		overflow: hidden
+		font-size: 0.7em
+		padding: 1em
+		box-sizing: border-box
+		color: white
+		select
+			color: $textColor
+		li
+			display: inline-block
+			margin: 0 5px
+
+//Opciones de topbar
+.navbar-top>.nav-top>.nav>li>a:hover,
+.navbar-top>.nav-top>.nav>li>a:focus
+	background: rgba($blue2,0.5)
 
 .navbar-mdu
 	li
@@ -33,6 +53,54 @@ body
 			transition: background-color 0.5s
 			&:hover
 				background: $blue1
+.navbar-brand
+	color: white
+	font-family: 'Lato', sans-serif
+	img
+		height: 100%
+		width: auto
+		display: inline-block
+.navbar-header
+	.navbar-brand
+		padding: 0 0 0 0.5em
+
+
+//.navbar-side .navbar-nav>li>a,
+//.navbar-side .side-nav li.panel ul li a
+//	font: 400  0.7em Lato, sans-serif
+//	text-transform: uppercase
+//	letter-spacing: 2px
+//	background-color: $blue1
+//.navbar-side .navbar-nav>li>a:focus,
+//.navbar-side .navbar-nav>li>a:hover
+//	background: $blue3
+
+#side
+	background: $blue1
+	a
+		padding: 1em
+		background: $blue1
+		font: 400  0.7em Lato, sans-serif
+		text-transform: uppercase
+		letter-spacing: 2px
+		padding-left: 1em
+	.panel
+		margin-bottom: 1em
+		ul > li > a
+			box-sizing: border-box
+			padding-left: 2em
+		ul>li>ul>li>a
+			box-sizing: border-box
+			padding-left: 3em
+		ul>li>ul>li>ul>li>a
+			box-sizing: border-box
+			padding-left: 4em
+
+	
+
+#page-wrapper
+	border: none
+
 footer
 	background-color: $blue1
 	padding: 1em 0
