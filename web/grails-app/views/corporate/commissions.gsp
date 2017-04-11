@@ -23,12 +23,15 @@
               <tr>
                 <th>Nombre</th>
                 <th>RFC</th>
-                <th>Comisiones</th>
+                <th>Por pagar</th>
+                <th></th>
+                <th></th>
               </tr>
               <g:each in="${companies}" var="company" >
               <tr>
                 <td>${company.toString()}</td>
                 <td>${company.rfc}</td>
+                <td></td>
                 <td>
                   <g:if test="${company.commissions}">
                   <g:link controller="commission" class="btn btn-success" params="[companyId: company.id]" >Editar</g:link>
@@ -36,6 +39,9 @@
                   <g:else>
                   <g:link controller="commission" class="btn btn-warning" params="[companyId: company.id]">Agregar</g:link>
                   </g:else>
+                </td>
+                <td>
+                  <g:link class="btn btn-primary" controller="commission" action="charge" id="${company.id}" params="[corporateId:corporate.id]">Aplicar Comisión fija</g:link>
                 </td>
               </tr>
               </g:each>
