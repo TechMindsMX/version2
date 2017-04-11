@@ -11,16 +11,19 @@ class DashboardController {
   def index() {
     def user = springSecurityService.currentUser
     def companyList
+    params.max = 25
 
     if (session.corporate)
       companyList = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,session.corporate.id)
     else
       companyList = organizationService.findAllCompaniesOfUser(user)
 
-    def corporates= Corporate.list()
+    params.sort = "nameCorporate"
+    def corporates= Corporate.list(params)
 
     [companies:companyList,
      corporates:corporates,
+     countCorporates:Corporate.count(),
      companiesCount: companyList.size(),
      user:user]
   }
