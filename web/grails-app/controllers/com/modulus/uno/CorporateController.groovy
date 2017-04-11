@@ -159,6 +159,14 @@ class CorporateController {
     def commissionPrestamo = new Commission(fee:new BigDecimal("0"), percentage: new BigDecimal(0), type: CommissionType.PRESTAMO, company: company).save()
   }
 
+  def commissions(Corporate corporate) {
+    [corporate:corporate, companies:corporate.companies.sort{it.bussinessName}]
+  }
+
+  def defineCostCenters(Corporate corporate) {
+    [corporate:corporate, companies:corporate.companies.sort{it.bussinessName}]
+  }
+
 }
 
 @groovy.transform.TypeChecked

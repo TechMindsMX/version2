@@ -11,16 +11,19 @@ class DashboardController {
   def index() {
     def user = springSecurityService.currentUser
     def companyList
+    params.max = 25
 
     if (session.corporate)
       companyList = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,session.corporate.id)
     else
       companyList = organizationService.findAllCompaniesOfUser(user)
 
-    def corporates= Corporate.list()
+    params.sort = "nameCorporate"
+    def corporates= Corporate.list(params)
 
     [companies:companyList,
      corporates:corporates,
+     countCorporates:Corporate.count(),
      companiesCount: companyList.size(),
      user:user]
   }
@@ -53,16 +56,6 @@ class DashboardController {
       feesReceiptToAuthorizeCount : FeesReceipt.countByStatusAndCompany(FeesReceiptStatus.POR_AUTORIZAR, company),
       loanPaymentOrderToAuthorizeCount : LoanPaymentOrder.countByStatusAndCompany(LoanPaymentOrderStatus.VALIDATE, company)
     ]
-  }
-
-  def listCompanies() {
-     params.max = (params.max ?: 10)
-     [companies:Company.list(params),companiesCount: Company.count()]
-  }
-
-  def defineCostCenters() {
-     params.max = (params.max ?: 10)
-     [companies:Company.list(params), companiesCount:Company.count()]
   }
 
   @Transactional

@@ -89,8 +89,8 @@
         <ul class="nav navbar-brand navbar-right">
           <sec:ifLoggedIn>
             <font color="white"> Hola: ${modulusuno.userLoggin()}</font>
-          </sec:ifLoggedIn> 
-        </ul> 
+          </sec:ifLoggedIn>
+        </ul>
 
       </div>&nbsp;
     </nav>
@@ -99,11 +99,16 @@
       <div class="navbar-collapse sidebar-collapse collapse">
         <ul id="side" class="nav navbar-nav side-nav">
           <sec:ifAnyGranted roles="ROLE_M1">
-            <li>
-              <g:link controller="dashboard" action="index" >Ver Corporativos</g:link>
-              <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
-              <g:link controller="dashboard" action="listCompanies" >Agregar Comisiones a Empresas</g:link>
-              <g:link controller="dashboard" action="defineCostCenters" >Definir Centros de Costos</g:link>
+            <li class="panel">
+              <a href="javascript:;" data-parent="#side" data-toggle="collapse" class="accordion-toggle" data-target="#corporativos">
+                Corporativos <i class="fa fa-caret-down"></i>
+              </a>
+              <ul class="collapse nav" id="corporativos">
+                <li>
+                  <g:link controller="dashboard" action="index" >Lista de Corporativos</g:link>
+                  <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
+                </li>
+              </ul>
             </li>
           </sec:ifAnyGranted>
 
