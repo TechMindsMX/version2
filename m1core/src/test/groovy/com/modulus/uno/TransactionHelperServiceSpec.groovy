@@ -13,7 +13,7 @@ class TransactionHelperServiceSpec extends Specification {
     given:"A Loan order"
       LoanOrder loanOrder = Mock(LoanOrder)
     and:"A commission"
-      Commission commission = new Commission(percentage:10, type: CommissionType.PRESTAMO)
+      Commission commission = new Commission(percentage:10, type: CommissionType.PAGO)
     and:"A creditor and debtor"
       Company creditor = Mock(Company)
       Company debtor = Mock(Company)
@@ -37,7 +37,7 @@ class TransactionHelperServiceSpec extends Specification {
     given:"A Loan order"
       LoanOrder loanOrder = Mock(LoanOrder)
     and:"A commission"
-      Commission commission = new Commission(fee:20, type: CommissionType.PRESTAMO)
+      Commission commission = new Commission(fee:20, type: CommissionType.PAGO)
     and:"A creditor and debtor"
       Company creditor = Mock(Company)
       Company debtor = Mock(Company)
