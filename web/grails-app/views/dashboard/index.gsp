@@ -6,20 +6,16 @@
   </head>
   <body>
 
-    <div class="page-title">
-      <h1>
-      <i class="fa fa-tachometer fa-3x"></i>
-        Tablero principal
-        <small>Administración total</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-dashboard"></i>  <a href="index.html">Tablero principal</a>
-        </li>
-        <li class="active">Bienvenido, puedes empezar por aquí... </li>
-      </ol>
-    </div>
-
     <sec:ifAnyGranted roles="ROLE_M1">
+      <div class="page-title">
+        <h1>
+        <i class="fa fa-building fa-3x"></i>
+          Corporativos
+          <small>Listado</small>
+        </h1>
+      </div>
+
+
       <div class="row">
         <div class="col-md-12 col-lg-12">
           <g:if test="${!corporates}">
@@ -34,8 +30,29 @@
           </g:if>
           <g:else>
             <div class="content scaffold-list">
-              <h1><g:message code="corporate.list.label" /></h1>
-              <f:table collection="${corporates}" properties="['nameCorporate','corporateUrl']" />
+              <div class="table-responsive">
+                <table class="table">
+                  <tr>
+                    <th>Corporativo</th>
+                    <th>URL</th>
+                    <th>No. de Empresas</th>
+                    <th></th>
+                  </tr>
+                  <g:each in="${corporates}" var="corp">
+                  <tr>
+                    <td><strong>${corp.nameCorporate}</strong></td>
+                    <td>${corp.corporateUrl}</td>
+                    <td>${corp.companies ? corp.companies.size() : 0}</td>
+                    <td></td>
+                  </tr>
+                  </g:each>
+                </table>
+               <nav>
+                  <div class="pagination">
+                    <g:paginate class="pagination" controller="dashboard" action="index" total="${countCorporates}" />
+                  </div>
+                </nav>
+              </div>
             </div>
           </g:else>
         </div>
@@ -45,6 +62,15 @@
     </sec:ifAnyGranted>
 
     <sec:ifAnyGranted roles="ROLE_CORPORATIVE">
+      <div class="page-title">
+        <h1>
+        <i class="fa fa-building fa-3x"></i>
+          Empresas
+          <small>Listado</small>
+        </h1>
+      </div>
+
+
     <div class="row">
       <div class="col-md-12">
         <!-- verificar las companies del corporate -->
@@ -73,7 +99,7 @@
     </g:if>
     </sec:ifAnyGranted>
     <sec:ifAnyGranted  roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">
-      <h1>Seccion para Operaciones de Modulus UNO</h1>
+      <h1>Sección para Operaciones de Modulus UNO</h1>
     </sec:ifAnyGranted>
 
   </body>
