@@ -63,5 +63,23 @@ class CommissionTransactionService {
     command
   }
 
+  CommissionTransaction applyFixedCommissionToCompany(Company company) {
+    FeeCommand feeCommand = createFeeCommandForFixedCommissionOfCompany(company)
+    def commission = saveCommissionTransaction(feeCommand)
+    commission
+  }
+
+  private FeeCommand createFeeCommandForFixedCommissionOfCompany(Company company) {
+     Commission commission = company.commissions.find { com ->
+        com.type == CommissionType."FIJA"
+    }
+
+    if (!commission) {
+      throw new BusinessException("No existe comisión fija registrada para la empresa")
+    }
+
+    new FeeCommand(companyId:company.id, amount: commission.fee.setScale(2, RoundingMode.HALF_UP), type:commission.type)
+  }
+
 }
 
