@@ -40,7 +40,7 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                      <td>Total</td>
+                      <td><strong>Total:</strong></td>
                       <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.balance.sum())}</strong></td>
                     </tr>
                   </tfoot>
