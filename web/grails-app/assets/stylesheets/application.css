@@ -9,4 +9,5 @@
 *= require third-party/jquery-ui/themes/base/jquery-ui.css
 *= require icons.css
 *= require custom_styles.css
+*= require modulus_uno.css
 */

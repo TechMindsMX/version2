@@ -109,7 +109,12 @@
     </g:if>
     </sec:ifAnyGranted>
     <sec:ifAnyGranted  roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">
-      <h1>Sección para Operaciones de Modulus UNO</h1>
+      <div class="row">
+        <div class="col-sm-12 text-center">
+          <h2>Sección para Operaciones de Modulus UNO</h2>
+          <img src="${assetPath(src:'modulus_uno.svg')}" alt="MODULUS UNO">
+        </div>
+      </div>
     </sec:ifAnyGranted>
 
   </body>
