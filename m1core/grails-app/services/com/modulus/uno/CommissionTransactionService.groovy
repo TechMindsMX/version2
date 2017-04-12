@@ -68,6 +68,11 @@ class CommissionTransactionService {
     command
   }
 
+  Map getFixedCommissionsForCompany(Company company, def params) {
+    List<CommissionTransaction> listFixedCommissions = CommissionTransaction.findAllByCompanyAndType(company, CommissionType.FIJA, params)
+    [listFixedCommissions:listFixedCommissions, countFixedCommissions:CommissionTransaction.countByCompanyAndType(company, CommissionType.FIJA)]
+  }
+
   CommissionTransaction applyFixedCommissionToCompany(Company company) {
     FeeCommand feeCommand = createFeeCommandForFixedCommissionOfCompany(company)
     def commission = saveCommissionTransaction(feeCommand)
