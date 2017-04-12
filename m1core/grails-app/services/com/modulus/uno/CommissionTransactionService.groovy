@@ -35,6 +35,11 @@ class CommissionTransactionService {
     total
   }
 
+  BigDecimal getTotalCommissionsPendingForCompany(Company company) {
+    List balances = getCommissionsPendingBalanceForCompany(company)
+    balances.balance.sum()
+  }
+
   CommissionTransaction registerCommissionForSaleOrder(SaleOrder order) {
     FeeCommand feeCommand = createFeeCommandForSaleOrder(order)
     def commission = saveCommissionTransaction(feeCommand)
