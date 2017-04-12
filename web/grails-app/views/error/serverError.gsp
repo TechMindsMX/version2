@@ -42,7 +42,7 @@
           <div class="row">
             <div class="collapse" id="errorMessage">
               <div class="well">
-                <p>Mensaje: ${exception?.cause?.target?.message ?: exception?.cause?.target?.undeclaredThrowable ?: "Por favor intente más tarde o bien comuníquese con el equipo de soporte"}</p>
+                <p>Mensaje: ${exception ? exception.message : "Por favor intente más tarde o bien comuníquese con el equipo de soporte"}</p>
                 <p>URL: ${destinyUrl}</p>
               </div>
             </div>
