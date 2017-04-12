@@ -20,6 +20,7 @@
           <g:if test="${!companies.isEmpty()}">
           <div class="table-responsive">
             <table class="table">
+              <thead>
               <tr>
                 <th>Nombre</th>
                 <th>RFC</th>
@@ -27,6 +28,8 @@
                 <th></th>
                 <th></th>
               </tr>
+              </thead>
+              <tbody>
               <g:each in="${companies}" var="company" >
               <tr>
                 <td>${company.toString()}</td>
@@ -49,6 +52,16 @@
                 </td>
               </tr>
               </g:each>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <td><strong>Total por pagar:</strong></td>
+                  <td class="text-right"><strong>${modulusuno.formatPrice(number:totalPendingCommissions*.total.sum())}</strong></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tfoot>
             </table>
           </div>
           </g:if>
@@ -60,7 +73,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3 col-md-offset-9">
+        <div class="col-md-2 col-md-offset-10 text-right">
           <g:link class="btn btn-primary" controller="dashboard" action="index">Regresar</g:link>
         </div>
       </div>
