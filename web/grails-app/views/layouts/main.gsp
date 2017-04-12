@@ -19,13 +19,13 @@
       <div class="navbar-header">
       <div class="navbar-brand">
       <img src="${assetPath(src: 'modulusuno-bco.svg')}" alt="MODULUS UNO">
-      <span>MODULUS UNO</span>  
+      <span>MODULUS UNO</span>
       </div>
-      
+
         <button type="button" class="navbar-toggle pull-right" data-toggle="collapse" data-target=".sidebar-collapse">
           <i class="fa fa-bars"></i> Menu
         </button>
-        
+
       </div>
 
       <div class="nav-top">
@@ -49,16 +49,9 @@
             </sec:ifAnyGranted>
           </li>
           <li>
-<<<<<<< HEAD
             &nbsp;&nbsp;&nbsp;&nbsp;
           </li>
           <li align="right">
-
-=======
-            <sec:ifLoggedIn>
-              <span>Usuario Logueado: ${modulusuno.userLoggin()}</span>
-            </sec:ifLoggedIn>
->>>>>>> feature/244
           </li>
         </ul>
 
@@ -88,11 +81,10 @@
         </ul>
         <ul class="nav navbar-brand navbar-right">
           <sec:ifLoggedIn>
-            <font color="white"> Hola: ${modulusuno.userLoggin()}</font>
+          <font color="white"> Hola: ${modulusuno.userLoggin()}</font>
           </sec:ifLoggedIn>
         </ul>
-
-      </div>&nbsp;
+      </div>
     </nav>
 
     <nav class="navbar-side" role="navigation">
