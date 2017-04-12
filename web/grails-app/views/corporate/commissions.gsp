@@ -31,7 +31,7 @@
               <tr>
                 <td>${company.toString()}</td>
                 <td>${company.rfc}</td>
-                <td></td>
+                <td class="text-right">${modulusuno.formatPrice(number:(totalPendingCommissions.find {it.company == company}).total)}</td>
                 <td>
                   <g:if test="${company.commissions}">
                   <g:link controller="commission" class="btn btn-success" params="[companyId: company.id]" >Editar</g:link>
