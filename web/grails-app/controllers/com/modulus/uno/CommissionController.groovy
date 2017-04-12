@@ -140,6 +140,12 @@ class CommissionController {
     redirect action:'listFixedCommission', id:company.id, params:[corporateId:params.corporateId]
   }
 
+  def listPendingCommissions(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    List commissionsBalance = commissionTransactionService.getCommissionsPendingBalanceForCompany(company)
+    [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
