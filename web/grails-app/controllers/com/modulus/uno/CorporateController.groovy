@@ -169,7 +169,7 @@ class CorporateController {
   private List getTotalPendingCommissionsForCorporate(Corporate corporate) {
     List totalPendingCommissions = []
     corporate.companies.each {
-      totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it)]
+      totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it) ?: 0]
     }
     totalPendingCommissions
   }
