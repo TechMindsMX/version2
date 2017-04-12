@@ -9,6 +9,7 @@ class CommissionController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def corporateService
+  def commissionTransactionService
 
   def index(Integer max) {
     params.max = Math.min(max ?: 10, 100)
@@ -123,6 +124,26 @@ class CommissionController {
 
   private Commission commissionTypeAlreadyExists(Commission commission) {
     Commission.findByCompanyAndTypeAndIdNotEqual(commission.company, commission.type, commission.id)
+  }
+
+  def listFixedCommission(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    params.max = 25
+    params.sort = "dateCreated"
+    params.order = "desc"
+    Map fixedCommissionsForCompany = commissionTransactionService.getFixedCommissionsForCompany(company, params)
+    [corporate:corporate, company:company, fixedCommissions:fixedCommissionsForCompany]
+  }
+
+  def charge(Company company) {
+    commissionTransactionService.applyFixedCommissionToCompany(company)
+    redirect action:'listFixedCommission', id:company.id, params:[corporateId:params.corporateId]
+  }
+
+  def listPendingCommissions(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    List commissionsBalance = commissionTransactionService.getCommissionsPendingBalanceForCompany(company)
+    [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
   }
 
   protected void notFound() {

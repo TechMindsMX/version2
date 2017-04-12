@@ -9,6 +9,7 @@ class CorporateController {
   def springSecurityService
   def managerApplicationService
   def recoveryService
+  CommissionTransactionService commissionTransactionService
 
   def create(){
     respond new Corporate()
@@ -160,7 +161,17 @@ class CorporateController {
   }
 
   def commissions(Corporate corporate) {
-    [corporate:corporate, companies:corporate.companies.sort{it.bussinessName}]
+    List companies = corporate.companies.sort{it.bussinessName}
+    List totalPendingCommissions = getTotalPendingCommissionsForCorporate(corporate)
+    [corporate:corporate, companies:companies, totalPendingCommissions:totalPendingCommissions]
+  }
+
+  private List getTotalPendingCommissionsForCorporate(Corporate corporate) {
+    List totalPendingCommissions = []
+    corporate.companies.each {
+      totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it) ?: 0]
+    }
+    totalPendingCommissions
   }
 
   def defineCostCenters(Corporate corporate) {
