@@ -126,8 +126,16 @@ class CommissionController {
     Commission.findByCompanyAndTypeAndIdNotEqual(commission.company, commission.type, commission.id)
   }
 
-  def charge(Company company) {
+  def listFixedCommission(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
+    params.max = 2
+    params.sort = "dateCreated"
+    params.order = "desc"
+    Map fixedCommissionsForCompany = commissionTransactionService.getFixedCommissionsForCompany(company, params)
+    [company:company, fixedCommissions:fixedCommissionsForCompany]
+  }
+
+  def charge(Company company) {
     commissionTransactionService.applyFixedCommissionToCompany(company)
     redirect controller:'corporate', action:'commissions', id:corporate.id
   }
