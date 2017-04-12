@@ -49,6 +49,10 @@
             </sec:ifAnyGranted>
           </li>
           <li>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+          </li>
+          <li align="right">
+
           </li>
         </ul>
         <ul class="nav navbar-right">
@@ -70,6 +74,11 @@
               </li>
             </ul>
           </li>
+        </ul>
+        <ul class="nav navbar-brand navbar-right">
+          <sec:ifLoggedIn>
+          <font color="white"> Hola: ${modulusuno.userLoggin()}</font>
+          </sec:ifLoggedIn>
         </ul>
       </div>
     </nav>
