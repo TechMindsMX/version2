@@ -41,7 +41,7 @@
                   </g:else>
                 </td>
                 <td>
-                  <g:link class="btn btn-primary" controller="commission" action="charge" id="${company.id}" params="[corporateId:corporate.id]">Aplicar Comisión fija</g:link>
+                  <g:link class="btn btn-primary" controller="commission" action="listFixedCommission" id="${company.id}" params="[corporateId:corporate.id]">Aplicar Comisión fija</g:link>
                 </td>
               </tr>
               </g:each>
