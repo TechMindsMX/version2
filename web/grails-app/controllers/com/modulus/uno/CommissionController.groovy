@@ -128,16 +128,16 @@ class CommissionController {
 
   def listFixedCommission(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
-    params.max = 2
+    params.max = 25
     params.sort = "dateCreated"
     params.order = "desc"
     Map fixedCommissionsForCompany = commissionTransactionService.getFixedCommissionsForCompany(company, params)
-    [company:company, fixedCommissions:fixedCommissionsForCompany]
+    [corporate:corporate, company:company, fixedCommissions:fixedCommissionsForCompany]
   }
 
   def charge(Company company) {
     commissionTransactionService.applyFixedCommissionToCompany(company)
-    redirect controller:'corporate', action:'commissions', id:corporate.id
+    redirect action:'listFixedCommission', id:company.id, params:[corporateId:params.corporateId]
   }
 
   protected void notFound() {
