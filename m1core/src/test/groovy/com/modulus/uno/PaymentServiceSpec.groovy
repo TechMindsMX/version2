@@ -25,4 +25,5 @@ class PaymentServiceSpec extends Specification {
     then:
       result.status == PaymentStatus.CONCILIATED
   }
+
 }

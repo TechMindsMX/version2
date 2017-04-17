@@ -51,57 +51,20 @@
                       <div class="alert alert-success" role="alert">${flash.message} - ${relation}
                       </div>
                     </g:if>
-                    <ol class="property-list businessEntity">
-                      <f:display bean="businessEntity" property="rfc" wrapper="show"/>
-                      <g:if test="${!relation.equals('EMPLEADO')}">
-                        <f:display bean="businessEntity" property="website" wrapper="show"/>
-                      </g:if>
 
-                      <g:if test="${businessEntity.type == BusinessEntityType.FISICA}">
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.NOMBRE}">
-                            <li class="fieldcontain">
-                              <span id="name-label" class="property-label">Nombre</span>
-                              <div class="property-value" aria-labelledby="name-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.APELLIDO_PATERNO}">
-                            <li class="fieldcontain">
-                              <span id="lastName-label" class="property-label">Apellido Paterno</span>
-                              <div class="property-value" aria-labelledby="lastName-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.APELLIDO_MATERNO}">
-                            <li class="fieldcontain">
-                              <span id="lastName-label" class="property-label">Apellido Materno</span>
-                              <div class="property-value" aria-labelledby="lastName-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                      </g:if>
-                      <g:if test="${businessEntity.type == BusinessEntityType.MORAL}">
-                        <g:each var="name" in="${businessEntity.names}">
-                          <g:if test="${name.type == NameType.RAZON_SOCIAL}">
-                            <li class="fieldcontain">
-                              <span id="name-label" class="property-label">Razón Social</span>
-                              <div class="property-value" aria-labelledby="name-label">
-                                ${name.value}
-                              </div>
-                            </li>
-                          </g:if>
-                        </g:each>
-                      </g:if>
-                    </ol>
+                    <dl class="dl-horizontal">
+                      <dt>RFC</dt>
+                      <dd>${businessEntity.rfc}</dd>
+                      <dt>Sitio web</dt>
+                      <dd>${businessEntity.website ?: 'Sin información'}</dd>
+                      <dt><g:if test="${businessEntity.type == BusinessEntityType.MORAL}">Razón Social</g:if>
+                        <g:if test="${businessEntity.type == BusinessEntityType.FISICA}">Nombre</g:if>
+
+                      </dt>
+                      <dd>
+                        <g:render template="businessName" model="[businessEntity: businessEntity, relation: relation]" />
+                      </dd>
+                    </dl>
 
                   </div>
                   <div class="panel-footer">
@@ -222,34 +185,51 @@
             </div>
           </div>
           <div class="col-md-6">
-            <g:if test="${relation.equals('CLIENTE_PROVEEDOR')} || ${relation.equals('CLIENTE')}">
-                <div class="panel panel-default">
-              <div class="panel-heading">
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="col-md-6">
-                      <span class="property-label"><h4>Pagos del cliente</h4></span>
-                    </div>
-                    <div class="col-md-6" align="right">
+            <g:if test="${relation.equals('CLIENTE_PROVEEDOR') || relation.equals('CLIENTE')}">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="col-md-6">
+                        <span class="property-label"><h4>Pagos del cliente</h4></span>
+                      </div>
+                      <div class="col-md-6" align="right">
 
+                      </div>
                     </div>
                   </div>
+
                 </div>
 
+                <div class="panel-body">
+
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Facturación total(Ejecutadas y autorizadas)</th>
+                        <th>Total Cobrado (ya conciliado)</th>
+                        <th>Total Cobrado (por conciliar)</th>
+                        <th>Pendiente de cobro</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>${modulusuno.formatPrice(number:totalSoldForClient)}</td>
+                        <td>${modulusuno.formatPrice(number:totalSoldForClientStatusConciliated)}</td>
+                        <td>${modulusuno.formatPrice(number:paymentsFromClientToPay)}</td>
+                        <td>${modulusuno.formatPrice(number:totalPending)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
               </div>
-
-              <div class="panel-body">
-
-               Pagos
-
-            </div>
-          </div>
             </g:if>
 
+          </div>
         </div>
       </div>
     </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>
