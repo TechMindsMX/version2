@@ -40,6 +40,8 @@
                 <input type="file" required="true" class="form-control" name="logo" accept="image/png" />
                 <label>Password</label>
                 <input type="password" required="true" class="form-control" name="password" />
+                <label>Serie de Facturas</label>
+                <input type="text" class="form-control" name="serie" />
                 <br />
                 <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
                   <input type="submit" class="btn btn-green btn-lg" value="Actualizar" />
