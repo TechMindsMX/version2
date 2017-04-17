@@ -2,7 +2,7 @@ package com.modulus.uno.machine
 
 class TrackingLog {
 
-  State state
+  String state
   
   Date dateCreated
   Date lastUpdated

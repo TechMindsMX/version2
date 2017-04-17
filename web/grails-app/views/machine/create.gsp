@@ -41,12 +41,6 @@
                 </div>
 
                 <div class="form-group col-sm-6">
-                </div>
-              </div>
-              <!-- END OF ROW -->
-              <!-- BEGIN ROW -->
-              <div class="row">
-                <div class="form-group col-sm-12">
                   <g:submitButton name="create" class="save btn btn-primary" value="Agregar" />
                 </div>
               </div>
@@ -62,7 +56,7 @@
             <!-- END OF ROW -->
           </div>
           <!-- END OF COL-SM-6 -->
-          <div class="col-sm-6">
+          <div class="col-sm-6 graphDiv" >
             <svg id="svg" width="100%"></svg>
           </div>
         </div>
@@ -73,7 +67,7 @@
     <!-- END OF PORTLET -->
 
     <script id="transitions-form-template" type="text/x-handlebars-template">
-      <div class="form-group col-sm-4">
+      <div class="form-group col-sm-3">
         <label for="actionFrom">
           ${message(code:'machine.initial.state')}
         </label>
@@ -89,19 +83,36 @@
         <label for="actionFrom">
           ${message(code:'machine.action')}
         </label>
-        <input type="text" name="action" class="form-control" />
+        <input type="text" name="action" class="form-control" autocomplete="off" />
       </div>
 
-      <div class="form-group col-sm-4">
+      <div class="form-group col-sm-3">
         <label for="actionFrom">
           ${message(code:'machine.state.to')}
         </label>
-        <input type="text" name="stateTo" class="form-control" />
+        <input type="text" name="stateTo" class="form-control" autocomplete="off" />
+      </div>
+      
+      <div class="form-group col-sm-2">
+        <g:submitButton name="create" class="save btn btn-primary" value="Agregar" />
       </div>
     </script>
 
     <script id="transitionsTable" type="text/x-handlebars-template">
-      <g:render template="transitionList"  />
+      {{#if transitions}}
+      <g:form name="newMachineForm" controller="machine" action="save" method="POST">
+        <g:render template="transitionList"  />
+        <!-- BEGIN ROW -->
+        <div class="row">
+          <div class="col-lg-12">
+            <input type="hidden" name="entity" value="${entityName}" />
+            <input type="hidden" name="company" value="${companyId}" />
+            <button type="submit" class="btn btn-default">Guardar</button>
+          </div>
+        </div>
+        <!-- END OF ROW -->
+      </g:form>
+      {{/if}}
     </script>
   </body>
 </html>
