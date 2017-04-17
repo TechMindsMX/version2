@@ -6,6 +6,7 @@ class Conciliation {
   User user
   SaleOrder saleOrder
   Payment payment
+  MovimientosBancarios bankingTransaction
   BigDecimal amount
   BigDecimal changeType
   ConciliationStatus status = ConciliationStatus.TO_APPLY
@@ -20,6 +21,7 @@ class Conciliation {
     user nullable:false
     saleOrder nullable:true
     payment nullable:true
+    bankingTransaction nullable:true
     comment nullable:true, blank:true
   }
 }
