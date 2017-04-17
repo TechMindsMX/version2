@@ -2,11 +2,11 @@ package com.modulus.uno
 
 class CommissionsInvoice {
 
-  CommissionsInvoiceEmitter emitter
+  Company companyEmitter
   Company companyReceiver
-  CommissionsInvoiceStatus status
+  CommissionsInvoiceStatus status = CommissionsInvoiceStatus.CREATED
 
-  static hasMany = [items:CommissionTransaction, payments:CommissionsInvoicePayment]
+  static hasMany = [commissions:CommissionTransaction]
 
   Date dateCreated
   Date lastUpdated
