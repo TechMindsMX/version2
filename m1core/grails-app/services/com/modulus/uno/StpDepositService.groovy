@@ -1,11 +1,13 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import java.math.RoundingMode
 
 @Transactional
 class StpDepositService {
 
   TransactionService transactionService
+  CommissionTransactionService commissionTransactionService
 
   def notificationDepositFromStp(StpDeposit stpDeposit) {
     stpDeposit = saveNotification(stpDeposit)
@@ -25,7 +27,7 @@ class StpDepositService {
 
     stpDeposit.status = StpDepositStatus.APLICADO
     stpDeposit.save()
-    
+
     generatePaymentToConciliateBill(m1Account, client, stpDeposit)
   }
 
@@ -35,6 +37,7 @@ class StpDepositService {
     payment.company = m1Account ? m1Account.company : client.company
     payment.transaction = createAndSaveTransaction(stpDeposit)
     payment.save()
+    registerCommissionForDeposit(payment)
     log.info "Payment was generated: ${payment?.dump()}"
   }
 
@@ -77,6 +80,33 @@ class StpDepositService {
                       transactionType:TransactionType.DEPOSIT,
                       transactionStatus:TransactionStatus.AUTHORIZED]
     transactionService.saveTransaction(new Transaction(parameters))
+  }
+
+  private void registerCommissionForDeposit(Payment payment) {
+    FeeCommand feeCommand = createFeeCommandForDeposit(payment)
+    commissionTransactionService.saveCommissionTransaction(feeCommand)
+  }
+
+  private FeeCommand createFeeCommandForDeposit(Payment payment) {
+    def command = null
+    Commission commission = payment.company.commissions.find { com ->
+        com.type == CommissionType."DEPOSITO"
+    }
+
+    if (!commission) {
+      throw new BusinessException("No existe comisión de depósito registrada")
+    }
+
+    BigDecimal amountFee = 0
+    if (commission){
+      if (commission.fee){
+        amountFee = commission.fee * 1.0
+      } else {
+        amountFee = payment.amount * (commission.percentage/100)
+      }
+      command = new FeeCommand(companyId:payment.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type, transactionId:payment.transaction.id)
+    }
+    command
   }
 
 }

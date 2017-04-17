@@ -36,9 +36,9 @@ databaseChangeLog = {
   include file: 'deleting-deposit-order.groovy'
   include file: 'adding-neighboorhood-to-address.groovy'
   include file: 'adding-dates-created-and-updated-to-fees-receipt.groovy'
-  include file: 'adding-mock-machine-class.groovy'
   include file: 'adding-column-reconcilable-to-transactions-banks.groovy'
   include file: 'adding-conciliation-status-to-bankings-transactions.groovy'
   include file: 'adding-column-banking-transaction-to-conciliation.groovy'
+  include file: 'adding-mock-machine-class.groovy'
   include file: 'adding-the-linker-structure.groovy'
 }
