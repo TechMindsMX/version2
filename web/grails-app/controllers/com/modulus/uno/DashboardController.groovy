@@ -58,9 +58,4 @@ class DashboardController {
     ]
   }
 
-  @Transactional
-  def saveAliasStp() {
-    companyService.assignAliasStpToCompany(Company.get(params.company), params.aliasStp)
-    redirect action:'defineCostCenters'
-  }
 }

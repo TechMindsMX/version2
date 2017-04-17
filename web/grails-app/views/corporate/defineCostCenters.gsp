@@ -64,6 +64,7 @@
                 </div>
                 <g:form action="saveAliasStp">
                 <input type="hidden" id="company" name="company"/>
+                <input type="hidden" id="corporateId" name="corporateId" value="${corporate.id}"/>
                 <div class="modal-body">
                   <div class="form-group">
                     <label for="companyName" class="control-label">Empresa:</label>
