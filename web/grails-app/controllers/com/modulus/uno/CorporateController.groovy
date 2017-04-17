@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import grails.transaction.Transactional
+
 class CorporateController {
 
   CorporateService corporateService
@@ -178,6 +180,12 @@ class CorporateController {
     [corporate:corporate, companies:corporate.companies.sort{it.bussinessName}]
   }
 
+  @Transactional
+  def saveAliasStp() {
+    Corporate corporate = Corporate.get(params.corporateId)
+    companyService.assignAliasStpToCompany(Company.get(params.company), params.aliasStp)
+    redirect action:'defineCostCenters', id:corporate.id
+  }
 }
 
 @groovy.transform.TypeChecked
