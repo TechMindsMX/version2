@@ -146,6 +146,11 @@ class CommissionController {
     [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
   }
 
+  def createCommissionsInvoice(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    String folioSat = commissionService.createCommissionsInvoiceForCompany(company)
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
