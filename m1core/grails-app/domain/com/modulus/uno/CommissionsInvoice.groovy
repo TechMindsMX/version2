@@ -2,8 +2,7 @@ package com.modulus.uno
 
 class CommissionsInvoice {
 
-  Company companyEmitter
-  Company companyReceiver
+  Company receiver
   CommissionsInvoiceStatus status = CommissionsInvoiceStatus.CREATED
 
   static hasMany = [commissions:CommissionTransaction]
