@@ -21,7 +21,7 @@ class LoanOrderServiceSpec extends Specification {
 
   void "should execute a loan order"() {
     given:"A commission"
-      Commission commission = new Commission(percentage:10, type: CommissionType.PRESTAMO)
+      Commission commission = new Commission(percentage:10, type: CommissionType.PAGO)
     and:"A loan order and command"
       LoanOrder loanOrder = Mock(LoanOrder)
       TransferFundsCommand command = Mock(TransferFundsCommand)
