@@ -46,7 +46,7 @@ class InvoiceService {
     command.receptor.datosFiscales.codigoPostal = saleOrder.addresses[0].zipCode
     command.receptor.datosFiscales.noExterior = saleOrder.addresses[0].streetNumber ?: "SN"
     command.receptor.datosFiscales.noInterior = saleOrder.addresses[0].suite ?: "SN"
-    command.receptor.datosFiscales.colonia = saleOrder.addresses[0].colony
+    command.receptor.datosFiscales.colonia = saleOrder.addresses[0].neighboorhood ?: saleOrder.addresses[0].colony
 
     ClientLink client = ClientLink.findByClientRefAndCompany(saleOrder.rfc, company)
     datosDeFacturacion.numeroDeCuentaDePago = client.stpClabe ?: company.accounts[0].stpClabe
@@ -93,4 +93,68 @@ class InvoiceService {
   void changeSerieAndInitialFolioToStampInvoiceForEmitter(Map params) {
     restService.updateSerieForEmitter(params)
   }
+
+  String createCommissionsInvoiceForCompany(Company company) {
+    Factura factura = createInvoiceWithCommissionsCompany(company)
+    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    result.text
+  }
+
+  FacturaCommand createInvoiceWithCommissionsCompany(Company company) {
+     DatosDeFacturacion datosDeFacturacion = new DatosDeFacturacion()
+    def emisor = createEmisorForCommissionsInvoice()
+    def receptor = createReceptorForCommissionsInvoice(company)
+    def command = new FacturaCommand(datosDeFacturacion:datosDeFacturacion, emisor:emisor, receptor:receptor)
+    command.emitter = company.rfc
+    command.pdfTemplate = "template_pdf.tof"
+    command.observaciones = ""
+
+    datosDeFacturacion.numeroDeCuentaDePago = grailsApplication.config.m1emitter.stpClabe
+
+    command.conceptos = createConceptsForInvoiceWithCommissionsCompany(company)
+
+    def impuestos = []
+    saleOrder.items.each { item ->
+      impuestos.add(new Impuesto(importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva, impuesto:'IVA'))
+    }
+
+    command.impuestos = impuestos
+    command
+  }
+
+  private Contribuyente createEmisorForCommissionsInvoice() {
+    DatosFiscales datosFiscales = new DatosFiscales(
+      razonSocial:grailsApplication.config.m1emitter.businessName,
+      regimen:"MORAL",
+      rfc:grailsApplication.config.m1emitter.rfc,
+      pais:grailsApplication.config.m1emitter.address.country,
+      calle:grailsApplication.config.m1emitter.address.street,
+      noInterior:grailsApplication.config.m1emitter.address.suite ?: "SN",
+      noExterior:grailsApplication.config.m1emitter.address.streetNumber,
+      ciudad:grailsApplication.config.m1emitter.address.city,
+      colonia:grailsApplication.config.m1emitter.address.neighboorhood ?: grailsApplication.config.m1emitter.address.colony,
+      delegacion:grailsApplication.config.m1emitter.address.town,
+      codigoPostal:grailsApplication.config.m1emitter.address.zipCode
+    )
+    new Contribuyente(datosFiscales:datosFiscales)
+  }
+
+  private Contribuyente createReceptorForCommissionsInvoice(Company company) {
+    Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
+    DatosFiscales datosFiscales = new DatosFiscales(
+      razonSocial:company.bussinessName,
+      regimen:company.taxRegime.code,
+      rfc:company.rfc,
+      pais:address.country,
+      calle:address.street,
+      noInterior:address.suite ?: "SN",
+      noExterior:address.streetNumber,
+      ciudad:address.city,
+      colonia:address.neighboorhood ?: address.colony,
+      delegacion:address.town,
+      codigoPostal:address.zipCode
+    )
+    new Contribuyente(datosFiscales:datosFiscales)
+  }
+
 }
