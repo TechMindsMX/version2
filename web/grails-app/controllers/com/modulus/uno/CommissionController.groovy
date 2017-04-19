@@ -148,7 +148,16 @@ class CommissionController {
 
   def createCommissionsInvoice(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
-    String folioSat = commissionService.createCommissionsInvoiceForCompany(company)
+    commissionsInvoiceService.createCommissionsInvoiceForCompany(company)
+    redirect action:"listCommissionsInvoice", id:company.id, params:[corporateId:corporate.id]
+  }
+
+  def listCommissionsInvoice(Company company) {
+    params.max = 25
+    params.sort = "dateCreated"
+    params.order = "desc"
+    Corporate corporate = Corporate.get(params.corporateId)
+    [listInvoices:commissionsInvoiceService.getCommissionsInvoiceForCompany(company, params)]
   }
 
   protected void notFound() {
