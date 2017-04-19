@@ -95,7 +95,7 @@ class InvoiceService {
   }
 
   String createCommissionsInvoiceForCompany(Company company) {
-    Factura factura = createInvoiceWithCommissionsCompany(company)
+    FacturaCommand factura = createInvoiceWithCommissionsCompany(company)
     def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
     result.text
   }
