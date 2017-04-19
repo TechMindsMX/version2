@@ -23,5 +23,17 @@ class CommissionsInvoiceServiceSpec extends Specification {
       invoice.commissions.size() == 2
   }
 
+  void "Should get the commissions invoice for a company"() {
+    given:"A company"
+      Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
+    and:"Commissions invoice"
+      CommissionsInvoice invoice1 = new CommissionsInvoice(receiver:company).save(validate:false)
+      CommissionsInvoice invoice2 = new CommissionsInvoice(receiver:company).save(validate:false)
+    when:"We get the commissions invoices"
+      def invoices = service.getCommissionsInvoiceForCompany(company, [max:25, offset:0, sort:"dateCreated", order:"desc"])
+    then:
+      invoices.listInvoices.size() == 2
+  }
+
 }
 
