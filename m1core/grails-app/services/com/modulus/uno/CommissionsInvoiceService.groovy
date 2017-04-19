@@ -23,4 +23,13 @@ class CommissionsInvoiceService {
     }
   }
 
+  Map getCommissionsInvoiceForCompany(Company company, Map params) {
+    Map invoices = [:]
+    List<CommissionsInvoice> listInvoices = CommissionsInvoice.findAllByReceiver(company, params)
+    Integer countInvoices = CommissionsInvoice.countByReceiver(company)
+    invoices.listInvoices = listInvoices
+    invoices.countInvoices = countInvoices
+    invoices
+  }
+
 }
