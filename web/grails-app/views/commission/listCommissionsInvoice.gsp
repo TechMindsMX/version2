@@ -36,22 +36,10 @@
                   <tr>
                     <td><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/> </td>
                     <td class="text-right">${modulusuno.formatPrice(number:invoice.commissions*.amount.sum())}</td>
-                    <td><g:message code="commissions.invoice.status.${invoice.status}"/></td>
+                    <td class="text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></td>
                   </tr>
                   </g:each>
                   </tbody>
-                  <tfoot>
-                    <tr>
-                      <td><strong>Total:</strong></td>
-                      <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.balance.sum())}</strong></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td class="text-right">
-                        <g:link class="btn btn-success" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">Facturar</g:link>
-                      </td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
             </div>
