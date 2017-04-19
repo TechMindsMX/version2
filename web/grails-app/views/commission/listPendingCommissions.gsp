@@ -46,7 +46,9 @@
                     <tr>
                       <td></td>
                       <td class="text-right">
+                        <g:if test="${commissionsBalance*.balance.sum()}">
                         <g:link class="btn btn-success" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">Facturar</g:link>
+                        </g:if>
                       </td>
                     </tr>
                   </tfoot>
