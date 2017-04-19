@@ -157,7 +157,7 @@ class CommissionController {
     params.sort = "dateCreated"
     params.order = "desc"
     Corporate corporate = Corporate.get(params.corporateId)
-    [listInvoices:commissionsInvoiceService.getCommissionsInvoiceForCompany(company, params)]
+    [invoices:commissionsInvoiceService.getCommissionsInvoiceForCompany(company, params), corporate:corporate]
   }
 
   protected void notFound() {
