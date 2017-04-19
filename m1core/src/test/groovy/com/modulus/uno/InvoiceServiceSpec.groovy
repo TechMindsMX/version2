@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(InvoiceService)
-@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink])
+@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionsInvoice, CommissionTransaction])
 class InvoiceServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
@@ -158,5 +158,34 @@ class InvoiceServiceSpec extends Specification {
       service.cancelBill(saleOrder)
     then:
       1 * restService.sendFacturaCommandWithAuth(_,_)
+  }
+
+  void "Should create command to stamp a commissions invoice"() {
+    given:"A commissions invoice"
+      Address address = new Address(street:"Tiburcio Montiel",
+                                streetNumber:"266",
+                                suite:"B3",
+                                zipCode:"11850",
+                                colony:"Reforma",
+                                town:"Miguel Hidalgo",
+                                city:"Ciudad de México",
+                                country:"México",
+                                federalEntity:"México",
+                                addressType:AddressType.FISCAL)
+      Company receiver = new Company(rfc:"XXX010101AAA", addresses:[address]).save(validate:false)
+      CommissionTransaction fixed = new CommissionTransaction(type:CommissionType.FIJA, amount:new BigDecimal(1000), company:receiver).save(validate:false)
+      CommissionTransaction payments = new CommissionTransaction(type:CommissionType.PAGO, amount:new BigDecimal(100), company:receiver).save(validate:false)
+      CommissionsInvoice invoice = new CommissionsInvoice(receiver:receiver, status:CommissionsInvoiceStatus.CREATED).save(validate:false)
+      invoice.addToCommissions(fixed)
+      invoice.addToCommissions(payments)
+      invoice.save(validate:false)
+    when:
+      def command = service.createCommandFromCommissionsInvoice(invoice)
+    then:
+      command.emitter == "AAA010101AAA"
+      command.emisor.datosFiscales.rfc == "AAA010101AAA"
+      command.receptor.datosFiscales.rfc == "XXX010101AAA"
+      command.conceptos.size() == 2
+      command.impuestos.size() == 2
   }
 }
