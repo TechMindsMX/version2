@@ -10,6 +10,7 @@ class CommissionController {
 
   def corporateService
   def commissionTransactionService
+  def commissionsInvoiceService
 
   def index(Integer max) {
     params.max = Math.min(max ?: 10, 100)
@@ -142,10 +143,11 @@ class CommissionController {
 
   def listPendingCommissions(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
-    List commissionsBalance = commissionTransactionService.getCommissionsPendingBalanceForCompany(company)
+    List commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
     [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
   }
 
+  @Transactional
   def createCommissionsInvoice(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
     commissionsInvoiceService.createCommissionsInvoiceForCompany(company)
@@ -157,7 +159,7 @@ class CommissionController {
     params.sort = "dateCreated"
     params.order = "desc"
     Corporate corporate = Corporate.get(params.corporateId)
-    [invoices:commissionsInvoiceService.getCommissionsInvoiceForCompany(company, params), corporate:corporate]
+    [invoices:commissionsInvoiceService.getCommissionsInvoiceForCompany(company, params), corporate:corporate, company:company]
   }
 
   protected void notFound() {
