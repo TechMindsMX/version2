@@ -41,7 +41,11 @@
                     ${modulusuno.formatPrice(number:(totalPendingCommissions.find {it.company == company}).total)}
                   </g:link>
                 </td>
-                <td></td>
+                <td class="text-right">
+                  <g:link controller="commission" action="listCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">
+                    ${modulusuno.formatPrice(number:(totalInvoicedCommissions.find {it.company == company}).total)}
+                  </g:link>
+                </td>
                 <td></td>
                 <td>
                   <g:if test="${company.commissions}">
