@@ -1,5 +1,5 @@
 package com.modulus.uno
 
 enum CommissionTransactionStatus {
-  PENDING, CHARGED
+  PENDING, INVOICED, CHARGED
 }

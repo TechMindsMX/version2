@@ -30,7 +30,7 @@ class CommissionTransactionServiceSpec extends Specification {
       company.addToCommissions(commission2)
       company.save(validate:false)
     when:
-      def balance = service.getCommissionsPendingBalanceForCompany(company)
+      def balance = service.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
     then:
       balance.size() == company.commissions.size()
   }
