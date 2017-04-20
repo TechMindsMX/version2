@@ -165,7 +165,8 @@ class CorporateController {
   def commissions(Corporate corporate) {
     List companies = corporate.companies.sort{it.bussinessName}
     List totalPendingCommissions = getTotalPendingCommissionsForCorporate(corporate)
-    [corporate:corporate, companies:companies, totalPendingCommissions:totalPendingCommissions]
+    List totalInvoicedCommissions = getTotalInvoicedCommissionsForCorporate(corporate)
+    [corporate:corporate, companies:companies, totalPendingCommissions:totalPendingCommissions, totalInvoicedCommissions:totalInvoicedCommissions]
   }
 
   private List getTotalPendingCommissionsForCorporate(Corporate corporate) {
@@ -174,6 +175,14 @@ class CorporateController {
       totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it) ?: 0]
     }
     totalPendingCommissions
+  }
+
+  private List getTotalInvoicedCommissionsForCorporate(Corporate corporate) {
+    List totalCommissions = []
+    corporate.companies.each {
+      totalCommissions << [company:it, total:commissionTransactionService.getTotalInvoicedCommissionsForCompany(it) ?: 0]
+    }
+    totalCommissions
   }
 
   def defineCostCenters(Corporate corporate) {

@@ -12,21 +12,21 @@ class CommissionTransactionService {
     commissionTransaction
   }
 
-  def getCommissionsPendingBalanceForCompany(Company company) {
+  def getCommissionsBalanceForCompanyAndStatus(Company company, CommissionTransactionStatus status) {
     List balances = []
     company.commissions.sort{it.type}.each {
-      Map balance = [typeCommission:it.type, balance: getCommissionsPendingBalanceForTypeAndCompany(it.type, company) ?: 0]
+      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceForTypeAndCompanyAndStatus(it.type, company, status) ?: 0]
       balances.add(balance)
     }
     balances
   }
 
-  BigDecimal getCommissionsPendingBalanceForTypeAndCompany(CommissionType type, Company company) {
+  BigDecimal getCommissionsBalanceForTypeAndCompanyAndStatus(CommissionType type, Company company, CommissionTransactionStatus status) {
     BigDecimal total = CommissionTransaction.createCriteria().get {
       and {
         eq("company", company)
         eq("type", type)
-        eq("status", CommissionTransactionStatus.PENDING)
+        eq("status", status)
       }
       projections {
         sum "amount"
@@ -36,7 +36,12 @@ class CommissionTransactionService {
   }
 
   BigDecimal getTotalCommissionsPendingForCompany(Company company) {
-    List balances = getCommissionsPendingBalanceForCompany(company)
+    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+    balances.balance.sum()
+  }
+
+  BigDecimal getTotalInvoicedCommissionsForCompany(Company company) {
+    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.INVOICED)
     balances.balance.sum()
   }
 

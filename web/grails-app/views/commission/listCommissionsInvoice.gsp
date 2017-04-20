@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.CommissionsInvoiceStatus %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -9,13 +10,13 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-info-circle fa-3x"></i>
-        Comisiones Pendientes de Cobro
+        Facturas de Comisiones
         <small>${company.bussinessName}</small>
       </h1>
     </div>
 
     <div class="row">
-      <div class="col-lg-6 col-lg-offset-3">
+      <div class="col-lg-12">
         <div class="portlet portlet-blue">
           <div class="portlet-heading">
           </div>
@@ -26,32 +27,28 @@
                 <table class="table">
                   <thead>
                   <tr>
-                    <th class="text-center">Tipo</th>
-                    <th class="text-center">Monto</th>
+                    <th class="text-center">Fecha</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Estatus</th>
+                    <th></th>
                   </tr>
                   </thead>
                   <tbody>
-                  <g:each in="${commissionsBalance}" var="commission">
+                  <g:each in="${invoices.listInvoices}" var="invoice">
                   <tr>
-                    <td>${commission.typeCommission}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number:commission.balance)}</td>
+                    <td><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/> </td>
+                    <td class="text-right">${modulusuno.formatPrice(number:invoice.commissions*.amount.sum())}</td>
+                    <td class="text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></td>
+                    <td class="text-center">
+                      <g:if test="${invoice.status == CommissionsInvoiceStatus.CREATED}">
+                        <g:link class="btn btn-info" action="stampInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">
+                          Timbrar
+                        </g:link>
+                      </g:if>
+                    </td>
                   </tr>
                   </g:each>
                   </tbody>
-                  <tfoot>
-                    <tr>
-                      <td><strong>Total:</strong></td>
-                      <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.balance.sum())}</strong></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td class="text-right">
-                        <g:if test="${commissionsBalance*.balance.sum()}">
-                        <g:link class="btn btn-success" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">Facturar</g:link>
-                        </g:if>
-                      </td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
             </div>
