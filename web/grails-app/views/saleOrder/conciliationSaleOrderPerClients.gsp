@@ -14,7 +14,13 @@
       </h1>
     </div>
     <div class="row">
-      <div class="col-md-12 col-lg-12">
+    <div class="col-md-offset-2 col-md-8">
+      <div class="portlet portlet-blue">
+        <div class="portlet-heading">
+          Buscar ordenes de pago.
+        </div>
+        <div class="portlet-body">
+        
         <g:form action="conciliationSaleOrderPerClients" class="form-horizontal">
         <div class="form-group">
           <div class="col-sm-9">
@@ -25,7 +31,9 @@
           </div>
         </div>
         </g:form>
-        <g:if test="${!clients.isEmpty()}">
+
+
+          <g:if test="${!clients.isEmpty()}">
         <table class="table table-hover">
           <tr>
             <th>#</th>
@@ -43,6 +51,9 @@
           </g:each>
         </table>
         </g:if>
+
+        </div>
+      </div>
       </div>
     </div>
   </body>
