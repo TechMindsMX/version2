@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.CommissionsInvoiceStatus %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -15,7 +16,7 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-6 col-lg-offset-3">
+      <div class="col-lg-12">
         <div class="portlet portlet-blue">
           <div class="portlet-heading">
           </div>
@@ -29,6 +30,7 @@
                     <th class="text-center">Fecha</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Estatus</th>
+                    <th></th>
                   </tr>
                   </thead>
                   <tbody>
@@ -37,6 +39,13 @@
                     <td><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/> </td>
                     <td class="text-right">${modulusuno.formatPrice(number:invoice.commissions*.amount.sum())}</td>
                     <td class="text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></td>
+                    <td>
+                      <g:if test="${invoice.status == CommissionsInvoiceStatus.CREATED}">
+                        <g:link class="btn btn-primary" action="stampInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">
+                          Timbrar
+                        </g:link>
+                      </g:if>
+                    </td>
                   </tr>
                   </g:each>
                   </tbody>
