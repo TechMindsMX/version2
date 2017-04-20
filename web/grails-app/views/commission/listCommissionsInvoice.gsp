@@ -39,9 +39,9 @@
                     <td><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/> </td>
                     <td class="text-right">${modulusuno.formatPrice(number:invoice.commissions*.amount.sum())}</td>
                     <td class="text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></td>
-                    <td>
+                    <td class="text-center">
                       <g:if test="${invoice.status == CommissionsInvoiceStatus.CREATED}">
-                        <g:link class="btn btn-primary" action="stampInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">
+                        <g:link class="btn btn-info" action="stampInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">
                           Timbrar
                         </g:link>
                       </g:if>
