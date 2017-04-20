@@ -169,6 +169,12 @@ class CommissionController {
     redirect action:"listCommissionsInvoice", id:invoice.receiver.id, params:[corporateId:corporate.id]
   }
 
+  def showCommissionsInvoice(CommissionsInvoice invoice) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    List commissionsSummary = commissionsInvoiceService.getCommissionsSummaryFromInvoice(invoice)
+    [corporate:corporate, invoice:invoice, commissionsSummary:commissionsSummary]
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {

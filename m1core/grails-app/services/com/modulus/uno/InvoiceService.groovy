@@ -6,13 +6,13 @@ class InvoiceService {
 
   def restService
   def grailsApplication
+  def commissionsInvoiceService
 
   String generateFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
     def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
     result.text
   }
-
 
   private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
     def datosDeFacturacion = new DatosDeFacturacion(folio: "${saleOrder.id}", metodoDePago: "${saleOrder.paymentMethod}", moneda:saleOrder.currency, tipoDeCambio:saleOrder.changeType?:new BigDecimal(0))
@@ -154,7 +154,7 @@ class InvoiceService {
 
   private List<Concepto> createConceptsFromCommissionsInvoice(invoice) {
     List<Concepto> conceptos = []
-    List totalByCommissionType = getTotalByCommissionTypeInInvoice(invoice)
+    List totalByCommissionType = commissionsInvoiceService.getCommissionsSummaryFromInvoice(invoice)
     totalByCommissionType.each { totalByType ->
       Concepto concepto = new Concepto(
        descripcion:totalByType.type == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${totalByType.type}",
@@ -165,22 +165,6 @@ class InvoiceService {
       conceptos.add(concepto)
     }
     conceptos
-  }
-
-  private List getTotalByCommissionTypeInInvoice(CommissionsInvoice invoice) {
-    def commissionTypes = invoice.commissions.collect { it.type }.unique()
-
-    def totales = []
-    commissionTypes.each { type ->
-      def totalType = [:]
-      totalType.type = type
-      def commissionsOfType = invoice.commissions.collect { commission ->
-        if (commission.type == type) { return commission }
-      } - null
-      totalType.total = commissionsOfType*.amount.sum()
-      totales << totalType
-    }
-    totales
   }
 
   private List<Impuesto> createTaxesFromConcepts(List<Concepto> conceptos) {
