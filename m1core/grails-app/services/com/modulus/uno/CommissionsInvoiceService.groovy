@@ -3,6 +3,7 @@ package com.modulus.uno
 class CommissionsInvoiceService {
 
   def commissionTransactionService
+  def invoiceService
 
   CommissionsInvoice createCommissionsInvoiceForCompany(Company company) {
     List<CommissionTransaction> pendingCommissions = CommissionTransaction.findAllByCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
@@ -30,6 +31,14 @@ class CommissionsInvoiceService {
     invoices.listInvoices = listInvoices
     invoices.countInvoices = countInvoices
     invoices
+  }
+
+  CommissionsInvoice stampInvoice(CommissionsInvoice invoice) {
+    String folioSat = invoiceService.stampCommissionsInvoice(invoice)
+    invoice.status = CommissionsInvoiceStatus.STAMPED
+    invoice.folioSat = folioSat
+    invoice.save()
+    invoice
   }
 
 }

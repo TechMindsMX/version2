@@ -162,6 +162,13 @@ class CommissionController {
     [invoices:commissionsInvoiceService.getCommissionsInvoiceForCompany(company, params), corporate:corporate, company:company]
   }
 
+  @Transactional
+  def stampInvoice(CommissionsInvoice invoice) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    commissionsInvoiceService.stampInvoice(invoice)
+    redirect action:"listCommissionsInvoice", id:invoice.receiver.id, params:[corporateId:corporate.id]
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
