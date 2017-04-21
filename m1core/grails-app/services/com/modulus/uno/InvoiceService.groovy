@@ -101,10 +101,11 @@ class InvoiceService {
   }
 
   FacturaCommand createCommandFromCommissionsInvoice(CommissionsInvoice invoice) {
-     DatosDeFacturacion datosDeFacturacion = new DatosDeFacturacion()
+    DatosDeFacturacion datosDeFacturacion = new DatosDeFacturacion(folio:"${invoice.id}")
     def emisor = createEmisorForCommissionsInvoice()
     def receptor = createReceptorForCommissionsInvoice(invoice)
     def command = new FacturaCommand(datosDeFacturacion:datosDeFacturacion, emisor:emisor, receptor:receptor)
+    command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de ${emisor.datosFiscales.razonSocial} con RFC ${emisor.datosFiscales.rfc}"
     command.emitter = emisor.datosFiscales.rfc
     command.pdfTemplate = "template_pdf.tof"
     command.observaciones = ""
