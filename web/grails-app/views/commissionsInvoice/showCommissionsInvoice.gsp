@@ -84,7 +84,35 @@
                         </div>
                       </div>
                     </div>
+
                   </g:if>
+
+                  <g:if test="${invoice.status == CommissionsInvoiceStatus.STAMPED}">
+
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalCancelConfirm">
+                      <i class="fa fa-ban"></i> Cancelar
+                    </button>
+
+                    <div class="modal fade" id="modalCancelConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Confirme la acción</h4>
+                          </div>
+                          <div class="modal-body">
+                            ¿Está seguro de cancelar la factura de comisiones?
+                          </div>
+                          <div class="modal-footer">
+                            <g:link class="btn btn-danger" action="cancelStampedInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">Sí</g:link>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </g:if>
+
                 </div>
               </div>
 
