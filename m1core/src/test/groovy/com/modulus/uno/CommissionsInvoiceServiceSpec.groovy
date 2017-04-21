@@ -71,5 +71,23 @@ class CommissionsInvoiceServiceSpec extends Specification {
       result.size() == 2
   }
 
+  void "Should delete a commissions invoice"() {
+    given:"A company"
+      Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
+    and:"Commission transactions"
+      CommissionTransaction commissionPago = new CommissionTransaction(type:CommissionType.PAGO, amount:new BigDecimal(100), status:CommissionTransactionStatus.INVOICED, company:company).save(validate:false)
+      CommissionTransaction commissionFija = new CommissionTransaction(type:CommissionType.FIJA, amount:new BigDecimal(1000), status:CommissionTransactionStatus.INVOICED, company:company).save(validate:false)
+    and:"The commissions invoice"
+      CommissionsInvoice invoice = new CommissionsInvoice(receiver:company).save(validate:false)
+      invoice.addToCommissions(commissionPago)
+      invoice.addToCommissions(commissionFija)
+      invoice.save(validate:false)
+    when:
+      service.deleteCommissionsInvoice(invoice)
+    then:
+      commissionPago.status == CommissionTransactionStatus.PENDING
+      commissionFija.status == CommissionTransactionStatus.PENDING
+  }
+
 }
 
