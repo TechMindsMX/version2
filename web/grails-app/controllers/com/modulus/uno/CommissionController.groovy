@@ -8,9 +8,7 @@ class CommissionController {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-  def corporateService
   def commissionTransactionService
-  def commissionsInvoiceService
 
   def index(Integer max) {
     params.max = Math.min(max ?: 10, 100)
@@ -136,43 +134,15 @@ class CommissionController {
     [corporate:corporate, company:company, fixedCommissions:fixedCommissionsForCompany]
   }
 
-  def charge(Company company) {
-    commissionTransactionService.applyFixedCommissionToCompany(company)
-    redirect action:'listFixedCommission', id:company.id, params:[corporateId:params.corporateId]
-  }
-
   def listPendingCommissions(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
     List commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
     [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
   }
 
-  @Transactional
-  def createCommissionsInvoice(Company company) {
-    Corporate corporate = Corporate.get(params.corporateId)
-    commissionsInvoiceService.createCommissionsInvoiceForCompany(company)
-    redirect action:"listCommissionsInvoice", id:company.id, params:[corporateId:corporate.id]
-  }
-
-  def listCommissionsInvoice(Company company) {
-    params.max = 25
-    params.sort = "dateCreated"
-    params.order = "desc"
-    Corporate corporate = Corporate.get(params.corporateId)
-    [invoices:commissionsInvoiceService.getCommissionsInvoiceForCompany(company, params), corporate:corporate, company:company]
-  }
-
-  @Transactional
-  def stampInvoice(CommissionsInvoice invoice) {
-    Corporate corporate = Corporate.get(params.corporateId)
-    commissionsInvoiceService.stampInvoice(invoice)
-    redirect action:"listCommissionsInvoice", id:invoice.receiver.id, params:[corporateId:corporate.id]
-  }
-
-  def showCommissionsInvoice(CommissionsInvoice invoice) {
-    Corporate corporate = Corporate.get(params.corporateId)
-    List commissionsSummary = commissionsInvoiceService.getCommissionsSummaryFromInvoice(invoice)
-    [corporate:corporate, invoice:invoice, commissionsSummary:commissionsSummary]
+  def charge(Company company) {
+    commissionTransactionService.applyFixedCommissionToCompany(company)
+    redirect action:'listFixedCommission', id:company.id, params:[corporateId:params.corporateId]
   }
 
   protected void notFound() {
