@@ -89,5 +89,22 @@ class CommissionsInvoiceServiceSpec extends Specification {
       commissionFija.status == CommissionTransactionStatus.PENDING
   }
 
+  void "Should cancel a stamped commissions invoice"() {
+    given:"A commissions invoice"
+      Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
+    and:"Commission transactions"
+      CommissionTransaction commissionPago = new CommissionTransaction(type:CommissionType.PAGO, amount:new BigDecimal(100), status:CommissionTransactionStatus.INVOICED, company:company).save(validate:false)
+      CommissionTransaction commissionFija = new CommissionTransaction(type:CommissionType.FIJA, amount:new BigDecimal(1000), status:CommissionTransactionStatus.INVOICED, company:company).save(validate:false)
+    and:"The commissions invoice"
+      CommissionsInvoice invoice = new CommissionsInvoice(receiver:company, status:CommissionsInvoiceStatus.STAMPED).save(validate:false)
+      invoice.addToCommissions(commissionPago)
+      invoice.addToCommissions(commissionFija)
+      invoice.save(validate:false)
+    when:"We stamp the invoice"
+      def result = service.cancelStampedCommissionsInvoice(invoice)
+    then:"We expect"
+      result.status == CommissionsInvoiceStatus.CANCELED
+  }
+
 }
 
