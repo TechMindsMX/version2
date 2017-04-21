@@ -58,16 +58,24 @@ class CommissionsInvoiceService {
   }
 
   void deleteCommissionsInvoice(CommissionsInvoice invoice) {
-    updateCommissionTransactionsOfInvoiceForDelete(invoice)
+    unlinkInvoiceAndChangeToPendingStatusFromCommissionTransactions(invoice)
     invoice.delete()
   }
 
-  private void updateCommissionTransactionsOfInvoiceForDelete(CommissionsInvoice invoice) {
+  private void unlinkInvoiceAndChangeToPendingStatusFromCommissionTransactions(CommissionsInvoice invoice) {
     invoice.commissions.each { commission ->
       commission.status = CommissionTransactionStatus.PENDING
       commission.invoice = null
       commission.save()
     }
+  }
+
+  CommissionsInvoice cancelStampedCommissionsInvoice(CommissionsInvoice invoice) {
+    invoiceService.cancelStampedCommissionsInvoice(invoice)
+    invoice.status = CommissionsInvoiceStatus.CANCELED
+    unlinkInvoiceAndChangeToPendingStatusFromCommissionTransactions(invoice)
+    invoice.save()
+    invoice
   }
 
 }

@@ -47,4 +47,11 @@ class CommissionsInvoiceController {
     redirect action:"listCommissionsInvoice", id:company.id, params:[corporateId:corporate.id]
   }
 
+  @Transactional
+  def cancelStampedInvoice(CommissionsInvoice invoice) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    commissionsInvoiceService.cancelStampedCommissionsInvoice(invoice)
+    redirect action:"listCommissionsInvoice", id:invoice.receiver.id, params:[corporateId:corporate.id]
+  }
+
 }
