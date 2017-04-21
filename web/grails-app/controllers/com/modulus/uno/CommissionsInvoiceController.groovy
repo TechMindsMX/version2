@@ -39,4 +39,12 @@ class CommissionsInvoiceController {
     [corporate:corporate, invoice:invoice, commissionsSummary:commissionsSummary]
   }
 
+  @Transactional
+  def deleteInvoice(CommissionsInvoice invoice) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    Company company = invoice.receiver
+    commissionsInvoiceService.deleteCommissionsInvoice(invoice)
+    redirect action:"listCommissionsInvoice", id:company.id, params:[corporateId:corporate.id]
+  }
+
 }
