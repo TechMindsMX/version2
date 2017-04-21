@@ -59,6 +59,11 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <g:if test="${invoice.status == CommissionsInvoiceStatus.CREATED}">
+                  <g:link class="btn btn-danger" action="deleteInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">Borrar</g:link>
+                </g:if>
+              </div>
 
             </div>
           </div>
