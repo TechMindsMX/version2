@@ -5,15 +5,17 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 
 @TestFor(StpDepositService)
-@Mock([StpDeposit, Payment, Company, Commission, Transaction, ModulusUnoAccount, ClientLink])
+@Mock([StpDeposit, Payment, Company, Commission, Transaction, ModulusUnoAccount, ClientLink, PaymentM1Emitter])
 class StpDepositServiceSpec extends Specification {
 
   TransactionService transactionService = Mock(TransactionService)
   CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
+  GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
 
   def setup() {
     service.transactionService = transactionService
     service.commissionTransactionService = commissionTransactionService
+    service.grailsApplication = grailsApplication
   }
 
   void "Should obtain a accepted status for a stp deposit which account is from company"(){
@@ -68,6 +70,23 @@ class StpDepositServiceSpec extends Specification {
       ClientLink.metaClass.static.findByStpClabe = { client }
     and:
       transactionService.saveTransaction(_) >> new Transaction().save(validate:false)
+    when:"We process the notification"
+      def result = service.notificationDepositFromStp(notification)
+    then:"We validate"
+      result.estatus == StpDepositStatus.ACEPTADO
+  }
+
+  void "Should obtain a accepted status for a stp deposit which account is from m1 emitter"(){
+    given:"A string notification with xml"
+      String clave = "1101"
+      String rastreo = "ABC001"
+      String clabe = "646180132400000007"
+      StpDeposit notification = createNotificationWithData(clave, rastreo, clabe)
+    and:
+      StpDeposit.metaClass.static.findAllByOperationNumberAndTracingKeyAndIdNotEqualAndStatusNotEqual = { [] }
+    and:
+      ModulusUnoAccount.metaClass.static.findByStpClabe = { null }
+      ModulusUnoAccount.metaClass.static.findByStpClabeLike = { null }
     when:"We process the notification"
       def result = service.notificationDepositFromStp(notification)
     then:"We validate"

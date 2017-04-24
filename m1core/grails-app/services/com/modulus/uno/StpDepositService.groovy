@@ -8,6 +8,7 @@ class StpDepositService {
 
   TransactionService transactionService
   CommissionTransactionService commissionTransactionService
+  def grailsApplication
 
   def notificationDepositFromStp(StpDeposit stpDeposit) {
     stpDeposit = saveNotification(stpDeposit)
@@ -28,7 +29,17 @@ class StpDepositService {
     stpDeposit.status = StpDepositStatus.APLICADO
     stpDeposit.save()
 
-    generatePaymentToConciliateBill(m1Account, client, stpDeposit)
+    if (grailsApplication.config.m1emitter.stpClabe == stpDeposit.accountBeneficiary) {
+      generatePaymentToConciliateForM1Emitter(stpDeposit)
+    } else {
+      generatePaymentToConciliateBill(m1Account, client, stpDeposit)
+    }
+  }
+
+  private def generatePaymentToConciliateForM1Emitter(StpDeposit stpDeposit) {
+    PaymentM1Emitter payment = new PaymentM1Emitter(
+      amount:stpDeposit.amount
+    ).save()
   }
 
   private def generatePaymentToConciliateBill(ModulusUnoAccount m1Account, ClientLink client, StpDeposit stpDeposit) {
@@ -55,10 +66,10 @@ class StpDepositService {
       StpDeposit lastDeposit = stpDeposits.sort { it.dateCreated }.last()
       status = lastDeposit.status
     } else {
-      //validar si cuenta es de company o client
+      //validar si cuenta es de company o client o del emisor M1
       ModulusUnoAccount account = ModulusUnoAccount.findByStpClabe(stpDeposit.accountBeneficiary)
       ClientLink client = ClientLink.findByStpClabe(stpDeposit.accountBeneficiary)
-      if (account || client) {
+      if (account || client || grailsApplication.config.m1emitter.stpClabe == stpDeposit.accountBeneficiary) {
         status = StpDepositStatus.ACEPTADO
       }
     }
