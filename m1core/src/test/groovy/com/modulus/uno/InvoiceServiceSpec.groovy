@@ -155,7 +155,7 @@ class InvoiceServiceSpec extends Specification {
     given:
       Company company = new Company(rfc:"RODS861224HNE").save(validate:false)
     and:"A Sale order to cancel"
-      SaleOrder saleOrder = new SaleOrder(uuid:'uuid',company:company).save(validate:false)
+      SaleOrder saleOrder = new SaleOrder(uuid:'uuid',company:company, folio:'folioSat').save(validate:false)
     when:
       service.cancelBill(saleOrder)
     then:
