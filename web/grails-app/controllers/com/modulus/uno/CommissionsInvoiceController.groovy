@@ -54,4 +54,8 @@ class CommissionsInvoiceController {
     redirect action:"listCommissionsInvoice", id:invoice.receiver.id, params:[corporateId:corporate.id]
   }
 
+  def conciliate(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    [corporate:corporate, company:company, payments:commissionsInvoiceService.getPaymentsToConciliate()]
+  }
 }
