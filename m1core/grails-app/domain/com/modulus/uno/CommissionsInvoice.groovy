@@ -30,7 +30,7 @@ class CommissionsInvoice {
   }
 
   BigDecimal getTotalPayed() {
-    payments*.amount.sum()
+    payments*.amount.sum() ?: new BigDecimal(0)
   }
 
   BigDecimal getAmountToPay() {
