@@ -28,7 +28,7 @@
                     <th></th>
                   </tr>
                   <g:each in="${payments}" var="payment">
-                  <g:form controller="conciliationCommissionsInvoice" action="chooseInvoiceToConciliate" id="${payment.id}">
+                  <g:form controller="conciliationCommissionsInvoice" action="chooseInvoiceToConciliate" id="${payment.id}" params="[companyId:company.id, corporateId:corporate.id]">
                   <tr>
                     <td><g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}"/></td>
                     <td>${modulusuno.formatPrice(number: payment.amount)}</td>
@@ -40,6 +40,11 @@
                   </g:each>
 
                 </table>
+              </div>
+              <div class="row">
+                <div class="col-md-2 col-md-offset-10">
+                  <g:link class="btn btn-info" controller="corporate" action="commissions" id="${corporate.id}">Regresar</g:link>
+                </div>
               </div>
 
             </div>
