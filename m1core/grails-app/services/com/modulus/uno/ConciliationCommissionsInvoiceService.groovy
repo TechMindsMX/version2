@@ -6,14 +6,17 @@ class ConciliationCommissionsInvoiceService {
     ConciliationCommissionsInvoice.findAllByPaymentAndStatus(payment, ConciliationStatus.TO_APPLY)
   }
 
-  def saveConciliationCommissionsInvoice(PaymentM1Emitter payment, CommissionsInvoice invoice, BigDecimal amount) {
-    ConciliationCommissionsInvoice conciliation = new ConciliationCommissionsInvoice(
-      payment:payment,
-      amount:amount,
-      invoice:invoice
-    )
+  ConciliationCommissionsInvoice saveConciliation(ConciliationCommissionsInvoice conciliation) {
+    if (conciliation.amount > conciliation.invoice.amountToPay) {
+      throw new BusinessException("El monto a conciliar no puede ser mayor al monto por pagar de la factura")
+    }
+
     conciliation.save()
     conciliation
+  }
+
+  void deleteConciliation(ConciliationCommissionsInvoice conciliation) {
+    conciliation.delete()
   }
 
 }
