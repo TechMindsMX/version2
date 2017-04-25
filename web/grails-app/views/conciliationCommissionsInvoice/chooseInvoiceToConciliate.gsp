@@ -9,7 +9,7 @@
       <h1>
         <i class="fa fa-usd fa-3x"></i>
         Conciliación de Cobro de Comisiones
-        <small>Elegir factura(s)</small>
+        <small>Elegir factura(s) de comisiones de la empresa <strong>${company.bussinessName}</strong></small>
       </h1>
     </div>
 
@@ -48,6 +48,8 @@
                 <g:form action="addInvoiceToConciliate">
                   <div class="row">
                     <g:hiddenField name="paymentId" value="${payment.id}"/>
+                    <g:hiddenField name="corporateId" value="${corporate.id}"/>
+                    <g:hiddenField name="companyId" value="${company.id}"/>
                     <div class="col-md-12">
                       <label>Facturas disponibles:</label>
                       <g:select class="form-control" name="invoiceId" from="${invoices}" noSelection="['':' Elegir factura...']" required="true" optionKey="id"/>
@@ -83,13 +85,13 @@
                   </tr>
                   <g:each in="${conciliations}" var="conciliation">
                   <tr>
-                    <td></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
-                    <td class="text-right"></td>
+                    <td>${conciliation.invoice.id} / ${conciliation.invoice.receiver.bussinessName}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number:conciliation.invoice.total)}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number:conciliation.invoice.amountToPay)}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number:conciliation.amount)}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number:(conciliation.invoice.amountToPay - conciliation.amount))}</td>
                     <td class="text-center">
-                      <g:form action="deleteConciliation" id="${conciliation.id}">
+                      <g:form action="deleteConciliation" id="${conciliation.id}" params="[corporateId:corporate.id, companyId:company.id]">
                         <button class="btn btn-danger">Quitar</button>
                       </g:form>
                     </td>
@@ -100,11 +102,15 @@
               <hr>
               </g:if>
 
+              <div class="row">
+                <div class="text-right">
+                  <g:link class="btn btn-info" controller="commissionsInvoice" action="conciliate" id="${company.id}" params="[corporateId:corporate.id]">Regresar</g:link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <asset:javascript src="conciliation/chooseInvoice.js"/>
   </body>
 </html>
