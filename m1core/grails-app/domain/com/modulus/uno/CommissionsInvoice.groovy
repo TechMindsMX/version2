@@ -8,7 +8,7 @@ class CommissionsInvoice {
   CommissionsInvoiceStatus status = CommissionsInvoiceStatus.CREATED
   String folioSat
 
-  static hasMany = [commissions:CommissionTransaction]
+  static hasMany = [commissions:CommissionTransaction, payments:CommissionsInvoicePayment]
 
   Date dateCreated
   Date lastUpdated
@@ -29,7 +29,15 @@ class CommissionsInvoice {
     getSubtotal() + getAmountIva()
   }
 
+  BigDecimal getTotalPayed() {
+    payments*.amount.sum()
+  }
+
+  BigDecimal getAmountToPay() {
+    getTotal() - getTotalPayed()
+  }
+
   String toString() {
-    "${id} / ${receiver.bussinessName} / Total:\$ ${total.setScale(2, RoundingMode.HALF_UP}"
+    "${id} / ${receiver.bussinessName} / Total: \$${total.setScale(2, RoundingMode.HALF_UP)} / Por pagar: \$${amountToPay.setScale(2, RoundingMode.HALF_UP)}"
   }
 }
