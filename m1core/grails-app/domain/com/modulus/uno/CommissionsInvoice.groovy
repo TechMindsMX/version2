@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import java.math.RoundingMode
+
 class CommissionsInvoice {
 
   Company receiver
@@ -13,5 +15,21 @@ class CommissionsInvoice {
 
   static constraints = {
     folioSat nullable:true
+  }
+
+  BigDecimal getSubtotal() {
+    commissions*.amount.sum()
+  }
+
+  BigDecimal getAmountIva() {
+    getSubtotal() * 0.16
+  }
+
+  BigDecimal getTotal() {
+    getSubtotal() + getAmountIva()
+  }
+
+  String toString() {
+    "${id} / ${receiver.bussinessName} / Total:\$ ${total.setScale(2, RoundingMode.HALF_UP}"
   }
 }
