@@ -18,7 +18,7 @@ class CommissionsInvoice {
   }
 
   BigDecimal getSubtotal() {
-    commissions*.amount.sum()
+    commissions ? commissions*.amount.sum() : new BigDecimal(0)
   }
 
   BigDecimal getAmountIva() {
