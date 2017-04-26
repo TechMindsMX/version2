@@ -9,6 +9,12 @@ import spock.lang.Unroll
 @Mock([ConciliationCommissionsInvoice, PaymentM1Emitter, CommissionsInvoice, CommissionTransaction])
 class ConciliationCommissionsInvoiceServiceSpec extends Specification {
 
+  CommissionsInvoiceService commissionsInvoiceService = Mock(CommissionsInvoiceService)
+
+  def setup() {
+    service.commissionsInvoiceService = commissionsInvoiceService
+  }
+
   void "Should return null when payment hasn't conciliations to apply"() {
     given:"A payment m1 emitter"
       PaymentM1Emitter payment =  new PaymentM1Emitter(amount:1000).save(validate:false)
@@ -60,6 +66,22 @@ class ConciliationCommissionsInvoiceServiceSpec extends Specification {
       service.saveConciliation(conciliation)
     then:
       thrown BusinessException
+  }
+
+  void "Should conciliate a payment m1 emitter"() {
+    given:"The payment m1 emitter"
+      PaymentM1Emitter payment = new PaymentM1Emitter(amount:2320).save(validate:false)
+    and:"The commissions invoice"
+      CommissionsInvoice invoice = new CommissionsInvoice(status:CommissionsInvoiceStatus.STAMPED, payments:[]).save(validate:false)
+      CommissionTransaction commission = new CommissionTransaction(type:CommissionType.FIJA, amount:2000, invoice:invoice).save(validate:false)
+      invoice.addToCommissions(commission)
+      invoice.save(validate:false)
+    and:"The conciliation commissions invoice"
+      ConciliationCommissionsInvoice conciliation = new ConciliationCommissionsInvoice(payment:payment, amount:2320, invoice:invoice).save(validate:false)
+    when:
+      service.applyConciliationsForPayment(payment)
+    then:
+      payment.status == PaymentStatus.CONCILIATED
   }
 
 }
