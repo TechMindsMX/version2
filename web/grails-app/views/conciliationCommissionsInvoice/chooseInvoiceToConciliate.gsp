@@ -103,10 +103,21 @@
               </g:if>
 
               <div class="row">
-                <div class="text-right">
+                <div class="col-md-3">
                   <g:link class="btn btn-info" controller="commissionsInvoice" action="conciliate" id="${company.id}" params="[corporateId:corporate.id]">Regresar</g:link>
                 </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3 text-right">
+                  <g:if test="${toApply == 0}">
+                    <g:link class="btn btn-success" action="applyConciliation" id="${payment.id}" params="[companyId:company.id, corporateId:corporate.id]">Aplicar</g:link>
+                  </g:if>
+                  <g:else>
+                    <div class="alert alert-warning" role="alert">Aún dispone de monto por aplicar</div>
+                  </g:else>
+                </div>
               </div>
+
             </div>
           </div>
         </div>
