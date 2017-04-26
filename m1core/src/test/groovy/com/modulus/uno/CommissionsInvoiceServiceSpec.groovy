@@ -6,7 +6,7 @@ import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(CommissionsInvoiceService)
-@Mock([CommissionsInvoice, Company, CommissionTransaction])
+@Mock([CommissionsInvoice, Company, CommissionTransaction, CommissionsInvoicePayment])
 class CommissionsInvoiceServiceSpec extends Specification {
 
   InvoiceService invoiceService = Mock(InvoiceService)
@@ -132,6 +132,42 @@ class CommissionsInvoiceServiceSpec extends Specification {
       amountCommission  || total
       100               ||  116
       1000              ||  1160
+  }
+
+  void "Should add payment to commissions invoice and don't change status to payed"() {
+    given:"A commissions invoice"
+      CommissionsInvoice invoice = new CommissionsInvoice(status:CommissionsInvoiceStatus.STAMPED, commissions:[]).save(validate:false)
+    and:"The commission transactions"
+      CommissionTransaction commissionPago = new CommissionTransaction(type:CommissionType.PAGO, amount:new BigDecimal(100), status:CommissionTransactionStatus.INVOICED).save(validate:false)
+      CommissionTransaction commissionFija = new CommissionTransaction(type:CommissionType.FIJA, amount:new BigDecimal(1000), status:CommissionTransactionStatus.INVOICED).save(validate:false)
+      invoice.addToCommissions(commissionPago)
+      invoice.addToCommissions(commissionFija)
+      invoice.save(validate:false)
+    and:"The payment amount"
+      BigDecimal amount = new BigDecimal(500)
+    when:
+      def result = service.createPaymentToCommissionsInvoiceWithAmount(invoice, amount)
+    then:
+      result.status == CommissionsInvoiceStatus.STAMPED
+      result.totalPayed == amount
+  }
+
+  void "Should add payment to commissions invoice and change its status to payed"() {
+    given:"A commissions invoice"
+      CommissionsInvoice invoice = new CommissionsInvoice(status:CommissionsInvoiceStatus.STAMPED, commissions:[]).save(validate:false)
+    and:"The commission transactions"
+      CommissionTransaction commissionPago = new CommissionTransaction(type:CommissionType.PAGO, amount:new BigDecimal(100), status:CommissionTransactionStatus.INVOICED).save(validate:false)
+      CommissionTransaction commissionFija = new CommissionTransaction(type:CommissionType.FIJA, amount:new BigDecimal(1000), status:CommissionTransactionStatus.INVOICED).save(validate:false)
+      invoice.addToCommissions(commissionPago)
+      invoice.addToCommissions(commissionFija)
+      invoice.save(validate:false)
+    and:"The payment amount"
+      BigDecimal amount = new BigDecimal(1276)
+    when:
+      def result = service.createPaymentToCommissionsInvoiceWithAmount(invoice, amount)
+    then:
+      result.status == CommissionsInvoiceStatus.PAYED
+      result.amountToPay == 0
   }
 
 }
