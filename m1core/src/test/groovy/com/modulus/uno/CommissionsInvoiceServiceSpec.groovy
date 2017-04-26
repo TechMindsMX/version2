@@ -106,5 +106,33 @@ class CommissionsInvoiceServiceSpec extends Specification {
       result.status == CommissionsInvoiceStatus.CANCELED
   }
 
+  void "Should get total invoiced = 0 for a company when it hasn't invoices created or stamped"() {
+    given:"A company"
+      Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
+    when:
+      def result = service.getTotalInvoicedCommissionsForCompany(company)
+    then:
+      result == 0
+  }
+
+  @Unroll
+  void "Should get total invoiced = #total for a company with invoices"() {
+    given:"A company"
+      Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
+    and:"The invoices"
+      CommissionsInvoice invoice = new CommissionsInvoice(receiver:company, status:CommissionsInvoiceStatus.CREATED, commissions:[]).save(validate:false)
+      CommissionTransaction commission = new CommissionTransaction(amount:amountCommission, invoice:invoice, company:company).save(validate:false)
+      invoice.addToCommissions(commission)
+      invoice.save(validate:false)
+    when:
+      def result = service.getTotalInvoicedCommissionsForCompany(company)
+    then:
+      result == total
+    where:
+      amountCommission  || total
+      100               ||  116
+      1000              ||  1160
+  }
+
 }
 
