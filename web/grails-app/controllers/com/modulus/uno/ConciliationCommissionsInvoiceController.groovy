@@ -16,13 +16,13 @@ class ConciliationCommissionsInvoiceController {
 
     List<ConciliationCommissionsInvoice> conciliations = conciliationCommissionsInvoiceService.getConciliationsToApplyForPayment(payment)
     BigDecimal toApply = payment.amount - (conciliations ? conciliations*.amount.sum() : new BigDecimal(0))
-    List<CommissionsInvoice> invoices = getInvoicesToListForPayment()
+    List<CommissionsInvoice> invoices = getInvoicesToListForPayment(company)
 
     [payment:payment, invoices:invoices, toApply:toApply, conciliations:conciliations, corporate:corporate, company:company]
   }
 
-  private List<CommissionsInvoice> getInvoicesToListForPayment() {
-    List <CommissionsInvoice> allInvoices = CommissionsInvoice.findAllByStatus(CommissionsInvoiceStatus.STAMPED)
+  private List<CommissionsInvoice> getInvoicesToListForPayment(Company company) {
+    List <CommissionsInvoice> allInvoices = CommissionsInvoice.findAllByReceiverAndStatus(company, CommissionsInvoiceStatus.STAMPED)
     List <ConciliationCommissionsInvoice> allConciliations = ConciliationCommissionsInvoice.findAllByStatus(ConciliationStatus.TO_APPLY)
     List <CommissionsInvoice> invoicesFiltered = allInvoices.findAll { invoice ->
       if (!allConciliations.find { conciliation -> conciliation.invoice.id == invoice.id }) {
