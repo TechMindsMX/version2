@@ -10,6 +10,7 @@ class CommissionsInvoiceController {
 
   def commissionTransactionService
   def commissionsInvoiceService
+  def paymentM1EmitterService
 
   @Transactional
   def createCommissionsInvoice(Company company) {
@@ -54,4 +55,8 @@ class CommissionsInvoiceController {
     redirect action:"listCommissionsInvoice", id:invoice.receiver.id, params:[corporateId:corporate.id]
   }
 
+  def conciliate(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    [corporate:corporate, company:company, payments:paymentM1EmitterService.getPaymentsInStatus(PaymentStatus.PENDING)]
+  }
 }

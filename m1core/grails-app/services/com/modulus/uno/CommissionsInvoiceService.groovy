@@ -73,8 +73,34 @@ class CommissionsInvoiceService {
   CommissionsInvoice cancelStampedCommissionsInvoice(CommissionsInvoice invoice) {
     invoiceService.cancelStampedCommissionsInvoice(invoice)
     invoice.status = CommissionsInvoiceStatus.CANCELED
-    unlinkInvoiceAndChangeToPendingStatusFromCommissionTransactions(invoice)
+    changeToPendingStatusCommissionTransactionsFromInvoice(invoice)
     invoice.save()
+    invoice
+  }
+
+  private void changeToPendingStatusCommissionTransactionsFromInvoice(CommissionsInvoice invoice) {
+    invoice.commissions.each { commission ->
+      commission.status = CommissionTransactionStatus.PENDING
+      commission.save()
+    }
+  }
+
+  BigDecimal getTotalInvoicedCommissionsForCompany(Company company) {
+    List<CommissionsInvoice> invoices = CommissionsInvoice.findAllByReceiverAndStatusInList(company, [CommissionsInvoiceStatus.CREATED, CommissionsInvoiceStatus.STAMPED])
+    invoices ? invoices*.total.sum() : new BigDecimal(0)
+  }
+
+  CommissionsInvoice createPaymentToCommissionsInvoiceWithAmount(CommissionsInvoice invoice, BigDecimal amount) {
+    CommissionsInvoicePayment invoicePayment = new CommissionsInvoicePayment(amount:amount, invoice:invoice)
+    invoice.addToPayments(invoicePayment)
+    invoice.save()
+    if (invoice.amountToPay <= 0) {
+      invoice.status = CommissionsInvoiceStatus.PAYED
+      invoice.commissions.each { commission ->
+        commission.status = CommissionTransactionStatus.CHARGED
+      }
+      invoice.save()
+    }
     invoice
   }
 
