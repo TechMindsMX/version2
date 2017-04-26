@@ -73,9 +73,16 @@ class CommissionsInvoiceService {
   CommissionsInvoice cancelStampedCommissionsInvoice(CommissionsInvoice invoice) {
     invoiceService.cancelStampedCommissionsInvoice(invoice)
     invoice.status = CommissionsInvoiceStatus.CANCELED
-    unlinkInvoiceAndChangeToPendingStatusFromCommissionTransactions(invoice)
+    changeToPendingStatusCommissionTransactionsFromInvoice(invoice)
     invoice.save()
     invoice
+  }
+
+  private void changeToPendingStatusCommissionTransactionsFromInvoice(CommissionsInvoice invoice) {
+    invoice.commissions.each { commission ->
+      commission.status = CommissionTransactionStatus.PENDING
+      commission.save()
+    }
   }
 
   BigDecimal getTotalInvoicedCommissionsForCompany(Company company) {
