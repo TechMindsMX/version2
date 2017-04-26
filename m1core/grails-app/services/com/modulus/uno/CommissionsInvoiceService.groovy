@@ -78,4 +78,9 @@ class CommissionsInvoiceService {
     invoice
   }
 
+  BigDecimal getTotalInvoicedCommissionsForCompany(Company company) {
+    List<CommissionsInvoice> invoices = CommissionsInvoice.findAllByReceiverAndStatusInList(company, [CommissionsInvoiceStatus.CREATED, CommissionsInvoiceStatus.STAMPED])
+    invoices ? invoices*.total.sum() : new BigDecimal(0)
+  }
+
 }
