@@ -62,4 +62,11 @@ class ConciliationCommissionsInvoiceController {
     redirect action:"chooseInvoiceToConciliate", id:payment.id, params:[corporateId:params.corporateId, companyId:params.companyId]
   }
 
+  @Transactional
+  def applyConciliation(PaymentM1Emitter payment) {
+    log.info "Applying conciliations for payment: ${payment.id}"
+    conciliationCommissionsInvoiceService.applyConciliationsForPayment(payment)
+    redirect controller:"commissionsInvoice", action:"conciliate", id:params.companyId, params:[corporateId:params.corporateId]
+  }
+
 }
