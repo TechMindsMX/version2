@@ -151,7 +151,7 @@ class InvoiceServiceSpec extends Specification {
       result.impuestos[0].impuesto == 'IVA'
   }
 
-  def "Should cancel billing"() {
+  def "Should throw a exception when cancel a sale order invoiced and service return a fail"() {
     given:
       Company company = new Company(rfc:"RODS861224HNE").save(validate:false)
     and:"A Sale order to cancel"
@@ -159,7 +159,7 @@ class InvoiceServiceSpec extends Specification {
     when:
       service.cancelBill(saleOrder)
     then:
-      1 * restService.sendFacturaCommandWithAuth(_,_)
+      thrown RestException
   }
 
   void "Should create command to stamp a commissions invoice"() {
