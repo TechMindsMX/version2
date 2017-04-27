@@ -53,6 +53,9 @@
                         <a href="${modulusuno.commissionsInvoiceUrl(invoice:invoice, format:'xml')}" class="btn btn-success">XML</a>
                         <a href="${modulusuno.commissionsInvoiceUrl(invoice:invoice, format:'pdf')}" class="btn btn-default">PDF</a>
                       </g:if>
+                      <g:if test="${invoice.status == CommissionsInvoiceStatus.CANCELED}">
+                        <a href="${modulusuno.commissionsInvoiceUrl(invoice:invoice, format:'xml', accuse:true)}" class="btn btn-success">XML</a>
+                      </g:if>
                     </td>
                   </tr>
                   </g:each>

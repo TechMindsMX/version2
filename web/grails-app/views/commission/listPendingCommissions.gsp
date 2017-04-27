@@ -40,9 +40,18 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                      <td><strong>Total:</strong></td>
+                      <td><strong>Subtotal:</strong></td>
                       <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.balance.sum())}</strong></td>
                     </tr>
+                    <tr>
+                      <td><strong>IVA:</strong></td>
+                      <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.iva.sum())}</strong></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Total:</strong></td>
+                      <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.total.sum())}</strong></td>
+                    </tr>
+
                     <tr>
                       <td></td>
                       <td class="text-right">

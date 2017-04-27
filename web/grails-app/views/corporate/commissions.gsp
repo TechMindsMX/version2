@@ -26,7 +26,6 @@
                 <th>RFC</th>
                 <th>Por facturar</th>
                 <th>Facturado</th>
-                <th>Pagado</th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -47,7 +46,6 @@
                     ${modulusuno.formatPrice(number:(totalInvoicedCommissions.find {it.company == company}).total)}
                   </g:link>
                 </td>
-                <td></td>
                 <td>
                   <g:if test="${company.commissions}">
                   <g:link controller="commission" class="btn btn-success" params="[companyId: company.id]" >Editar</g:link>
@@ -68,9 +66,9 @@
               <tfoot>
                 <tr>
                   <td></td>
-                  <td><strong>Total por pagar:</strong></td>
+                  <td><strong>Totales:</strong></td>
                   <td class="text-right"><strong>${modulusuno.formatPrice(number:totalPendingCommissions*.total.sum())}</strong></td>
-                  <td></td>
+                  <td class="text-right"><strong>${modulusuno.formatPrice(number:totalInvoicedCommissions*.total.sum())}</strong></td>
                   <td></td>
                   <td></td>
                   <td>
