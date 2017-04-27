@@ -26,8 +26,8 @@
                 <table class="table">
                   <thead>
                   <tr>
-                    <th>Tipo</th>
-                    <th>Monto</th>
+                    <th class="text-center">Tipo</th>
+                    <th class="text-center">Monto</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -42,6 +42,14 @@
                     <tr>
                       <td><strong>Total:</strong></td>
                       <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.balance.sum())}</strong></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td class="text-right">
+                        <g:if test="${commissionsBalance*.balance.sum()}">
+                        <g:link class="btn btn-success" controller="commissionsInvoice" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">Facturar</g:link>
+                        </g:if>
+                      </td>
                     </tr>
                   </tfoot>
                 </table>
