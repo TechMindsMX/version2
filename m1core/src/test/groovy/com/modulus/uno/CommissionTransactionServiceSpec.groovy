@@ -9,6 +9,12 @@ import grails.test.mixin.Mock
 @Mock([CommissionTransaction, Company, Transaction, SaleOrder, SaleOrderItem, Commission])
 class CommissionTransactionServiceSpec extends Specification {
 
+  GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
+
+  def setup(){
+    service.grailsApplication = grailsApplication
+  }
+
   void "Should save a commission transaction"() {
     given:"A fee command"
       FeeCommand feeCommand = new FeeCommand(companyId:"1", amount:new BigDecimal(10), type:"PAGO", transactionId:"1")
@@ -30,7 +36,7 @@ class CommissionTransactionServiceSpec extends Specification {
       company.addToCommissions(commission2)
       company.save(validate:false)
     when:
-      def balance = service.getCommissionsPendingBalanceForCompany(company)
+      def balance = service.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
     then:
       balance.size() == company.commissions.size()
   }

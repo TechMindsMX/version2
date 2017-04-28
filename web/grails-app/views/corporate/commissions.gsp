@@ -24,7 +24,9 @@
               <tr>
                 <th>Nombre</th>
                 <th>RFC</th>
-                <th>Por pagar</th>
+                <th>Por facturar</th>
+                <th>Facturado</th>
+                <th></th>
                 <th></th>
                 <th></th>
               </tr>
@@ -39,6 +41,11 @@
                     ${modulusuno.formatPrice(number:(totalPendingCommissions.find {it.company == company}).total)}
                   </g:link>
                 </td>
+                <td class="text-right">
+                  <g:link controller="commissionsInvoice" action="listCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">
+                    ${modulusuno.formatPrice(number:(totalInvoicedCommissions.find {it.company == company}).total)}
+                  </g:link>
+                </td>
                 <td>
                   <g:if test="${company.commissions}">
                   <g:link controller="commission" class="btn btn-success" params="[companyId: company.id]" >Editar</g:link>
@@ -50,16 +57,22 @@
                 <td>
                   <g:link class="btn btn-primary" controller="commission" action="listFixedCommission" id="${company.id}" params="[corporateId:corporate.id]">Aplicar Comisión fija</g:link>
                 </td>
+                <td>
+                  <g:link class="btn btn-info" controller="commissionsInvoice" action="conciliate" id="${company.id}" params="[corporateId:corporate.id]">Conciliar cobros</g:link>
+                </td>
               </tr>
               </g:each>
               </tbody>
               <tfoot>
                 <tr>
                   <td></td>
-                  <td><strong>Total por pagar:</strong></td>
+                  <td><strong>Totales:</strong></td>
                   <td class="text-right"><strong>${modulusuno.formatPrice(number:totalPendingCommissions*.total.sum())}</strong></td>
+                  <td class="text-right"><strong>${modulusuno.formatPrice(number:totalInvoicedCommissions*.total.sum())}</strong></td>
                   <td></td>
                   <td></td>
+                  <td>
+                  </td>
                 </tr>
               </tfoot>
             </table>
@@ -73,7 +86,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-2 col-md-offset-10 text-right">
+        <div class="col-md-2 col-md-offset-10">
           <g:link class="btn btn-primary" controller="dashboard" action="index">Regresar</g:link>
         </div>
       </div>

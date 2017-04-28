@@ -43,4 +43,9 @@ databaseChangeLog = {
   include file: 'adding-the-linker-structure.groovy'
   include file: 'creating-commission-transaction-domain.groovy'
   include file: 'updating-commission-prestamo-to-commission-fija-for-existing-commissions.groovy'
+  include file: 'create-domain-commissions-invoice.groovy'
+  include file: 'adding-column-commissions-invoice-to-commission-transaction.groovy'
+  include file: 'create-domain-payment-m1-emitter.groovy'
+  include file: 'create-domain-conciliation-commissions-invoice.groovy'
+  include file: 'create-domain-commissions-invoice-payment.groovy'
 }

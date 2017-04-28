@@ -8,7 +8,6 @@ class CommissionController {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-  def corporateService
   def commissionTransactionService
 
   def index(Integer max) {
@@ -135,15 +134,15 @@ class CommissionController {
     [corporate:corporate, company:company, fixedCommissions:fixedCommissionsForCompany]
   }
 
+  def listPendingCommissions(Company company) {
+    Corporate corporate = Corporate.get(params.corporateId)
+    List commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+    [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
+  }
+
   def charge(Company company) {
     commissionTransactionService.applyFixedCommissionToCompany(company)
     redirect action:'listFixedCommission', id:company.id, params:[corporateId:params.corporateId]
-  }
-
-  def listPendingCommissions(Company company) {
-    Corporate corporate = Corporate.get(params.corporateId)
-    List commissionsBalance = commissionTransactionService.getCommissionsPendingBalanceForCompany(company)
-    [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
   }
 
   protected void notFound() {

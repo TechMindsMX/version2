@@ -6,27 +6,32 @@ import java.math.RoundingMode
 @Transactional
 class CommissionTransactionService {
 
+  def grailsApplication
+
   def saveCommissionTransaction (FeeCommand feeCommand) {
     CommissionTransaction commissionTransaction = feeCommand.createCommissionTransaction()
     commissionTransaction.save()
     commissionTransaction
   }
 
-  def getCommissionsPendingBalanceForCompany(Company company) {
+  def getCommissionsBalanceForCompanyAndStatus(Company company, CommissionTransactionStatus status) {
     List balances = []
+    BigDecimal iva = new BigDecimal(grailsApplication.config.iva)
     company.commissions.sort{it.type}.each {
-      Map balance = [typeCommission:it.type, balance: getCommissionsPendingBalanceForTypeAndCompany(it.type, company) ?: 0]
+      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceForTypeAndCompanyAndStatus(it.type, company, status) ?: 0]
+      balance.iva = balance.balance * (iva/100)
+      balance.total = balance.balance + balance.iva
       balances.add(balance)
     }
     balances
   }
 
-  BigDecimal getCommissionsPendingBalanceForTypeAndCompany(CommissionType type, Company company) {
+  BigDecimal getCommissionsBalanceForTypeAndCompanyAndStatus(CommissionType type, Company company, CommissionTransactionStatus status) {
     BigDecimal total = CommissionTransaction.createCriteria().get {
       and {
         eq("company", company)
         eq("type", type)
-        eq("status", CommissionTransactionStatus.PENDING)
+        eq("status", status)
       }
       projections {
         sum "amount"
@@ -36,7 +41,12 @@ class CommissionTransactionService {
   }
 
   BigDecimal getTotalCommissionsPendingForCompany(Company company) {
-    List balances = getCommissionsPendingBalanceForCompany(company)
+    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+    balances.balance.sum()
+  }
+
+  BigDecimal getTotalInvoicedCommissionsForCompany(Company company) {
+    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.INVOICED)
     balances.balance.sum()
   }
 

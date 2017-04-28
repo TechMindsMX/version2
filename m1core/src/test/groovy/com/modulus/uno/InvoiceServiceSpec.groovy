@@ -5,16 +5,18 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(InvoiceService)
-@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink])
+@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionsInvoice, CommissionTransaction])
 class InvoiceServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
 
   def restService = Mock(RestService)
+  CommissionsInvoiceService commissionsInvoiceService = Mock(CommissionsInvoiceService)
 
   def setup(){
     service.grailsApplication = grailsApplication
     service.restService = restService
+    service.commissionsInvoiceService = commissionsInvoiceService
   }
 
   void "create an invoice from sale order"(){
@@ -158,5 +160,36 @@ class InvoiceServiceSpec extends Specification {
       service.cancelBill(saleOrder)
     then:
       thrown RestException
+  }
+
+  void "Should create command to stamp a commissions invoice"() {
+    given:"A commissions invoice"
+      Address address = new Address(street:"Tiburcio Montiel",
+                                streetNumber:"266",
+                                suite:"B3",
+                                zipCode:"11850",
+                                colony:"Reforma",
+                                town:"Miguel Hidalgo",
+                                city:"Ciudad de México",
+                                country:"México",
+                                federalEntity:"México",
+                                addressType:AddressType.FISCAL)
+      Company receiver = new Company(rfc:"XXX010101AAA", addresses:[address]).save(validate:false)
+      CommissionTransaction fixed = new CommissionTransaction(type:CommissionType.FIJA, amount:new BigDecimal(1000), company:receiver).save(validate:false)
+      CommissionTransaction payments = new CommissionTransaction(type:CommissionType.PAGO, amount:new BigDecimal(100), company:receiver).save(validate:false)
+      CommissionsInvoice invoice = new CommissionsInvoice(receiver:receiver, status:CommissionsInvoiceStatus.CREATED).save(validate:false)
+      invoice.addToCommissions(fixed)
+      invoice.addToCommissions(payments)
+      invoice.save(validate:false)
+    and:
+      commissionsInvoiceService.getCommissionsSummaryFromInvoice(_) >> [[type:CommissionType.FIJA, total:1000.00],[type:CommissionType.PAGO, total:100.00]]
+    when:
+      def command = service.createCommandFromCommissionsInvoice(invoice)
+    then:
+      command.emitter == "AAA010101AAA"
+      command.emisor.datosFiscales.rfc == "AAA010101AAA"
+      command.receptor.datosFiscales.rfc == "XXX010101AAA"
+      command.conceptos.size() == 2
+      command.impuestos.size() == 2
   }
 }
