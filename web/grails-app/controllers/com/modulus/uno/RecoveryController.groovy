@@ -19,7 +19,14 @@ class RecoveryController {
 
   def save() {
     def email = params.email
+    try {
     recoveryService.generateRegistrationCodeForEmail(email)
+    } catch (Exception e) {
+      flash.message = e.message
+      redirect action:'forgotPassword'
+      return
+    }
+
     flash.message = g.message(code: 'login.email')
     redirect controller:'login', action:'auth'
   }

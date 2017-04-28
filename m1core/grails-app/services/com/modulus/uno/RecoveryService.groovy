@@ -4,7 +4,7 @@ import org.springframework.context.i18n.LocaleContextHolder as LCH
 import grails.transaction.Transactional
 
 class RecoveryService {
-  
+
   def grailsApplication
   def registrationService
   def recoveryCollaboratorService
@@ -46,9 +46,9 @@ class RecoveryService {
   def generateRegistrationCodeForEmail(String email) {
     def profile = Profile.findByEmail(email)
     def user = User.findByProfile(profile)
-    String urlCorporate = corporateService.findUrlCorporateOfUser(user)
     if(!user) throw new UserNotFoundException(messageSource.getMessage('exception.user.not.found', null, LCH.getLocale()))
     if(!user.enabled) throw new AccountNoActivatedException(messageSource.getMessage('exception.account.not.activated', null, LCH.getLocale()))
+    String urlCorporate = corporateService.findUrlCorporateOfUser(user)
     def message = recoveryCollaboratorService.generateToken("${urlCorporate}${grailsApplication.config.recovery.forgot}", email)
     emailSenderService.sendEmailForRegistrationCode(message, email)
   }
