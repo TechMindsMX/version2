@@ -26,6 +26,13 @@
             </div>
             <div id="greenPortlet" class="panel-collapse collapse in">
               <div class="portlet-body">
+
+                <g:if test="${flash.message}">
+                <div class="alert alert-danger">
+                  ${flash.message}
+                </div>
+                </g:if>
+
                 <g:form name="recovery" action="save" class="form-signin form-horizontal">
                   <br/>
                   <div class="col-md-12">
