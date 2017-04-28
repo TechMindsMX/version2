@@ -19,7 +19,7 @@
             <div class="portlet portlet-green">
               <div class="portlet-heading login-heading">
                 <div class="portlet-title">
-                  <h4>B<g:message code="recovery.password.title" /></h4>
+                  <h4><g:message code="recovery.password.title" /></h4>
                 </div>
                 <div class="clearfix"></div>
               </div>
@@ -31,12 +31,12 @@
                 <g:form name="recovery" action="update" id="${params.token}" class="form-signin form-horizontal">
                   <label class="${session.labelWidth} control-label" for="password"><g:message code="recovery.password.label" /></label>
                   <div class="${session.inputWidth}">
-                    <input class="form-control" type="password" name="password">
+                    <input class="form-control" type="password" name="password" required="" />
                   </div>
                   <label class="${session.labelWidth} control-label" for="confirmPassword"><g:message code="recovery.password.confirm.label" /></label
                     >
                     <div class="${session.inputWidth}">
-                      <input class="form-control" type="password" name="confirmPassword">
+                      <input class="form-control" type="password" name="confirmPassword" required=""/>
                     </div>
                     <br/>
                     <button type="submit" class="btn btn-primary"><g:message code="recovery.password.button.label" /></button>
