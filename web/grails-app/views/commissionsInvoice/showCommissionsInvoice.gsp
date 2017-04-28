@@ -24,14 +24,18 @@
             <div class="portlet-body">
 
               <div class="row">
-                <div class="col-md-4 text-center"><strong>Fecha</strong></div>
-                <div class="col-md-4 text-center"><strong>Total</strong></div>
-                <div class="col-md-4 text-center"><strong>Estatus</strong></div>
+                <div class="col-md-3 text-center"><strong>Fecha</strong></div>
+                <div class="col-md-3 text-center"><strong>Estatus</strong></div>
+                <div class="col-md-2 text-center"><strong>Total</strong></div>
+                <div class="col-md-2 text-center"><strong>Pagado</strong></div>
+                <div class="col-md-2 text-center"><strong>Por pagar</strong></div>
               </div>
               <div class="row">
-                <div class="col-md-4 text-center"><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/></div>
-                <div class="col-md-4 text-center">${modulusuno.formatPrice(number:invoice.total)}</div>
-                <div class="col-md-4 text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></div>
+                <div class="col-md-3 text-center"><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/></div>
+                <div class="col-md-3 text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></div>
+                <div class="col-md-2 text-center">${modulusuno.formatPrice(number:invoice.total)}</div>
+                <div class="col-md-2 text-center">${modulusuno.formatPrice(number:invoice.totalPayed)}</div>
+                <div class="col-md-2 text-center">${modulusuno.formatPrice(number:invoice.amountToPay)}</div>
               </div>
               </br>
               <div class="row">
