@@ -14,10 +14,6 @@
      <g:message code="Estado de Cuenta"/>
      <small>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</small>
    </h1>
-   <ol class="breadcrumb">
-     <li><i class="fa fa-caret-square-o-up"></i>Compañia</li>
-     <li class="active">Estado de Cuenta</li>
-   </ol>
  </div>
  <div class="row">
    <div class="col-lg-8 col-md-7 col-sm-12">
