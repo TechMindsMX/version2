@@ -49,7 +49,13 @@ class InvoiceService {
     command.receptor.datosFiscales.colonia = saleOrder.addresses[0].colony
 
     ClientLink client = ClientLink.findByClientRefAndCompany(saleOrder.rfc, company)
-    datosDeFacturacion.numeroDeCuentaDePago = client.stpClabe ?: company.accounts[0].stpClabe
+
+    if (saleOrder.paymentMethod == PaymentMethod.EFECTIVO || saleOrder.paymentMethod == PaymentMethod.CHEQUE_NOMINATIVO) {
+      BankAccount bankAccount = company.banksAccounts.find {it.concentradora}
+      datosDeFacturacion.numeroDeCuentaDePago = bankAccount ? "${bankAccount.branchNumber} - ${bankAccount.accountNumber} - ${bankAccount.banco}" : company.accounts[0].stpClabe
+    } else {
+      datosDeFacturacion.numeroDeCuentaDePago = client.stpClabe ?: company.accounts[0].stpClabe
+    }
 
     if(Company.findByRfcAndStatus(command.receptor.datosFiscales.rfc, CompanyStatus.ACCEPTED)){
       command.betweenIntegrated = true
