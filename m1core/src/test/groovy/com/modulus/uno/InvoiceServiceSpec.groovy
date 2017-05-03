@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(InvoiceService)
-@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionsInvoice, CommissionTransaction])
+@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionsInvoice, CommissionTransaction, BankAccount, Bank])
 class InvoiceServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
@@ -105,8 +105,11 @@ class InvoiceServiceSpec extends Specification {
         stpClabe:'1234567890',
         timoneUuid:'timoneUuid'
       ).save(validate:false)
+    and:"A bank account"
+      Bank bank = new Bank(name:"BANCO").save(validate:false)
+      BankAccount bankAccount = new BankAccount(accountNumber:"2233445566", branchNumber:"999", banco:bank, concentradora:true).save(validate:false)
     and:"A company"
-      Company company = new Company(rfc:'AAD990814BP7', bussinessName:'Integradora de Emprendimientos Culturales S.A. de C.V.', employeeNumbers:10, grossAnnualBilling:100000, addresses:[address],accounts:[account]).save(validate:false)
+      Company company = new Company(rfc:'AAD990814BP7', bussinessName:'Integradora de Emprendimientos Culturales S.A. de C.V.', employeeNumbers:10, grossAnnualBilling:100000, addresses:[address],accounts:[account], banksAccounts:[bankAccount]).save(validate:false)
     and:"Sale Order item"
       SaleOrderItem saleOrderItem = new SaleOrderItem(sku:'sku1',name:'name', price:100, ieps:0, iva:16, quantity:2, unitType:UnitType.UNIDADES)
     and:"An sale order"
@@ -122,7 +125,7 @@ class InvoiceServiceSpec extends Specification {
       result.datosDeFacturacion.tipoDeComprobante == 'ingreso'
       result.datosDeFacturacion.lugarDeExpedicion == 'CIUDAD DE MEXICO'
       result.datosDeFacturacion.metodoDePago == '01 - EFECTIVO'
-      result.datosDeFacturacion.numeroDeCuentaDePago == '999988887777666655'
+      result.datosDeFacturacion.numeroDeCuentaDePago == '999 - 2233445566 - BANCO'
       result.datosDeFacturacion.moneda == 'MXN'
 
       result.emisor.datosFiscales.razonSocial == 'Integradora de Emprendimientos Culturales S.A. de C.V.'
