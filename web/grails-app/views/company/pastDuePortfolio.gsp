@@ -16,10 +16,11 @@
         <li><i class="fa fa-caret-square-o-up"></i>Modulus UNO</li>
         <li class="active"><g:message code="manager.pastDuePortfolio.label"/></li>
       </ol>
-      <div class="panel panel-primary">
-        <div class="panel-heading">Cartera Vencida</div>
-        <div class="panel-body">
+      <div class="portlet portlet-blue">
+        <div class="portlet-heading">Cartera Vencida</div>
+        <div class="portlet-body">
           <div class="container-fluid">
+          <div class="row">
             <div class="col-md-3 text-center">
               <g:link class="btn btn-info" action="pastDuePortfolioForDays" params="[days:30]">30 días</g:link>
             </div>
@@ -32,13 +33,14 @@
             <div class="col-md-3 text-center">
               <g:link class="btn btn-danger" action="pastDuePortfolioForDays" params="[days:120]">120 días y más</g:link>
             </div>
+            </div>
           </div>
         </div>
       </div> <!-- cabecera -->
 
       <g:if test="${days}">
-      <div class="panel panel-primary">
-        <div class="panel-body">
+      <div class="portlet portlet-blue">
+        <div class="portlet-body">
           <div class="container-fluid">
             <div class="row">
               <div class="alert alert-${alert}">

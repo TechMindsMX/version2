@@ -4,7 +4,7 @@ $blue3: #1C4387
 $blue4: #003764
 $blue5: #192954
 $textColor: #555
-@import url('https://fonts.googleapis.com/css?family=Montserrat:100,300,400,700,800|Lato:100,400,700')
+
 
 html,body
 	margin: 0
@@ -75,6 +75,7 @@ html,body
 //.navbar-side .navbar-nav>li>a:hover
 //	background: $blue3
 
+
 #side
 	background: $blue1
 	a
@@ -100,6 +101,38 @@ html,body
 
 #page-wrapper
 	border: none
+
+.portlet
+	background: white
+	padding: 1em
+	box-sizing: border-box
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12)
+	border: none
+	&.portlet-blue,
+	&.portlet-default,
+	&.portlet-primary
+		border: none
+.circle-tile
+	background-color: white
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12)
+	border: none
+	padding: 1em
+	.circle-tile-content
+		border: none
+
+.portlet.portlet-blue > .portlet-heading
+	padding: 1em
+	font-family: 'Montserrat', sans-serif
+	font-size: 1.2em
+	font-weight: 300
+	color: #666
+
+
+label
+	font-family: 'Montserrat', sans-serif
+	font-size: 0.8em
+	font-weight: 300
+	color: #666
 
 footer
 	background-color: $blue1

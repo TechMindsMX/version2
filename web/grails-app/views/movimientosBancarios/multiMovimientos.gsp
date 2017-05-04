@@ -8,10 +8,14 @@
     <body>
         <div id="list-movimientosBancarios" class="content scaffold-list" role="main">
             <h1>Subir Movimientos Bancarios </h1>
+            <div class="portlet portlet-blue">
+            <div class="portlet-heading">
             <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
-            </g:if>
-              <g:hasErrors bean="${flash.command}">
+            </g:if>  
+            </div>
+              <div class="portlet-body">
+                <g:hasErrors bean="${flash.command}">
               <ul class="error alert alert-danger" role="alert">
                   <g:eachError bean="${flash.command}" var="error">
                   <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
@@ -29,6 +33,10 @@
               <p><input type="file" name="multiMovimientos" class="form-control" required="required"/></p>
               <p><input type="submit" value="Subir" class="btn btn-info"/></p>
             </g:form>
+              </div>
+            </div>
+            
+              
         </div>
     </body>
 </html>

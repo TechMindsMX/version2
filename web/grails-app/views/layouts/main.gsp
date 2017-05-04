@@ -9,6 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Modulus UNO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,300,400,700,800|Lato:100,400,700" rel="stylesheet">
     <asset:stylesheet src="application.css"/>
     <asset:javascript src="application.js"/>
     <asset:javascript src="main-nav.js"/>
