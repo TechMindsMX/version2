@@ -41,4 +41,19 @@ class CommissionsInvoiceService {
     invoice
   }
 
+  List getCommissionsSummaryFromInvoice(CommissionsInvoice invoice) {
+    def commissionTypes = invoice.commissions.collect { it.type }.unique()
+
+    def summary = []
+    commissionTypes.each { type ->
+      def totalType = [:]
+      totalType.type = type
+      def commissionsOfType = invoice.commissions.collect { commission ->
+        if (commission.type == type) { return commission }
+      } - null
+      totalType.total = commissionsOfType*.amount.sum()
+      summary << totalType
+    }
+    summary
+  }
 }

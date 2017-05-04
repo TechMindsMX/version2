@@ -27,6 +27,7 @@
                 <table class="table">
                   <thead>
                   <tr>
+                    <th class="text-center">No. de Orden</th>
                     <th class="text-center">Fecha</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Estatus</th>
@@ -36,6 +37,9 @@
                   <tbody>
                   <g:each in="${invoices.listInvoices}" var="invoice">
                   <tr>
+                    <td class="text-center">
+                      <g:link action="showCommissionsInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">${invoice.id}</g:link>
+                    </td>
                     <td><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/> </td>
                     <td class="text-right">${modulusuno.formatPrice(number:invoice.commissions*.amount.sum())}</td>
                     <td class="text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></td>

@@ -11,10 +11,12 @@ class InvoiceServiceSpec extends Specification {
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
 
   def restService = Mock(RestService)
+  CommissionsInvoiceService commissionsInvoiceService = Mock(CommissionsInvoiceService)
 
   def setup(){
     service.grailsApplication = grailsApplication
     service.restService = restService
+    service.commissionsInvoiceService = commissionsInvoiceService
   }
 
   void "create an invoice from sale order"(){
@@ -182,6 +184,8 @@ class InvoiceServiceSpec extends Specification {
       invoice.addToCommissions(fixed)
       invoice.addToCommissions(payments)
       invoice.save(validate:false)
+    and:
+      commissionsInvoiceService.getCommissionsSummaryFromInvoice(_) >> [[type:CommissionType.FIJA, total:1000.00],[type:CommissionType.PAGO, total:100.00]]
     when:
       def command = service.createCommandFromCommissionsInvoice(invoice)
     then:
