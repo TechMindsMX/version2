@@ -103,31 +103,25 @@ class InvoiceService {
     restService.updateSerieForEmitter(params)
   }
 
-  String createCommissionsInvoiceForCompany(Company company) {
-    FacturaCommand factura = createInvoiceWithCommissionsCompany(company)
+  String stampCommissionsInvoice(CommissionsInvoice invoice) {
+    FacturaCommand factura = createCommandFromCommissionsInvoice(invoice)
     def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
     result.text
   }
 
-  FacturaCommand createInvoiceWithCommissionsCompany(Company company) {
+  FacturaCommand createCommandFromCommissionsInvoice(CommissionsInvoice invoice) {
      DatosDeFacturacion datosDeFacturacion = new DatosDeFacturacion()
     def emisor = createEmisorForCommissionsInvoice()
-    def receptor = createReceptorForCommissionsInvoice(company)
+    def receptor = createReceptorForCommissionsInvoice(invoice)
     def command = new FacturaCommand(datosDeFacturacion:datosDeFacturacion, emisor:emisor, receptor:receptor)
-    command.emitter = company.rfc
+    command.emitter = emisor.datosFiscales.rfc
     command.pdfTemplate = "template_pdf.tof"
     command.observaciones = ""
 
     datosDeFacturacion.numeroDeCuentaDePago = grailsApplication.config.m1emitter.stpClabe
 
-    command.conceptos = createConceptsForInvoiceWithCommissionsCompany(company)
-
-    def impuestos = []
-    saleOrder.items.each { item ->
-      impuestos.add(new Impuesto(importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva, impuesto:'IVA'))
-    }
-
-    command.impuestos = impuestos
+    command.conceptos = createConceptsFromCommissionsInvoice(invoice)
+    command.impuestos = createTaxesFromConcepts(command.conceptos)
     command
   }
 
@@ -148,7 +142,8 @@ class InvoiceService {
     new Contribuyente(datosFiscales:datosFiscales)
   }
 
-  private Contribuyente createReceptorForCommissionsInvoice(Company company) {
+  private Contribuyente createReceptorForCommissionsInvoice(CommissionsInvoice invoice) {
+    Company company = invoice.receiver
     Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
     DatosFiscales datosFiscales = new DatosFiscales(
       razonSocial:company.bussinessName,
@@ -164,6 +159,51 @@ class InvoiceService {
       codigoPostal:address.zipCode
     )
     new Contribuyente(datosFiscales:datosFiscales)
+  }
+
+  private List<Concepto> createConceptsFromCommissionsInvoice(invoice) {
+    List<Concepto> conceptos = []
+    List totalByCommissionType = getTotalByCommissionTypeInInvoice(invoice)
+    totalByCommissionType.each { totalByType ->
+      Concepto concepto = new Concepto(
+       descripcion:totalByType.type == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${totalByType.type}",
+       unidad:"SERVICIO",
+       valorUnitario:totalByType.total,
+       descuento:new BigDecimal(0)
+      )
+      conceptos.add(concepto)
+    }
+    conceptos
+  }
+
+  private List getTotalByCommissionTypeInInvoice(CommissionsInvoice invoice) {
+    def commissionTypes = invoice.commissions.collect { it.type }.unique()
+
+    def totales = []
+    commissionTypes.each { type ->
+      def totalType = [:]
+      totalType.type = type
+      def commissionsOfType = invoice.commissions.collect { commission ->
+        if (commission.type == type) { return commission }
+      } - null
+      totalType.total = commissionsOfType*.amount.sum()
+      totales << totalType
+    }
+    totales
+  }
+
+  private List<Impuesto> createTaxesFromConcepts(List<Concepto> conceptos) {
+    List<Impuesto> impuestos = []
+    BigDecimal iva = new BigDecimal(grailsApplication.config.iva)
+    conceptos.each { concepto ->
+      Impuesto impuesto = new Impuesto(
+        importe:concepto.cantidad * concepto.valorUnitario * (iva/100),
+        tasa:iva,
+        impuesto:"IVA"
+      )
+      impuestos.add(impuesto)
+    }
+    impuestos
   }
 
 }

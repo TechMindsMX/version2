@@ -9,6 +9,12 @@ import grails.test.mixin.Mock
 @Mock([CommissionsInvoice, Company, CommissionTransaction])
 class CommissionsInvoiceServiceSpec extends Specification {
 
+  InvoiceService invoiceService = Mock(InvoiceService)
+
+  def setup() {
+    service.invoiceService = invoiceService
+  }
+
   void "Should save a commissions invoice"() {
     given:"A company"
       Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
@@ -33,6 +39,19 @@ class CommissionsInvoiceServiceSpec extends Specification {
       def invoices = service.getCommissionsInvoiceForCompany(company, [max:25, offset:0, sort:"dateCreated", order:"desc"])
     then:
       invoices.listInvoices.size() == 2
+  }
+
+  void "Should stamp a commissions invoice"() {
+    given:"A commissions invoice"
+      Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
+      CommissionsInvoice invoice = new CommissionsInvoice(receiver:company).save(validate:false)
+    and:
+      invoiceService.stampCommissionsInvoice(invoice) >> "folioSat"
+    when:"We stamp the invoice"
+      def result = service.stampInvoice(invoice)
+    then:"We expect"
+      result.status == CommissionsInvoiceStatus.STAMPED
+      result.folioSat == "folioSat"
   }
 
 }
