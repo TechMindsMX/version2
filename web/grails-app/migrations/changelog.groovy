@@ -45,4 +45,5 @@ databaseChangeLog = {
   include file: 'updating-commission-prestamo-to-commission-fija-for-existing-commissions.groovy'
   include file: 'create-domain-commissions-invoice.groovy'
   include file: 'adding-column-commissions-invoice-to-commission-transaction.groovy'
+  include file: 'create-domain-payment-m1-emitter.groovy'
 }
