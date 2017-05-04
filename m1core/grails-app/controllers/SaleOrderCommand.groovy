@@ -18,6 +18,7 @@ class SaleOrderCommand implements Validateable {
   static constraints = {
     currencyUsd blank:false, size:3..3, validator: { val -> val in ["MXN","USD"] }
     changeType nullable:true
+    externalId nullable:true
   }
 
   SaleOrder createOrUpdateSaleOrder() {

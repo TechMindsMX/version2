@@ -25,8 +25,6 @@ class CompanyInterceptor {
     boolean before() {
       log.info "Interceptor method for a company Id in session"
       def currentUser = springSecurityService.currentUser
-      // Refactor: Por qué está sepomex en la sesión?
-      session["sepomexUrl"] = grails.util.Holders.grailsApplication.config.sepomex.url
       if (!currentUser)
         return true
       if (session.company)
