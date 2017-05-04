@@ -30,7 +30,7 @@
               </div>
               <div class="row">
                 <div class="col-md-4 text-center"><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/></div>
-                <div class="col-md-4 text-center">${modulusuno.formatPrice(number:invoice.commissions*.amount.sum())}</div>
+                <div class="col-md-4 text-center">${modulusuno.formatPrice(number:invoice.total)}</div>
                 <div class="col-md-4 text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></div>
               </div>
               </br>

@@ -45,8 +45,8 @@
       </table>
       <table class="table table-condensed">
         <tr>
-          <th>Comisiones por pagar</th>
-          <th class="text-right"><strong>Total: ${accountStatement.commissionsBalance.balance.sum()}</th>
+          <th>Comisiones acumuladas (más IVA)</th>
+          <th class="text-right"><strong>Total: ${modulusuno.formatPrice(number:accountStatement.commissionsBalance.balance.sum())}</th>
         </tr>
         <g:each in="${accountStatement.commissionsBalance}" var="comm">
         <tr>

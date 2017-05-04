@@ -6,6 +6,8 @@ import java.math.RoundingMode
 @Transactional
 class CommissionTransactionService {
 
+  def grailsApplication
+
   def saveCommissionTransaction (FeeCommand feeCommand) {
     CommissionTransaction commissionTransaction = feeCommand.createCommissionTransaction()
     commissionTransaction.save()
@@ -14,8 +16,11 @@ class CommissionTransactionService {
 
   def getCommissionsBalanceForCompanyAndStatus(Company company, CommissionTransactionStatus status) {
     List balances = []
+    BigDecimal iva = new BigDecimal(grailsApplication.config.iva)
     company.commissions.sort{it.type}.each {
       Map balance = [typeCommission:it.type, balance: getCommissionsBalanceForTypeAndCompanyAndStatus(it.type, company, status) ?: 0]
+      balance.iva = balance.balance * (iva/100)
+      balance.total = balance.balance + balance.iva
       balances.add(balance)
     }
     balances
