@@ -41,7 +41,7 @@
                       <g:link action="showCommissionsInvoice" id="${invoice.id}" params="[corporateId:corporate.id]">${invoice.id}</g:link>
                     </td>
                     <td><g:formatDate format="dd-MM-yyyy" date="${invoice.dateCreated}"/> </td>
-                    <td class="text-right">${modulusuno.formatPrice(number:invoice.commissions*.amount.sum())}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number:invoice.total)}</td>
                     <td class="text-center"><g:message code="commissions.invoice.status.${invoice.status}"/></td>
                     <td class="text-center">
                       <g:if test="${invoice.status == CommissionsInvoiceStatus.CREATED}">

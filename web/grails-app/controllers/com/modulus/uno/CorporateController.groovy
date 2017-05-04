@@ -12,6 +12,7 @@ class CorporateController {
   def managerApplicationService
   def recoveryService
   CommissionTransactionService commissionTransactionService
+  CommissionsInvoiceService commissionsInvoiceService
 
   def create(){
     respond new Corporate()
@@ -180,7 +181,7 @@ class CorporateController {
   private List getTotalInvoicedCommissionsForCorporate(Corporate corporate) {
     List totalCommissions = []
     corporate.companies.each {
-      totalCommissions << [company:it, total:commissionTransactionService.getTotalInvoicedCommissionsForCompany(it) ?: 0]
+      totalCommissions << [company:it, total:commissionsInvoiceService.getTotalInvoicedCommissionsForCompany(it) ?: 0]
     }
     totalCommissions
   }

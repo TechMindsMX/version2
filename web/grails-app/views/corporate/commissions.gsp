@@ -29,6 +29,7 @@
                 <th>Pagado</th>
                 <th></th>
                 <th></th>
+                <th></th>
               </tr>
               </thead>
               <tbody>
@@ -58,6 +59,9 @@
                 <td>
                   <g:link class="btn btn-primary" controller="commission" action="listFixedCommission" id="${company.id}" params="[corporateId:corporate.id]">Aplicar Comisión fija</g:link>
                 </td>
+                <td>
+                  <g:link class="btn btn-info" controller="commissionsInvoice" action="conciliate" id="${company.id}" params="[corporateId:corporate.id]">Conciliar cobros</g:link>
+                </td>
               </tr>
               </g:each>
               </tbody>
@@ -68,6 +72,9 @@
                   <td class="text-right"><strong>${modulusuno.formatPrice(number:totalPendingCommissions*.total.sum())}</strong></td>
                   <td></td>
                   <td></td>
+                  <td></td>
+                  <td>
+                  </td>
                 </tr>
               </tfoot>
             </table>
@@ -81,7 +88,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-2 col-md-offset-10 text-right">
+        <div class="col-md-2 col-md-offset-10">
           <g:link class="btn btn-primary" controller="dashboard" action="index">Regresar</g:link>
         </div>
       </div>
