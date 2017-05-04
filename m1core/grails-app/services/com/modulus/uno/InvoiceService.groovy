@@ -191,4 +191,9 @@ class InvoiceService {
     impuestos
   }
 
+  void cancelStampedCommissionsInvoice(CommissionsInvoice invoice) {
+    CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${invoice.folioSat.substring(0,36)}", rfc:"${grailsApplication.config.m1emitter.rfc}")
+    restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
+  }
+
 }
