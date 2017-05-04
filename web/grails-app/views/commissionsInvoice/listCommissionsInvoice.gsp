@@ -49,6 +49,10 @@
                           Timbrar
                         </g:link>
                       </g:if>
+                      <g:if test="${invoice.status == CommissionsInvoiceStatus.STAMPED}">
+                        <a href="${modulusuno.commissionsInvoiceUrl(invoice:invoice, format:'xml')}" class="btn btn-success">XML</a>
+                        <a href="${modulusuno.commissionsInvoiceUrl(invoice:invoice, format:'pdf')}" class="btn btn-default">PDF</a>
+                      </g:if>
                     </td>
                   </tr>
                   </g:each>

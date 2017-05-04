@@ -5,7 +5,7 @@ class DatosDeFacturacion {
   String formaDePago = 'PAGO EN UNA SOLA EXHIBICION'
   String tipoDeComprobante = 'ingreso'
   String lugarDeExpedicion = 'CIUDAD DE MEXICO'
-  String metodoDePago = 'TRANSFERENCIA ELECTRONICA'
+  String metodoDePago = '03 - TRANSFERENCIA ELECTRONICA'
   String numeroDeCuentaDePago = 'DESCONOCIDO'
   String moneda = 'MXN'
   BigDecimal tipoDeCambio = new BigDecimal(1)
