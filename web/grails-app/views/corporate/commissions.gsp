@@ -42,7 +42,7 @@
                   </g:link>
                 </td>
                 <td class="text-right">
-                  <g:link controller="commission" action="listCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">
+                  <g:link controller="commissionsInvoice" action="listCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">
                     ${modulusuno.formatPrice(number:(totalInvoicedCommissions.find {it.company == company}).total)}
                   </g:link>
                 </td>

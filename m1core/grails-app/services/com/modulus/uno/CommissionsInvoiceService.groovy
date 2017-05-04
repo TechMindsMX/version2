@@ -56,4 +56,18 @@ class CommissionsInvoiceService {
     }
     summary
   }
+
+  void deleteCommissionsInvoice(CommissionsInvoice invoice) {
+    updateCommissionTransactionsOfInvoiceForDelete(invoice)
+    invoice.delete()
+  }
+
+  private void updateCommissionTransactionsOfInvoiceForDelete(CommissionsInvoice invoice) {
+    invoice.commissions.each { commission ->
+      commission.status = CommissionTransactionStatus.PENDING
+      commission.invoice = null
+      commission.save()
+    }
+  }
+
 }
