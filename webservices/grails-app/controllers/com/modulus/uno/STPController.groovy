@@ -31,4 +31,25 @@ class STPController {
       response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
     }
   }
-} 
+
+  @ApiOperation(value = "Notify operations closed",
+    response = StpOperationsClosedSwagger, hidden=true)
+  @ApiResponses([
+    @ApiResponse(code = 422, message = 'Bad Entity Received'),
+    @ApiResponse(code = 201, message = 'Created')
+  ])
+  @ApiImplicitParams([
+    @ApiImplicitParam(name = 'body', paramType = 'body', required = true, dataType = 'StpOperationsClosedSwagger')
+  ])
+  def stpOperationsClosedNotification(StpOperationsClosedSwagger stpOperationsClosedSwagger) {
+    try {
+      StpOperationsClosed stpOperationClosed = stpOperationsClosedSwagger.createStpOperationsClosed()
+      log.info "Receiving notificaction: ${stpOperationClosed.dump()}"
+      def result = stpService.receiveOperationsClosed(sptOperationClosed)
+      respond result, status: 201, formats: ['json']
+    }catch (Exception ex) {
+      response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
+    }
+  }
+
+}
