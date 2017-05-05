@@ -9,6 +9,51 @@ class StpDepositService {
   TransactionService transactionService
   CommissionTransactionService commissionTransactionService
 
+  def notificationDepositFromStpOld(String xmlNotif) {
+    StpDeposit stpDeposit = saveNotificationOld(xmlNotif)
+    StpDepositStatus status = defineStpDepositStatus(stpDeposit)
+    if (status == StpDepositStatus.ACEPTADO) {
+        processStpDeposit(stpDeposit)
+    }
+    [clave:stpDeposit.operationNumber, rastreo:stpDeposit.tracingKey, estatus:status]
+  }
+
+  private StpDeposit saveNotificationOld(String xml) {
+    def notification
+      try {
+        notification = new XmlSlurper().parseText(xml)
+      } catch (Exception ex) {
+        log.error "Excpetion in parsing: ${ex.message}"
+        throw new BusinessException ("Error parsing xml: ${ex.message}")
+      }
+    StpDepositCommand command = createStpDepositCommand(notification)
+      StpDeposit stpDeposit = command.createStpDeposit()
+      log.info "Recording deposit: ${stpDeposit.dump()}"
+      stpDeposit.save()
+      stpDeposit
+  }
+
+  private StpDepositCommand createStpDepositCommand(def notification) {
+    StpDepositCommand command = new StpDepositCommand(
+      clave:notification.Clave,
+      fechaOperacion:notification.FechaOperacion,
+      institucionOrdenante:notification.InstitucionOrdenante.@clave,
+      institucionBeneficiaria:notification.InstitucionBeneficiaria.@clave,
+      claveRastreo:notification.ClaveRastreo,
+      monto:notification.Monto,
+      nombreOrdenante:notification.NombreOrdenante ?: "",
+      nombreBeneficiario:notification.NombreBeneficiario,
+      tipoCuentaBeneficiario:notification.TipoCuentaBeneficiario.@clave,
+      cuentaBeneficiario:notification.CuentaBeneficiario,
+      rfcCurpBeneficiario:notification.RfcCurpBeneficiario,
+      conceptoPago:notification.ConceptoPago,
+      referenciaNumerica:notification.ReferenciaNumerica,
+      empresa:notification.Empresa
+    )
+  }
+
+  //TODO: Quitar métodos de arriba cuando esté listo el cambio en producción de STP
+
   def notificationDepositFromStp(StpDeposit stpDeposit) {
     stpDeposit = saveNotification(stpDeposit)
     StpDepositStatus status = defineStpDepositStatus(stpDeposit)
@@ -22,7 +67,7 @@ class StpDepositService {
     ModulusUnoAccount m1Account = ModulusUnoAccount.findByStpClabe(stpDeposit.accountBeneficiary)
     ClientLink client = ClientLink.findByStpClabe(stpDeposit.accountBeneficiary)
 
-    log.info "Accoun company: ${m1Account}"
+    log.info "Account company: ${m1Account}"
     log.info "Account client: ${client}"
 
     stpDeposit.status = StpDepositStatus.APLICADO
