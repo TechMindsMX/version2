@@ -21,7 +21,7 @@ class STPController {
   @ApiImplicitParams([
     @ApiImplicitParam(name = 'body', paramType = 'body', required = true, dataType = 'StpDepositSwagger')
   ])
-  def stpDepositNotification(StpDepositSwagger stpDepositSwagger) {
+  def stpDepositNotificationJson(StpDepositSwagger stpDepositSwagger) {
     try {
       StpDeposit stpDeposit = stpDepositSwagger.createStpDeposit()
       log.info "Receiving notificaction: ${stpDeposit.dump()}"
@@ -31,4 +31,17 @@ class STPController {
       response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
     }
   }
-} 
+
+  @SwaggySave(extraParams = [
+    @ApiImplicitParam(name = 'notification', value = '', dataType = 'string',paramType = 'query')
+  ])
+  def stpDepositNotification() {
+    try {
+      log.info "Receiving notificaction: ${params.notification}"
+        def result = stpDepositService.notificationDepositFromStpOld(params.notification)
+        respond result, status: 201, formats: ['json']
+    } catch (Exception ex) {
+      response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
+    }
+  }
+}
