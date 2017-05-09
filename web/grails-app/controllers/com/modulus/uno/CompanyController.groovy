@@ -153,7 +153,6 @@ class CompanyController {
   }
 
   def accountStatement(){
-    def roles = springSecurityService.getPrincipal().getAuthorities()
     def company = Company.get(session.company.toLong())
     String startDate = params.startDate ? new SimpleDateFormat("dd-MM-yyyy").format(params.startDate) : ""
     String endDate = params.endDate ? new SimpleDateFormat("dd-MM-yyyy").format(params.endDate) : ""
