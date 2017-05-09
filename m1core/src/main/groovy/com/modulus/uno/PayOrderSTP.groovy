@@ -28,7 +28,7 @@ class PayOrderSTP implements Validateable {
 
   //Valores no documentados en STP pero necesarios para la firma
   String tipoDeCuentaDelBeneficiario2
-  String nombreDelBeneficiario2 
+  String nombreDelBeneficiario2
   String cuentaDelBeneficiario2
   String rfcCurpDelBeneficiario2
   String conceptoDelPago2
@@ -52,7 +52,7 @@ class PayOrderSTP implements Validateable {
     emailDelBeneficiario blank:true, nullable:false, maxSize:120
     empresa blank:false, nullable:false, maxSize:15
     fechaDeOperacion blank:true, nullable:false, maxSize:8
-    firma blank:false, nullable:false, maxSize:172
+    firma blank:false, nullable:false
     folioOrigen blank:true, nullable:false, maxSize:50
     institucionContraparte blank:false, nullable:false, maxSize:5
     institucionOperante blank:false, nullable:false, maxSize:5
