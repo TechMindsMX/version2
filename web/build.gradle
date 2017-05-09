@@ -85,7 +85,7 @@ dependencies {
   testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
   testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
-  compile "mysql:mysql-connector-java:5.1.34"
+  compile "mysql:mysql-connector-java:5.1.42"
   compile 'org.grails.plugins:grails-melody-plugin:1.65.0'
   compile 'org.grails.plugins:database-migration:3.0.0'
   compile 'org.liquibase:liquibase-core:3.5.3'
