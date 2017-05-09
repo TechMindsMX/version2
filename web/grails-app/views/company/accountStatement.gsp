@@ -20,27 +20,22 @@
         <div class="portlet">
           <div class="portlet-heading">
             <h2>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h2>
+            <h4>Clabe STP: ${accountStatement.company.accounts?.first().stpClabe}</h4>
           </div>
           <div class="portlet-body">
             <div class="table-responsive">
               <table class="table table-condensed">
                 <tr>
                   <th>Moneda / Saldo</th>
-                  <th>En Tránsito</th>
-                  <th>Disponible</th>
-                  <th>Total</th>
+                  <th class="text-center">Total</th>
                 </tr>
                 <tr>
                   <td><strong>Pesos</strong></td>
-                  <td>${modulusuno.formatPrice(number: accountStatement.balanceTransiting)}</td>
-                  <td>${modulusuno.formatPrice(number: (accountStatement.balance.balance-accountStatement.balanceTransiting))}</td>
-                  <td>${modulusuno.formatPrice(number: accountStatement.balance.balance)}</td>
+                  <td class="text-right">${modulusuno.formatPrice(number: accountStatement.balance.balance)}</td>
                 </tr>
                 <tr>
                   <td><strong>Dólares</strong></td>
                   <td >${modulusuno.formatPrice(number: 0.00)}</td>
-                  <td >${modulusuno.formatPrice(number: 0.00)}</td>
-                  <td >${modulusuno.formatPrice(number: usd)}</td>
                 </tr>
               </table>
             </div>
