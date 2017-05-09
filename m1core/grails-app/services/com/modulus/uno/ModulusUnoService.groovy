@@ -83,9 +83,9 @@ class ModulusUnoService {
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
-      fechaDeOperacion: new Date().format("yyyyMMdd"),
+      fechaDeOperacion: "${new Date().format("yyyyMMdd")}",
       folioOrigen: "",
-      claveDeRastreo: new Date().getTime().toString(),
+      claveDeRastreo: "${new Date().time}",
       institucionOperante: grailsApplication.config.stp.institutionOperation,
       montoDelPago: amount,
       tipoDelPago: "1",
@@ -117,6 +117,7 @@ class ModulusUnoService {
       iva: ""
     ]
     String keyTransaction = stpService.sendPayOrder(data)
+    log.info "Key transaction stp: ${keyTransaction}"
     Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
     amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:cashOutOrder.company.accounts?.first()?.stpClabe,
     referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
@@ -168,9 +169,9 @@ class ModulusUnoService {
     def data = [
         institucionContraparte: order.bankAccount.banco.bankingCode,
         empresa: order.company.accounts?.first()?.aliasStp,
-        fechaDeOperacion: new Date().format("yyyyMMdd"),
+        fechaDeOperacion: "${new Date().format("yyyyMMdd")}",
         folioOrigen: "",
-        claveDeRastreo: new Date().toTimestamp(),
+        claveDeRastreo: "${new Date().time}",
         institucionOperante: grailsApplication.config.stp.institutionOperation,
         montoDelPago: amountToPay.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
