@@ -290,31 +290,6 @@ and:
       balances.usd == 0
   }
 
-  void "Should get transiting balance of company"(){
-    given:"A company"
-      Company company = createCompany()
-    and:
-      purchaseOrderService.getTotalPurchaseOrderAuthorizedOfCompany(company) >> 100
-      cashOutOrderService.getTotalOrdersAuthorizedOfCompany(company) >> 100
-      loanOrderHelperService.getTotalOrdersAuthorizedOfCompany(company) >> 100
-      feesReceiptService.getTotalFeesReceiptAuthorizedOfCompany(company) >> 100
-    when:
-      def result = service.getBalanceTransiting(company)
-    then:
-      result == 400
-  }
-
-  void "Should get subject to collection balance of company"(){
-    given:"A company"
-      Company company = createCompany()
-    and:
-      saleOrderService.getTotalSaleOrderAuthorizedOfCompany(company) >> 100
-    when:
-      def result = service.getBalanceSubjectToCollection(company)
-    then:
-      result == 100
-  }
-
   void "Should throw a BusinessException when account statement period is not valid"(){
     given:"A company"
       Company company = createCompany()
@@ -332,7 +307,7 @@ and:
       Company company = createCompany()
     and:"An account"
       ModulusUnoAccount account = new ModulusUnoAccount()
-      account.timoneUuid >> "1234567890"
+      account.stpClabe >> "1234567890"
       account.save(validate:false)
       company.accounts = [account]
       company.save(validate:false)
@@ -344,8 +319,8 @@ and:
       AccountStatement accountStatement = service.getAccountStatementOfCompany(company, beginDate, endDate)
     then:
       accountStatement.balance.balance == 0
-      accountStatement.balanceTransiting == 0
       1 * transactionService.getTransactionsAccountForPeriod(_,_,_)
+      1 * commissionTransactionService.getCommissionsPendingBalanceForCompany(_)
   }
 
   @Unroll

@@ -9,11 +9,10 @@
   </head>
   <body>
     <div class="page-title">
-      <h1><g:message code="cashOutOrder.show"/></h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañia</li>
-        <li class="active"><g:message code="cashOutOrder.show.subtitle" /></li>
-      </ol>
+      <h1>
+        <i class="fa fa-bank fa-3x"></i>
+        <g:message code="cashOutOrder.show"/>
+      </h1>
     </div>
     <div class="col-lg-12">
       <div class="portlet portlet-blue">

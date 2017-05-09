@@ -113,12 +113,13 @@ class PurchaseOrderController {
   @Transactional
   def executePurchaseOrder(PurchaseOrder order) {
     BigDecimal amount = new BigDecimal(params.amount ?: 0) ?: order.total
+    Boolean enabledToPay = companyService.companyIsEnabledToPay(order.company)
     if (purchaseOrderService.amountExceedsTotal(amount, order)) {
-      render view:'show', model:[purchaseOrder:order, amountExcceds: "El monto excede el total del pago de la order de compra"]
+      render view:'show', model:[purchaseOrder:order, amountExcceds: "El monto excede el total del pago de la order de compra", enabledToPay:enabledToPay]
       return
     }
     String messageSuccess = message(code:"purchaseOrder.already.executed")
-    if (companyService.enoughBalanceCompany(order.company, order.total)){
+    if (companyService.enoughBalanceCompany(order.company, amount)){
       if (purchaseOrderIsInStatus(order, PurchaseOrderStatus.AUTORIZADA)) {
         purchaseOrderService.payPurchaseOrder(order, amount)
         messageSuccess = message(code:"purchaseOrder.executed.message")
@@ -130,7 +131,7 @@ class PurchaseOrderController {
 
     } else {
       String insufficientBalance = message(code:'company.insufficient.balance')
-      render view:'show', model:[purchaseOrder:order, insufficientBalance:insufficientBalance]
+      render view:'show', model:[purchaseOrder:order, insufficientBalance:insufficientBalance, enabledToPay:enabledToPay]
     }
 
   }

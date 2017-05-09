@@ -16,45 +16,46 @@
      </h1>
    </div>
    <div class="row">
-     <h2>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h2>
-     <h4>Clabe STP: ${accountStatement.company.accounts?.first().stpClabe}</h4>
-   </div>
-   <br/>
-   <div class="row">
      <div class="col-lg-8 col-md-7 col-sm-12">
-       <div class="table-responsive">
-         <table class="table table-condensed">
-           <tr>
-             <th>Moneda / Saldo</th>
-             <th>En Tránsito</th>
-             <th>Disponible</th>
-             <th>Total</th>
-           </tr>
-           <tr>
-             <td><strong>Pesos</strong></td>
-             <td>${modulusuno.formatPrice(number: accountStatement.balanceTransiting)}</td>
-             <td>${modulusuno.formatPrice(number: (accountStatement.balance.balance-accountStatement.balanceTransiting))}</td>
-             <td>${modulusuno.formatPrice(number: accountStatement.balance.balance)}</td>
-           </tr>
-           <tr>
-             <td><strong>Dólares</strong></td>
-             <td >${modulusuno.formatPrice(number: 0.00)}</td>
-             <td >${modulusuno.formatPrice(number: 0.00)}</td>
-             <td >${modulusuno.formatPrice(number: usd)}</td>
-           </tr>
-         </table>
-         <table class="table table-condensed">
-           <tr>
-             <th>Comisiones acumuladas (más IVA)</th>
-             <th class="text-right"><strong>Total: ${modulusuno.formatPrice(number:accountStatement.commissionsBalance.balance.sum())}</th>
-           </tr>
-           <g:each in="${accountStatement.commissionsBalance}" var="comm">
-           <tr>
-             <td><strong>${comm.typeCommission}</strong></td>
-             <td class="text-right">${modulusuno.formatPrice(number: comm.balance)}</td>
-           </tr>
-           </g:each>
-         </table>
+       <div class="portlet">
+         <div class="portlet-heading">
+           <h2>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h2>
+           <h4>Clabe STP: ${accountStatement.company.accounts?.first().stpClabe}</h4>
+         </div>
+         <div class="portlet-body">
+           <div class="table-responsive">
+             <table class="table table-condensed">
+               <tr>
+                 <th>Moneda / Saldo</th>
+                 <th class="text-center">Total</th>
+               </tr>
+               <tr>
+                 <td><strong>Pesos</strong></td>
+                 <td class="text-right">${modulusuno.formatPrice(number: accountStatement.balance.balance)}</td>
+               </tr>
+               <tr>
+                 <td><strong>Dólares</strong></td>
+                 <td >${modulusuno.formatPrice(number: 0.00)}</td>
+               </tr>
+             </table>
+           </div>
+
+           <div class="table-responsive">
+             <table class="table table-condensed">
+               <tr>
+                 <th>Comisiones acumuladas (más IVA)</th>
+                 <th class="text-right"><strong>Total: ${modulusuno.formatPrice(number:accountStatement.commissionsBalance.balance.sum())}</th>
+               </tr>
+               <g:each in="${accountStatement.commissionsBalance}" var="comm">
+               <tr>
+                 <td><strong>${comm.typeCommission}</strong></td>
+                 <td class="text-right">${modulusuno.formatPrice(number: comm.balance)}</td>
+               </tr>
+               </g:each>
+             </table>
+           </div>
+
+         </div>
        </div>
      </div>
      <div class="col-lg-4 col-md-5 col-sm-12">
