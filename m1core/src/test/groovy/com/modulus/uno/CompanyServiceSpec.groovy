@@ -320,7 +320,7 @@ and:
     then:
       accountStatement.balance.balance == 0
       1 * transactionService.getTransactionsAccountForPeriod(_,_,_)
-      1 * commissionTransactionService.getCommissionsPendingBalanceForCompany(_)
+      1 * commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(_,_)
   }
 
   @Unroll
