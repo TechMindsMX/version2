@@ -8,6 +8,7 @@ class StpService {
   def grailsApplication
 
   def sendPayOrder(Map data){
+    log.info "Data map: ${data}"
     String sign = signService.generateSign(data)
     log.info "Data to sign: ${sign}"
     String encryptedSign = signService.encodeSign(sign)
@@ -17,6 +18,14 @@ class StpService {
     def result = requestSOAPService.doRequest(grailsApplication.config.stp.urls.payOrder){
       xml xmlPayOrder
     }.doit()
+    validateResult(result.envelope.text())
     result.envelope.text()
+  }
+
+  private void validateResult(String idResult) {
+    if (!idResult.isNumber()) {
+      log.error "Error al registrar el pago en STP: ${idResult}"
+      throw new RestException("No fue posible ejecutar el pago, intente más tarde")
+    }
   }
 }
