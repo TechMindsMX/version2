@@ -86,8 +86,7 @@ class CompanyService {
 
   Boolean enoughBalanceCompany(Company company, BigDecimal amount) {
     Balance balances = getBalanceOfCompany(company)
-    BigDecimal availableBalance = balances.balance - getBalanceTransiting(company)
-    availableBalance >= amount
+    balances.balance >= amount
   }
 
   AccountStatement getAccountStatementOfCompany(Company company, String beginDate, String endDate){
@@ -98,12 +97,9 @@ class CompanyService {
       if (!collaboratorService.periodIsValid(beginDate, endDate)) throw new BusinessException("La fecha inicial debe ser anterior a la fecha final")
     }
 
-    AccountStatementCommand command = new AccountStatementCommand (uuid: company.accounts?.first()?.timoneUuid, begin:beginDate, end:endDate)
     AccountStatement accountStatement = new AccountStatement()
     accountStatement.company = company
     accountStatement.balance = getBalanceOfCompany(company)
-    accountStatement.balanceTransiting = getBalanceTransiting(company)
-    accountStatement.balanceSubjectToCollection = getBalanceSubjectToCollection(company)
     accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(beginDate)
     accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate)
     accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
@@ -122,19 +118,6 @@ class CompanyService {
       balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
     }
     new Balance(balance:balance, usd:usd)
-  }
-
-  BigDecimal getBalanceTransiting(Company company){
-    BigDecimal transitingPurchaseOrder = purchaseOrderService.getTotalPurchaseOrderAuthorizedOfCompany(company) ?: 0.0f
-    BigDecimal transitingCashOutOrder = cashOutOrderService.getTotalOrdersAuthorizedOfCompany(company) ?: 0.0f
-    BigDecimal transitingLoanPaymentOrder = loanOrderHelperService.getTotalOrdersAuthorizedOfCompany(company) ?: 0.0f
-    BigDecimal transitingFeesReceipt = feesReceiptService.getTotalFeesReceiptAuthorizedOfCompany(company) ?: 0.0f
-    transitingPurchaseOrder + transitingCashOutOrder + transitingLoanPaymentOrder + transitingFeesReceipt
-  }
-
-  def getBalanceSubjectToCollection(Company company){
-    def balanceToCollectionSaleOrders = saleOrderService.getTotalSaleOrderAuthorizedOfCompany(company)
-    (balanceToCollectionSaleOrders ?: 0.0f)
   }
 
   def getNumberOfAuthorizersMissingForThisCompany(Company company) {
