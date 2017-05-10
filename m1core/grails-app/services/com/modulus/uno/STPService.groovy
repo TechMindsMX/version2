@@ -28,4 +28,14 @@ class StpService {
       throw new RestException("No fue posible ejecutar el pago, intente más tarde")
     }
   }
+
+  def getTransactionsForCompanyInPeriod(String account, Period period) {
+    Map data = createDataMap(account, period)
+    String xmlSignedConciliation = generateXMLService.xmlSignedConciliationRequest(data)
+    def result = requestSOAPService.doRequest(grailsApplication.config.stp.urls.signedConciliation){
+      xml xmlSignedConciliation
+    }.doit()
+
+  }
+
 }
