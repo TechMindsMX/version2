@@ -9,5 +9,10 @@
       </g:link>
     </li>
     <li><g:link controller="payment" action="conciliation">Conciliación de Cobros</g:link></li>
+    <li>
+      <g:if test="${companyInfo.isAvailableForOperationInThisCompany() == 'true'}">
+      <g:link controller="company" action="accountStatement">Estado de Cuenta</g:link>
+      </g:if>
+    </li>
   </ul>
 </li>
