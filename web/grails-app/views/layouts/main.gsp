@@ -53,7 +53,6 @@
             &nbsp;&nbsp;&nbsp;&nbsp;
           </li>
           <li align="right">
-
           </li>
         </ul>
 
@@ -83,12 +82,10 @@
         </ul>
         <ul class="nav navbar-brand navbar-right">
           <sec:ifLoggedIn>
-            <font color="white"> Hola: ${modulusuno.userLoggin()}</font>
+          <font color="white"> Hola: ${modulusuno.userLoggin()}</font>
           </sec:ifLoggedIn>
         </ul>
-
-      </div>&nbsp;
-
+      </div>
     </nav>
 
     <nav class="navbar-side" role="navigation">
