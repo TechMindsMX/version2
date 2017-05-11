@@ -11,7 +11,7 @@ class GenerateXMLServiceSpec extends Specification {
       def data = [
         institucionContraparte: "40002",
         empresa: "TECHMINDS",
-        fechaDeOperacion: "20170306",  
+        fechaDeOperacion: "20170306",
         folioOrigen: "",
         claveDeRastreo: "1488820184033",
         institucionOperante: "90646",
@@ -44,7 +44,7 @@ class GenerateXMLServiceSpec extends Specification {
         prioridad: "",
         iva: "",
         firma: "Yik10Fo+yReNXvSfeYvbIlthR2e05PETN+4WXqnOsfStHBYTo/QCRsDJCsCgaNOLfGArByCWGwDA9Lx5htWRB0KKnyZVIDE1qBrsjfb7MEY+sqCqiNDw4SAihuKEPZteG9Ej0Ku9z3R8wMyTMXq8Uu70iB7SOWY13mBcSVnt5CQ="
-      ]     
+      ]
     when:""
       def xml = service.xmlPayOrderRequest(data)
     then:""
@@ -82,7 +82,7 @@ class GenerateXMLServiceSpec extends Specification {
       def data = [
         institucionContraparte: "40002",
         empresa: "TEXTO muy grande mas de lo permitidooooooooooooooooo",
-        fechaDeOperacion: "20170306",  
+        fechaDeOperacion: "20170306",
         folioOrigen: "",
         claveDeRastreo: "1488820184033",
         institucionOperante: "90646",
@@ -115,11 +115,40 @@ class GenerateXMLServiceSpec extends Specification {
         prioridad: "",
         iva: "",
         firma: "Yik10Fo+yReNXvSfeYvbIlthR2e05PETN+4WXqnOsfStHBYTo/QCRsDJCsCgaNOLfGArByCWGwDA9Lx5htWRB0KKnyZVIDE1qBrsjfb7MEY+sqCqiNDw4SAihuKEPZteG9Ej0Ku9z3R8wMyTMXq8Uu70iB7SOWY13mBcSVnt5CQ="
-      ]     
+      ]
     when:""
       service.xmlPayOrderRequest(data)
     then:""
       thrown XMLException
+  }
+
+  void "Should generate the xml to send for get transactions conciliation from account"() {
+    given:""
+      def data = [
+        initDate: "2017-04-01 00:00:00",
+        endDate: "2017-04-30 23:59:59",
+        account: "646180132400000001",
+        costsCenter: "TECHMINDS",
+        sign: "encryptedSign"
+     ]
+    when:""
+      def xml = service.xmlSignedConciliationRequest(data)
+    then:""
+      xml.replaceAll("\n", "").replaceAll(" ", "") == """
+      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:h2h="http://h2h.integration.spei.enlacefi.lgec.com/">
+        <soapenv:Header/>
+        <soapenv:Body>
+          <h2h:conciliacionServiceFirma>
+            <fechaInicial>2017-04-01 00:00:00</fechaInicial>
+            <fechaFinal>2017-04-30 23:59:59</fechaFinal>
+            <cuenta>646180132400000001</cuenta>
+            <empresa>TECHMINDS</empresa>
+            <recorreSubempresas>1</recorreSubempresas>
+            <firma>encryptedSign</firma>
+          </h2h:conciliacionServiceFirma>
+      </soapenv:Body>
+      </soapenv:Envelope>
+      """.replaceAll("\n", "").replaceAll(" ", "")
   }
 
 }
