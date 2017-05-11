@@ -1,0 +1,13 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:h2h="http://h2h.integration.spei.enlacefi.lgec.com/">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <h2h:conciliacionServiceFirma>
+      <fechaInicial>$initDate</fechaInicial>
+      <fechaFinal>$endDate</fechaFinal>
+      <cuenta>$account</cuenta>
+      <empresa>$costsCenter</empresa>
+      <recorreSubempresas>1</recorreSubempresas>
+      <firma>$sign</firma>
+    </h2h:conciliacionServiceFirma>
+  </soapenv:Body>
+</soapenv:Envelope>
