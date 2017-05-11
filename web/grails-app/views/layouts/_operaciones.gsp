@@ -6,7 +6,7 @@
       Retiros <i class="fa fa-caret-down"></i>
     </a>
       <li>
-        <ul class="collapse nav" id="cashoutOrder-${action}" style="padding-left:2em;">
+        <ul class="collapse nav" id="cashoutOrder-${action}">
           <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
           <li>
             <g:link controller="cashOutOrder" action="create">Nueva</g:link>
@@ -25,7 +25,7 @@
       Órdenes de Venta <i class="fa fa-caret-down"></i>
     </a>
       <li>
-        <ul class="collapse nav" id="saleOrder-${action}" style="padding-left:2em;">
+        <ul class="collapse nav" id="saleOrder-${action}">
           <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
           <li>
             <g:link controller="saleOrder" action="create">Nueva</g:link>
@@ -46,7 +46,7 @@
       Órdenes de Compra <i class="fa fa-caret-down"></i>
     </a>
       <li>
-        <ul class="collapse nav" id="ordenesCompra-${action}" style="padding-left:2em;">
+        <ul class="collapse nav" id="ordenesCompra-${action}">
           <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
           <li>
             <g:link controller="purchaseOrder" action="create">Nueva</g:link>
@@ -65,7 +65,7 @@
       Reembolsos a Empleados <i class="fa fa-caret-down"></i>
     </a>
       <li>
-        <ul class="collapse nav" id="ordenesReembolso-${action}" style="padding-left:2em;">
+        <ul class="collapse nav" id="ordenesReembolso-${action}">
           <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
           <li>
             <g:link controller="purchaseOrder" action="createMoneyBackOrder">Nueva</g:link>
@@ -84,7 +84,7 @@
       Recibo de Honorarios<i class="fa fa-caret-down"></i>
     </a>
       <li>
-        <ul class="collapse nav" id="feesReceipt-${action}" style="padding-left:2em;">
+        <ul class="collapse nav" id="feesReceipt-${action}">
           <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_OPERATOR_VISOR">
           <li>
             <g:link controller="feesReceipt" action="list">

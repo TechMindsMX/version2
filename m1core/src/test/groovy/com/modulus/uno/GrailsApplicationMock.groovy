@@ -17,6 +17,7 @@ class GrailsApplicationMock  {
   ,regimen:'Régimen General de Ley Personal Morales']
   def plugin = [awssdk:[domain:[base:[url:"-qa.modulusuno.com"]]]]
   def path = [server:last, plugin:plugin]
-  def config = [emailer:template, recovery:page, modulus:modulus, grails:path, iva:16, speiFee:8.50, folio:saleOrder, factura: datosDeFacturacion]
+  def m1emitter = [rfc:"AAA010101AAA", businessName:"TECHMINDS", stpClabe:"646180132400000007", address:[street:'Calzada Las Águilas', streetNumber:'2370', suite:'', zipCode:'01820', colony:'Lomas de Axomiatla', neighboorhood:'', country:'México', city:'Ciudad de México', town:'Álvaro Obregón', federalEntity:'Ciudad de México']]
+  def config = [emailer:template, recovery:page, modulus:modulus, grails:path, iva:16, speiFee:8.50, folio:saleOrder, factura: datosDeFacturacion, m1emitter:m1emitter]
 
 }

@@ -17,9 +17,9 @@
         <li class="active"><g:message code="manager.pendingAccounts.label"/></li>
       </ol>
     </div>
-    <div class="panel panel-primary">
-      <div class="panel-heading">Saldo Bancario</div>
-      <div class="panel-body">
+    <div class="portlet portlet-blue">
+      <div class="portlet-heading">Saldo Bancario</div>
+      <div class="portlet-body">
         <div class="container-fluid">
         <g:if test="${mainAccount}">
           <div class="col-md-4">
@@ -42,8 +42,9 @@
       </div>
     </div>
 
-    <div class="panel panel-info">
-      <div class="panel-body">
+    <div class="portlet portlet-blue">
+      <div class="portlet-body">
+      <div class="row">
         <g:form action="pendingAccounts">
           <div class="col-md-4">
             <p>Desde el:</p>
@@ -62,11 +63,14 @@
             <i class="fa fa-file-excel-o"></i> XLS
           </g:link>
         </div>
+        </div>
       </div>
     </div>
-    <div class="panel panel-primary">
-      <div class="panel-heading">Cuentas por Cobrar</div>
-      <div class="panel-body">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="portlet portlet-blue">
+      <div class="portlet-heading">Cuentas por Cobrar</div>
+      <div class="portlet-body">
         <div class="text-right">
         <p><b>Total: ${modulusuno.formatPrice(number:pendingAccounts.totalCharges)}</b></p>
         <p><b>Vencido: ${modulusuno.formatPrice(number:pendingAccounts.totalExpiredCharges)}</b></p>
@@ -147,9 +151,12 @@
         </div><!--container-->
       </div>
     </div>
-    <div class="panel panel-primary">
-      <div class="panel-heading">Cuentas por Pagar</div>
-      <div class="panel-body">
+      </div><!--end col-6-->
+      <div class="col-md-6">
+       
+    <div class="portlet portlet-blue">
+      <div class="portlet-heading">Cuentas por Pagar</div>
+      <div class="portlet-body">
         <div class="text-right">
         <p><b>Total: ${modulusuno.formatPrice(number:pendingAccounts.totalPayments)}</b></p>
         <p><b>Vencido: ${modulusuno.formatPrice(number:pendingAccounts.totalExpiredPayments)}</b></p>
@@ -226,6 +233,10 @@
               </div>
             </div>
             <!-- modal change date payments end -->
+        
+      </div><!--end col-6-->
+    </div><!--endrow-->
+   
           </div>
         </div><!--container-->
       </div>

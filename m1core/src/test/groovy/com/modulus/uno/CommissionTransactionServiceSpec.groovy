@@ -9,6 +9,12 @@ import grails.test.mixin.Mock
 @Mock([CommissionTransaction, Company, Transaction, SaleOrder, SaleOrderItem, Commission])
 class CommissionTransactionServiceSpec extends Specification {
 
+  GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
+
+  def setup(){
+    service.grailsApplication = grailsApplication
+  }
+
   void "Should save a commission transaction"() {
     given:"A fee command"
       FeeCommand feeCommand = new FeeCommand(companyId:"1", amount:new BigDecimal(10), type:"PAGO", transactionId:"1")
@@ -30,7 +36,7 @@ class CommissionTransactionServiceSpec extends Specification {
       company.addToCommissions(commission2)
       company.save(validate:false)
     when:
-      def balance = service.getCommissionsPendingBalanceForCompany(company)
+      def balance = service.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
     then:
       balance.size() == company.commissions.size()
   }
@@ -78,6 +84,36 @@ class CommissionTransactionServiceSpec extends Specification {
       saleOrder.addToItems(saleOrderItem)
     when:
       def transaction = service.registerCommissionForSaleOrder(saleOrder)
+    then:
+      thrown BusinessException
+  }
+
+  @Unroll
+  void "Should save a fixed commission transaction with amount=#amountExpected when commission fee=#fee for a company"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:fee, percentage:0, type:CommissionType.FIJA).save(validate:false)
+      company.addToCommissions(commission)
+    when:
+      def transaction = service.applyFixedCommissionToCompany(company)
+    then:
+      transaction.id
+      transaction.amount == amountExpected
+    where:
+    fee   ||  amountExpected
+    1000  ||  1000
+    2000  ||  2000
+  }
+
+  void "Should throw exception when company hasn't fixed commission"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:2, percentage:0, type:CommissionType.PAGO).save(validate:false)
+      company.addToCommissions(commission)
+    when:
+      def transaction = service.applyFixedCommissionToCompany(company)
     then:
       thrown BusinessException
   }

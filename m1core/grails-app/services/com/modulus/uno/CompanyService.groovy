@@ -103,7 +103,7 @@ class CompanyService {
     accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(beginDate)
     accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate)
     accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
-    accountStatement.commissionsBalance = commissionTransactionService.getCommissionsPendingBalanceForCompany(company)
+    accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
     accountStatement
   }
 

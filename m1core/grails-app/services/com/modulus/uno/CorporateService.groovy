@@ -99,14 +99,14 @@ class CorporateService {
     corporate.save()
     corporate
   }
-  
+
   String findUrlCorporateOfUser(User user){
     Corporate corporate = Corporate.createCriteria().get {
       users {
         eq 'username', user.username
       }
     }
-    "${corporate.corporateUrl}${DOMAIN_BASE_URL}"
+    corporate ? "${corporate.corporateUrl}${DOMAIN_BASE_URL}" : "web${DOMAIN_BASE_URL}"
   }
 
   String findCorporateByCompanyId(def companyId) {

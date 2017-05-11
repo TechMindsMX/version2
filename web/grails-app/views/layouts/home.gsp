@@ -3,9 +3,11 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,300,400,700,800|Lato:100,400,700" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <asset:stylesheet src="third-party/bootstrap/dist/css/bootstrap.css"/>
     <asset:stylesheet src="third-party/font-awesome/css/font-awesome.css"/>
+
     <style>
       body {
         padding-top: 50px;
