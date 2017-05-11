@@ -14,4 +14,10 @@ class GenerateXMLService {
     engine.createTemplate(tenplate).make(payOrder.asMap()).toString()
   }
 
+  def xmlSignedConciliationRequest(Map data){
+    def engine = new groovy.text.GStringTemplateEngine()
+    def xmlSignedConciliationTemplate = new File(getClass().getClassLoader().getResource("templateSignedConciliation.xml").file).text
+    engine.createTemplate(xmlSignedConciliationTemplate).make(data).toString()
+  }
+
 }
