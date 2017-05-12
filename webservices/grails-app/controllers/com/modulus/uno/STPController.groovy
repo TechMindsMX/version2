@@ -9,8 +9,9 @@ import grails.converters.JSON
 class STPController {
 
   StpDepositService stpDepositService
+  StpService stpService
 
-  static allowedMethods = [stpDepositNotification:"POST"]
+  static allowedMethods = [stpDepositNotification:"POST", stpDepositNotificationJson:"POST", stpConciliationCompany:"POST"]
 
   @ApiOperation(value = "Notify deposit",
     response = StpDepositSwagger, hidden=true)
@@ -44,4 +45,26 @@ class STPController {
       response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
     }
   }
+
+  @ApiOperation(value = "Conciliation Company",
+    response = StpConciliationSwagger, hidden=true)
+  @ApiResponses([
+    @ApiResponse(code = 422, message = 'Bad Entity Received'),
+    @ApiResponse(code = 201, message = 'Ok')
+  ])
+  @ApiImplicitParams([
+    @ApiImplicitParam(name = 'body', paramType = 'body', required = true, dataType = 'StpConciliationSwagger')
+  ])
+  def stpConciliationCompany(StpConciliationSwagger stpConciliationSwagger) {
+    try {
+      log.info "Get conciliation for company: ${stpConciliationSwagger.dump()}"
+      Company company = Company.get(stpConciliationSwagger.company)
+      Period period = new Period(init:Date.parse("yyyy-MM-dd HH:mm:ss", stpConciliationSwagger.initDate), end:Date.parse("yyyy-MM-dd HH:mm:ss", stpConciliationSwagger.endDate))
+      def result = stpService.getTransactionsForCompanyInPeriod(company, period)
+      respond result, status: 201, formats: ['json']
+    }catch (Exception ex) {
+      response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
+    }
+  }
+
 }
