@@ -57,7 +57,7 @@ class STPController {
   ])
   def stpConciliationCompany(StpConciliationSwagger stpConciliationSwagger) {
     try {
-      log.info "Get conciliation for company: ${stpConciliationSwagger.dump()}"
+      log.info "Get conciliation for company"
       Company company = Company.get(stpConciliationSwagger.company)
       Period period = new Period(init:Date.parse("yyyy-MM-dd HH:mm:ss", stpConciliationSwagger.initDate), end:Date.parse("yyyy-MM-dd HH:mm:ss", stpConciliationSwagger.endDate))
       def result = stpService.getTransactionsForCompanyInPeriod(company, period)
