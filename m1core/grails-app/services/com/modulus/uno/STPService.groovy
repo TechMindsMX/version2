@@ -37,7 +37,9 @@ class StpService {
     def result = requestSOAPService.doRequest(grailsApplication.config.stp.urls.payOrder){
       xml xmlSignedConciliation
     }.doit()
-    processResponseConciliationService(result)
+    Map transactions = processResponseConciliationService(result)
+    transactions.period = period
+    transactions
   }
 
   private Map createDataMapForConciliation(Company company, Period period) {
