@@ -50,4 +50,15 @@ import java.lang.Void as Should
       transactions.size() == 2
   }
 
+  Should "create and save the final transfer transaction"() {
+    given:"The final mov from stp"
+      Map finalMov = [id:"idFinalTrans", tracing:"TracingFinalTrans", debit:new BigDecimal(10000), clabe:"StpClabeOfCompany", reference:"Reference"]
+    when:
+      def trans = service.createFinalTransferTransaction(finalMov)
+    then:
+      trans
+      trans.keyAccount == finalMov.clabe
+      trans.amount == finalMov.debit
+      trans.transactionType == TransactionType.WITHDRAW
+  }
 }
