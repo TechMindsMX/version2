@@ -265,6 +265,7 @@ class CompanyService {
     applyOperationsCloseTransaction(company, transactions)
   }
 
+  @Transactional
   private String applyOperationsCloseTransaction(Company company, Map transactions) {
     log.info "Applying Operations Close for ${company} with transactions ${transactions}"
     String status = "OK"
@@ -273,6 +274,7 @@ class CompanyService {
     Map movFinal = transactions.transactions.find { it.tracing == tracingFinal }
     if (movFinal) {
       log.info "Registrar la transacción de traspaso final en el estado de cuenta de la empresa ${company} correspondiente al día ${dateTransaction}"
+      transactionService.createFinalTransferTransaction(movFinal)
     } else {
       status = "NOT FOUND"
       log.warn "No se encontró registro del traspaso final para la empresa ${company} del día ${dateTransaction}"
