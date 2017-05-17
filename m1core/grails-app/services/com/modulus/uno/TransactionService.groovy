@@ -43,4 +43,18 @@ class TransactionService {
     }
   }
 
+  Transaction createFinalTransferTransaction(Map finalMov) {
+    Transaction transaction = new Transaction(
+      keyTransaction:finalMov.id,
+      trackingKey:finalMov.tracing,
+      amount:finalMov.debit,
+      paymentConcept:"TRASPASO FINAL",
+      keyAccount:finalMov.clabe,
+      referenceNumber:finalMov.reference,
+      transactionType:TransactionType.WITHDRAW,
+      transactionStatus:TransactionStatus.AUTHORIZED
+    ).save()
+    transaction
+  }
+
 }
