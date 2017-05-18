@@ -9,6 +9,7 @@ class ManagerApplicationService {
   def documentService
   def modulusUnoService
   def collaboratorService
+  CompanyService companyService
 
   def acceptingCompanyToIntegrate(Long companyId, String email) {
     Company company = Company.findById(companyId)
@@ -135,4 +136,12 @@ class ManagerApplicationService {
       throw new BusinessException ("La fecha inicial debe ser anterior o igual a la fecha final")
   }
 
+  String applyFinalTransferForAllCompanies() {
+    String result = "OK"
+    List<Company> companies = companyService.getAllCompaniesAcceptedAndWithAliasStp()
+    companies.each { company ->
+      companyService.executeOperationsCloseForCompany(company)
+    }
+    result
+  }
 }
