@@ -61,6 +61,7 @@ dependencies {
 
   compile "mysql:mysql-connector-java:5.1.42"
   compile "org.grails.plugins:swaggydoc-grails3:0.28.0"
+  compile 'org.grails.plugins:quartz:2.0.9'
 }
 
 grails {
