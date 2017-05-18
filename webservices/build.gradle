@@ -59,8 +59,9 @@ dependencies {
   testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
   testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
-  compile "mysql:mysql-connector-java:5.1.34"
+  compile "mysql:mysql-connector-java:5.1.42"
   compile "org.grails.plugins:swaggydoc-grails3:0.28.0"
+  compile 'org.grails.plugins:quartz:2.0.9'
 }
 
 grails {
