@@ -153,7 +153,6 @@ class CompanyController {
   }
 
   def accountStatement(){
-    def roles = springSecurityService.getPrincipal().getAuthorities()
     def company = Company.get(session.company.toLong())
     String startDate = params.startDate ? new SimpleDateFormat("dd-MM-yyyy").format(params.startDate) : ""
     String endDate = params.endDate ? new SimpleDateFormat("dd-MM-yyyy").format(params.endDate) : ""
@@ -194,7 +193,7 @@ class CompanyController {
   }
 
   def sendFilesToCreateInvoice() {
-    def company = Company.findById(session.company.toLong())
+    Company company = Company.get(session.company)
     def responseStatus = companyService.sendDocumentsPerInvoice(params, company.rfc)
     flash.responseStatus = responseStatus
     redirect(action:"show",id:"${session.company.toLong()}")
@@ -284,6 +283,11 @@ class CompanyController {
     flash.responseStatus = "Archivos de Facturación Actualizados"//responseStatus
     redirect action:"show", id:company.id
 
+  }
+
+  def changeSerieForInvoices(Company company) {
+    companyService.changeSerieForInvoicesOfCompany(company, params.serie, params.folio)
+    redirect action:"show", id:company.id
   }
 
   private String getAlertColor(Integer days) {

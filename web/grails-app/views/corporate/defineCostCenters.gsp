@@ -8,15 +8,16 @@
 
     <div class="page-title">
       <h1>
-      <i class="fa fa-tachometer fa-3x"></i>
-        Definición de Centros de Costos
-        <small>Compañías Registradas</small>
+        <i class="fa fa-tachometer fa-3x"></i>
+        ${corporate.nameCorporate}
+        <small>Definición de Centros de Costos</small>
       </h1>
     </div>
 
     <sec:ifAnyGranted roles="ROLE_M1">
       <div class="row">
         <div class="col-md-12 col-lg-12">
+          <g:if test="${companies}">
           <div class="table-responsive">
           <table class="table table-condensed table-hover">
             <thead>
@@ -28,7 +29,7 @@
             </tr>
             </thead>
             <tbody>
-            <g:each in="${companies.sort{it.bussinessName}}" var="company">
+            <g:each in="${companies}" var="company">
             <tr>
               <td>${company}</td>
               <td>${company.rfc}</td>
@@ -46,6 +47,12 @@
             </tbody>
           </table>
           </div>
+          </g:if>
+          <g:else>
+            <div class="content scaffold-list">
+              <div class="alert alert-warning">Ninguna Empresa ha sido creada</div>
+            </div>
+          </g:else>
 
           <!-- modal edit alias stp -->
           <div class="modal fade" id="editAliasStp" tabindex="-1" role="dialog" aria-labelledby="editAliasStpLabel">
@@ -57,6 +64,7 @@
                 </div>
                 <g:form action="saveAliasStp">
                 <input type="hidden" id="company" name="company"/>
+                <input type="hidden" id="corporateId" name="corporateId" value="${corporate.id}"/>
                 <div class="modal-body">
                   <div class="form-group">
                     <label for="companyName" class="control-label">Empresa:</label>
@@ -76,10 +84,11 @@
             </div>
           </div>
           <!-- modal edit alias stp -->
-
-          <div class="pagination">
-            <g:paginate controller="dashboard" action="defineCostCenters" total="${companiesCount}" />
-          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-md-offset-9">
+          <g:link class="btn btn-primary" controller="dashboard" action="index">Regresar</g:link>
         </div>
       </div>
     </sec:ifAnyGranted>

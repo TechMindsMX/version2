@@ -12,14 +12,16 @@ class BusinessEntityController {
   def restService
   def springSecurityService
   def employeeService
+  def saleOrderService
+  def paymentService
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", createAccountByProvider: "POST"]
 
   def index(Integer max) {
-    params.max = Math.min(max ?: 10, 100)
+    params.max = 25
     def roles = springSecurityService.getPrincipal().getAuthorities()
     def company = Company.findById(session.company.toLong())
-    max = Math.min(max ?: 10, 100)
+    max = Math.min(max ?: 25, 100)
     def offset = params.offset? params.offset.toInteger() : 0
     def total = company.businessEntities.size()
     def allBusinessEntitiesCompany = company.businessEntities.toList().sort{it.id}
@@ -29,9 +31,19 @@ class BusinessEntityController {
   }
 
   def show(BusinessEntity businessEntity) {
+    Company company = Company.get(session.company)
     params.sepomexUrl = grails.util.Holders.grailsApplication.config.sepomex.url
+    BigDecimal totalSoldForClient = saleOrderService.getTotalSoldForClient(company,businessEntity.rfc) ?: 0
+    BigDecimal totalSoldForClientStatusConciliated = saleOrderService.getTotalSoldForClientStatusConciliated(company,businessEntity.rfc) ?: 0
+    BigDecimal paymentsFromClientToPay = paymentService.getPaymentsFromClientToPay(company, businessEntity.rfc) ?: 0
+    BigDecimal totalPending =  totalSoldForClient - totalSoldForClientStatusConciliated
     LeadType relation = businessEntityService.getClientProviderType(businessEntity.rfc)
-    respond businessEntity, model:[relation:relation.toString(),clientLink: businessEntityService.getClientLinkOfBusinessEntityAndCompany(businessEntity, Company.get(session.company))]
+    respond businessEntity, model:[relation:relation.toString(),
+                                   clientLink: businessEntityService.getClientLinkOfBusinessEntityAndCompany(businessEntity, company),
+                                   totalSoldForClient:totalSoldForClient,
+    totalSoldForClientStatusConciliated:totalSoldForClientStatusConciliated,
+    paymentsFromClientToPay:paymentsFromClientToPay,
+    totalPending:totalPending]
   }
 
   def create() {

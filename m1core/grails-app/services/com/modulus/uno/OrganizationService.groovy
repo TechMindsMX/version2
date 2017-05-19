@@ -49,7 +49,7 @@ class OrganizationService {
 
   List<Company> findAllCompaniesOfUser(User user){
     List<UserRoleCompany> userRolesCompanies = UserRoleCompany.findAllByUser(user)
-    userRolesCompanies*.company
+    userRolesCompanies*.company.sort{it.bussinessName}
   }
 
 }

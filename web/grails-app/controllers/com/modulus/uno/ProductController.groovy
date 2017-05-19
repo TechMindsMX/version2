@@ -9,7 +9,7 @@ class ProductController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def index(Integer max) {
-    params.max = Math.min(max ?: 10, 100)
+    params.max = 25
     def productList = []
     Long countProducts = 0
     params.sort = 'name'

@@ -53,26 +53,30 @@
             &nbsp;&nbsp;&nbsp;&nbsp;
           </li>
           <li align="right">
-
           </li>
         </ul>
+
+
         <ul class="nav navbar-right">
+
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-user"></i>  <i class="fa fa-caret-down"></i>
             </a>
+
             <ul class="dropdown-menu dropdown-user">
               <li>
                 <g:link controller="user" action="profile" id="${sec.loggedInUserInfo(field: "id")}">
-                <i class="fa fa-user"></i> Mi Perfil
+                  <i class="fa fa-user"></i> Mi Perfil
                 </g:link>
               </li>
               <li class="divider"></li>
               <li>
                 <g:link controller="logout" action="index" class="logout_open">
-                <i class="fa fa-sign-out"></i> Cerrar sesión
+                  <i class="fa fa-sign-out"></i> Cerrar sesión
                 </g:link>
               </li>
+
             </ul>
           </li>
         </ul>
@@ -88,11 +92,16 @@
       <div class="navbar-collapse sidebar-collapse collapse">
         <ul id="side" class="nav navbar-nav side-nav">
           <sec:ifAnyGranted roles="ROLE_M1">
-            <li>
-              <g:link controller="dashboard" action="index" >Ver Corporativos</g:link>
-              <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
-              <g:link controller="dashboard" action="listCompanies" >Agregar Comisiones a Empresas</g:link>
-              <g:link controller="dashboard" action="defineCostCenters" >Definir Centros de Costos</g:link>
+            <li class="panel">
+              <a href="javascript:;" data-parent="#side" data-toggle="collapse" class="accordion-toggle" data-target="#corporativos">
+                Corporativos <i class="fa fa-caret-down"></i>
+              </a>
+              <ul class="collapse nav" id="corporativos">
+                <li>
+                  <g:link controller="dashboard" action="index" >Lista de Corporativos</g:link>
+                  <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
+                </li>
+              </ul>
             </li>
           </sec:ifAnyGranted>
 
@@ -102,12 +111,15 @@
               <li><g:link controller="corporate" action="addUser" id="${session.corporate.id}">Alta Usuario</g:link></li>
               <li><g:link controller="corporate" action="users" id="${session.corporate.id}">Lista de Usuarios</g:link></li>
               <li><g:link controller="corporate" action="companies" id="${session.corporate.id}">Todas las Empresas</g:link></li>
+              <li><g:link controller="machine" action="index">Lista de Máquinas</g:link></li>
+              <li><g:link controller="machine" action="register">Crear nueva máquina</g:link></li>
+              <li><g:link controller="notificationForState" action="index">Notificaciones</g:link></li>
             </g:if>
           </sec:ifAnyGranted>
 
           <g:if test="${session.company && companyInfo.isAvailableForOperationInThisCompany()}">
             <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-            <g:render template="/layouts/representante_legal" />
+              <g:render template="/layouts/representante_legal" />
             </sec:ifAnyGranted>
             <sec:ifAnyGranted roles="ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
               <g:render template="/layouts/fico" />

@@ -175,4 +175,28 @@ class CorporateServiceSpec extends Specification {
       legalReps[1].username == "legal02"
   }
 
+  void "Should get corporate url from user"() {
+    given:"The user"
+      User user = new User().save(validate:false)
+    and:"The corporate"
+      Corporate corporate = new Corporate(corporateUrl:"myCorp").save(validate:false)
+      corporate.addToUsers(user)
+      corporate.save(validate:false)
+    when:
+      String url = service.findUrlCorporateOfUser(user)
+    then:
+      url == "myCorp-qa.modulusuno.com"
+  }
+
+  void "Should get corporate url from user without corporate"() {
+    given:"The user"
+      User user = new User().save(validate:false)
+    and:"The corporate"
+      Corporate corporate = new Corporate(corporateUrl:"myCorp").save(validate:false)
+    when:
+      String url = service.findUrlCorporateOfUser(user)
+    then:
+      url == "web-qa.modulusuno.com"
+  }
+
 }

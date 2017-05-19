@@ -8,7 +8,7 @@
   </div>
   <div id="defaultPortlet" class="panel-collapse collapse in">
     <div class="portlet-body">
-      <g:if test="${documents}">
+      <g:if test="${!documents.status}">
         <g:form class="form-horizontal" action="sendFilesToCreateInvoice" name="documentsToInvoice" method="POST" enctype="multipart/form-data" >
           <label>Archivo .key</label>
           <input type="file" required="true" class="form-control" name="key" />
@@ -20,6 +20,8 @@
           <input type="file" required="true" class="form-control" name="logo" accept="image/png" />
           <label>Password</label>
           <input type="password" required="true" class="form-control" name="password" />
+          <label>Serie de Facturas</label>
+          <input type="text" class="form-control" name="serie" />
           <br />
           <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
             <input type="submit" class="btn btn-green btn-lg" value="Subir" />
@@ -58,6 +60,42 @@
            </span>
            Número de Certificado
          </li>
+         <li class="text-primary">
+           Serie de Facturas: ${documents.currentSerie ?: "SIN SERIE"} &nbsp;
+            <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#changeSerieModal" data-whatever="${documents.currentSerie}">
+              Cambiar Serie
+            </button>
+            <!-- modal change date -->
+            <div class="modal fade" id="changeSerieModal" tabindex="-1" role="dialog" aria-labelledby="changeSerieModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="changeSerieModalLabel">Cambiar Serie y Folio Inicial de Facturación</h4>
+                  </div>
+                  <g:form action="changeSerieForInvoices" id="${company.id}">
+                  <div class="modal-body">
+                      <div class="form-group">
+                        <label for="serie" class="control-label">Serie:</label>
+                        <input type="text" class="form-control" id="serie" name="serie">
+                      </div>
+                      <div class="form-group">
+                        <label for="folio" class="control-label">Folio Inicial:</label>
+                        <input type="number" name="folio" min="1" step="1" required="required">
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Cambiar</button>
+                  </div>
+                  </g:form>
+                </div>
+              </div>
+            </div>
+            <!-- modal change date end -->
+
+         </li>
+
        </ul>
        <div class="text-right">
          <g:link class="btn btn-primary" action="changeStampDocuments" id="${company.id}">Cambiar</g:link>
@@ -68,5 +106,6 @@
   <div class="portlet-footer"></div>
   </div>
 </div>
+<asset:javascript src="company/invoicingDocuments.js"/>
 <br />
 <br />

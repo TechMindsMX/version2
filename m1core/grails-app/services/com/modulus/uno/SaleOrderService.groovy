@@ -14,6 +14,8 @@ class SaleOrderService {
   def companyService
   def springSecurityService
   def dataSource
+  def commissionTransactionService
+
 
   // TODO: Code Review
   def createSaleOrderWithAddress(def params) {
@@ -78,13 +80,13 @@ class SaleOrderService {
   }
 
   def executeSaleOrder(SaleOrder saleOrder){
+    commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
     String uuidFolio = invoiceService.generateFactura(saleOrder)
     updateSaleOrderFromGeneratedBill(uuidFolio, saleOrder)
   }
 
   private updateSaleOrderFromGeneratedBill(String uuidFolio, SaleOrder saleOrder) {
-    def tokens = uuidFolio.tokenize("_")
-    saleOrder.folio = tokens[0]
+    saleOrder.folio = uuidFolio
     saleOrder.status = SaleOrderStatus.EJECUTADA
     saleOrder.save()
     emailSenderService.notifySaleOrderChangeStatus(saleOrder)
@@ -159,9 +161,9 @@ class SaleOrderService {
     SaleOrder saleOrder = SaleOrder.get(id)
     if (!saleOrder.originalDate)
       saleOrder.originalDate = saleOrder.fechaCobro
-    saleOrder.fechaCobro = chargeDate
-    saleOrder.save()
-    saleOrder
+      saleOrder.fechaCobro = chargeDate
+      saleOrder.save()
+      saleOrder
   }
 
   List<SaleOrder> obtainListPastDuePortfolio(Long idCompany, Integer days) {
@@ -173,30 +175,30 @@ class SaleOrderService {
 
     if (days==120) {
       listResult = saleCriteria.list {
-          eq("company", company)
-          or {
-            and {
-              le("fechaCobro", end)
-              isNull("originalDate")
-            }
-            and {
-              le("originalDate", end)
-            }
+        eq("company", company)
+        or {
+          and {
+            le("fechaCobro", end)
+            isNull("originalDate")
           }
-          eq("status", SaleOrderStatus.EJECUTADA)
+          and {
+            le("originalDate", end)
+          }
+        }
+        eq("status", SaleOrderStatus.EJECUTADA)
       }
     } else {
       Date begin = dateFormat.parse(dateFormat.format(new Date()-(days+30)))
       listResult = saleCriteria.list {
-          eq("company", company)
-          or {
-            and {
-              between("fechaCobro", begin, end)
-              isNull("originalDate")
-            }
-            between("originalDate", begin, end)
+        eq("company", company)
+        or {
+          and {
+            between("fechaCobro", begin, end)
+            isNull("originalDate")
           }
-          eq("status", SaleOrderStatus.EJECUTADA)
+          between("originalDate", begin, end)
+        }
+        eq("status", SaleOrderStatus.EJECUTADA)
       }
     }
     listResult
@@ -239,4 +241,24 @@ class SaleOrderService {
     }
     saleOrdersFiltered
   }
+
+  BigDecimal getTotalSoldForClient(Company company, String rfc/*, Date firstDate, Date lastDate*/) {
+    def salesOrderEjecuted = SaleOrder.createCriteria().list{
+      eq("rfc", rfc)
+      eq("company", company)
+      'in'("status", [SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA])
+      //   between("dateCreated", firstDate, lastDate)
+    }
+    salesOrderEjecuted.total.sum()
+  }
+  BigDecimal getTotalSoldForClientStatusConciliated(Company company, String rfc) {
+    List<SaleOrder> salesOrderConciliated = SaleOrder.createCriteria().list{
+      eq("rfc", rfc)
+      eq("company", company)
+    }
+    salesOrderConciliated.amountPayed.sum()
+  }
+
+
+
 }

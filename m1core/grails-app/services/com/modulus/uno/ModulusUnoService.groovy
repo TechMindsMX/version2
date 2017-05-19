@@ -12,13 +12,7 @@ class ModulusUnoService {
   StpService stpService
   TransactionService transactionService
   def stpClabeService
-
-  static final feeType = [
-    SaleOrder : "SALE_FEE",
-    LoanOrder : "LOAN_FEE",
-    PurchaseOrder : "PAYMENT_FEE",
-    CashOutOrder : "CASHOUT_FEE"
-  ]
+  def commissionTransactionService
 
   static final commissionType = [
     SaleOrder : "FACTURA",
@@ -39,8 +33,6 @@ class ModulusUnoService {
         com.type == CommissionType."${comType}"
     }
 
-    String fType = feeType."${order.class.simpleName}"
-
     BigDecimal amountFee = 0
     if (commission){
       if (commission.fee){
@@ -48,29 +40,25 @@ class ModulusUnoService {
       } else {
         amountFee = order.class.simpleName == "SaleOrder" ? order.total * (commission.percentage/100) : order.amount * (commission.percentage/100)
       }
-      String uuid = order.company.accounts.first().timoneUuid
-      command = new FeeCommand(uuid:uuid,amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:fType)
+      command = new FeeCommand(companyId:order.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP), type:commission.type)
     }
     command
   }
 
-  private FeeCommand createFeeCommandFromPurchaseOrder(PurchaseOrder order, PaymentToPurchase payment){
+  private FeeCommand createFeeCommandFromPurchaseOrder(PurchaseOrder order, BigDecimal amount){
     def command = null
     Commission commission = order.company.commissions.find { com ->
         com.type == CommissionType."PAGO"
     }
-
-    String fType = feeType."${order.class.simpleName}"
 
     BigDecimal amountFee = 0
     if (commission){
       if (commission.fee){
         amountFee = commission.fee * 1.0
       } else {
-        amountFee = payment.amount * (commission.percentage/100)
+        amountFee = amount * (commission.percentage/100)
       }
-      String uuid = order.company.accounts.first().timoneUuid
-      command = new FeeCommand(uuid:uuid,amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:fType)
+      command = new FeeCommand(companyId:order.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type)
     }
     command
   }
@@ -95,9 +83,9 @@ class ModulusUnoService {
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
-      fechaDeOperacion: new Date().format("yyyyMMdd"),
+      fechaDeOperacion: "${new Date().format("yyyyMMdd")}",
       folioOrigen: "",
-      claveDeRastreo: new Date().getTime().toString(),
+      claveDeRastreo: "${new Date().time}",
       institucionOperante: grailsApplication.config.stp.institutionOperation,
       montoDelPago: amount,
       tipoDelPago: "1",
@@ -129,12 +117,15 @@ class ModulusUnoService {
       iva: ""
     ]
     String keyTransaction = stpService.sendPayOrder(data)
+    log.info "Key transaction stp: ${keyTransaction}"
     Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
     amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:cashOutOrder.company.accounts?.first()?.stpClabe,
     referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
     transactionStatus:TransactionStatus.AUTHORIZED]
     Transaction transaction = new Transaction(parameters)
     transactionService.saveTransaction(transaction)
+    feeCommand.transactionId = transaction.id
+    commissionTransactionService.saveCommissionTransaction(feeCommand)
     transaction
   }
 
@@ -163,8 +154,8 @@ class ModulusUnoService {
     cashinResult
   }
 
-  def payPurchaseOrder(PurchaseOrder order, PaymentToPurchase payment) {
-    FeeCommand feeCommand = createFeeCommandFromPurchaseOrder(order, payment)
+  def payPurchaseOrder(PurchaseOrder order, BigDecimal amountToPay) {
+    FeeCommand feeCommand = createFeeCommandFromPurchaseOrder(order, amountToPay)
     if (!feeCommand){
       throw new CommissionException("No existe comisión para la operación")
     }
@@ -178,11 +169,11 @@ class ModulusUnoService {
     def data = [
         institucionContraparte: order.bankAccount.banco.bankingCode,
         empresa: order.company.accounts?.first()?.aliasStp,
-        fechaDeOperacion: new Date().format("yyyyMMdd"),
+        fechaDeOperacion: "${new Date().format("yyyyMMdd")}",
         folioOrigen: "",
-        claveDeRastreo: new Date().toTimestamp(),
+        claveDeRastreo: "${new Date().time}",
         institucionOperante: grailsApplication.config.stp.institutionOperation,
-        montoDelPago: payment.amount.setScale(2, RoundingMode.HALF_UP),
+        montoDelPago: amountToPay.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
         nombreDelOrdenante: order.company.bussinessName,
@@ -218,6 +209,8 @@ class ModulusUnoService {
     transactionStatus:TransactionStatus.AUTHORIZED]
     Transaction transaction = new Transaction(parameters)
     transactionService.saveTransaction(transaction)
+    feeCommand.transactionId = transaction.id
+    commissionTransactionService.saveCommissionTransaction(feeCommand)
     transaction
   }
 

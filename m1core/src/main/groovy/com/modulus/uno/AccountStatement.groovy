@@ -5,6 +5,7 @@ class AccountStatement {
   Balance balance
   BigDecimal balanceTransiting
   BigDecimal balanceSubjectToCollection
+  List commissionsBalance
   Date startDate
   Date endDate
   def transactions

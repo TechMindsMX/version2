@@ -3,20 +3,51 @@ package com.modulus.uno
 import com.modulus.uno.machine.*
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import grails.converters.JSON
 
 @Transactional(readOnly=true)
 class MachineController {
 
-  static allowedMethods = [save: "POST", update: "PUT",delete:"DELETE"]
+  static allowedMethods = [save: "POST", update: "POST",delete:"DELETE"]
 
-  MachineryLinkService machineryLinkService
+  def springSecurityService
   CompanyService companyService
   CorporateService corporateService
-  def springSecurityService
   MachineService machineService
+  MachineryLinkService machineryLinkService
+  TransitionService transitionService
+  CombinationService combinationService 
+  CombinationLinkService combinationLinkService
+  CompanyMachineService companyMachineService
 
   def index(){
-     
+    User user =  springSecurityService.currentUser
+    Corporate corporate = corporateService.findCorporateOfUser(user)
+    ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
+
+    [entities:machineryLinkService.getClassesWithMachineryInterface(),
+     companies:companies]
+  }
+
+  def show(String id){
+    Machine machine = Machine.findByUuid(id)
+
+    if(!machine)
+      return response.sendError(404)
+
+    ArrayList<State> states = []
+    states.addAll(0,machine.states)
+
+    respond ([transitionList:transitionService.getMachineTransitions(machine.id),stateList:states])
+  }
+
+  def edit(String id){
+    Machine machine = Machine.findByUuid(id)
+    if(!machine)
+      return response.sendError(404)
+
+    [transitions:transitionService.getMachineTransitions(machine.id),
+     states:machine.states]
   }
 
   def register(){
@@ -24,47 +55,40 @@ class MachineController {
     Corporate corporate = corporateService.findCorporateOfUser(user)
     ArrayList<Company> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,corporate.id)
     render view:"register",model:[entities:machineryLinkService.getClassesWithMachineryInterface(),
-                               companies:companies]
+                                  companies:companies]
   }
 
   def create(){
     String entity = params.entity ? "${params.entity[0].toLowerCase()}${params.entity[1..params.entity.size()-1]}" : ""
 
-    if(!entity){
+    if(!entity || !params.company){
       return response.sendError(404)
     }
 
-    render view:"create",model:[entity:g.message(code:"${entity}.name")]
+    render view:"create",model:[entity:g.message(code:"${entity}.name"),
+                                entityName:params.entity,
+                                companyId:params.long("company")]
   }
 
   @Transactional
   def save(MachineCommand machine){
-    String initialState = machine.initialState
-    TransitionCommand initialTransition = machine.transitions.find{ it.stateFrom == initialState }
-    ArrayList<TransitionCommand> stateTransitions = machine.transitions.findAll{ transition -> (transition.stateFrom != initialTransition.stateFrom || transition.stateTo != initialTransition.stateTo) }
-
-    //TODO: Move BFS to Service
-    if(initialTransition){
-      Machine newMachine = machineService.createMachineWithActions(initialTransition.stateFrom,initialTransition.stateTo,initialTransition.actions)
-      ArrayList<String> states = [initialState,initialTransition.stateTo]//Q
-      ArrayList<TransitionCommand> transitionsToSave = []
-
-      while(states){
-        String s = states.remove(0)
-        State state = newMachine.states.find{ it.name.toUpperCase() == s }
-        transitionsToSave = stateTransitions.findAll{ it.stateFrom == s }
-        stateTransitions.removeAll{ it.stateFrom == s }  
-
-        transitionsToSave.each{ transition ->
-          transition.actions.each{ action ->
-            machineService.createTransition(state.id,transition.stateTo,action)
-          }
-          states << transition.stateTo
-        }
-      }
-    }
-
+    Machine savedMachine = machineService.saveMachine(machine.getMachine())
+    Company company = Company.get(params.company)
+    Combination combination = combinationService.createCombinationOfInstanceWithClass(savedMachine,params.entity)
+    combinationLinkService.createCombinationLinkForInstance(company,combination)
     redirect(action:"index")
+  }
+
+  @Transactional
+  def update(MachineCommand machineCommand){
+    Machine machine = Machine.findByUuid(params.uuid)
+    machineService.updateMachine(machine.id,machineCommand.getMachine())
+    redirect(action:"index")
+  }
+
+  def list(){
+    ArrayList<Machine> machines = companyMachineService.getCompanyMachinesForEntity(params.long('company'),params.className)
+    [machines:machines]
   }
 
 }

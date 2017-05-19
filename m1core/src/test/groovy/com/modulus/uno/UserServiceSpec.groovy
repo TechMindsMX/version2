@@ -9,13 +9,6 @@ import java.lang.Void as Should
 @Mock([UserRole,Profile,User])
 class UserServiceSpec extends Specification {
 
-  def recoveryService = Mock(RecoveryService)
-
-  def setup(){
-    service.recoveryService = recoveryService
-  }
-
-
   Should "save an user without Role"(){
     given:"the user"
       User user = Mock(User)
@@ -35,7 +28,6 @@ class UserServiceSpec extends Specification {
       service.createUserWithoutRole(user,profile)
     then:
       1 * user.save()
-      1 * recoveryService.sendConfirmationAccountToken(profile.email)
   }
 
 }

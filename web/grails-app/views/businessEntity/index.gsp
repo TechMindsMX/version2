@@ -12,11 +12,8 @@
       Registros / Lista de relaciones comerciales
       <small><g:message code="businessEntity.view.list.label" /></small>
       </h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañia</li>
-        <li class="active"><g:message code="businessEntity.view.list.label" /></li>
-      </ol>
     </div>
+
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
@@ -28,7 +25,11 @@
         </div>
         <div id="horizontalFormExample" class="panel-collapse collapse in">
           <div class="portlet-body">
-            <div class="row-fluid">
+              <g:if test="${flash.message}">
+              <div class="message" role="status">${flash.message}</div>
+              </g:if>
+
+            <div class="row">
               <div class="col-md-12">
                 <g:form controller="businessEntity" action="search" class="form-horizontal">
                   <div class="form-group">
@@ -43,10 +44,10 @@
                 </g:form>
               </div>
             </div>
-            <div id="list-businessEntity" class="content scaffold-list" role="main">
-              <g:if test="${flash.message}">
-              <div class="message" role="status">${flash.message}</div>
-              </g:if>
+
+            <div class="row">
+              <div class="col-md-12">
+            <div class="table-responsive">
               <table class="table">
                 <tr>
                   <th>RFC</th>
@@ -56,7 +57,6 @@
                   <th>Tipo de Relación</th>
                 </tr>
                 <g:each in="${businessEntityList.sort{it.id}}" var="be">
-                  <g:if test="${be?.rfc}">
                   <tr>
                     <td>
                       <g:link controller="businessEntity" action="show" id="${be.id}">${be.rfc}</g:link></td>
@@ -65,13 +65,17 @@
                     <td>${be.type}</td>
                     <td><my:whatIsThisBusinessEntity be="${be}" /></td>
                   </tr>
-                  </g:if>
                 </g:each>
               </table>
+              <nav>
               <div class="pagination">
-                <g:paginate total="${businessEntityCount ?: 0}" />
+                <g:paginate class="pagination" controller="businessEntity" action="index" total="${businessEntityCount ?: 0}" />
+              </div>
+              </nav>
+            </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>

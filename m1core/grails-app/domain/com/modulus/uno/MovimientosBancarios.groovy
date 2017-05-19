@@ -7,7 +7,8 @@ class MovimientosBancarios {
   BigDecimal amount
   Date dateEvent
   MovimientoBancarioType type
-
+  Boolean reconcilable = false
+  ConciliationStatus conciliationStatus
 
   Date dateCreated
   Date lastUpdated
@@ -18,7 +19,7 @@ class MovimientosBancarios {
     concept blank:false, size:5..200
     reference blank:true, nullable:true, size:5..200
     amount min:0.0
-
+    conciliationStatus nullable:true
   }
 
 

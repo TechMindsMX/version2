@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import grails.transaction.Transactional
+
 class CorporateController {
 
   CorporateService corporateService
@@ -8,7 +10,9 @@ class CorporateController {
   OrganizationService organizationService
   def springSecurityService
   def managerApplicationService
-  def awsRoute53Service
+  def recoveryService
+  CommissionTransactionService commissionTransactionService
+  CommissionsInvoiceService commissionsInvoiceService
 
   def create(){
     respond new Corporate()
@@ -28,6 +32,7 @@ class CorporateController {
     }
     corporateService.saveNewCorporate(corporate)
     corporateService.createAVirtualHostNginx(corporate)
+    log.info "sudo service nginx reload".execute().text
     request.withFormat {
       form multipartForm {
         flash.message = message(code:'default.created.message', args:[message(code: 'corporate.label',
@@ -103,6 +108,7 @@ class CorporateController {
 
     ArrayList<Role> roles = springSecurityService.getPrincipal().getAuthorities()
     corporateService.addUserToCorporate(corporateId,user)
+    recoveryService.sendConfirmationAccountToken(user)
 
     if(roles[0].authority == "ROLE_M1"){
       userService.setAuthorityToUser(user,'ROLE_CORPORATIVE')
@@ -157,6 +163,39 @@ class CorporateController {
     def commissionPrestamo = new Commission(fee:new BigDecimal("0"), percentage: new BigDecimal(0), type: CommissionType.PRESTAMO, company: company).save()
   }
 
+  def commissions(Corporate corporate) {
+    List companies = corporate.companies.sort{it.bussinessName}
+    List totalPendingCommissions = getTotalPendingCommissionsForCorporate(corporate)
+    List totalInvoicedCommissions = getTotalInvoicedCommissionsForCorporate(corporate)
+    [corporate:corporate, companies:companies, totalPendingCommissions:totalPendingCommissions, totalInvoicedCommissions:totalInvoicedCommissions]
+  }
+
+  private List getTotalPendingCommissionsForCorporate(Corporate corporate) {
+    List totalPendingCommissions = []
+    corporate.companies.each {
+      totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it) ?: 0]
+    }
+    totalPendingCommissions
+  }
+
+  private List getTotalInvoicedCommissionsForCorporate(Corporate corporate) {
+    List totalCommissions = []
+    corporate.companies.each {
+      totalCommissions << [company:it, total:commissionsInvoiceService.getTotalInvoicedCommissionsForCompany(it) ?: 0]
+    }
+    totalCommissions
+  }
+
+  def defineCostCenters(Corporate corporate) {
+    [corporate:corporate, companies:corporate.companies.sort{it.bussinessName}]
+  }
+
+  @Transactional
+  def saveAliasStp() {
+    Corporate corporate = Corporate.get(params.corporateId)
+    companyService.assignAliasStpToCompany(Company.get(params.company), params.aliasStp)
+    redirect action:'defineCostCenters', id:corporate.id
+  }
 }
 
 @groovy.transform.TypeChecked

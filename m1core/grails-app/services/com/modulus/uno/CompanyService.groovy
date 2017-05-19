@@ -20,6 +20,8 @@ class CompanyService {
   def corporateService
   DirectorService directorService
   TransactionService transactionService
+  def invoiceService
+  CommissionTransactionService commissionTransactionService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -84,8 +86,7 @@ class CompanyService {
 
   Boolean enoughBalanceCompany(Company company, BigDecimal amount) {
     Balance balances = getBalanceOfCompany(company)
-    BigDecimal availableBalance = balances.balance - getBalanceTransiting(company)
-    availableBalance >= amount
+    balances.balance >= amount
   }
 
   AccountStatement getAccountStatementOfCompany(Company company, String beginDate, String endDate){
@@ -96,15 +97,13 @@ class CompanyService {
       if (!collaboratorService.periodIsValid(beginDate, endDate)) throw new BusinessException("La fecha inicial debe ser anterior a la fecha final")
     }
 
-    AccountStatementCommand command = new AccountStatementCommand (uuid: company.accounts?.first()?.timoneUuid, begin:beginDate, end:endDate)
     AccountStatement accountStatement = new AccountStatement()
     accountStatement.company = company
     accountStatement.balance = getBalanceOfCompany(company)
-    accountStatement.balanceTransiting = getBalanceTransiting(company)
-    accountStatement.balanceSubjectToCollection = getBalanceSubjectToCollection(company)
     accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(beginDate)
     accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate)
     accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
+    accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
     accountStatement
   }
 
@@ -119,19 +118,6 @@ class CompanyService {
       balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
     }
     new Balance(balance:balance, usd:usd)
-  }
-
-  BigDecimal getBalanceTransiting(Company company){
-    BigDecimal transitingPurchaseOrder = purchaseOrderService.getTotalPurchaseOrderAuthorizedOfCompany(company) ?: 0.0f
-    BigDecimal transitingCashOutOrder = cashOutOrderService.getTotalOrdersAuthorizedOfCompany(company) ?: 0.0f
-    BigDecimal transitingLoanPaymentOrder = loanOrderHelperService.getTotalOrdersAuthorizedOfCompany(company) ?: 0.0f
-    BigDecimal transitingFeesReceipt = feesReceiptService.getTotalFeesReceiptAuthorizedOfCompany(company) ?: 0.0f
-    transitingPurchaseOrder + transitingCashOutOrder + transitingLoanPaymentOrder + transitingFeesReceipt
-  }
-
-  def getBalanceSubjectToCollection(Company company){
-    def balanceToCollectionSaleOrders = saleOrderService.getTotalSaleOrderAuthorizedOfCompany(company)
-    (balanceToCollectionSaleOrders ?: 0.0f)
   }
 
   def getNumberOfAuthorizersMissingForThisCompany(Company company) {
@@ -183,21 +169,20 @@ class CompanyService {
   }
 
   def sendDocumentsPerInvoice(def params, def rfc) {
-    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert]
-    String token = restService.obtainingTokenFromModulusUno()
-    def result = restService.sendFilesForInvoiceM1(documents,token)
+    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert, serie:params.serie]
+    def result = restService.sendFilesForInvoiceM1(documents)
     result
   }
 
   def updateDocumentsToStamp(def params, def rfc) {
-    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert]
+    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert, serie:params.serie]
+    log.info "Updating documents to stamp: ${documents}"
     def result = restService.updateFilesForInvoice(documents)
     result
   }
 
   def isAvailableForGenerateInvoices(String rfc) {
     def response = restService.existEmisorForGenerateInvoice(rfc)
-    isAvailableForInvoices(response)
   }
 
   PendingAccounts obtainPendingAccountsOfPeriod(Date startDate, Date endDate, Company company) {
@@ -247,7 +232,8 @@ class CompanyService {
 
   Boolean isCompanyEnabledToStamp(Company company) {
     Address fiscalAddress = company.addresses.find {it.addressType == AddressType.FISCAL}
-    !(isAvailableForGenerateInvoices(company.rfc)) && fiscalAddress
+    def documents = isAvailableForGenerateInvoices(company.rfc)
+    documents.status && fiscalAddress
   }
 
   List<SaleOrder> getDetailPastDuePortfolio(Long idCompany, Integer days) {
@@ -264,4 +250,8 @@ class CompanyService {
     company.accounts.first().aliasStp && company.commissions.find { it.type == CommissionType.PAGO }
   }
 
+  void changeSerieForInvoicesOfCompany(Company company, String serie, String folio) {
+    Map newSerie = [rfc:company.rfc, serie:serie, folio:folio]
+    invoiceService.changeSerieAndInitialFolioToStampInvoiceForEmitter(newSerie)
+  }
 }

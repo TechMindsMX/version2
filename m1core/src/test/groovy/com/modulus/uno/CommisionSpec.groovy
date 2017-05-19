@@ -31,7 +31,7 @@ class CommissionSpec extends Specification {
     0     | 0          | CommissionType.FACTURA  || true
     null  | null       | CommissionType.FACTURA  || true
     100   | 0          | CommissionType.DEPOSITO || true
-    100   | 0          | CommissionType.PRESTAMO || true
+    100   | 0          | CommissionType.FIJA     || true
     100   | 0          | null                    || false
     100   | -1         | CommissionType.FACTURA  || false
     100   | 101        | CommissionType.FACTURA  || false

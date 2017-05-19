@@ -9,7 +9,7 @@ class PaymentController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def paymentService
-  def saleOrderService
+  def movimientosBancariosService
   def conciliationService
 
   @Transactional(readOnly = true)
@@ -122,23 +122,23 @@ class PaymentController {
 
   def referencedPayments() {
     Company company = Company.get(session.company)
-    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabInvoiceWithoutPayment:""]
+    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabBankTransactions:""]
     Map payments = paymentService.findReferencedPaymentsForCompany(company)
     render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
   }
 
   def notReferencedPayments() {
     Company company = Company.get(session.company)
-    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabInvoiceWithoutPayment:""]
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabBankTransactions:""]
     Map payments = paymentService.findNotReferencedPaymentsForCompany(company)
     render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
   }
 
-  def conciliateInvoicesWithoutPayments() {
+  def conciliateBankTransactions() {
     Company company = Company.get(session.company)
-    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabInvoiceWithoutPayment:"active"]
-    List<SaleOrder> saleOrders = saleOrderService.getSaleOrdersToConciliateFromCompany(company)
-    render view:"conciliation", model:[saleOrders:saleOrders, styleClasses:styleClasses]
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankTransactions:"active"]
+    List<MovimientosBancarios> bankingsTransactions = movimientosBancariosService.findBankingsTransactionsToConciliateForCompany(company)
+    render view:"conciliation", model:[bankingsTransactions:bankingsTransactions, styleClasses:styleClasses]
   }
 
 }

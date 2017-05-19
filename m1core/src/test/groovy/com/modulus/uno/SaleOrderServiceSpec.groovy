@@ -16,12 +16,14 @@ class SaleOrderServiceSpec extends Specification {
   def emailSenderService = Mock(EmailSenderService)
   def invoiceService = Mock(InvoiceService)
   def companyService = Mock(CompanyService)
+  def commissionTransactionService = Mock(CommissionTransactionService)
 
   def setup(){
     items.removeAll()
     service.emailSenderService = emailSenderService
     service.invoiceService = invoiceService
     service.companyService = companyService
+    service.commissionTransactionService = commissionTransactionService
   }
 
   void "should create an sale order"() {
@@ -129,7 +131,7 @@ class SaleOrderServiceSpec extends Specification {
   then:"We expect new status"
     1 * invoiceService.generateFactura(saleOrder) >> "uuid_folio"
     result instanceof SaleOrder
-    result.folio == 'uuid'
+    result.folio == 'uuid_folio'
   }
 
   @Ignore
@@ -221,5 +223,37 @@ class SaleOrderServiceSpec extends Specification {
     400          ||  80            | SaleOrderStatus.EJECUTADA  | 20
     2000         ||  0             | SaleOrderStatus.PAGADA     | 100
   }
+
+/*  void "Should get 200 for all sale orders executed for a client in company"(){
+    given:"A company"
+      Company company = Company.get(2)
+    and:"A rfc client"
+      String rfcClient = "MDE130712JA8"
+    and: "A between time "
+      Date firstDate = new Date()
+      Date lastDate = new Date()
+    and:"the get criteria method"
+      def myCriteria = new Expando()
+      myCriteria.list = { Closure closure -> new SaleOrder()  }
+      SaleOrder.metaClass.static.createCriteria = {myCriteria }
+    when:
+      def total = service.getTotalSoldForClient(company, rfcClient, firstDate, lastDate)
+    then:
+      total == 2000
+  }*/
+ /* void "Should get for all sale order consiliate "(){
+     given:"A company"
+      Company company = Company.get(2)
+    and:"A rfc client"
+      String rfcClient = "MDE130712JA8"
+        and:"the get criteria method"
+      def myCriteria = new Expando()
+      myCriteria.get = { Closure closure -> 2000 }
+      SaleOrder.metaClass.static.createCriteria = {myCriteria }
+    when:
+      def total = service.getTotalSoldForClientStatusConciliated(company, rfcClient, firstDate, lastDate)
+    then:
+      total == 2000*/
+
 
 }

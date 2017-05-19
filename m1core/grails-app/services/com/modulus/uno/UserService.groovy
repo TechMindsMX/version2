@@ -5,9 +5,7 @@ import grails.transaction.Transactional
 @Transactional
 class UserService {
 
-  def recoveryService
   def documentService
-  def companyService
 
   def addInformationToLegalRepresentative(def user, def params) {
     def profile = user.profile
@@ -55,7 +53,6 @@ class UserService {
     profile.save()
     user.profile = profile
     user.save()
-    recoveryService.sendConfirmationAccountToken(user.profile?.email)
     user
   }
 
@@ -72,12 +69,6 @@ class UserService {
         return user
     }
     users
-  }
-
-  def save(User user, Role role){
-    user.save()
-    UserRole.create user, role
-    recoveryService.sendConfirmationAccountToken(user.profile?.email)
   }
 
   private def createTelephone(params) {
