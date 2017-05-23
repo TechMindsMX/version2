@@ -52,7 +52,11 @@
       <g:if test="${amountExcceds}">
         <div class="alert alert-danger" role="alert">${amountExcceds}</div>
       </g:if>
-      <div class="table-responsive">
+      <div class="col-md-offset-2 col-md-8">
+        
+      <div class="portlet">
+        <div class="portlet-body">
+          <div class="table-responsive">
         <g:form controller="purchaseOrderItem" action="save">
         <table class="table">
           <thead>
@@ -120,7 +124,7 @@
             </g:if>
             <g:each in="${purchaseOrder.items.sort{it.id}}" var="item">
             <tr>
-              <td><h3>${item.quantity}</h3></td>
+              <td>${item.quantity}</td>
               <td>${item.name}</td>
               <td>
                 <dl class="dl-horizontal">
@@ -169,10 +173,20 @@
         </table>
         </g:form>
       </div>
+        </div>
+      </div><!--Close Portlet-->
+
+      </div>
+      
     </div>
 
     <div class="row">
-      <g:if test="${params.badfile}">
+    <div class="col-md-offset-2 col-md-8">
+      <div class="portlet">
+
+        <div class="portlet-body">
+        
+        <g:if test="${params.badfile}">
         <div class="alert alert-warning">${params.badfile}</div>
       </g:if>
      <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
@@ -208,5 +222,13 @@
       </g:if>
     </div>
     <asset:javascript src="purchaseOrder/show.js"/>
+
+
+
+          
+        </div>
+      </div>
+    </div>
+    </div>
  </body>
 </html>

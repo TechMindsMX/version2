@@ -1,6 +1,6 @@
 <%! import com.modulus.uno.PurchaseOrderStatus %>
 <%! import com.modulus.uno.RejectReason %>
-<div class="col-lg-4">
+<div class="col-md-offset-2 col-md-8">
   <div class="portlet portlet-default">
     <div class="portlet-heading">
       <div class="portlet-title">
