@@ -22,6 +22,7 @@ class CompanyService {
   TransactionService transactionService
   def invoiceService
   CommissionTransactionService commissionTransactionService
+  StpService stpService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -253,5 +254,47 @@ class CompanyService {
   void changeSerieForInvoicesOfCompany(Company company, String serie, String folio) {
     Map newSerie = [rfc:company.rfc, serie:serie, folio:folio]
     invoiceService.changeSerieAndInitialFolioToStampInvoiceForEmitter(newSerie)
+  }
+
+  String executeOperationsCloseForCompany(Company company) {
+    Period period = collaboratorService.getTodayPeriod()
+    period.init = period.init - 1
+    period.end = period.end - 1
+    log.info "Period defined: ${period.dump()}"
+    Map transactions = stpService.getTransactionsForCompanyInPeriod(company, period)
+    applyOperationsCloseTransaction(company, transactions)
+  }
+
+  @Transactional
+  private String applyOperationsCloseTransaction(Company company, Map transactions) {
+    log.info "Applying Operations Close for ${company} with transactions ${transactions}"
+    String status = "OK"
+    String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(transactions.period.init)
+    String tracingFinal = "${dateTransaction}${company.accounts.first().aliasStp}"
+    Map movFinal = transactions.transactions.find { it.tracing.contains(tracingFinal) }
+    if (movFinal) {
+      log.info "Registrar la transacción de traspaso final en el estado de cuenta de la empresa ${company} correspondiente al día ${dateTransaction}"
+      transactionService.createFinalTransferTransaction(movFinal)
+    } else {
+      status = "NOT FOUND"
+      log.warn "No se encontró registro del traspaso final para la empresa ${company} del día ${dateTransaction}"
+    }
+    status
+  }
+
+  List<Company> getAllCompaniesAcceptedAndWithAliasStp() {
+    def c = Company.createCriteria()
+    def list = c.list {
+      eq("status", CompanyStatus.ACCEPTED)
+      accounts {
+        and {
+          isNotNull("aliasStp")
+          ne("aliasStp", "")
+          isNotNull("stpClabe")
+          ne("stpClabe", "")
+        }
+      }
+    }
+    list
   }
 }

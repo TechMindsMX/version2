@@ -57,4 +57,18 @@ class CollaboratorService {
     new SimpleDateFormat("dd-MM-yyyy").parse(sdf)
   }
 
+  Period getTodayPeriod() {
+    Period period = new Period()
+    Calendar cal = Calendar.instance
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    period.init = cal.time
+
+    cal.set(Calendar.HOUR_OF_DAY, 23)
+    cal.set(Calendar.MINUTE, 59)
+    cal.set(Calendar.SECOND, 59)
+    period.end = cal.time
+    period
+  }
 }
