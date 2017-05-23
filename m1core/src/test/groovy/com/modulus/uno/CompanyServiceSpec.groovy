@@ -511,7 +511,7 @@ and:
       List listMovs = [
       [id:"idmov1", credit:new BigDecimal(100), debit:new BigDecimal(0), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingCredit", reference:"referenceCredit"],
       [id:"idmov2", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingDebit", reference:"referenceDebit"],
-      [id:"idmov3", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"${dateTransaction}aliasStp", reference:"referenceFinal"]
+      [id:"idmov3", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"${dateTransaction}aliasStpidmov3", reference:"referenceFinal"]
       ]
       Map transactions = [balance:[:], transactions:listMovs, period:period]
       stpService.getTransactionsForCompanyInPeriod(_, _) >> transactions
@@ -522,6 +522,7 @@ and:
       1 * transactionService.createFinalTransferTransaction(_)
   }
 
+  @Unroll
   void "Should obtain status NOT FOUND when don't exists the final transfer transactions from stp"() {
     given:"A company"
       Company company = new Company(rfc:"AAA010101AAA").save(validate:false)
@@ -536,17 +537,17 @@ and:
       collaboratorService.getTodayPeriod() >> period
     and:"The transactions from stp"
       String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(new Date().parse("dd-MM-yyyy", "12-05-2017"))
-      List listMovs = [
-      [id:"idmov1", credit:new BigDecimal(100), debit:new BigDecimal(0), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingCredit", reference:"referenceCredit"],
-      [id:"idmov2", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingDebit", reference:"referenceDebit"],
-      [id:"idmov3", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"anotherTracing", reference:"referenceFinal"]
-      ]
+      List listMovs = listTransactions
       Map transactions = [balance:[:], transactions:listMovs, period:period]
       stpService.getTransactionsForCompanyInPeriod(_, _) >> transactions
     when:
       def response = service.executeOperationsCloseForCompany(company)
     then:
-      response == "NOT FOUND"
+      response == expectedResponse
+    where:
+      listTransactions || expectedResponse
+      [[id:"idmov1", credit:new BigDecimal(100), debit:new BigDecimal(0), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingCredit", reference:"referenceCredit"], [id:"idmov2", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingDebit", reference:"referenceDebit"], [id:"idmov3", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"anotherTracing", reference:"referenceFinal"]] || "NOT FOUND"
+      [] || "NOT FOUND"
+      null || "NOT FOUND"
   }
-
 }
