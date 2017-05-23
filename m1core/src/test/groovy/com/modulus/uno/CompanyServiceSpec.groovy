@@ -26,10 +26,7 @@ class CompanyServiceSpec extends Specification {
   TransactionService transactionService = Mock(TransactionService)
   CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
   StpService stpService = Mock(StpService)
-<<<<<<< HEAD
   MovimientosBancariosService movimientosBancariosService = Mock(MovimientosBancariosService)
-=======
->>>>>>> #277 Creando los tests del método que guarda la transacción de traspaso final de una empresa
 
   def setup(){
     service.modulusUnoService = modulusUnoService
@@ -44,10 +41,7 @@ class CompanyServiceSpec extends Specification {
     service.transactionService = transactionService
     service.commissionTransactionService = commissionTransactionService
     service.stpService = stpService
-<<<<<<< HEAD
     service.movimientosBancariosService = movimientosBancariosService
-=======
->>>>>>> #277 Creando los tests del método que guarda la transacción de traspaso final de una empresa
   }
 
   Should "create a direction for a Company"(){
@@ -630,5 +624,4 @@ and:
     then:
       result == new BigDecimal(2000)
   }
-
 }
