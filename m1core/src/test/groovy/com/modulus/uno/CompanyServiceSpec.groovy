@@ -519,6 +519,7 @@ and:
       def response = service.executeOperationsCloseForCompany(company)
     then:
       response == "OK"
+      1 * transactionService.createFinalTransferTransaction(_)
   }
 
   void "Should obtain status NOT FOUND when don't exists the final transfer transactions from stp"() {
