@@ -28,7 +28,6 @@
                 <th>Facturado</th>
                 <th></th>
                 <th></th>
-                <th></th>
               </tr>
               </thead>
               <tbody>
@@ -55,9 +54,6 @@
                   </g:else>
                 </td>
                 <td>
-                  <g:link class="btn btn-primary" controller="commission" action="listFixedCommission" id="${company.id}" params="[corporateId:corporate.id]">Aplicar Comisión fija</g:link>
-                </td>
-                <td>
                   <g:link class="btn btn-info" controller="commissionsInvoice" action="conciliate" id="${company.id}" params="[corporateId:corporate.id]">Conciliar cobros</g:link>
                 </td>
               </tr>
@@ -71,8 +67,6 @@
                   <td class="text-right"><strong>${modulusuno.formatPrice(number:totalInvoicedCommissions*.total.sum())}</strong></td>
                   <td></td>
                   <td></td>
-                  <td>
-                  </td>
                 </tr>
               </tfoot>
             </table>

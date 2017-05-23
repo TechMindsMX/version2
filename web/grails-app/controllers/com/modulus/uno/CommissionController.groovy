@@ -125,15 +125,6 @@ class CommissionController {
     Commission.findByCompanyAndTypeAndIdNotEqual(commission.company, commission.type, commission.id)
   }
 
-  def listFixedCommission(Company company) {
-    Corporate corporate = Corporate.get(params.corporateId)
-    params.max = 25
-    params.sort = "dateCreated"
-    params.order = "desc"
-    Map fixedCommissionsForCompany = commissionTransactionService.getFixedCommissionsForCompany(company, params)
-    [corporate:corporate, company:company, fixedCommissions:fixedCommissionsForCompany]
-  }
-
   def listPendingCommissions(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
     List commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
