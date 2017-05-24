@@ -10,15 +10,19 @@ import java.lang.Void as Should
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(ManagerApplicationService)
-@Mock([Company,User,Role,UserRoleCompany,Profile,CompanyRejectedLog,FirstAccessToLegalRepresentatives])
+@Mock([Company,User,Role,UserRoleCompany,Profile,CompanyRejectedLog,FirstAccessToLegalRepresentatives, Commission])
 class ManagerApplicationServiceSpec extends Specification {
 
   def modulusUnoService = Mock(ModulusUnoService)
   def collaboratorService = Mock(CollaboratorService)
+  CompanyService companyService = Mock(CompanyService)
+  CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
 
   def setup() {
     service.modulusUnoService = modulusUnoService
     service.collaboratorService = collaboratorService
+    service.companyService = companyService
+    service.commissionTransactionService = commissionTransactionService
   }
 
   Should "accept a company to integrate"(){
@@ -167,6 +171,26 @@ class ManagerApplicationServiceSpec extends Specification {
       "ISR"   | 1
       "IVA"   | 1
       "FEE"   | 1
+  }
+
+  void "Should apply Fixed commission For All Companies"() {
+    given:"The fixed commission"
+      Commission commission1 = new Commission(fee:new BigDecimal(1000), type:CommissionType.FIJA).save(validate:false)
+      Commission commission2 = new Commission(fee:new BigDecimal(1000), type:CommissionType.FIJA).save(validate:false)
+    and:"The companies"
+      Company one = new Company().save(validate:false)
+      one.addToCommissions(commission1)
+      one.save(validate:false)
+      Company two = new Company().save(validate:false)
+      two.addToCommissions(commission2)
+      two.save(validate:false)
+      List<Company> companies = [one, two]
+    and:""
+      companyService.getAllCompaniesAcceptedWithFixedCommissionDefined() >> companies
+    when:
+      String result = service.applyFixedCommissionForAllCompanies()
+    then:
+      result == "OK"
   }
 
 }
