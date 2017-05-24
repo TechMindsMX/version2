@@ -10,6 +10,7 @@ class ManagerApplicationService {
   def modulusUnoService
   def collaboratorService
   CompanyService companyService
+  CommissionTransactionService commissionTransactionService
 
   def acceptingCompanyToIntegrate(Long companyId, String email) {
     Company company = Company.findById(companyId)
@@ -144,4 +145,14 @@ class ManagerApplicationService {
     }
     result
   }
+
+  String applyFixedCommissionForAllCompanies() {
+    String result = "OK"
+    List<Company> companies = companyService.getAllCompaniesAcceptedWithFixedCommissionDefined()
+    companies.each { company ->
+      commissionTransactionService.applyFixedCommissionToCompany(company)
+    }
+    result
+  }
+
 }
