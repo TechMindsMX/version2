@@ -7,7 +7,7 @@ class FixedCommissionJob {
   ManagerApplicationService managerApplicationService
 
   static triggers = {
-    cron name:'fixedCommission', cronExpression: Holders.config.jobs.fixedCommission
+    cron name:'fixedCommission', cronExpression: Holders.config.fixedCommission
   }
 
   def group = "ModulusUno"
