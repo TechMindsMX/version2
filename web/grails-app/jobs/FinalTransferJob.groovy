@@ -7,7 +7,7 @@ class FinalTransferJob {
   ManagerApplicationService managerApplicationService
 
   static triggers = {
-    cron name:'finalTransfer', cronExpression: Holders.config.finalTransfer
+    cron name:'finalTransfer', cronExpression: Holders.config.jobs.finalTransfer
   }
 
   def group = "ModulusUno"
