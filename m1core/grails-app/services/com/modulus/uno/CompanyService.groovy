@@ -297,4 +297,16 @@ class CompanyService {
     }
     list
   }
+
+  List<Company> getAllCompaniesAcceptedWithFixedCommissionDefined() {
+    def c = Company.createCriteria()
+    def list = c.list {
+      eq("status", CompanyStatus.ACCEPTED)
+      commissions {
+        eq("type", CommissionType.FIJA)
+      }
+    }
+    list
+  }
+
 }
