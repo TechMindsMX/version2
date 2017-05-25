@@ -69,7 +69,6 @@ class StpService {
   }
 
   private Map resultResponse(def root) {
-    log.info "Obtaining result"
     def result = root.'**'.find {
          it.name()=='resultado'
     }
@@ -81,7 +80,6 @@ class StpService {
   }
 
   private List obtainTransactionsFromResponse(def root) {
-    log.info "Obtaining transactions"
     def movimientos = root.'**'.findAll{
       it.name()=='movimiento'
     }
@@ -105,7 +103,6 @@ class StpService {
   }
 
   private Map obtainBalanceFromResponse(def root) {
-    log.info "Obtaining balance"
     def cuentaWS = root.'**'.find { it.name()=='cuentaWS' }
     def saldo = cuentaWS.saldo
 
