@@ -150,7 +150,9 @@ class ManagerApplicationService {
     String result = "OK"
     List<Company> companies = companyService.getAllCompaniesAcceptedWithFixedCommissionDefined()
     companies.each { company ->
-      commissionTransactionService.applyFixedCommissionToCompany(company)
+      if (!commissionTransactionService.companyHasFixedCommissionAppliedInCurrentMonth(company)) {
+        commissionTransactionService.applyFixedCommissionToCompany(company)
+      }
     }
     result
   }
