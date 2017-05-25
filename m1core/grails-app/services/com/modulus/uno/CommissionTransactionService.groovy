@@ -7,6 +7,7 @@ import java.math.RoundingMode
 class CommissionTransactionService {
 
   def grailsApplication
+  CollaboratorService collaboratorService
 
   def saveCommissionTransaction (FeeCommand feeCommand) {
     CommissionTransaction commissionTransaction = feeCommand.createCommissionTransaction()
@@ -99,6 +100,12 @@ class CommissionTransactionService {
     }
 
     new FeeCommand(companyId:company.id, amount: commission.fee.setScale(2, RoundingMode.HALF_UP), type:commission.type)
+  }
+
+  Boolean companyHasFixedCommissionAppliedInCurrentMonth(Company company) {
+    Period period = collaboratorService.getCurrentMonthPeriod()
+    CommissionTransaction exists = CommissionTransaction.findByTypeAndCompanyAndDateCreatedBetween(CommissionType.FIJA, company, period.init, period.end)
+    exists ? true : false
   }
 
 }
