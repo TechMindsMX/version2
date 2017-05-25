@@ -85,6 +85,7 @@ class CommissionTransactionService {
   }
 
   CommissionTransaction applyFixedCommissionToCompany(Company company) {
+    log.info "Applying fixed commission to company ${company}"
     FeeCommand feeCommand = createFeeCommandForFixedCommissionOfCompany(company)
     def commission = saveCommissionTransaction(feeCommand)
     commission
