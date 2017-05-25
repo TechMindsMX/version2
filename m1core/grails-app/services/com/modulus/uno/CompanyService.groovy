@@ -260,7 +260,6 @@ class CompanyService {
     Period period = collaboratorService.getTodayPeriod()
     period.init = period.init - 1
     period.end = period.end - 1
-    log.info "Period defined: ${period.dump()}"
     Map transactions = stpService.getTransactionsForCompanyInPeriod(company, period)
     applyOperationsCloseTransaction(company, transactions)
   }
@@ -273,7 +272,7 @@ class CompanyService {
     String tracingFinal = "${dateTransaction}${company.accounts.first().aliasStp}"
     Map movFinal = transactions.transactions.find { it.tracing.contains(tracingFinal) }
     if (movFinal) {
-      log.info "Registrar la transacción de traspaso final en el estado de cuenta de la empresa ${company} correspondiente al día ${dateTransaction}"
+      log.info "Recording final transfer for ${company} of the ${dateTransaction}"
       transactionService.createFinalTransferTransaction(movFinal)
     } else {
       status = "NOT FOUND"
