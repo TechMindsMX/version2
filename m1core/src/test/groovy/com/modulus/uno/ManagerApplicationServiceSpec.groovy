@@ -191,6 +191,7 @@ class ManagerApplicationServiceSpec extends Specification {
       String result = service.applyFixedCommissionForAllCompanies()
     then:
       result == "OK"
+      2 * commissionTransactionService.applyFixedCommissionToCompany(_)
   }
 
 }
