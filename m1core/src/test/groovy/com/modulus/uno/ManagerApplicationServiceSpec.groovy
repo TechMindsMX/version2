@@ -174,16 +174,9 @@ class ManagerApplicationServiceSpec extends Specification {
   }
 
   void "Should apply Fixed commission For All Companies"() {
-    given:"The fixed commission"
-      Commission commission1 = new Commission(fee:new BigDecimal(1000), type:CommissionType.FIJA).save(validate:false)
-      Commission commission2 = new Commission(fee:new BigDecimal(1000), type:CommissionType.FIJA).save(validate:false)
-    and:"The companies"
+    given:"The companies"
       Company one = new Company().save(validate:false)
-      one.addToCommissions(commission1)
-      one.save(validate:false)
       Company two = new Company().save(validate:false)
-      two.addToCommissions(commission2)
-      two.save(validate:false)
       List<Company> companies = [one, two]
     and:""
       companyService.getAllCompaniesAcceptedWithFixedCommissionDefined() >> companies
