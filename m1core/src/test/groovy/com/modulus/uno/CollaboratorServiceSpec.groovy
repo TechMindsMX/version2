@@ -24,32 +24,35 @@ class CollaboratorServiceSpec extends Specification {
 
   void "Should get last day of the current month"(){
     given:
-      def fin = Calendar.instance
-
-      Boolean leapYear = false
-      if ((fin[YEAR]%4==0) && ((fin[YEAR]%100!=0) || (fin[YEAR]%400==0)))
-        leapYear = true
-
-      switch (fin[MONTH]) {
-        case [APRIL,JUNE,SEPTEMBER,NOVEMBER]:
-          fin.set(date:30)
-          break
-        case FEBRUARY:
-          if (leapYear)
-           fin.set(date:29)
-          else
-            fin.set(date:28)
-          break
-        default:
-          fin.set(date:31)
-          break
-      }
-
-      String expectDate = new SimpleDateFormat("dd-MM-yyyy").format(fin.time)
+      String expectDate = new SimpleDateFormat("dd-MM-yyyy").format(endCurrentMonth().time)
     when:
       String endDate = service.getEndDateCurrentMonth()
     then:
       expectDate == endDate
+  }
+
+  private Calendar endCurrentMonth() {
+    def fin = Calendar.instance
+
+    Boolean leapYear = false
+    if ((fin[YEAR]%4==0) && ((fin[YEAR]%100!=0) || (fin[YEAR]%400==0)))
+      leapYear = true
+
+      switch (fin[MONTH]) {
+        case [APRIL,JUNE,SEPTEMBER,NOVEMBER]:
+        fin.set(date:30)
+        break
+        case FEBRUARY:
+        if (leapYear)
+          fin.set(date:29)
+        else
+          fin.set(date:28)
+          break
+        default:
+        fin.set(date:31)
+        break
+      }
+    fin
   }
 
   @Unroll
@@ -76,4 +79,14 @@ class CollaboratorServiceSpec extends Specification {
       sdfTime.format(period.end) == "23:59:59"
       sdfDay.format(period.init) == sdfDay.format(period.end)
   }
+
+  void "should get current month period"() {
+    when:
+      Period period = service.getCurrentMonthPeriod()
+    then:
+      period.init.format("MM-yyyy") == period.end.format("MM-yyyy")
+      period.init.format("dd") == "01"
+      period.end.format("dd") == endCurrentMonth().time.format("dd")
+  }
+
 }
