@@ -147,6 +147,7 @@ class ManagerApplicationService {
   }
 
   String applyFixedCommissionForAllCompanies() {
+    log.info "Executing job for apply fixed commission to companies"
     String result = "OK"
     List<Company> companies = companyService.getAllCompaniesAcceptedWithFixedCommissionDefined()
     companies.each { company ->
