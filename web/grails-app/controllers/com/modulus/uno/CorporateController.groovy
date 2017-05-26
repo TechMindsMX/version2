@@ -13,6 +13,7 @@ class CorporateController {
   def recoveryService
   CommissionTransactionService commissionTransactionService
   CommissionsInvoiceService commissionsInvoiceService
+  CollaboratorService collaboratorService
 
   def create(){
     respond new Corporate()
@@ -164,16 +165,17 @@ class CorporateController {
   }
 
   def commissions(Corporate corporate) {
+    Period period = collaboratorService.getCurrentMonthPeriod()
     List companies = corporate.companies.sort{it.bussinessName}
-    List totalPendingCommissions = getTotalPendingCommissionsForCorporate(corporate)
+    List totalPendingCommissions = getTotalPendingCommissionsForCorporate(corporate, period)
     List totalInvoicedCommissions = getTotalInvoicedCommissionsForCorporate(corporate)
     [corporate:corporate, companies:companies, totalPendingCommissions:totalPendingCommissions, totalInvoicedCommissions:totalInvoicedCommissions]
   }
 
-  private List getTotalPendingCommissionsForCorporate(Corporate corporate) {
+  private List getTotalPendingCommissionsForCorporate(Corporate corporate, Period period) {
     List totalPendingCommissions = []
     corporate.companies.each {
-      totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it) ?: 0]
+      totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it, period) ?: 0]
     }
     totalPendingCommissions
   }
