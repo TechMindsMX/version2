@@ -37,8 +37,10 @@ class CommissionTransactionServiceSpec extends Specification {
       company.addToCommissions(commission1)
       company.addToCommissions(commission2)
       company.save(validate:false)
+    and:"The period"
+      Period period = new Period(init:new Date().parse("dd-MM-yyyy","01-05-2017"), end:new Date().parse("dd-MM-yyyy", "31-05-2017"))
     when:
-      def balance = service.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+      def balance = service.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     then:
       balance.size() == company.commissions.size()
   }
