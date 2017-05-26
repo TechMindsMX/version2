@@ -9,6 +9,7 @@ class CommissionController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def commissionTransactionService
+  CollaboratorService collaboratorService
 
   def index(Integer max) {
     params.max = Math.min(max ?: 10, 100)
@@ -127,7 +128,8 @@ class CommissionController {
 
   def listPendingCommissions(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
-    List commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+    Period period = collaboratorService.getCurrentMonthPeriod()
+    List commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
   }
 
