@@ -322,7 +322,7 @@ and:
     then:
       accountStatement.balance.balance == 0
       1 * transactionService.getTransactionsAccountForPeriod(_,_,_)
-      1 * commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(_, _)
+      1 * commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(_, _, _)
   }
 
   @Unroll
