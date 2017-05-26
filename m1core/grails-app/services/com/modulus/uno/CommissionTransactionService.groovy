@@ -42,13 +42,13 @@ class CommissionTransactionService {
     total
   }
 
-  BigDecimal getTotalCommissionsPendingForCompany(Company company) {
-    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+  BigDecimal getTotalCommissionsPendingForCompany(Company company, Period period) {
+    List balances = getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     balances.balance.sum()
   }
 
-  BigDecimal getTotalInvoicedCommissionsForCompany(Company company) {
-    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.INVOICED)
+  BigDecimal getTotalInvoicedCommissionsForCompany(Company company, Period period) {
+    List balances = getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.INVOICED, period)
     balances.balance.sum()
   }
 
