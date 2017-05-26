@@ -128,9 +128,17 @@ class CommissionController {
 
   def listPendingCommissions(Company company) {
     Corporate corporate = Corporate.get(params.corporateId)
-    Period period = collaboratorService.getCurrentMonthPeriod()
+    Period period = definePeriod(params.startDate, params.endDate)
     List commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
-    [corporate:corporate, company:company, commissionsBalance:commissionsBalance]
+    [corporate:corporate, company:company, commissionsBalance:commissionsBalance, period:period]
+  }
+
+  private Period definePeriod(Date start, Date end) {
+    if (start && end) {
+      new Period(init:start, end:end)
+    } else {
+      collaboratorService.getCurrentMonthPeriod()
+    }
   }
 
   def charge(Company company) {
