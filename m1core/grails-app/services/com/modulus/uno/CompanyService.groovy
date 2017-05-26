@@ -91,20 +91,22 @@ class CompanyService {
   }
 
   AccountStatement getAccountStatementOfCompany(Company company, String beginDate, String endDate){
+    Period period = new Period()
     if (!beginDate && !endDate) {
-      beginDate = collaboratorService.getBeginDateCurrentMonth()
-      endDate = collaboratorService.getEndDateCurrentMonth()
+      period = collaboratorService.getCurrentMonthPeriod()
     } else {
-      if (!collaboratorService.periodIsValid(beginDate, endDate)) throw new BusinessException("La fecha inicial debe ser anterior a la fecha final")
+      period.init = new Date().parse("dd-MM-yyyy", beginDate)
+      period.end = new Date().parse("dd-MM-yyyy", endDate)
+      if (!period.validate()) throw new BusinessException("El período definido no es válido")
     }
 
     AccountStatement accountStatement = new AccountStatement()
     accountStatement.company = company
     accountStatement.balance = getBalanceOfCompany(company)
-    accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(beginDate)
-    accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate)
+    accountStatement.startDate = period.init
+    accountStatement.endDate = period.end
     accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
-    accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+    accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     accountStatement
   }
 
