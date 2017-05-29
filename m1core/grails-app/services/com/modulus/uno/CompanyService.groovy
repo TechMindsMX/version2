@@ -281,4 +281,20 @@ class CompanyService {
     }
     status
   }
+
+  List<Company> getAllCompaniesAcceptedAndWithAliasStp() {
+    def c = Company.createCriteria()
+    def list = c.list {
+      eq("status", CompanyStatus.ACCEPTED)
+      accounts {
+        and {
+          isNotNull("aliasStp")
+          ne("aliasStp", "")
+          isNotNull("stpClabe")
+          ne("stpClabe", "")
+        }
+      }
+    }
+    list
+  }
 }
