@@ -271,7 +271,7 @@ class CompanyService {
     String status = "OK"
     String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(transactions.period.init)
     String tracingFinal = "${dateTransaction}${company.accounts.first().aliasStp}"
-    Map movFinal = transactions.transactions.find { it.tracing == tracingFinal }
+    Map movFinal = transactions.transactions.find { it.tracing.contains(tracingFinal) }
     if (movFinal) {
       log.info "Registrar la transacción de traspaso final en el estado de cuenta de la empresa ${company} correspondiente al día ${dateTransaction}"
       transactionService.createFinalTransferTransaction(movFinal)
