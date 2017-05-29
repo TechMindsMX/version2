@@ -259,6 +259,13 @@ class SaleOrderService {
     salesOrderConciliated.amountPayed.sum()
   }
 
+  SaleOrder createCommissionsInvoiceForCompanyAndPeriod(Company company, Period period) {
+    SaleOrder saleOrder = createCommissionsSaleOrder(company, period)
+    List balances = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
+    createItemsForCommissionsSaleOrder(saleOrder, balances)
+    //updateCommissionTransactionsOfInvoice(commissionsInvoice)
+    commissionsInvoice
+  }
 
 
 }
