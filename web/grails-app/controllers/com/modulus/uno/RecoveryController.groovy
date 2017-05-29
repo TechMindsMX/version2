@@ -1,10 +1,11 @@
 package com.modulus.uno
 
 import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
 
 class RecoveryController {
 
-  static allowedMethods = [actionPassword:"POST"]
+  static allowedMethods = [actionPassword:"POST", save:"POST", update:"POST", activeAccountOfLegalRepresentative:"POST"]
 
   def recoveryService
 
@@ -17,6 +18,7 @@ class RecoveryController {
 
   def forgotPassword() {}
 
+  @Transactional
   def save() {
     def email = params.email
     try {
@@ -31,7 +33,9 @@ class RecoveryController {
     redirect controller:'login', action:'auth'
   }
 
+  @Transactional
   def update(ChangePasswordCommand command) {
+    log.info "Change password for token: ${command.dump()}"
     if(command.hasErrors()) {
       respond command.errors, view:'show', id:params.id
       return
@@ -41,6 +45,7 @@ class RecoveryController {
     redirect controller:'login', action:'auth'
   }
 
+  @Transactional
   def activeAccountOfLegalRepresentative() {
     def statusToken = recoveryService.activateAccountByToken(params.token)
     if (statusToken) {
@@ -50,6 +55,7 @@ class RecoveryController {
     render view:"activePassword", model:['token':params.token]
   }
 
+  @Transactional
   def activePassword(ChangePasswordCommand command) {
     if (command.hasErrors()) {
       render view:"activePassword",model:['token':params.id,'errors':command.errors]

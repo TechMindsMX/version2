@@ -54,12 +54,14 @@ class RecoveryService {
   }
 
   def changePasswordForToken(token, password){
+    log.info "Changing password for token: ${token}"
     if(!registrationService.isValidToken(token)) throw new BusinessException(messageSource.getMessage('exception.not.valid.token', null, LCH.getLocale()))
     recoveryCollaboratorService.saveRegistrationCode(token)
 
     def user = getUserByToken(token)
     if(!user) throw new UserNotFoundException(messageSource.getMessage('exception.user.not.found', [], LCH.getLocale()))
 
+    log.info "Updating password for user: ${user.username}"
     user.password = password
     user.save()
   }
