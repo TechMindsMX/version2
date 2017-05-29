@@ -19,6 +19,7 @@ class SaleOrderController {
   def businessEntity
   def s3AssetService
   def emailSenderService
+  CollaboratorService collaboratorService
 
   def authorizeSaleOrder(SaleOrder saleOrder){
     saleOrder = saleOrderService.addAuthorizationToSaleOrder(saleOrder, springSecurityService.currentUser)
@@ -275,6 +276,16 @@ class SaleOrderController {
     SaleOrder saleOrder = SaleOrder.get(params.saleOrderId)
     Map model = [currency:saleOrder.currency]
     render model as JSON
+  }
+
+  @Transactional
+  def createCommissionsInvoice(Company company) {
+    log.info "Create commissions invoice for period: ${params.startDate} / ${params.endDate}"
+    Corporate corporate = Corporate.get(params.corporateId)
+    Period period = collaboratorService.createPeriod(params.startDate, params.endDate)
+    log.info "Period: ${period.dump()}"
+    saleOrderService.createCommissionsInvoiceForCompanyAndPeriod(company, period)
+    redirect action:"listCommissionsInvoice", id:company.id, params:[corporateId:corporate.id]
   }
 
 }
