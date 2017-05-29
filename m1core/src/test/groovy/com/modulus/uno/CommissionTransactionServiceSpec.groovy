@@ -10,9 +10,11 @@ import grails.test.mixin.Mock
 class CommissionTransactionServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
+  CollaboratorService collaboratorService = Mock(CollaboratorService)
 
   def setup(){
     service.grailsApplication = grailsApplication
+    service.collaboratorService = collaboratorService
   }
 
   void "Should save a commission transaction"() {
@@ -116,6 +118,25 @@ class CommissionTransactionServiceSpec extends Specification {
       def transaction = service.applyFixedCommissionToCompany(company)
     then:
       thrown BusinessException
+  }
+
+  @Unroll
+  void "Should return #expect when company has fixed commission transaction = #transactionFound"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The current month period"
+      Period period = new Period(init:new Date().parse("dd-MM-yyyy", "01-04-2017"), end:new Date().parse("dd-MM-yyyy", "30-04-2017"))
+      collaboratorService.getCurrentMonthPeriod() >> period
+    and:"Fixed Commission Transaction"
+      CommissionTransaction.metaClass.static.findByTypeAndCompanyAndDateCreatedBetween = {type,comp,init,end -> transactionFound }
+    when:
+      Boolean result = service.companyHasFixedCommissionAppliedInCurrentMonth(company)
+    then:
+      result == expect
+    where:
+      transactionFound                                  ||  expect
+      new CommissionTransaction().save(validate:false)  ||  true
+      null                                              ||  false
   }
 
 }

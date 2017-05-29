@@ -71,4 +71,12 @@ class CollaboratorService {
     period.end = cal.time
     period
   }
+
+  Period getCurrentMonthPeriod() {
+    new Period(
+      init:new Date().parse("dd-MM-yyyy", getBeginDateCurrentMonth()),
+      end:new Date().parse("dd-MM-yyyy", getEndDateCurrentMonth())
+    )
+  }
+
 }
