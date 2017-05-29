@@ -18,13 +18,16 @@
       <div class="row">
         <div class="col-md-12 col-lg-12">
           <g:if test="${!companies.isEmpty()}">
+          <div>
+            <span><h4><font color="red">* Totales del mes actual</font></h4></span>
+          </div>
           <div class="table-responsive">
             <table class="table">
               <thead>
               <tr>
                 <th>Nombre</th>
                 <th>RFC</th>
-                <th>Por facturar</th>
+                <th>Por facturar*</th>
                 <th>Facturado</th>
                 <th></th>
                 <th></th>
