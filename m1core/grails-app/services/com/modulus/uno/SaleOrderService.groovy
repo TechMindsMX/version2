@@ -267,5 +267,19 @@ class SaleOrderService {
     commissionsInvoice
   }
 
-
+  private SaleOrder createCommissionsSaleOrder(Company company, Period period) {
+    Company emitter = Company.findByRfc(grailsApplication.config.m1emitter.rfc)
+    Address addressEmitter = emitter.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
+    SaleOrder saleOrder = new SaleOrder(
+      rfc:company.rfc,
+      clientName:company.bussinessName,
+      fechaCobro:new Date(),
+      note:"Comisiones del ${period.init.format('dd-MM-yyyy')} al ${period.end.format('dd-MM-yyyy')}",
+      currency:"MXN",
+      company:emitter
+    )
+    saleOrder.addToAddresses(addressEmitter)
+    saleOrder.save()
+    saleOrder
+  }
 }
