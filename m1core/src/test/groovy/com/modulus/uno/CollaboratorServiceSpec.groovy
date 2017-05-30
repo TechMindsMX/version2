@@ -65,4 +65,15 @@ class CollaboratorServiceSpec extends Specification {
     "01-01-16"  | "01-01-16"  | true
   }
 
+  void "should get today period"() {
+    given:"A format"
+      SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss")
+      SimpleDateFormat sdfDay = new SimpleDateFormat("dd-MM-yyyy")
+    when:
+      Period period = service.getTodayPeriod()
+    then:
+      sdfTime.format(period.init) == "00:00:00"
+      sdfTime.format(period.end) == "23:59:59"
+      sdfDay.format(period.init) == sdfDay.format(period.end)
+  }
 }

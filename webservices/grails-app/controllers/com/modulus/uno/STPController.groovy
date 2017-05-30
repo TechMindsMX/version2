@@ -10,6 +10,7 @@ class STPController {
 
   StpDepositService stpDepositService
   StpService stpService
+  CompanyService companyService
 
   static allowedMethods = [stpDepositNotification:"POST", stpDepositNotificationJson:"POST", stpConciliationCompany:"POST"]
 
@@ -60,7 +61,8 @@ class STPController {
       log.info "Get conciliation for company"
       Company company = Company.get(stpConciliationSwagger.company)
       Period period = new Period(init:Date.parse("yyyy-MM-dd HH:mm:ss", stpConciliationSwagger.initDate), end:Date.parse("yyyy-MM-dd HH:mm:ss", stpConciliationSwagger.endDate))
-      def result = stpService.getTransactionsForCompanyInPeriod(company, period)
+      String status = companyService.executeOperationsCloseForCompany(company)
+      Map result = [status:status]
       respond result, status: 201, formats: ['json']
     }catch (Exception ex) {
       response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
