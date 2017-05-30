@@ -15,9 +15,39 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-6 col-lg-offset-3">
+      <div class="col-lg-8 col-lg-offset-2">
         <div class="portlet portlet-blue">
           <div class="portlet-heading">
+            <div class="table-responsive">
+              <g:form action="listPendingCommissions" id="${company.id}" params="[corporateId:corporate.id]">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Desde:</th>
+                    <th>Hasta:</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center">
+                      <g:datePicker id="startDate" name="startDate" value="${period.init}" precision="day" years="${2016..new Date()[Calendar.YEAR]}" required=""/>
+                    </td>
+                    <td class="text-center">
+                      <g:datePicker id="endDate" name="endDate" value="${period.end}" precision="day" years="${2016..new Date()[Calendar.YEAR]}" required=""/>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td></td>
+                    <td class="text-right">
+                      <button class="btn btn-default">Consultar</button>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+              </g:form>
+            </div>
           </div>
           <div id="bluePortlet" class="panel-collapse collapse in">
             <div class="portlet-body">

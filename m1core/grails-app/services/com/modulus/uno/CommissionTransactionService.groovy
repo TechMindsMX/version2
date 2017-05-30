@@ -15,11 +15,11 @@ class CommissionTransactionService {
     commissionTransaction
   }
 
-  def getCommissionsBalanceForCompanyAndStatus(Company company, CommissionTransactionStatus status) {
+  def getCommissionsBalanceInPeriodForCompanyAndStatus(Company company, CommissionTransactionStatus status, Period period) {
     List balances = []
     BigDecimal iva = new BigDecimal(grailsApplication.config.iva)
     company.commissions.sort{it.type}.each {
-      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceForTypeAndCompanyAndStatus(it.type, company, status) ?: 0]
+      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceInPeriodForTypeAndCompanyAndStatus(it.type, company, status, period) ?: 0]
       balance.iva = balance.balance * (iva/100)
       balance.total = balance.balance + balance.iva
       balances.add(balance)
@@ -27,12 +27,13 @@ class CommissionTransactionService {
     balances
   }
 
-  BigDecimal getCommissionsBalanceForTypeAndCompanyAndStatus(CommissionType type, Company company, CommissionTransactionStatus status) {
+  BigDecimal getCommissionsBalanceInPeriodForTypeAndCompanyAndStatus(CommissionType type, Company company, CommissionTransactionStatus status, Period period) {
     BigDecimal total = CommissionTransaction.createCriteria().get {
       and {
         eq("company", company)
         eq("type", type)
         eq("status", status)
+        between("dateCreated", period.init, period.end)
       }
       projections {
         sum "amount"
@@ -41,13 +42,13 @@ class CommissionTransactionService {
     total
   }
 
-  BigDecimal getTotalCommissionsPendingForCompany(Company company) {
-    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.PENDING)
+  BigDecimal getTotalCommissionsPendingForCompany(Company company, Period period) {
+    List balances = getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     balances.balance.sum()
   }
 
-  BigDecimal getTotalInvoicedCommissionsForCompany(Company company) {
-    List balances = getCommissionsBalanceForCompanyAndStatus(company, CommissionTransactionStatus.INVOICED)
+  BigDecimal getTotalInvoicedCommissionsForCompany(Company company, Period period) {
+    List balances = getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.INVOICED, period)
     balances.balance.sum()
   }
 
