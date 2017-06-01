@@ -284,8 +284,8 @@ class SaleOrderController {
     Corporate corporate = Corporate.get(params.corporateId)
     Period period = collaboratorService.createPeriod(params.startDate, params.endDate)
     log.info "Period: ${period.dump()}"
-    saleOrderService.createCommissionsInvoiceForCompanyAndPeriod(company, period)
-    redirect action:"listCommissionsInvoice", id:company.id, params:[corporateId:corporate.id]
+    SaleOrder saleOrder = saleOrderService.createCommissionsInvoiceForCompanyAndPeriod(company, period)
+    redirect controller:"corporate", action:"commissions", id:corporate.id
   }
 
 }
