@@ -259,6 +259,48 @@ class SaleOrderService {
     salesOrderConciliated.amountPayed.sum()
   }
 
+  SaleOrder createCommissionsInvoiceForCompanyAndPeriod(Company company, Period period) {
+    SaleOrder saleOrder = createCommissionsSaleOrder(company, period)
+    List balances = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
+    saleOrder = createItemsForCommissionsSaleOrder(saleOrder, balances)
+    //TODO: updateCommissionTransactionsOfInvoice(commissionsInvoice)
+    //TODO: send mails to authorizers for emitter company
+    saleOrder
+  }
 
+  SaleOrder createCommissionsSaleOrder(Company company, Period period) {
+    Company emitter = Company.findByRfc(grailsApplication.config.m1emitter.rfc)
+    Address addressEmitter = emitter.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
+    SaleOrder saleOrder = new SaleOrder(
+      rfc:company.rfc,
+      clientName:company.bussinessName,
+      fechaCobro:new Date(),
+      note:"Comisiones del ${period.init.format('dd-MM-yyyy')} al ${period.end.format('dd-MM-yyyy')}",
+      currency:"MXN",
+      company:emitter,
+      status:SaleOrderStatus.POR_AUTORIZAR
+    )
+    saleOrder.addToAddresses(addressEmitter)
+    saleOrder.save()
+    saleOrder
+  }
 
+  SaleOrder createItemsForCommissionsSaleOrder(saleOrder, balances) {
+    balances.each { balance ->
+      if (balance.balance) {
+      SaleOrderItem item = new SaleOrderItem(
+        sku:"COM0",
+        name:balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}",
+        quantity:new BigDecimal(1),
+        price:balance.balance,
+        iva:new BigDecimal(grailsApplication.config.iva),
+        unitType:"SERVICIO",
+        saleOrder:saleOrder
+      ).save()
+      saleOrder.addToItems(item)
+      }
+    }
+    saleOrder.save()
+    saleOrder
+  }
 }
