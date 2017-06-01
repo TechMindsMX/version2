@@ -79,4 +79,8 @@ class CollaboratorService {
     )
   }
 
+  Period createPeriod(String init, String end) {
+    new Period(init:new Date().parse("dd-MM-yyyy", init), end:new Date().parse("dd-MM-yyyy", end))
+  }
+
 }

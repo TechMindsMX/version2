@@ -86,7 +86,7 @@
                       <td></td>
                       <td class="text-right">
                         <g:if test="${commissionsBalance*.balance.sum()}">
-                        <g:link class="btn btn-success" controller="commissionsInvoice" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">Facturar</g:link>
+                        <g:link class="btn btn-success" controller="saleOrder" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id, startDate:period.init.format('dd-MM-yyyy'), endDate:period.end.format('dd-MM-yyyy')]">Facturar</g:link>
                         </g:if>
                       </td>
                     </tr>
