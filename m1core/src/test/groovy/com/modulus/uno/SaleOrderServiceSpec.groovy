@@ -243,6 +243,7 @@ class SaleOrderServiceSpec extends Specification {
       sale
       sale.rfc == client.rfc
       sale.company.rfc == emitter.rfc
+      sale.status == SaleOrderStatus.POR_AUTORIZAR
   }
 
   void "Should create the items for commissions sale order"() {
@@ -258,6 +259,7 @@ class SaleOrderServiceSpec extends Specification {
       saleOrder = service.createItemsForCommissionsSaleOrder(saleOrder, balances)
     then:
       saleOrder.items.size() > 0
+      saleOrder.subtotal == 1110.00
   }
 
 }
