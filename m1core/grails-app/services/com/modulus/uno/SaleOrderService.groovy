@@ -263,8 +263,9 @@ class SaleOrderService {
     SaleOrder saleOrder = createCommissionsSaleOrder(company, period)
     List balances = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     saleOrder = createItemsForCommissionsSaleOrder(saleOrder, balances)
-    //updateCommissionTransactionsOfInvoice(commissionsInvoice)
-    commissionsInvoice
+    //TODO: updateCommissionTransactionsOfInvoice(commissionsInvoice)
+    //TODO: send mails to authorizers for emitter company
+    saleOrder
   }
 
   SaleOrder createCommissionsSaleOrder(Company company, Period period) {
@@ -276,7 +277,8 @@ class SaleOrderService {
       fechaCobro:new Date(),
       note:"Comisiones del ${period.init.format('dd-MM-yyyy')} al ${period.end.format('dd-MM-yyyy')}",
       currency:"MXN",
-      company:emitter
+      company:emitter,
+      status:SaleOrderStatus.POR_AUTORIZAR
     )
     saleOrder.addToAddresses(addressEmitter)
     saleOrder.save()
@@ -285,6 +287,7 @@ class SaleOrderService {
 
   SaleOrder createItemsForCommissionsSaleOrder(saleOrder, balances) {
     balances.each { balance ->
+      if (balance.balance) {
       SaleOrderItem item = new SaleOrderItem(
         sku:"COM0",
         name:balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}",
@@ -295,6 +298,7 @@ class SaleOrderService {
         saleOrder:saleOrder
       ).save()
       saleOrder.addToItems(item)
+      }
     }
     saleOrder.save()
     saleOrder
