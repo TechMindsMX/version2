@@ -6,7 +6,7 @@ class MaintainConnectionJob {
   def maintainConnectionService
 
   static triggers = {
-    cron name:'maintainingConnection', cronExpression: '0 5,10,15,20,25,30,35 0-23 ? JAN-DEC SUN-SAT'
+    cron name:'maintainingConnection', cronExpression: '0 0 0-23 ? JAN-DEC SUN-SAT'
   }
 
   def group = "ModulusUno"
