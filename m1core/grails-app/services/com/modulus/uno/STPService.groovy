@@ -32,6 +32,7 @@ class StpService {
   }
 
   def getTransactionsForCompanyInPeriod(Company company, Period period) {
+    log.info "Request conciliation service stp for company ${company}"
     Map data = createDataMapForConciliation(company, period)
     String xmlSignedConciliation = generateXMLService.xmlSignedConciliationRequest(data)
     def result = requestSOAPService.doRequest(grailsApplication.config.stp.urls.payOrder){
@@ -53,19 +54,23 @@ class StpService {
   }
 
   private Map processResponseConciliationService(def response) {
+    log.info "Processing response from conciliation stp"
     String str = new String(response.httpResponse.data, "UTF-8").trim().replace("\n", "")
     def ns = new groovy.xml.Namespace("http://h2h.integration.spei.enlacefi.lgec.com/", 'ns')
     def root = new XmlParser().parseText(str)
 
+    Map result = [balance:[:], transactions:[]]
     Map resultResponse = resultResponse(root)
     if (resultResponse.code != 0) {
       log.error "Error consultando conciliacionServiceFirma: ${resultResponse.code} - ${resultResponse.description}"
-      throw new RestException(resultResponse.description)
+    } else {
+      log.info "Result is OK, obtaining balance and transactions"
+      List transactions = obtainTransactionsFromResponse(root)
+      Map balance = obtainBalanceFromResponse(root)
+      result.balance = balance
+      result.transactions = transactions
     }
-
-    List transactions = obtainTransactionsFromResponse(root)
-    Map balance = obtainBalanceFromResponse(root)
-    Map result = [balance:balance, transactions:transactions]
+    result
   }
 
   private Map resultResponse(def root) {
