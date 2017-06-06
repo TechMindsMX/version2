@@ -259,6 +259,7 @@ class CompanyService {
   }
 
   String executeOperationsCloseForCompany(Company company) {
+    log.info "Init operations close for company ${company}"
     Period period = collaboratorService.getTodayPeriod()
     period.init = period.init - 1
     period.end = period.end - 1
