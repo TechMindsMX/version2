@@ -11,6 +11,12 @@ import static java.util.Calendar.*
 @TestFor(CollaboratorService)
 class CollaboratorServiceSpec extends Specification {
 
+  def setup() {
+    grailsApplication.config.stp.finalTransfer.hour = "17"
+    grailsApplication.config.stp.finalTransfer.minute = "35"
+    grailsApplication.config.stp.finalTransfer.second = "0"
+  }
+
   void "Should get first day of the current month"(){
     given:
       def ini = Calendar.instance
@@ -73,10 +79,10 @@ class CollaboratorServiceSpec extends Specification {
       SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss")
       SimpleDateFormat sdfDay = new SimpleDateFormat("dd-MM-yyyy")
     when:
-      Period period = service.getTodayPeriod()
+      Period period = service.getPeriodForConciliationStp()
     then:
       sdfTime.format(period.init) == "00:00:00"
-      sdfTime.format(period.end) == "23:59:59"
+      sdfTime.format(period.end) == "17:35:00"
       sdfDay.format(period.init) == sdfDay.format(period.end)
   }
 
