@@ -263,7 +263,7 @@ class SaleOrderService {
     SaleOrder saleOrder = createCommissionsSaleOrder(company, period)
     List balances = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     saleOrder = createItemsForCommissionsSaleOrder(saleOrder, balances)
-    //TODO: updateCommissionTransactionsOfInvoice(commissionsInvoice)
+    commissionTransactionService.linkCommissionTransactionsForCompanyInPeriodWithSaleOrder(company, period, saleOrder)
     //TODO: send mails to authorizers for emitter company
     saleOrder
   }

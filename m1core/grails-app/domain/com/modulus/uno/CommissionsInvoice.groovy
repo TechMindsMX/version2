@@ -8,7 +8,7 @@ class CommissionsInvoice {
   CommissionsInvoiceStatus status = CommissionsInvoiceStatus.CREATED
   String folioSat
 
-  static hasMany = [commissions:CommissionTransaction, payments:CommissionsInvoicePayment]
+  static hasMany = [payments:CommissionsInvoicePayment]
 
   Date dateCreated
   Date lastUpdated

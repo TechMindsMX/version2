@@ -110,5 +110,24 @@ class CommissionTransactionService {
     exists ? true : false
   }
 
+  void linkCommissionTransactionsForCompanyInPeriodWithSaleOrder(Company company, Period period, SaleOrder saleOrder) {
+    List<CommissionTransaction> transactions = listCommissionTransactionForCompanyInPeriodAndStatus(company, period, CommissionTransactionStatus.PENDING)
+    transactions.each { transaction ->
+      transaction.status = CommissionTransactionStatus.INVOICED
+      transaction.invoice = saleOrder
+      transaction.save()
+    }
+  }
+
+  List<CommissionTransaction> listCommissionTransactionForCompanyInPeriodAndStatus(Company company, Period period, CommissionTransactionStatus status) {
+    def list = CommissionTransaction.createCriteria().list {
+      and {
+        eq("company", company)
+        eq("status", status)
+        between("dateCreated", period.init, period.end)
+      }
+    }
+  }
+
 }
 
