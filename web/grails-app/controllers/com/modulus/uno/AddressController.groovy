@@ -33,7 +33,11 @@ class AddressController {
   @Transactional
   def save(Address address) {
     if (address.hasErrors()) {
-      respond address.errors, view:'create', model:[company:session.company]
+      BusinessEntity businessEntity = BusinessEntity.findById(params.businessEntityId)
+      def addressTypes = addressService.getAddresTypesForOrganization(session.company.toLong())
+      if (businessEntity)
+        addressTypes = addressService.getAddressTypesForBusinessEntity(businessEntity)
+      respond address.errors, view:'create', model:[businessEntity:businessEntity, addressTypes:addressTypes]
       return
     }
     def domain = addressService.createAddressForAObject(address, params.long('businessEntityId'), session.company.toLong())
@@ -60,7 +64,13 @@ class AddressController {
 
     if (address.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      respond address.errors, view:'edit'
+      BusinessEntity  businessEntity = BusinessEntity.findById(params.businessEntityId)
+      //TODO: checar otra solución para recargar el businessEntity
+      String businessName = "${businessEntity}"
+      def addressTypes = addressService.getAddressTypesForEditCompanyAddress(address, session.company)
+      if (businessEntity)
+        addressTypes = addressService.getAddressTypesForEditBusinessEntityAddress(address, businessEntity)
+      respond address.errors, view:'edit', model:[addressTypes:addressTypes, relation:params.relation, businessEntity:businessEntity]
       return
     }
 
