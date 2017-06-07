@@ -23,3 +23,4 @@
 <input type="hidden" value="${businessEntity?.id}" name="businessEntityId" />
 <input type="hidden" value="${grailsApplication.config.sepomex.url}" id="sepomexUrl"/>
 <input type="hidden" value="${address.colony}" id="currentColony"/>
+<input type="hidden" value="${relation}" name="relation"/>
