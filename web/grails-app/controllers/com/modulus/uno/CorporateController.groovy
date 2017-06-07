@@ -85,9 +85,8 @@ class CorporateController {
   def addUser(Corporate corporate){
     if(!corporate)
       return response.sendError(404)
-
-    render view:"newUser",model:[user:new UserCommand(),
-                                 corporateId:corporate.id]
+    String conditionsAndTerms = managerApplicationService.getConditionsAndTerms()
+    render view:"newUser",model:[user:new UserCommand(), corporateId:corporate.id, conditionsAndTerms:conditionsAndTerms]
   }
 
   def saveUser(UserCommand userCommand){
