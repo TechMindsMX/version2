@@ -8,17 +8,11 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-plus-circle fa-3x"></i>
-        Agregar Usuario
+        Usuarios
         <small>
           <g:message code="corporate.user.new" />
         </small>
       </h1>
-      <ol class="breadcrumb">
-        <li>
-          <i class="fa fa-caret-square-o-up"></i>
-          Usuario
-        </li>
-      </ol>
     </div>
     <!--END OF PAGE TITLE -->
 
