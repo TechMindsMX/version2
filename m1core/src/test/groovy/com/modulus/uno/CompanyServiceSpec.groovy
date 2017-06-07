@@ -503,11 +503,11 @@ and:
     and:"The period"
       Period period = new Period(
         init:new Date().parse("dd-MM-yyyy HH:mm:ss", "13-05-2017 00:00:00"),
-        end:new Date().parse("dd-MM-yyyy HH:mm:ss", "13-05-2017 23:59:59")
+        end:new Date().parse("dd-MM-yyyy HH:mm:ss", "13-05-2017 17:35:00")
         )
-      collaboratorService.getTodayPeriod() >> period
+      collaboratorService.getPeriodForConciliationStp() >> period
     and:"The transactions from stp"
-      String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(new Date().parse("dd-MM-yyyy", "12-05-2017"))
+      String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(new Date().parse("dd-MM-yyyy", "13-05-2017"))
       List listMovs = [
       [id:"idmov1", credit:new BigDecimal(100), debit:new BigDecimal(0), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingCredit", reference:"referenceCredit"],
       [id:"idmov2", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingDebit", reference:"referenceDebit"],
@@ -532,11 +532,11 @@ and:
     and:"The period"
       Period period = new Period(
         init:new Date().parse("dd-MM-yyyy HH:mm:ss", "13-05-2017 00:00:00"),
-        end:new Date().parse("dd-MM-yyyy HH:mm:ss", "13-05-2017 23:59:59")
+        end:new Date().parse("dd-MM-yyyy HH:mm:ss", "13-05-2017 17:35:00")
         )
-      collaboratorService.getTodayPeriod() >> period
+      collaboratorService.getPeriodForConciliationStp() >> period
     and:"The transactions from stp"
-      String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(new Date().parse("dd-MM-yyyy", "12-05-2017"))
+      String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(new Date().parse("dd-MM-yyyy", "13-05-2017"))
       List listMovs = listTransactions
       Map transactions = [balance:[:], transactions:listMovs, period:period]
       stpService.getTransactionsForCompanyInPeriod(_, _) >> transactions
