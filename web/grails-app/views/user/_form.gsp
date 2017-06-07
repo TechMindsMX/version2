@@ -43,7 +43,28 @@
 
 <div class="checkbox" >
   <label for="terms">
-    <g:checkBox name="terms"/> Acepto términos y condiciones*
+    <g:checkBox name="terms"/>
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modalTermsAndCondition">
+          Acepto términos y condiciones*
+        </button>
+
+        <div class="modal fade" id="modalTermsAndCondition" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Términos y Condiciones</h4>
+              </div>
+              <div class="modal-body">
+                <textarea class="form-control" rows="15">${conditionsAndTerms}</textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
   </label>
 </div>
 </f:with>

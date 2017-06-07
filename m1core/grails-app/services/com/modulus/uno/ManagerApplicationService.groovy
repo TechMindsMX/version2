@@ -11,6 +11,7 @@ class ManagerApplicationService {
   def collaboratorService
   CompanyService companyService
   CommissionTransactionService commissionTransactionService
+  def grailsApplication
 
   def acceptingCompanyToIntegrate(Long companyId, String email) {
     Company company = Company.findById(companyId)
@@ -156,6 +157,14 @@ class ManagerApplicationService {
       }
     }
     result
+  }
+
+  String getConditionsAndTerms() {
+    File conditions = new File(grailsApplication.config.conditionsAndTerms)
+    String textConditions = "Términos y Condiciones"
+    if (conditions.exists())
+      textConditions = conditions.text
+    textConditions
   }
 
 }
