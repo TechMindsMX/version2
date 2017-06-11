@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Modulus UNO</title>
-    
+
     <link rel="icon" href="../../favicon.ico">
     <link href="carousel.css" rel="stylesheet">
     <asset:stylesheet src="application.css"/>
@@ -57,7 +57,7 @@
           Lleva fácilmente su control.</p>
         </div>
         <div class="col-sm-4">
-          
+
           <h2>OPERA</h2>
           <p>Realiza depósitos, retiros o pagos. Recibe cobranza, actualiza inventarios.
           Todo de una manera muy sencilla.</p>
@@ -74,15 +74,38 @@
     <div class="container">
       <div class="row">
         <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2015 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        <p>&copy; 2015 TechMinds S.A. &middot;
+
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modalPrivacyNotice">
+          Aviso de Privacidad
+        </button>
+
+        <div class="modal fade" id="modalPrivacyNotice" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Aviso de Privacidad</h4>
+              </div>
+              <div class="modal-body">
+                <textarea class="form-control" rows="15">${privacyNotice}</textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p>
+
       </div>
     </div>
   </footer>
 
-    
 
 
-      
-      
+
+
+
   </body>
 </html>
