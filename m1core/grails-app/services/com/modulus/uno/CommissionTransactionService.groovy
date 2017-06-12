@@ -19,7 +19,7 @@ class CommissionTransactionService {
     List balances = []
     BigDecimal iva = new BigDecimal(grailsApplication.config.iva)
     company.commissions.sort{it.type}.each {
-      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceInPeriodForTypeAndCompanyAndStatus(it.type, company, status, period) ?: 0]
+      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceInPeriodForTypeAndCompanyAndStatus(it.type, company, status, period) ?: 0, quantity:CommissionTransaction.countByCompanyAndTypeAndStatusAndDateCreatedBetween(company, it.type, status, period.init, period.end)]
       balance.iva = balance.balance * (iva/100)
       balance.total = balance.balance + balance.iva
       balances.add(balance)
