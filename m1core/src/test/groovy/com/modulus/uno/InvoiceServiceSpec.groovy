@@ -11,12 +11,10 @@ class InvoiceServiceSpec extends Specification {
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
 
   def restService = Mock(RestService)
-  CommissionsInvoiceService commissionsInvoiceService = Mock(CommissionsInvoiceService)
 
   def setup(){
     service.grailsApplication = grailsApplication
     service.restService = restService
-    service.commissionsInvoiceService = commissionsInvoiceService
   }
 
   void "create an invoice from sale order"(){
