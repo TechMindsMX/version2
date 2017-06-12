@@ -74,17 +74,7 @@ class StpDepositService {
     stpDeposit.status = StpDepositStatus.APLICADO
     stpDeposit.save()
 
-    if (grailsApplication.config.m1emitter.stpClabe == stpDeposit.accountBeneficiary) {
-      generatePaymentToConciliateForM1Emitter(stpDeposit)
-    } else {
-      generatePaymentToConciliateBill(m1Account, client, stpDeposit)
-    }
-  }
-
-  private def generatePaymentToConciliateForM1Emitter(StpDeposit stpDeposit) {
-    PaymentM1Emitter payment = new PaymentM1Emitter(
-      amount:stpDeposit.amount
-    ).save()
+    generatePaymentToConciliateBill(m1Account, client, stpDeposit)
   }
 
   private def generatePaymentToConciliateBill(ModulusUnoAccount m1Account, ClientLink client, StpDeposit stpDeposit) {
