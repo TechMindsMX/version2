@@ -85,7 +85,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Aviso de Privacidad</h4>
+                <label><h3>Aviso de Privacidad</h3></label>
               </div>
               <div class="modal-body">
                 <textarea class="form-control" rows="15">${privacyNotice}</textarea>
