@@ -2,5 +2,10 @@ package com.modulus.uno
 
 class HomeController {
 
-  def index() { }
+  def managerApplicationService
+
+  def index() {
+    [privacyNotice:managerApplicationService.getPrivacyNotice()]
+  }
+
 }
