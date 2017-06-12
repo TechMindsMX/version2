@@ -24,6 +24,8 @@ class SaleOrderServiceSpec extends Specification {
     service.invoiceService = invoiceService
     service.companyService = companyService
     service.commissionTransactionService = commissionTransactionService
+    grailsApplication.config.m1emitter.rfc = "AAA010101AAA"
+    grailsApplication.config.iva = "16"
   }
 
   void "should create an sale order"() {
@@ -224,36 +226,40 @@ class SaleOrderServiceSpec extends Specification {
     2000         ||  0             | SaleOrderStatus.PAGADA     | 100
   }
 
-/*  void "Should get 200 for all sale orders executed for a client in company"(){
+  void "Should create the header sale order for commissions for a company in period"() {
     given:"A company"
-      Company company = Company.get(2)
-    and:"A rfc client"
-      String rfcClient = "MDE130712JA8"
-    and: "A between time "
-      Date firstDate = new Date()
-      Date lastDate = new Date()
-    and:"the get criteria method"
-      def myCriteria = new Expando()
-      myCriteria.list = { Closure closure -> new SaleOrder()  }
-      SaleOrder.metaClass.static.createCriteria = {myCriteria }
-    when:
-      def total = service.getTotalSoldForClient(company, rfcClient, firstDate, lastDate)
+      Company client = new Company(rfc:"XYZ010101ABC", bussinessName:"TheCompany").save(validate:false)
+    and:"the period"
+      Period period = new Period(init:new Date().parse("dd-MM-yyyy", "01-05-2017"), end:new Date().parse("dd-MM-yyyy", "31-05-2017"))
+    and:""
+      Company emitter = new Company(rfc:"BBB020202BBB").save(validate:false)
+      Address address = new Address(addressType:AddressType.FISCAL).save(validate:false)
+      emitter.addToAddresses(address)
+      emitter.save(validate:false)
+      Company.metaClass.static.findByRfc = { emitter }
+    when:""
+      SaleOrder sale = service.createCommissionsSaleOrder(client, period)
     then:
-      total == 2000
-  }*/
- /* void "Should get for all sale order consiliate "(){
-     given:"A company"
-      Company company = Company.get(2)
-    and:"A rfc client"
-      String rfcClient = "MDE130712JA8"
-        and:"the get criteria method"
-      def myCriteria = new Expando()
-      myCriteria.get = { Closure closure -> 2000 }
-      SaleOrder.metaClass.static.createCriteria = {myCriteria }
-    when:
-      def total = service.getTotalSoldForClientStatusConciliated(company, rfcClient, firstDate, lastDate)
-    then:
-      total == 2000*/
+      sale
+      sale.rfc == client.rfc
+      sale.company.rfc == emitter.rfc
+      sale.status == SaleOrderStatus.POR_AUTORIZAR
+  }
 
+  void "Should create the items for commissions sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder().save(validate:false)
+    and:"the balances"
+      List balances = [
+        [typeCommission:CommissionType.FIJA, balance:new BigDecimal(1000)],
+        [typeCommission:CommissionType.PAGO, balance:new BigDecimal(100)],
+        [typeCommission:CommissionType.DEPOSITO, balance:new BigDecimal(10)]
+      ]
+    when:""
+      saleOrder = service.createItemsForCommissionsSaleOrder(saleOrder, balances)
+    then:
+      saleOrder.items.size() > 0
+      saleOrder.subtotal == 1110.00
+  }
 
 }

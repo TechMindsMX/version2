@@ -12,13 +12,6 @@ class CommissionsInvoiceController {
   def commissionsInvoiceService
   def paymentM1EmitterService
 
-  @Transactional
-  def createCommissionsInvoice(Company company) {
-    Corporate corporate = Corporate.get(params.corporateId)
-    commissionsInvoiceService.createCommissionsInvoiceForCompany(company)
-    redirect action:"listCommissionsInvoice", id:company.id, params:[corporateId:corporate.id]
-  }
-
   def listCommissionsInvoice(Company company) {
     params.max = 25
     params.sort = "dateCreated"
