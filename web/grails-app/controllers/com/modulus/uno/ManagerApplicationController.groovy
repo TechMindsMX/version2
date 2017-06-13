@@ -97,4 +97,7 @@ class ManagerApplicationController {
     [company:company,legalRepresentatives:documentsByUser, baseUrlDocuments:grailsApplication.config.grails.url.base.images]
   }
 
+  def conditionsAndTerms() {
+    [conditionsAndTerms:managerApplicationService.getConditionsAndTerms()]
+  }
 }
