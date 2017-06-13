@@ -100,4 +100,9 @@ class ManagerApplicationController {
   def conditionsAndTerms() {
     [conditionsAndTerms:managerApplicationService.getConditionsAndTerms()]
   }
+
+  def privacyNotice() {
+    [privacyNotice:managerApplicationService.getPrivacyNotice()]
+  }
+
 }
