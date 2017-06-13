@@ -227,6 +227,9 @@ class SaleOrderService {
     if (saleOrder.amountToPay <= 0) {
       saleOrder.status = SaleOrderStatus.PAGADA
       saleOrder.save()
+      if (commissionTransactionService.saleOrderIsCommissionsInvoice(saleOrder)) {
+        commissionTransactionService.conciliateTransactionsForSaleOrder(saleOrder)
+      }
     }
     saleOrder
   }
