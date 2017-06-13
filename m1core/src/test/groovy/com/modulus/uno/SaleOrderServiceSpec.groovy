@@ -200,10 +200,11 @@ class SaleOrderServiceSpec extends Specification {
     then:
       result.amountToPay == amountToPay
       result.status == status
+      callings * commissionTransactionService.saleOrderIsCommissionsInvoice(_)
     where:
-    amount    ||  amountToPay   |   status
-    20        ||  80            | SaleOrderStatus.EJECUTADA
-    100       ||  0             | SaleOrderStatus.PAGADA
+    amount  ||  amountToPay   |   status                  | callings
+    20      ||  80            | SaleOrderStatus.EJECUTADA | 0
+    100     ||  0             | SaleOrderStatus.PAGADA    | 1
   }
 
   @Unroll
