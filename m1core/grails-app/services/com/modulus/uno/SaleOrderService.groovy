@@ -273,7 +273,7 @@ class SaleOrderService {
 
   SaleOrder createCommissionsSaleOrder(Company company, Period period) {
     Company emitter = Company.findByRfc(grailsApplication.config.m1emitter.rfc)
-    Address addressEmitter = emitter.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
+    Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
     SaleOrder saleOrder = new SaleOrder(
       rfc:company.rfc,
       clientName:company.bussinessName,
@@ -283,7 +283,7 @@ class SaleOrderService {
       company:emitter,
       status:SaleOrderStatus.POR_AUTORIZAR
     )
-    saleOrder.addToAddresses(addressEmitter)
+    saleOrder.addToAddresses(address)
     saleOrder.save()
     saleOrder
   }
