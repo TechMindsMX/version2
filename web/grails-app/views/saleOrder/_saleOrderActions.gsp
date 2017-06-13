@@ -165,7 +165,8 @@
   </g:if>
 
   <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_EJECUTADA}">
-  <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder)}" class="btn btn-default">Descarga Acuse</a>
+    <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-default">Acuse XML</a>
+    <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default">Acuse PDF</a>
   </g:if>
 </g:if>
 </p>
