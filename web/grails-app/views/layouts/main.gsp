@@ -75,6 +75,11 @@
                   <i class="fa fa-file-text-o"></i> Términos y Condiciones
                 </g:link>
               </li>
+              <li>
+                <g:link controller="managerApplication" action="privacyNotice">
+                  <i class="fa fa-file-text-o"></i> Aviso de Privacidad
+                </g:link>
+              </li>
               <li class="divider"></li>
               <li>
                 <g:link controller="logout" action="index" class="logout_open">
