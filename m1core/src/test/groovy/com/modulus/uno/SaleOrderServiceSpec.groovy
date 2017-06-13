@@ -230,6 +230,9 @@ class SaleOrderServiceSpec extends Specification {
   void "Should create the header sale order for commissions for a company in period"() {
     given:"A company"
       Company client = new Company(rfc:"XYZ010101ABC", bussinessName:"TheCompany").save(validate:false)
+      Address addressCli = new Address(addressType:AddressType.FISCAL).save(validate:false)
+      client.addToAddresses(addressCli)
+      client.save(validate:false)
     and:"the period"
       Period period = new Period(init:new Date().parse("dd-MM-yyyy", "01-05-2017"), end:new Date().parse("dd-MM-yyyy", "31-05-2017"))
     and:""
@@ -266,6 +269,9 @@ class SaleOrderServiceSpec extends Specification {
   void "Should create a commissions sale order for a company and period"() {
     given:"A company"
       Company company = new Company().save(validate:false)
+      Address address = new Address(addressType:AddressType.FISCAL).save(validate:false)
+      company.addToAddresses(address)
+      company.save(validate:false)
     and:"The period"
       Period period = new Period(init:new Date().parse("dd-MM-yyyy", "01-05-2017"), end:new Date().parse("dd-MM-yyyy", "31-05-2017"))
     when:
