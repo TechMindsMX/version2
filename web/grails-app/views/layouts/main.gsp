@@ -70,6 +70,11 @@
                   <i class="fa fa-user"></i> Mi Perfil
                 </g:link>
               </li>
+              <li>
+                <g:link controller="managerApplication" action="conditionsAndTerms">
+                  <i class="fa fa-file-text-o"></i> Términos y Condiciones
+                </g:link>
+              </li>
               <li class="divider"></li>
               <li>
                 <g:link controller="logout" action="index" class="logout_open">
