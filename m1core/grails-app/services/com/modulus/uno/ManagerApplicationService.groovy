@@ -167,4 +167,12 @@ class ManagerApplicationService {
     textConditions
   }
 
+  String getPrivacyNotice() {
+    File privacy = new File(grailsApplication.config.privacyNotice)
+    String textPrivacy = "Aviso de Privacidad"
+    if (privacy.exists())
+      textPrivacy = privacy.text
+    textPrivacy
+  }
+
 }
