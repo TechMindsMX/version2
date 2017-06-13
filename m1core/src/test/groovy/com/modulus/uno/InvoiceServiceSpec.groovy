@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(InvoiceService)
-@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionsInvoice, CommissionTransaction, BankAccount, Bank])
+@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionTransaction, BankAccount, Bank])
 class InvoiceServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
