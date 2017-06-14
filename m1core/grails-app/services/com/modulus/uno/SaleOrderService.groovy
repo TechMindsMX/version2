@@ -95,9 +95,7 @@ class SaleOrderService {
 
   def executeCancelBill(SaleOrder saleOrder) {
     invoiceService.cancelBill(saleOrder)
-    saleOrder.status = SaleOrderStatus.CANCELACION_EJECUTADA
-    saleOrder.save()
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELACION_EJECUTADA)
   }
 
   String getFactura(SaleOrder saleOrder, String format){
@@ -227,6 +225,9 @@ class SaleOrderService {
     if (saleOrder.amountToPay <= 0) {
       saleOrder.status = SaleOrderStatus.PAGADA
       saleOrder.save()
+      if (commissionTransactionService.saleOrderIsCommissionsInvoice(saleOrder)) {
+        commissionTransactionService.conciliateTransactionsForSaleOrder(saleOrder)
+      }
     }
     saleOrder
   }
@@ -270,7 +271,7 @@ class SaleOrderService {
 
   SaleOrder createCommissionsSaleOrder(Company company, Period period) {
     Company emitter = Company.findByRfc(grailsApplication.config.m1emitter.rfc)
-    Address addressEmitter = emitter.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
+    Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
     SaleOrder saleOrder = new SaleOrder(
       rfc:company.rfc,
       clientName:company.bussinessName,
@@ -280,7 +281,7 @@ class SaleOrderService {
       company:emitter,
       status:SaleOrderStatus.POR_AUTORIZAR
     )
-    saleOrder.addToAddresses(addressEmitter)
+    saleOrder.addToAddresses(address)
     saleOrder.save()
     saleOrder
   }
@@ -303,4 +304,15 @@ class SaleOrderService {
     saleOrder.save()
     saleOrder
   }
+
+  SaleOrder cancelOrRejectSaleOrder(SaleOrder saleOrder, SaleOrderStatus status) {
+    saleOrder.status = status
+    saleOrder.save()
+    if (commissionTransactionService.saleOrderIsCommissionsInvoice(saleOrder)) {
+      commissionTransactionService.unlinkTransactionsForSaleOrder(saleOrder)
+    }
+    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrder
+  }
+
 }
