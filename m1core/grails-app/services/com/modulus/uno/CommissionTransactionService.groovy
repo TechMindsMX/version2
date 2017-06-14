@@ -141,5 +141,14 @@ class CommissionTransactionService {
     }
   }
 
+  void unlinkTransactionsForSaleOrder(SaleOrder saleOrder) {
+    List<CommissionTransaction> transactions = CommissionTransaction.findAllByInvoice(saleOrder)
+    transactions.each { tr ->
+      tr.status = CommissionTransactionStatus.PENDING
+      tr.invoice = null
+      tr.save()
+    }
+  }
+
 }
 
