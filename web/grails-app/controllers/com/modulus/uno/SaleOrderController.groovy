@@ -49,7 +49,7 @@ class SaleOrderController {
 
   def cancelSaleOrder(SaleOrder saleOrder){
     flash.message = message(code: 'saleOrder.cancel', args: [:])
-    saleOrderService.cancelSaleOrder(saleOrder)
+    saleOrderService.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
     redirect action:'list', params:[companyId:saleOrder.company.id, status:"${SaleOrderStatus.POR_AUTORIZAR}"]
   }
 
@@ -212,8 +212,7 @@ class SaleOrderController {
   }
 
   def rejectSaleOrder(SaleOrder saleOrder){
-    saleOrder.status = SaleOrderStatus.RECHAZADA
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrderService.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.RECHAZADA)
     flash.message = message(code: 'saleOrder.execute', args: [:])
     redirect action:'list'
   }
