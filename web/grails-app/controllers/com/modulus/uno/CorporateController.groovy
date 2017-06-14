@@ -197,6 +197,14 @@ class CorporateController {
     companyService.assignAliasStpToCompany(Company.get(params.company), params.aliasStp)
     redirect action:'defineCostCenters', id:corporate.id
   }
+
+  def editUser(User user) {
+    log.info "User: ${user.dump()}"
+    log.info "Params: ${params}"
+    String conditionsAndTerms = managerApplicationService.getConditionsAndTerms()
+    render view:"editUser",model:[user:user, corporateId:params.corporateId, conditionsAndTerms:conditionsAndTerms]
+  }
+
 }
 
 @groovy.transform.TypeChecked
