@@ -95,9 +95,7 @@ class SaleOrderService {
 
   def executeCancelBill(SaleOrder saleOrder) {
     invoiceService.cancelBill(saleOrder)
-    saleOrder.status = SaleOrderStatus.CANCELACION_EJECUTADA
-    saleOrder.save()
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELACION_EJECUTADA)
   }
 
   String getFactura(SaleOrder saleOrder, String format){
@@ -307,8 +305,8 @@ class SaleOrderService {
     saleOrder
   }
 
-  SaleOrder cancelSaleOrder(SaleOrder saleOrder) {
-    saleOrder.status = SaleOrderStatus.CANCELADA
+  SaleOrder cancelOrRejectSaleOrder(SaleOrder saleOrder, SaleOrderStatus status) {
+    saleOrder.status = status
     saleOrder.save()
     if (commissionTransactionService.saleOrderIsCommissionsInvoice(saleOrder)) {
       commissionTransactionService.unlinkTransactionsForSaleOrder(saleOrder)
