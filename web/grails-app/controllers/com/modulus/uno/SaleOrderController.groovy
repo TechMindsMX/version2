@@ -49,8 +49,7 @@ class SaleOrderController {
 
   def cancelSaleOrder(SaleOrder saleOrder){
     flash.message = message(code: 'saleOrder.cancel', args: [:])
-    saleOrder.status = SaleOrderStatus.CANCELADA
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrderService.cancelSaleOrder(saleOrder)
     redirect action:'list', params:[companyId:saleOrder.company.id, status:"${SaleOrderStatus.POR_AUTORIZAR}"]
   }
 
@@ -283,7 +282,6 @@ class SaleOrderController {
     log.info "Create commissions invoice for period: ${params.startDate} / ${params.endDate}"
     Corporate corporate = Corporate.get(params.corporateId)
     Period period = collaboratorService.createPeriod(params.startDate, params.endDate)
-    log.info "Period: ${period.dump()}"
     SaleOrder saleOrder = saleOrderService.createCommissionsInvoiceForCompanyAndPeriod(company, period)
     redirect controller:"corporate", action:"commissions", id:corporate.id
   }
