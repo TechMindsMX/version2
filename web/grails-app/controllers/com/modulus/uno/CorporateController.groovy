@@ -12,7 +12,6 @@ class CorporateController {
   def managerApplicationService
   def recoveryService
   CommissionTransactionService commissionTransactionService
-  CommissionsInvoiceService commissionsInvoiceService
   CollaboratorService collaboratorService
 
   def create(){
@@ -167,8 +166,7 @@ class CorporateController {
     Period period = collaboratorService.getCurrentMonthPeriod()
     List companies = corporate.companies.sort{it.bussinessName}
     List totalPendingCommissions = getTotalPendingCommissionsForCorporate(corporate, period)
-    List totalInvoicedCommissions = getTotalInvoicedCommissionsForCorporate(corporate)
-    [corporate:corporate, companies:companies, totalPendingCommissions:totalPendingCommissions, totalInvoicedCommissions:totalInvoicedCommissions]
+    [corporate:corporate, companies:companies, totalPendingCommissions:totalPendingCommissions]
   }
 
   private List getTotalPendingCommissionsForCorporate(Corporate corporate, Period period) {
@@ -177,14 +175,6 @@ class CorporateController {
       totalPendingCommissions << [company:it, total:commissionTransactionService.getTotalCommissionsPendingForCompany(it, period) ?: 0]
     }
     totalPendingCommissions
-  }
-
-  private List getTotalInvoicedCommissionsForCorporate(Corporate corporate) {
-    List totalCommissions = []
-    corporate.companies.each {
-      totalCommissions << [company:it, total:commissionsInvoiceService.getTotalInvoicedCommissionsForCompany(it) ?: 0]
-    }
-    totalCommissions
   }
 
   def defineCostCenters(Corporate corporate) {
