@@ -306,4 +306,15 @@ class SaleOrderService {
     saleOrder.save()
     saleOrder
   }
+
+  SaleOrder cancelSaleOrder(SaleOrder saleOrder) {
+    saleOrder.status = SaleOrderStatus.CANCELADA
+    saleOrder.save()
+    if (commissionTransactionService.saleOrderIsCommissionsInvoice(saleOrder)) {
+      commissionTransactionService.unlinkTransactionsForSaleOrder(saleOrder)
+    }
+    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrder
+  }
+
 }
