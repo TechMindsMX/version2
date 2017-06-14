@@ -286,14 +286,14 @@ class SaleOrderServiceSpec extends Specification {
     given:"The sale order"
       SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.POR_AUTORIZAR).save(validate:false)
     when:
-      def result = service.cancelSaleOrder(saleOrder)
+      def result = service.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
     then:
       result.status == SaleOrderStatus.CANCELADA
       1 * commissionTransactionService.saleOrderIsCommissionsInvoice(_)
       1 * emailSenderService.notifySaleOrderChangeStatus(_)
   }
 
-  void "Should cancel a commissions invoice sale order"() {
+  void "Should cancel or reject a commissions invoice sale order"() {
     given:"The sale order"
       SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.POR_AUTORIZAR).save(validate:false)
       SaleOrderItem item = new SaleOrderItem(quantity:1, price:100, iva:16).save(validate:false)
@@ -302,7 +302,7 @@ class SaleOrderServiceSpec extends Specification {
     and:
       commissionTransactionService.saleOrderIsCommissionsInvoice(_) >> true
     when:
-      def result = service.cancelSaleOrder(saleOrder)
+      def result = service.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
     then:
       1 * commissionTransactionService.unlinkTransactionsForSaleOrder(_)
   }
