@@ -69,7 +69,7 @@
                   <g:each var="user" in="${users}">
                     <tr>
                       <td class="text-primary">
-                        ${user.profile.fullName}
+                        <g:link action="editUser" id="${user.id}" params="[corporateId:corporate.id]">${user.profile.fullName}</g:link>
                       </td>
                     </tr>
                   </g:each>
