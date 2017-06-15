@@ -61,7 +61,7 @@
       <div class="col-lg-4 col-md-5 col-sm-12">
         <div class="portlet">
           <div class="portlet-heading">
-            <h2>Consultas</h2>
+            <h2>Filtros</h2>
           </div>
           <div class="portlet-body">
             <g:form controller="Company" action="accountStatement" class="form-horizontal">
@@ -73,11 +73,11 @@
             <div class="row">
               <div class="col-md-12">
                 <p>Desde el:</p>
-                <g:datePicker id="startDate" name="startDate" value="${accountStatement.startDate}" precision="day" years="${2016..new Date()[Calendar.YEAR]}" required=""/>
+                <g:datePicker id="startDate" name="startDate" value="${accountStatement.period.init}" precision="day" years="${2016..new Date()[Calendar.YEAR]}" required=""/>
               </div>
               <div class="col-md-12">
                 <p>Hasta el:</p>
-                <g:datePicker id="endDate" name="endDate" value="${accountStatement.endDate}" precision="day" years="${2016..new Date()[Calendar.YEAR]}" required=""/>
+                <g:datePicker id="endDate" name="endDate" value="${accountStatement.period.end}" precision="day" years="${2016..new Date()[Calendar.YEAR]}" required=""/>
               </div>
               <div class="col-md-12 text-right">
                 <div style="margin-top:1em;">
@@ -101,10 +101,10 @@
                   <th><h2>Resultado de la consulta</h2></th>
                   <th class="text-right">
                     <br/>
-                    <g:link class="btn btn-default" action="generatePdfForAccountStatement" params="[company:accountStatement.company.id, startDate:accountStatement.startDate, endDate: accountStatement.endDate]">
+                    <g:link class="btn btn-default" action="generatePdfForAccountStatement" params="[company:accountStatement.company.id, startDate:accountStatement.period.init, endDate: accountStatement.period.end]">
                     <i class="fa fa-file-pdf-o"></i> PDF
                     </g:link>
-                    <g:link class="btn btn-default" action="generateXlsForAccountStatement" params="[company:accountStatement.company.id, startDate:accountStatement.startDate, endDate: accountStatement.endDate]">
+                    <g:link class="btn btn-default" action="generateXlsForAccountStatement" params="[company:accountStatement.company.id, startDate:accountStatement.period.init, endDate: accountStatement.period.end]">
                     <i class="fa fa-file-excel-o"></i> XLS
                     </g:link>
                   </th>
