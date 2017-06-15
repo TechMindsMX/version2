@@ -1,5 +1,6 @@
 <fieldset class="form">
-  <input type="hidden" name="user" value="${user.id}" />
+  <input type="hidden" name="id" value="${user.id}" />
+  <input type="hidden" name="corporateId" value="${corporateId}" />
   <f:with bean="user">
   <f:field property="username" label="${message(code:'user.username')}" wrapper="home"/>
   <f:field property="profile.name" label="${message(code:'user.name')}" wrapper="home"/>
