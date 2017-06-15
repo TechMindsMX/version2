@@ -321,7 +321,7 @@ and:
       AccountStatement accountStatement = service.getAccountStatementOfCompany(company, beginDate, endDate)
     then:
       accountStatement.balance.balance == 0
-      1 * transactionService.getTransactionsAccountForPeriod(_,_,_)
+      1 * transactionService.getTransactionsAccountForPeriod(_,_)
       1 * commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(_, _, _)
   }
 
