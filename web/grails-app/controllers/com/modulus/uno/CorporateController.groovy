@@ -216,6 +216,13 @@ class CorporateController {
     redirect action:'show', id:params.corporateId.toLong()
   }
 
+  @Transactional
+  def changeStatusUser(User user) {
+    user.enabled = !user.enabled
+    user.save()
+    redirect action:'show', id:params.corporateId.toLong()
+  }
+
 }
 
 @groovy.transform.TypeChecked
