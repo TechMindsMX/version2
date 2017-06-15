@@ -11,14 +11,7 @@
         <h1>
           <i class="fa fa-info-circle fa-3x"></i>
           <g:message code="corporate.show" />
-          <small>Información del Corporativo</small>
         </h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Corporativo</li>
-          <li class="active">
-            <g:message code="corporate.show" />
-          </li>
-        </ol>
       </div>
       <!-- END OF PAGE TITLE -->
     </div>
@@ -54,20 +47,6 @@
             </div>
             <!-- END OF PORTLET-BODY -->
           </div>
-          <!-- END OF DEFAULT PORTLET -->
-          <!-- BEGIN PORTLET-FOOTER -->
-
-          <!-- TODO: Edit the corporate -
-          <div class="portlet-footer">
-            <div class="text-right">
-              <g:link class="btn btn-default" >
-                <g:message code="default.button.edit.label" default="Edit" />
-              </g:link>
-            </div>
-          </div>
-          -->
-
-          <!-- END OF PORTLET FOOTER -->
         </div>
         <!-- END OF PORTLET DEFAULT -->
       </div>
@@ -90,7 +69,12 @@
                   <g:each var="user" in="${users}">
                     <tr>
                       <td class="text-primary">
-                        ${user.profile.fullName}
+                        <g:link action="editUser" id="${user.id}" params="[corporateId:corporate.id]">${user.profile.fullName}</g:link>
+                      </td>
+                      <td class="text-right">
+                        <g:link class="btn btn-warning" action="changeStatusUser" id="${user.id}" params="[corporateId:corporate.id]">
+                          <g:if test="${user.enabled}">Desactivar</g:if><g:else>Activar</g:else>
+                        </g:link>
                       </td>
                     </tr>
                   </g:each>
@@ -116,5 +100,8 @@
         <!-- END OF PORTLET-DEFAULT -->
       </div>
 
+      <div class="col-md-12 text-right">
+        <g:link class="btn btn-default" controller="dashboard" action="index">Lista</g:link>
+      </div>
   </body>
 </html>

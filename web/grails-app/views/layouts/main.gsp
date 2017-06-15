@@ -120,10 +120,7 @@
               <li><g:link controller="corporate" action="addCompany" id="${session.corporate.id}">Crear Nueva Empresa</g:link></li>
               <li><g:link controller="corporate" action="addUser" id="${session.corporate.id}">Alta Usuario</g:link></li>
               <li><g:link controller="corporate" action="users" id="${session.corporate.id}">Lista de Usuarios</g:link></li>
-              <li><g:link controller="corporate" action="companies" id="${session.corporate.id}">Todas las Empresas</g:link></li>
-              <li><g:link controller="machine" action="index">Lista de Máquinas</g:link></li>
-              <li><g:link controller="machine" action="register">Crear nueva máquina</g:link></li>
-              <li><g:link controller="notificationForState" action="index">Notificaciones</g:link></li>
+              <li><g:link controller="dashboard" action="index">Todas las Empresas</g:link></li>
             </g:if>
           </sec:ifAnyGranted>
 

@@ -41,7 +41,7 @@
                   </tr>
                   <g:each in="${corporates}" var="corp">
                   <tr>
-                    <td><strong>${corp.nameCorporate}</strong></td>
+                    <td><g:link controller="corporate" action="show" id="${corp.id}"><strong>${corp.nameCorporate}</strong></g:link></td>
                     <td>${corp.corporateUrl}</td>
                     <td>${corp.companies ? corp.companies.size() : 0}</td>
                     <td>
