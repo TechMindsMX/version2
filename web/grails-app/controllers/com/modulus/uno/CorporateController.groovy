@@ -199,10 +199,21 @@ class CorporateController {
   }
 
   def editUser(User user) {
-    log.info "User: ${user.dump()}"
-    log.info "Params: ${params}"
-    String conditionsAndTerms = managerApplicationService.getConditionsAndTerms()
-    render view:"editUser",model:[user:user, corporateId:params.corporateId, conditionsAndTerms:conditionsAndTerms]
+    render view:"editUser", model:[user:user, corporateId:params.corporateId]
+  }
+
+  @Transactional
+  def updateUser(User user) {
+    if (user.hasErrors()) {
+      log.error "Error updating user ${user.id}"
+      render view:"editUser", model:[user:user, corporateId:params.corporateId]
+      return
+    }
+
+    user.save()
+    log.info "User ${user.username} was updated"
+
+    redirect action:'show', id:params.corporateId.toLong()
   }
 
 }
