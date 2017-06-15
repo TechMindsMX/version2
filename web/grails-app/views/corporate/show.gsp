@@ -71,6 +71,11 @@
                       <td class="text-primary">
                         <g:link action="editUser" id="${user.id}" params="[corporateId:corporate.id]">${user.profile.fullName}</g:link>
                       </td>
+                      <td class="text-right">
+                        <g:link class="btn btn-warning" action="changeStatusUser" id="${user.id}" params="[corporateId:corporate.id]">
+                          <g:if test="${user.enabled}">Desactivar</g:if><g:else>Activar</g:else>
+                        </g:link>
+                      </td>
                     </tr>
                   </g:each>
                 </table>
