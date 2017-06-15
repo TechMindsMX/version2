@@ -103,9 +103,8 @@ class CompanyService {
     AccountStatement accountStatement = new AccountStatement()
     accountStatement.company = company
     accountStatement.balance = getBalanceOfCompany(company)
-    accountStatement.startDate = period.init
-    accountStatement.endDate = period.end
-    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
+    accountStatement.period = period
+    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.period.init,accountStatement.period.end)
     accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     accountStatement
   }
