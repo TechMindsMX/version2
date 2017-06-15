@@ -104,7 +104,7 @@ class CompanyService {
     accountStatement.company = company
     accountStatement.balance = getBalanceOfCompany(company)
     accountStatement.period = period
-    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.period.init,accountStatement.period.end)
+    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe, accountStatement.period)
     accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     accountStatement
   }
