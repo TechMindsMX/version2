@@ -53,18 +53,18 @@
       <div class="row">
         <div class="col-sm-4">
           <h2>REGISTRA</h2>
-          <p>Registra a todos tus clientes, proveedores, empleados, colaboradores, productos o inventarios.
+          <p>Registra a todos tus clientes, proveedores, empleados, colaboradores y productos.
           Lleva fácilmente su control.</p>
         </div>
         <div class="col-sm-4">
 
           <h2>OPERA</h2>
-          <p>Realiza depósitos, retiros o pagos. Recibe cobranza, actualiza inventarios.
+          <p>Recibe cobranza, realiza retiros o pagos.
           Todo de una manera muy sencilla.</p>
         </div>
         <div class="col-sm-4">
           <h2>CONSULTA</h2>
-          <p>Cuanto debo? Cuanto me deben? Que hay que pagar esta semana?
+          <p>¿Cuánto debo? ¿Cuánto me deben? ¿Qué hay que pagar esta semana?
           Tan fácil como consultarlo.</p>
         </div>
       </div>
@@ -73,8 +73,8 @@
   <footer>
     <div class="container">
       <div class="row">
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2015 TechMinds S.A. &middot;
+        <p class="pull-right"><a href="#">Regresar Arriba</a></p>
+        <p>&copy; 2017 Technology and Innovation Minds S.A. de C.V. &middot;
 
         <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modalPrivacyNotice">
           Aviso de Privacidad
