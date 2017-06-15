@@ -37,7 +37,7 @@
                   </div>
                 </g:eachError>
               </g:hasErrors>
-              <g:form action="updateUser">
+              <g:form action="updateUser" method="PUT">
                 <g:render template="editUser"/>
               </g:form>
             </div>
