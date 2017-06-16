@@ -126,24 +126,24 @@
                   <g:each in="${accountStatement.transactions}" var="mov">
                   <tr>
                     <td>
-                      <g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.dateCreated}"/>
+                      <g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.date}"/>
                     </td>
                     <td>
-                      ${mov.paymentConcept}
+                      ${mov.concept}
                     </td>
-                    <td>${mov.keyTransaction ?: ""}</td>
+                    <td>${mov.transactionId ?: ""}</td>
                     <td>
-                      <g:if test="${mov.transactionType == TransactionType.DEPOSIT}">
+                      <g:if test="${mov.type == TransactionType.DEPOSIT}">
                       ${modulusuno.formatPrice(number: mov.amount)}
                       </g:if>
                     </td>
                     <td>
-                      <g:if test="${mov.transactionType == TransactionType.WITHDRAW}">
+                      <g:if test="${mov.type == TransactionType.WITHDRAW}">
                       ${modulusuno.formatPrice(number: mov.amount)}
                       </g:if>
                     </td>
                     <td>
-                      <g:if test="${mov.transactionType == TransactionType.DEPOSIT}">
+                      <g:if test="${mov.type == TransactionType.DEPOSIT}">
                       <span class="label label-success">
                         <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
                       </span>
