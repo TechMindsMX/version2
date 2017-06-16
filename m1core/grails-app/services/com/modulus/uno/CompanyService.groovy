@@ -104,9 +104,40 @@ class CompanyService {
     accountStatement.company = company
     accountStatement.balance = getBalanceOfCompany(company)
     accountStatement.period = period
-    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe, accountStatement.period)
+    accountStatement.transactions = obtainTransactionsForCompanyInPeriod(company, period)
     accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
     accountStatement
+  }
+
+  List<AccountStatementTransaction> obtainTransactionsForCompanyInPeriod(Company company, Period period) {
+    //get transactions stp
+    List<Transaction> stpTransactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe, period)
+    println "Stp transactions: ${stpTransactions}"
+    //parse stpTransactions to Account statement transactions
+    List<AccountStatementTransaction> asTransactions = parseStpTransactionsToAccountStatementTransactions(stpTransactions)
+    //get bank accounts for company
+    // for each bank account
+      //get bank account transactions
+      //parse bank accounts transactions to account statement transactions
+    asTransactions
+  }
+
+  List<AccountStatementTransaction> parseStpTransactionsToAccountStatementTransactions(List<Transaction> stpTransactions) {
+    List<AccountStatementTransaction> asTransactions = []
+    BankAccount bankAccount = new BankAccount(clabe:stpTransactions?.first()?.keyAccount, banco:Bank.findByName("STP"))
+    stpTransactions.each { transaction ->
+      asTransactions.add(new AccountStatementTransaction(
+          account: bankAccount,
+          date: transaction.dateCreated,
+          concept:transaction.paymentConcept,
+          transactionId:transaction.keyTransaction,
+          amount:transaction.amount,
+          type:transaction.transactionType,
+          balance:transaction.balance
+        )
+      )
+    }
+    asTransactions
   }
 
   ArrayList<User> getAuthorizersByCompany(Company company) {
