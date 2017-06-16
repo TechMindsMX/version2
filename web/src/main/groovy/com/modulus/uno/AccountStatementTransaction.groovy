@@ -1,5 +1,8 @@
 package com.modulus.uno
 
+import groovy.transform.Sortable
+
+@Sortable(includes = "date")
 class AccountStatementTransaction {
 
   BankAccount account
