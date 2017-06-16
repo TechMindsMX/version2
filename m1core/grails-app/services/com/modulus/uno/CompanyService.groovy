@@ -110,11 +110,13 @@ class CompanyService {
   }
 
   List<AccountStatementTransaction> obtainTransactionsForCompanyInPeriod(Company company, Period period) {
+    List<AccountStatementTransaction> asTransactions = []
     //get transactions stp
     List<Transaction> stpTransactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe, period)
-    println "Stp transactions: ${stpTransactions}"
     //parse stpTransactions to Account statement transactions
-    List<AccountStatementTransaction> asTransactions = parseStpTransactionsToAccountStatementTransactions(stpTransactions)
+    if (stpTransactions) {
+      asTransactions = parseStpTransactionsToAccountStatementTransactions(stpTransactions)
+    }
     //get bank accounts for company
     // for each bank account
       //get bank account transactions
