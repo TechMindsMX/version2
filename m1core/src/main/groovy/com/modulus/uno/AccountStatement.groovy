@@ -7,5 +7,5 @@ class AccountStatement {
   BigDecimal balanceSubjectToCollection
   List commissionsBalance
   Period period
-  def transactions
+  List<AccountStatementTransaction> transactions
 }
