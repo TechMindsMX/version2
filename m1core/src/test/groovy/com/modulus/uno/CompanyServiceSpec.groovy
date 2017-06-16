@@ -11,7 +11,7 @@ import spock.lang.Unroll
 import spock.lang.Ignore
 
 @TestFor(CompanyService)
-@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission])
+@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission, Bank, Transaction])
 class CompanyServiceSpec extends Specification {
 
   ModulusUnoService modulusUnoService = Mock(ModulusUnoService)
@@ -316,7 +316,10 @@ and:
     and:"A valid period"
       String beginDate = "01-04-2016"
       String endDate = "30-04-2016"
-      collaboratorService.periodIsValid(beginDate, endDate) >> true
+    and:
+      Bank.metaClass.static.findByName = { new Bank(name:"STP") }
+    and:
+      transactionService.getTransactionsAccountForPeriod(_,_) >> []
     when:"get the account statement"
       AccountStatement accountStatement = service.getAccountStatementOfCompany(company, beginDate, endDate)
     then:
@@ -549,5 +552,21 @@ and:
       [[id:"idmov1", credit:new BigDecimal(100), debit:new BigDecimal(0), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingCredit", reference:"referenceCredit"], [id:"idmov2", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingDebit", reference:"referenceDebit"], [id:"idmov3", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"anotherTracing", reference:"referenceFinal"]] || "NOT FOUND"
       [] || "NOT FOUND"
       null || "NOT FOUND"
+  }
+
+  void "Should parse stp transactions to account statement transactions"() {
+    given:"The stp transactions"
+      List<Transaction> stpTransactions = [
+        new Transaction(keyAccount:"ClabeStp", dateCreated:new Date(), paymentConcept:"Concepto", keyTransaction:"Clave Trans", amount:new BigDecimal(100), transactionType:TransactionType.DEPOSIT, balance:new BigDecimal(100))
+      ]
+    and:
+      Bank.metaClass.static.findByName = { new Bank(name:"STP") }
+    when:
+      List<AccountStatementTransaction> asTransactions = service.parseStpTransactionsToAccountStatementTransactions(stpTransactions)
+    then:
+      asTransactions.size() == stpTransactions.size()
+      asTransactions.first().amount == stpTransactions.first().amount
+      asTransactions.first().account.clabe == stpTransactions.first().keyAccount
+      asTransactions.first().account.banco.name == "STP"
   }
 }
