@@ -116,6 +116,7 @@
                 <table class="table">
                   <tr>
                     <th>Fecha</th>
+                    <th>Cuenta</th>
                     <th>Concepto</th>
                     <th>Id de Transacción</th>
                     <th>Abono</th>
@@ -127,6 +128,9 @@
                   <tr>
                     <td>
                       <g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.date}"/>
+                    </td>
+                    <td>
+                      ${mov.account}
                     </td>
                     <td>
                       ${mov.concept}
