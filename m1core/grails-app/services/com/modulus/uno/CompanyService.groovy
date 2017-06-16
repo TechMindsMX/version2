@@ -192,11 +192,12 @@ class CompanyService {
     List formattedTransactions = []
     transactions.each { mov ->
       Map transaction = [:]
-      transaction.date = mov.dateCreated
-      transaction.concept = mov.paymentConcept
-      transaction.id = mov.keyTransaction ?: ""
-      transaction.credit = mov.transactionType == TransactionType.DEPOSIT ? mov.amount : ""
-      transaction.debit = mov.transactionType == TransactionType.WITHDRAW ? mov.amount : ""
+      transaction.date = mov.date
+      transaction.account = mov.account
+      transaction.concept = mov.concept
+      transaction.id = mov.transactionId ?: ""
+      transaction.credit = mov.type == TransactionType.DEPOSIT ? mov.amount : ""
+      transaction.debit = mov.type == TransactionType.WITHDRAW ? mov.amount : ""
       transaction.balance = mov.balance
       formattedTransactions << transaction
     }
