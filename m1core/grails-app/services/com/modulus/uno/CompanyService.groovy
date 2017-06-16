@@ -121,7 +121,7 @@ class CompanyService {
     // for each bank account
       //get bank account transactions
       //parse bank accounts transactions to account statement transactions
-    asTransactions
+    asTransactions.sort(false, AccountStatementTransaction.comparatorByDate())
   }
 
   List<AccountStatementTransaction> parseStpTransactionsToAccountStatementTransactions(List<Transaction> stpTransactions) {
