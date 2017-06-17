@@ -11,7 +11,7 @@ import spock.lang.Unroll
 import spock.lang.Ignore
 
 @TestFor(CompanyService)
-@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission, Bank, Transaction])
+@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission, Bank, Transaction, MovimientosBancarios, BankAccount])
 class CompanyServiceSpec extends Specification {
 
   ModulusUnoService modulusUnoService = Mock(ModulusUnoService)
@@ -568,5 +568,36 @@ and:
       asTransactions.first().amount == stpTransactions.first().amount
       asTransactions.first().account.clabe == stpTransactions.first().keyAccount
       asTransactions.first().account.banco.name == "STP"
+  }
+
+  void "Should parse bank transactions to account statement transactions"() {
+    given:"The bank transactions"
+      List<MovimientosBancarios> bankTransactions = [
+        new MovimientosBancarios(cuenta:new BankAccount(banco:new Bank(name:"BANAMEX", bankingCode:"002"), clabe:"bankClabe").save(validate:false), dateEvent:new Date(), concept:"Concepto", reference:"Clave Trans", amount:new BigDecimal(100), type:MovimientoBancarioType.DEBITO)
+      ]
+    when:
+      List<AccountStatementTransaction> asTransactions = service.parseBankTransactionsToAccountStatementTransactions(bankTransactions)
+    then:
+      asTransactions.size() == bankTransactions.size()
+      asTransactions.first().amount == bankTransactions.first().amount
+      asTransactions.first().account.clabe == bankTransactions.first().cuenta.clabe
+      asTransactions.first().account.banco.name == bankTransactions.first().cuenta.banco.name
+  }
+
+  void "Should recalculate balances for account statement transactions"() {
+    given:"The account statement transactions"
+      List<AccountStatementTransaction> asTransactions = [
+        new AccountStatementTransaction(amount:new BigDecimal(500), type:TransactionType.DEPOSIT, date:new Date()-1),
+        new AccountStatementTransaction(amount:new BigDecimal(500), type:TransactionType.DEPOSIT, date:new Date()-2),
+        new AccountStatementTransaction(amount:new BigDecimal(100), type:TransactionType.WITHDRAW, date:new Date()-3)
+      ]
+    and:"The before global balance"
+      BigDecimal beforeGlobalBalance = new BigDecimal(3000)
+    when:
+      List<AccountStatementTransaction> recalculate = service.recalculateBalancesForTransactions(beforeGlobalBalance, asTransactions)
+    then:
+      recalculate.first().balance == new BigDecimal(2900)
+      recalculate[1].balance == new BigDecimal(3400)
+      recalculate.last().balance == new BigDecimal(3900)
   }
 }
