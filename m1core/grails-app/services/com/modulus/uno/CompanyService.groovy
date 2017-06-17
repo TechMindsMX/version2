@@ -111,17 +111,50 @@ class CompanyService {
 
   List<AccountStatementTransaction> obtainTransactionsForCompanyInPeriod(Company company, Period period) {
     List<AccountStatementTransaction> asTransactions = []
-    //get transactions stp
+    asTransactions = obtainStpTransactions(company, period)
+    List<AccountStatementTransaction> asTransactionsBankAccounts = obtainBankAccountsTransactions(company, period)
+    asTransactions.addAll(asTransactionsBankAccounts)
+    BigDecimal beforeGlobalBalance = new BigDecimal(0)//getGlobalBalanceForCompanyPriorToDate(company, period.init)
+    recalculateBalancesForTransactions(beforeGlobalBalance, asTransactions)
+  }
+
+  BigDecimal getGlobalBalanceForCompanyPriorToDate(Company company, Date date) {
+    BigDecimal beforeBalanceStp = transactionService.getBalanceByKeyAccountPriorToDate(company.accounts.first().stpClabe, date)
+    BigDecimal beforeBalanceBanks
+    company.banksAccounts.each { bankAccount
+      beforeBalanceBanks += movimientosBancariosService.getBalanceByCuentaPriorToDate(bankAccount, date)
+    }
+    beforeBalanceStp + beforeBalanceBanks
+  }
+
+  List<AccountStatementTransaction> recalculateBalancesForTransactions(BigDecimal beforeGlobalBalance, List<AccountStatementTransaction> asTransactions) {
+    List<AccountStatementTransaction> asTransactionsRecalculated = asTransactions.sort(false, AccountStatementTransaction.comparatorByDate())
+    BigDecimal balance = beforeGlobalBalance
+    asTransactionsRecalculated.each { transaction ->
+      balance = transaction.type == TransactionType.WITHDRAW ? (balance - transaction.amount) : (balance + transaction.amount)
+      transaction.balance = balance
+    }
+    asTransactionsRecalculated
+  }
+
+  List<AccountStatementTransaction> obtainStpTransactions(Company company, Period period) {
+    List<AccountStatementTransaction> asTransactions = []
     List<Transaction> stpTransactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe, period)
-    //parse stpTransactions to Account statement transactions
     if (stpTransactions) {
       asTransactions = parseStpTransactionsToAccountStatementTransactions(stpTransactions)
     }
-    //get bank accounts for company
-    // for each bank account
-      //get bank account transactions
-      //parse bank accounts transactions to account statement transactions
-    asTransactions.sort(false, AccountStatementTransaction.comparatorByDate())
+    asTransactions
+  }
+
+  List<AccountStatementTransaction> obtainBankAccountsTransactions(Company company, Period period) {
+    List<AccountStatementTransaction> asTransactions = []
+    company.banksAccounts.each { bankAccount ->
+      List<MovimientosBancarios> bankTransactions = MovimientosBancarios.findAllByCuentaAndDateEventBetween(bankAccount, period.init, period.end)
+      if (bankTransactions) {
+        asTransactions = parseBankTransactionsToAccountStatementTransactions(bankTransactions)
+      }
+    }
+    asTransactions
   }
 
   List<AccountStatementTransaction> parseStpTransactionsToAccountStatementTransactions(List<Transaction> stpTransactions) {
@@ -136,6 +169,24 @@ class CompanyService {
           amount:transaction.amount,
           type:transaction.transactionType,
           balance:transaction.balance
+        )
+      )
+    }
+    asTransactions
+  }
+
+  List<AccountStatementTransaction> parseBankTransactionsToAccountStatementTransactions(List<MovimientosBancarios> bankTransactions) {
+    List<AccountStatementTransaction> asTransactions = []
+    BankAccount bankAccount = bankTransactions.first().cuenta
+    bankTransactions.each { transaction ->
+      asTransactions.add(new AccountStatementTransaction(
+          account: bankAccount,
+          date: transaction.dateEvent,
+          concept:transaction.concept,
+          transactionId:transaction.reference,
+          amount:transaction.amount,
+          type:transaction.type==MovimientoBancarioType.DEBITO ? TransactionType.WITHDRAW : TransactionType.DEPOSIT,
+          balance:new BigDecimal(0)
         )
       )
     }
