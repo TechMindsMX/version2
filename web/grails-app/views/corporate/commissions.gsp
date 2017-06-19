@@ -28,7 +28,6 @@
                 <th>Nombre</th>
                 <th>RFC</th>
                 <th>Por facturar*</th>
-                <th>Facturado</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -41,11 +40,6 @@
                 <td class="text-right">
                   <g:link controller="commission" action="listPendingCommissions" id="${company.id}" params="[corporateId:corporate.id]">
                     ${modulusuno.formatPrice(number:(totalPendingCommissions.find {it.company == company}).total)}
-                  </g:link>
-                </td>
-                <td class="text-right">
-                  <g:link controller="commissionsInvoice" action="listCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">
-                    ${modulusuno.formatPrice(number:(totalInvoicedCommissions.find {it.company == company}).total)}
                   </g:link>
                 </td>
                 <td>
@@ -67,7 +61,6 @@
                   <td></td>
                   <td><strong>Totales:</strong></td>
                   <td class="text-right"><strong>${modulusuno.formatPrice(number:totalPendingCommissions*.total.sum())}</strong></td>
-                  <td class="text-right"><strong>${modulusuno.formatPrice(number:totalInvoicedCommissions*.total.sum())}</strong></td>
                   <td></td>
                   <td></td>
                 </tr>
