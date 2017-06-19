@@ -53,15 +53,11 @@ class InvoiceService {
       BankAccount bankAccount = company.banksAccounts.find {it.concentradora}
       datosDeFacturacion.numeroDeCuentaDePago = bankAccount ? "${bankAccount.branchNumber} - ${bankAccount.accountNumber} - ${bankAccount.banco}" : company.accounts[0].stpClabe
     } else {
-      datosDeFacturacion.numeroDeCuentaDePago = client.stpClabe ?: company.accounts[0].stpClabe
+      datosDeFacturacion.numeroDeCuentaDePago = client?.stpClabe ?: company.accounts[0].stpClabe
     }
 
-    if(Company.findByRfcAndStatus(command.receptor.datosFiscales.rfc, CompanyStatus.ACCEPTED)){
-      command.betweenIntegrated = true
-      command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de las empresas, como Emisor ${company.bussinessName} con RFC ${company.rfc} y como Receptor ${receptor.datosFiscales.razonSocial} con RFC ${receptor.datosFiscales.rfc}"
-    } else {
-      command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de ${company.bussinessName} con RFC ${company.rfc}"
-    }
+    command.betweenIntegrated = false
+    command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de ${company.bussinessName} con RFC ${company.rfc}"
 
     def conceptos = []
     saleOrder.items.each { item ->
