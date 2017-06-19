@@ -29,7 +29,6 @@
                 <th>RFC</th>
                 <th>Por facturar*</th>
                 <th></th>
-                <th></th>
               </tr>
               </thead>
               <tbody>
@@ -49,9 +48,6 @@
                   <g:else>
                   <g:link controller="commission" class="btn btn-warning" params="[companyId: company.id]">Agregar</g:link>
                   </g:else>
-                </td>
-                <td>
-                  <g:link class="btn btn-info" controller="commissionsInvoice" action="conciliate" id="${company.id}" params="[corporateId:corporate.id]">Conciliar cobros</g:link>
                 </td>
               </tr>
               </g:each>
