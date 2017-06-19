@@ -26,6 +26,7 @@ class CompanyServiceSpec extends Specification {
   TransactionService transactionService = Mock(TransactionService)
   CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
   StpService stpService = Mock(StpService)
+  MovimientosBancariosService movimientosBancariosService = Mock(MovimientosBancariosService)
 
   def setup(){
     service.modulusUnoService = modulusUnoService
@@ -40,6 +41,7 @@ class CompanyServiceSpec extends Specification {
     service.transactionService = transactionService
     service.commissionTransactionService = commissionTransactionService
     service.stpService = stpService
+    service.movimientosBancariosService = movimientosBancariosService
   }
 
   Should "create a direction for a Company"(){
@@ -600,4 +602,24 @@ and:
       recalculate[1].balance == new BigDecimal(3400)
       recalculate.last().balance == new BigDecimal(3900)
   }
+
+  void "Should get global balance prior to date for a company"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+      BankAccount bankAccount = new BankAccount().save(validate:false)
+      company.addToBanksAccounts(bankAccount)
+      ModulusUnoAccount accountM1 = new ModulusUnoAccount(stpClabe:"ClabeSTP").save(validate:false)
+      company.addToAccounts(accountM1)
+      company.save(validate:false)
+    and:"The date"
+      Date date = new Date().parse("dd-MM-yyyy","01-05-2017")
+    and:
+      transactionService.getBalanceByKeyAccountPriorToDate(_,_) >> new BigDecimal(1200)
+      movimientosBancariosService.getBalanceByCuentaPriorToDate(_,_) >> new BigDecimal(800)
+    when:
+      def result = service.getGlobalBalanceForCompanyPriorToDate(company, date)
+    then:
+      result == new BigDecimal(2000)
+  }
+
 }
