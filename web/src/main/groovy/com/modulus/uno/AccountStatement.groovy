@@ -6,7 +6,7 @@ class AccountStatement {
   BigDecimal balanceTransiting
   BigDecimal balanceSubjectToCollection
   List commissionsBalance
-  Date startDate
-  Date endDate
-  def transactions
+  Period period
+  List<AccountStatementTransaction> transactions
+  List<Map> balanceSummary
 }

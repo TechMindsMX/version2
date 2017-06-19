@@ -11,7 +11,7 @@ import spock.lang.Unroll
 import spock.lang.Ignore
 
 @TestFor(CompanyService)
-@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission])
+@Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission, Bank, Transaction, MovimientosBancarios, BankAccount])
 class CompanyServiceSpec extends Specification {
 
   ModulusUnoService modulusUnoService = Mock(ModulusUnoService)
@@ -26,6 +26,7 @@ class CompanyServiceSpec extends Specification {
   TransactionService transactionService = Mock(TransactionService)
   CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
   StpService stpService = Mock(StpService)
+  MovimientosBancariosService movimientosBancariosService = Mock(MovimientosBancariosService)
 
   def setup(){
     service.modulusUnoService = modulusUnoService
@@ -40,6 +41,7 @@ class CompanyServiceSpec extends Specification {
     service.transactionService = transactionService
     service.commissionTransactionService = commissionTransactionService
     service.stpService = stpService
+    service.movimientosBancariosService = movimientosBancariosService
   }
 
   Should "create a direction for a Company"(){
@@ -278,17 +280,18 @@ and:
       Company company = createCompany()
       company.status = CompanyStatus.ACCEPTED
     and:"An account"
-      ModulusUnoAccount account = new ModulusUnoAccount()
-      account.stpClabe >> "1234567890"
-      account.save(validate:false)
-      company.accounts = [account]
+      ModulusUnoAccount accountM1 = new ModulusUnoAccount(stpClabe:"1234567890").save(validate:false)
+      company.addToAccounts(accountM1)
+      BankAccount bankAccount = new BankAccount().save(validate:false)
+      company.addToBanksAccounts(bankAccount)
       company.save(validate:false)
     and:
       modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe) >> 100
+      movimientosBancariosService.getBalanceByCuentaPriorToDate(_,_) >> 150
     when:"Get Balance of company"
-      Balance balances = service.getBalanceOfCompany(company)
+      Balance balances = service.getGlobalBalanceOfCompany(company)
     then:"Expect a balance and usd amount"
-      balances.balance == 100
+      balances.balance == 250
       balances.usd == 0
   }
 
@@ -308,20 +311,25 @@ and:
     given:"A company"
       Company company = createCompany()
     and:"An account"
-      ModulusUnoAccount account = new ModulusUnoAccount()
-      account.stpClabe >> "1234567890"
-      account.save(validate:false)
-      company.accounts = [account]
+      ModulusUnoAccount accountM1 = new ModulusUnoAccount(stpClabe:"1234567890").save(validate:false)
+      company.addToAccounts(accountM1)
+      BankAccount bankAccount = new BankAccount(banco:new Bank(name:"BANCO")).save(validate:false)
+      company.addToBanksAccounts(bankAccount)
       company.save(validate:false)
     and:"A valid period"
       String beginDate = "01-04-2016"
       String endDate = "30-04-2016"
-      collaboratorService.periodIsValid(beginDate, endDate) >> true
+    and:
+      Bank.metaClass.static.findByName = { new Bank(name:"STP") }
+    and:
+      transactionService.getTransactionsAccountForPeriod(_,_) >> []
+      transactionService.getBalanceByKeyAccountPriorToDate(_,_) >> new BigDecimal(0)
+      movimientosBancariosService.getBalanceByCuentaPriorToDate(_,_) >> new BigDecimal(0)
     when:"get the account statement"
       AccountStatement accountStatement = service.getAccountStatementOfCompany(company, beginDate, endDate)
     then:
       accountStatement.balance.balance == 0
-      1 * transactionService.getTransactionsAccountForPeriod(_,_,_)
+      1 * transactionService.getTransactionsAccountForPeriod(_,_)
       1 * commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(_, _, _)
   }
 
@@ -550,4 +558,71 @@ and:
       [] || "NOT FOUND"
       null || "NOT FOUND"
   }
+
+  void "Should parse stp transactions to account statement transactions"() {
+    given:"The stp transactions"
+      List<Transaction> stpTransactions = [
+        new Transaction(keyAccount:"ClabeStp", dateCreated:new Date(), paymentConcept:"Concepto", keyTransaction:"Clave Trans", amount:new BigDecimal(100), transactionType:TransactionType.DEPOSIT, balance:new BigDecimal(100))
+      ]
+    and:
+      Bank.metaClass.static.findByName = { new Bank(name:"STP") }
+    when:
+      List<AccountStatementTransaction> asTransactions = service.parseStpTransactionsToAccountStatementTransactions(stpTransactions)
+    then:
+      asTransactions.size() == stpTransactions.size()
+      asTransactions.first().amount == stpTransactions.first().amount
+      asTransactions.first().account.clabe == stpTransactions.first().keyAccount
+      asTransactions.first().account.banco.name == "STP"
+  }
+
+  void "Should parse bank transactions to account statement transactions"() {
+    given:"The bank transactions"
+      List<MovimientosBancarios> bankTransactions = [
+        new MovimientosBancarios(cuenta:new BankAccount(banco:new Bank(name:"BANAMEX", bankingCode:"002"), clabe:"bankClabe").save(validate:false), dateEvent:new Date(), concept:"Concepto", reference:"Clave Trans", amount:new BigDecimal(100), type:MovimientoBancarioType.DEBITO)
+      ]
+    when:
+      List<AccountStatementTransaction> asTransactions = service.parseBankTransactionsToAccountStatementTransactions(bankTransactions)
+    then:
+      asTransactions.size() == bankTransactions.size()
+      asTransactions.first().amount == bankTransactions.first().amount
+      asTransactions.first().account.clabe == bankTransactions.first().cuenta.clabe
+      asTransactions.first().account.banco.name == bankTransactions.first().cuenta.banco.name
+  }
+
+  void "Should recalculate balances for account statement transactions"() {
+    given:"The account statement transactions"
+      List<AccountStatementTransaction> asTransactions = [
+        new AccountStatementTransaction(amount:new BigDecimal(500), type:TransactionType.DEPOSIT, date:new Date()-1),
+        new AccountStatementTransaction(amount:new BigDecimal(500), type:TransactionType.DEPOSIT, date:new Date()-2),
+        new AccountStatementTransaction(amount:new BigDecimal(100), type:TransactionType.WITHDRAW, date:new Date()-3)
+      ]
+    and:"The before global balance"
+      BigDecimal beforeGlobalBalance = new BigDecimal(3000)
+    when:
+      List<AccountStatementTransaction> recalculate = service.recalculateBalancesForTransactions(beforeGlobalBalance, asTransactions)
+    then:
+      recalculate.first().balance == new BigDecimal(2900)
+      recalculate[1].balance == new BigDecimal(3400)
+      recalculate.last().balance == new BigDecimal(3900)
+  }
+
+  void "Should get global balance prior to date for a company"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+      BankAccount bankAccount = new BankAccount().save(validate:false)
+      company.addToBanksAccounts(bankAccount)
+      ModulusUnoAccount accountM1 = new ModulusUnoAccount(stpClabe:"ClabeSTP").save(validate:false)
+      company.addToAccounts(accountM1)
+      company.save(validate:false)
+    and:"The date"
+      Date date = new Date().parse("dd-MM-yyyy","01-05-2017")
+    and:
+      transactionService.getBalanceByKeyAccountPriorToDate(_,_) >> new BigDecimal(1200)
+      movimientosBancariosService.getBalanceByCuentaPriorToDate(_,_) >> new BigDecimal(800)
+    when:
+      def result = service.getGlobalBalanceForCompanyPriorToDate(company, date)
+    then:
+      result == new BigDecimal(2000)
+  }
+
 }

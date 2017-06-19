@@ -33,9 +33,9 @@ class TransactionService {
     total
   }
 
-  List<Transaction> getTransactionsAccountForPeriod(keyAccount, startDate, endDate) {
-    List<Transaction> transactions = Transaction.findAllByKeyAccountAndDateCreatedBetween(keyAccount,startDate,endDate)
-    BigDecimal balance = getBalanceByKeyAccountPriorToDate(keyAccount, startDate)
+  List<Transaction> getTransactionsAccountForPeriod(keyAccount, Period period) {
+    List<Transaction> transactions = Transaction.findAllByKeyAccountAndDateCreatedBetween(keyAccount, period.init, period.end)
+    BigDecimal balance = getBalanceByKeyAccountPriorToDate(keyAccount, period.init)
     transactions.sort{ it.dateCreated }.collect{ transaction ->
       balance = transaction.transactionType == TransactionType.WITHDRAW ? (balance - transaction.amount) : (balance + transaction.amount)
       transaction.balance = balance
