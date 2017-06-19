@@ -95,9 +95,7 @@ class SaleOrderService {
 
   def executeCancelBill(SaleOrder saleOrder) {
     invoiceService.cancelBill(saleOrder)
-    saleOrder.status = SaleOrderStatus.CANCELACION_EJECUTADA
-    saleOrder.save()
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELACION_EJECUTADA)
   }
 
   String getFactura(SaleOrder saleOrder, String format){
@@ -227,6 +225,9 @@ class SaleOrderService {
     if (saleOrder.amountToPay <= 0) {
       saleOrder.status = SaleOrderStatus.PAGADA
       saleOrder.save()
+      if (commissionTransactionService.saleOrderIsCommissionsInvoice(saleOrder)) {
+        commissionTransactionService.conciliateTransactionsForSaleOrder(saleOrder)
+      }
     }
     saleOrder
   }
@@ -259,6 +260,59 @@ class SaleOrderService {
     salesOrderConciliated.amountPayed.sum()
   }
 
+  SaleOrder createCommissionsInvoiceForCompanyAndPeriod(Company company, Period period) {
+    SaleOrder saleOrder = createCommissionsSaleOrder(company, period)
+    List balances = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
+    saleOrder = createItemsForCommissionsSaleOrder(saleOrder, balances)
+    commissionTransactionService.linkCommissionTransactionsForCompanyInPeriodWithSaleOrder(company, period, saleOrder)
+    //TODO: send mails to authorizers for emitter company
+    saleOrder
+  }
 
+  SaleOrder createCommissionsSaleOrder(Company company, Period period) {
+    Company emitter = Company.findByRfc(grailsApplication.config.m1emitter.rfc)
+    Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
+    SaleOrder saleOrder = new SaleOrder(
+      rfc:company.rfc,
+      clientName:company.bussinessName,
+      fechaCobro:new Date(),
+      note:"Comisiones del ${period.init.format('dd-MM-yyyy')} al ${period.end.format('dd-MM-yyyy')}",
+      currency:"MXN",
+      company:emitter,
+      status:SaleOrderStatus.POR_AUTORIZAR
+    )
+    saleOrder.addToAddresses(address)
+    saleOrder.save()
+    saleOrder
+  }
+
+  SaleOrder createItemsForCommissionsSaleOrder(saleOrder, balances) {
+    balances.each { balance ->
+      if (balance.balance) {
+      SaleOrderItem item = new SaleOrderItem(
+        sku:"COMISION-${balance.typeCommission}",
+        name:balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}",
+        quantity:balance.quantity,
+        price:balance.balance/balance.quantity,
+        iva:new BigDecimal(grailsApplication.config.iva),
+        unitType:"SERVICIO",
+        saleOrder:saleOrder
+      ).save()
+      saleOrder.addToItems(item)
+      }
+    }
+    saleOrder.save()
+    saleOrder
+  }
+
+  SaleOrder cancelOrRejectSaleOrder(SaleOrder saleOrder, SaleOrderStatus status) {
+    saleOrder.status = status
+    saleOrder.save()
+    if (commissionTransactionService.saleOrderIsCommissionsInvoice(saleOrder)) {
+      commissionTransactionService.unlinkTransactionsForSaleOrder(saleOrder)
+    }
+    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrder
+  }
 
 }

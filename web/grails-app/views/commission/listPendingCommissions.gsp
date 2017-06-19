@@ -56,6 +56,7 @@
                 <table class="table">
                   <thead>
                   <tr>
+                    <th class="text-center">Cantidad</th>
                     <th class="text-center">Tipo</th>
                     <th class="text-center">Monto</th>
                   </tr>
@@ -63,6 +64,7 @@
                   <tbody>
                   <g:each in="${commissionsBalance}" var="commission">
                   <tr>
+                    <td class="text-center">${commission.quantity}</td>
                     <td>${commission.typeCommission}</td>
                     <td class="text-right">${modulusuno.formatPrice(number:commission.balance)}</td>
                   </tr>
@@ -70,23 +72,27 @@
                   </tbody>
                   <tfoot>
                     <tr>
+                      <td></td>
                       <td><strong>Subtotal:</strong></td>
                       <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.balance.sum())}</strong></td>
                     </tr>
                     <tr>
+                      <td></td>
                       <td><strong>IVA:</strong></td>
                       <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.iva.sum())}</strong></td>
                     </tr>
                     <tr>
+                      <td></td>
                       <td><strong>Total:</strong></td>
                       <td class="text-right"><strong>${modulusuno.formatPrice(number:commissionsBalance*.total.sum())}</strong></td>
                     </tr>
 
                     <tr>
                       <td></td>
+                      <td></td>
                       <td class="text-right">
                         <g:if test="${commissionsBalance*.balance.sum()}">
-                        <g:link class="btn btn-success" controller="commissionsInvoice" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id]">Facturar</g:link>
+                        <g:link class="btn btn-success" controller="saleOrder" action="createCommissionsInvoice" id="${company.id}" params="[corporateId:corporate.id, startDate:period.init.format('dd-MM-yyyy'), endDate:period.end.format('dd-MM-yyyy')]">Facturar</g:link>
                         </g:if>
                       </td>
                     </tr>

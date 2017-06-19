@@ -141,5 +141,48 @@ class CommissionTransactionServiceSpec extends Specification {
       null                                              ||  false
   }
 
+  @Unroll
+  void "Should return #result for sale order is or not is commission invoice"() {
+    given:""
+      CommissionTransaction.metaClass.static.findByInvoice = { transaction }
+    and:
+      SaleOrder saleOrder = new SaleOrder().save(validate:false)
+    when:
+      def isCommissionInvoice = service.saleOrderIsCommissionsInvoice(saleOrder)
+    then:
+      isCommissionInvoice == result
+    where:
+      transaction ||  result
+      new CommissionTransaction().save(validate:false)  ||  true
+      null                                              ||  false
+  }
+
+  void "Should set Charged status for all transactions linked to sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder().save(validate:false)
+      CommissionTransactionStatus status = CommissionTransactionStatus.INVOICED
+    and:"The transactions"
+      List<CommissionTransaction> transactions = [new CommissionTransaction(status:status, invoice:saleOrder).save(validate:false)]
+      CommissionTransaction.metaClass.static.findAllByInvoiceAndStatus = {sO, statusTr ->  transactions }
+    when:
+      service.conciliateTransactionsForSaleOrder(saleOrder)
+    then:
+      transactions.first().status == CommissionTransactionStatus.CHARGED
+  }
+
+  void "Should unlink transactions from sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder().save(validate:false)
+      CommissionTransactionStatus status = CommissionTransactionStatus.INVOICED
+    and:"The transactions"
+      List<CommissionTransaction> transactions = [new CommissionTransaction(status:status, invoice:saleOrder).save(validate:false)]
+      CommissionTransaction.metaClass.static.findAllByInvoiceAndStatus = {sO, statusTr ->  transactions }
+    when:
+      service.unlinkTransactionsForSaleOrder(saleOrder)
+    then:
+      transactions.first().status == CommissionTransactionStatus.PENDING
+      transactions.first().invoice == null
+  }
+
 }
 

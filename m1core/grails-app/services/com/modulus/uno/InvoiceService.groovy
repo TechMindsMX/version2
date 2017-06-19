@@ -6,7 +6,6 @@ class InvoiceService {
 
   def restService
   def grailsApplication
-  def commissionsInvoiceService
 
   String generateFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
@@ -54,15 +53,11 @@ class InvoiceService {
       BankAccount bankAccount = company.banksAccounts.find {it.concentradora}
       datosDeFacturacion.numeroDeCuentaDePago = bankAccount ? "${bankAccount.branchNumber} - ${bankAccount.accountNumber} - ${bankAccount.banco}" : company.accounts[0].stpClabe
     } else {
-      datosDeFacturacion.numeroDeCuentaDePago = client.stpClabe ?: company.accounts[0].stpClabe
+      datosDeFacturacion.numeroDeCuentaDePago = client?.stpClabe ?: company.accounts[0].stpClabe
     }
 
-    if(Company.findByRfcAndStatus(command.receptor.datosFiscales.rfc, CompanyStatus.ACCEPTED)){
-      command.betweenIntegrated = true
-      command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de las empresas, como Emisor ${company.bussinessName} con RFC ${company.rfc} y como Receptor ${receptor.datosFiscales.razonSocial} con RFC ${receptor.datosFiscales.rfc}"
-    } else {
-      command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de ${company.bussinessName} con RFC ${company.rfc}"
-    }
+    command.betweenIntegrated = false
+    command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de ${company.bussinessName} con RFC ${company.rfc}"
 
     def conceptos = []
     saleOrder.items.each { item ->
@@ -101,99 +96,6 @@ class InvoiceService {
 
   void changeSerieAndInitialFolioToStampInvoiceForEmitter(Map params) {
     restService.updateSerieForEmitter(params)
-  }
-
-  String stampCommissionsInvoice(CommissionsInvoice invoice) {
-    FacturaCommand factura = createCommandFromCommissionsInvoice(invoice)
-    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
-    result.text
-  }
-
-  FacturaCommand createCommandFromCommissionsInvoice(CommissionsInvoice invoice) {
-    DatosDeFacturacion datosDeFacturacion = new DatosDeFacturacion(folio:"${invoice.id}")
-    def emisor = createEmisorForCommissionsInvoice()
-    def receptor = createReceptorForCommissionsInvoice(invoice)
-    def command = new FacturaCommand(datosDeFacturacion:datosDeFacturacion, emisor:emisor, receptor:receptor)
-    command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de ${emisor.datosFiscales.razonSocial} con RFC ${emisor.datosFiscales.rfc}"
-    command.emitter = emisor.datosFiscales.rfc
-    command.pdfTemplate = "template_pdf.tof"
-    command.observaciones = ""
-
-    datosDeFacturacion.numeroDeCuentaDePago = grailsApplication.config.m1emitter.stpClabe
-
-    command.conceptos = createConceptsFromCommissionsInvoice(invoice)
-    command.impuestos = createTaxesFromConcepts(command.conceptos)
-    command
-  }
-
-  private Contribuyente createEmisorForCommissionsInvoice() {
-    DatosFiscales datosFiscales = new DatosFiscales(
-      razonSocial:grailsApplication.config.m1emitter.businessName,
-      regimen:"MORAL",
-      rfc:grailsApplication.config.m1emitter.rfc,
-      pais:grailsApplication.config.m1emitter.address.country,
-      calle:grailsApplication.config.m1emitter.address.street,
-      noInterior:grailsApplication.config.m1emitter.address.suite ?: "SN",
-      noExterior:grailsApplication.config.m1emitter.address.streetNumber,
-      ciudad:grailsApplication.config.m1emitter.address.city,
-      colonia:grailsApplication.config.m1emitter.address.neighboorhood ?: grailsApplication.config.m1emitter.address.colony,
-      delegacion:grailsApplication.config.m1emitter.address.town,
-      codigoPostal:grailsApplication.config.m1emitter.address.zipCode
-    )
-    new Contribuyente(datosFiscales:datosFiscales)
-  }
-
-  private Contribuyente createReceptorForCommissionsInvoice(CommissionsInvoice invoice) {
-    Company company = invoice.receiver
-    Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
-    DatosFiscales datosFiscales = new DatosFiscales(
-      razonSocial:company.bussinessName,
-      regimen:company.taxRegime.code,
-      rfc:company.rfc,
-      pais:address.country,
-      calle:address.street,
-      noInterior:address.suite ?: "SN",
-      noExterior:address.streetNumber,
-      ciudad:address.city,
-      colonia:address.neighboorhood ?: address.colony,
-      delegacion:address.town,
-      codigoPostal:address.zipCode
-    )
-    new Contribuyente(datosFiscales:datosFiscales)
-  }
-
-  private List<Concepto> createConceptsFromCommissionsInvoice(invoice) {
-    List<Concepto> conceptos = []
-    List totalByCommissionType = commissionsInvoiceService.getCommissionsSummaryFromInvoice(invoice)
-    totalByCommissionType.each { totalByType ->
-      Concepto concepto = new Concepto(
-       descripcion:totalByType.type == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${totalByType.type}",
-       unidad:"SERVICIO",
-       valorUnitario:totalByType.total,
-       descuento:new BigDecimal(0)
-      )
-      conceptos.add(concepto)
-    }
-    conceptos
-  }
-
-  private List<Impuesto> createTaxesFromConcepts(List<Concepto> conceptos) {
-    List<Impuesto> impuestos = []
-    BigDecimal iva = new BigDecimal(grailsApplication.config.iva)
-    conceptos.each { concepto ->
-      Impuesto impuesto = new Impuesto(
-        importe:concepto.cantidad * concepto.valorUnitario * (iva/100),
-        tasa:iva,
-        impuesto:"IVA"
-      )
-      impuestos.add(impuesto)
-    }
-    impuestos
-  }
-
-  void cancelStampedCommissionsInvoice(CommissionsInvoice invoice) {
-    CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${invoice.folioSat.substring(0,36)}", rfc:"${grailsApplication.config.m1emitter.rfc}")
-    restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
   }
 
 }

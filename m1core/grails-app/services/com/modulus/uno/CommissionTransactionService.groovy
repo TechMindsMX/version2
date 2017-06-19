@@ -19,7 +19,7 @@ class CommissionTransactionService {
     List balances = []
     BigDecimal iva = new BigDecimal(grailsApplication.config.iva)
     company.commissions.sort{it.type}.each {
-      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceInPeriodForTypeAndCompanyAndStatus(it.type, company, status, period) ?: 0]
+      Map balance = [typeCommission:it.type, balance: getCommissionsBalanceInPeriodForTypeAndCompanyAndStatus(it.type, company, status, period) ?: 0, quantity:CommissionTransaction.countByCompanyAndTypeAndStatusAndDateCreatedBetween(company, it.type, status, period.init, period.end)]
       balance.iva = balance.balance * (iva/100)
       balance.total = balance.balance + balance.iva
       balances.add(balance)
@@ -108,6 +108,46 @@ class CommissionTransactionService {
     Period period = collaboratorService.getCurrentMonthPeriod()
     CommissionTransaction exists = CommissionTransaction.findByTypeAndCompanyAndDateCreatedBetween(CommissionType.FIJA, company, period.init, period.end)
     exists ? true : false
+  }
+
+  void linkCommissionTransactionsForCompanyInPeriodWithSaleOrder(Company company, Period period, SaleOrder saleOrder) {
+    List<CommissionTransaction> transactions = listCommissionTransactionForCompanyInPeriodAndStatus(company, period, CommissionTransactionStatus.PENDING)
+    transactions.each { transaction ->
+      transaction.status = CommissionTransactionStatus.INVOICED
+      transaction.invoice = saleOrder
+      transaction.save()
+    }
+  }
+
+  List<CommissionTransaction> listCommissionTransactionForCompanyInPeriodAndStatus(Company company, Period period, CommissionTransactionStatus status) {
+    def list = CommissionTransaction.createCriteria().list {
+      and {
+        eq("company", company)
+        eq("status", status)
+        between("dateCreated", period.init, period.end)
+      }
+    }
+  }
+
+  boolean saleOrderIsCommissionsInvoice(SaleOrder saleOrder) {
+    CommissionTransaction.findByInvoice(saleOrder) ? true : false
+  }
+
+  void conciliateTransactionsForSaleOrder(SaleOrder saleOrder) {
+    List<CommissionTransaction> transactions = CommissionTransaction.findAllByInvoiceAndStatus(saleOrder, CommissionTransactionStatus.INVOICED)
+    transactions.each { tr ->
+      tr.status = CommissionTransactionStatus.CHARGED
+      tr.save()
+    }
+  }
+
+  void unlinkTransactionsForSaleOrder(SaleOrder saleOrder) {
+    List<CommissionTransaction> transactions = CommissionTransaction.findAllByInvoice(saleOrder)
+    transactions.each { tr ->
+      tr.status = CommissionTransactionStatus.PENDING
+      tr.invoice = null
+      tr.save()
+    }
   }
 
 }

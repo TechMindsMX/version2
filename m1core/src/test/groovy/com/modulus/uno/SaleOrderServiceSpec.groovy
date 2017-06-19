@@ -24,6 +24,8 @@ class SaleOrderServiceSpec extends Specification {
     service.invoiceService = invoiceService
     service.companyService = companyService
     service.commissionTransactionService = commissionTransactionService
+    grailsApplication.config.m1emitter.rfc = "AAA010101AAA"
+    grailsApplication.config.iva = "16"
   }
 
   void "should create an sale order"() {
@@ -198,10 +200,11 @@ class SaleOrderServiceSpec extends Specification {
     then:
       result.amountToPay == amountToPay
       result.status == status
+      callings * commissionTransactionService.saleOrderIsCommissionsInvoice(_)
     where:
-    amount    ||  amountToPay   |   status
-    20        ||  80            | SaleOrderStatus.EJECUTADA
-    100       ||  0             | SaleOrderStatus.PAGADA
+    amount  ||  amountToPay   |   status                  | callings
+    20      ||  80            | SaleOrderStatus.EJECUTADA | 0
+    100     ||  0             | SaleOrderStatus.PAGADA    | 1
   }
 
   @Unroll
@@ -224,36 +227,84 @@ class SaleOrderServiceSpec extends Specification {
     2000         ||  0             | SaleOrderStatus.PAGADA     | 100
   }
 
-/*  void "Should get 200 for all sale orders executed for a client in company"(){
+  void "Should create the header sale order for commissions for a company in period"() {
     given:"A company"
-      Company company = Company.get(2)
-    and:"A rfc client"
-      String rfcClient = "MDE130712JA8"
-    and: "A between time "
-      Date firstDate = new Date()
-      Date lastDate = new Date()
-    and:"the get criteria method"
-      def myCriteria = new Expando()
-      myCriteria.list = { Closure closure -> new SaleOrder()  }
-      SaleOrder.metaClass.static.createCriteria = {myCriteria }
-    when:
-      def total = service.getTotalSoldForClient(company, rfcClient, firstDate, lastDate)
+      Company client = new Company(rfc:"XYZ010101ABC", bussinessName:"TheCompany").save(validate:false)
+      Address addressCli = new Address(addressType:AddressType.FISCAL).save(validate:false)
+      client.addToAddresses(addressCli)
+      client.save(validate:false)
+    and:"the period"
+      Period period = new Period(init:new Date().parse("dd-MM-yyyy", "01-05-2017"), end:new Date().parse("dd-MM-yyyy", "31-05-2017"))
+    and:""
+      Company emitter = new Company(rfc:"BBB020202BBB").save(validate:false)
+      Address address = new Address(addressType:AddressType.FISCAL).save(validate:false)
+      emitter.addToAddresses(address)
+      emitter.save(validate:false)
+      Company.metaClass.static.findByRfc = { emitter }
+    when:""
+      SaleOrder sale = service.createCommissionsSaleOrder(client, period)
     then:
-      total == 2000
-  }*/
- /* void "Should get for all sale order consiliate "(){
-     given:"A company"
-      Company company = Company.get(2)
-    and:"A rfc client"
-      String rfcClient = "MDE130712JA8"
-        and:"the get criteria method"
-      def myCriteria = new Expando()
-      myCriteria.get = { Closure closure -> 2000 }
-      SaleOrder.metaClass.static.createCriteria = {myCriteria }
-    when:
-      def total = service.getTotalSoldForClientStatusConciliated(company, rfcClient, firstDate, lastDate)
-    then:
-      total == 2000*/
+      sale
+      sale.rfc == client.rfc
+      sale.company.rfc == emitter.rfc
+      sale.status == SaleOrderStatus.POR_AUTORIZAR
+  }
 
+  void "Should create the items for commissions sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder().save(validate:false)
+    and:"the balances"
+      List balances = [
+        [typeCommission:CommissionType.FIJA, balance:new BigDecimal(1000), quantity:1],
+        [typeCommission:CommissionType.PAGO, balance:new BigDecimal(100), quantity:10],
+        [typeCommission:CommissionType.DEPOSITO, balance:new BigDecimal(10), quantity:2]
+      ]
+    when:""
+      saleOrder = service.createItemsForCommissionsSaleOrder(saleOrder, balances)
+    then:
+      saleOrder.items.size() > 0
+      saleOrder.subtotal == 1110.00
+  }
+
+  void "Should create a commissions sale order for a company and period"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+      Address address = new Address(addressType:AddressType.FISCAL).save(validate:false)
+      company.addToAddresses(address)
+      company.save(validate:false)
+    and:"The period"
+      Period period = new Period(init:new Date().parse("dd-MM-yyyy", "01-05-2017"), end:new Date().parse("dd-MM-yyyy", "31-05-2017"))
+    when:
+      SaleOrder saleOrder = service.createCommissionsInvoiceForCompanyAndPeriod(company, period)
+    then:
+      saleOrder
+      1 * commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(_, _, _)
+      1 * commissionTransactionService.linkCommissionTransactionsForCompanyInPeriodWithSaleOrder(_, _, _)
+  }
+
+  void "Should cancel a sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.POR_AUTORIZAR).save(validate:false)
+    when:
+      def result = service.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
+    then:
+      result.status == SaleOrderStatus.CANCELADA
+      1 * commissionTransactionService.saleOrderIsCommissionsInvoice(_)
+      1 * emailSenderService.notifySaleOrderChangeStatus(_)
+  }
+
+  void "Should cancel or reject a commissions invoice sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.POR_AUTORIZAR).save(validate:false)
+      SaleOrderItem item = new SaleOrderItem(quantity:1, price:100, iva:16).save(validate:false)
+      saleOrder.addToItems(item)
+      saleOrder.save(validate:false)
+    and:
+      commissionTransactionService.saleOrderIsCommissionsInvoice(_) >> true
+    when:
+      def result = service.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
+    then:
+      1 * commissionTransactionService.unlinkTransactionsForSaleOrder(_)
+  }
 
 }

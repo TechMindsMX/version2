@@ -19,6 +19,7 @@ class SaleOrderController {
   def businessEntity
   def s3AssetService
   def emailSenderService
+  CollaboratorService collaboratorService
 
   def authorizeSaleOrder(SaleOrder saleOrder){
     saleOrder = saleOrderService.addAuthorizationToSaleOrder(saleOrder, springSecurityService.currentUser)
@@ -48,8 +49,7 @@ class SaleOrderController {
 
   def cancelSaleOrder(SaleOrder saleOrder){
     flash.message = message(code: 'saleOrder.cancel', args: [:])
-    saleOrder.status = SaleOrderStatus.CANCELADA
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrderService.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
     redirect action:'list', params:[companyId:saleOrder.company.id, status:"${SaleOrderStatus.POR_AUTORIZAR}"]
   }
 
@@ -212,8 +212,7 @@ class SaleOrderController {
   }
 
   def rejectSaleOrder(SaleOrder saleOrder){
-    saleOrder.status = SaleOrderStatus.RECHAZADA
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrderService.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.RECHAZADA)
     flash.message = message(code: 'saleOrder.execute', args: [:])
     redirect action:'list'
   }
@@ -275,6 +274,15 @@ class SaleOrderController {
     SaleOrder saleOrder = SaleOrder.get(params.saleOrderId)
     Map model = [currency:saleOrder.currency]
     render model as JSON
+  }
+
+  @Transactional
+  def createCommissionsInvoice(Company company) {
+    log.info "Create commissions invoice for period: ${params.startDate} / ${params.endDate}"
+    Corporate corporate = Corporate.get(params.corporateId)
+    Period period = collaboratorService.createPeriod(params.startDate, params.endDate)
+    SaleOrder saleOrder = saleOrderService.createCommissionsInvoiceForCompanyAndPeriod(company, period)
+    redirect controller:"corporate", action:"commissions", id:corporate.id
   }
 
 }
