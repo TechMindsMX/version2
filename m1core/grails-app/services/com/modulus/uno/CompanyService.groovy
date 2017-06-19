@@ -107,7 +107,18 @@ class CompanyService {
     accountStatement.period = period
     accountStatement.transactions = obtainTransactionsForCompanyInPeriod(company, period)
     accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
+    accountStatement.balanceSummary = obtainBalanceSummaryForCompany(company)
     accountStatement
+  }
+
+  List<Map> obtainBalanceSummaryForCompany(Company company) {
+    Map stpBalance = [account:company.accounts.first().stpClabe, bank:"STP", balance:transactionService.getBalanceByKeyAccountPriorToDate(company.accounts.first().stpClabe, new Date())]
+    List<Map> summary = [stpBalance]
+    company.banksAccounts.sort{it.banco.name}.each { bankAccount ->
+      Map bankBalance = [account:bankAccount.clabe, bank:bankAccount.banco.name, balance:movimientosBancariosService.getBalanceByCuentaPriorToDate(bankAccount, new Date())]
+      summary.add(bankBalance)
+    }
+    summary
   }
 
   List<AccountStatementTransaction> obtainTransactionsForCompanyInPeriod(Company company, Period period) {
