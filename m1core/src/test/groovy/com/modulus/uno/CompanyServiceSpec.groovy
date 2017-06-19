@@ -313,7 +313,8 @@ and:
     and:"An account"
       ModulusUnoAccount accountM1 = new ModulusUnoAccount(stpClabe:"1234567890").save(validate:false)
       company.addToAccounts(accountM1)
-      BankAccount bankAccount = new BankAccount().save(validate:false)
+      BankAccount bankAccount = new BankAccount(banco:new Bank(name:"BANCO")).save(validate:false)
+      company.addToBanksAccounts(bankAccount)
       company.save(validate:false)
     and:"A valid period"
       String beginDate = "01-04-2016"
