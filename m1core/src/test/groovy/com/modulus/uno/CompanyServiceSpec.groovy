@@ -280,17 +280,18 @@ and:
       Company company = createCompany()
       company.status = CompanyStatus.ACCEPTED
     and:"An account"
-      ModulusUnoAccount account = new ModulusUnoAccount()
-      account.stpClabe >> "1234567890"
-      account.save(validate:false)
-      company.accounts = [account]
+      ModulusUnoAccount accountM1 = new ModulusUnoAccount(stpClabe:"1234567890").save(validate:false)
+      company.addToAccounts(accountM1)
+      BankAccount bankAccount = new BankAccount().save(validate:false)
+      company.addToBanksAccounts(bankAccount)
       company.save(validate:false)
     and:
       modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe) >> 100
+      movimientosBancariosService.getBalanceByCuentaPriorToDate(_,_) >> 150
     when:"Get Balance of company"
-      Balance balances = service.getBalanceOfCompany(company)
+      Balance balances = service.getGlobalBalanceOfCompany(company)
     then:"Expect a balance and usd amount"
-      balances.balance == 100
+      balances.balance == 250
       balances.usd == 0
   }
 
@@ -310,10 +311,9 @@ and:
     given:"A company"
       Company company = createCompany()
     and:"An account"
-      ModulusUnoAccount account = new ModulusUnoAccount()
-      account.stpClabe >> "1234567890"
-      account.save(validate:false)
-      company.accounts = [account]
+      ModulusUnoAccount accountM1 = new ModulusUnoAccount(stpClabe:"1234567890").save(validate:false)
+      company.addToAccounts(accountM1)
+      BankAccount bankAccount = new BankAccount().save(validate:false)
       company.save(validate:false)
     and:"A valid period"
       String beginDate = "01-04-2016"
@@ -322,6 +322,8 @@ and:
       Bank.metaClass.static.findByName = { new Bank(name:"STP") }
     and:
       transactionService.getTransactionsAccountForPeriod(_,_) >> []
+      transactionService.getBalanceByKeyAccountPriorToDate(_,_) >> new BigDecimal(0)
+      movimientosBancariosService.getBalanceByCuentaPriorToDate(_,_) >> new BigDecimal(0)
     when:"get the account statement"
       AccountStatement accountStatement = service.getAccountStatementOfCompany(company, beginDate, endDate)
     then:
