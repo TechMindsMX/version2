@@ -8,4 +8,5 @@ class AccountStatement {
   List commissionsBalance
   Period period
   List<AccountStatementTransaction> transactions
+  List<Map> balanceSummary
 }
