@@ -251,9 +251,9 @@ class SaleOrderServiceSpec extends Specification {
       SaleOrder saleOrder = new SaleOrder().save(validate:false)
     and:"the balances"
       List balances = [
-        [typeCommission:CommissionType.FIJA, balance:new BigDecimal(1000)],
-        [typeCommission:CommissionType.PAGO, balance:new BigDecimal(100)],
-        [typeCommission:CommissionType.DEPOSITO, balance:new BigDecimal(10)]
+        [typeCommission:CommissionType.FIJA, balance:new BigDecimal(1000), quantity:1],
+        [typeCommission:CommissionType.PAGO, balance:new BigDecimal(100), quantity:10],
+        [typeCommission:CommissionType.DEPOSITO, balance:new BigDecimal(10), quantity:2]
       ]
     when:""
       saleOrder = service.createItemsForCommissionsSaleOrder(saleOrder, balances)
