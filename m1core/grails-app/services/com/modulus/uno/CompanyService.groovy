@@ -87,8 +87,8 @@ class CompanyService {
   }
 
   Boolean enoughBalanceCompany(Company company, BigDecimal amount) {
-    Balance balances = getBalanceOfCompany(company)
-    balances.balance >= amount
+    BigDecimal balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
+    balance >= amount
   }
 
   AccountStatement getAccountStatementOfCompany(Company company, String beginDate, String endDate){
@@ -103,7 +103,7 @@ class CompanyService {
 
     AccountStatement accountStatement = new AccountStatement()
     accountStatement.company = company
-    accountStatement.balance = getBalanceOfCompany(company)
+    accountStatement.balance = getGlobalBalanceOfCompany(company)
     accountStatement.period = period
     accountStatement.transactions = obtainTransactionsForCompanyInPeriod(company, period)
     accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
@@ -115,7 +115,7 @@ class CompanyService {
     asTransactions = obtainStpTransactions(company, period)
     List<AccountStatementTransaction> asTransactionsBankAccounts = obtainBankAccountsTransactions(company, period)
     asTransactions.addAll(asTransactionsBankAccounts)
-    BigDecimal beforeGlobalBalance = new BigDecimal(0)//getGlobalBalanceForCompanyPriorToDate(company, period.init)
+    BigDecimal beforeGlobalBalance = getGlobalBalanceForCompanyPriorToDate(company, period.init)
     recalculateBalancesForTransactions(beforeGlobalBalance, asTransactions)
   }
 
@@ -198,11 +198,16 @@ class CompanyService {
     directorService.findUsersOfCompanyByRole(company.id,['ROLE_AUTHORIZER_VISOR','ROLE_AUTHORIZER_EJECUTOR'])
   }
 
-  Balance getBalanceOfCompany(Company company) {
+  Balance getGlobalBalanceOfCompany(Company company) {
     BigDecimal balance = 0
     BigDecimal usd = 0
     if (company.status == CompanyStatus.ACCEPTED && company.accounts) {
       balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
+      BigDecimal banksBalance = new BigDecimal(0)
+      company.banksAccounts.each { bankAccount ->
+        banksBalance += movimientosBancariosService.getBalanceByCuentaPriorToDate(bankAccount, new Date())
+      }
+      balance += banksBalance
     }
     new Balance(balance:balance, usd:usd)
   }
