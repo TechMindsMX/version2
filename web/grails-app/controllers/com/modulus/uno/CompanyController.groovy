@@ -177,8 +177,8 @@ class CompanyController {
     String endDate = params.endDate ? new SimpleDateFormat("dd-MM-yyyy").format(new Date(params.endDate)) : ""
     AccountStatement accountStatement = companyService.getAccountStatementOfCompany(company, startDate, endDate)
 
-    def headers = ['Fecha', 'Concepto', 'Id. Transacción', 'Abono', 'Cargo', 'Saldo']
-    def withProperties = ['date', 'concept', 'id', 'credit', 'debit', 'balance']
+    def headers = ['Fecha', 'Cuenta','Concepto', 'Id. Transacción', 'Abono', 'Cargo', 'Saldo']
+    def withProperties = ['date', 'account', 'concept', 'id', 'credit', 'debit', 'balance']
     def formattedTransactions = companyService.formattingTransactionsForXls(accountStatement.transactions)
     println "Transacciones: ${formattedTransactions}"
     new WebXlsxExporter().with {

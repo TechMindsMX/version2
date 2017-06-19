@@ -44,8 +44,10 @@ import java.lang.Void as Should
                         paymentConcept:"Prestamo",keyAccount:"646180132408900007",referenceNumber:"201703100010",
                         transactionType:TransactionType.WITHDRAW,transactionStatus:TransactionStatus.AUTHORIZED]).save(flush:true)
       }
+    and:"The period"
+      Period period = new Period(init:new Date()-10, end:new Date()+5)
     when:
-      def transactions = service.getTransactionsAccountForPeriod("646180132408900006",(new Date()-10),(new Date()+5))
+      def transactions = service.getTransactionsAccountForPeriod("646180132408900006", period)
     then:
       transactions.size() == 2
   }

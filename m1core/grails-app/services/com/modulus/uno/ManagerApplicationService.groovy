@@ -28,8 +28,7 @@ class ManagerApplicationService {
     accountStatement.balance = getBalanceIntegratorOfType(type)
     accountStatement.balanceTransiting = 0
     accountStatement.balanceSubjectToCollection = 0
-    accountStatement.startDate = new SimpleDateFormat("dd-MM-yyyy").parse(period.beginDate)
-    accountStatement.endDate = new SimpleDateFormat("dd-MM-yyyy").parse(period.endDate)
+    accountStatement.period = new Period(init:new SimpleDateFormat("dd-MM-yyyy").parse(period.beginDate), end:new SimpleDateFormat("dd-MM-yyyy").parse(period.endDate))
     accountStatement.transactions = modulusUnoService.getTransactionsInPeriodOfIntegrator(command)
     accountStatement
   }
