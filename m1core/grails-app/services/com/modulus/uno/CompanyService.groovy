@@ -23,6 +23,7 @@ class CompanyService {
   def invoiceService
   CommissionTransactionService commissionTransactionService
   StpService stpService
+  MovimientosBancariosService movimientosBancariosService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -120,8 +121,8 @@ class CompanyService {
 
   BigDecimal getGlobalBalanceForCompanyPriorToDate(Company company, Date date) {
     BigDecimal beforeBalanceStp = transactionService.getBalanceByKeyAccountPriorToDate(company.accounts.first().stpClabe, date)
-    BigDecimal beforeBalanceBanks
-    company.banksAccounts.each { bankAccount
+    BigDecimal beforeBalanceBanks = new BigDecimal(0)
+    company.banksAccounts.each { bankAccount ->
       beforeBalanceBanks += movimientosBancariosService.getBalanceByCuentaPriorToDate(bankAccount, date)
     }
     beforeBalanceStp + beforeBalanceBanks
