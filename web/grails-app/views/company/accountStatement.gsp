@@ -19,8 +19,8 @@
       <div class="col-lg-8 col-md-7 col-sm-12">
         <div class="portlet">
           <div class="portlet-heading">
-            <h2>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h2>
-            <h4>Clabe STP: ${accountStatement.company.accounts?.first().stpClabe}</h4>
+            <h2>Saldo Global</h2>
+            <h4>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h4>
           </div>
           <div class="portlet-body">
             <div class="table-responsive">
@@ -33,31 +33,12 @@
                   <td><strong>Pesos</strong></td>
                   <td class="text-right">${modulusuno.formatPrice(number: accountStatement.balance.balance)}</td>
                 </tr>
-                <tr>
-                  <td><strong>Dólares</strong></td>
-                  <td >${modulusuno.formatPrice(number: 0.00)}</td>
-                </tr>
               </table>
             </div>
-
-            <div class="table-responsive">
-              <table class="table table-condensed">
-                <tr>
-                  <th>Comisiones acumuladas (más IVA)</th>
-                  <th class="text-right"><strong>Total: ${modulusuno.formatPrice(number:accountStatement.commissionsBalance.balance.sum())}</th>
-                </tr>
-                <g:each in="${accountStatement.commissionsBalance}" var="comm">
-                <tr>
-                  <td><strong>${comm.typeCommission}</strong></td>
-                  <td class="text-right">${modulusuno.formatPrice(number: comm.balance)}</td>
-                </tr>
-                </g:each>
-              </table>
-            </div>
-
           </div>
         </div>
       </div>
+
       <div class="col-lg-4 col-md-5 col-sm-12">
         <div class="portlet">
           <div class="portlet-heading">
@@ -92,13 +73,70 @@
     </div>
 
     <div class="row">
+      <div class="col-md-6">
+        <div class="portlet">
+          <div class="portlet-heading">
+            <h2>Resumen de saldos por cuenta</h2>
+          </div>
+          <div class="portlet-body">
+            <div class="table-responsive">
+              <table class="table table-condensed">
+                <tr>
+                  <th>Cuenta</th>
+                  <th>Saldo</th>
+                </tr>
+                <g:each in="${accountStatement.balanceSummary}" var="account">
+                <tr>
+                  <td>${account.bank} - ${account.account}</td>
+                  <td class="text-right">${modulusuno.formatPrice(number: account.balance)}</td>
+                </tr>
+                </g:each>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="col-md-6">
+        <div class="portlet">
+          <div class="portlet-heading">
+            <h2>Comisiones acumuladas del período (más IVA)</h2>
+          </div>
+          <div class="portlet-body">
+            <div class="table-responsive">
+              <table class="table table-condensed">
+                <tr>
+                  <th>Tipo</th>
+                  <th class="text-center">Total</th>
+                </tr>
+                <g:each in="${accountStatement.commissionsBalance}" var="comm">
+                <tr>
+                  <td><strong>${comm.typeCommission}</strong></td>
+                  <td class="text-right">${modulusuno.formatPrice(number: comm.balance)}</td>
+                </tr>
+                </g:each>
+                <tr>
+                  <td></td>
+                  <td class="text-right"><strong>Total: ${modulusuno.formatPrice(number:accountStatement.commissionsBalance.balance.sum())}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
       <div class="col-md-12">
         <div class="portlet">
           <div class="portlet-heading">
             <div class="table-responsive">
               <table class="table">
                 <tr>
-                  <th><h2>Resultado de la consulta</h2></th>
+                  <th><h2>Detalle de Movimientos</h2></th>
                   <th class="text-right">
                     <br/>
                     <g:link class="btn btn-default" action="generatePdfForAccountStatement" params="[company:accountStatement.company.id, startDate:accountStatement.period.init, endDate: accountStatement.period.end]">
