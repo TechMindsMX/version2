@@ -262,4 +262,16 @@ class SaleOrderServiceSpec extends Specification {
       saleOrder.subtotal == 1110.00
   }
 
+  void "Should create a commissions sale order for a company and period"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+    and:"The period"
+      Period period = new Period(init:new Date().parse("dd-MM-yyyy", "01-05-2017"), end:new Date().parse("dd-MM-yyyy", "31-05-2017"))
+    when:
+      SaleOrder saleOrder = service.createCommissionsInvoiceForCompanyAndPeriod(company, period)
+    then:
+      saleOrder
+      1 * commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(_, _, _)
+      1 * commissionTransactionService.linkCommissionTransactionsForCompanyInPeriodWithSaleOrder(_, _, _)
+  }
 }

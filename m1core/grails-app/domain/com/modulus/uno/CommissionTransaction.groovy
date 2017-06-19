@@ -6,9 +6,9 @@ class CommissionTransaction {
   CommissionType type
   BigDecimal amount
   CommissionTransactionStatus status = CommissionTransactionStatus.PENDING
-  CommissionsInvoice invoice
   Company company
   Transaction transaction
+  SaleOrder invoice
 
   Date dateCreated
   Date lastUpdated
@@ -17,8 +17,8 @@ class CommissionTransaction {
     type nullable:false
     amount nullable:false, min:0.01
     company nullable:false
-    invoice nullable:true
     transaction nullable:true
+    invoice nullable:true
   }
 
 }
