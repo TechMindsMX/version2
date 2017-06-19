@@ -281,4 +281,30 @@ class SaleOrderServiceSpec extends Specification {
       1 * commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(_, _, _)
       1 * commissionTransactionService.linkCommissionTransactionsForCompanyInPeriodWithSaleOrder(_, _, _)
   }
+
+  void "Should cancel a sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.POR_AUTORIZAR).save(validate:false)
+    when:
+      def result = service.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
+    then:
+      result.status == SaleOrderStatus.CANCELADA
+      1 * commissionTransactionService.saleOrderIsCommissionsInvoice(_)
+      1 * emailSenderService.notifySaleOrderChangeStatus(_)
+  }
+
+  void "Should cancel or reject a commissions invoice sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.POR_AUTORIZAR).save(validate:false)
+      SaleOrderItem item = new SaleOrderItem(quantity:1, price:100, iva:16).save(validate:false)
+      saleOrder.addToItems(item)
+      saleOrder.save(validate:false)
+    and:
+      commissionTransactionService.saleOrderIsCommissionsInvoice(_) >> true
+    when:
+      def result = service.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
+    then:
+      1 * commissionTransactionService.unlinkTransactionsForSaleOrder(_)
+  }
+
 }
