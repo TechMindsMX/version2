@@ -187,6 +187,32 @@ class CorporateController {
     companyService.assignAliasStpToCompany(Company.get(params.company), params.aliasStp)
     redirect action:'defineCostCenters', id:corporate.id
   }
+
+  def editUser(User user) {
+    render view:"editUser", model:[user:user, corporateId:params.corporateId]
+  }
+
+  @Transactional
+  def updateUser(User user) {
+    if (user.hasErrors()) {
+      log.error "Error updating user ${user.id}"
+      render view:"editUser", model:[user:user, corporateId:params.corporateId]
+      return
+    }
+
+    user.save()
+    log.info "User ${user.username} was updated"
+
+    redirect action:'show', id:params.corporateId.toLong()
+  }
+
+  @Transactional
+  def changeStatusUser(User user) {
+    user.enabled = !user.enabled
+    user.save()
+    redirect action:'show', id:params.corporateId.toLong()
+  }
+
 }
 
 @groovy.transform.TypeChecked
