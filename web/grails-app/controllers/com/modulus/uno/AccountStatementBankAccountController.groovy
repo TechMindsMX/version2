@@ -7,7 +7,7 @@ class AccountStatementBankAccountController {
   AccountStatementBankAccountService accountStatementBankAccountService
 
   def list(BankAccount bankAccount) {
-    [bankAccount:bankAccount, accountStatements:accountStatementBankAccountService.listAccountStatementForBankAccount(bankAccount)]
+    [bankAccount:bankAccount, accountStatements:accountStatementBankAccountService.listAccountStatementForBankAccount(bankAccount), baseUrlDocuments:grailsApplication.config.grails.url.base.images]
   }
 
   def create(BankAccount bankAccount) {
