@@ -50,7 +50,7 @@
                   <input type="file" required="" class="form-control" name="pdfDocument" accept="application/pdf" maxlength="5000000" />
                 </div>
               </fieldset>
-              <fieldset class="buttons">
+              <fieldset class="buttons text-right">
                 <g:submitButton name="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
               </fieldset>
             </g:form>
