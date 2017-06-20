@@ -36,7 +36,7 @@
                 <g:each in="${accountStatements}" var="accountStatement">
                   <tr>
                     <td class="text-center"><g:formatDate format="MMM-yyyy" date="${accountStatement.month}"/></td>
-                    <td class="text-center"><g:link class="btn btn-success">PDF</g:link></td>
+                    <td class="text-center"><g:link class="btn btn-success" uri="${baseUrlDocuments}/${accountStatement.document.title}.${accountStatement.document.mimeType}">PDF</g:link></td>
                   </tr>
                 </g:each>
               </tbody>
