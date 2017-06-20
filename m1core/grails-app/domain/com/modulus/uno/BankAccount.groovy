@@ -9,6 +9,7 @@ class BankAccount {
   String clabe
   boolean concentradora = false
 
+  static hasMany = [accountStatements:AccountStatementBankAccount]
   static belongsTo = [banco:Bank]
 
   static constraints = {

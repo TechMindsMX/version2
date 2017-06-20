@@ -47,6 +47,7 @@
                 <td>
                   <g:link action="show" id="${account.id}" class="btn btn-green" ><i class="fa fa-search" aria-hidden="true"></i></g:link>&nbsp;
                   <g:link controller="movimientosBancarios" action="create" class="btn btn-green" id="${account.id}"><i class="fa fa-plus" aria-hidden="true"></i></g:link>
+                  <g:link controller="accountStatementBankAccount" action="list" class="btn btn-green" id="${account.id}" title="Estados de Cuenta"><i class="fa fa-file-text aria-hidden="true"></i></g:link>
                 </td>
               </tr>
             </g:each>
