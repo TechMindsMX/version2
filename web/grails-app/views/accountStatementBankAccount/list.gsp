@@ -16,6 +16,13 @@
     <div class="col-md-12">
       <div class="portlet">
 
+        <div class"portlet-heading">
+          <div class="row">
+            <div class="col-md-12">
+              <g:link class="btn btn-primary" action="create" id="${bankAccount.id}">Nuevo</g:link>
+            </div>
+          </div>
+        </div>
         <div class="portlet-body">
           <div class="table-responsive">
             <table class="table">
@@ -28,15 +35,17 @@
               <tbody>
                 <g:each in="${accountStatements}" var="accountStatement">
                   <tr>
-                    <td><g:dateFormat format="MM-yyyy" date="${accountStatement.month}"/></td>
-                    <td>${accountStatement.document}</td>
+                    <td class="text-center"><g:formatDate format="MMM-yyyy" date="${accountStatement.month}"/></td>
+                    <td class="text-center"><g:link class="btn btn-success">PDF</g:link></td>
                   </tr>
                 </g:each>
               </tbody>
             </table>
           </div>
         </div>
-
+        <div class="pagination">
+          <g:paginate total="${accountStatementsCount ?: 0}" />
+        </div>
       </div>
     </div>
   </div>
