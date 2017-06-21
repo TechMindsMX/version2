@@ -288,7 +288,7 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     def emailList = getEmailList(payment.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR", "ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
     log.info "Parameters: ${paramsEmailer}"
     log.info "Id Template: ${idEmailer}"
-    log.info "Emails list: ${emailList}"
-    notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
+    log.info "Emails list: ${emailList.unique()}"
+    notifyService.sendEmailNotifications(emailList.unique(), idEmailer, paramsEmailer)
   }
 }
