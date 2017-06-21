@@ -288,7 +288,18 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     def emailList = getEmailList(payment.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR", "ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
     log.info "Parameters: ${paramsEmailer}"
     log.info "Id Template: ${idEmailer}"
-    log.info "Emails list: ${emailList.unique()}"
-    notifyService.sendEmailNotifications(emailList.unique(), idEmailer, paramsEmailer)
+    log.info "Emails list: ${emailList}"
+    notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
+  }
+
+  def notifyPaymentToPurchaseOrder(PurchaseOrder purchaseOrder) {
+    def paramsEmailer=notifyService.parametersForPaymentToPurchase(purchaseOrder.payments.last())
+    def idEmailer = grailsApplication.config.emailer.paymentToPurchase
+    def emailList = getEmailList(payment.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR", "ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
+    log.info "Parameters: ${paramsEmailer}"
+    log.info "Id Template: ${idEmailer}"
+    log.info "Emails list: ${emailList}"
+    notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
+
   }
 }
