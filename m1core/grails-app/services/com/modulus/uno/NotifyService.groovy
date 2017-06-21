@@ -272,6 +272,17 @@ class NotifyService {
     def paramsMap = ['user': user.username]
   }
 
+  def parametersForStpDeposit(Payment payment){
+    def paramsMap = [:]
+    def paramsFields = ["paymentConcept", "trackingKey", "referenceNumber"]
+    paramsMap = buildParamsEmailMap(payment.transaction, paramsFields)
+    paramsMap.amount = payment.amount.toString()
+    paramsMap.dateCreated = payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    paramsMap.company = payment.rfc ? BusinessEntity.findByRfc(payment.rfc).toString() : "NO IDENTIFICADO"
+    paramsMap.url=corporateService.findCorporateByCompanyId(payment.company.id)
+    paramsMap
+  }
+
   def sendEmailToGroup(ArrayList<NotificationForState> notifys, def emailerParams){
     notifys.each{ notify ->
       GroupNotification group = GroupNotification.findById(notify.groupNotification)

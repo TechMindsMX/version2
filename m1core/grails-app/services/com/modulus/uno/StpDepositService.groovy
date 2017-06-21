@@ -9,6 +9,7 @@ class StpDepositService {
   TransactionService transactionService
   CommissionTransactionService commissionTransactionService
   def grailsApplication
+  EmailSenderService emailSenderService
 
   def notificationDepositFromStpOld(String xmlNotif) {
     StpDeposit stpDeposit = saveNotificationOld(xmlNotif)
@@ -84,6 +85,8 @@ class StpDepositService {
     payment.transaction = createAndSaveTransaction(stpDeposit)
     payment.save()
     registerCommissionForDeposit(payment)
+    log.info "Send notifications for stp deposit"
+    emailSenderService.notifyStpDepositReceived(payment)
     log.info "Payment was generated: ${payment?.dump()}"
   }
 

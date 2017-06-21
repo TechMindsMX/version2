@@ -282,4 +282,13 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     emailList
   }
 
+  def notifyStpDepositReceived(Payment payment) {
+    def paramsEmailer=notifyService.parametersForStpDeposit(payment)
+    def idEmailer = grailsApplication.config.emailer.stpDepositReceived
+    def emailList = getEmailList(payment.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR", "ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
+    log.info "Parameters: ${paramsEmailer}"
+    log.info "Id Template: ${idEmailer}"
+    log.info "Emails list: ${emailList.unique()}"
+    notifyService.sendEmailNotifications(emailList.unique(), idEmailer, paramsEmailer)
+  }
 }
