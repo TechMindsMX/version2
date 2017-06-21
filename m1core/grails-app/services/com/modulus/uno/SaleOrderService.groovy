@@ -289,10 +289,10 @@ class SaleOrderService {
     balances.each { balance ->
       if (balance.balance) {
       SaleOrderItem item = new SaleOrderItem(
-        sku:"COM0",
+        sku:"COMISION-${balance.typeCommission}",
         name:balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}",
-        quantity:new BigDecimal(1),
-        price:balance.balance,
+        quantity:balance.quantity,
+        price:balance.balance/balance.quantity,
         iva:new BigDecimal(grailsApplication.config.iva),
         unitType:"SERVICIO",
         saleOrder:saleOrder
