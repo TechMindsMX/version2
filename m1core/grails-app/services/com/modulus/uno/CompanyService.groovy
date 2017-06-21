@@ -23,6 +23,7 @@ class CompanyService {
   def invoiceService
   CommissionTransactionService commissionTransactionService
   StpService stpService
+  MovimientosBancariosService movimientosBancariosService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -86,8 +87,8 @@ class CompanyService {
   }
 
   Boolean enoughBalanceCompany(Company company, BigDecimal amount) {
-    Balance balances = getBalanceOfCompany(company)
-    balances.balance >= amount
+    BigDecimal balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
+    balance >= amount
   }
 
   AccountStatement getAccountStatementOfCompany(Company company, String beginDate, String endDate){
@@ -102,23 +103,122 @@ class CompanyService {
 
     AccountStatement accountStatement = new AccountStatement()
     accountStatement.company = company
-    accountStatement.balance = getBalanceOfCompany(company)
-    accountStatement.startDate = period.init
-    accountStatement.endDate = period.end
-    accountStatement.transactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe,accountStatement.startDate,accountStatement.endDate)
+    accountStatement.balance = getGlobalBalanceOfCompany(company)
+    accountStatement.period = period
+    accountStatement.transactions = obtainTransactionsForCompanyInPeriod(company, period)
     accountStatement.commissionsBalance = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
+    accountStatement.balanceSummary = obtainBalanceSummaryForCompany(company)
     accountStatement
+  }
+
+  List<Map> obtainBalanceSummaryForCompany(Company company) {
+    Map stpBalance = [account:company.accounts.first().stpClabe, bank:"STP", balance:transactionService.getBalanceByKeyAccountPriorToDate(company.accounts.first().stpClabe, new Date())]
+    List<Map> summary = [stpBalance]
+    company.banksAccounts.sort{it.banco.name}.each { bankAccount ->
+      Map bankBalance = [account:bankAccount.clabe, bank:bankAccount.banco.name, balance:movimientosBancariosService.getBalanceByCuentaPriorToDate(bankAccount, new Date())]
+      summary.add(bankBalance)
+    }
+    summary
+  }
+
+  List<AccountStatementTransaction> obtainTransactionsForCompanyInPeriod(Company company, Period period) {
+    List<AccountStatementTransaction> asTransactions = []
+    asTransactions = obtainStpTransactions(company, period)
+    List<AccountStatementTransaction> asTransactionsBankAccounts = obtainBankAccountsTransactions(company, period)
+    asTransactions.addAll(asTransactionsBankAccounts)
+    BigDecimal beforeGlobalBalance = getGlobalBalanceForCompanyPriorToDate(company, period.init)
+    recalculateBalancesForTransactions(beforeGlobalBalance, asTransactions)
+  }
+
+  BigDecimal getGlobalBalanceForCompanyPriorToDate(Company company, Date date) {
+    BigDecimal beforeBalanceStp = transactionService.getBalanceByKeyAccountPriorToDate(company.accounts.first().stpClabe, date)
+    BigDecimal beforeBalanceBanks = new BigDecimal(0)
+    company.banksAccounts.each { bankAccount ->
+      beforeBalanceBanks += movimientosBancariosService.getBalanceByCuentaPriorToDate(bankAccount, date)
+    }
+    beforeBalanceStp + beforeBalanceBanks
+  }
+
+  List<AccountStatementTransaction> recalculateBalancesForTransactions(BigDecimal beforeGlobalBalance, List<AccountStatementTransaction> asTransactions) {
+    List<AccountStatementTransaction> asTransactionsRecalculated = asTransactions.sort(false, AccountStatementTransaction.comparatorByDate())
+    BigDecimal balance = beforeGlobalBalance
+    asTransactionsRecalculated.each { transaction ->
+      balance = transaction.type == TransactionType.WITHDRAW ? (balance - transaction.amount) : (balance + transaction.amount)
+      transaction.balance = balance
+    }
+    asTransactionsRecalculated
+  }
+
+  List<AccountStatementTransaction> obtainStpTransactions(Company company, Period period) {
+    List<AccountStatementTransaction> asTransactions = []
+    List<Transaction> stpTransactions = transactionService.getTransactionsAccountForPeriod(company.accounts?.first()?.stpClabe, period)
+    if (stpTransactions) {
+      asTransactions = parseStpTransactionsToAccountStatementTransactions(stpTransactions)
+    }
+    asTransactions
+  }
+
+  List<AccountStatementTransaction> obtainBankAccountsTransactions(Company company, Period period) {
+    List<AccountStatementTransaction> asTransactions = []
+    company.banksAccounts.each { bankAccount ->
+      List<MovimientosBancarios> bankTransactions = MovimientosBancarios.findAllByCuentaAndDateEventBetween(bankAccount, period.init, period.end)
+      if (bankTransactions) {
+        asTransactions = parseBankTransactionsToAccountStatementTransactions(bankTransactions)
+      }
+    }
+    asTransactions
+  }
+
+  List<AccountStatementTransaction> parseStpTransactionsToAccountStatementTransactions(List<Transaction> stpTransactions) {
+    List<AccountStatementTransaction> asTransactions = []
+    BankAccount bankAccount = new BankAccount(clabe:stpTransactions?.first()?.keyAccount, banco:Bank.findByName("STP"))
+    stpTransactions.each { transaction ->
+      asTransactions.add(new AccountStatementTransaction(
+          account: bankAccount,
+          date: transaction.dateCreated,
+          concept:transaction.paymentConcept,
+          transactionId:transaction.keyTransaction,
+          amount:transaction.amount,
+          type:transaction.transactionType,
+          balance:transaction.balance
+        )
+      )
+    }
+    asTransactions
+  }
+
+  List<AccountStatementTransaction> parseBankTransactionsToAccountStatementTransactions(List<MovimientosBancarios> bankTransactions) {
+    List<AccountStatementTransaction> asTransactions = []
+    BankAccount bankAccount = bankTransactions.first().cuenta
+    bankTransactions.each { transaction ->
+      asTransactions.add(new AccountStatementTransaction(
+          account: bankAccount,
+          date: transaction.dateEvent,
+          concept:transaction.concept,
+          transactionId:transaction.reference,
+          amount:transaction.amount,
+          type:transaction.type==MovimientoBancarioType.DEBITO ? TransactionType.WITHDRAW : TransactionType.DEPOSIT,
+          balance:new BigDecimal(0)
+        )
+      )
+    }
+    asTransactions
   }
 
   ArrayList<User> getAuthorizersByCompany(Company company) {
     directorService.findUsersOfCompanyByRole(company.id,['ROLE_AUTHORIZER_VISOR','ROLE_AUTHORIZER_EJECUTOR'])
   }
 
-  Balance getBalanceOfCompany(Company company) {
+  Balance getGlobalBalanceOfCompany(Company company) {
     BigDecimal balance = 0
     BigDecimal usd = 0
     if (company.status == CompanyStatus.ACCEPTED && company.accounts) {
       balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
+      BigDecimal banksBalance = new BigDecimal(0)
+      company.banksAccounts.each { bankAccount ->
+        banksBalance += movimientosBancariosService.getBalanceByCuentaPriorToDate(bankAccount, new Date())
+      }
+      balance += banksBalance
     }
     new Balance(balance:balance, usd:usd)
   }
@@ -160,11 +260,12 @@ class CompanyService {
     List formattedTransactions = []
     transactions.each { mov ->
       Map transaction = [:]
-      transaction.date = mov.dateCreated
-      transaction.concept = mov.paymentConcept
-      transaction.id = mov.keyTransaction ?: ""
-      transaction.credit = mov.transactionType == TransactionType.DEPOSIT ? mov.amount : ""
-      transaction.debit = mov.transactionType == TransactionType.WITHDRAW ? mov.amount : ""
+      transaction.date = mov.date
+      transaction.account = mov.account
+      transaction.concept = mov.concept
+      transaction.id = mov.transactionId ?: ""
+      transaction.credit = mov.type == TransactionType.DEPOSIT ? mov.amount : ""
+      transaction.debit = mov.type == TransactionType.WITHDRAW ? mov.amount : ""
       transaction.balance = mov.balance
       formattedTransactions << transaction
     }

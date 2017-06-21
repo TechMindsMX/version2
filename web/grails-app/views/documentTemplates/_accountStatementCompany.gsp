@@ -30,27 +30,29 @@
   <div>
     <table>
      <tr>
-       <th style="width:20%">Fecha</th>
-       <th style="width:25%">Concepto</th>
+       <th style="width:15%">Fecha</th>
+       <th style="width:15%">Cuenta</th>
+       <th style="width:20%">Concepto</th>
        <th style="width:5%">Id de Transacción</th>
        <th style="width:15%">Abono</th>
        <th style="width:15%">Cargo</th>
-       <th style="width:20%">Saldo</th>
+       <th style="width:15%">Saldo</th>
      </tr>
      <g:each in="${accountStatement.transactions}" var="mov">
       <tr>
-        <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.dateCreated}"/></td>
+        <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.date}"/></td>
+        <td>${mov.account}</td>
         <td>
-          ${mov.paymentConcept}
+          ${mov.concept}
         </td>
-        <td style="text-align:center">${mov.keyTransaction?:""}</td>
+        <td style="text-align:center">${mov.transactionId?:""}</td>
         <td style="text-align:right">
-          <g:if test="${mov.transactionType == TransactionType.DEPOSIT}">
+          <g:if test="${mov.type == TransactionType.DEPOSIT}">
             ${modulusuno.formatPrice(number: mov.amount)}
           </g:if>
         </td>
         <td style="text-align:right">
-          <g:if test="${mov.transactionType == TransactionType.WITHDRAW}">
+          <g:if test="${mov.type == TransactionType.WITHDRAW}">
             ${modulusuno.formatPrice(number: mov.amount)}
           </g:if>
         </td>
