@@ -170,5 +170,19 @@ class CommissionTransactionServiceSpec extends Specification {
       transactions.first().status == CommissionTransactionStatus.CHARGED
   }
 
+  void "Should unlink transactions from sale order"() {
+    given:"The sale order"
+      SaleOrder saleOrder = new SaleOrder().save(validate:false)
+      CommissionTransactionStatus status = CommissionTransactionStatus.INVOICED
+    and:"The transactions"
+      List<CommissionTransaction> transactions = [new CommissionTransaction(status:status, invoice:saleOrder).save(validate:false)]
+      CommissionTransaction.metaClass.static.findAllByInvoiceAndStatus = {sO, statusTr ->  transactions }
+    when:
+      service.unlinkTransactionsForSaleOrder(saleOrder)
+    then:
+      transactions.first().status == CommissionTransactionStatus.PENDING
+      transactions.first().invoice == null
+  }
+
 }
 
