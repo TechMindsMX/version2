@@ -279,7 +279,7 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     usersList.each{ user ->
       emailList.add(user.profile.email)
     }
-    emailList
+    emailList.unique()
   }
 
 }
