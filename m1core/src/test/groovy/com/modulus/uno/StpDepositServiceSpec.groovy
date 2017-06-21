@@ -76,23 +76,6 @@ class StpDepositServiceSpec extends Specification {
       result.estatus == StpDepositStatus.ACEPTADO
   }
 
-  void "Should obtain a accepted status for a stp deposit which account is from m1 emitter"(){
-    given:"A string notification with xml"
-      String clave = "1101"
-      String rastreo = "ABC001"
-      String clabe = "646180132400000007"
-      StpDeposit notification = createNotificationWithData(clave, rastreo, clabe)
-    and:
-      StpDeposit.metaClass.static.findAllByOperationNumberAndTracingKeyAndIdNotEqualAndStatusNotEqual = { [] }
-    and:
-      ModulusUnoAccount.metaClass.static.findByStpClabe = { null }
-      ModulusUnoAccount.metaClass.static.findByStpClabeLike = { null }
-    when:"We process the notification"
-      def result = service.notificationDepositFromStp(notification)
-    then:"We validate"
-      result.estatus == StpDepositStatus.ACEPTADO
-  }
-
   void "Should obtain a rejected status for a stp deposit which account is not from client and neither company"(){
     given:"A string notification with xml"
       String clave = "1101"
