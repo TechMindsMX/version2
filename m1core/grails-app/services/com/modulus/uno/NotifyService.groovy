@@ -283,6 +283,22 @@ class NotifyService {
     paramsMap
   }
 
+  def parametersForPaymentToPurchase(PurchaseOrder purchaseOrder){
+    PaymentToPurchase payment = purchaseOrder.payments.last()
+    def paramsMap = [:]
+    def paramsFields = ["paymentConcept", "trackingKey", "referenceNumber"]
+    paramsMap = buildParamsEmailMap(payment.transaction, paramsFields)
+    paramsMap.amount = payment.amount.toString()
+    paramsMap.dateCreated = payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    paramsMap.providerName = purchaseOrder.providerName
+    paramsMap.id = purchaseOrder.id
+    paramsMap.destinyBank = purchaseOrder.bankAccount.banco.name
+    paramsMap.destinyBankAccount = purchaseOrder.bankAccount.clabe
+    paramsMap.aliasStp = purchaseOrder.company.accounts.first().aliasStp
+    paramsMap.url=corporateService.findCorporateByCompanyId(purchaseOrder.company.id)
+    paramsMap
+  }
+
   def sendEmailToGroup(ArrayList<NotificationForState> notifys, def emailerParams){
     notifys.each{ notify ->
       GroupNotification group = GroupNotification.findById(notify.groupNotification)
