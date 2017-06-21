@@ -6,7 +6,7 @@ import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(NotifyService)
-@Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, PurchaseOrder,Corporate,SaleOrderItem])
+@Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, PurchaseOrder,Corporate,SaleOrderItem, Bank, BankAccount, PaymentToPurchase, Transaction, ModulusUnoAccount, Payment, ComposeName])
 class NotifyServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
@@ -339,6 +339,94 @@ class NotifyServiceSpec extends Specification {
       def u = new User(username:"user$it", profile: new Profile(email:"user$it@modulus.uno")).save(validate:false)
       u
     }
+  }
+
+  void "obtain the params for payment to Purchase Order"(){
+    given:"a purchase order"
+      BankAccount bankAccount = new BankAccount(clabe:"Clabe", banco:new Bank(name:"BankName").save(validate:false)).save(validate:false)
+      def purchaseOrder = new PurchaseOrder(providerName:"Fake Inc", bankAccount:bankAccount)
+      purchaseOrder.save(validate:false)
+    and:
+      ModulusUnoAccount m1Account = new ModulusUnoAccount(aliasStp:"AliasStp").save(validate:false)
+      def company = new Company().save(validate:false)
+      company.addToAccounts(m1Account)
+      company.save(validate:false)
+      purchaseOrder.company = company
+      Transaction transaction = new Transaction(paymentConcept:"Concepto", trackingKey:"Rastreo", referenceNumber:"Referencia").save(validate:false)
+      PaymentToPurchase payment = new PaymentToPurchase(amount:new BigDecimal(1500), transaction:transaction, dateCreated:new Date()).save(validate:false)
+      purchaseOrder.addToPayments(payment)
+      purchaseOrder.save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
+    when:"we extract the params"
+    def params = service.parametersForPaymentToPurchase(purchaseOrder)
+    then:"we should get"
+    params.id == 1
+    params.providerName == "Fake Inc"
+    params.paymentConcept == "Concepto"
+    params.trackingKey == "Rastreo"
+    params.referenceNumber == "Referencia"
+    params.amount == "1500"
+    params.dateCreated == payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    params.destinyBank == "BankName"
+    params.destinyBankAccount == "Clabe"
+    params.aliasStp == "AliasStp"
+    params.url == URL
+  }
+
+  void "obtain the params for stp deposit when payment isn't from any client"(){
+    given:"the payment"
+      def company = new Company().save(validate:false)
+      Transaction transaction = new Transaction(paymentConcept:"Concepto", trackingKey:"Rastreo", referenceNumber:"Referencia").save(validate:false)
+      Payment payment = new Payment(amount:new BigDecimal(1000), dateCreated:new Date(), transaction:transaction, company:company).save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
+    when:"we extract the params"
+    def params = service.parametersForStpDeposit(payment)
+    then:"we should get"
+    params.paymentConcept == "Concepto"
+    params.trackingKey == "Rastreo"
+    params.referenceNumber == "Referencia"
+    params.amount == "1000"
+    params.dateCreated == payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    params.company == "NO IDENTIFICADO"
+    params.url == URL
+  }
+
+  void "obtain the params for stp deposit when payment is from any client"(){
+    given:"the payment"
+      def company = new Company().save(validate:false)
+      Transaction transaction = new Transaction(paymentConcept:"Concepto", trackingKey:"Rastreo", referenceNumber:"Referencia").save(validate:false)
+      Payment payment = new Payment(amount:new BigDecimal(1000), dateCreated:new Date(), transaction:transaction, company:company, rfc:"RFC").save(validate:false)
+    and:
+      Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
+      corporate.addToCompanies(company)
+      corporate.save()
+    and:
+      corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
+    and:
+      BusinessEntity businessEntity = new BusinessEntity(type:BusinessEntityType.MORAL).save(validate:false)
+      ComposeName name = new ComposeName(value:"Client", type:NameType.RAZON_SOCIAL).save(validate:false)
+      businessEntity.addToNames(name)
+      BusinessEntity.metaClass.static.findByRfc = { businessEntity }
+    when:"we extract the params"
+    def params = service.parametersForStpDeposit(payment)
+    then:"we should get"
+    params.paymentConcept == "Concepto"
+    params.trackingKey == "Rastreo"
+    params.referenceNumber == "Referencia"
+    params.amount == "1000"
+    params.dateCreated == payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    params.company == "Client"
+    params.url == URL
   }
 
 }
