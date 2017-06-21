@@ -129,5 +129,17 @@ class CommissionTransactionService {
     }
   }
 
+  boolean saleOrderIsCommissionsInvoice(SaleOrder saleOrder) {
+    CommissionTransaction.findByInvoice(saleOrder) ? true : false
+  }
+
+  void conciliateTransactionsForSaleOrder(SaleOrder saleOrder) {
+    List<CommissionTransaction> transactions = CommissionTransaction.findAllByInvoiceAndStatus(saleOrder, CommissionTransactionStatus.INVOICED)
+    transactions.each { tr ->
+      tr.status = CommissionTransactionStatus.CHARGED
+      tr.save()
+    }
+  }
+
 }
 
