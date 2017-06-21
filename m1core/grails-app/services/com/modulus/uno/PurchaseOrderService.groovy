@@ -210,7 +210,7 @@ class PurchaseOrderService {
     PaymentToPurchase payment = new PaymentToPurchase(amount:amount, transaction:Transaction.get(transactionId))
     purchaseOrder.addToPayments(payment)
     purchaseOrder.save()
-    //emailSenderService.notifyPaymentToPurchaseOrder(purchaseOrder)
+    emailSenderService.notifyPaymentToPurchaseOrder(purchaseOrder)
     purchaseOrder
   }
 
