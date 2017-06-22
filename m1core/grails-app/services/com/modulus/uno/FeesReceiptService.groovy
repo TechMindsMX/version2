@@ -49,7 +49,7 @@ class FeesReceiptService {
     feesReceipt
   }
 
-  private String sendPaymentToStp(FeesReceipt feesReceipt) {
+  private def sendPaymentToStp(FeesReceipt feesReceipt) {
     String fullConcept = "HONORARIOS ID:${feesReceipt.id}, ${feesReceipt.collaboratorName}"
     String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
     def data = [
