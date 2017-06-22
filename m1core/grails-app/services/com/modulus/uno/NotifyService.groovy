@@ -300,7 +300,7 @@ class NotifyService {
   }
 
   def parametersForPaymentToPurchase(PurchaseOrder purchaseOrder){
-    PaymentToPurchase payment = purchaseOrder.payments.last()
+    PaymentToPurchase payment = purchaseOrder.payments.sort{it.id}.last()
     def paramsMap = [:]
     def paramsFields = ["paymentConcept", "trackingKey", "referenceNumber"]
     paramsMap = buildParamsEmailMap(payment.transaction, paramsFields)
