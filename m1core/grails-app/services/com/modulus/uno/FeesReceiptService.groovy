@@ -59,7 +59,7 @@ class FeesReceiptService {
         folioOrigen: "",
         claveDeRastreo: new Date().toTimestamp(),
         institucionOperante: grailsApplication.config.stp.institutionOperation,
-        montoDelPago: feesReceipt.amount + feesReceipt.iva - feesReceipt.ivaWithHolding - feesReceipt.isr,
+        montoDelPago: feesReceipt.netAmount.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
         nombreDelOrdenante: feesReceipt.company.bussinessName,
