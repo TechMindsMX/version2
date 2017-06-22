@@ -13,7 +13,7 @@ class STPController {
   CompanyService companyService
   ManagerApplicationService managerApplicationService
 
-  static allowedMethods = [stpDepositNotification:"POST", stpDepositNotificationJson:"POST", stpConciliationCompany:"POST"]
+  static allowedMethods = [stpDepositNotification:"POST", stpDepositNotificationJson:"POST", stpConciliationCompany:"POST", notificationStatusOrder:"POST"]
 
   @ApiOperation(value = "Notify deposit",
     response = StpDepositSwagger, hidden=true)
@@ -80,6 +80,24 @@ class STPController {
       log.info "Initializing close operations for all companies"
       String status= managerApplicationService.applyFinalTransferForAllCompanies()
       Map result = [status:status]
+      respond result, status: 201, formats: ['json']
+    }catch (Exception ex) {
+      response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
+    }
+  }
+
+  @ApiOperation(value = "Notify status order", response = StatusOrderStpSwagger, hidden=true)
+  @ApiResponses([
+    @ApiResponse(code = 422, message = 'Bad Entity Received'),
+    @ApiResponse(code = 201, message = 'Created')
+  ])
+  @ApiImplicitParams([
+    @ApiImplicitParam(name = 'body', paramType = 'body', required = true, dataType = 'StatusOrderStpSwagger')
+  ])
+  def notificationStatusOrder(StatusOrderStpSwagger statusOrderStpSwagger) {
+    try {
+      log.info "Receiving notificaction status order: ${statusOrderStpSwagger.dump()}"
+      Map result = [message:"Notification Received"]
       respond result, status: 201, formats: ['json']
     }catch (Exception ex) {
       response.sendError(422, "Missing parameters from notification, error: ${ex.message}")
