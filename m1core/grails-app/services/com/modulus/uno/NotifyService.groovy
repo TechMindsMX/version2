@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import java.math.RoundingMode
 
 @Transactional
 class NotifyService {
@@ -178,6 +179,20 @@ class NotifyService {
     paramsMap = buildParamsEmailMap(cashOutOrder, paramsFields)
     paramsMap.status = orderStatus
     paramsMap.url=corporateService.findCorporateByCompanyId(cashOutOrder.company.id)
+    if (status == CashOutOrderStatus.EXECUTED) {
+      paramsMap = defineExtraParamsForPayedCashoutOrderTemplate(cashOutOrder, paramsMap)
+    }
+    paramsMap
+  }
+
+  def defineExtraParamsForPayedCashoutOrderTemplate(CashOutOrder cashOutOrder, def paramsMap) {
+    paramsMap.paymentConcept = cashOutOrder.transaction.paymentConcept
+    paramsMap.trackingKey = cashOutOrder.transaction.trackingKey
+    paramsMap.referenceNumber = cashOutOrder.transaction.referenceNumber
+    paramsMap.dateCreated = cashOutOrder.transaction.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    paramsMap.destinyBank = cashOutOrder.account.banco.name
+    paramsMap.destinyBankAccount = cashOutOrder.account.clabe
+    paramsMap.aliasStp = cashOutOrder.company.accounts.first().aliasStp
     paramsMap
   }
 
@@ -236,7 +251,7 @@ class NotifyService {
       orderStatus= "AUTORIZADA"
       break
       case FeesReceiptStatus.EJECUTADA:
-      paramsFields=['id']
+      paramsFields=['id', 'collaboratorName']
       orderStatus= "EJECUTADA"
       break
       case FeesReceiptStatus.CANCELADA:
@@ -252,6 +267,21 @@ class NotifyService {
     paramsMap.status=orderStatus
     paramsMap.company=company.toString()
     paramsMap.url=corporateService.findCorporateByCompanyId(feesReceipt.company.id)
+    if (status == FeesReceiptStatus.EJECUTADA) {
+      paramsMap = defineExtraParamsForPayedFeesReceiptTemplate(feesReceipt, paramsMap)
+    }
+    paramsMap
+  }
+
+  def defineExtraParamsForPayedFeesReceiptTemplate(FeesReceipt feesReceipt, def paramsMap) {
+    paramsMap.amount = feesReceipt.netAmount.setScale(2, RoundingMode.HALF_UP).toString()
+    paramsMap.paymentConcept = feesReceipt.transaction.paymentConcept
+    paramsMap.trackingKey = feesReceipt.transaction.trackingKey
+    paramsMap.referenceNumber = feesReceipt.transaction.referenceNumber
+    paramsMap.dateCreated = feesReceipt.transaction.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    paramsMap.destinyBank = feesReceipt.bankAccount.banco.name
+    paramsMap.destinyBankAccount = feesReceipt.bankAccount.clabe
+    paramsMap.aliasStp = feesReceipt.company.accounts.first().aliasStp
     paramsMap
   }
 
@@ -280,6 +310,22 @@ class NotifyService {
     paramsMap.dateCreated = payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
     paramsMap.company = payment.rfc ? BusinessEntity.findByRfc(payment.rfc).toString() : "NO IDENTIFICADO"
     paramsMap.url=corporateService.findCorporateByCompanyId(payment.company.id)
+    paramsMap
+  }
+
+  def parametersForPaymentToPurchase(PurchaseOrder purchaseOrder){
+    PaymentToPurchase payment = purchaseOrder.payments.sort{it.id}.last()
+    def paramsMap = [:]
+    def paramsFields = ["paymentConcept", "trackingKey", "referenceNumber"]
+    paramsMap = buildParamsEmailMap(payment.transaction, paramsFields)
+    paramsMap.amount = payment.amount.toString()
+    paramsMap.dateCreated = payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    paramsMap.providerName = purchaseOrder.providerName
+    paramsMap.id = purchaseOrder.id
+    paramsMap.destinyBank = purchaseOrder.bankAccount.banco.name
+    paramsMap.destinyBankAccount = purchaseOrder.bankAccount.clabe
+    paramsMap.aliasStp = purchaseOrder.company.accounts.first().aliasStp
+    paramsMap.url=corporateService.findCorporateByCompanyId(purchaseOrder.company.id)
     paramsMap
   }
 

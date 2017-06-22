@@ -110,7 +110,6 @@ class PurchaseOrderController {
     respond purchaseOrder
   }
 
-  @Transactional
   def executePurchaseOrder(PurchaseOrder order) {
     BigDecimal amount = new BigDecimal(params.amount ?: 0) ?: order.total
     Boolean enabledToPay = companyService.companyIsEnabledToPay(order.company)
@@ -122,6 +121,7 @@ class PurchaseOrderController {
     if (companyService.enoughBalanceCompany(order.company, amount)){
       if (purchaseOrderIsInStatus(order, PurchaseOrderStatus.AUTORIZADA)) {
         purchaseOrderService.payPurchaseOrder(order, amount)
+        emailSenderService.notifyPaymentToPurchaseOrder(order)
         messageSuccess = message(code:"purchaseOrder.executed.message")
       }
       if (order.isMoneyBackOrder)

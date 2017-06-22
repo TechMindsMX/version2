@@ -116,7 +116,7 @@ class EmailSenderService {
       emailList = getEmailList(order.company,["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
       break
       case CashOutOrderStatus.EXECUTED:
-      idEmailer = grailsApplication.config.emailer.cashOutOrderAcceptStatus
+      idEmailer = grailsApplication.config.emailer.cashOutOrderPayed
       emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break
       case CashOutOrderStatus.REJECTED:
@@ -148,7 +148,7 @@ class EmailSenderService {
       emailList = getEmailList(feesReceipt.company,["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
       break
       case FeesReceiptStatus.EJECUTADA:
-      idEmailer = grailsApplication.config.emailer.feesReceiptAcceptStatus
+      idEmailer = grailsApplication.config.emailer.feesReceiptPayed
       emailList = getEmailList(feesReceipt.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break
       case FeesReceiptStatus.CANCELADA:
@@ -279,7 +279,7 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     usersList.each{ user ->
       emailList.add(user.profile.email)
     }
-    emailList
+    emailList.unique()
   }
 
   def notifyStpDepositReceived(Payment payment) {
@@ -288,7 +288,18 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     def emailList = getEmailList(payment.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR", "ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
     log.info "Parameters: ${paramsEmailer}"
     log.info "Id Template: ${idEmailer}"
-    log.info "Emails list: ${emailList.unique()}"
-    notifyService.sendEmailNotifications(emailList.unique(), idEmailer, paramsEmailer)
+    log.info "Emails list: ${emailList}"
+    notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
+  }
+
+  def notifyPaymentToPurchaseOrder(PurchaseOrder purchaseOrder) {
+    def paramsEmailer=notifyService.parametersForPaymentToPurchase(purchaseOrder)
+    def idEmailer = grailsApplication.config.emailer.paymentToPurchase
+    def emailList = getEmailList(purchaseOrder.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR", "ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
+    log.info "Parameters: ${paramsEmailer}"
+    log.info "Id Template: ${idEmailer}"
+    log.info "Emails list: ${emailList}"
+    notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
+
   }
 }

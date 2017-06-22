@@ -165,8 +165,8 @@ class PurchaseOrderService {
     if (order.total <= order.totalPayments) {
       order.status = PurchaseOrderStatus.PAGADA
       order.save()
+      emailSenderService.notifyPurchaseOrderChangeStatus(order)
     }
-    emailSenderService.notifyPurchaseOrderChangeStatus(order)
     order
   }
 
