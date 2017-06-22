@@ -148,7 +148,7 @@ class EmailSenderService {
       emailList = getEmailList(feesReceipt.company,["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
       break
       case FeesReceiptStatus.EJECUTADA:
-      idEmailer = grailsApplication.config.emailer.feesReceiptAcceptStatus
+      idEmailer = grailsApplication.config.emailer.feesReceiptPayed
       emailList = getEmailList(feesReceipt.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break
       case FeesReceiptStatus.CANCELADA:
