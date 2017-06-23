@@ -46,7 +46,7 @@ class FeesReceiptService {
         empresa: feesReceipt.company.accounts.first().aliasStp,
         fechaDeOperacion: new Date().format("yyyyMMdd"),
         folioOrigen: "",
-        claveDeRastreo: new Date().toTimestamp(),
+        claveDeRastreo: "${new Date().time}",
         institucionOperante: grailsApplication.config.stp.institutionOperation,
         montoDelPago: feesReceipt.amount + feesReceipt.iva - feesReceipt.ivaWithHolding - feesReceipt.isr,
         tipoDelPago: "1",
@@ -82,6 +82,7 @@ class FeesReceiptService {
     amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:feesReceipt.company.accounts.first().stpClabe,
     referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
     transactionStatus:TransactionStatus.AUTHORIZED]
+    log.info "Parameters: ${parameters}"
     Transaction transaction = new Transaction(parameters)
     transactionService.saveTransaction(transaction)
     feesReceipt.status = FeesReceiptStatus.EJECUTADA
