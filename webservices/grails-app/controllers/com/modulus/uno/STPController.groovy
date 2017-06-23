@@ -12,6 +12,7 @@ class STPController {
   StpService stpService
   CompanyService companyService
   ManagerApplicationService managerApplicationService
+  StatusOrderStpService statusOrderStpService
 
   static allowedMethods = [stpDepositNotification:"POST", stpDepositNotificationJson:"POST", stpConciliationCompany:"POST", notificationStatusOrder:"POST"]
 
@@ -97,6 +98,8 @@ class STPController {
   def notificationStatusOrder(StatusOrderStpSwagger statusOrderStpSwagger) {
     try {
       log.info "Receiving notificaction status order: ${statusOrderStpSwagger.dump()}"
+      StatusOrderStp statusOrderStp = statusOrderStpSwagger.createStatusOrderStp()
+      statusOrderStpService.saveStatusOrderStp(statusOrderStp)
       Map result = [message:"Notification Received"]
       respond result, status: 201, formats: ['json']
     }catch (Exception ex) {
