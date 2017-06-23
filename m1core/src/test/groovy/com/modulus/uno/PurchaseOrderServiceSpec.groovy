@@ -156,4 +156,36 @@ class PurchaseOrderServiceSpec extends Specification {
     new PaymentToPurchase(amount: new BigDecimal(amount)).save()
   }
 
+  void "Should change status of purchase order payment for a reverted transaction and purchase order is authorized"() {
+    given:"A transaction"
+      Transaction transaction = new Transaction().save(validate:false)
+    and:
+      PaymentToPurchase payment = new PaymentToPurchase(transaction:transaction).save(validate:false)
+    and:
+      PurchaseOrder purchaseOrder = new PurchaseOrder(status:PurchaseOrderStatus.AUTORIZADA)
+      purchaseOrder.addToPayments(payment)
+      purchaseOrder.save(validate:false)
+    when:
+      service.reversePaymentPurchaseForTransaction(transaction)
+    then:
+      payment.status == PaymentToPurchaseStatus.REFUND
+      purchaseOrder.status == PurchaseOrderStatus.AUTORIZADA
+  }
+
+  void "Should change status of purchase order payment and purchase order for a reverted transaction"() {
+    given:"A transaction"
+      Transaction transaction = new Transaction().save(validate:false)
+    and:
+      PaymentToPurchase payment = new PaymentToPurchase(transaction:transaction).save(validate:false)
+    and:
+      PurchaseOrder purchaseOrder = new PurchaseOrder(status:PurchaseOrderStatus.PAGADA)
+      purchaseOrder.addToPayments(payment)
+      purchaseOrder.save(validate:false)
+    when:
+      service.reversePaymentPurchaseForTransaction(transaction)
+    then:
+      payment.status == PaymentToPurchaseStatus.REFUND
+      purchaseOrder.status == PurchaseOrderStatus.AUTORIZADA
+  }
+
 }
