@@ -39,6 +39,17 @@ class FeesReceiptService {
   }
 
   def executeFeesReceipt(FeesReceipt feesReceipt){
+    def data = sendPaymentToStp(feesReceipt)
+    Transaction transaction = saveTransaction(feesReceipt, data)
+    feesReceipt.status = FeesReceiptStatus.EJECUTADA
+    feesReceipt.transaction = transaction
+    feesReceipt.save()
+    registerCommissionForFeesReceipt(feesReceipt)
+    emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
+    feesReceipt
+  }
+
+  private def sendPaymentToStp(FeesReceipt feesReceipt) {
     String fullConcept = "HONORARIOS ID:${feesReceipt.id}, ${feesReceipt.collaboratorName}"
     String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
     def data = [
@@ -48,7 +59,7 @@ class FeesReceiptService {
         folioOrigen: "",
         claveDeRastreo: new Date().toTimestamp(),
         institucionOperante: grailsApplication.config.stp.institutionOperation,
-        montoDelPago: feesReceipt.amount + feesReceipt.iva - feesReceipt.ivaWithHolding - feesReceipt.isr,
+        montoDelPago: feesReceipt.netAmount.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
         nombreDelOrdenante: feesReceipt.company.bussinessName,
@@ -77,19 +88,23 @@ class FeesReceiptService {
         prioridad: "",
         iva: ""
     ]
-    String keyTransaction = stpService.sendPayOrder(data)
-    Map parameters = [keyTransaction:keyTransaction,trackingKey:data.claveDeRastreo,
-    amount:data.montoDelPago,paymentConcept:data.conceptoDelPago,keyAccount:feesReceipt.company.accounts.first().stpClabe,
-    referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
-    transactionStatus:TransactionStatus.AUTHORIZED]
+    data.keyTransaction = stpService.sendPayOrder(data)
+    data
+  }
+
+  private Transaction saveTransaction(FeesReceipt feesReceipt, def data) {
+    Map parameters = [
+      keyTransaction:data.keyTransaction,
+      trackingKey:data.claveDeRastreo,
+      amount:data.montoDelPago,
+      paymentConcept:data.conceptoDelPago,
+      keyAccount:feesReceipt.company.accounts.first().stpClabe,
+      referenceNumber:data.referenciaNumerica,transactionType:TransactionType.WITHDRAW,
+      transactionStatus:TransactionStatus.AUTHORIZED
+    ]
     Transaction transaction = new Transaction(parameters)
     transactionService.saveTransaction(transaction)
-    feesReceipt.status = FeesReceiptStatus.EJECUTADA
-    feesReceipt.transaction = transaction
-    feesReceipt.save()
-    registerCommissionForFeesReceipt(feesReceipt)
-    emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
-    feesReceipt
+    transaction
   }
 
   def sendToAuthorize(FeesReceipt feesReceipt) {

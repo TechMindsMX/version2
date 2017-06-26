@@ -233,14 +233,20 @@ class NotifyServiceSpec extends Specification {
   void "obtain the params for Fees Receipt Status to populate the email"(){
     given:"a company"
       def company = new Company("rfc":"qwerty123456", "bussinessName":"apple")
+      ModulusUnoAccount m1Account = new ModulusUnoAccount(aliasStp:"AliasStp").save(validate:false)
+      company.addToAccounts(m1Account)
       company.save(validate:false)
     and:
       Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
       corporate.addToCompanies(company)
       corporate.save()
     and: "a fees Receipt"
-      def feesReceipt = new FeesReceipt(rejectReason:RejectReason.DOCUMENTO_INVALIDO, comments:"fake")
+      def feesReceipt = new FeesReceipt(collaboratorName:"Empleado", rejectReason:RejectReason.DOCUMENTO_INVALIDO, comments:"fake", amount:new BigDecimal(100))
       feesReceipt.company = company
+      Transaction transaction = new Transaction(paymentConcept:"Concepto", trackingKey:"Rastreo", referenceNumber:"Referencia", dateCreated:Date.parse("dd-MM-yyyy hh:mm:ss", "10-06-2017 10:30:15")).save(validate:false)
+      feesReceipt.transaction = transaction
+      BankAccount bankAccount = new BankAccount(banco:new Bank(name:"ElBanco").save(validate:false), clabe:"Clabe").save(validate:false)
+      feesReceipt.bankAccount = bankAccount
       feesReceipt.save(validate:false)
     and:
       corporateService.findCorporateByCompanyId(company.id) >> "${corporate.corporateUrl}${grailsApplication.config.grails.plugin.awssdk.domain.base.url}"
@@ -261,7 +267,7 @@ class NotifyServiceSpec extends Specification {
     ['id':"1", 'company':'apple', 'status':'CREADA', 'url':URL],
     ['id':"1", 'company':'apple', 'status':'PUESTA EN ESPERA DE SER AUTORIZADA', 'url':URL],
     ['id':"1", 'company':'apple', 'status':'AUTORIZADA', 'url':URL],
-    ['id':"1", 'company':'apple', 'status':'EJECUTADA', 'url':URL],
+    ['id':"1", 'collaboratorName':'Empleado', 'company':'apple', 'status':'EJECUTADA', 'url':URL, 'amount':'95.33', 'paymentConcept':'Concepto', 'trackingKey':'Rastreo', 'referenceNumber':'Referencia', 'dateCreated':'10-06-2017 10:30:15', 'destinyBank':'ElBanco','destinyBankAccount':'Clabe', 'aliasStp':'AliasStp' ],
     ['id':"1", 'company':'apple', 'status':'CANCELADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO.toString(), 'comments':'fake', 'url':URL],
     ['id':"1", 'company':'apple', 'status':'RECHAZADA', 'rejectReason': RejectReason.DOCUMENTO_INVALIDO.toString(), 'comments':'fake', 'url':URL]
     ]
@@ -405,7 +411,7 @@ class NotifyServiceSpec extends Specification {
     given:"the payment"
       def company = new Company().save(validate:false)
       Transaction transaction = new Transaction(paymentConcept:"Concepto", trackingKey:"Rastreo", referenceNumber:"Referencia").save(validate:false)
-      Payment payment = new Payment(amount:new BigDecimal(1000), dateCreated:new Date(), transaction:transaction, company:company, rfc:"RFC").save(validate:false)
+      Payment payment = new Payment(amount:new BigDecimal(1000), dateCreated:Date.parse("dd-MM-yyyy hh:mm:ss", "10-06-2017 10:30:15"), transaction:transaction, company:company, rfc:"RFC").save(validate:false)
     and:
       Corporate corporate = new Corporate(nameCorporate:"makingdevs", corporateUrl:"makingdevs").save()
       corporate.addToCompanies(company)
@@ -424,7 +430,7 @@ class NotifyServiceSpec extends Specification {
     params.trackingKey == "Rastreo"
     params.referenceNumber == "Referencia"
     params.amount == "1000"
-    params.dateCreated == payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    params.dateCreated == "10-06-2017 10:30:15"
     params.company == "Client"
     params.url == URL
   }

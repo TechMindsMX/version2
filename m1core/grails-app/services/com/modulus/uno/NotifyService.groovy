@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import java.math.RoundingMode
 
 @Transactional
 class NotifyService {
@@ -236,7 +237,7 @@ class NotifyService {
       orderStatus= "AUTORIZADA"
       break
       case FeesReceiptStatus.EJECUTADA:
-      paramsFields=['id']
+      paramsFields=['id', 'collaboratorName']
       orderStatus= "EJECUTADA"
       break
       case FeesReceiptStatus.CANCELADA:
@@ -252,6 +253,21 @@ class NotifyService {
     paramsMap.status=orderStatus
     paramsMap.company=company.toString()
     paramsMap.url=corporateService.findCorporateByCompanyId(feesReceipt.company.id)
+    if (status == FeesReceiptStatus.EJECUTADA) {
+      paramsMap = defineExtraParamsForPayedFeesReceiptTemplate(feesReceipt, paramsMap)
+    }
+    paramsMap
+  }
+
+  def defineExtraParamsForPayedFeesReceiptTemplate(FeesReceipt feesReceipt, def paramsMap) {
+    paramsMap.amount = feesReceipt.netAmount.setScale(2, RoundingMode.HALF_UP).toString()
+    paramsMap.paymentConcept = feesReceipt.transaction.paymentConcept
+    paramsMap.trackingKey = feesReceipt.transaction.trackingKey
+    paramsMap.referenceNumber = feesReceipt.transaction.referenceNumber
+    paramsMap.dateCreated = feesReceipt.transaction.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    paramsMap.destinyBank = feesReceipt.bankAccount.banco.name
+    paramsMap.destinyBankAccount = feesReceipt.bankAccount.clabe
+    paramsMap.aliasStp = feesReceipt.company.accounts.first().aliasStp
     paramsMap
   }
 
@@ -284,7 +300,7 @@ class NotifyService {
   }
 
   def parametersForPaymentToPurchase(PurchaseOrder purchaseOrder){
-    PaymentToPurchase payment = purchaseOrder.payments.last()
+    PaymentToPurchase payment = purchaseOrder.payments.sort{it.id}.last()
     def paramsMap = [:]
     def paramsFields = ["paymentConcept", "trackingKey", "referenceNumber"]
     paramsMap = buildParamsEmailMap(payment.transaction, paramsFields)
