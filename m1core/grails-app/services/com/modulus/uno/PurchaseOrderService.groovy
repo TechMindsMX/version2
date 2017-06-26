@@ -222,4 +222,26 @@ class PurchaseOrderService {
     PurchaseOrderItem.executeUpdate("delete PurchaseOrderItem item where item.id = :id", [id: item.id])
   }
 
+  def reversePaymentPurchaseForTransaction(Transaction transaction) {
+    PaymentToPurchase payment = PaymentToPurchase.findByTransaction(transaction)
+    if (payment) {
+      payment.status = PaymentToPurchaseStatus.REFUND
+      payment.save()
+      checkStatusForPurchaseOrderOfPayment(payment)
+    }
+  }
+
+  def checkStatusForPurchaseOrderOfPayment(PaymentToPurchase payment) {
+    def c = PurchaseOrder.createCriteria()
+    def order = c.get {
+      payments {
+        eq("id", payment.id)
+      }
+    }
+    if (order.status == PurchaseOrderStatus.PAGADA) {
+      order.status = PurchaseOrderStatus.AUTORIZADA
+      order.save()
+    }
+  }
+
 }

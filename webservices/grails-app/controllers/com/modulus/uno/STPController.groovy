@@ -99,7 +99,9 @@ class STPController {
     try {
       log.info "Receiving notificaction status order: ${statusOrderStpSwagger.dump()}"
       StatusOrderStp statusOrderStp = statusOrderStpSwagger.createStatusOrderStp()
+      log.info "${statusOrderStp.dump()}"
       statusOrderStpService.saveStatusOrderStp(statusOrderStp)
+      log.info "Return respond"
       Map result = [message:"Notification Received"]
       respond result, status: 201, formats: ['json']
     }catch (Exception ex) {

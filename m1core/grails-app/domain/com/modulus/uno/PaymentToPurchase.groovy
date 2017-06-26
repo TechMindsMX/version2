@@ -3,6 +3,7 @@ package com.modulus.uno
 class PaymentToPurchase {
 
   BigDecimal amount
+  PaymentToPurchaseStatus status = PaymentToPurchaseStatus.APPLIED
 
   Transaction transaction
 

@@ -57,7 +57,7 @@ class FeesReceiptService {
         empresa: feesReceipt.company.accounts.first().aliasStp,
         fechaDeOperacion: new Date().format("yyyyMMdd"),
         folioOrigen: "",
-        claveDeRastreo: new Date().toTimestamp(),
+        claveDeRastreo: "${new Date().time}",
         institucionOperante: grailsApplication.config.stp.institutionOperation,
         montoDelPago: feesReceipt.netAmount.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
@@ -139,6 +139,15 @@ class FeesReceiptService {
       command = new FeeCommand(companyId:feesReceipt.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type, transactionId:feesReceipt.transaction.id)
     }
     command
+  }
+
+  FeesReceipt reverseFeesReceiptForTransaction(Transaction transaction) {
+    FeesReceipt feesReceipt = FeesReceipt.findByTransaction(transaction)
+    if (feesReceipt) {
+      feesReceipt.status = FeesReceiptStatus.PAGO_DEVUELTO
+      feesReceipt.save()
+    }
+    feesReceipt
   }
 
 }
