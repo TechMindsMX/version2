@@ -116,7 +116,7 @@ class EmailSenderService {
       emailList = getEmailList(order.company,["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
       break
       case CashOutOrderStatus.EXECUTED:
-      idEmailer = grailsApplication.config.emailer.cashOutOrderAcceptStatus
+      idEmailer = grailsApplication.config.emailer.cashOutOrderPayed
       emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break
       case CashOutOrderStatus.REJECTED:

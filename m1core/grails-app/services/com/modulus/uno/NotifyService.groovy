@@ -179,6 +179,20 @@ class NotifyService {
     paramsMap = buildParamsEmailMap(cashOutOrder, paramsFields)
     paramsMap.status = orderStatus
     paramsMap.url=corporateService.findCorporateByCompanyId(cashOutOrder.company.id)
+    if (status == CashOutOrderStatus.EXECUTED) {
+      paramsMap = defineExtraParamsForPayedCashoutOrderTemplate(cashOutOrder, paramsMap)
+    }
+    paramsMap
+  }
+
+  def defineExtraParamsForPayedCashoutOrderTemplate(CashOutOrder cashOutOrder, def paramsMap) {
+    paramsMap.paymentConcept = cashOutOrder.transaction.paymentConcept
+    paramsMap.trackingKey = cashOutOrder.transaction.trackingKey
+    paramsMap.referenceNumber = cashOutOrder.transaction.referenceNumber
+    paramsMap.dateCreated = cashOutOrder.transaction.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    paramsMap.destinyBank = cashOutOrder.account.banco.name
+    paramsMap.destinyBankAccount = cashOutOrder.account.clabe
+    paramsMap.aliasStp = cashOutOrder.company.accounts.first().aliasStp
     paramsMap
   }
 
