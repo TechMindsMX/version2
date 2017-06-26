@@ -12,7 +12,9 @@
         <table class="table table-condensed">
           <g:each in="${purchaseOrder.payments.sort{ it.dateCreated}}" var="payment" >
             <tr>
-              <th>${payment.dateCreated.format("dd/MMM/yyyy")}</th><th> ${g.formatNumber(number:payment.amount, type:"currency", maxFractionDigits:"2", locale:"es_MX")}</th>
+              <th>${payment.dateCreated.format("dd/MM/yyyy")}</th>
+              <th>${modulusuno.formatPrice(number:payment.amount)}</th>
+              <th><g:message code="purchase.payment.status.${payment.status}"/></th>
             </tr>
           </g:each>
         </table>

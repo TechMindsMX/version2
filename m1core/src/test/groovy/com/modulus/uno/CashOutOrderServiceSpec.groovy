@@ -5,7 +5,7 @@ import spock.lang.Specification
 import grails.test.mixin.Mock
 
 @TestFor(CashOutOrderService)
-@Mock([Company,User,UserRole,Role,Profile,BankAccount,CashOutOrder,Authorization])
+@Mock([Company,User,UserRole,Role,Profile,BankAccount,CashOutOrder,Authorization, Transaction])
 class CashOutOrderServiceSpec extends Specification {
 
   ModulusUnoService modulusUnoService = Mock(ModulusUnoService)
@@ -72,4 +72,13 @@ class CashOutOrderServiceSpec extends Specification {
         UserRole.create user, userRole
   }
 
+  void "Should change status to refund payment for cashout with reverse transaction"() {
+    given:"The cashout order"
+      Transaction transaction = new Transaction().save(validate:false)
+      CashOutOrder cashOutOrder = new CashOutOrder(status:CashOutOrderStatus.EXECUTED, transaction:transaction).save(validate:false)
+    when:
+      def result = service.reverseCashOutForTransaction(transaction)
+    then:
+      result.status == CashOutOrderStatus.REFUND_PAYMENT
+  }
 }

@@ -52,4 +52,6 @@ databaseChangeLog = {
     include file: 'adding-sale-order-to-commission-transaction.groovy'
     include file: 'drop-commissions-invoice-domains.groovy'
     include file: 'create-domain-account-statement-for-bank-account.groovy'
+    include file: 'create-domain-satus-order-stp.groovy'
+    include file: 'adding-status-to-payment-to-purchase.groovy'
 }

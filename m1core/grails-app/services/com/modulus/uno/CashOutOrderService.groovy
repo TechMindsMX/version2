@@ -50,4 +50,12 @@ class CashOutOrderService {
     cashoutOrders
   }
 
+  CashOutOrder reverseCashOutForTransaction(Transaction transaction) {
+    CashOutOrder cashOutOrder = CashOutOrder.findByTransaction(transaction)
+    if (cashOutOrder) {
+      cashOutOrder.status = CashOutOrderStatus.REFUND_PAYMENT
+      cashOutOrder.save()
+    }
+    cashOutOrder
+  }
 }
