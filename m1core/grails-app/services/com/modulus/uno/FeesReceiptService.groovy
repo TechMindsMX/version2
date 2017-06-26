@@ -127,4 +127,13 @@ class FeesReceiptService {
     command
   }
 
+  FeesReceipt reverseFeesReceiptForTransaction(Transaction transaction) {
+    FeesReceipt feesReceipt = FeesReceipt.findByTransaction(transaction)
+    if (feesReceipt) {
+      feesReceipt.status = FeesReceiptStatus.PAGO_DEVUELTO
+      feesReceipt.save()
+    }
+    feesReceipt
+  }
+
 }
