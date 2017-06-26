@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(FeesReceiptService)
-@Mock([FeesReceipt,User,Authorization])
+@Mock([FeesReceipt,User,Authorization, Transaction])
 class FeesReceiptServiceSpec extends Specification {
 
   DocumentService documentService = Mock(DocumentService)
@@ -62,4 +62,13 @@ class FeesReceiptServiceSpec extends Specification {
       1 * emailSenderService.notifyFeesReceiptChangeStatus(feesReceipt)
   }
 
+  void "Should change status to refund payment for feesreceipt with reverse transaction"() {
+    given:"A fees receipt"
+      Transaction transaction = new Transaction().save(validate:false)
+      FeesReceipt feesReceipt = new FeesReceipt(status:FeesReceiptStatus.EJECUTADA, transaction:transaction).save(validate:false)
+    when:
+      def result = service.reverseFeesReceiptForTransaction(transaction)
+    then:
+      result.status == FeesReceiptStatus.PAGO_DEVUELTO
+  }
 }
