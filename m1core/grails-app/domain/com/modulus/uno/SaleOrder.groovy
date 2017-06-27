@@ -51,7 +51,7 @@ class SaleOrder {
   }
 
   BigDecimal getTotalIvaRetention(){
-    items*.ivaRetention.sum() ?: 0
+    items*.totalIvaRetention.sum() ?: 0
   }
 
   BigDecimal getTotal(){
