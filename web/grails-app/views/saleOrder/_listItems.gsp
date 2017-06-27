@@ -16,10 +16,10 @@
           <dd>${modulusuno.formatPrice(number:item.price)}</dd>
           <dt>Descuento:</dt>
           <dd>${modulusuno.formatPrice(number:item.amountDiscount)}</dd>
-          <dt>IEPS:</dt>
-          <dd>${modulusuno.formatPrice(number:item.amountIEPS)}</dd>
           <dt>IVA:</dt>
           <dd>${modulusuno.formatPrice(number:item.amountIVA)}</dd>
+          <dt>Retención IVA:</dt>
+          <dd>${modulusuno.formatPrice(number:item.ivaRetention)}</dd>
           <dt>Neto:</dt>
           <dd>${modulusuno.formatPrice(number:item.netPrice)}</dd>
         </dl>
@@ -54,15 +54,15 @@
       </td>
     </tr>
     <tr>
-      <td colspan="5" class="text-right"><strong>IEPS</strong></td>
-      <td class="text-right">
-        ${modulusuno.formatPrice(number:saleOrder.totalIEPS)}
-      </td>
-    </tr>
-    <tr>
       <td colspan="5" class="text-right"><strong>IVA</strong></td>
       <td class="text-right">
         ${modulusuno.formatPrice(number:saleOrder.totalIVA)}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="5" class="text-right"><strong>Retención IVA</strong></td>
+      <td class="text-right">
+        ${modulusuno.formatPrice(number:saleOrder.totalIvaRetention)}
       </td>
     </tr>
     <tr>
