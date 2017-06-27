@@ -38,8 +38,8 @@
         </dd>
         <dt>IVA</dt>
         <dd>${modulusuno.formatPrice(number:saleOrder.totalIVA)}</dd>
-        <dt>IEPS</dt>
-        <dd>${modulusuno.formatPrice(number:saleOrder.totalIEPS)}</dd>
+        <dt>Retención IVA</dt>
+        <dd>${modulusuno.formatPrice(number:saleOrder.totalIvaRetention)}</dd>
         <dt>Total</dt>
         <dd>${modulusuno.formatPrice(number:saleOrder.total)}</dd>
         <dt>Por pagar</dt>
