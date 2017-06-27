@@ -44,10 +44,10 @@
                 </td>
                 <td>
                   <g:if test="${company.commissions}">
-                  <g:link controller="commission" class="btn btn-success" params="[companyId: company.id]" >Editar</g:link>
+                  <g:link controller="commission" class="btn btn-success" id="${company.id}" params="[corporateId:corporate.id]">Editar</g:link>
                   </g:if>
                   <g:else>
-                  <g:link controller="commission" class="btn btn-warning" params="[companyId: company.id]">Agregar</g:link>
+                  <g:link controller="commission" class="btn btn-warning" id="${company.id}" params="[corporateId:corporate.id]">Agregar</g:link>
                   </g:else>
                 </td>
                 <td>
