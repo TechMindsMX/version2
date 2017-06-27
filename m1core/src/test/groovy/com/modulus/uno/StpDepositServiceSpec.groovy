@@ -5,7 +5,7 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 
 @TestFor(StpDepositService)
-@Mock([StpDeposit, Payment, Company, Commission, Transaction, ModulusUnoAccount, ClientLink, PaymentM1Emitter])
+@Mock([StpDeposit, Payment, Company, Commission, Transaction, ModulusUnoAccount, ClientLink])
 class StpDepositServiceSpec extends Specification {
 
   TransactionService transactionService = Mock(TransactionService)
