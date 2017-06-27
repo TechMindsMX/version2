@@ -70,8 +70,13 @@ class InvoiceService {
     saleOrder.items.each { item ->
       impuestos.add(new Impuesto(importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva, impuesto:'IVA'))
     }
-
     command.impuestos = impuestos
+
+    def retenciones = []
+    saleOrder.items.each { item ->
+      retenciones.add(new Impuesto(importe:item.quantity * item.ivaRetention, tasa:0, impuesto:'IVA'))
+    }
+    command.retenciones = retenciones
     command
   }
 
