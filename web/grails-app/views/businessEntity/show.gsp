@@ -14,6 +14,7 @@
         <h1>
           <i class="fa fa-user fa-3x"></i>
           <g:message code="businessEntity.view.show.label" />
+          <small>${relation}</small>
         </h1>
       </div>
 
@@ -70,13 +71,12 @@
                   <div class="panel-footer">
                     <div class="row">
                       <div class="col-md-12">
+                      <g:if test="${relation=='CLIENTE' || relation=='CLIENTE_PROVEEDOR'}">
                         <div class="col-md-6">
-                          <g:if test="${relation=='CLIENTE' || relation=='CLIENTE_PROVEEDOR'}">
                             <div class="property-value">
                               <span class="property-label"><g:message code="businessEntity.label.stpAccount" default="Cuenta para pago referenciado"/></span>
 
                             </div>
-                          </g:if>
                         </div>
                         <div class="col-md-6" align="right">
                           <div class="property-value">
@@ -90,6 +90,7 @@
                             </g:else>
                           </div>
                         </div>
+                      </g:if>
                       </div>
                     </div>
                   </div>
