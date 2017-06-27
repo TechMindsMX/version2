@@ -59,6 +59,10 @@ class SaleOrderItem {
     this.quantity * this.getNetPrice()
   }
 
+  BigDecimal getTotalIvaRetention() {
+    this.quantity * this.ivaRetention
+  }
+
   static marshaller = {
     JSON.registerObjectMarshaller(SaleOrderItem, 1) { m ->
       return [
