@@ -34,7 +34,6 @@ var options = {
             if(data.sku!==undefined){$('#sku').val(data.sku);}
             if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}//data.price.toFixed(2)
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
-            if(data.ieps!==undefined){$('#ieps').val(data.ieps.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
             calculateAmountAndNetPrice()
             return true;
@@ -88,7 +87,6 @@ var optionsBySku = {
             if(data.productName!==undefined){$('#product-name').val(data.productName);}
             if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
-            if(data.ieps!==undefined){$('#ieps').val(data.ieps.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
             calculateAmountAndNetPrice()
               return true;
@@ -134,7 +132,6 @@ $('#products').on('blur',function(){
         if(data.sku!==undefined){$('#sku').val(data.sku);}
         if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}
         if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
-        if(data.ieps!==undefined){$('#ieps').val(data.ieps.toFixed(2));}
         if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
         calculateAmountAndNetPrice()
         return true;
@@ -165,13 +162,13 @@ function calculatePriceWithDiscount() {
 
 function calculateAmountAndNetPrice(){
   $("#amount").val("0")
-  if (isNaN($("#quantity").val()) || isNaN($("#price").val()) || isNaN($("#discount").val()) || isNaN($("#ieps").val()) || isNaN($("#iva").val())){
+  if (isNaN($("#quantity").val()) || isNaN($("#price").val()) || isNaN($("#discount").val()) || isNaN($("#ivaRetention").val()) || isNaN($("#iva").val())){
     $("#amount").val("No válido")
     $("#netprice").val("No válido")
     return
   }
 
-  $("#netprice").val((calculatePriceWithDiscount()*(1 + $("#iva").val()/100.00 + $("#ieps").val()/100.00)).toFixed(2))
+  $("#netprice").val((calculatePriceWithDiscount()*(1 + $("#iva").val()/100.00) - $("#ivaRetention").val()).toFixed(2))
   $("#amount").val(($("#quantity").val()*$("#netprice").val()).toFixed(2))
 }
 
@@ -186,7 +183,7 @@ $("#discount").change( function() {
   }
 )
 
-$("#ieps").change( function() {
+$("#ivaRetention").change( function() {
    calculateAmountAndNetPrice()
  }
 )

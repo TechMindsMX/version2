@@ -43,13 +43,13 @@
           </div>
           <div class="input-group">
             <div class="input-group-addon">%</div>
-            <input type="text" id="ieps" name="ieps" class="form-control" required="" pattern="[0-9]+(\.[0-9]{1,2})?"/>
-            <div class="input-group-addon">IEPS</div>
-          </div>
-          <div class="input-group">
-            <div class="input-group-addon">%</div>
             <input type="text" id="iva" name="iva" class="form-control" required="" pattern="[0-9]+(\.[0-9]{1,2})?"/>
             <div class="input-group-addon">IVA</div>
+          </div>
+          <div class="input-group">
+            <div class="input-group-addon">$</div>
+            <input type="text" id="ivaRetention" name="ivaRetention" class="form-control" required="" pattern="[0-9]+(\.[0-9]{1,2})?"/>
+            <div class="input-group-addon">Retención IVA</div>
           </div>
           <div class="input-group">
             <div class="input-group-addon">$</div>
