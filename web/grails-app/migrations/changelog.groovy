@@ -55,4 +55,5 @@ databaseChangeLog = {
   include file: 'create-domain-satus-order-stp.groovy'
   include file: 'adding-status-to-payment-to-purchase.groovy'
   include file: 'rename-column-ieps-to-iva-retention-in-sale-order-item.groovy'
+  include file: 'drop-domain-payment-m1-emitter.groovy'
 }
