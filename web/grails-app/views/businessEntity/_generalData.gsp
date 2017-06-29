@@ -26,6 +26,12 @@
     <dl class="dl-horizontal">
       <dt>RFC</dt>
       <dd>${businessEntity.rfc}</dd>
+      <g:if test="${relation == 'EMPLEADO'}">
+        <dt>CURP</dt>
+        <dd>${businessEntity.getCurp()}</dd>
+        <dt>No. de Empleado</dt>
+        <dd>${businessEntity.getNumber()}</dd>
+      </g:if>
       <dt>Sitio web</dt>
       <dd>${businessEntity.website ?: 'Sin información'}</dd>
       <dt>
