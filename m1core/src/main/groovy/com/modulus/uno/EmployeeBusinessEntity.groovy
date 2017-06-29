@@ -1,3 +1,6 @@
 package com.modulus.uno
 
-interface EmployeeBusinessEntity { }
+interface EmployeeBusinessEntity {
+  String getCurp()
+  String getNumber()
+}
