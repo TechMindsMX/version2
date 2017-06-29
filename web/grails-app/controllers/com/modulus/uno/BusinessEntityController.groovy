@@ -59,7 +59,7 @@ class BusinessEntityController {
 
   @Transactional
  def save(BusinessEntityCommand command) {
-
+  command.rfc = command.rfc.toUpperCase()
    command.clientProviderType = params.clientProviderType
    if (params.clientProviderType.equals("EMPLEADO")){
      command.website="http://www.employee.com"
