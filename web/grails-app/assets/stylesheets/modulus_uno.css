@@ -2,7 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-size: 100%;
-  background-color: #003764;
+  background-color: #1C4387;
   color: #555; }
   html .mdu-home-content, body .mdu-home-content {
     background: white;
@@ -14,7 +14,7 @@ html, body {
     font-weight: 100; }
 
 .navbar-top {
-  background-color: #003764; }
+  background-color: #1C4387; }
   .navbar-top .navbar-center {
     display: inline-block;
     overflow: hidden;
@@ -34,14 +34,14 @@ html, body {
 
 .navbar-mdu li a {
   padding: 1em 2em;
-  color: #003764;
+  color: #1C4387;
   margin: 8px 0;
-  border: solid 1px #003764;
+  border: solid 1px #1C4387;
   background: transparent;
   border-radius: 2px;
   transition: background-color 0.5s; }
   .navbar-mdu li a:hover {
-    background: #003764; }
+    background: #1C4387; }
 
 .navbar-brand {
   color: white;
@@ -55,10 +55,10 @@ html, body {
   padding: 0 0 0 0.5em; }
 
 #side {
-  background: #003764; }
+  background: #1C4387; }
   #side a {
     padding: 1em;
-    background: #003764;
+    background: #1C4387;
     font: 400 0.7em Lato, sans-serif;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -109,7 +109,7 @@ label {
   color: #666; }
 
 footer {
-  background-color: #003764;
+  background-color: #1C4387;
   padding: 1em 0;
   color: white;
   font-size: 70%; }
