@@ -9,6 +9,7 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
 
   BusinessEntityType type
+  BusinessEntityStatus status = BusinessEntityStatus.ACTIVE
 
   String artemisaId
 
@@ -30,6 +31,7 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
         return false
       }
     })
+    status nullable:false
   }
 
   String toString(){
