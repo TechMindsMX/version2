@@ -27,9 +27,9 @@
 
 <g:if test="${clientProviderType == LeadType.EMPLEADO.toString()}">
   <label id="curpLabel"><g:message code="businessEntity.curp" /><span class="required-indicator">*</span></label>
-  <input id="curp" name="curp" value="${curp ?: params.curp}" class="form-control" style="text-transform:uppercase" required="" />
+  <input id="curp" name="curp" value="${businessEntity.getCurp()}" class="form-control" style="text-transform:uppercase" required="" />
   <label id="numberLabel"><g:message code="businessEntity.number" /></label>
-  <input id="number" name="number" value="${number ?: params.number}" class="form-control" style="text-transform:uppercase"/>
+  <input id="number" name="number" value="${businessEntity.getNumber()}" class="form-control" style="text-transform:uppercase"/>
 </g:if>
 
 <div id="website">
