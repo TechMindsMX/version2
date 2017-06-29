@@ -33,15 +33,17 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-md-12">
         <g:render template="clientData"/>
       </div>
-      <div class="col-lg-6">
+      <div class="col-md-12">
         <g:render template="saleOrderData"/>
       </div>
     </div>
 
     <div class="row">
+    <div class="col-md-12">
+    <div class="portlet">
       <g:if test="${flash.message}">
       <div class="alert alert-info">${flash.message}</div>
       </g:if>
@@ -51,6 +53,8 @@
       <g:form controller="saleOrder" action="applyDiscount">
         <g:render template="listItems"/>
       </g:form>
+      </div>
+      </div>
     </div>
     <asset:javascript src="saleOrder/show.js"/>
   </body>
