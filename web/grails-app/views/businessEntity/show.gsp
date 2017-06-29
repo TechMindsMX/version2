@@ -35,5 +35,11 @@
             </div>
           </div>
 
+      <div class="row">
+        <div class="col-md-2 col-md-offset-10">
+          <g:link class="btn btn-primary" action="index">Regresar</g:link>
+        </div>
+      </div>
+
   </body>
 </html>
