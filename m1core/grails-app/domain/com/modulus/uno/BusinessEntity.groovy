@@ -78,4 +78,16 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
     }
   }
 
+  @Override
+  String getCurp() {
+    EmployeeLink employee = EmployeeLink.findByEmployeeRef(this.rfc)
+    employee?.curp
+  }
+
+  @Override
+  String getNumber() {
+    EmployeeLink employee = EmployeeLink.findByEmployeeRef(this.rfc)
+    employee?.number
+  }
+
 }
