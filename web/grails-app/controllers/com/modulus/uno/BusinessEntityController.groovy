@@ -59,7 +59,7 @@ class BusinessEntityController {
 
   @Transactional
  def save(BusinessEntityCommand command) {
-
+  command.rfc = command.rfc.toUpperCase()
    command.clientProviderType = params.clientProviderType
    if (params.clientProviderType.equals("EMPLEADO")){
      command.website="http://www.employee.com"
@@ -87,11 +87,7 @@ class BusinessEntityController {
 
   def edit(BusinessEntity businessEntity) {
     String clientProviderType = businessEntityService.getClientProviderType(businessEntity.rfc)
-    def employeeLink
-    if (clientProviderType == "EMPLEADO") {
-      employeeLink = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
-    }
-    respond businessEntity, model:[curp:employeeLink?.curp, clientProviderType:clientProviderType]
+    respond businessEntity, model:[clientProviderType:clientProviderType]
   }
 
   @Transactional

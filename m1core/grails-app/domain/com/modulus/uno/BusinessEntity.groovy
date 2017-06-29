@@ -9,6 +9,7 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
 
   BusinessEntityType type
+  BusinessEntityStatus status = BusinessEntityStatus.ACTIVE
 
   String artemisaId
 
@@ -30,6 +31,7 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
         return false
       }
     })
+    status nullable:false
   }
 
   String toString(){
@@ -74,6 +76,18 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
       banksAccounts: m.banksAccounts
       ]
     }
+  }
+
+  @Override
+  String getCurp() {
+    EmployeeLink employee = EmployeeLink.findByEmployeeRef(this.rfc)
+    employee?.curp
+  }
+
+  @Override
+  String getNumber() {
+    EmployeeLink employee = EmployeeLink.findByEmployeeRef(this.rfc)
+    employee?.number
   }
 
 }

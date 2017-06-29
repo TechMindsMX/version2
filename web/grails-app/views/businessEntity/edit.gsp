@@ -39,9 +39,13 @@
                 <input class="save btn btn-default" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
               </g:form>
             </div>
-            <g:link controller="company" action="show" id="${session.company}" class="home btn btn-default">
-              <g:message code="company.show.return"/>
-            </g:link>
+
+      <div class="row">
+        <div class="col-md-2 col-md-offset-10">
+          <g:link class="btn btn-primary" action="show" id="${businessEntity.id}">Regresar</g:link>
+        </div>
+      </div>
+
           </div>
         </div>
       </div>

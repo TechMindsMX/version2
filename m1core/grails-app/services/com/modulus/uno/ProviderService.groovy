@@ -8,13 +8,11 @@ import grails.transaction.Transactional
 class ProviderService {
 
   def messageSource
-  def emailSenderService
 
   def addProviderToCompany(ProviderBusinessEntity provider, Company company){
     if(isProviderOfThisCompany(provider, company))throw new BusinessException(messageSource.getMessage('exception.provider.already.exist', null, LCH.getLocale()))
     def providerLink = new ProviderLink(type:provider.class.simpleName, providerRef: provider.rfc, company: company).save()
     company.addToBusinessEntities(provider)
-    emailSenderService.sendEmailForNewProvider(company, provider)
     providerLink
   }
 
