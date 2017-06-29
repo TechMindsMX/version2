@@ -87,11 +87,7 @@ class BusinessEntityController {
 
   def edit(BusinessEntity businessEntity) {
     String clientProviderType = businessEntityService.getClientProviderType(businessEntity.rfc)
-    def employeeLink
-    if (clientProviderType == "EMPLEADO") {
-      employeeLink = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
-    }
-    respond businessEntity, model:[curp:employeeLink?.curp, clientProviderType:clientProviderType]
+    respond businessEntity, model:[clientProviderType:clientProviderType]
   }
 
   @Transactional
