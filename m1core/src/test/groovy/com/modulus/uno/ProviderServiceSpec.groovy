@@ -10,10 +10,8 @@ import spock.lang.Specification
 @Mock([Address,Company,BusinessEntity,ProviderLink])
 class ProviderServiceSpec extends Specification {
 
-  def emailSenderService = Mock(EmailSenderService)
 
   def setup(){
-    service.emailSenderService = emailSenderService
     messageSource.addMessage('exception.provider.already.exist', LCH.getLocale(), 'A provider with same RFC already exist for this company')
   }
 
@@ -31,7 +29,6 @@ class ProviderServiceSpec extends Specification {
     providerLink.providerRef == be.rfc
     providerLink.company == company
     isProvider
-    1 * emailSenderService.sendEmailForNewProvider(company, be)
   }
 
   void "should not save a be since already exist"(){
