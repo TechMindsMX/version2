@@ -43,6 +43,8 @@
 
 
     <div class="row">
+    <div class="col-md-12">
+    <div class="portlet">
       <g:if test="${flash.message}">
         <div class="alert alert-info">${flash.message}</div>
       </g:if>
@@ -173,6 +175,7 @@
         </table>
         </g:form>
       </div>
+<<<<<<< HEAD
         </div>
       </div><!--Close Portlet-->
 
@@ -187,6 +190,16 @@
         <div class="portlet-body">
         
         <g:if test="${params.badfile}">
+=======
+      </div>
+      </div>
+    </div>
+
+    <div class="row">
+    <div class="col-md-12">
+    <div class="portlet">
+      <g:if test="${params.badfile}">
+>>>>>>> feature/329
         <div class="alert alert-warning">${params.badfile}</div>
       </g:if>
      <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
@@ -220,6 +233,8 @@
         </g:each>
       </ul>
       </g:if>
+      </div>
+      </div>
     </div>
     <asset:javascript src="purchaseOrder/show.js"/>
 

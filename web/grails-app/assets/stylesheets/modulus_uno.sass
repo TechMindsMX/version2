@@ -1,10 +1,12 @@
-$blue1: #3CB4E7
+$blue1: #1C4387
 $blue2: #447FC1
 $blue3: #1C4387
 $blue4: #003764
 $blue5: #192954
+$ble: #3CB4E7
 $textColor: #555
-
+$colorWarning: orange 
+$colorDanger: orangered
 
 html,body
 	margin: 0
@@ -35,6 +37,8 @@ html,body
 		li
 			display: inline-block
 			margin: 0 5px
+	.navbar-header
+		background: $blue1
 
 //Opciones de topbar
 .navbar-top>.nav-top>.nav>li>a:hover,
@@ -63,6 +67,7 @@ html,body
 .navbar-header
 	.navbar-brand
 		padding: 0 0 0 0.5em
+		
 
 
 //.navbar-side .navbar-nav>li>a,
@@ -119,6 +124,10 @@ html,body
 	padding: 1em
 	.circle-tile-content
 		border: none
+		color: $textColor
+	.circle-tile-heading:hover
+		background: none
+		color: $blue5
 
 .portlet.portlet-blue > .portlet-heading
 	padding: 1em
@@ -140,8 +149,13 @@ footer
 	color: white
 	font-size: 70%
 	a
+		color: white !important
+		&:hover
+			color: #f1f1f1
+	.btn
 		color: white
 		&:hover
+<<<<<<< HEAD
 			color: yellow
 
 .table > tbody > tr.success >td:last-child
@@ -151,3 +165,63 @@ footer
 	color: rgba(231, 76, 60,1)
 .table > tbody > tr.info >td:last-child
 	background: rgba(41, 128, 185,1)
+=======
+			color: #f2f2f2
+
+//Cambio de color en botones
+
+.btn-primary,
+.btn-default,
+.btn-green,
+.btn-success
+	background: $ble
+	border-color: $ble
+	&:hover,
+	&:focus,
+	&:active, 
+	&:active:focus,
+	&:active:focus:hover
+		outline: none
+		background: lighten($ble,5)
+		border-color: lighten($ble,5)
+		color: white
+
+.dropdown-toggle.btn-primary,
+.dropdown-toggle.btn-default,
+.dropdown-toggle.btn-green,
+.open > .dropdown-toggle.btn-primary,
+.open > .dropdown-toggle.btn-default,
+.open > .dropdown-toggle.btn-green
+	background: lighten($ble,5)
+	border-color: lighten($ble,5)
+	&:focus,
+	&:hover
+		background: lighten($ble,5)
+		border-color: lighten($ble,5)
+
+.btn-warning
+	background: none
+	border: solid 1px $colorWarning !important
+	color: $colorWarning
+	&:hover,
+	&:focus	
+		border: solid 1px $colorWarning !important
+		background: $colorWarning
+		color: white
+
+.btn-danger
+	background: none
+	border: solid 1px $colorDanger !important
+	color: $colorDanger
+	&:hover,
+	&:focus,
+	&:active
+		background: $colorDanger
+		border: solid 1px $colorDanger !important
+		color: white
+
+body .table > tbody > tr.success >td:last-child
+	background: none
+body .table > tbody > tr.info >td:last-child
+	background: none
+>>>>>>> feature/329
