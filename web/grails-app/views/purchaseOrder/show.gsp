@@ -175,22 +175,6 @@
         </table>
         </g:form>
       </div>
-<<<<<<< HEAD
-        </div>
-      </div><!--Close Portlet-->
-
-      </div>
-      
-    </div>
-
-    <div class="row">
-    <div class="col-md-offset-2 col-md-8">
-      <div class="portlet">
-
-        <div class="portlet-body">
-        
-        <g:if test="${params.badfile}">
-=======
       </div>
       </div>
     </div>
@@ -199,7 +183,6 @@
     <div class="col-md-12">
     <div class="portlet">
       <g:if test="${params.badfile}">
->>>>>>> feature/329
         <div class="alert alert-warning">${params.badfile}</div>
       </g:if>
      <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
