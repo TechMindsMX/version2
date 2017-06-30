@@ -35,6 +35,13 @@
             </div>
           </div>
 
+      <g:if test="${relation == 'EMPLEADO'}">
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2">
+            <g:render template="dataImss"/>
+          </div>
+        </div>
+      </g:if>
       <div class="row">
         <div class="col-md-2 col-md-offset-10">
           <g:link class="btn btn-primary" action="index">Regresar</g:link>
