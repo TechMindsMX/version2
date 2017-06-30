@@ -52,5 +52,6 @@ databaseChangeLog = {
   include file: 'adding-sale-order-to-commission-transaction.groovy'
   include file: 'drop-commissions-invoice-domains.groovy'
   include file: 'adding-column-status-to-business-entity.groovy'
-    include file: 'adding-column-number-to-employee-link.groovy'
+  include file: 'adding-column-number-to-employee-link.groovy'
+  include file: 'create-domain-data-imss-employee.groovy'
 }
