@@ -9,7 +9,7 @@
           <g:if test="${!dataImssEmployee}">
           <div class="property-value" aria-labelledby="company-label">
             <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-            <g:link action="create" controller="dataImssEmployee" params="[businessEntity:businessEntity.id]" class="btn btn-default">Registrar</g:link>
+            <g:link action="create" controller="dataImssEmployee" params="[businessEntityId:businessEntity.id]" class="btn btn-default">Registrar</g:link>
             </sec:ifAnyGranted>
           </div>
           </g:if>
