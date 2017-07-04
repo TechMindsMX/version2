@@ -31,7 +31,7 @@
               <g:hasErrors bean="${dataImssEmployee}">
                 <ul class="error alert alert-danger" role="alert">
                   <g:eachError bean="${dataImssEmployee}" var="error">
-                  <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
+                  <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message code="dataImssEmployee.error.${error.field}" args="${[error.defaultMessage.replace('{0}','')]}"/></li>
                     </g:eachError>
                 </ul>
               </g:hasErrors>
@@ -41,9 +41,16 @@
                   <g:render template="form" bean="${form}"/>
                 </fieldset>
                 <br />
+                <div class="row">
+                  <div class="col-md-6">
                 <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
                   <g:submitButton name="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
                 </sec:ifAnyGranted>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <g:link class="btn btn-primary" controller="businessEntity" action="show" id="${businessEntity.id}">Cancelar</g:link>
+                  </div>
+                </div>
               </g:form>
           </div>
         </div>
