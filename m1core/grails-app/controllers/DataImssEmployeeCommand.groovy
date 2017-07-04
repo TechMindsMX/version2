@@ -7,19 +7,19 @@ class DataImssEmployeeCommand implements Validateable {
 
   String idEmployee
   String nss
-  String registrationDate
+  Date registrationDate
   String baseImssMonthlySalary
   String netMonthlySalary
   String holidayBonusRate
   String annualBonusDays
-  PaymentPeriod paymentPeriod
+  String paymentPeriod
 
   static constraints = {
     idEmployee nullable:false
     nss nullable:false
     registrationDate nullable:false
-    imssSalary nullable:false
-    assimilableSalary nullable:false
+    baseImssMonthlySalary nullable:false
+    netMonthlySalary nullable:false
     holidayBonusRate nullable:false
     annualBonusDays nullable:false
     paymentPeriod nullable:false
@@ -28,13 +28,14 @@ class DataImssEmployeeCommand implements Validateable {
   DataImssEmployee createDataImssEmployee() {
     EmployeeLink employee = EmployeeLink.get(this.idEmployee)
     new DataImssEmployee(
-      employee: employee,
-      registrationDate:Date.parse("dd/MM/yyyy", this.registrationDate),
+      employee:employee,
+      registrationDate:this.registrationDate,
+      nss:this.nss,
       baseImssMonthlySalary:getValueInBigDecimal(this.baseImssMonthlySalary),
       netMonthlySalary:getValueInBigDecimal(this.netMonthlySalary),
       holidayBonusRate:getValueInBigDecimal(this.holidayBonusRate),
       annualBonusDays:this.annualBonusDays.toInteger(),
-      paymentPeriod:this.paymentPeriod
+      paymentPeriod:PaymentPeriod.find { it.toString() == this.paymentPeriod }
     )
   }
 
