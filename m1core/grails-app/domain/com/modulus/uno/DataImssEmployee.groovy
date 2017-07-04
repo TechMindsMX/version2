@@ -14,8 +14,9 @@ class DataImssEmployee {
   static constraints = {
     employee nullable:false
     nss nullable:false
-    imssSalary nullable:false, min:0.0
-    assimilableSalary nullable:false, min:0.0
+    registrationDate nullable:false
+    baseImssMonthlySalary nullable:false, min:0.0
+    netMonthlySalary nullable:false, min:0.0
     holidayBonusRate nullable:false, min:0.0, max:100.0
     annualBonusDays nullable:false, min:15
     paymentPeriod nullable:false
