@@ -8,7 +8,7 @@
   <body>
     <div class="page-title">
       <h1>
-        <i class="fa fa-cubes fa-3x"></i>
+        <i class="fa fa-hospital-o fa-3x"></i>
         Datos IMSS de Empleado
         <small>${businessEntity}</small>
       </h1>
