@@ -3,6 +3,7 @@ package com.modulus.uno
 class DataImssEmployee {
 
   EmployeeLink employee
+  String nss
   Date registrationDate
   BigDecimal baseImssMonthlySalary
   BigDecimal netMonthlySalary
@@ -12,6 +13,7 @@ class DataImssEmployee {
 
   static constraints = {
     employee nullable:false
+    nss nullable:false
     imssSalary nullable:false, min:0.0
     assimilableSalary nullable:false, min:0.0
     holidayBonusRate nullable:false, min:0.0, max:100.0
