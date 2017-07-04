@@ -11,7 +11,7 @@ class DataImssEmployeeController {
   }
 
   def save(DataImssEmployeeCommand command) {
-    log.info "Data Imss to save: ${command.dump()}"
+    log.info "Data Imss command: ${command.dump()}"
 
     if (command.hasErrors()) {
       BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
@@ -20,7 +20,16 @@ class DataImssEmployeeController {
       return
     }
 
-    dataImssEmployeeService.saveDataImss(command.createDataImssEmployee())
+    DataImssEmployee dataImssEmployee = command.createDataImssEmployee()
+    dataImssEmployeeService.saveDataImss(dataImssEmployee)
+
+    log.info "Data Imss Instance: ${dataImssEmployee.dump()}"
+    if (dataImssEmployee.hasErrors()) {
+      BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
+      EmployeeLink employee = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
+      render view:"create", model:[dataImssEmployee:dataImssEmployee, businessEntity:businessEntity, employee:employee]
+      return
+    }
 
     redirect controller:"businessEntity", action:"show", id:params.businessEntityId
   }
