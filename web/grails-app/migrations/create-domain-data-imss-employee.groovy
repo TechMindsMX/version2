@@ -48,4 +48,8 @@ databaseChangeLog = {
         addForeignKeyConstraint(baseColumnNames: "employee_id", baseTableName: "data_imss_employee", constraintName: "FKpdxcdux5fcfcek3bc12uh0869", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "employee_link")
     }
 
+    changeSet(author: "tim (manual)", id: "adding-unique-constraint-to-nss") {
+        addUniqueConstraint(columnNames: "nss", constraintName: "UC_DATAIMSSEMPLOYEE_NSS", tableName: "data_imss_employee")
+    }
+
 }
