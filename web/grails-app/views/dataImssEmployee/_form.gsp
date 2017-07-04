@@ -34,13 +34,13 @@
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.holidayBonusRate"/></label>
-      <input class="form-control" type="number" min="0.00" max="100.00" step="0.01" name="holidayBonusRate" value="${dataImssEmployee?.holidayBonusRate}" required=""/>
+      <input class="form-control" type="number" min="0.00" max="100.00" step="0.01" name="holidayBonusRate" value="${dataImssEmployee?.holidayBonusRate ?: 25}" required=""/>
     </div>
   </div>
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.annualBonusDays"/></label>
-      <input class="form-control" type="number" min="15" name="annualBonusDays" value="${dataImssEmployee?.annualBonusDays}" required=""/>
+      <input class="form-control" type="number" min="15" name="annualBonusDays" value="${dataImssEmployee?.annualBonusDays ?: 15}" required=""/>
     </div>
   </div>
 </div>
