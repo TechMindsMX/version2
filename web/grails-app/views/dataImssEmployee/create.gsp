@@ -28,14 +28,6 @@
               <div class="message" role="status">${flash.message}</div>
             </g:if>
 
-            <g:hasErrors bean="${command}">
-              <ul class="error alert alert-danger" role="alert">
-                <g:eachError bean="${command}" var="error">
-                <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
-                  </g:eachError>
-              </ul>
-            </g:hasErrors>
-
               <g:hasErrors bean="${dataImssEmployee}">
                 <ul class="error alert alert-danger" role="alert">
                   <g:eachError bean="${dataImssEmployee}" var="error">
