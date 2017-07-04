@@ -1,4 +1,5 @@
-<input type="hidden" name="employee.id" value="${dataImssEmployee?.employee.id}"/>
+<input type="hidden" name="idEmployee" value="${employee.id}"/>
+<input type="hidden" name="businessEntityId" value="${businessEntity.id}"/>
 <div class="row">
   <div class="col-md-6">
     <div class="form-group">
