@@ -58,4 +58,5 @@ databaseChangeLog = {
   include file: 'drop-domain-payment-m1-emitter.groovy'
   include file: 'adding-column-status-to-business-entity.groovy'
   include file: 'adding-column-number-to-employee-link.groovy'
+  include file: 'create-domain-data-imss-employee.groovy'
 }
