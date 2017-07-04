@@ -3,18 +3,20 @@ package com.modulus.uno
 import java.text.*
 import grails.validation.Validateable
 
-class DataImssEmployeeCommand extends Validateable {
+class DataImssEmployeeCommand implements Validateable {
 
   String idEmployee
+  String nss
   String registrationDate
   String baseImssMonthlySalary
   String netMonthlySalary
   String holidayBonusRate
   String annualBonusDays
-  String paymentPeriod
+  PaymentPeriod paymentPeriod
 
   static constraints = {
     idEmployee nullable:false
+    nss nullable:false
     registrationDate nullable:false
     imssSalary nullable:false
     assimilableSalary nullable:false
@@ -32,7 +34,7 @@ class DataImssEmployeeCommand extends Validateable {
       netMonthlySalary:getValueInBigDecimal(this.netMonthlySalary),
       holidayBonusRate:getValueInBigDecimal(this.holidayBonusRate),
       annualBonusDays:this.annualBonusDays.toInteger(),
-      paymentPeriod:PaymentPeriod.find { it.toString() == this.paymentPeriod }
+      paymentPeriod:this.paymentPeriod
     )
   }
 
