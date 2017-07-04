@@ -37,6 +37,10 @@ databaseChangeLog = {
             column(name: "registration_date", type: "datetime") {
                 constraints(nullable: "false")
             }
+
+            column(name: "nss", type: "VARCHAR(255)") {
+                constraints(nullable: "false")
+            }
         }
     }
 
