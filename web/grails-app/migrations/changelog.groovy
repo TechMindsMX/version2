@@ -54,4 +54,5 @@ databaseChangeLog = {
   include file: 'adding-column-status-to-business-entity.groovy'
   include file: 'adding-column-number-to-employee-link.groovy'
   include file: 'create-domain-data-imss-employee.groovy'
+    include file: 'create-domain-paysheet-project.groovy'
 }
