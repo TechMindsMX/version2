@@ -9,7 +9,7 @@ class SaleOrderItem {
   BigDecimal quantity = new BigDecimal(0)
   BigDecimal price = new BigDecimal(0)
   BigDecimal discount = new BigDecimal(0)
-  BigDecimal ieps = new BigDecimal(0)
+  BigDecimal ivaRetention = new BigDecimal(0)
   BigDecimal iva = new BigDecimal(0)
 
   String unitType
@@ -22,7 +22,7 @@ class SaleOrderItem {
     name blank:false,size:1..300
     price min:0.0,max:250000000.00
     discount min:0.0,max:100.00
-    ieps min:0.0,max:100.00
+    ivaRetention min:0.0
     iva min:0.0,max:100.00
     quantity min:0.0
   }
@@ -47,24 +47,20 @@ class SaleOrderItem {
     this.quantity * this.getAmountIVA()
   }
 
-  BigDecimal getAmountIEPS(){
-    this.getPriceWithDiscount() * (this.ieps/100)
-  }
-
-  BigDecimal getAppliedIEPS() {
-    this.quantity * this.getAmountIEPS()
-  }
-
   BigDecimal getAmountWithoutTaxes(){
     this.quantity * this.getPriceWithDiscount()
   }
 
   BigDecimal getNetPrice(){
-    this.getPriceWithDiscount() + this.getAmountIVA() + this.getAmountIEPS()
+    this.getPriceWithDiscount() + this.getAmountIVA() - this.ivaRetention
   }
 
   BigDecimal getNetAmount(){
     this.quantity * this.getNetPrice()
+  }
+
+  BigDecimal getTotalIvaRetention() {
+    this.quantity * this.ivaRetention
   }
 
   static marshaller = {
