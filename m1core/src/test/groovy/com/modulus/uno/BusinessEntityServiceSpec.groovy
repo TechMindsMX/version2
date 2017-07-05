@@ -7,7 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
-@Mock([BusinessEntity, ComposeName])
+@Mock([BusinessEntity, ComposeName, ClientLink, Company])
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
@@ -15,12 +15,16 @@ class BusinessEntityServiceSpec extends Specification {
   def addresses = []
 
   def bankAccountService = Mock(BankAccountService)
+  SaleOrderService saleOrderService = Mock(SaleOrderService)
+  PaymentService paymentService = Mock(PaymentService)
 
   def setup() {
     names.removeAll()
     bankAccounts.removeAll()
     addresses.removeAll()
     service.bankAccountService = bankAccountService
+    service.saleOrderService = saleOrderService
+    service.paymentService = paymentService
   }
 
   @Unroll
@@ -78,4 +82,28 @@ class BusinessEntityServiceSpec extends Specification {
       addresses.size() == 1
   }
 
+  @Unroll
+  void "Should obtain data for business entity of type client or client-provider"() {
+    given:"A business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC").save(validate:false)
+    and:"A company"
+      Company company = new Company().save(validate:false)
+    and:"A client link"
+      ClientLink clientLink = new ClientLink(company:company, clientRef:"RFC").save(validate:false)
+    and:
+      saleOrderService.getTotalSoldForClient(_,_) >> 0
+      saleOrderService.getTotalSoldForClientStatusConciliated(_,_) >> 0
+      paymentService.getPaymentsFromClientToPay(_,_) >> 0
+    when:
+      def data = service.getClientData(company, businessEntity, relation)
+    then:
+      data as Boolean == result
+    where:
+      relation                    ||  result
+      LeadType.CLIENTE            ||  true
+      LeadType.CLIENTE_PROVEEDOR  ||  true
+      LeadType.PROVEEDOR          ||  false
+      LeadType.EMPLEADO           ||  false
+
+  }
 }

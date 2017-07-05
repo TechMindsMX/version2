@@ -10,6 +10,8 @@ class BusinessEntityService {
   def employeeService
   def bankAccountService
   def emailSenderService
+  SaleOrderService saleOrderService
+  PaymentService paymentService
 
   def generatedBussinessEntityProperties(BusinessEntity businessEntity, def params, Company company) {
     LeadType leadType = LeadType."${params.clientProviderType}"
@@ -194,4 +196,24 @@ class BusinessEntityService {
 
   }
 
+  Map getClientData(Company company, BusinessEntity businessEntity, LeadType relation) {
+    Map clientData = [:]
+    if (relation == LeadType.CLIENTE || relation == LeadType.CLIENTE_PROVEEDOR) {
+      clientData.clientLink = getClientLinkOfBusinessEntityAndCompany(businessEntity, company)
+      clientData.totalSoldForClient = saleOrderService.getTotalSoldForClient(company,businessEntity.rfc) ?: 0
+      clientData.totalSoldForClientStatusConciliated = saleOrderService.getTotalSoldForClientStatusConciliated(company,businessEntity.rfc) ?: 0
+      clientData.paymentsFromClientToPay = paymentService.getPaymentsFromClientToPay(company, businessEntity.rfc) ?: 0
+      clientData.totalPending =  clientData.totalSoldForClient - clientData.totalSoldForClientStatusConciliated
+    }
+    clientData
+  }
+
+  DataImssEmployee getDataImssEmployee(Company company, BusinessEntity businessEntity, LeadType relation) {
+    DataImssEmployee dataImssEmployee
+    if (relation == LeadType.EMPLEADO) {
+      EmployeeLink employee = EmployeeLink.findByCompanyAndEmployeeRef(company, businessEntity.rfc)
+      dataImssEmployee = DataImssEmployee.findByEmployee(employee)
+    }
+    dataImssEmployee
+  }
 }
