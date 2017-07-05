@@ -43,6 +43,8 @@
 
 
     <div class="row">
+    <div class="col-md-12">
+    <div class="portlet">
       <g:if test="${flash.message}">
         <div class="alert alert-info">${flash.message}</div>
       </g:if>
@@ -120,7 +122,7 @@
             </g:if>
             <g:each in="${purchaseOrder.items.sort{it.id}}" var="item">
             <tr>
-              <td><h3>${item.quantity}</h3></td>
+              <td>${item.quantity}</td>
               <td>${item.name}</td>
               <td>
                 <dl class="dl-horizontal">
@@ -169,9 +171,13 @@
         </table>
         </g:form>
       </div>
+      </div>
+      </div>
     </div>
 
     <div class="row">
+    <div class="col-md-12">
+    <div class="portlet">
       <g:if test="${params.badfile}">
         <div class="alert alert-warning">${params.badfile}</div>
       </g:if>
@@ -206,6 +212,8 @@
         </g:each>
       </ul>
       </g:if>
+      </div>
+      </div>
     </div>
     <asset:javascript src="purchaseOrder/show.js"/>
  </body>
