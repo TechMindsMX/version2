@@ -79,21 +79,10 @@
     <f:display bean="company" property="rfc" wrapper="describe" />
   </form>
   <div class="property-value">
-    <sec:ifAnyGranted roles="ROLE_INTEGRADO">
-    <g:if test="${available}">
-    <g:link controller="requestCompany" action="create" class="btn btn-success btn-block" params="[companyId:company.id]">Enviar mi Solicitud</g:link>
-  </g:if>
-  <g:else>
-</g:else>
-<g:if test="${company.status == CompanyStatus.REJECTED}">
-<g:link action="rejected" class="btn btn-default" id="${company.id}">Revisar Razones de Rechazo</g:link>
-</g:if>
-</sec:ifAnyGranted>
-<g:if test="${!company.accounts}" >
-
-<g:link controller="company" action="crearCuentaSTP" id="${company.id}" class="btn btn-danger btn-block">Generar Cuenta STP</g:link>
-</g:if>
-</div>
+    <g:if test="${!company.accounts}" >
+      <g:link controller="company" action="crearCuentaSTP" id="${company.id}" class="btn btn-danger btn-block">Generar Cuenta STP</g:link>
+    </g:if>
+  </div>
 </div>
 </div>
 <div class="portlet-footer">
@@ -109,6 +98,9 @@
 </sec:ifAnyGranted>
 </div>
 </div>
+  <div class="">
+    <g:render template="paysheetProject"/>
+  </div>
 </div>
 <!-- Cuentas -->
 <div class="col-md-6">
