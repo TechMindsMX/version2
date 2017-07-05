@@ -58,8 +58,8 @@
         </div>
         <div class="col-md-6" align="right">
           <div class="property-value">
-            <g:if test="${clientLink?.stpClabe}">
-            ${clientLink.stpClabe}
+            <g:if test="${clientData?.clientLink?.stpClabe}">
+            ${clientData?.clientLink?.stpClabe}
             </g:if>
             <g:else>
             <g:link class="btn btn-default" action="generateSubAccountStp" id="${businessEntity.id}" >
