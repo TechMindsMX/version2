@@ -9,14 +9,30 @@
     <div class="portlet-body">
       <div class="row">
         <div class="col-md-12 text-right">
-          <g:link class="btn btn-default" controller="paysheetProject" action="create" params="[companyId:company.id]">Nuevo</g:link>
+          <g:link class="btn btn-default" controller="paysheetProject" action="create">Nuevo</g:link>
         </div>
       </div>
       <g:if test="${company.paysheetProjects}">
       <div class="table-responsive">
         <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th width="45%">Descripción</th>
+              <th>F.I.</th>
+              <th>R.T. (%)</th>
+            </tr>
+          </thead>
+          <tbody>
           <g:each in="${company.paysheetProjects}" var="project">
+            <tr>
+              <td>${project.name}</td>
+              <td>${project.description}</td>
+              <td>${project.integrationFactor}</td>
+              <td>${project.occupationalRiskRate}</td>
+            </tr>
           </g:each>
+          </tbody>
         </table>
       </div>
       </g:if>
