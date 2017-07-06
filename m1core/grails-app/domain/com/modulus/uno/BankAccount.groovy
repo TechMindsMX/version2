@@ -7,6 +7,7 @@ class BankAccount {
   String accountNumber
   String branchNumber
   String clabe
+  String cardNumber
   boolean concentradora = false
 
   static belongsTo = [banco:Bank]
@@ -18,6 +19,7 @@ class BankAccount {
       if(!(val[val.size()-1].toInteger() == getControlDigit(val[0..(val.size()-2)])))
         return ['wrongClabe']
     }
+    cardNumber nullable:true, blank:true
   }
 
   private static Integer getControlDigit(def clabe){
