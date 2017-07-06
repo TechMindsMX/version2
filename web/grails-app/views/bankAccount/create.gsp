@@ -18,7 +18,6 @@
           <small>${params.businessEntityInfo}</small>
         </g:else>
       </h1>
-
     </div>
     <div id="create-bankAccount" class="content scaffold-create" role="main">
       <div class="portlet portlet-blue">
