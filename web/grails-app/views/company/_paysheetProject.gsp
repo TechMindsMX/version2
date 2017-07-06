@@ -26,7 +26,7 @@
           <tbody>
           <g:each in="${company.paysheetProjects}" var="project">
             <tr>
-              <td>${project.name}</td>
+              <td><g:link controller="paysheetProject" action="edit" id="${project.id}">${project.name}</g:link></td>
               <td>${project.description}</td>
               <td>${project.integrationFactor}</td>
               <td>${project.occupationalRiskRate}</td>
