@@ -6,7 +6,7 @@
       </sec:ifAnyGranted>
       <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_LEGAL_REPRESENTATIVE_VISOR">
     <li class="subList">
-      <g:link action="edit" controller="bankAccount" params="[company:company.id, companyBankAccount:true]" id="${bankAccount.id}">${bankAccount.accountNumber} - ${bankAccount.banco}</g:link> <g:if test="${bankAccount.concentradora}">Cuenta Concentradora</g:if>
+      <g:link action="edit" controller="bankAccount" params="[company:company.id, companyBankAccount:true]" id="${bankAccount.id}">${bankAccount.accountNumber} - ${bankAccount.banco}</g:link> <g:if test="${bankAccount.concentradora}"><span class="label label-info">Concentradora</span></g:if>
     </li>
       </sec:ifAnyGranted>
     </g:each>
