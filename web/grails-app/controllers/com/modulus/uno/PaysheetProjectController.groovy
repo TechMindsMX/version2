@@ -25,7 +25,7 @@ class PaysheetProjectController {
       return
     }
 
-    log.info "Paysheet project saved: ${command.dump()}"
+    log.info "Paysheet project saved: ${paysheetProject.dump()}"
 
     redirect controller:"company", action:"show", id:company.id
   }
@@ -33,6 +33,29 @@ class PaysheetProjectController {
   def edit(PaysheetProject paysheetProject) {
     Company company = Company.get(session.company)
     respond paysheetProject, model:[company:company]
+  }
+
+  def update(PaysheetProjectCommand command) {
+    log.info "Paysheet Project to update: ${command.dump()}"
+    Company company = Company.get(session.company)
+    if (command.hasErrors()) {
+      render view:"edit", model:[paysheetProject:command, company:company]
+      return
+    }
+
+    PaysheetProject paysheetProject = PaysheetProject.get(params.id)
+    paysheetProject.properties = command.createPaysheetProject().properties
+
+    paysheetProjectService.savePaysheetProject(paysheetProject)
+
+    if (paysheetProject.hasErrors()) {
+      render view:"edit", model:[paysheetProject:paysheetProject, company:company]
+      return
+    }
+
+    log.info "Paysheet Project Instance updated: ${paysheetProject.dump()}"
+
+    redirect controller:"company", action:"show", id:company.id
   }
 
 }
