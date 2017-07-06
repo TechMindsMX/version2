@@ -1,26 +1,26 @@
 <div class="form-group">
   <label class="col-sm-5">Clabe <span class="required-indicator">*</span></label>
   <div class="col-sm-4">
-    <input class="form-control" type="number" id="clabe" name="clabe" max="999999999999999999" required=""/>
+    <input class="form-control" type="number" id="clabe" name="clabe" max="999999999999999999" required="" value="${bankAccount?.clabe}"/>
   </div>
 </div>
 <div class="form-group">
   <label class="col-sm-5">Plaza <span class="required-indicator">*</span></label>
   <div class="col-sm-4">
-    <input class="form-control" type="number" id="branchNumber" name="branchNumber" max="999" required=""/>
+    <input class="form-control" type="number" id="branchNumber" name="branchNumber" max="999" required="" value="${bankAccount?.branchNumber}"/>
   </div>
 </div>
 <div class="form-group">
   <label class="col-sm-5">Número de Cuenta</label>
   <div class="col-sm-4">
-    <input class="form-control" type="number" id="accountNumber" name="accountNumber" readonly=""/>
+    <input class="form-control" type="number" id="accountNumber" name="accountNumber" readonly="" value="${bankAccount?.accountNumber}"/>
   </div>
 </div>
 <input id="bank" name="bank" type="hidden"/>
 <div class="form-group">
   <label class="col-sm-5">Banco <span class="required-indicator">*</span></label>
   <div class="col-sm-4">
-    <g:select name="banco" from="${banks}" optionValue="name" optionKey="bankingCode" class="form-control" aria-controls="example-table" readonly="true" noSelection="['':'']"/>
+    <g:select name="banco" from="${banks}" optionValue="name" optionKey="bankingCode" class="form-control" aria-controls="example-table" readonly="true" noSelection="['':'']" value ="${bankAccount?.banco.bankingCode}"/>
   </div>
 </div>
 
@@ -40,7 +40,7 @@
 <div class="form-group">
   <label class="col-sm-5">Número de Tarjeta</label>
   <div class="col-sm-4">
-    <input class="form-control" type="number" id="cardNumber" name="cardNumber" max="9999999999999999"/>
+    <input class="form-control" type="number" id="cardNumber" name="cardNumber" max="9999999999999999" value="${bankAccount?.cardNumber}"/>
   </div>
 </div>
 
