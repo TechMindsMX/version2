@@ -58,4 +58,11 @@ class PaysheetProjectController {
     redirect controller:"company", action:"show", id:company.id
   }
 
+  def delete(PaysheetProject paysheetProject) {
+    log.info "Deleting paysheet project ${paysheetProject.dump()}"
+    Company company = Company.get(session.company)
+    paysheetProjectService.deletePaysheetProject(paysheetProject)
+    redirect controller:"company", action:"show", id:company.id
+  }
+
 }
