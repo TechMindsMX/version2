@@ -24,7 +24,6 @@ class BankAccountController {
 
   @Transactional
   def save(BankAccountCommand command) {
-
     def bankAccount = command.createBankAccount()
     bankAccount.banco = Bank.findByBankingCode(command.bank)
     log.info "Bank Account to save: ${bankAccount.dump()}"
@@ -54,12 +53,15 @@ class BankAccountController {
   }
 
   @Transactional
-  def update(BankAccount bankAccount) {
-    bankAccount.banco = Bank.findByBankingCode(params.bank)
+  def update(BankAccountCommand command) {
+    BankAccount bankAccount = BankAccount.get(params.id)
+    bankAccount.properties = command.createBankAccount().properties
+    bankAccount.banco = Bank.findByBankingCode(command.bank)
+    log.info "Bank account to update: ${bankAccount.dump()}"
 
     if (params.relation == "CLIENTE"){
       bankAccount.branchNumber = "*".padLeft(5,"0")
-      bankAccount.accountNumber = params.accountNumberEnd.padLeft(11,"*")
+      bankAccount.accountNumber = params.accountNumber.padLeft(11,"*")
     }
 
     if (bankAccount == null) {
@@ -75,15 +77,26 @@ class BankAccountController {
     }
 
     def resultBankAccount = null
+    def domain
     try{
       if (params.companyBankAccount){
+        domain = Company.get(session.company)
         resultBankAccount = bankAccountService.updateBankAccountCompany(bankAccount, session.company)
-        redirect(controller:"company",action:"show",id:session.company)
       } else {
-        def businessEntity = BusinessEntity.get(params.businessEntity)
-        resultBankAccount = bankAccountService.updateBankAccountBusinessEntity(bankAccount, businessEntity)
-        redirect(controller:"businessEntity",action:"show",id:businessEntity.id)
+        domain = BusinessEntity.get(params.businessEntity)
+        resultBankAccount = bankAccountService.updateBankAccountBusinessEntity(bankAccount, domain)
       }
+
+      log.info "Bank account updated: ${bankAccount.dump()}"
+
+      if(bankAccount.hasErrors()) {
+        transactionStatus.setRollbackOnly()
+        respond bankAccount.errors, view:'edit', model:[banks:Bank.list().sort{it.name}, params:params, relation:params.relation]
+        return
+      }
+
+      redirect(controller:domain.class.simpleName, action:"show", id:domain.id)
+
     } catch (Exception e){
       transactionStatus.setRollbackOnly()
       flash.message = e.message
