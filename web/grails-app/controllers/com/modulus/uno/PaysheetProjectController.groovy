@@ -30,4 +30,9 @@ class PaysheetProjectController {
     redirect controller:"company", action:"show", id:company.id
   }
 
+  def edit(PaysheetProject paysheetProject) {
+    Company company = Company.get(session.company)
+    respond paysheetProject, model:[company:company]
+  }
+
 }
