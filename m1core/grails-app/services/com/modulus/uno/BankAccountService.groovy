@@ -49,7 +49,7 @@ class BankAccountService {
     def company = Company.get(companyId)
     if(repeatedBankAccountCompany(bankAccount, company))
       throw new Exception("La cuenta indicada ya existe")
-    bankAccount.save flush:true
+    bankAccount.save()
     company.addToBanksAccounts(bankAccount)
     company.save()
 
