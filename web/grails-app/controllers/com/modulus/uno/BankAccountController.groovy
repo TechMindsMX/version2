@@ -19,7 +19,6 @@ class BankAccountController {
   }
 
   def create() {
-
     respond new BankAccount(params), model:[banks:Bank.list().sort{ it.name }, relation:params.relation]
   }
 
