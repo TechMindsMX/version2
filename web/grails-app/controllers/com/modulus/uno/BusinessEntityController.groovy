@@ -160,4 +160,14 @@ class BusinessEntityController {
     [clientProviderType:LeadType.CLIENTE]
   }
 
+  def downloadLayout() {
+    log.info "Downloading layout for business entity of type ${params.clientProviderType}"
+    def layout = businessEntityService.createLayoutForBusinessEntityType(params.clientProviderType)
+    layout.with {
+      setResponseHeaders(response, "layout${params.clientProviderType}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
+
 }
