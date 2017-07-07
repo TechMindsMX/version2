@@ -2,13 +2,9 @@
 <%! import com.modulus.uno.NameType %>
 <%! import com.modulus.uno.LeadType %>
 <f:with bean="businessEntity">
+
 <div class="form-group">
-  <label><g:message code="businessEntity.clientProviderType" /><span class="required-indicator">*</span></label>
-  <!-- TODO : Muy elaborado, puede ser un solo radio con los valores del enum -->
-  <g:radio name="clientProviderType" value="${LeadType.CLIENTE}" checked="${clientProviderType == LeadType.CLIENTE.toString()}" class="form-group" required="" /> Cliente
-  <g:radio name="clientProviderType" value="${LeadType.PROVEEDOR}" checked="${clientProviderType == LeadType.PROVEEDOR.toString()}"/> Proveedor
-  <g:radio name="clientProviderType" value="${LeadType.CLIENTE_PROVEEDOR}" checked="${clientProviderType == LeadType.CLIENTE_PROVEEDOR.toString()}"/> Cliente/Proveedor
-  <g:radio name="clientProviderType" value="${LeadType.EMPLEADO}" checked="${clientProviderType == LeadType.EMPLEADO.toString()}"/> Emp/Colaborador
+  <g:render template="businessEntityTypes"/>
 </div>
 
 <div id="person">
