@@ -155,4 +155,9 @@ class BusinessEntityController {
       '*'{ render status: NOT_FOUND }
     }
   }
+
+  def massiveRegistration() {
+    [clientProviderType:LeadType.CLIENTE]
+  }
+
 }
