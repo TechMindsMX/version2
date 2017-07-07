@@ -17,6 +17,7 @@ class BusinessEntityServiceSpec extends Specification {
   def bankAccountService = Mock(BankAccountService)
   SaleOrderService saleOrderService = Mock(SaleOrderService)
   PaymentService paymentService = Mock(PaymentService)
+  XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService = Mock(XlsLayoutsBusinessEntityService)
 
   def setup() {
     names.removeAll()
@@ -25,6 +26,7 @@ class BusinessEntityServiceSpec extends Specification {
     service.bankAccountService = bankAccountService
     service.saleOrderService = saleOrderService
     service.paymentService = paymentService
+    service.xlsLayoutsBusinessEntityService = xlsLayoutsBusinessEntityService
   }
 
   @Unroll
@@ -105,5 +107,24 @@ class BusinessEntityServiceSpec extends Specification {
       LeadType.PROVEEDOR          ||  false
       LeadType.EMPLEADO           ||  false
 
+  }
+
+  @Unroll
+  void "Should generate the layout for massive registration from business entity type"() {
+    given:"The business entity type"
+      String entityType = businessEntityType
+    when:
+      service.createLayoutForBusinessEntityType(entityType)
+    then:
+      callsClient * xlsLayoutsBusinessEntityService.generateLayoutForCLIENTE()
+      callsClientProvider * xlsLayoutsBusinessEntityService.generateLayoutForCLIENTE_PROVEEDOR()
+      callsProvider * xlsLayoutsBusinessEntityService.generateLayoutForPROVEEDOR()
+      callsEmployee * xlsLayoutsBusinessEntityService.generateLayoutForEMPLEADO()
+    where:
+      businessEntityType  || callsClient  | callsClientProvider | callsProvider | callsEmployee
+      "CLIENTE"           ||  1           | 0                   | 0             | 0
+      "CLIENTE_PROVEEDOR" ||  0           | 1                   | 0             | 0
+      "PROVEEDOR"         ||  0           | 0                   | 1             | 0
+      "EMPLEADO"          ||  0           | 0                   | 0             | 1
   }
 }
