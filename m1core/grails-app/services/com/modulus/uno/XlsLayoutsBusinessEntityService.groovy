@@ -23,7 +23,7 @@ class XlsLayoutsBusinessEntityService {
   }
 
   def generateLayoutForEMPLEADO() {
-    def headers = ['RFC','CURP','PATERNO','MATERNO','NOMBRE','NO. EMPL.','CUENTA CLABE','NO. TARJETA',"IMSS (S ó N)","NSS","FECHA ALTA (dd-MM-yyyy)", "SALARIO BASE DE COTIZACION (mensual)", "SALARIO NETO (mensual)", "PRIMA VAC. (%)", "DÍAS AGUINALDO", "PERIODO PAGO"]
+    def headers = ['RFC','CURP','PATERNO','MATERNO','NOMBRE','NO. EMPL.','CUENTA CLABE (18 dígitos)','NO. TARJETA (16 dígitos)',"IMSS (S ó N)","NSS","FECHA ALTA (dd-MM-yyyy)", "SALARIO BASE DE COTIZACION (mensual)", "SALARIO NETO (mensual)", "PRIMA VAC. (%)", "DÍAS AGUINALDO", "PERIODO PAGO (Semanal, Catorcenal, Quincenal, Mensual)"]
     new WebXlsxExporter().with {
       fillRow(headers, 0)
     }
