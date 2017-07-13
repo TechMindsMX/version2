@@ -32,7 +32,24 @@ appender('ROLLING',RollingFileAppender) {
 
 }
 
-logger 'grails.artefact.Interceptor', DEBUG, ['ROLLING'], false
-logger 'grails.app.controllers', DEBUG, ['ROLLING'], false
-logger 'grails.app.services', DEBUG, ['ROLLING'], false
+def artefacts = ['controllers','services','domains','conf','init','taglib']
+
+switch(Environment.current){
+  case Environment.DEVELOPMENT:
+    artefacts.each { artefact ->
+      logger "grails.app.${artefact}", DEBUG, ['ROLLING'], false  
+    }
+    break
+  case Environment.TEST:
+    artefacts.each { artefact ->
+      logger "grails.app.${artefact}", WARN, ['ROLLING'], false  
+    }
+    break
+  case Environment.PRODUCTION:
+    artefacts.each { artefact ->
+      logger "grails.app.${artefact}", ERROR, ['ROLLING'], false  
+    }
+    break
+}
+
 root(WARN, ['ROLLING'])
