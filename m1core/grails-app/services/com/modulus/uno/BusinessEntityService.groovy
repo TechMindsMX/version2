@@ -225,31 +225,68 @@ class BusinessEntityService {
 
   def processXlsMassiveForEMPLEADO(def file, Company company) {
     log.info "Processing massive registration for Employee"
-    File xlsFile = new File(file.getOriginalFilename())
-    xlsFile.createNewFile()
-    FileOutputStream fos = new FileOutputStream(xlsFile);
-    fos.write(file.getBytes());
-    fos.close();
+    File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
-      //data.each { employee ->
-        //saveEmployeeImportData(employee)
-        //crear business entity
-        //crear employee link
-        //crear data imss employee
-      //}
+    List results = processDataFromXls(data, company)
   }
 
-  /*@Transactional
-  def saveEmployeeImportData(Map employee) {
-    BusinessEntity businessEntity = createBusinessEntityForMapEmployee(company, employee)
+  File getFileToProcess(def file) {
+    File xlsFile = new File(file.getOriginalFilename())
+    xlsFile.createTempFile()
+    FileOutputStream fos = new FileOutputStream(xlsFile)
+    fos.write(file.getBytes())
+    fos.close()
+    xlsFile
   }
 
-  def createBusinessEntityForRowEmployee(Company company, Map employeeMap) {
+  List processDataFromXls(List data, Company company) {
+    List results = []
+    data.each { employee ->
+      String result = saveEmployeeImportData(employee, company)
+      results.add(result)
+    }
+    results
+  }
+
+  @Transactional
+  def saveEmployeeImportData(Map employee, Company company) {
+    BusinessEntity businessEntity = createBusinessEntityForRowEmployee(employee)
+    if (businessEntity.hasErrors()) {
+      return "Error en el RFC"
+    }
+
+    /*EmployeeLink employeeLink = employeeService.createEmployeeForMapEmployee(employee, company)
+    if (employeeLink.hasErrors()) {
+      return employeeLink.errors.toString()
+    }
+
+    BankAccount bankAccount = createBankAccountForBusinessEntityFromRowEmployee(businessEntity, employeeMap)
+    if (bankAccount.hasErrors()) {
+      return bankAccount.errors.toString()
+    }
+
+    if (employee.IMSS == "S") {
+      DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForEmployeeMap(employeeMap, employee)
+      if (dataImssEmployee.hasErrors()) {
+        return dataImssEmployee.errors.toString()
+      }
+    }*/
+    "Registrado"
+  }
+
+  def createBusinessEntityForRowEmployee(Map employeeMap) {
     BusinessEntity businessEntity = new BusinessEntity(
       rfc:employeeMap.RFC,
       type:BusinessEntityType.FISICA,
       status:BusinessEntityStatus.TO_AUTHORIZE
     )
+
+    businessEntity.save()
+
+    createComposeNameForBusinessEntityFromRowEmployee(businessEntity, employeeMap)
+  }
+
+  def createComposeNameForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map employeeMap) {
     ComposeName lastName = new ComposeName(value:employeeMap.PATERNO, type:NameType.APELLIDO_PATERNO)
     ComposeName motherLastName = new ComposeName(value:employeeMap.MATERNO, type:NameType.APELLIDO_MATERNO)
     ComposeName name = new ComposeName(value:employeeMap.NOMBRE, type:NameType.NOMBRE)
@@ -257,6 +294,6 @@ class BusinessEntityService {
     businessEntity.addToNames(motherLastName)
     businessEntity.addToNames(name)
     businessEntity.save()
-  }*/
-
+    businessEntity
+  }
 }
