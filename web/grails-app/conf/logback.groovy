@@ -35,5 +35,4 @@ appender('ROLLING',RollingFileAppender) {
 logger 'grails.artefact.Interceptor', DEBUG, ['ROLLING'], false
 logger 'grails.app.controllers', DEBUG, ['ROLLING'], false
 logger 'grails.app.services', DEBUG, ['ROLLING'], false
-logger('org.springframework', WARN)
 root(WARN, ['ROLLING'])
