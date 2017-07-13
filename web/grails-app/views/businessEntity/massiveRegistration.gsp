@@ -38,7 +38,7 @@
                   <g:hiddenField id="entityType" name="entityType" value="${clientProviderType}"/>
                   <div class="form-group">
                     <label>Archivo XLS de registros:</label>
-                    <input type="file" name="massiveRecords" class="form-control" required="required" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                    <input type="file" name="massiveRecordsFile" class="form-control" required="required" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
                   </div>
                   <div class="row">
                     <div class="col-md-12 text-right">
