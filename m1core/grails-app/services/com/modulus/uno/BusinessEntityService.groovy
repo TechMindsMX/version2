@@ -250,21 +250,26 @@ class BusinessEntityService {
 
   @Transactional
   def saveEmployeeImportData(Map employee, Company company) {
+    if (employeeService.employeeAlreadyExistsInCompany(employee.RFC, company)) {
+      return "Error, el RFC del empleado ya existe"
+    }
+
+    EmployeeLink employeeLink = employeeService.createEmployeeForRowEmployee(employee, company)
+    if (employeeLink && employeeLink.hasErrors()) {
+      return "Error en la CURP"
+    }
+
     BusinessEntity businessEntity = createBusinessEntityForRowEmployee(employee)
     if (businessEntity.hasErrors()) {
       return "Error en el RFC"
     }
 
-    /*EmployeeLink employeeLink = employeeService.createEmployeeForMapEmployee(employee, company)
-    if (employeeLink.hasErrors()) {
-      return employeeLink.errors.toString()
-    }
-
-    BankAccount bankAccount = createBankAccountForBusinessEntityFromRowEmployee(businessEntity, employeeMap)
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(businessEntity, employee)
     if (bankAccount.hasErrors()) {
-      return bankAccount.errors.toString()
+      return "Error en los datos bancarios"
     }
 
+    /*
     if (employee.IMSS == "S") {
       DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForEmployeeMap(employeeMap, employee)
       if (dataImssEmployee.hasErrors()) {
