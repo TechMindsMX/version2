@@ -7,7 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
-@Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink])
+@Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink, BankAccount])
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
@@ -174,15 +174,16 @@ class BusinessEntityServiceSpec extends Specification {
     and:"Find employee"
       employeeService.employeeAlreadyExistsInCompany(_,_) >> existingEmployee
       employeeService.createEmployeeForRowEmployee(_,_) >> employeeLink
+      bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(_,_) >> bankAccount
     when:
       def result = service.saveEmployeeImportData(rowEmployee, company)
     then:
       result == expected
     where:
-      row       | existingEmployee    | employeeLink     ||  expected
-      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false)  || "Error en el RFC"
-      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   null   | new EmployeeLink().save(validate:false)   || "Registrado"
-      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   new EmployeeLink().save(validate:false)   |  null  || "Error, el RFC del empleado ya existe"
+      row       | existingEmployee    | employeeLink    |   bankAccount ||  expected
+      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false) | null || "Error en el RFC"
+      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456"]  |   null   | new EmployeeLink().save(validate:false)  | new BankAccount().save(validate:false) || "Registrado"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   new EmployeeLink().save(validate:false)   |  null | null  || "Error, el RFC del empleado ya existe"
   }
 
 }
