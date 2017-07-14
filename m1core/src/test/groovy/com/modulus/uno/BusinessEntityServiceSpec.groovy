@@ -7,7 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
-@Mock([BusinessEntity, ComposeName, ClientLink, Company])
+@Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink])
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
@@ -18,6 +18,7 @@ class BusinessEntityServiceSpec extends Specification {
   SaleOrderService saleOrderService = Mock(SaleOrderService)
   PaymentService paymentService = Mock(PaymentService)
   XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService = Mock(XlsLayoutsBusinessEntityService)
+  EmployeeService employeeService = Mock(EmployeeService)
 
   def setup() {
     names.removeAll()
@@ -27,6 +28,7 @@ class BusinessEntityServiceSpec extends Specification {
     service.saleOrderService = saleOrderService
     service.paymentService = paymentService
     service.xlsLayoutsBusinessEntityService = xlsLayoutsBusinessEntityService
+    service.employeeService = employeeService
   }
 
   @Unroll
@@ -166,17 +168,21 @@ class BusinessEntityServiceSpec extends Specification {
   @Unroll
   void "Should obtain #expected for row employee #row"() {
     given:"A company"
-      Company company = new Company().save(validate:false)
+      Company company = new Company(rfc:"RFCCompany").save(validate:false)
     and:"The row employee"
       Map rowEmployee = row
+    and:"Find employee"
+      employeeService.employeeAlreadyExistsInCompany(_,_) >> existingEmployee
+      employeeService.createEmployeeForRowEmployee(_,_) >> employeeLink
     when:
       def result = service.saveEmployeeImportData(rowEmployee, company)
     then:
       result == expected
     where:
-      row     ||  expected
-      [RFC:"PAG770214501", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre"] || "Error en el RFC"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre"] || "Registrado"
+      row       | existingEmployee    | employeeLink     ||  expected
+      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false)  || "Error en el RFC"
+      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   null   | new EmployeeLink().save(validate:false)   || "Registrado"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   new EmployeeLink().save(validate:false)   |  null  || "Error, el RFC del empleado ya existe"
   }
 
 }
