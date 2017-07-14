@@ -25,4 +25,20 @@ class EmployeeService {
     EmployeeLink.countByTypeAndEmployeeRef(instance.class.simpleName, instance.rfc)
   }
 
+  EmployeeLink employeeAlreadyExistsInCompany(String rfc, Company company) {
+    EmployeeLink.findByEmployeeRefAndCompany(rfc, company)
+  }
+
+  EmployeeLink createEmployeeForRowEmployee(Map rowEmployee, Company company) {
+    EmployeeLink employeeLink = new EmployeeLink(
+      type:"BusinessEntity",
+      employeeRef:rowEmployee.RFC,
+      curp:rowEmployee.CURP,
+      number:rowEmployee.NO_EMPL,
+      company:company
+    )
+    employeeLink.save()
+    employeeLink
+  }
+
 }
