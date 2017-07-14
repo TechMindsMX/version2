@@ -255,7 +255,7 @@ class BusinessEntityService {
     }
 
     EmployeeLink employeeLink = employeeService.createEmployeeForRowEmployee(employee, company)
-    if (employeeLink && employeeLink.hasErrors()) {
+    if (!employeeLink || employeeLink?.hasErrors()) {
       return "Error en la CURP"
     }
 
@@ -265,7 +265,7 @@ class BusinessEntityService {
     }
 
     BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(businessEntity, employee)
-    if (bankAccount.hasErrors()) {
+    if (!bankAccount || bankAccount?.hasErrors()) {
       return "Error en los datos bancarios"
     }
 
