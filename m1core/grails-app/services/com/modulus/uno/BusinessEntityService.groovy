@@ -14,6 +14,7 @@ class BusinessEntityService {
   PaymentService paymentService
   XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService
   XlsImportService xlsImportService
+  DataImssEmployeeService dataImssEmployeeService
 
   def generatedBussinessEntityProperties(BusinessEntity businessEntity, def params, Company company) {
     LeadType leadType = LeadType."${params.clientProviderType}"
@@ -249,33 +250,33 @@ class BusinessEntityService {
   }
 
   @Transactional
-  def saveEmployeeImportData(Map employee, Company company) {
-    if (employeeService.employeeAlreadyExistsInCompany(employee.RFC, company)) {
+  def saveEmployeeImportData(Map rowEmployee, Company company) {
+    if (employeeService.employeeAlreadyExistsInCompany(rowEmployee.RFC, company)) {
       return "Error, el RFC del empleado ya existe"
     }
 
-    EmployeeLink employeeLink = employeeService.createEmployeeForRowEmployee(employee, company)
+    EmployeeLink employeeLink = employeeService.createEmployeeForRowEmployee(rowEmployee, company)
     if (!employeeLink || employeeLink?.hasErrors()) {
       return "Error en la CURP"
     }
 
-    BusinessEntity businessEntity = createBusinessEntityForRowEmployee(employee)
+    BusinessEntity businessEntity = createBusinessEntityForRowEmployee(rowEmployee)
     if (businessEntity.hasErrors()) {
       return "Error en el RFC"
     }
 
-    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(businessEntity, employee)
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(businessEntity, rowEmployee)
     if (!bankAccount || bankAccount?.hasErrors()) {
       return "Error en los datos bancarios"
     }
 
-    /*
-    if (employee.IMSS == "S") {
-      DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForEmployeeMap(employeeMap, employee)
-      if (dataImssEmployee.hasErrors()) {
-        return dataImssEmployee.errors.toString()
+    if (rowEmployee.IMSS == "S") {
+      DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForRowEmployee(rowEmployee, employeeLink)
+      if (!dataImssEmployee || dataImssEmployee?.hasErrors()) {
+        return "Error en los datos de IMSS"
       }
-    }*/
+    }
+
     "Registrado"
   }
 
