@@ -7,7 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
-@Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink, BankAccount])
+@Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink, BankAccount, DataImssEmployee])
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
@@ -19,6 +19,7 @@ class BusinessEntityServiceSpec extends Specification {
   PaymentService paymentService = Mock(PaymentService)
   XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService = Mock(XlsLayoutsBusinessEntityService)
   EmployeeService employeeService = Mock(EmployeeService)
+  DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
 
   def setup() {
     names.removeAll()
@@ -29,6 +30,7 @@ class BusinessEntityServiceSpec extends Specification {
     service.paymentService = paymentService
     service.xlsLayoutsBusinessEntityService = xlsLayoutsBusinessEntityService
     service.employeeService = employeeService
+    service.dataImssEmployeeService = dataImssEmployeeService
   }
 
   @Unroll
@@ -175,15 +177,20 @@ class BusinessEntityServiceSpec extends Specification {
       employeeService.employeeAlreadyExistsInCompany(_,_) >> existingEmployee
       employeeService.createEmployeeForRowEmployee(_,_) >> employeeLink
       bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(_,_) >> bankAccount
+      dataImssEmployeeService.createDataImssForRowEmployee(_,_) >> dataImss
     when:
       def result = service.saveEmployeeImportData(rowEmployee, company)
     then:
       result == expected
     where:
-      row       | existingEmployee    | employeeLink    |   bankAccount ||  expected
-      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false) | null || "Error en el RFC"
-      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456"]  |   null   | new EmployeeLink().save(validate:false)  | new BankAccount().save(validate:false) || "Registrado"
-      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   new EmployeeLink().save(validate:false)   |  null | null  || "Error, el RFC del empleado ya existe"
+      row       | existingEmployee    | employeeLink    |   bankAccount | dataImss   ||  expected
+      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false) | null  | null || "Error en el RFC"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   new EmployeeLink().save(validate:false)   |  null | null  | null  || "Error, el RFC del empleado ya existe"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   null   |  null | null | null  || "Error en la CURP"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456"]  |   null   |  new EmployeeLink().save(validate:false) | null | null || "Error en los datos bancarios"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   null   |  new EmployeeLink().save(validate:false) | new BankAccount().save(validate:false) | null  || "Error en los datos de IMSS"
+
+      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   null   | new EmployeeLink().save(validate:false)  | new BankAccount().save(validate:false) | new DataImssEmployee().save(validate:false) || "Registrado"
   }
 
 }
