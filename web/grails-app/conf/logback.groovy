@@ -26,14 +26,31 @@ appender('ROLLING',RollingFileAppender) {
       '%clr(%-40.40logger{39}){cyan} %clr(:){faint} ' + // Logger
       '%m%n%wex' // Message
   }
-   rollingPolicy(TimeBasedRollingPolicy){
+  rollingPolicy(TimeBasedRollingPolicy){
     FileNamePattern = "${basePath}/logs/modulusuno-%d{yyyy-MM}.log"
   }
 
 }
 
-logger 'grails.artefact.Interceptor', DEBUG, ['ROLLING'], false
-logger 'grails.app.controllers', DEBUG, ['ROLLING'], false
-logger 'grails.app.services', DEBUG, ['ROLLING'], false
-logger('org.springframework', WARN)
+def artefacts = ['controllers','services','domains','conf','init','taglib']
+
+switch(Environment.current){
+  case Environment.DEVELOPMENT:
+    artefacts.each { artefact ->
+      logger "grails.app.services.grails.plugin", WARN, ['ROLLING'], false // formfields.FormFieldsTemplateService
+      logger "grails.app.${artefact}", DEBUG, ['ROLLING'], false
+    }
+    break
+  case Environment.TEST:
+    artefacts.each { artefact ->
+      logger "grails.app.${artefact}", WARN, ['ROLLING'], false
+    }
+    break
+  case Environment.PRODUCTION:
+    artefacts.each { artefact ->
+      logger "grails.app.${artefact}", ERROR, ['ROLLING'], false
+    }
+    break
+}
+
 root(WARN, ['ROLLING'])
