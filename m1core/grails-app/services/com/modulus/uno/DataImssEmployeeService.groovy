@@ -20,10 +20,11 @@ class DataImssEmployeeService {
       baseImssMonthlySalary:new BigDecimal(rowEmployee.BASE_COTIZA),
       netMonthlySalary:new BigDecimal(rowEmployee.NETO),
       holidayBonusRate:new BigDecimal(rowEmployee.PRIMA_VAC),
-      annualBonusDays:new Integer(rowEmployee.DIAS_AGUINALDO),
+      annualBonusDays:rowEmployee.DIAS_AGUINALDO.intValue(),
       paymentPeriod:paymentPeriod
     )
     dataImssEmployee.save()
+    log.info "DataImssEmployee: ${dataImssEmployee.dump()}"
     dataImssEmployee
   }
 
