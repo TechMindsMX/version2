@@ -12,6 +12,7 @@ class CompanyInterceptor {
     PageRenderer groovyPageRenderer
 
     CompanyInterceptor() {
+      log.info "************** Contructor Method of interceptor ******************"
       matchAll()
            .excludes(controller:"login")
            .excludes(controller:"logout")
@@ -22,6 +23,7 @@ class CompanyInterceptor {
     }
 
     boolean before() {
+      log.info "Interceptor method for a company Id in session"
       def currentUser = springSecurityService.currentUser
       if (!currentUser)
         return true
