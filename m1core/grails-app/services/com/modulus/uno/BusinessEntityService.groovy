@@ -229,11 +229,12 @@ class BusinessEntityService {
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
     List results = processDataFromXls(data, company)
+    log.info "Results: ${results}"
+    results
   }
 
   File getFileToProcess(def file) {
-    File xlsFile = new File(file.getOriginalFilename())
-    xlsFile.createTempFile()
+    File xlsFile = File.createTempFile("tmpMassiveRegistration${new Date().getTime()}",".xlsx")
     FileOutputStream fos = new FileOutputStream(xlsFile)
     fos.write(file.getBytes())
     fos.close()
@@ -252,30 +253,38 @@ class BusinessEntityService {
   @Transactional
   def saveEmployeeImportData(Map rowEmployee, Company company) {
     if (employeeService.employeeAlreadyExistsInCompany(rowEmployee.RFC, company)) {
-      return "Error, el RFC del empleado ya existe"
+      transactionStatus.setRollbackOnly()
+      return "Error: el RFC del empleado ya existe"
     }
 
     EmployeeLink employeeLink = employeeService.createEmployeeForRowEmployee(rowEmployee, company)
     if (!employeeLink || employeeLink?.hasErrors()) {
-      return "Error en la CURP"
+      transactionStatus.setRollbackOnly()
+      return "Error: CURP"
     }
 
     BusinessEntity businessEntity = createBusinessEntityForRowEmployee(rowEmployee)
     if (businessEntity.hasErrors()) {
-      return "Error en el RFC"
+      transactionStatus.setRollbackOnly()
+      return "Error: RFC"
     }
 
     BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(businessEntity, rowEmployee)
     if (!bankAccount || bankAccount?.hasErrors()) {
-      return "Error en los datos bancarios"
+      transactionStatus.setRollbackOnly()
+      return "Error: datos bancarios"
     }
 
     if (rowEmployee.IMSS == "S") {
       DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForRowEmployee(rowEmployee, employeeLink)
       if (!dataImssEmployee || dataImssEmployee?.hasErrors()) {
-        return "Error en los datos de IMSS"
+        transactionStatus.setRollbackOnly()
+        return "Error: datos de IMSS"
       }
     }
+
+    company.addToBusinessEntities(businessEntity)
+    company.save(flush:true)
 
     "Registrado"
   }
