@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 @Transactional
 class BusinessEntityService {
@@ -16,6 +17,7 @@ class BusinessEntityService {
   XlsImportService xlsImportService
   DataImssEmployeeService dataImssEmployeeService
 
+  @Transactional
   def generatedBussinessEntityProperties(BusinessEntity businessEntity, def params, Company company) {
     LeadType leadType = LeadType."${params.clientProviderType}"
     if(params.persona == 'fisica'){
@@ -35,7 +37,7 @@ class BusinessEntityService {
     }
     if((leadType == LeadType.PROVEEDOR || leadType == LeadType.CLIENTE_PROVEEDOR) && businessEntity.id){
       providerService.addProviderToCompany(businessEntity, company)
-      emailSenderService.sendEmailForNewProvider(company, provider)
+      emailSenderService.sendEmailForNewProvider(company, businessEntity)
     }
     if(leadType == LeadType.EMPLEADO){
       businessEntity.website = null
@@ -45,6 +47,7 @@ class BusinessEntityService {
 
   }
 
+  @Transactional
   def appendNamesToBusinessEntity(BusinessEntity businessEntity, String[] properties) {
     def name = new ComposeName(value:properties[0], type:NameType.NOMBRE)
     def lastName = new ComposeName(value:properties[1], type:NameType.APELLIDO_PATERNO)
@@ -66,6 +69,7 @@ class BusinessEntityService {
     businessEntity
   }
 
+  @Transactional
   def createBankAccountAndAddToBusinesEntity(Map properties,BusinessEntity businessEntity) {
     def bankAccountCommand = bankAccountService.createABankAccountCommandByParams(properties)
     def bankAccount = bankAccountService.createABankAccount(bankAccountCommand)
@@ -74,6 +78,7 @@ class BusinessEntityService {
     businessEntity.save()
   }
 
+  @Transactional
   def createAddressForBusinessEntity(Address address, Long businessEntityId) {
     def businessEntity = BusinessEntity.get(businessEntityId)
     businessEntity.addToAddresses(address)
@@ -81,6 +86,7 @@ class BusinessEntityService {
     businessEntity
   }
 
+  @Transactional
   def deleteLinksForRfc(String rfc){
     def clientLink = ClientLink.findByClientRef(rfc)
     clientLink?.delete()
@@ -124,6 +130,7 @@ class BusinessEntityService {
           if (employeeLink) return LeadType.EMPLEADO
   }
 
+  @Transactional
   def updateNamesToBusinessEntity(BusinessEntity businessEntity, String[] names) {
     businessEntity.names.each{
       if(it.type == NameType.NOMBRE){
@@ -144,6 +151,7 @@ class BusinessEntityService {
     businessEntity
   }
 
+  @Transactional
   def updateDataToBusinessEntity(BusinessEntity businessEntity, String businessName) {
     businessEntity.names.each{
       if(it.type == NameType.RAZON_SOCIAL){
@@ -167,6 +175,7 @@ class BusinessEntityService {
     [businessEntity.banksAccounts,businessEntity.addresses]
   }
 
+  @Transactional
   def generateSubAccountStp(Company company, BusinessEntity businessEntity) {
     ClientLink client = ClientLink.findByCompanyAndClientRef(company, businessEntity.rfc)
     client = clientService.generateSubAccountStp(client)
@@ -177,6 +186,7 @@ class BusinessEntityService {
     ClientLink.findByCompanyAndClientRef(company, businessEntity.rfc)
   }
 
+  @Transactional
   def updateBusinessEntity(BusinessEntity businessEntity, Company company, def params) {
     LeadType leadType = LeadType."${params.clientProviderType}"
     if(businessEntity.type == BusinessEntityType.FISICA){
@@ -229,8 +239,9 @@ class BusinessEntityService {
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
     List results = processDataFromXls(data, company)
+    log.info "Data: ${data}"
     log.info "Results: ${results}"
-    results
+    [data:data, results:results]
   }
 
   File getFileToProcess(def file) {
@@ -246,11 +257,22 @@ class BusinessEntityService {
     data.each { employee ->
       String result = saveEmployeeImportData(employee, company)
       results.add(result)
+      if (result == "Registrado") {
+        addEmployeeToCompany(employee.RFC, company)
+      }
     }
     results
   }
 
   @Transactional
+  def addEmployeeToCompany(String rfc, Company company) {
+    log.debug "Adding employee to company: ${rfc}"
+    BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
+    company.addToBusinessEntities((EmployeeBusinessEntity) businessEntity)
+    company.save()
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveEmployeeImportData(Map rowEmployee, Company company) {
     if (employeeService.employeeAlreadyExistsInCompany(rowEmployee.RFC, company)) {
       transactionStatus.setRollbackOnly()
@@ -282,9 +304,6 @@ class BusinessEntityService {
         return "Error: datos de IMSS"
       }
     }
-
-    company.addToBusinessEntities(businessEntity)
-    company.save(flush:true)
 
     "Registrado"
   }
