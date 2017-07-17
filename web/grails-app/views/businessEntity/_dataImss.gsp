@@ -39,7 +39,7 @@
   <div class="panel-footer">
     <div class="row">
       <div class="col-md-12 text-right">
-        <g:link class="btn btn-default" controller="dataImssEmployee" action="edit" id="${dataImssEmployee?.id}">Editar</g:link>
+        <g:link class="btn btn-default" controller="dataImssEmployee" action="edit" id="${dataImssEmployee?.id}" params="[businessEntityId:businessEntity.id]">Editar</g:link>
       </div>
     </div>
   </div>
