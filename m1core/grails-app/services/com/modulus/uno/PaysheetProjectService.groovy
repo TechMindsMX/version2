@@ -10,4 +10,8 @@ class PaysheetProjectService {
     paysheetProject
   }
 
+  @Transactional
+  void deletePaysheetProject(PaysheetProject paysheetProject) {
+    paysheetProject.delete()
+  }
 }
