@@ -30,6 +30,10 @@ class EmployeeService {
   }
 
   EmployeeLink createEmployeeForRowEmployee(Map rowEmployee, Company company) {
+    if (rowEmployee.NO_EMPL.toString().isNumber()) {
+      rowEmployee.NO_EMPL = Integer.toString(new Double(rowEmployee.NO_EMPL).intValue())
+    }
+
     EmployeeLink employeeLink = new EmployeeLink(
       type:"BusinessEntity",
       employeeRef:rowEmployee.RFC,
