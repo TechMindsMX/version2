@@ -30,7 +30,7 @@
               </g:if>
 
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-6">
                 <g:form controller="businessEntity" action="search" class="form-horizontal">
                   <div class="form-group">
                     <div class="col-sm-3">
@@ -42,6 +42,9 @@
                     </div>
                   </div>
                 </g:form>
+              </div>
+              <div class="col-md-6 text-right">
+                <g:link class="btn btn-primary" action="showToAuthorizeEntities">Autorizar Registros</g:link>
               </div>
             </div>
 
