@@ -173,7 +173,7 @@ class BusinessEntityController {
     String entityType = params.entityType
     def file = request.getFile('massiveRecordsFile')
     Company company = Company.get(session.company)
-    businessEntityService."processXlsMassiveFor${entityType}"(file, company)
-    redirect action:"massiveRegistration"
+    Map resultImport = businessEntityService."processXlsMassiveFor${entityType}"(file, company)
+    render view:"massiveRegistrationResult", model:[resultImport:resultImport]
   }
 }

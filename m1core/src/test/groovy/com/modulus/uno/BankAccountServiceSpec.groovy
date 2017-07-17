@@ -3,6 +3,7 @@ package com.modulus.uno
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
+import spock.lang.Unroll
 import java.lang.Void as Should
 
 @TestFor(BankAccountService)
@@ -132,6 +133,35 @@ class BankAccountServiceSpec extends Specification {
                          website:"www.prvuno.com",
                          type:BusinessEntityType.MORAL)
 
+  }
+
+  Should "obtain all data bank map from clabe when its length is 18"() {
+    given:"The clabe with valid length"
+      String clabe = "036180009876543217"
+    and:
+      Bank bank = new Bank(bankingCode:"40036", name:"Banco").save(validate:false)
+    when:
+      def result = service.getDataBankFromClabe(clabe)
+    then:
+      result.branchNumber == "180"
+      result.accountNumber == "00987654321"
+      result.bank.bankingCode.endsWith("036")
+  }
+
+  @Unroll
+  Should "obtain empty data bank map from clabe when its length isn't 18"() {
+    given:"The clabe with no valid length"
+      String clabe = wrongClabe
+    and:
+      Bank bank = new Bank(bankingCode:"40036", name:"Banco").save(validate:false)
+    when:
+      def result = service.getDataBankFromClabe(clabe)
+    then:
+      result == emptyMap
+    where:
+      wrongClabe  || emptyMap
+      "036180"    || [:]
+      "12345678901234567890"  ||  [:]
   }
 
 }
