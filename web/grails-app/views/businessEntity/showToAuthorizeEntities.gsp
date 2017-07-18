@@ -17,11 +17,6 @@
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
-          <div class="portlet-title">
-            <br />
-            <br />
-          </div>
-          <div class="clearfix"></div>
         </div>
         <div id="horizontalFormExample" class="panel-collapse collapse in">
           <div class="portlet-body">
@@ -30,7 +25,8 @@
               </g:if>
 
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12 text-right">
+                <button class="btn btn-primary">Autorizar</button>
               </div>
             </div>
 
@@ -63,6 +59,15 @@
             </div>
 
           </div>
+
+          <div class="portlet-footer">
+            <div class="row">
+              <div class="col-md-12 text-right">
+                <g:link class="btn btn-default" action="index">Regresar</g:link>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
