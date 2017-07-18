@@ -48,7 +48,8 @@ databaseChangeLog = {
   include file: 'create-domain-payment-m1-emitter.groovy'
   include file: 'create-domain-conciliation-commissions-invoice.groovy'
   include file: 'create-domain-commissions-invoice-payment.groovy'
-    include file: 'drop-column-invoice-from-commission-transaction.groovy'
-    include file: 'adding-sale-order-to-commission-transaction.groovy'
-    include file: 'drop-commissions-invoice-domains.groovy'
+  include file: 'drop-column-invoice-from-commission-transaction.groovy'
+  include file: 'adding-sale-order-to-commission-transaction.groovy'
+  include file: 'drop-commissions-invoice-domains.groovy'
+  include file: 'create-menu-operation-domain.groovy'
 }
