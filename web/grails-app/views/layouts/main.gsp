@@ -13,6 +13,7 @@
     <asset:stylesheet src="application.css"/>
     <asset:javascript src="application.js"/>
     <asset:javascript src="main-nav.js"/>
+    <link href="${assetPath(src: 'third-party/hisrc/50K.jpg')}"/>
     <g:layoutHead/>
   </head>
   <body>
