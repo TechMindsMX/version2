@@ -30,10 +30,10 @@
               </g:if>
 
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-10">
                 <g:form controller="businessEntity" action="search" class="form-horizontal">
                   <div class="form-group">
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                       <input type="text" name="rfc" class="form-control" placeholder="RFC ó Nombre" maxlength="20"/>
                       <input type="hidden" name="company" value="${session.company}" />
                     </div>
@@ -43,7 +43,7 @@
                   </div>
                 </g:form>
               </div>
-              <div class="col-md-6 text-right">
+              <div class="col-md-2 text-right">
                 <g:link class="btn btn-primary" action="showToAuthorizeEntities">Autorizar Registros</g:link>
               </div>
             </div>
