@@ -74,9 +74,16 @@ class NotifyServiceSpec extends Specification {
   void "obtain the params for CashOut Order Status to populate the email"(){
     given:"a cashOut order"
       def cashOutOrder = new CashOutOrder(amount:9999, comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO)
+      Transaction transaction = new Transaction(paymentConcept:"Concepto", trackingKey:"Rastreo", referenceNumber:"Referencia", dateCreated:Date.parse("dd-MM-yyyy hh:mm:ss", "10-06-2017 10:30:15")).save(validate:false)
+      cashOutOrder.transaction = transaction
+      BankAccount bankAccount = new BankAccount(banco:new Bank(name:"ElBanco").save(validate:false), clabe:"Clabe").save(validate:false)
+      cashOutOrder.account = bankAccount
       cashOutOrder.save(validate:false)
     and:
       def company = new Company().save(validate:false)
+      ModulusUnoAccount m1Account = new ModulusUnoAccount(aliasStp:"AliasStp").save(validate:false)
+      company.addToAccounts(m1Account)
+      company.save(validate:false)
       cashOutOrder.company = company
       cashOutOrder.save(validate:false)
     and:
@@ -106,7 +113,7 @@ class NotifyServiceSpec extends Specification {
       [id:"1", amount:"9999", status:"PUESTA EN ESPERA DE SER AUTORIZADA", url:URL],
       [id:"1", amount:"9999", status:"AUTORIZADA", url:URL],
       [id:"1", amount:"9999", status:"RECHAZADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL],
-      [id:"1", amount:"9999", status:"EJECUTADA", url:URL],
+      [id:"1", amount:"9999", status:"EJECUTADA", url:URL, 'paymentConcept':'Concepto', 'trackingKey':'Rastreo', 'referenceNumber':'Referencia', 'dateCreated':'10-06-2017 10:30:15', 'destinyBank':'ElBanco','destinyBankAccount':'Clabe', 'aliasStp':'AliasStp'],
       [id:"1", amount:"9999", status:"CANCELADA", comments:"falsa", rejectReason:RejectReason.DOCUMENTO_INVALIDO.toString(), url:URL]
       ]
   }
