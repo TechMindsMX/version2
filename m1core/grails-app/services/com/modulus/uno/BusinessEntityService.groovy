@@ -338,4 +338,25 @@ class BusinessEntityService {
     beToAuthorize
   }
 
+  @Transactional
+  def authorizeBusinessEntities(String ids) {
+    if (ids) {
+      List<BusinessEntity> businessEntities = getBusinessEntitiesFromIds(ids)
+      log.info "Business entities: ${businessEntities}"
+      businessEntities.each { be ->
+        be.status = BusinessEntityStatus.ACTIVE
+        be.save(flush:true)
+      }
+    }
+  }
+
+  List<BusinessEntity> getBusinessEntitiesFromIds(String ids) {
+    Scanner scanner = new Scanner(ids.replace(","," "))
+    List<Integer> intIds = []
+    while (scanner.hasNextInt()) {
+      intIds.add(scanner.nextInt())
+    }
+    BusinessEntity.getAll(intIds)
+  }
+
 }
