@@ -18,7 +18,7 @@ class SaleOrderItemSpec extends Specification {
     item.sku = sku
     item.name = name
     item.price = price
-    item.ieps = ieps
+    item.ivaRetention = ivaRetention
     item.iva = iva
     item.quantity = quantity
     item.unitType = unitType
@@ -27,7 +27,7 @@ class SaleOrderItemSpec extends Specification {
   then:"We validate"
     result == item.validate()
   where:"We have following values"
-  sku         | name              | quantity | price | ieps  | iva  | unitType          | currencyType      || result
+  sku         | name              | quantity | price | ivaRetention  | iva  | unitType          | currencyType      || result
   'H129'      | 'Galgo System 71' | 1.0      | 500   | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || true
   'H129-1'    | 'Galgo System 72' | 20.12    | 500   | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || true
   'h129'      | 'Galgo System 73' | 1.0      | 500   | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || true
@@ -64,7 +64,7 @@ class SaleOrderItemSpec extends Specification {
     item.name = name
     item.price = price
     item.discount = discount
-    item.ieps = ieps
+    item.ivaRetention = ivaRetention
     item.iva = iva
     item.quantity = quantity
     item.unitType = unitType
@@ -77,12 +77,13 @@ class SaleOrderItemSpec extends Specification {
     result.netPrice == netPrice
     result.netAmount == netAmount
   where:"We have following values"
-  sku    | name              | quantity | price | discount | ieps  | iva  | unitType          | currencyType      || amountDiscount | priceWithDiscount | netPrice | netAmount
+  sku    | name              | quantity | price | discount | ivaRetention  | iva  | unitType          | currencyType      || amountDiscount | priceWithDiscount | netPrice | netAmount
   'H129' | 'Galgo System 71' | 1.0      | 500   | 0        | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 0              | 500               | 580      | 580
   'H129' | 'Galgo System 71' | 1.0      | 500   | 10       | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 50             | 450               | 522      | 522
   'H129' | 'Galgo System 71' | 2.0      | 500   | 10       | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 50             | 450               | 522      | 1044
   'H129' | 'Galgo System 71' | 0.5      | 500   | 10       | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 50             | 450               | 522      | 261
   'H129' | 'Galgo System 71' | 1.0      | 500   | 5.5      | 0     | 16   | UnitType.UNIDADES | CurrencyType.USD  || 27.50          | 472.50            | 548.10   | 548.10
+  'H129' | 'Galgo System 71' | 1.0      | 500   | 0        | 100   | 16   | UnitType.UNIDADES | CurrencyType.USD  || 0              | 500               | 480      | 480
   }
 
 }
