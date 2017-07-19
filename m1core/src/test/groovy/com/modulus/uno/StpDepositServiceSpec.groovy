@@ -11,11 +11,13 @@ class StpDepositServiceSpec extends Specification {
   TransactionService transactionService = Mock(TransactionService)
   CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
+  EmailSenderService emailSenderService = Mock(EmailSenderService)
 
   def setup() {
     service.transactionService = transactionService
     service.commissionTransactionService = commissionTransactionService
     service.grailsApplication = grailsApplication
+    service.emailSenderService = emailSenderService
   }
 
   void "Should obtain a accepted status for a stp deposit which account is from company"(){
