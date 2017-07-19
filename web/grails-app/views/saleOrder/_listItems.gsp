@@ -5,7 +5,7 @@
     <tbody>
     <g:each in="${saleOrder.items.sort{it.id}}" var="item">
     <tr>
-      <td><h3>${item.quantity}</h3></td>
+      <td>${item.quantity}</td>
       <td>
         ${item.name}<br/>
         <small><i>${item.sku}</i></small>

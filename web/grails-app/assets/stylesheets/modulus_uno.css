@@ -2,7 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-size: 100%;
-  background-color: #3CB4E7;
+  background-color: #1C4387;
   color: #555; }
   html .mdu-home-content, body .mdu-home-content {
     background: white;
@@ -14,7 +14,7 @@ html, body {
     font-weight: 100; }
 
 .navbar-top {
-  background-color: #3CB4E7; }
+  background-color: #1C4387; }
   .navbar-top .navbar-center {
     display: inline-block;
     overflow: hidden;
@@ -27,6 +27,8 @@ html, body {
     .navbar-top .navbar-center li {
       display: inline-block;
       margin: 0 5px; }
+  .navbar-top .navbar-header {
+    background: #1C4387; }
 
 .navbar-top > .nav-top > .nav > li > a:hover,
 .navbar-top > .nav-top > .nav > li > a:focus {
@@ -34,14 +36,14 @@ html, body {
 
 .navbar-mdu li a {
   padding: 1em 2em;
-  color: #3CB4E7;
+  color: #1C4387;
   margin: 8px 0;
-  border: solid 1px #3CB4E7;
+  border: solid 1px #1C4387;
   background: transparent;
   border-radius: 2px;
   transition: background-color 0.5s; }
   .navbar-mdu li a:hover {
-    background: #3CB4E7; }
+    background: #1C4387; }
 
 .navbar-brand {
   color: white;
@@ -55,10 +57,10 @@ html, body {
   padding: 0 0 0 0.5em; }
 
 #side {
-  background: #3CB4E7; }
+  background: #1C4387; }
   #side a {
     padding: 1em;
-    background: #3CB4E7;
+    background: #1C4387;
     font: 400 0.7em Lato, sans-serif;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -93,7 +95,11 @@ html, body {
   border: none;
   padding: 1em; }
   .circle-tile .circle-tile-content {
-    border: none; }
+    border: none;
+    color: #555; }
+  .circle-tile .circle-tile-heading:hover {
+    background: none;
+    color: #192954; }
 
 .portlet.portlet-blue > .portlet-heading {
   padding: 1em;
@@ -109,13 +115,90 @@ label {
   color: #666; }
 
 footer {
-  background-color: #3CB4E7;
+  background-color: #1C4387;
   padding: 1em 0;
   color: white;
   font-size: 70%; }
   footer a {
-    color: white; }
+    color: white !important; }
     footer a:hover {
-      color: yellow; }
+      color: #f1f1f1; }
+  footer .btn {
+    color: white; }
+    footer .btn:hover {
+      color: #f2f2f2; }
+
+.btn-primary,
+.btn-default,
+.btn-green,
+.btn-success {
+  background: #3CB4E7;
+  border-color: #3CB4E7; }
+  .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary:active:focus, .btn-primary:active:focus:hover,
+  .btn-default:hover,
+  .btn-default:focus,
+  .btn-default:active,
+  .btn-default:active:focus,
+  .btn-default:active:focus:hover,
+  .btn-green:hover,
+  .btn-green:focus,
+  .btn-green:active,
+  .btn-green:active:focus,
+  .btn-green:active:focus:hover,
+  .btn-success:hover,
+  .btn-success:focus,
+  .btn-success:active,
+  .btn-success:active:focus,
+  .btn-success:active:focus:hover {
+    outline: none;
+    background: #53bdea;
+    border-color: #53bdea;
+    color: white; }
+
+.dropdown-toggle.btn-primary,
+.dropdown-toggle.btn-default,
+.dropdown-toggle.btn-green,
+.open > .dropdown-toggle.btn-primary,
+.open > .dropdown-toggle.btn-default,
+.open > .dropdown-toggle.btn-green {
+  background: #53bdea;
+  border-color: #53bdea; }
+  .dropdown-toggle.btn-primary:focus, .dropdown-toggle.btn-primary:hover,
+  .dropdown-toggle.btn-default:focus,
+  .dropdown-toggle.btn-default:hover,
+  .dropdown-toggle.btn-green:focus,
+  .dropdown-toggle.btn-green:hover,
+  .open > .dropdown-toggle.btn-primary:focus,
+  .open > .dropdown-toggle.btn-primary:hover,
+  .open > .dropdown-toggle.btn-default:focus,
+  .open > .dropdown-toggle.btn-default:hover,
+  .open > .dropdown-toggle.btn-green:focus,
+  .open > .dropdown-toggle.btn-green:hover {
+    background: #53bdea;
+    border-color: #53bdea; }
+
+.btn-warning {
+  background: none;
+  border: solid 1px orange !important;
+  color: orange; }
+  .btn-warning:hover, .btn-warning:focus {
+    border: solid 1px orange !important;
+    background: orange;
+    color: white; }
+
+.btn-danger {
+  background: none;
+  border: solid 1px orangered !important;
+  color: orangered; }
+  .btn-danger:hover, .btn-danger:focus, .btn-danger:active {
+    background: orangered;
+    border: solid 1px orangered !important;
+    color: white; }
+
+body .table > tbody > tr.success > td:last-child {
+  background: none; }
+
+body .table > tbody > tr.info > td:last-child {
+  background: none; }
 
 /*# sourceMappingURL=modulus_uno.css.map */
