@@ -7,7 +7,10 @@ class StatusOrderStpService {
   @Transactional
   StatusOrderStp saveStatusOrderStp(StatusOrderStp statusOrderStp) {
     statusOrderStp.save()
-    //procesar notificación cuando el estatus es rechazado
+    if (statusOrderStp.status == "DEVOLUCION") {
+      log.info "Initializing reverse transaction"
+      notify("reverseTransaction", statusOrderStp)
+    }
     statusOrderStp
   }
 

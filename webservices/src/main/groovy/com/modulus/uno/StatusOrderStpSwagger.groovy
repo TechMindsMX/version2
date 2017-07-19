@@ -18,7 +18,7 @@ class StatusOrderStpSwagger  {
   }
 
   private CauseRefundStp getCauseRefundStp(String causeValue) {
-    CauseRefundStp causeReceived = causeValue ?: "0"
+    String causeReceived = causeValue ?: "0"
     CauseRefundStp causeFound = CauseRefundStp.values().find { it.id == Integer.parseInt(causeReceived) }
     CauseRefundStp causeRefund = causeFound ?: CauseRefundStp.UNKNOWN_CAUSE
     causeRefund
