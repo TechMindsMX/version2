@@ -87,14 +87,10 @@
         <ul class="collapse nav" id="feesReceipt-${action}">
           <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_OPERATOR_VISOR">
           <li>
-            <g:link controller="feesReceipt" action="list">
-            Todas</a>
-            </g:link>
+            <g:link controller="feesReceipt" action="list">Todas</g:link>
           </li>
           <li>
-            <g:link controller="feesReceipt" action="list" params="[status:'CREADA']">
-            Creadas
-            </g:link>
+            <g:link controller="feesReceipt" action="list" params="[status:'CREADA']">Creadas</g:link>
           </li>
           </sec:ifAnyGranted>
         </ul>
@@ -110,4 +106,21 @@
       <g:link controller="movimientosBancarios" action="multiMovimientos" >Subir Movimientos Bancarios</g:link>
     </li>
   </sec:ifAnyGranted>
+
+  <li>
+    <a href="javascript:;" data-parent="#consultas" data-toggle="collapse" class="accordion-toggle" data-target="#paysheet-${action}">
+      Nómina<i class="fa fa-caret-down"></i>
+    </a>
+      <li>
+        <ul class="collapse nav" id="paysheet-${action}">
+          <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
+          <li>
+            <g:link controller="PrePaysheet" action="create">Crear Pre-Nómina</a></g:link>
+          </li>
+          </sec:ifAnyGranted>
+        </ul>
+      </li>
+  </li>
+
+
 </ul>
