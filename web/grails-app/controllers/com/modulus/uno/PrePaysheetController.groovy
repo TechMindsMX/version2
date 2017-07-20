@@ -43,4 +43,10 @@ class PrePaysheetController {
     respond prePaysheet
   }
 
+  def list() {
+    params.max = 25
+    Company company = Company.get(session.company)
+    Map prePaysheets = prePaysheetService.getListAndCountPrePaysheetsForCompany(company, params)
+    [prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
+  }
 }
