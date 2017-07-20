@@ -11,4 +11,10 @@ class PrePaysheetService {
     prePaysheet
   }
 
+  Map getListAndCountPrePaysheetsForCompany(Company company, Map params) {
+    Map prePaysheets = [:]
+    prePaysheets.list = PrePaysheet.findAllByCompany(company, params)
+    prePaysheets.total = PrePaysheet.countByCompany(company)
+    prePaysheets
+  }
 }
