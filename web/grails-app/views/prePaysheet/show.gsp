@@ -27,7 +27,7 @@
           <div class="portlet-footer">
             <div class="row">
               <div class="col-md-12 text-right">
-                <g:link class="btn btn-primary" controller="dashboard" action="index">Cancelar</g:link>
+                <g:link class="btn btn-primary" action="list">Lista</g:link>
               </div>
             </div>
           </div>
