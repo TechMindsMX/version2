@@ -117,6 +117,10 @@
           <li>
             <g:link controller="PrePaysheet" action="create">Crear Pre-Nómina</a></g:link>
           </li>
+          <li>
+            <g:link controller="PrePaysheet" action="list">Lista de Pre-Nóminas</a></g:link>
+          </li>
+
         </ul>
       </li>
   </li>
