@@ -107,20 +107,20 @@
     </li>
   </sec:ifAnyGranted>
 
+  <sec:ifAnyGranted roles="ROLE_OPERATOR_EJECUTOR">
   <li>
     <a href="javascript:;" data-parent="#consultas" data-toggle="collapse" class="accordion-toggle" data-target="#paysheet-${action}">
       Nómina<i class="fa fa-caret-down"></i>
     </a>
       <li>
         <ul class="collapse nav" id="paysheet-${action}">
-          <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
           <li>
             <g:link controller="PrePaysheet" action="create">Crear Pre-Nómina</a></g:link>
           </li>
-          </sec:ifAnyGranted>
         </ul>
       </li>
   </li>
+  </sec:ifAnyGranted>
 
 
 </ul>
