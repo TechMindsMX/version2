@@ -38,7 +38,7 @@
 
               <g:form action="save">
                 <fieldset class="form">
-                  <g:render template="form" bean="${form}"/>
+                  <g:render template="form" bean="${paysheetProject}"/>
                 </fieldset>
                 <br />
                 <div class="row">
