@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(MenuService)
-@Mock([MenuOperation])
+@Mock([MenuOperation, Role, Menu])
 class MenuServiceSpec extends Specification {
 
   def setup() { }
@@ -19,8 +19,9 @@ class MenuServiceSpec extends Specification {
       Role role = new Role(authority: "ROLE_USER")
       role.save()
     when:
-      boolean added = service.addMenuForRole(menuOperation, "ROLE_USER")
+      Menu menu = service.addMenuForRole(menuOperation, "ROLE_USER")
     then:
-      added
+      menu.role.authority == "ROLE_USER"
+      menu.menuOperations.size() == 1
   }
 }
