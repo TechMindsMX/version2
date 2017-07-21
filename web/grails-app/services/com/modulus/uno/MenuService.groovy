@@ -5,7 +5,7 @@ import grails.transaction.Transactional
 @Transactional
 class MenuService {
 
-  def serviceMethod() {
-
+  def addMenuForRole(MenuOperation menuOperation, String role) {
+    true
   }
 }

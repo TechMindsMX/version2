@@ -2,6 +2,8 @@ package com.modulus.uno
 
 class Menu {
 
-    static constraints = {
-    }
+
+
+  static constraints = {
+  }
 }
