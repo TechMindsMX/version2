@@ -12,16 +12,34 @@ class MenuServiceSpec extends Specification {
 
   def cleanup() { }
 
-  void "Add menu operation to menu for role"() {
+  void "Create a menu with menu name and role"() {
     given: "A menu and role"
       MenuOperation menuOperation = new MenuOperation(name:"Menu", internalUrl:"/menu")
       menuOperation.save()
       Role role = new Role(authority: "ROLE_USER")
       role.save()
-    when:
+    when: "Add menu for a role"
       Menu menu = service.addMenuForRole(menuOperation, "ROLE_USER")
-    then:
+    then: "Check structure"
       menu.role.authority == "ROLE_USER"
       menu.menuOperations.size() == 1
+      menu.id
+  }
+
+  void "Add menu operation to an existing menu for role"() {
+    given: "An existing menu with a menu operation"
+      MenuOperation menuOperation1 = new MenuOperation(name:"Menu", internalUrl:"/menu")
+      menuOperation1.save()
+      Role role = new Role(authority: "ROLE_USER")
+      role.save()
+      Menu menu1 = new Menu(role: role, menuOperations: [menuOperation1])
+      menu1.save(validate:false)
+    when:
+      MenuOperation menuOperation2 = new MenuOperation(name:"Another Menu", internalUrl:"/menu/another")
+      Menu menu2 = service.addMenuForRole(menuOperation2, "ROLE_USER")
+    then:
+      menu1.id == menu2.id
+      menu2.role.authority == "ROLE_USER"
+      menu2.menuOperations.size() == 2
   }
 }
