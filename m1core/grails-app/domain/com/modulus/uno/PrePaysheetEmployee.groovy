@@ -1,6 +1,8 @@
 package com.modulus.uno
 
 class PrePaysheetEmployee {
+  String rfc
+  String curp
   String numberEmployee
   String nameEmployee
   Bank bank
