@@ -18,7 +18,10 @@ class MenuService {
     menu
   }
 
-  Menu addSubmenuToMenu(){
-
+  Menu addSubmenuToMenu(Menu menu, String submenuName){
+    Menu submenu = new Menu(name: submenuName, role: menu.role)
+    menu.addToMenus(submenu)
+    menu.save()
+    menu
   }
 }

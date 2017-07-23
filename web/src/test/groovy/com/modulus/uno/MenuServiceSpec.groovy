@@ -42,8 +42,10 @@ class MenuServiceSpec extends Specification {
 
   void "Add submenu to an existing menu"() {
     given: "An existing menu"
-      Menu menu = new Menu(name:"Administrador")
-      menu.save(validate:false)
+      Role role = new Role(authority: "ROLE_FICO_VISOR")
+      role.save()
+      Menu menu = new Menu(name:"Administrador", role: role)
+      menu.save()
     when: "add another menu"
       Menu mainMenu = service.addSubmenuToMenu(menu, "Administrar")
     then: "we got new menu"
