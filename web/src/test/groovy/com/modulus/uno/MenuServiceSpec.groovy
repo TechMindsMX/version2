@@ -12,6 +12,19 @@ class MenuServiceSpec extends Specification {
 
   def cleanup() { }
 
+  void "Create a simple new menu"(){
+    given:
+      String menuName = "Tesorero/Contador"
+      Role role = new Role(authority: "ROLE_FICO_VISOR")
+      role.save()
+    when:
+      Menu menu = service.newMenu(menuName, role)
+    then:
+      menu.id
+      menu.role.name == "ROLE_FICO_VISOR"
+      menu.name == "Tesorero/Contador"
+  }
+
   void "Create a menu with menu name and role"() {
     given: "A menu and role"
       MenuOperation menuOperation = new MenuOperation(name:"Menu", internalUrl:"/menu")
