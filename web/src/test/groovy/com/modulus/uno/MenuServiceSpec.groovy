@@ -15,44 +15,41 @@ class MenuServiceSpec extends Specification {
   void "Create a simple new menu"(){
     given:
       String menuName = "Tesorero/Contador"
-      Role role = new Role(authority: "ROLE_FICO_VISOR")
-      role.save()
+      String roleName = "ROLE_FICO_VISOR"
+    and:
+      new Role(authority: "ROLE_FICO_VISOR").save()
     when:
-      Menu menu = service.newMenu(menuName, role)
+      Menu menu = service.newMenu(menuName, roleName)
     then:
       menu.id
-      menu.role.name == "ROLE_FICO_VISOR"
+      menu.role.authority == "ROLE_FICO_VISOR"
       menu.name == "Tesorero/Contador"
   }
 
-  void "Create a menu with menu name and role"() {
-    given: "A menu and role"
+  void "Add operation to an existing menu"() {
+    given: "An existing menu"
+      Role role = new Role(authority: "ROLE_FICO_VISOR")
+      role.save()
+      Menu menu = new Menu(name: "Tesorero/Contador", role: role)
       MenuOperation menuOperation = new MenuOperation(name:"Menu", internalUrl:"/menu")
       menuOperation.save()
-      Role role = new Role(authority: "ROLE_USER")
-      role.save()
     when: "Add menu for a role"
-      Menu menu = service.addMenuForRole(menuOperation, "ROLE_USER")
+      Menu newMenu = service.addOperationToMenu(menu, menuOperation)
     then: "Check structure"
-      menu.role.authority == "ROLE_USER"
-      menu.menuOperations.size() == 1
-      menu.id
+      newMenu.menuOperations.size() == 1
+      newMenu.id
   }
 
-  void "Add menu operation to an existing menu for role"() {
-    given: "An existing menu with a menu operation"
-      MenuOperation menuOperation1 = new MenuOperation(name:"Menu", internalUrl:"/menu")
-      menuOperation1.save()
-      Role role = new Role(authority: "ROLE_USER")
-      role.save()
-      Menu menu1 = new Menu(role: role, menuOperations: [menuOperation1])
-      menu1.save(validate:false)
-    when:
-      MenuOperation menuOperation2 = new MenuOperation(name:"Another Menu", internalUrl:"/menu/another")
-      Menu menu2 = service.addMenuForRole(menuOperation2, "ROLE_USER")
-    then:
-      menu1.id == menu2.id
-      menu2.role.authority == "ROLE_USER"
-      menu2.menuOperations.size() == 2
+  void "Add submenu to an existing menu"() {
+    given: "An existing menu"
+      Menu menu = new Menu(name:"Administrador")
+      menu.save(validate:false)
+    when: "add another menu"
+      Menu mainMenu = service.addSubmenuToMenu(menu, "Administrar")
+    then: "we got new menu"
+      mainMenu.name == "Administrador"
+      mainMenu.menus.size() == 1
+      mainMenu.menus[0].name == "Administrar"
+      mainMenu.role == mainMenu.menus[0].role
   }
 }

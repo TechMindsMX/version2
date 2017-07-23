@@ -5,21 +5,20 @@ import grails.transaction.Transactional
 @Transactional
 class MenuService {
 
-  Menu newMenu(String menuName, Role role){
+  Menu newMenu(String menuName, String roleName){
+    Role role = Role.findByAuthority(roleName)
     Menu menu = new Menu(name: menuName, role: role)
     menu.save()
     menu
   }
 
-  Menu addMenuForRole(MenuOperation menuOperation, String roleName) {
-    Role role = Role.findByAuthority(roleName)
-    Menu menu = Menu.findByRole(role)
-    if(!menu){
-      menu = new Menu(role: role)
-      menu.save()
-    }
+  Menu addOperationToMenu(Menu menu, MenuOperation menuOperation){
     menu.addToMenuOperations(menuOperation)
     menu.save()
     menu
+  }
+
+  Menu addSubmenuToMenu(){
+
   }
 }
