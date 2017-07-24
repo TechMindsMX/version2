@@ -13,4 +13,8 @@ class Menu {
     internalUrl()
     parentMenu nullable: true
   }
+
+  String toString(){
+    "$name ($internalUrl)"
+  }
 }
