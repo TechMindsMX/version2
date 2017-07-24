@@ -34,4 +34,28 @@ class PrePaysheetService {
     beInPrePaysheet.sort{ it.id }
   }
 
+  @Transactional
+  def addEmployeesToPrePaysheet(PrePaysheet prePaysheet, String entities) {
+    List<BusinessEntity> employees = businessEntityService.getBusinessEntitiesFromIds(entities)
+    employees.each { employee ->
+      createAndSavePrePaysheetEmployee(employee, prePaysheet)
+    }
+  }
+
+  PrePaysheet createAndSavePrePaysheetEmployee(BusinessEntity employee, PrePaysheet prePaysheet) {
+    DataImssEmployee dataImssEmployee = businessEntityService.getDataImssEmployee(prePaysheet.company, employee, LeadType.EMPLEADO)
+    PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(
+      rfc:employee.rfc,
+      curp:employee.curp,
+      numberEmployee:employee.number,
+      nameEmployee:employee.toString(),
+      netPayment:dataImssEmployee ? dataImssEmployee.netMonthlySalary : new BigDecimal(0),
+      prePaysheet:prePaysheet
+    )
+    prePaysheet.addToEmployees(prePaysheetEmployee)
+    prePaysheet.save()
+    log.info "PrePaysheetEmployee saved: ${prePaysheetEmployee?.dump()}
+    prePaysheet
+  }
+
 }
