@@ -25,10 +25,10 @@ class MenuServiceSpec extends Specification {
   void "Add operation to an existing menu"() {
     given: "An existing menu"
       Menu menu = new Menu(name: "Tesorero/Contador")
-      MenuOperation menuOperation = new MenuOperation(name:"Menu", internalUrl:"/menu")
-      menuOperation.save()
+      Menu submenu = new Menu(name:"Menu", internalUrl:"/menu")
+      submenu.save()
     when: "Add menu for a role"
-      Menu newMenu = service.addOperationToMenu(menu, menuOperation)
+      Menu newMenu = service.addOperationToMenu(menu, submenu)
     then: "Check structure"
       newMenu.menuOperations.size() == 1
       newMenu.id
@@ -39,7 +39,7 @@ class MenuServiceSpec extends Specification {
       Menu menu = new Menu(name:"Administrador")
       menu.save()
     when: "add another menu"
-      Menu mainMenu = service.addSubmenuToMenu(menu, "Administrar")
+      Menu mainMenu = service.addSubmenuToMenu(menu, "Administrar", "/url")
     then: "we got new menu"
       mainMenu.name == "Administrador"
       mainMenu.menus.size() == 1

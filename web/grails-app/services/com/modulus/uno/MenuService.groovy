@@ -11,14 +11,14 @@ class MenuService {
     menu
   }
 
-  Menu addOperationToMenu(Menu menu, MenuOperation menuOperation){
-    menu.addToMenuOperations(menuOperation)
+  Menu addOperationToMenu(Menu menu, Menu submenu){
+    menu.addToMenus(submenu)
     menu.save()
     menu
   }
 
-  Menu addSubmenuToMenu(Menu menu, String submenuName){
-    Menu submenu = new Menu(name: submenuName)
+  Menu addSubmenuToMenu(Menu menu, String submenuName, String internalUrl){
+    Menu submenu = new Menu(name: submenuName, url: internalUrl)
     menu.addToMenus(submenu)
     menu.save()
     menu
