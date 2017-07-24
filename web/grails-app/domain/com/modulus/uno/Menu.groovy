@@ -3,10 +3,13 @@ package com.modulus.uno
 class Menu {
 
   String name
+  String internalUrl
 
-  static hasMany = [menuOperations: MenuOperation, menus: Menu]
+  static hasMany = [menus: Menu]
+  static belongsTo = [parentMenu: Menu]
 
   static constraints = {
     name()
+    parentMenu nullable: true
   }
 }
