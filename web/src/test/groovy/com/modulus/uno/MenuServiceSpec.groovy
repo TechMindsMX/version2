@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(MenuService)
-@Mock([MenuOperation, Role, Menu])
+@Mock([MenuOperation, Menu])
 class MenuServiceSpec extends Specification {
 
   def setup() { }
@@ -15,22 +15,16 @@ class MenuServiceSpec extends Specification {
   void "Create a simple new menu"(){
     given:
       String menuName = "Tesorero/Contador"
-      String roleName = "ROLE_FICO_VISOR"
-    and:
-      new Role(authority: "ROLE_FICO_VISOR").save()
     when:
-      Menu menu = service.newMenu(menuName, roleName)
+      Menu menu = service.newMenu(menuName)
     then:
       menu.id
-      menu.role.authority == "ROLE_FICO_VISOR"
       menu.name == "Tesorero/Contador"
   }
 
   void "Add operation to an existing menu"() {
     given: "An existing menu"
-      Role role = new Role(authority: "ROLE_FICO_VISOR")
-      role.save()
-      Menu menu = new Menu(name: "Tesorero/Contador", role: role)
+      Menu menu = new Menu(name: "Tesorero/Contador")
       MenuOperation menuOperation = new MenuOperation(name:"Menu", internalUrl:"/menu")
       menuOperation.save()
     when: "Add menu for a role"
@@ -42,9 +36,7 @@ class MenuServiceSpec extends Specification {
 
   void "Add submenu to an existing menu"() {
     given: "An existing menu"
-      Role role = new Role(authority: "ROLE_FICO_VISOR")
-      role.save()
-      Menu menu = new Menu(name:"Administrador", role: role)
+      Menu menu = new Menu(name:"Administrador")
       menu.save()
     when: "add another menu"
       Menu mainMenu = service.addSubmenuToMenu(menu, "Administrar")
@@ -52,6 +44,5 @@ class MenuServiceSpec extends Specification {
       mainMenu.name == "Administrador"
       mainMenu.menus.size() == 1
       mainMenu.menus[0].name == "Administrar"
-      mainMenu.role == mainMenu.menus[0].role
   }
 }

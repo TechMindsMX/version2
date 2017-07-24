@@ -8,8 +8,6 @@ class MenuOperation {
   Date dateCreated
   Date lastUpdated
 
-  static belongsTo = [Menu]
-
   static constraints = {
     name blank:false
     internalUrl blank:false
