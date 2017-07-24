@@ -51,19 +51,19 @@ databaseChangeLog = {
             }
 
             column(name: "account", type: "VARCHAR(255)") {
-                constraints(nullable: "false")
+                constraints(nullable: "true")
             }
 
             column(name: "bank_id", type: "BIGINT") {
-                constraints(nullable: "false")
+                constraints(nullable: "true")
             }
 
             column(name: "card_number", type: "VARCHAR(255)") {
-                constraints(nullable: "false")
+                constraints(nullable: "true")
             }
 
             column(name: "clabe", type: "VARCHAR(255)") {
-                constraints(nullable: "false")
+                constraints(nullable: "true")
             }
 
             column(name: "curp", type: "VARCHAR(255)") {
@@ -79,14 +79,14 @@ databaseChangeLog = {
             }
 
             column(name: "note", type: "VARCHAR(255)") {
-                constraints(nullable: "false")
+                constraints(nullable: "true")
             }
 
             column(name: "number_employee", type: "VARCHAR(255)") {
                 constraints(nullable: "false")
             }
 
-            column(name: "pre_pay_sheet_id", type: "BIGINT") {
+            column(name: "pre_paysheet_id", type: "BIGINT") {
                 constraints(nullable: "false")
             }
 
@@ -101,7 +101,7 @@ databaseChangeLog = {
     }
 
     changeSet(author: "tim (generated)", id: "1500656235617-6") {
-        addForeignKeyConstraint(baseColumnNames: "pre_pay_sheet_id", baseTableName: "pre_paysheet_employee", constraintName: "FKja9awgcnkpe0bm75786k3v1nw", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "pre_paysheet")
+        addForeignKeyConstraint(baseColumnNames: "pre_paysheet_id", baseTableName: "pre_paysheet_employee", constraintName: "FKja9awgcnkpe0bm75786k3v1nw", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "pre_paysheet")
     }
 
     changeSet(author: "tim (generated)", id: "1500656235617-7") {
