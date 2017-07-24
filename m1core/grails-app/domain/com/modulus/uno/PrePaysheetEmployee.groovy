@@ -12,6 +12,13 @@ class PrePaysheetEmployee {
   BigDecimal netPayment
   String note
 
-  static belongsTo = [prePaySheet:PrePaysheet]
+  static belongsTo = [prePaysheet:PrePaysheet]
 
+  static constraints = {
+    bank nullable:true
+    clabe nullable:true
+    account nullable:true
+    cardNumber nullable:true
+    note nullable:true, blank:true
+  }
 }
