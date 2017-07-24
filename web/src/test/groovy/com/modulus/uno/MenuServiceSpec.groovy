@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(MenuService)
-@Mock([MenuOperation, Menu])
+@Mock([Menu])
 class MenuServiceSpec extends Specification {
 
   def setup() { }
@@ -15,8 +15,10 @@ class MenuServiceSpec extends Specification {
   void "Create a simple new menu"(){
     given:
       String menuName = "Tesorero/Contador"
+      String url = "/url"
     when:
-      Menu menu = service.newMenu(menuName)
+      Menu menu = service.newMenu(menuName, url)
+      println menu.errors
     then:
       menu.id
       menu.name == "Tesorero/Contador"
@@ -26,11 +28,11 @@ class MenuServiceSpec extends Specification {
     given: "An existing menu"
       Menu menu = new Menu(name: "Tesorero/Contador")
       Menu submenu = new Menu(name:"Menu", internalUrl:"/menu")
-      submenu.save()
+      menu.save(validate:false)
     when: "Add menu for a role"
-      Menu newMenu = service.addOperationToMenu(menu, submenu)
+      Menu newMenu = service.addSubmenuToMenu(menu, submenu)
     then: "Check structure"
-      newMenu.menuOperations.size() == 1
+      newMenu.menus.size() == 1
       newMenu.id
   }
 

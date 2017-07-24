@@ -10,6 +10,7 @@ class Menu {
 
   static constraints = {
     name()
+    internalUrl()
     parentMenu nullable: true
   }
 }
