@@ -37,13 +37,20 @@
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
               <ul class="property-list menu">
+                <g:if test="${menu.parentMenu}">
+                  <g:link action="show" id="${menu.parentMenu.id}">
+                  <f:display bean="menu" property="parentMenu" wrapper="show" />
+                  </g:link>
+                </g:if>
                 <f:display bean="menu" property="name" wrapper="show" />
                 <f:display bean="menu" property="internalUrl" wrapper="show" />
               </ul>
               <div class="property-value" aria-labelledby="menu-label">
-                <g:link class="edit btn btn-primary" action="edit" resource="${this.menu}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-                <g:link class="edit btn btn-default" action="index" resource="${this.menu}"><g:message code="default.button.index.label" default="Todos los menues" /></g:link>
-                <input class="delete btn btn-danger" type="submit" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+                <g:form action="delete" method="DELETE" id="${menu.id}">
+                  <g:link class="edit btn btn-primary" action="edit" resource="${this.menu}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
+                  <g:link class="edit btn btn-default" action="index" resource="${this.menu}"><g:message code="default.button.index.label" default="Todos los menues" /></g:link>
+                  <input class="delete btn btn-danger" type="submit" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+                </g:form>
               </div>
             </div>
           </div>
