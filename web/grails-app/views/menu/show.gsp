@@ -26,7 +26,7 @@
 
     <div class="row">
 
-      <div class="col-md-12">
+      <div class="col-md-6">
         <div class="portlet portlet-default">
           <div class="portlet-heading">
             <div class="portlet-title">
@@ -42,8 +42,42 @@
               </ul>
               <div class="property-value" aria-labelledby="menu-label">
                 <g:link class="edit btn btn-primary" action="edit" resource="${this.menu}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-                <g:link class="edit btn btn-default" action="index" resource="${this.menu}"><g:message code="default.button.index.label" default="List all" /></g:link>
+                <g:link class="edit btn btn-default" action="index" resource="${this.menu}"><g:message code="default.button.index.label" default="Todos los menues" /></g:link>
                 <input class="delete btn btn-danger" type="submit" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="portlet portlet-default">
+          <div class="portlet-heading">
+            <div class="portlet-title">
+              <h4>Submenues</h4>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="defaultPortlet" class="panel-collapse collapse in">
+            <div class="portlet-body">
+              <g:if test="${menu.menus}">
+                <ul>
+                  <g:each in="${menu.menus}" var="m">
+                  <li>
+                    <g:link action="show" id="${m.id}">
+                    ${m}
+                    </g:link>
+                  </li>
+                  </g:each>
+                </ul>
+              </g:if>
+              <g:else>
+                <b>No hay submenues</b>
+              </g:else>
+              <br></br>
+              <div class="property-value" aria-labelledby="menu-label">
+                <g:link class="edit btn btn-primary" action="create" resource="${this.menu}" params="['parentMenu.id': menu.id]">
+                  <g:message code="default.button.submenu.label" default="New submenu" />
+                </g:link>
               </div>
             </div>
           </div>
