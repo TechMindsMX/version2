@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="layout" content="main" />
-    <g:set var="entityName" value="${message(code: 'menuOperation.label', default: 'MenuOperation')}" />
+    <g:set var="entityName" value="${message(code: 'menu.label', default: 'Menu')}" />
     <title><g:message code="default.show.label" args="[entityName]" /></title>
   </head>
   <body>
@@ -12,7 +12,7 @@
       <div class="page-title">
         <h1>
           <i class="fa fa-info-circle fa-3x"></i>
-          <g:message code="menuOperation.show"/>
+          <g:message code="menu.show"/>
         </h1>
       </div>
       <!-- END OF PAGE TITLE -->
@@ -36,13 +36,13 @@
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              <ul class="property-list menuOperation">
-                <f:display bean="menuOperation" property="name" wrapper="show" />
-                <f:display bean="menuOperation" property="internalUrl" wrapper="show" />
+              <ul class="property-list menu">
+                <f:display bean="menu" property="name" wrapper="show" />
+                <f:display bean="menu" property="internalUrl" wrapper="show" />
               </ul>
-              <div class="property-value" aria-labelledby="menuOperation-label">
-                <g:link class="edit btn btn-primary" action="edit" resource="${this.menuOperation}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-                <g:link class="edit btn btn-default" action="index" resource="${this.menuOperation}"><g:message code="default.button.index.label" default="List all" /></g:link>
+              <div class="property-value" aria-labelledby="menu-label">
+                <g:link class="edit btn btn-primary" action="edit" resource="${this.menu}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
+                <g:link class="edit btn btn-default" action="index" resource="${this.menu}"><g:message code="default.button.index.label" default="List all" /></g:link>
                 <input class="delete btn btn-danger" type="submit" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
               </div>
             </div>

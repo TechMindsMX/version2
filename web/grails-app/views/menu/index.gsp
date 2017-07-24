@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="layout" content="main" />
-        <g:set var="entityName" value="${message(code: 'menuOperation.label', default: 'MenuOperation')}" />
+        <g:set var="entityName" value="${message(code: 'menu.label', default: 'Menu')}" />
         <title><g:message code="default.list.label" args="[entityName]" /></title>
     </head>
     <body>
@@ -17,15 +17,15 @@
 
       <g:link class="create btn btn-default" action="create">Nueva operación de menú</g:link>
 
-      <div id="list-menuOperation" class="content scaffold-list" role="main">
+      <div id="list-menu" class="content scaffold-list" role="main">
         <h1><g:message code="default.list.label" args="[entityName]" /></h1>
         <g:if test="${flash.message}">
           <div class="message" role="status">${flash.message}</div>
         </g:if>
-        <f:table collection="${menuOperationList}" properties="['name','internalUrl']" />
+        <f:table collection="${menuList}" properties="['name','internalUrl']" />
 
         <div class="pagination">
-          <g:paginate total="${menuOperationCount ?: 0}" />
+          <g:paginate total="${menuCount ?: 0}" />
         </div>
       </div>
     </body>

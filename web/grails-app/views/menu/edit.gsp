@@ -3,7 +3,7 @@
 <html>
   <head>
       <meta name="layout" content="main" />
-      <g:set var="entityName" value="${message(code: 'menuOperation.label', default: 'MenuOperation')}" />
+      <g:set var="entityName" value="${message(code: 'menu.label', default: 'Menu')}" />
       <title><g:message code="default.edit.label" args="[entityName]" /></title>
   </head>
   <body>
@@ -13,7 +13,7 @@
       <h1>
         <i class="fa fa-plus-circle fa-3x"></i>
         Editar operación en el menú
-        <small><g:message code="menuOperation.new" /></small>
+        <small><g:message code="menu.new" /></small>
       </h1>
       <ol class="breadcrumb">
         <li><i class="fa fa-caret-square-o-up"></i>Operación de Menú</li>
@@ -32,18 +32,18 @@
               <div class="message" role="status">${flash.message}</div>
             </g:if>
 
-            <g:hasErrors bean="${this.menuOperation}">
+            <g:hasErrors bean="${this.menu}">
               <ul class="errors" role="alert">
-                <g:eachError bean="${this.menuOperation}" var="error">
+                <g:eachError bean="${this.menu}" var="error">
                   <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
                 </g:eachError>
               </ul>
             </g:hasErrors>
-            <g:form resource="${this.menuOperation}" method="PUT">
-              <g:hiddenField name="version" value="${this.menuOperation?.version}" />
+            <g:form resource="${this.menu}" method="PUT">
+              <g:hiddenField name="version" value="${this.menu?.version}" />
               <fieldset class="form">
-                <f:field bean="menuOperation" property="name" wrapper="create"/>
-                <f:field bean="menuOperation" property="internalUrl" wrapper="create"/>
+                <f:field bean="menu" property="name" wrapper="create"/>
+                <f:field bean="menu" property="internalUrl" wrapper="create"/>
               </fieldset>
               <fieldset class="buttons">
                 <input class="save btn btn-default" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
