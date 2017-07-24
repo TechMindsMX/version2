@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.menu
 
 import grails.transaction.Transactional
 
