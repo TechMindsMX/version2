@@ -36,7 +36,12 @@ class PrePaysheetController {
       return
     }
 
-    redirect action:"show", id:prePaysheet.id
+    redirect action:"addEmployees", id:prePaysheet.id
+  }
+
+  def addEmployees(PrePaysheet prePaysheet) {
+    List employeesAvailableToAdd = prePaysheetService.getEmployeesAvailableToAdd(prePaysheet)
+    respond prePaysheet, model:[employeesAvailableToAdd:employeesAvailableToAdd]
   }
 
   def show(PrePaysheet prePaysheet) {
@@ -48,5 +53,20 @@ class PrePaysheetController {
     Company company = Company.get(session.company)
     Map prePaysheets = prePaysheetService.getListAndCountPrePaysheetsForCompany(company, params)
     [prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
+  }
+
+  @Transactional
+  def saveEmployees(PrePaysheet prePaysheet) {
+    log.info "PrePaysheet id: ${prePaysheet.id}"
+    log.info "Employees to save: ${params.entities}"
+
+    if (!params.entities) {
+      flash.message = "No seleccionó empleados"
+      redirect action:"addEmployees", id:prePaysheet.id
+      return
+    }
+
+    prePaysheetService.addEmployeesToPrePaysheet(prePaysheet, params.entities)
+    redirect action:"addEmployees", id:prePaysheet.id
   }
 }
