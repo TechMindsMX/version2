@@ -5,7 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(PrePaysheetService)
-@Mock([PrePaysheet, PrePaysheetEmployee, BusinessEntity, Company])
+@Mock([PrePaysheet, PrePaysheetEmployee, BusinessEntity, Company, EmployeeLink, DataImssEmployee])
 class PrePaysheetServiceSpec extends Specification {
 
   BusinessEntityService businessEntityService = Mock(BusinessEntityService)
@@ -29,4 +29,20 @@ class PrePaysheetServiceSpec extends Specification {
       result.size() == 2
       result.rfc == ["A", "C"]
   }
+
+  void "Should create and save a employee to prePaysheet"() {
+    given:"A prePaysheet"
+      Company company = new Company().save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
+    and:"A employee"
+      BusinessEntity employee = new BusinessEntity(rfc:"RFC").save(validate:false)
+      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC").save(validate:false)
+    and:
+      businessEntityService.getDataImssEmployee(_,_,_) >> null
+    when:
+      service.createAndSavePrePaysheetEmployee(employee, prePaysheet)
+    then:
+      prePaysheet.employees.size() == 1
+  }
+
 }
