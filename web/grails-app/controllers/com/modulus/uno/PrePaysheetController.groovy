@@ -41,7 +41,9 @@ class PrePaysheetController {
 
   def addEmployees(PrePaysheet prePaysheet) {
     List employeesAvailableToAdd = prePaysheetService.getEmployeesAvailableToAdd(prePaysheet)
-    respond prePaysheet, model:[employeesAvailableToAdd:employeesAvailableToAdd]
+    List dataImssEmployees = prePaysheetService.getDataImssForEmployees(employeesAvailableToAdd)
+    List netPaymentEmployees = prePaysheetService.getNetPaymentForEmployees(employeesAvailableToAdd, prePaysheet)
+    respond prePaysheet, model:[employeesAvailableToAdd:employeesAvailableToAdd, dataImssEmployees:dataImssEmployees, netPaymentEmployees:netPaymentEmployees]
   }
 
   def show(PrePaysheet prePaysheet) {
@@ -66,7 +68,7 @@ class PrePaysheetController {
       return
     }
 
-    prePaysheetService.addEmployeesToPrePaysheet(prePaysheet, params.entities)
+    prePaysheetService.addEmployeesToPrePaysheet(prePaysheet, params)
     redirect action:"addEmployees", id:prePaysheet.id
   }
 }
