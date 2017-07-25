@@ -10,31 +10,48 @@
     <div class="table-responsive">
       <table class="table">
         <tr>
-          <th>No. Empl</th>
-          <th>Nombre</th>
-          <th>RFC</th>
-          <th>CURP</th>
-          <th>Código Banco</th>
-          <th>Banco</th>
-          <th>Clabe</th>
-          <th>Cuenta</th>
-          <th>Tarjeta</th>
-          <th>Total a pagar</th>
-          <th>Observaciones</th>
+          <th width="60%">Empleado/Datos Bancarios</th>
+          <th width="10%">Monto</th>
+          <th width="30%">Observaciones</th>
         </tr>
 
-        <g:each in="${prePaysheetEmployeeList}" var="employee">
+        <g:each in="${prePaysheet.employees}" var="employee">
         <tr>
-          <td>${employee.numberEmployee}</td>
-          <td>${employee.nameEmployee}</td>
-          <td>${employee.rfc}</td>
-          <td>${employee.curp}</td>
-          <td>${employee.bank?.bankingCode}</td>
-          <td>${employee.bank?.name}</td>
-          <td>${employee.clabe}</td>
-          <td>${employee.account}</td>
-          <td>${employee.cardNumber}</td>
-          <td>${employee.netPayment}</td>
+          <td>
+            <div class="table-responsive">
+            <table class="table">
+              <tr>
+                <td><strong>No. Empl</strong></td>
+                <td><strong>Nombre</strong></td>
+                <td><strong>RFC</strong></td>
+                <td><strong>CURP</strong></td>
+              </tr>
+              <tr>
+                <td>${employee.numberEmployee}</td>
+                <td>${employee.nameEmployee}</td>
+                <td>${employee.rfc}</td>
+                <td>${employee.curp}</td>
+              </tr>
+            </table>
+            <table class="table">
+              <tr>
+                <td><strong>Código Banco</strong></td>
+                <td><strong>Banco</strong></td>
+                <td><strong>Clabe</strong></td>
+                <td><strong>Cuenta</strong></td>
+                <td><strong>Tarjeta</strong></td>
+              </tr>
+              <tr>
+                <td>${employee.bank?.bankingCode}</td>
+                <td>${employee.bank?.name}</td>
+                <td>${employee.clabe}</td>
+                <td>${employee.account}</td>
+                <td>${employee.cardNumber}</td>
+              </tr>
+            </table>
+            </div>
+          </td>
+          <td>${modulusuno.formatPrice(number:employee.netPayment)}</td>
           <td>${employee.note}</td>
         </tr>
         </g:each>
