@@ -193,4 +193,28 @@ class BusinessEntityServiceSpec extends Specification {
       [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   null   | new EmployeeLink().save(validate:false)  | new BankAccount().save(validate:false) | new DataImssEmployee().save(validate:false) || "Registrado"
   }
 
+  void "Should get all active employees for a company"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+    and:"The business entities"
+      BusinessEntity beEmp01 = new BusinessEntity(rfc:"A", status:BusinessEntityStatus.ACTIVE).save(validate:false)
+      EmployeeLink emp01 = new EmployeeLink(employeeRef:"A").save(validate:false)
+      BusinessEntity beEmp02 = new BusinessEntity(rfc:"B", status:BusinessEntityStatus.ACTIVE).save(validate:false)
+      EmployeeLink emp02 = new EmployeeLink(employeeRef:"B").save(validate:false)
+      BusinessEntity beEmp03 = new BusinessEntity(rfc:"C", status:BusinessEntityStatus.TO_AUTHORIZE).save(validate:false)
+      EmployeeLink emp03 = new EmployeeLink(employeeRef:"C").save(validate:false)
+      BusinessEntity beCli = new BusinessEntity(rfc:"X", status:BusinessEntityStatus.ACTIVE).save(validate:false)
+      ClientLink cli = new ClientLink(clientRef:"X").save(validate:false)
+      company.addToBusinessEntities(beEmp01)
+      company.addToBusinessEntities(beEmp02)
+      company.addToBusinessEntities(beEmp03)
+      company.addToBusinessEntities(beCli)
+      company.save(validate:false)
+    when:
+      def result = service.getAllActiveEmployeesForCompany(company)
+    then:
+      result.size() == 2
+      result.rfc == ["A", "B"]
+
+  }
 }

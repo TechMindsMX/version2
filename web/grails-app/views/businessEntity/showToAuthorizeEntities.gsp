@@ -37,7 +37,7 @@
                 <div class="table-responsive">
                   <table class="table">
                     <tr>
-                      <th><g:checkBox id="selectAll" name="selectAll" title="Seleccionar Todo"/></th>
+                      <th><g:checkBox id="selectAll" name="selectAll" title="Seleccionar Todos"/></th>
                       <th>RFC</th>
                       <th>Nombre/Razón Social</th>
                       <th>Sitio web</th>
@@ -76,6 +76,6 @@
         </div>
       </div>
     </div>
-    <asset:javascript src="businessEntity/authorizeEntities.js"/>
+    <asset:javascript src="businessEntity/selectEntities.js"/>
   </body>
 </html
