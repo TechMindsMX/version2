@@ -35,7 +35,7 @@
 
       <div class="row">
         <div class="col-md-12">
-          <g:form controller="prePaysheet" action="saveEmployees">
+          <g:form name="formAddEmployees" controller="prePaysheet" action="saveEmployees">
             <g:render template="addEmployees"/>
           </g:form>
         </div>
@@ -43,6 +43,7 @@
 
     </div>
     <asset:javascript src="businessEntity/selectEntities.js"/>
+    <asset:javascript src="prePaysheet/addEmployees.js"/>
   </body>
 </html>
 
