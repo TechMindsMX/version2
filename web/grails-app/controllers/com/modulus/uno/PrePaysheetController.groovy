@@ -12,6 +12,7 @@ class PrePaysheetController {
     respond new PrePaysheet(), model:[company:company]
   }
 
+  @Transactional
   def save(PrePaysheetCommand command) {
     log.info "Saving prePaysheet: ${command.dump()}"
     Company company = Company.get(session.company)
@@ -70,5 +71,11 @@ class PrePaysheetController {
 
     prePaysheetService.addEmployeesToPrePaysheet(prePaysheet, params)
     redirect action:"addEmployees", id:prePaysheet.id
+  }
+
+  @Transactional
+  def sendToProcess(PrePaysheet prePaysheet) {
+    prePaysheetService.sendPrePaysheetToProcess(prePaysheet)
+    redirect action:"list"
   }
 }
