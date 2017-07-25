@@ -36,10 +36,10 @@
                 <br />
                 <div class="row">
                   <div class="col-md-6">
-                    <g:submitButton name="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+                    <g:submitButton name="create" class="btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
                   </div>
                   <div class="col-md-6 text-right">
-                    <g:link class="btn btn-primary" controller="dashboard" action="index">Cancelar</g:link>
+                    <g:link class="btn btn-default" controller="dashboard" action="index">Cancelar</g:link>
                   </div>
                 </div>
               </g:form>

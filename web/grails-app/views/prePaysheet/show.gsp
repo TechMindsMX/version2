@@ -19,7 +19,6 @@
         <div class="portlet-heading">
           <div class="row">
             <div class="col-md-6">
-              <g:link class="btn btn-primary" action="addEmployees" id="${prePaysheet.id}">Agregar</g:link>
             </div>
             <div class="col-md-6 text-right">
               <g:link class="btn btn-default" action="list">Lista</g:link>
