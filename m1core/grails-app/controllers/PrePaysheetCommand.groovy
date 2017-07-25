@@ -7,8 +7,8 @@ class PrePaysheetCommand implements Validateable {
   String companyId
   String paysheetProject
   String paymentPeriod
-  String initDatePeriod
-  String endDatePeriod
+  Date initDatePeriod
+  Date endDatePeriod
   String accountExecutive
 
   static constraints = {
@@ -23,8 +23,8 @@ class PrePaysheetCommand implements Validateable {
     new PrePaysheet(
       paysheetProject:this.paysheetProject,
       paymentPeriod:PaymentPeriod.find { it.toString() == this.paymentPeriod },
-      initPeriod:Date.parse("dd-MM-yyyy", this.initDatePeriod),
-      endPeriod:Date.parse("dd-MM-yyyy",this.endDatePeriod),
+      initPeriod:this.initDatePeriod,
+      endPeriod:this.endDatePeriod,
       accountExecutive:this.accountExecutive,
       company:Company.get(this.companyId)
     )
