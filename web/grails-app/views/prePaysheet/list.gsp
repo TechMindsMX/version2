@@ -23,6 +23,8 @@
                 <tr>
                   <th>Proyecto</th>
                   <th>Período de Pago</th>
+                  <th>Del</th>
+                  <th>Al</th>
                   <th>Ejecutivo</th>
                   <th>Estatus</th>
                 </tr>
@@ -30,6 +32,8 @@
                   <tr>
                     <td><g:link action="show" id="${prePaysheet.id}">${prePaysheet.paysheetProject}</g:link></td>
                     <td>${prePaysheet.paymentPeriod}</td>
+                    <td><g:formatDate format="dd-MM-yyyy" date="${prePaysheet.initPeriod}"/></td>
+                    <td><g:formatDate format="dd-MM-yyyy" date="${prePaysheet.endPeriod}"/></td>
                     <td>${prePaysheet.accountExecutive}</td>
                     <td><g:message code="prePaysheet.status.${prePaysheet.status}"/></td>
                   </tr>
