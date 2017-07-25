@@ -12,4 +12,18 @@ trait MenuOperations {
     this
   }
 
+  static cheers(String name){
+    "Hello $name !!!"
+  }
+
+  static getClassesWitMenues(grailsApplication){
+    def domainClassFamilies = [:]
+    grailsApplication.domainClasses.each { artefact ->
+      if( MenuOperations.class.isAssignableFrom(artefact.clazz)) {
+        domainClassFamilies[artefact.clazz.name] = [GrailsNameUtils.getPropertyName(artefact.clazz)]
+        domainClassFamilies[artefact.clazz.name].addAll(artefact.subClasses.collect { GrailsNameUtils.getPropertyName(it.clazz) })
+      }
+    }
+    domainClassFamilies
+  }
 }
