@@ -52,5 +52,5 @@ databaseChangeLog = {
   include file: 'adding-sale-order-to-commission-transaction.groovy'
   include file: 'drop-commissions-invoice-domains.groovy'
   include file: 'create-menu-domains.groovy'
-  include file: 'create-menu-link-domains.groovy'
+  include file: 'create-menu-link-domain.groovy'
 }
