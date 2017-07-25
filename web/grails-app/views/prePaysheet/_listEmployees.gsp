@@ -1,4 +1,12 @@
 <div class="portlet portlet-default">
+  <div class="row">
+    <div class="col-md-2 col-md-offset-10 text-right">
+      <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.CREATED}">
+      <g:link class="btn btn-primary" action="addEmployees" id="${prePaysheet.id}">Agregar</g:link>
+      </g:if>
+    </div>
+  </div>
+
   <div class="portlet-heading">
     <div class="portlet-title">
       <h4>Empleados agregados en la pre-nómina</h4>
@@ -58,5 +66,12 @@
       </table>
     </div>
   </div>
+  <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.CREATED && prePaysheet.employees}">
+  <div class="row">
+    <div class="col-md-12 text-right">
+      <g:link class="btn btn-primary" action="sendToProcess" id="${prePaysheet.id}">Enviar a Procesar</g:link>
+    </div>
+  </div>
+  </g:if>
 </div>
 
