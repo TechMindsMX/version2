@@ -34,8 +34,11 @@
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              
-              
+              <ul>
+              <g:each in="${roles}" var="r">
+                <li>${r}</li>
+              </g:each>
+              </ul>
             </div>
           </div>
         </div>
@@ -45,13 +48,21 @@
         <div class="portlet portlet-default">
           <div class="portlet-heading">
             <div class="portlet-title">
-              <h4>Menu's</h4>
+              <h4>Menu's disponibles</h4>
             </div>
             <div class="clearfix"></div>
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              
+              <ul>
+              <g:each in="${menus}" var="m">
+                <li>
+                  <g:link controller="menu" action="show" id="${m.id}">
+                    ${m}
+                  </g:link>
+                </li>
+              </g:each>
+              </ul>
             </div>
           </div>
         </div>
