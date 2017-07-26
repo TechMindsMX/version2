@@ -72,6 +72,7 @@
     </sec:ifAnyGranted>
 
     <sec:ifAnyGranted roles="ROLE_CORPORATIVE">
+      <g:if test="${session.corporate}">
       <div class="page-title">
         <h1>
         <i class="fa fa-building fa-3x"></i>
@@ -79,21 +80,33 @@
           <small>Listado</small>
         </h1>
       </div>
+      </g:if>
 
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 text-center">
         <!-- verificar las companies del corporate -->
-        <g:if test="${companies.isEmpty()}">
-        <div class="alert alert-info">
-          <strong>Atención:</strong> Vemos que aún no tienes empresas registradas en Modulus UNO, comienza...
-        </div>
-        <p>
-        <g:link class="btn btn-default btn-lg" controller="corporate" action="addCompany" id="${session.corporate.id}">
-          Registra tu primera empresa
-        </g:link>
+        <g:if test="${companies.isEmpty() && session.corporate}">
+          <div class="alert alert-info">
+            <strong>Atención:</strong> Vemos que aún no tienes empresas registradas en Modulus UNO, comienza...
+          </div>
+          <p>
+          <g:link class="btn btn-default btn-lg" controller="corporate" action="addCompany" id="${session.corporate?.id}">
+            Registra tu primera empresa
+          </g:link>
+          </p>
         </g:if>
-        </p>
+
+        <g:if test="${!session.corporate}">
+          <div class="alert alert-info">
+            Tu cuenta se activó exitosamente
+          </div>
+          <p>
+          <g:link class="btn btn-default btn-lg" controller="dashboard" action="index">
+            Iniciar
+          </g:link>
+          </p>
+        </g:if>
       </div>
     </div>
 
