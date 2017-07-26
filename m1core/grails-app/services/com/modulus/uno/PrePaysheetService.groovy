@@ -2,6 +2,8 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 import java.math.RoundingMode
+import pl.touk.excel.export.WebXlsxExporter
+import java.text.SimpleDateFormat
 
 class PrePaysheetService {
 
@@ -93,4 +95,24 @@ class PrePaysheetService {
     prePaysheet.save()
     //TODO: enviar notificación al ejecutivo de cuenta
   }
+
+  def exportPrePaysheetToXls(PrePaysheet prePaysheet) {
+    Map employees = getEmployeesToExport(prePaysheet)
+    new WebXlsxExporter().with {
+      fillRow(["PROYECTO:", prePaysheet.paysheetProject],0)
+      fillRow(["PERIODO DE PAGO:", prePaysheet.paymentPeriod, "DEL:", new SimpleDateFormat("dd-MM-yyyy").format(prePaysheet.initPeriod), "AL:", new SimpleDateFormat("dd-MM-yyyy").format(prePaysheet.endPeriod)],1)
+      fillRow(["RESIDENTE:", prePaysheet.accountExecutive],2)
+      fillRow(employees.headers, 4)
+      add(employees.data, employees.properties, 5)
+    }
+  }
+
+  Map getEmployeesToExport(PrePaysheet prePaysheet) {
+    Map employees = [:]
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA','TOTAL A PAGAR','OBSERVACIONES']
+    employees.properties = ['rfc', 'curp', 'nameEmployee', 'numberEmployee', 'bank.bankingCode', 'bank.name', 'clabe', 'account', 'cardNumber', 'netPayment', 'note']
+    employees.data = prePaysheet.employees.sort {it.nameEmployee}
+    employees
+  }
+
 }
