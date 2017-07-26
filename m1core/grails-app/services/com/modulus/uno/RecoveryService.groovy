@@ -22,7 +22,7 @@ class RecoveryService {
   def confirmAccountForToken(token){
     def user = getUserByToken(token)
     if(!user) throw new UserNotFoundException(messageSource.getMessage('exception.user.not.found', null, LCH.getLocale()))
-    if(user.enabled) throw new AccountEnabledException(messageSource.getMessage('exception.user.not.found', null, LCH.getLocale()))
+    if(user.enabled) throw new AccountEnabledException(messageSource.getMessage('exception.account.already.activated', null, LCH.getLocale()))
     user.enabled = true
     user.save()
     String name = "${user.profile.name} ${user.profile.lastName} ${user.profile.motherLastName}"
