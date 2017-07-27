@@ -183,4 +183,11 @@ class BusinessEntityController {
     [beToAuthorize:beToAuthorize]
   }
 
+  def authorizeEntities() {
+    log.info "Ids to authorize: ${params.entities}"
+    if (params.entities) {
+      businessEntityService.authorizeBusinessEntities(params.entities)
+    }
+    redirect action:"showToAuthorizeEntities"
+  }
 }
