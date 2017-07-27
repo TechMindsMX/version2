@@ -12,6 +12,14 @@ trait MenuOperations {
     this
   }
 
+  MenuOperations removeMenu(Long menuId){
+    if(this.id == null) throw new RuntimeException("You need instance domain before remove menu")
+    Menu menu = Menu.get(menuId)
+    MenuLink menuLink = MenuLink.findWhere(menu: menu, menuRef: this.id, type: GrailsNameUtils.getPropertyName(this.class))
+    menuLink.delete(flush:true)
+    this
+  }
+
   static getClassesWithMenus(grailsApplication){
     def domainClassFamilies = []
     grailsApplication.domainClasses.each { artefact ->
