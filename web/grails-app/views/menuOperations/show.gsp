@@ -26,7 +26,9 @@
       <div class="col-md-6">
         <div class="portlet portlet-default">
           <div class="portlet-heading">
-            <button type="button" class="btn btn-primary pull-right"><i class="fa fa-reply" aria-hidden="true"></i>  Ver todos los roles</button>
+            <g:link class="btn btn-primary pull-right" controller="menuOperations">
+              <i class="fa fa-reply" aria-hidden="true"></i>  Ver todos los roles
+            </g:link>
             <div class="portlet-title">
               <h2>Role</h2>
             </div>
