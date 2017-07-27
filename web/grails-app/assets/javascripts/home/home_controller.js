@@ -5,7 +5,8 @@ var HomeController = (function(){
   var selectors = {
     sidebar_toggle:'#sidebar-toggle',
     navbar_side:'.navbar-side',
-    page_wrapper:'#page-wrapper'
+    page_wrapper:'#page-wrapper',
+    popover_selector:'[data-toggle="popover"]'
   };
 
   var toggleDiv = function(){
@@ -17,8 +18,13 @@ var HomeController = (function(){
     $(selectors.sidebar_toggle).on("click",toggleDiv);
   };
 
+  var initPopovers = function() {
+    $(selectors.popover_selector).popover();
+  };
+
   var start = function(){
     bindEvents();
+    initPopovers();
   };
 
   return{
