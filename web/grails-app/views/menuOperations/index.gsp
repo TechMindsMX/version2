@@ -36,7 +36,11 @@
             <div class="portlet-body">
               <ul>
               <g:each in="${roles}" var="r">
-                <li>${r}</li>
+                <li>
+                  <g:link controller="menuOperations" action="show" id="${r.id}">
+                    ${r.authority}
+                  </g:link>
+                </li>
               </g:each>
               </ul>
             </div>
