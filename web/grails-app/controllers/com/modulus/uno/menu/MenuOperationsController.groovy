@@ -20,8 +20,16 @@ class MenuOperationsController {
     [role:role, menus:menus, menusOfInstance:menusOfInstance]
   }
 
-  def save(){
+  def save(Menu menu){
+    Role role = Role.get(params.roleId)
+    role.addMenu(menu.id)
+    redirect action: 'show', id:role.id
+  }
 
+  def delete(Menu menu){
+    Role role = Role.get(params.roleId)
+    role.removeMenu(menu.id)
+    redirect action: 'show', id:role.id
   }
 
 }
