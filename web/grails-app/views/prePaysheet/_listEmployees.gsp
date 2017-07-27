@@ -23,7 +23,7 @@
           <th width="30%">Observaciones</th>
         </tr>
 
-        <g:each in="${prePaysheet.employees}" var="employee">
+        <g:each in="${prePaysheet.employees.sort{ it.nameEmployee }}" var="employee">
         <tr>
           <td>
             <div class="table-responsive">
@@ -66,12 +66,19 @@
       </table>
     </div>
   </div>
-  <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.CREATED && prePaysheet.employees}">
+
   <div class="row">
+    <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.CREATED && prePaysheet.employees}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-primary" action="sendToProcess" id="${prePaysheet.id}">Enviar a Procesar</g:link>
     </div>
+    </g:if>
+    <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.IN_PROCESS}">
+    <div class="col-md-12 text-right">
+      <g:link class="btn btn-default" action="exportToXls" id="${prePaysheet.id}">XLS</g:link>
+    </div>
+    </g:if>
   </div>
-  </g:if>
+
 </div>
 
