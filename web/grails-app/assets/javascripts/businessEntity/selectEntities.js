@@ -1,4 +1,5 @@
 $("#selectAll").click( function() {
+  $("#entities").val("");
   if ($("#selectAll").is(":checked")) {
     $("input[name='checkBe']").each ( function(index) {
       $(this).prop("checked", true);
