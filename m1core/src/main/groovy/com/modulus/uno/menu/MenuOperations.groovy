@@ -25,4 +25,9 @@ trait MenuOperations {
   static getInstancesWithMenus(){
     this.class
   }
+
+  static getMenusForThisIntance(Long idInstance){
+    MenuLink.findAllWhere(menuRef:idInstance,type:GrailsNameUtils.getPropertyName(this))
+  }
+
 }
