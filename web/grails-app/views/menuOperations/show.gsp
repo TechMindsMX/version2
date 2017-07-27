@@ -43,7 +43,11 @@
                   <g:each in="${menusOfInstance}" var="m">
                     <tr>
                       <td>${m.menu.name}</td> 
-                      <td><button type="button" class="btn btn-danger pull-right">Quitar</button></td> 
+                      <td>
+                        <g:link class="btn btn-danger pull-right" controller="menuOperations" action="delete" id="${m.menu.id}" params="[roleId:role.id]">
+                          Quitar
+                        </g:link>
+                      </td>
                     </tr>
                   </g:each>
                 </tbody>
@@ -68,7 +72,11 @@
                   <g:each in="${menus}" var="m">
                     <tr>
                       <td>${m.name}</td> 
-                      <td><button type="button" class="btn btn-primary pull-right">Agregar</button></td> 
+                      <td>
+                        <g:link  class="btn btn-primary pull-right" controller="menuOperations" action="save" id="${m.id}" params="[roleId:role.id]">
+                          Agregar
+                        </g:link>
+                      </td> 
                     </tr>
                   </g:each>
                 </tbody>
