@@ -38,6 +38,7 @@
           </li>
         </ul>
         <ul class="nav navbar-center">
+          <menus:getMenus></menus:getMenus>
           <li class="tooltip-sidebar-toggle" >
             <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR,ROLE_AUTHORIZER_VISOR,ROLE_AUTHORIZER_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR">
               <g:if test="${session.company}">
