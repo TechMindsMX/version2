@@ -13,4 +13,15 @@ class MenuOperationsController {
     def menus = Menu.findAllWhere(parentMenu: null)
     [roles:roles, menus:menus]
   }
+
+  def show(Role role){
+    def menus = Menu.findAllWhere(parentMenu: null)
+    def menusOfInstance = Role.getMenusForThisIntance(role.id)
+    [role:role, menus:menus, menusOfInstance:menusOfInstance]
+  }
+
+  def save(){
+
+  }
+
 }
