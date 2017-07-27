@@ -13,7 +13,6 @@
         Comisiones
         <small>
           <g:message code="commission.list.label" /><br/>
-          ${company}
         </small>
       </h1>
       <ol class="breadcrumb">
@@ -27,7 +26,7 @@
         <div class="portlet portlet-blue">
           <div class="portlet-heading">
             <div class="portlet-title">
-              <h4><g:message code="commission.list.label"/></h4>
+              <h4><g:message code="commission.list.label"/> <small>${company}</small></h4>
             </div>
             <div class="clearfix"></div>
           </div>
@@ -69,6 +68,11 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2 col-md-offset-10">
+        <g:link class="btn btn-primary" controller="corporate" action="commissions" id="${corporateId}">Regresar</g:link>
       </div>
     </div>
 
