@@ -71,23 +71,6 @@
           </div>
         </div>
       </div>
-
-    <div class="row">
-      <div class="col-md-12">
-        <div class="portlet portlet-default">
-          <div class="portlet-heading">
-            <div class="portlet-title">
-              <h4>Asignación de menú</h4>
-            </div>
-            <div class="clearfix"></div>
-          </div>
-          <div id="defaultPortlet" class="panel-collapse collapse in">
-            <div class="portlet-body">
-              
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </body>
 </html>
