@@ -2,7 +2,7 @@
   <ul>
     <g:each var="telephone" in="${company.telephones}">
       <sec:ifAnyGranted roles="ROLE_CORPORATIVE">
-        ${telephones.toString()}
+        ${telephone.toString()}
       </sec:ifAnyGranted>
       <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_LEGAL_REPRESENTATIVE_VISOR">
         <li class="subList"><g:link controller="telephone" action="editForCompany" id="${telephone.id}" >${telephone.toString()}</g:link></li>
