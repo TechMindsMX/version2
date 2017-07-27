@@ -176,4 +176,11 @@ class BusinessEntityController {
     Map resultImport = businessEntityService."processXlsMassiveFor${entityType}"(file, company)
     render view:"massiveRegistrationResult", model:[resultImport:resultImport]
   }
+
+  def showToAuthorizeEntities() {
+    Company company = Company.get(session.company)
+    def beToAuthorize = businessEntityService.getBusinessEntitiesToAuthorizeForCompany(company)
+    [beToAuthorize:beToAuthorize]
+  }
+
 }

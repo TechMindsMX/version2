@@ -330,4 +330,12 @@ class BusinessEntityService {
     businessEntity.save()
     businessEntity
   }
+
+  def getBusinessEntitiesToAuthorizeForCompany(Company company) {
+    def beToAuthorize = company.businessEntities.findAll { be ->
+      be.status == BusinessEntityStatus.TO_AUTHORIZE
+    }
+    beToAuthorize
+  }
+
 }
