@@ -11,10 +11,8 @@ class CommissionController {
   def commissionTransactionService
   CollaboratorService collaboratorService
 
-  def index(Integer max) {
-    params.max = Math.min(max ?: 10, 100)
-    def company = Company.get(params.companyId)
-    respond Commission.findAllByCompany(company), model:[company: company]
+  def index(Company company) {
+    respond Commission.findAllByCompany(company), model:[company: company, corporateId:params.corporateId]
   }
 
   def show(Commission commission) {
