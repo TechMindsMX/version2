@@ -9,7 +9,7 @@
       <h1>
         <i class="fa fa-users fa-3x"></i>
         Administración / Lista de Usuarios
-        <small>Usuarios registrados en el corporativo.</small>
+        <small>Usuarios registrados en el corporativo</small>
       </h1>
     </div>
     <!-- END OF PAGE TITLE -->
@@ -19,7 +19,7 @@
       <div class="portlet portlet-default">
         <div class="portlet-heading">
           <div class="portlet-title">
-            <h4>Usuarios registrados en el corporativo.</h4>
+            <h4>Usuarios registrados en el corporativo</h4>
           </div>
           <div class="clearfix"></div>
         </div>
@@ -32,6 +32,7 @@
             <table class="table">
               <tr>
                 <th class="text-align:center;width:600px">Usuario</th>
+                <th class="text-align:center;width:600px">Nombre de Usuario</th>
               </tr>
               <g:each in="${users}" var="user">
                 <tr>
@@ -40,6 +41,7 @@
                       ${user.profile.fullName}
                     </g:link>
                   </td>
+                  <td>${user.username}</td>
                 </tr>
               </g:each>
             </table>
