@@ -2,7 +2,9 @@ package com.modulus.uno
 
 class PrePaysheet {
   String paysheetProject
-  String paymentPeriod
+  PaymentPeriod paymentPeriod = PaymentPeriod.BIWEEKLY
+  Date initPeriod
+  Date endPeriod
   String accountExecutive
   PrePaysheetStatus status = PrePaysheetStatus.CREATED
 

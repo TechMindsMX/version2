@@ -359,4 +359,10 @@ class BusinessEntityService {
     BusinessEntity.getAll(intIds)
   }
 
+  List<BusinessEntity> getAllActiveEmployeesForCompany(Company company) {
+    company.businessEntities.findAll { be ->
+      (be.status == BusinessEntityStatus.ACTIVE) && (EmployeeLink.findByEmployeeRef(be.rfc))
+    }.sort { it.id }
+  }
+
 }
