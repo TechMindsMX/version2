@@ -12,9 +12,8 @@ class MenuTagLib {
   def getMenus = { attrs ->
     def currentUser = springSecurityService.getCurrentUser()
     def roles = currentUser.getAuthorities()
-    menuOperationsService.getMenusForTheseRoles(roles)
-
-    out << "<h1>HOLAAAAA</h1>"
+    def menus = menuOperationsService.getMenusForTheseRoles(roles)
+    out << render(template:'/layouts/menus', model:[menus:menus])
   }
 
 }
