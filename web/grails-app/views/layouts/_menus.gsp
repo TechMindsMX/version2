@@ -1,0 +1,14 @@
+<g:each var="menu" in="${menus}">
+  <li class="panel">
+    <a href="javascript:;" data-parent="#side" data-toggle="collapse" class="accordion-toggle" data-target="#${menu.name.replace(' ','')}">
+      ${menu.name} <i class="fa fa-caret-down"></i>
+    </a>
+    <ul class="collapse nav" id="${menu.name.replace(' ','')}">
+      <g:each var="submenu" in="${menu.menus}">
+        <li>
+          <a href="${submenu.internalUrl}">${submenu.name}</a>
+        </li>
+      </g:each>
+    </ul>
+  </li>
+</g:each>
