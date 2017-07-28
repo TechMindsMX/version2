@@ -9,7 +9,7 @@ class MenuOperationsService {
   def getMenusForTheseRoles(roles){
     roles.collect{ role ->
       Role.getMenusForThisIntance(role.id)
-    }.flatten().unique { a, b -> a.id <=> b.id }
+    }.flatten()*.menu
   }
 
 }
