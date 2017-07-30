@@ -102,20 +102,6 @@
       <div class="navbar-collapse sidebar-collapse collapse">
         <ul id="side" class="nav navbar-nav side-nav">
           <menus:getMenus></menus:getMenus>
-          
-          <sec:ifAnyGranted roles="ROLE_M1">
-            <li class="panel">
-              <a href="javascript:;" data-parent="#side" data-toggle="collapse" class="accordion-toggle" data-target="#corporativos">
-                Corporativos <i class="fa fa-caret-down"></i>
-              </a>
-              <ul class="collapse nav" id="corporativos">
-                <li>
-                  <g:link controller="dashboard" action="index" >Lista de Corporativos</g:link>
-                  <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
-                </li>
-              </ul>
-            </li>
-          </sec:ifAnyGranted>
 
           <sec:ifAnyGranted roles="ROLE_CORPORATIVE">
             <g:if test="${session.corporate}">
