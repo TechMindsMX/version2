@@ -53,4 +53,5 @@ databaseChangeLog = {
   include file: 'drop-commissions-invoice-domains.groovy'
   include file: 'create-menu-domains.groovy'
   include file: 'create-menu-link-domain.groovy'
+  include file: 'adding-default-menus-for-user-m1.groovy'
 }
