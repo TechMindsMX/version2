@@ -1,12 +1,14 @@
 package com.modulus.uno.purchaseOrder
 
 import com.modulus.uno.PurchaseOrder
+import com.modulus.uno.PurchaseOrderItem
 import com.modulus.uno.BusinessException
 import com.modulus.uno.utils.TempFileService
 
 class PurchaseOrderDocumentsService {
 
   TempFileService tempFileService
+  PurchaseOrderItemService purchaseOrderItemService
 
   def validateDocumentXmlForOrder(PurchaseOrder order, def document) {
     if (isXmlDocument(document)) {
@@ -15,7 +17,7 @@ class PurchaseOrderDocumentsService {
   }
 
   boolean isXmlDocument(def document) {
-    document.filename.tokenize('.').last().toLowerCase() == "xml"
+    document.originalFilename.tokenize('.').last().toLowerCase() == "xml"
   }
 
   def parseXmlFileToProcess(def document, def cfdiNs) {
@@ -34,19 +36,35 @@ class PurchaseOrderDocumentsService {
     if (xmlParsed[cfdiNs.Receptor].'@rfc'==[] || xmlParsed[cfdiNs.Receptor].'@rfc'?.first() != rfcCompany) {
       throw new BusinessException("El XML no corresponde al RFC de la empresa")
     }
+    true
   }
 
   def loadItemsToOrderFromDocumentXml(PurchaseOrder order, def document) {
-    if (isXmlDocument(document) && !order.isAnticipated && !order.items) {
-      log.debug "Load items"
+    if (isXmlDocument(document)) {
+      purchaseOrderItemService.deleteCurrentItemsFromPurchaseOrder(order)
       def cfdiNs = new groovy.xml.Namespace("http://www.sat.gob.mx/cfd/3", "cfdi")
       def xmlParsed = parseXmlFileToProcess(document, cfdiNs)
-      log.debug "Concepts from xml: ${xmlParsed[cfdiNs.Conceptos][cfdiNs.Concepto].size()}"
-      //parsear el xml
-      //validar el rfc del emisor y receptor
-      //generar los items
+      def itemsXml = xmlParsed[cfdiNs.Conceptos][cfdiNs.Concepto]
+      def taxes = xmlParsed[cfdiNs.Impuestos][cfdiNs.Traslados][cfdiNs.Traslado]
+      def retentions = xmlParsed[cfdiNs.Impuestos][cfdiNs.Retenciones][cfdiNs.Retencion]
+      itemsXml.eachWithIndex { xmlItem, index ->
+        def taxItem = taxes != [] ? taxes[index] : ""
+        createOrderItemFromXmlItem(order, xmlItem, taxItem)
+      }
     }
+    order
   }
 
+  def createOrderItemFromXmlItem(PurchaseOrder order, def item, def taxItem) {
+    PurchaseOrderItem poItem = new PurchaseOrderItem(
+      name:item.'@descripcion',
+      quantity:new BigDecimal(item.'@cantidad'),
+      price:new BigDecimal(item.'@valorUnitario'),
+      iva:taxItem ? new BigDecimal(taxItem.'@tasa'): new BigDecimal(0),
+      unitType:item.'@unidad',
+      purchaseOrder:order
+    )
+    poItem.save()
+  }
 
 }
