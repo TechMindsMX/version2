@@ -221,10 +221,6 @@ class PurchaseOrderService {
     amount > pendingToPay
   }
 
-  def deleteItemFromPurchaseOrder(PurchaseOrderItem item) {
-    PurchaseOrderItem.executeUpdate("delete PurchaseOrderItem item where item.id = :id", [id: item.id])
-  }
-
   def reversePaymentPurchaseForTransaction(Transaction transaction) {
     PaymentToPurchase payment = PaymentToPurchase.findByTransaction(transaction)
     if (payment) {
