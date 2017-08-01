@@ -16,9 +16,9 @@ class MenuServiceSpec extends Specification {
     given:
       String menuName = "Tesorero/Contador"
       String url = "/url"
+      String parameters = null
     when:
-      Menu menu = service.newMenu(menuName, url)
-      println menu.errors
+      Menu menu = service.newMenu(menuName, url, parameters)
     then:
       menu.id
       menu.name == "Tesorero/Contador"
@@ -41,7 +41,7 @@ class MenuServiceSpec extends Specification {
       Menu menu = new Menu(name:"Administrador")
       menu.save()
     when: "add another menu"
-      Menu mainMenu = service.addSubmenuToMenu(menu, "Administrar", "/url")
+      Menu mainMenu = service.addSubmenuToMenu(menu, "Administrar", "/url", null)
     then: "we got new menu"
       mainMenu.name == "Administrador"
       mainMenu.menus.size() == 1
