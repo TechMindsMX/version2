@@ -8,13 +8,14 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.mock.web.MockMultipartFile
 
 import com.modulus.uno.PurchaseOrder
+import com.modulus.uno.PurchaseOrderItem
 import com.modulus.uno.Company
 import com.modulus.uno.utils.TempFileService
 import com.modulus.uno.BusinessException
 import com.modulus.uno.CommissionException
 
 @TestFor(PurchaseOrderDocumentsService)
-@Mock([PurchaseOrder, Company])
+@Mock([PurchaseOrder, PurchaseOrderItem, Company])
 class PurchaseOrderDocumentsServiceSpec extends Specification {
 
   File xmlWrong, xmlOkOneConcept, xmlOkMultipleConcepts
@@ -22,12 +23,14 @@ class PurchaseOrderDocumentsServiceSpec extends Specification {
   Resource xmlOkOneConceptResource = new ClassPathResource("xmlOkOneConcept.xml")
   Resource xmlOkMultipleConceptsResource = new ClassPathResource("xmlOkMultipleConcepts.xml")
   TempFileService tempFileService = Mock(TempFileService)
+  PurchaseOrderItemService purchaseOrderItemService = Mock(PurchaseOrderItemService)
 
   def setup() {
     xmlWrong = xmlWrongResource.getFile()
     xmlOkOneConcept = xmlOkOneConceptResource.getFile()
     xmlOkMultipleConcepts = xmlOkMultipleConceptsResource.getFile()
     service.tempFileService = tempFileService
+    service.purchaseOrderItemService = purchaseOrderItemService
   }
 
   void "Thrown a exception when validate RFC from wrong XML"() {
@@ -42,4 +45,47 @@ class PurchaseOrderDocumentsServiceSpec extends Specification {
     then:
       thrown BusinessException
   }
+
+  void "Should return true when validate RFC from XML"() {
+    given:"The rfc company"
+      String rfcCompany = "AAA010101AAA"
+    and:"The document"
+      def document = new MockMultipartFile("xmlOkOneConcept.xml", "", "plain/text", xmlOkOneConcept.getBytes())
+    and:
+      tempFileService.getTempFileFromMultipart(_, _) >> xmlOkOneConcept
+    when:
+      def result = service.validateRfc(document, rfcCompany)
+    then:
+      result
+  }
+
+  void "Should create item from xml file with one concept into purchase order without current items"() {
+    given:"The purchase order with items"
+      PurchaseOrder order = new PurchaseOrder().save(validate:false)
+    and:"The document"
+      def document = new MockMultipartFile("xmlOkOneConcept.xml", "xmlOkOneConcept.xml", "plain/text", xmlOkOneConcept.getBytes())
+    and:
+      tempFileService.getTempFileFromMultipart(_, _) >> xmlOkOneConcept
+    when:
+      def result = service.loadItemsToOrderFromDocumentXml(order, document)
+    then:
+      result.items.size() == 1
+      result.items.first().name == "algo cinco"
+  }
+
+  void "Should create item from xml file with two concept into purchase order without current items"() {
+    given:"The purchase order with items"
+      PurchaseOrder order = new PurchaseOrder().save(validate:false)
+    and:"The document"
+      def document = new MockMultipartFile("xmlOkMultipleConcepts.xml", "xmlOkMultipleConcepts.xml", "plain/text", xmlOkMultipleConcepts.getBytes())
+    and:
+      tempFileService.getTempFileFromMultipart(_, _) >> xmlOkMultipleConcepts
+    when:
+      def result = service.loadItemsToOrderFromDocumentXml(order, document)
+    then:
+      result.items.size() == 2
+      result.items.first().name == "Producto Cinco"
+      result.items[1].name == "Producto Dos ST"
+  }
+
 }
