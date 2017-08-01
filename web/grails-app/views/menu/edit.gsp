@@ -44,6 +44,7 @@
               <fieldset class="form">
                 <f:field bean="menu" property="name" wrapper="create"/>
                 <f:field bean="menu" property="internalUrl" wrapper="create"/>
+                <f:field bean="menu" property="parameters" wrapper="create"/>
               </fieldset>
               <fieldset class="buttons">
                 <input class="save btn btn-default" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
