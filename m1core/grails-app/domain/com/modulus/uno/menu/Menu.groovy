@@ -4,6 +4,7 @@ class Menu {
 
   String name
   String internalUrl
+  String parameters
 
   static hasMany = [menus: Menu]
   static belongsTo = [parentMenu: Menu]
@@ -12,6 +13,7 @@ class Menu {
     name()
     internalUrl()
     parentMenu nullable: true
+    parameters nullable: true
   }
 
   String toString(){
