@@ -64,6 +64,6 @@ databaseChangeLog = {
   include file: 'create-domains-prepaysheet.groovy'
   include file: 'create-menu-domains.groovy'
   include file: 'create-menu-link-domain.groovy'
-  include file: 'adding-default-menus-for-user-m1.groovy'
   include file: 'adding-attribute-to-menus.groovy'
+  include file: 'adding-default-menus-for-user-m1.groovy'
 }
