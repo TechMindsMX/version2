@@ -47,6 +47,7 @@
                 </g:if>
                 <f:field bean="menu" property="name" wrapper="create"/>
                 <f:field bean="menu" property="internalUrl" wrapper="create"/>
+                <f:field bean="menu" property="parameters" wrapper="create"/>
                 
               </fieldset>
               <fieldset class="buttons">
