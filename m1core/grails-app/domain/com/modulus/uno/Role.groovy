@@ -2,10 +2,11 @@ package com.modulus.uno
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import com.modulus.uno.menu.*
 
 @EqualsAndHashCode(includes='authority')
 @ToString(includes='authority', includeNames=true, includePackage=false)
-class Role implements Serializable {
+class Role implements Serializable, MenuOperations {
 
 	private static final long serialVersionUID = 1
 
