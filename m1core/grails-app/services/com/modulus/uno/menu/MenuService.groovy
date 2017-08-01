@@ -5,8 +5,8 @@ import grails.transaction.Transactional
 @Transactional
 class MenuService {
 
-  Menu newMenu(String menuName, String internalUrl){
-    Menu menu = new Menu(name: menuName, internalUrl: internalUrl)
+  Menu newMenu(String menuName, String internalUrl, String parameters){
+    Menu menu = new Menu(name: menuName, internalUrl: internalUrl, parameters: parameters)
     menu.save()
     menu
   }
@@ -17,7 +17,7 @@ class MenuService {
     menu
   }
 
-  Menu addSubmenuToMenu(Menu menu, String submenuName, String internalUrl){
+  Menu addSubmenuToMenu(Menu menu, String submenuName, String internalUrl, String parameters){
     Menu submenu = new Menu(name: submenuName, url: internalUrl)
     menu.addToMenus(submenu)
     menu.save()
