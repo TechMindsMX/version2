@@ -53,9 +53,49 @@
         <div class="alert alert-danger" role="alert">${amountExcceds}</div>
       </g:if>
 
-      <g:if test="${purchaseOrder.isAnticipated}">
-        <g:render template="addItems"/>
-      </g:if>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Cantidad</th>
+                <th class="col-xs-5">Descripción del producto</th>
+                <th class="col-xs-2">Precio Unitario</th>
+                <th class="col-xs-3">Unidad de medida</th>
+                <th class="col-xs-2">Importe</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+
+            <tbody>
+            <g:if test="${purchaseOrder.isAnticipated}">
+              <g:render template="addItems"/>
+            </g:if>
+            <g:if test="${purchaseOrder.items}">
+              <g:render template="listItems"/>
+            </g:if>
+            </tbody>
+            <tfooter>
+            <tr>
+              <td colspan="6" class="text-right"><strong>Subtotal</strong></td>
+              <td class="text-right">
+                ${modulusuno.formatPrice(number:purchaseOrder.subtotal)}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="6" class="text-right"><strong>IEPS</strong></td>
+              <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.totalIEPS)}</td>
+            </tr>
+            <tr>
+              <td colspan="6" class="text-right"><strong>IVA</strong></td>
+              <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.totalIVA)}</td>
+            </tr>
+            <tr>
+              <td colspan="6" class="text-right"><strong>Total</strong></td>
+              <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.total)}</td>
+            </tr>
+            </tfooter>
+          </table>
+        </div>
 
       </div>
       </div>
