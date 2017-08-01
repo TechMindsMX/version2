@@ -102,31 +102,6 @@
       <div class="navbar-collapse sidebar-collapse collapse">
         <ul id="side" class="nav navbar-nav side-nav">
           <menus:getMenus></menus:getMenus>
-
-          <sec:ifAnyGranted roles="ROLE_CORPORATIVE">
-            <g:if test="${session.corporate}">
-              <li><g:link controller="corporate" action="addCompany" id="${session.corporate.id}">Crear Nueva Empresa</g:link></li>
-              <li><g:link controller="corporate" action="addUser" id="${session.corporate.id}">Alta Usuario</g:link></li>
-              <li><g:link controller="corporate" action="users" id="${session.corporate.id}">Lista de Usuarios</g:link></li>
-              <li><g:link controller="dashboard" action="index">Todas las Empresas</g:link></li>
-            </g:if>
-          </sec:ifAnyGranted>
-
-          <g:if test="${session.company && companyInfo.isAvailableForOperationInThisCompany()}">
-            <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-              <g:render template="/layouts/representante_legal" />
-            </sec:ifAnyGranted>
-            <sec:ifAnyGranted roles="ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
-              <g:render template="/layouts/fico" />
-            </sec:ifAnyGranted>
-            <sec:ifAnyGranted roles="ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR">
-              <g:render template="/layouts/operador" />
-            </sec:ifAnyGranted>
-            <sec:ifAnyGranted roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">
-              <g:render template="/layouts/authorizer" />
-            </sec:ifAnyGranted>
-
-          </g:if>
           <li><g:link controller="logout" action="index"><i class="fa fa-sign-out"></i> Cerrar sesión</g:link></li>
         </ul>
       </div>
