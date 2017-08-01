@@ -24,7 +24,7 @@
             <div class="message" role="status">${flash.message}</div>
           </div>
         </g:if>
-        <f:table collection="${menuList}" properties="['name','internalUrl']" />
+        <f:table collection="${menuList}" properties="['name','internalUrl','parameters']" />
 
         <div class="pagination">
           <g:paginate total="${menuCount ?: 0}" />
