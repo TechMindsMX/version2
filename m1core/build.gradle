@@ -60,6 +60,7 @@ dependencies {
   compile "org.bouncycastle:bcprov-jdk15:1.46"
   compile files('lib/CryptoHandler-1.0.jar')
   compile 'in.ashwanthkumar:slack-java-webhook:0.0.7'
+  compile 'com.amazonaws:aws-java-sdk:1.11.171'
 }
 
 bootRun {
