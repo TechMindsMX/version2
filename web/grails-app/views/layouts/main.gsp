@@ -102,44 +102,7 @@
     <nav class="navbar-side" role="navigation">
       <div class="navbar-collapse sidebar-collapse collapse">
         <ul id="side" class="nav navbar-nav side-nav">
-          <sec:ifAnyGranted roles="ROLE_M1">
-            <li class="panel">
-              <a href="javascript:;" data-parent="#side" data-toggle="collapse" class="accordion-toggle" data-target="#corporativos">
-                Corporativos <i class="fa fa-caret-down"></i>
-              </a>
-              <ul class="collapse nav" id="corporativos">
-                <li>
-                  <g:link controller="dashboard" action="index" >Lista de Corporativos</g:link>
-                  <g:link controller="corporate" action="create" >Crear Nuevo Corporativo</g:link>
-                </li>
-              </ul>
-            </li>
-          </sec:ifAnyGranted>
-
-          <sec:ifAnyGranted roles="ROLE_CORPORATIVE">
-            <g:if test="${session.corporate}">
-              <li><g:link controller="corporate" action="addCompany" id="${session.corporate.id}">Crear Nueva Empresa</g:link></li>
-              <li><g:link controller="corporate" action="addUser" id="${session.corporate.id}">Alta Usuario</g:link></li>
-              <li><g:link controller="corporate" action="users" id="${session.corporate.id}">Lista de Usuarios</g:link></li>
-              <li><g:link controller="dashboard" action="index">Todas las Empresas</g:link></li>
-            </g:if>
-          </sec:ifAnyGranted>
-
-          <g:if test="${session.company && companyInfo.isAvailableForOperationInThisCompany()}">
-            <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-              <g:render template="/layouts/representante_legal" />
-            </sec:ifAnyGranted>
-            <sec:ifAnyGranted roles="ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR">
-              <g:render template="/layouts/fico" />
-            </sec:ifAnyGranted>
-            <sec:ifAnyGranted roles="ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR">
-              <g:render template="/layouts/operador" />
-            </sec:ifAnyGranted>
-            <sec:ifAnyGranted roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">
-              <g:render template="/layouts/authorizer" />
-            </sec:ifAnyGranted>
-
-          </g:if>
+          <menus:getMenus></menus:getMenus>
           <li><g:link controller="logout" action="index"><i class="fa fa-sign-out"></i> Cerrar sesión</g:link></li>
         </ul>
       </div>
