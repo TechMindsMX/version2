@@ -1,0 +1,29 @@
+<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd" LugarExpedicion="CIUDAD DE MEXICO" NumCtaPago="646180132406300048" formaDePago="PAGO EN UNA SOLA EXHIBICION" metodoDePago="03" Moneda="MXN" motivoDescuento="Sin descuento" subTotal="16780.0000" descuento="0.000000" total="19224.80000000" folio="13" fecha="2017-07-04T17:12:31" certificado="MIIEYTCCA0mgAwIBAgIUMjAwMDEwMDAwMDAyMDAwMDE0MjgwDQYJKoZIhvcNAQEFBQAwggFcMRowGAYDVQQDDBFBLkMuIDIgZGUgcHJ1ZWJhczEvMC0GA1UECgwmU2VydmljaW8gZGUgQWRtaW5pc3RyYWNpw7NuIFRyaWJ1dGFyaWExODA2BgNVBAsML0FkbWluaXN0cmFjacOzbiBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpw7NuMSkwJwYJKoZIhvcNAQkBFhphc2lzbmV0QHBydWViYXMuc2F0LmdvYi5teDEmMCQGA1UECQwdQXYuIEhpZGFsZ28gNzcsIENvbC4gR3VlcnJlcm8xDjAMBgNVBBEMBTA2MzAwMQswCQYDVQQGEwJNWDEZMBcGA1UECAwQRGlzdHJpdG8gRmVkZXJhbDESMBAGA1UEBwwJQ295b2Fjw6FuMTQwMgYJKoZIhvcNAQkCDCVSZXNwb25zYWJsZTogQXJhY2VsaSBHYW5kYXJhIEJhdXRpc3RhMB4XDTEzMDUwNzE2MDEyOVoXDTE3MDUwNzE2MDEyOVowgdsxKTAnBgNVBAMTIEFDQ0VNIFNFUlZJQ0lPUyBFTVBSRVNBUklBTEVTIFNDMSkwJwYDVQQpEyBBQ0NFTSBTRVJWSUNJT1MgRU1QUkVTQVJJQUxFUyBTQzEpMCcGA1UEChMgQUNDRU0gU0VSVklDSU9TIEVNUFJFU0FSSUFMRVMgU0MxJTAjBgNVBC0THEFBQTAxMDEwMUFBQSAvIEhFR1Q3NjEwMDM0UzIxHjAcBgNVBAUTFSAvIEhFR1Q3NjEwMDNNREZOU1IwODERMA8GA1UECxMIcHJvZHVjdG8wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAKS/beUVy6E3aODaNuLd2S3PXaQre0tGxmYTeUxa55x2t/7919ttgOpKF6hPF5KvlYh4ztqQqP4yEV+HjH7yy/2d/+e7t+J61jTrbdLqT3WD0+s5fCL6JOrF4hqy//EGdfvYftdGRNrZH+dAjWWml2S/hrN9aUxraS5qqO1b7btlAgMBAAGjHTAbMAwGA1UdEwEB/wQCMAAwCwYDVR0PBAQDAgbAMA0GCSqGSIb3DQEBBQUAA4IBAQACPXAWZX2DuKiZVv35RS1WFKgT2ubUO9C+byfZapV6ZzYNOiA4KmpkqHU/bkZHqKjR+R59hoYhVdn+ClUIliZf2ChHh8s0a0vBRNJ3IHfA1akWdzocYZLXjz3m0Er31BY+uS3qWUtPsONGVDyZL6IUBBUlFoecQhP9AO39er8zIbeU2b0MMBJxCt4vbDKFvT9i3V0Puoo+kmmkf15D2rBGR+drd8H8Yg8TDGFKf2zKmRsgT7nIeou6WpfYp570WIvLJQY+fsMp334D05Up5ykYSAxUGa30RdUzA4rxN5hT+W9whWVGD88TD33Nw55uNRUcRO3ZUVHmdWRG+GjhlfsD" noCertificado="20001000000200001428" sello="g3v0DuLGg25kg3YJYGGvVk/atG2sya9eXmhLjMp+RIFHXcMaou6EA0OwuOcUrl2U9lKK4GU32w7CDfMX5P1O4AoRWTTJwvYwq56EWU3ZBeiQsA+x3i5QThHXtiozUkkN3zUB6kLRpv1Z+rmXnzuPhKbePvpNuppF/q6FsG5GUYk=" tipoDeComprobante="ingreso" version="3.2">
+  <cfdi:Emisor nombre="soft-temoc sa" rfc="AAA010101AAA">
+    <cfdi:DomicilioFiscal calle="El mero mero" noExterior="1000" noInterior="SN" colonia="San Pablo Sur" municipio="Salina Cruz" codigoPostal="70690" estado="Oaxaca" pais="México"/>
+    <cfdi:RegimenFiscal Regimen="taxregime.moral"/>
+  </cfdi:Emisor>
+  <cfdi:Receptor nombre="CLIENTEZAZO SA DE CV" rfc="AAA010101AAA">
+    <cfdi:Domicilio calle="Calzada principal" noExterior="4321" noInterior="SN" colonia="Roma" municipio="Ciudad de México" codigoPostal="06700" estado="Ciudad de México" pais="México"/>
+  </cfdi:Receptor>
+  <cfdi:Conceptos>
+    <cfdi:Concepto importe="15780.0000" valorUnitario="789.00" descripcion="Producto Cinco" unidad="CAJA" cantidad="20.00"/>
+    <cfdi:Concepto importe="1000.0000" valorUnitario="100.00" descripcion="Producto Dos ST" unidad="UNIDADES" cantidad="10.00"/>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos totalImpuestosTrasladados="2684.80000000" totalImpuestosRetenidos="240.0000">
+    <cfdi:Retenciones>
+      <cfdi:Retencion impuesto="IVA" importe="200.0000"/>
+      <cfdi:Retencion impuesto="IVA" importe="40.0000"/>
+    </cfdi:Retenciones>
+    <cfdi:Traslados>
+      <cfdi:Traslado importe="2524.80000000" tasa="16.00" impuesto="IVA"/>
+      <cfdi:Traslado importe="160.00000000" tasa="16.00" impuesto="IVA"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" version="1.0" UUID="A1DADA62-F5B4-4EE5-99E7-13490089EDC7" FechaTimbrado="2017-07-04T17:12:36" selloCFD="g3v0DuLGg25kg3YJYGGvVk/atG2sya9eXmhLjMp+RIFHXcMaou6EA0OwuOcUrl2U9lKK4GU32w7CDfMX5P1O4AoRWTTJwvYwq56EWU3ZBeiQsA+x3i5QThHXtiozUkkN3zUB6kLRpv1Z+rmXnzuPhKbePvpNuppF/q6FsG5GUYk=" noCertificadoSAT="20001000000100005761" selloSAT="nt804TntgWTXbLbSG8r9AVJNRZa/elcOh7lDeOileXiZ7b2r0geAIvLVioPchCBy6gQlvb82SuLFJTE6oB7cFtpZoF/T54MzJSKkFTiFCSMtKbWK7qgf+ueIVWARoDCwLebtueP3HFe24+rxMEnGbHouKNe152it2KEmD7gVnws=" xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/TimbreFiscalDigital/TimbreFiscalDigital.xsd"/>
+  </cfdi:Complemento>
+  <cfdi:Addenda xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <fa:Datos xmlns:fa="http://www.itcomplements.com/cfd/v1" FormaDePago="PAGO EN UNA SOLA EXHIBICION" MetodoDePago="03 - TRANSFERENCIA ELECTRONICA" NumeroDeCuenta="646180132406300048" LugarDeExpedicion="CIUDAD DE MEXICO" Observaciones="testing Retención Iva" version="1.0" xsi:schemaLocation="http://www.itcomplements.com/cfd/v1 http://www.itcomplements.com/cfd/v1/fav1.xsd"></fa:Datos>
+  </cfdi:Addenda>
+</cfdi:Comprobante>

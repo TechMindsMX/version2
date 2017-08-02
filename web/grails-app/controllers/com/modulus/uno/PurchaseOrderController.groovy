@@ -5,6 +5,8 @@ import grails.transaction.Transactional
 import grails.converters.JSON
 import wslite.rest.*
 
+import com.modulus.uno.purchaseOrder.PurchaseOrderItemService
+
 
 class PurchaseOrderController {
 
@@ -12,6 +14,7 @@ class PurchaseOrderController {
 
   BusinessEntityService businessEntityService
   PurchaseOrderService purchaseOrderService
+  PurchaseOrderItemService purchaseOrderItemService
   def springSecurityService
   def companyService
   def emailSenderService
@@ -290,7 +293,7 @@ class PurchaseOrderController {
 
   def deleteItem(PurchaseOrderItem item) {
     Long idPurchaseOrder = item.purchaseOrder.id
-    purchaseOrderService.deleteItemFromPurchaseOrder(item)
+    purchaseOrderItemService.deleteItemFromPurchaseOrder(item)
     redirect action:'show', id:idPurchaseOrder
   }
 
