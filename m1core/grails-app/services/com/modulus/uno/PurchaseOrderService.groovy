@@ -9,6 +9,7 @@ class PurchaseOrderService {
   def emailSenderService
   def modulusUnoService
   def restService
+  def purchaseOrderDocumentsService
 
   def addAuthorizationToPurchaseOrder(PurchaseOrder order, User user) {
     def authorization = new Authorization(user:user)
@@ -18,6 +19,8 @@ class PurchaseOrderService {
 
   def addInvoiceToPurchaseOrder(def invoice, Long purchaseOrderId, String type){
     PurchaseOrder order = PurchaseOrder.get(purchaseOrderId)
+    purchaseOrderDocumentsService.validateDocumentXmlForOrder(order, invoice)
+    purchaseOrderDocumentsService.loadItemsToOrderFromDocumentXml(order, invoice)
     documentService.uploadDocumentForOrder(invoice,type,order)
   }
 
@@ -216,10 +219,6 @@ class PurchaseOrderService {
   Boolean amountExceedsTotal(def amount, PurchaseOrder order) {
     BigDecimal pendingToPay = order.total - order.totalPayments
     amount > pendingToPay
-  }
-
-  def deleteItemFromPurchaseOrder(PurchaseOrderItem item) {
-    PurchaseOrderItem.executeUpdate("delete PurchaseOrderItem item where item.id = :id", [id: item.id])
   }
 
   def reversePaymentPurchaseForTransaction(Transaction transaction) {
