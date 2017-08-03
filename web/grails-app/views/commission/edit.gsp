@@ -39,6 +39,7 @@
             </g:hasErrors>
             <g:form resource="${this.commission}" method="PUT">
               <g:hiddenField name="version" value="${this.commission?.version}" />
+              <g:hiddenField name="corporateId" value="${corporateId}" />
               <fieldset class="form">
                 <g:render template="form" bean="commission"/>
               </fieldset>
@@ -50,6 +51,6 @@
         </div>
       </div>
     </div>
-    <g:link class="list btn btn-default" action="index" params='[companyId:commission.company.id]'><g:message code="commission.list.label" args="[entityName]" /></g:link>
+    <g:link class="list btn btn-default" action="index" id="${commission.company.id}" params='[corporateId:corporateId]'><g:message code="commission.list.label" args="[entityName]" /></g:link>
   </body>
 </html>
