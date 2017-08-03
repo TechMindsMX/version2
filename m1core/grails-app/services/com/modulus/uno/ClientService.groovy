@@ -40,4 +40,12 @@ class ClientService {
     client.save()
     client
   }
+
+  def updateClientToCompany(BusinessEntity businessEntity, String backRfc) {
+    ClientLink clientLink = ClientLink.findByClientRef(backRfc)
+    clientLink.clientRef = businessEntity.rfc
+    clientLink.save()
+    clientLink
+  }
+
 }
