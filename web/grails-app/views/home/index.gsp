@@ -7,7 +7,7 @@
     <title>Modulus UNO</title>
 
     <link rel="icon" href="../../favicon.ico">
-    <link href="carousel.css" rel="stylesheet">
+    <asset:stylesheet src="third-party/modulus-uno-theme/css/carousel.css"/>
     <asset:stylesheet src="application.css"/>
     <asset:javascript src="application.js"/>
 
