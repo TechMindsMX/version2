@@ -16,12 +16,12 @@ class CommissionController {
   }
 
   def show(Commission commission) {
-    respond commission
+    respond commission, model:[corporateId:params.corporateId]
   }
 
   def create() {
     def company = Company.get(params.long("companyId"))
-    respond new Commission(params), model:[company: company]
+    respond new Commission(params), model:[company: company, corporateId:params.corporateId]
   }
 
   @Transactional
@@ -34,7 +34,7 @@ class CommissionController {
 
     if (command.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      render view:'create', model:[company:Company.get(params.company), commandErrors:command.errors]
+      render view:'create', model:[company:Company.get(params.company), commandErrors:command.errors, corporateId:params.corporateId]
       return
     }
 
@@ -43,7 +43,7 @@ class CommissionController {
 
     if (!commission.validate()){
       transactionStatus.setRollbackOnly()
-      render view:'create', model:[commission:commission, company:commission.company]
+      render view:'create', model:[commission:commission, company:commission.company, corporateId:params.corporateId]
       return
     }
 
@@ -60,7 +60,7 @@ class CommissionController {
 
   def edit(Commission commission) {
     Company company = Company.get(params.long("companyId"))
-    respond commission, model:[company: company]
+    respond commission, model:[company: company, corporateId:params.corporateId]
   }
 
   @Transactional
@@ -78,25 +78,19 @@ class CommissionController {
 
     if (commission.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      respond commission.errors, view:'edit', model:[company:commission.company]
+      respond commission.errors, view:'edit', model:[company:commission.company, corporateId:params.corporateId]
       return
     }
 
     if (commissionTypeAlreadyExists(commission)) {
       transactionStatus.setRollbackOnly()
-      respond commission, view:'edit', model:[company:commission.company]
+      respond commission, view:'edit', model:[company:commission.company, corporateId:params.corporateId]
       return
     }
 
     commission.save flush:true
 
-    request.withFormat {
-      form multipartForm {
-        flash.message = message(code: 'commission.updated.message')
-        redirect commission
-      }
-      '*'{ respond commission, [status: OK] }
-    }
+    redirect action:"show", id:commission.id, params:[corporateId:params.corporateId]
   }
 
   @Transactional
