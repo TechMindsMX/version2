@@ -48,7 +48,7 @@
                   </tr>
                   <g:each in="${commissionList}" var="commission">
                   <tr>
-                    <td><g:link action="show" id="${commission.id}">${commission.type}</g:link></td>
+                    <td><g:link action="show" id="${commission.id}" params="[corporateId:corporateId]">${commission.type}</g:link></td>
                     <td>${commission.company}</td>
                     <td>${modulusuno.formatPrice(number:commission.fee)}</td>
                     <td>${commission.percentage}</td>
@@ -60,7 +60,7 @@
                 <g:paginate total="${commissionCount ?: 0}" />
               </div>
               <g:if test="${commissionList?.size() < CommissionType.values().length}">
-              <g:link class="create btn btn-default" action="create" params="[companyId:params.companyId?:company.id]">
+              <g:link class="create btn btn-default" action="create" params="[companyId:params.companyId?:company.id, corporateId:corporateId]">
               <g:message code="commission.create.label" args="[entityName]" />
               </g:link>
               </g:if>

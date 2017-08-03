@@ -47,6 +47,7 @@
               </ul>
                 </g:hasErrors>
                 <g:form action="save">
+                  <g:hiddenField name="corporateId" value="${corporateId}" />
                 <fieldset class="form">
                   <g:render template="form" bean="${commission}" />
                 </fieldset>
@@ -59,7 +60,7 @@
         </div>
       </div>
     </div>
-    <g:link class="list btn btn-default" action="index" params="[companyId:"${company.id}"]">
+    <g:link class="list btn btn-default" action="index" id="${company.id}" params="[corporateId:corporateId]">
     <g:message code="commission.list.label" args="[entityName]" />
     </g:link>
 
