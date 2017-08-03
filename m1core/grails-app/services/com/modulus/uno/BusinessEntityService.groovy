@@ -176,18 +176,22 @@ class BusinessEntityService {
       updateDataToBusinessEntity(businessEntity, params.businessName)
     }
 
-    deleteLinksForRfc(businessEntity.rfc)
 
     if(leadType == LeadType.CLIENTE || leadType == LeadType.CLIENTE_PROVEEDOR){
-      clientService.addClientToCompany(businessEntity, company)
+      clientService.updateClientToCompany(businessEntity, params.backRfc)
     }
     if(leadType == LeadType.PROVEEDOR || leadType == LeadType.CLIENTE_PROVEEDOR){
+      deleteLinksForRfc(businessEntity.rfc)
       providerService.addProviderToCompany(businessEntity, company)
     }
     if(leadType == LeadType.EMPLEADO){
-      employeeService.addEmployeeToCompany(businessEntity, company, params.curp)
+      employeeService.updateEmployeeToCompany(businessEntity, company, params)
     }
 
+  }
+
+  boolean existsBusinessEntityInCompany(String rfc, Company company) {
+    ProviderLink.findByProviderRef(rfc) || ClientLink.findByClientRef(rfc) || EmployeeLink.findByEmployeeRef(rfc)
   }
 
 }
