@@ -2,13 +2,9 @@
 <%! import com.modulus.uno.NameType %>
 <%! import com.modulus.uno.LeadType %>
 <f:with bean="businessEntity">
+
 <div class="form-group">
-  <label><g:message code="businessEntity.clientProviderType" /><span class="required-indicator">*</span></label>
-  <!-- TODO : Muy elaborado, puede ser un solo radio con los valores del enum -->
-  <g:radio name="clientProviderType" value="${LeadType.CLIENTE}" checked="${clientProviderType == LeadType.CLIENTE.toString()}" class="form-group" required="" /> Cliente
-  <g:radio name="clientProviderType" value="${LeadType.PROVEEDOR}" checked="${clientProviderType == LeadType.PROVEEDOR.toString()}"/> Proveedor
-  <g:radio name="clientProviderType" value="${LeadType.CLIENTE_PROVEEDOR}" checked="${clientProviderType == LeadType.CLIENTE_PROVEEDOR.toString()}"/> Cliente/Proveedor
-  <g:radio name="clientProviderType" value="${LeadType.EMPLEADO}" checked="${clientProviderType == LeadType.EMPLEADO.toString()}"/> Emp/Colaborador
+  <g:render template="businessEntityTypes"/>
 </div>
 
 <div id="person">
@@ -27,7 +23,9 @@
 
 <g:if test="${clientProviderType == LeadType.EMPLEADO.toString()}">
   <label id="curpLabel"><g:message code="businessEntity.curp" /><span class="required-indicator">*</span></label>
-  <input id="curp" name="curp" value="${curp ?: params.curp}" class="form-control" style="text-transform:uppercase" required="" />
+  <input id="curp" name="curp" value="${businessEntity.getCurp()}" class="form-control" style="text-transform:uppercase" required="" />
+  <label id="numberLabel"><g:message code="businessEntity.number" /></label>
+  <input id="number" name="number" value="${businessEntity.getNumber()}" class="form-control" style="text-transform:uppercase"/>
 </g:if>
 
 <div id="website">

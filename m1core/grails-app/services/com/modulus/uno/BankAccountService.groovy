@@ -49,7 +49,7 @@ class BankAccountService {
     def company = Company.get(companyId)
     if(repeatedBankAccountCompany(bankAccount, company))
       throw new Exception("La cuenta indicada ya existe")
-    bankAccount.save flush:true
+    bankAccount.save()
     company.addToBanksAccounts(bankAccount)
     company.save()
 
@@ -91,4 +91,34 @@ class BankAccountService {
     bankAccount
   }
 
+  BankAccount createBankAccountForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map rowEmployee) {
+    Map dataBank = getDataBankFromClabe(rowEmployee.CLABE)
+    BankAccount bankAccount = new BankAccount(
+      accountNumber:dataBank.accountNumber,
+      branchNumber:dataBank.branchNumber,
+      clabe:rowEmployee.CLABE,
+      cardNumber:rowEmployee.NUMTARJETA,
+      banco:dataBank.bank
+    )
+
+    bankAccount.save()
+
+    if (bankAccount.id) {
+      businessEntity.addToBanksAccounts(bankAccount)
+      businessEntity.save()
+    }
+
+    bankAccount
+  }
+
+  Map getDataBankFromClabe(String clabe) {
+    Map data = [:]
+    if (clabe.length() == 18) {
+      String codeBank = clabe.substring(0,3)
+      data.branchNumber = clabe.substring(3,6)
+      data.accountNumber = clabe.substring(6,17)
+      data.bank = Bank.findByBankingCodeLike("%${codeBank}")
+    }
+    data
+  }
 }

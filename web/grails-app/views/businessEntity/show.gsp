@@ -8,7 +8,6 @@
     <title><g:message code="default.show.label" args="[entityName]" /></title>
   </head>
   <body>
-    <div class="container" style="width:95%">
 
       <div class="page-title">
         <h1>
@@ -18,219 +17,36 @@
         </h1>
       </div>
 
-      <div id="edit-address" class="content scaffold-edit" role="main">
-
-
-
-        <div id="horizontalFormExample" class="panel-collapse collapse in">
-
           <div clas="row">
-            <div clas="col-md-12">
-              <div class="col-md-6">
-
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="col-md-6">
-                          <h4>Datos Generales</h4>
-                        </div>
-                        <div class="col-md-6" align="right">
-                          <g:form resource="${this.businessEntity}" method="DELETE">
-                            <fieldset class="buttons">
-                              <g:link class="edit btn btn-default" action="edit" resource="${this.businessEntity}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-                            </fieldset>
-                          </g:form>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                  <div class="panel-body">
-
-                    <g:if test="${flash.message}">
-                      <div class="alert alert-success" role="alert">${flash.message} - ${relation}
-                      </div>
-                    </g:if>
-
-                    <dl class="dl-horizontal">
-                      <dt>RFC</dt>
-                      <dd>${businessEntity.rfc}</dd>
-                      <dt>Sitio web</dt>
-                      <dd>${businessEntity.website ?: 'Sin información'}</dd>
-                      <dt><g:if test="${businessEntity.type == BusinessEntityType.MORAL}">Razón Social</g:if>
-                        <g:if test="${businessEntity.type == BusinessEntityType.FISICA}">Nombre</g:if>
-
-                      </dt>
-                      <dd>
-                        <g:render template="businessName" model="[businessEntity: businessEntity, relation: relation]" />
-                      </dd>
-                    </dl>
-
-                  </div>
-                  <div class="panel-footer">
-                    <div class="row">
-                      <div class="col-md-12">
-                      <g:if test="${relation=='CLIENTE' || relation=='CLIENTE_PROVEEDOR'}">
-                        <div class="col-md-6">
-                            <div class="property-value">
-                              <span class="property-label"><g:message code="businessEntity.label.stpAccount" default="Cuenta para pago referenciado"/></span>
-
-                            </div>
-                        </div>
-                        <div class="col-md-6" align="right">
-                          <div class="property-value">
-                            <g:if test="${clientLink?.stpClabe}">
-                              ${clientLink.stpClabe}
-                            </g:if>
-                            <g:else>
-                              <g:link class="btn btn-default" action="generateSubAccountStp" id="${businessEntity.id}" >
-                                <g:message code="businessEntity.label.createSubAccount" default="Generar cuenta"/>
-                              </g:link>
-                            </g:else>
-                          </div>
-                        </div>
-                      </g:if>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="col-md-6">
-                          <span id="address-label" class="property-label"><h4>Dirección</h4></span>
-                        </div>
-                        <div class="col-md-6" align="right">
-                          <g:if test="${!relation.equals('EMPLEADO')}">
-                            <div class="property-value" aria-labelledby="company-label">
-                              <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-                                <g:link action="create" controller="address" params="[businessEntity:businessEntity.id]" class="btn btn-default">Agregar Dirección</g:link>
-                              </sec:ifAnyGranted>
-                            </div>
-                          </g:if>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="panel-body">
-                    <g:if test="${businessEntity.addresses}" >
-
-                      <div class="property-value" aria-labelledby="telefono-label">
-                        <ul>
-                          <g:each var="address" in="${businessEntity.addresses.sort{it.id}}">
-                            <g:link controller="address" action="edit" id="${address.id}" params="[relation:relation, businessEntityId:businessEntity.id]">
-                              <li class="subList">${address.addressType}: ${address.street} #${address.streetNumber} - ${address.suite} CP ${address.zipCode}, ${address.colony}, ${address.city}, ${address.town}. ${address.federalEntity}, ${address.country}</li>
-                            </g:link>
-                          </g:each>
-                        </ul>
-                      </div>
-                    </g:if>
-
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" style="margin-right: 0px; margin-left: 0px;">
             <div class="col-md-6">
-
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="col-md-6">
-                        <span class="property-label"><h4><g:message code="businessEntity.label.bankAccounts.${relation}" default="Cuentas Bancarias"/></h4></span>
-                      </div>
-                      <div class="col-md-6" align="right">
-
-                        <div class="property-value">
-                          <fieldset class="buttons">
-                            <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-                              <g:link class="btn btn-default" action="create" controller="bankAccount" params="[businessEntity:businessEntity.id, businessEntityInfo:businessEntity.toString(), relation:relation]"><g:message code="businessEntity.label.createBankAccount.${relation}" default="Agregar Cuenta"/></g:link>
-                            </sec:ifAnyGranted>
-                          </fieldset>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <div class="property-value">
-
-                    <g:if test="${!businessEntity.banksAccounts}">
-                      <p><h4><label class="label label-warning"><g:message code="businessEntity.label.noBankAccounts.${relation}" default="No hay cuentas bancarias registradas"/></label></h4></p>
-                    </g:if>
-                  <ul>
-                    <g:each in="${businessEntity.banksAccounts.sort{it.banco.name}}" var="account">
-                      <li class="sublist">
-                        <g:link controller="bankAccount" action="edit" params="[businessEntity:businessEntity.id, businessEntityInfo:businessEntity.toString(), relation:relation]" id="${account.id}">
-                          ${account.banco} -
-                          ${account.accountNumber}
-                          <g:if test="${relation != 'CLIENTE'}">- CLABE: ${account.clabe}</g:if>
-                        </g:link>
-                      </li>
-                    </g:each>
-                  </ul>
-                </div>
-
-              </div>
+              <g:render template="generalData"/>
+            </div>
+            <div class="col-md-6">
+              <g:render template="bankAccounts"/>
             </div>
           </div>
-          <div class="col-md-6">
-            <g:if test="${relation.equals('CLIENTE_PROVEEDOR') || relation.equals('CLIENTE')}">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="col-md-6">
-                        <span class="property-label"><h4>Pagos del cliente</h4></span>
-                      </div>
-                      <div class="col-md-6" align="right">
+          <div class="row"></div>
+          <div class="row">
+            <div class="col-md-6">
+              <g:render template="summaryBalance"/>
+            </div>
+            <div class="col-md-6">
+              <g:render template="addresses"/>
+            </div>
+          </div>
 
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <div class="panel-body">
-
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>Facturación total(Ejecutadas y autorizadas)</th>
-                        <th>Total Cobrado (ya conciliado)</th>
-                        <th>Total Cobrado (por conciliar)</th>
-                        <th>Pendiente de cobro</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>${modulusuno.formatPrice(number:totalSoldForClient)}</td>
-                        <td>${modulusuno.formatPrice(number:totalSoldForClientStatusConciliated)}</td>
-                        <td>${modulusuno.formatPrice(number:paymentsFromClientToPay)}</td>
-                        <td>${modulusuno.formatPrice(number:totalPending)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                </div>
-              </div>
-            </g:if>
-
+      <g:if test="${relation == 'EMPLEADO'}">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            <g:render template="dataImss"/>
           </div>
         </div>
+      </g:if>
+      <div class="row">
+        <div class="col-md-2 col-md-offset-10">
+          <g:link class="btn btn-primary" action="index">Regresar</g:link>
+        </div>
       </div>
-    </div>
-    </div>
+
   </body>
 </html>

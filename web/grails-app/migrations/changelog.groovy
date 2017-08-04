@@ -56,4 +56,10 @@ databaseChangeLog = {
   include file: 'adding-status-to-payment-to-purchase.groovy'
   include file: 'rename-column-ieps-to-iva-retention-in-sale-order-item.groovy'
   include file: 'drop-domain-payment-m1-emitter.groovy'
+  include file: 'adding-column-status-to-business-entity.groovy'
+  include file: 'adding-column-number-to-employee-link.groovy'
+  include file: 'create-domain-data-imss-employee.groovy'
+  include file: 'create-domain-paysheet-project.groovy'
+  include file: 'adding-column-card-number-to-bank-account.groovy'
+  include file: 'create-domains-prepaysheet.groovy'
 }

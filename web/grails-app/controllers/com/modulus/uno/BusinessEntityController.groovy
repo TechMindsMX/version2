@@ -12,8 +12,6 @@ class BusinessEntityController {
   def restService
   def springSecurityService
   def employeeService
-  def saleOrderService
-  def paymentService
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", createAccountByProvider: "POST"]
 
@@ -32,18 +30,10 @@ class BusinessEntityController {
 
   def show(BusinessEntity businessEntity) {
     Company company = Company.get(session.company)
-    params.sepomexUrl = grails.util.Holders.grailsApplication.config.sepomex.url
-    BigDecimal totalSoldForClient = saleOrderService.getTotalSoldForClient(company,businessEntity.rfc) ?: 0
-    BigDecimal totalSoldForClientStatusConciliated = saleOrderService.getTotalSoldForClientStatusConciliated(company,businessEntity.rfc) ?: 0
-    BigDecimal paymentsFromClientToPay = paymentService.getPaymentsFromClientToPay(company, businessEntity.rfc) ?: 0
-    BigDecimal totalPending =  totalSoldForClient - totalSoldForClientStatusConciliated
     LeadType relation = businessEntityService.getClientProviderType(businessEntity.rfc)
-    respond businessEntity, model:[relation:relation.toString(),
-                                   clientLink: businessEntityService.getClientLinkOfBusinessEntityAndCompany(businessEntity, company),
-                                   totalSoldForClient:totalSoldForClient,
-    totalSoldForClientStatusConciliated:totalSoldForClientStatusConciliated,
-    paymentsFromClientToPay:paymentsFromClientToPay,
-    totalPending:totalPending]
+    Map clientData = businessEntityService.getClientData(company, businessEntity, relation)
+    DataImssEmployee dataImssEmployee = businessEntityService.getDataImssEmployee(company, businessEntity, relation)
+    respond businessEntity, model:[relation:relation.toString(), clientData:clientData, dataImssEmployee:dataImssEmployee]
   }
 
   def create() {
@@ -59,7 +49,7 @@ class BusinessEntityController {
 
   @Transactional
  def save(BusinessEntityCommand command) {
-
+  command.rfc = command.rfc.toUpperCase()
    command.clientProviderType = params.clientProviderType
    if (params.clientProviderType.equals("EMPLEADO")){
      command.website="http://www.employee.com"
@@ -87,11 +77,7 @@ class BusinessEntityController {
 
   def edit(BusinessEntity businessEntity) {
     String clientProviderType = businessEntityService.getClientProviderType(businessEntity.rfc)
-    def employeeLink
-    if (clientProviderType == "EMPLEADO") {
-      employeeLink = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
-    }
-    respond businessEntity, model:[curp:employeeLink?.curp, clientProviderType:clientProviderType]
+    respond businessEntity, model:[clientProviderType:clientProviderType]
   }
 
   @Transactional
@@ -168,5 +154,40 @@ class BusinessEntityController {
       }
       '*'{ render status: NOT_FOUND }
     }
+  }
+
+  def massiveRegistration() {
+    [clientProviderType:LeadType.CLIENTE]
+  }
+
+  def downloadLayout() {
+    log.info "Downloading layout for business entity of type ${params.clientProviderType}"
+    def layout = businessEntityService.createLayoutForBusinessEntityType(params.clientProviderType)
+    layout.with {
+      setResponseHeaders(response, "layout${params.clientProviderType}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
+  def uploadMassiveRecords() {
+    String entityType = params.entityType
+    def file = request.getFile('massiveRecordsFile')
+    Company company = Company.get(session.company)
+    Map resultImport = businessEntityService."processXlsMassiveFor${entityType}"(file, company)
+    render view:"massiveRegistrationResult", model:[resultImport:resultImport]
+  }
+
+  def showToAuthorizeEntities() {
+    Company company = Company.get(session.company)
+    def beToAuthorize = businessEntityService.getBusinessEntitiesToAuthorizeForCompany(company)
+    [beToAuthorize:beToAuthorize]
+  }
+
+  def authorizeEntities() {
+    log.info "Ids to authorize: ${params.entities}"
+    if (params.entities) {
+      businessEntityService.authorizeBusinessEntities(params.entities)
+    }
+    redirect action:"showToAuthorizeEntities"
   }
 }
