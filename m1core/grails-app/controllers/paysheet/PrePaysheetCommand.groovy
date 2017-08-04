@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
 
 import grails.validation.Validateable
 
