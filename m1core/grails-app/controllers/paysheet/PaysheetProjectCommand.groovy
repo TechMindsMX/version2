@@ -1,7 +1,8 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
 
 import java.text.*
 import grails.validation.Validateable
+import com.modulus.uno.Company
 
 class PaysheetProjectCommand implements Validateable {
 
