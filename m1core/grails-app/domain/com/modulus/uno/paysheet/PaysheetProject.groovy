@@ -8,6 +8,7 @@ class PaysheetProject {
   String description
   BigDecimal integrationFactor
   BigDecimal occupationalRiskRate
+  BigDecimal commission
 
   static belongsTo = [company:Company]
 
@@ -16,6 +17,7 @@ class PaysheetProject {
     description nullable:true, blank:true
     integrationFactor nullable:false, min:0.0
     occupationalRiskRate nullable:false, min:0.0, max:100.0
+    commission nullable:false, min:0.0, max:100.0
   }
 
 }
