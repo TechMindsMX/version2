@@ -1,5 +1,5 @@
 package com.modulus.uno.paysheet
 
-class PaysheetEmployeeStatus {
+enum PaysheetEmployeeStatus {
   PENDING, PAYED, CANCELED
 }
