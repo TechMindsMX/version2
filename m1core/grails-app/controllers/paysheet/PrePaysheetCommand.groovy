@@ -1,6 +1,8 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
 
 import grails.validation.Validateable
+import com.modulus.uno.PaymentPeriod
+import com.modulus.uno.Company
 
 class PrePaysheetCommand implements Validateable {
 

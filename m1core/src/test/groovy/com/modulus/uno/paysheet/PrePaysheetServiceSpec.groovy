@@ -1,8 +1,17 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
 
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
+
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
+import com.modulus.uno.EmployeeLink
+import com.modulus.uno.DataImssEmployee
+import com.modulus.uno.BankAccount
+import com.modulus.uno.Bank
+import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.PaymentPeriod
 
 @TestFor(PrePaysheetService)
 @Mock([PrePaysheet, PrePaysheetEmployee, BusinessEntity, Company, EmployeeLink, DataImssEmployee, BankAccount, Bank])

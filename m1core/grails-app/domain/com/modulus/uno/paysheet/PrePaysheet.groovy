@@ -1,4 +1,7 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
+
+import com.modulus.uno.PaymentPeriod
+import com.modulus.uno.Company
 
 class PrePaysheet {
   String paysheetProject

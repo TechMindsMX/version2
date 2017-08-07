@@ -28,4 +28,8 @@ class DataImssEmployeeService {
     dataImssEmployee
   }
 
+  DataImssEmployee getDataImssForEmployee(EmployeeLink employee) {
+    DataImssEmployee.findByEmployee(employee)
+  }
+
 }
