@@ -15,16 +15,22 @@
 </div>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="paysheetProject.label.integrationFactor"/></label>
       <input class="form-control" type="number" min="0.000000" step="0.000001" name="integrationFactor" value="${paysheetProject?.integrationFactor}" required=""/>
     </div>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="paysheetProject.label.occupationalRiskRate"/></label>
       <input class="form-control" type="number" min="0.000000" max="100.000000" step="0.000001" name="occupationalRiskRate" value="${paysheetProject?.occupationalRiskRate}" required=""/>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label><g:message code="paysheetProject.label.commission"/></label>
+      <input class="form-control" type="number" min="0.00" max="100.00" step="0.01" name="commission" value="${paysheetProject?.commission}" required=""/>
     </div>
   </div>
 </div>
