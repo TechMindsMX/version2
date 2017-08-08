@@ -1,4 +1,6 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
+
+import com.modulus.uno.Company
 
 class PaysheetProjectController {
 
