@@ -1,0 +1,145 @@
+package com.modulus.uno.paysheet
+
+import com.modulus.uno.DataImssEmployeeService
+import com.modulus.uno.DataImssEmployee
+import com.modulus.uno.EmployeeLink
+import java.math.RoundingMode
+
+class PaysheetService {
+
+  def grailsApplication
+  DataImssEmployeeService dataImssEmployeeService
+  PaysheetProjectService paysheetProjectService
+
+  PaysheetEmployee createPaysheetEmployeeFromPrePaysheetEmployee(Paysheet paysheet, PrePaysheetEmployee prePaysheetEmployee) {
+    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
+      prePaysheetEmployee:prePaysheetEmployee,
+      paysheet:paysheet
+    )
+    calculateSalaryImssForEmployee(paysheetEmployee)
+    calculateSalaryAssimilable(paysheetEmployee)
+  }
+
+  def calculateSalaryImssForEmployee(PaysheetEmployee paysheetEmployee) {
+    BreakdownPaymentEmployee breakdownPayment = generateBreakdownPaymentEmployee(paysheetEmployee)
+    paysheetEmployee.socialQuota = breakdownPayment.socialQuotaEmployeeTotal
+  }
+
+  BreakdownPaymentEmployee generateBreakdownPaymentEmployee(PaysheetEmployee paysheetEmployee) {
+    EmployeeLink employee = EmployeeLink.findByEmployeeRef(paysheetEmployee.prePaysheetEmployee.rfc)
+    BigDecimal integratedDailySalary = getIntegratedDailySalaryForEmployee(employee, paysheetEmployee.paysheet)
+    BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
+    BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
+    BreakdownPaymentEmployee breakdownPayment = new BreakdownPaymentEmployee(
+      integratedDailySalary: integratedDailySalary,
+      baseQuotation: baseQuotation,
+      fixedFee: getFixedFee(),
+      diseaseAndMaternityBase: diseaseAndMaternityBase,
+      diseaseAndMaternityEmployer: getDiseaseAndMaternityEmployer(diseaseAndMaternityBase),
+      diseaseAndMaternity: getDiseaseAndMaternityEmployee(diseaseAndMaternityBase),
+      pension: getPensionEmployee(baseQuotation),
+      pensionEmployer: getPensionEmployer(baseQuotation),
+      loan: getLoanEmployee(baseQuotation),
+      loanEmployer: getLoanEmployer(baseQuotation),
+      disabilityAndLife: getDisabilityAndLifeEmployee(integratedDailySalary),
+      disabilityAndLifeEmployer: getDisabilityAndLifeEmployer(integratedDailySalary),
+      kindergarten: getKindergarten(baseQuotation),
+      occupationalRisk: getOccupationalRisk(baseQuotation, paysheetEmployee.paysheet),
+      retirementSaving: getRetirementSaving(baseQuotation),
+      unemploymentAndEld: getUnemploymentAndEldEmployee(baseQuotation),
+      unemploymentAndEldEmployer: getUnemploymentAndEldEmployer(baseQuotation),
+      infonavit: getInfonavit(baseQuotation)
+    )
+  }
+
+  BigDecimal getIntegratedDailySalaryForEmployee(EmployeeLink employeeLink, Paysheet paysheet) {
+    PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheet.company, paysheet.prePaysheet.paysheetProject)
+    DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employeeLink)
+    (dataImssEmployee.baseImssMonthlySalary / 30 * project.integrationFactor).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getBaseQuotation(BigDecimal integratedDailySalary) {
+    integratedDailySalary * new BigDecimal(grailsApplication.config.paysheet.quotationDays)
+  }
+
+  BigDecimal getFixedFee() {
+    new BigDecimal(grailsApplication.config.paysheet.uma) * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.fixedFee)/100)
+  }
+
+  BigDecimal getDiseaseAndMaternityBase(BigDecimal integratedDailySalary) {
+    BigDecimal limit = 3 * new BigDecimal(grailsApplication.config.paysheet.uma)
+    BigDecimal diseaseAndMaternityBase = new BigDecimal(0)
+    if (integratedDailySalary > limit) {
+      diseaseAndMaternityBase = (integratedDailySalary - limit) * new BigDecimal(grailsApplication.config.paysheet.quotationDays)
+    }
+    diseaseAndMaternityBase.setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getDiseaseAndMaternityEmployer(BigDecimal diseaseAndMaternityBase) {
+    (diseaseAndMaternityBase * (new BigDecimal(grailsApplication.config.paysheet.diseaseAndMaternityEmployer)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getDiseaseAndMaternityEmployee(BigDecimal diseaseAndMaternityBase) {
+    (diseaseAndMaternityBase * (new BigDecimal(grailsApplication.config.paysheet.diseaseAndMaternityEmployee)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getPensionEmployer(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.pensionEmployer)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getPensionEmployee(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.pensionEmployee)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getLoanEmployer(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.loanEmployer)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getLoanEmployee(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.loanEmployee)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getDisabilityAndLifeEmployer(BigDecimal integratedDailySalary) {
+    BigDecimal limit = new BigDecimal(grailsApplication.config.paysheet.uma) * 25
+    BigDecimal disabilityAndLifeEmployer = integratedDailySalary * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.disabilityAndLifeEmployer)/100)
+    if (integratedDailySalary > limit) {
+      disabilityAndLifeEmployer = limit * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.disabilityAndLifeEmployer)/100)
+    }
+    disabilityAndLifeEmployer.setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getDisabilityAndLifeEmployee(BigDecimal integratedDailySalary) {
+    BigDecimal limit = new BigDecimal(grailsApplication.config.paysheet.uma) * 25
+    BigDecimal disabilityAndLifeEmployee = integratedDailySalary * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.disabilityAndLifeEmployee)/100)
+    if (integratedDailySalary > limit) {
+      disabilityAndLifeEmployer = limit * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.disabilityAndLifeEmployee)/100)
+    }
+    disabilityAndLifeEmployee.setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getKindergarten(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.kindergarten)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getOccupationalRisk(BigDecimal baseQuotation, Paysheet paysheet) {
+    PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheet.company, paysheet.prePaysheet.paysheetProject)
+    (baseQuotation * (project.occupationalRiskRate/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getRetirementSaving(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.retirementSaving)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getUnemploymentAndEldEmployer(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.unemploymentAndEldEmployer)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getUnemploymentAndEldEmployee(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.unemploymentAndEldEmployee)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getInfonavit(BigDecimal baseQuotation) {
+    (baseQuotation * (new BigDecimal(grailsApplication.config.paysheet.infonavit)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+}
