@@ -9,11 +9,12 @@ import java.math.RoundingMode
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.DataImssEmployeeService
+import com.modulus.uno.Company
 
 
-@TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheetEmployee, PaysheetEmployee, BreakdownPaymentEmployee, EmployeeLink, PaysheetProject, DataImssEmployee, PrePaysheet])
-class PaysheetServiceSpec extends Specification {
+@TestFor(BreakdownPaymentEmployeeService)
+@Mock([Paysheet, PrePaysheetEmployee, PaysheetEmployee, BreakdownPaymentEmployee, EmployeeLink, PaysheetProject, DataImssEmployee, PrePaysheet, Company])
+class BreakdownPaymentEmployeeServiceSpec extends Specification {
 
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
   DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
@@ -283,6 +284,30 @@ class PaysheetServiceSpec extends Specification {
       new BigDecimal(4992.98).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(249.65).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(4539.25).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(226.96).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(7789.42).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(389.47).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  @Unroll
+  void "Should get social quota for employee = #sqee and social quota employer = #sqer when base imss monthly salary = #bimss"() {
+    given:"The employee"
+      Company company = new Company().save(validate:false)
+      PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(rfc:"RFC").save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"proyecto").save(validate:false)
+      Paysheet paysheet = new Paysheet(company:company, prePaysheet:prePaysheet).save(validate:false)
+      PaysheetEmployee paysheetEmployee = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee, paysheet:paysheet).save(validate:false)
+      EmployeeLink employee = new EmployeeLink(employeeRef:"RFC").save(validate:false)
+    and:
+      PaysheetProject paysheetProject = new PaysheetProject(integrationFactor:new BigDecimal(1.0452), occupationalRiskRate:new BigDecimal(0.54355)).save(validate:false)
+      paysheetProjectService.getPaysheetProjectByCompanyAndName(_, _) >> paysheetProject
+      DataImssEmployee dataImssEmployee = new DataImssEmployee(baseImssMonthlySalary:bimss).save(validate:false)
+      dataImssEmployeeService.getDataImssForEmployee(_) >> dataImssEmployee
+    when:
+      BreakdownPaymentEmployee breakdownPaymentEmployee = service.generateBreakdownPaymentEmployee(paysheetEmployee)
+    then:
+      breakdownPaymentEmployee.socialQuotaEmployeeTotal == sqee
+      breakdownPaymentEmployee.socialQuotaEmployer == sqer
+    where:
+    bimss                                   ||      sqee    ||    sqer
+    new BigDecimal(4714.12).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(118.58).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(1226.77).setScale(2, RoundingMode.HALF_UP)
   }
 
 }
