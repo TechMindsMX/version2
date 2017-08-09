@@ -1,5 +1,7 @@
 package com.modulus.uno.paysheet
 
+import java.math.RoundingMode
+
 class BreakdownPaymentEmployee {
 
   BigDecimal integratedDailySalary = new BigDecimal(0)
@@ -24,11 +26,11 @@ class BreakdownPaymentEmployee {
   static belongsTo = [paysheetEmployee:PaysheetEmployee]
 
   BigDecimal getSocialQuotaEmployeeTotal() {
-    this.diseaseAndMaternity + this.pension + this.loan + this.disabilityAndLife + this.unemploymentAndEld
+    (this.diseaseAndMaternity + this.pension + this.loan + this.disabilityAndLife + this.unemploymentAndEld).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal getSocialQuotaEmployer() {
-    this.fixedFee + this.diseaseAndMaternityEmployer + this.pensionEmployer + this.loanEmployer + this.disabilityAndLifeEmployer + this.kindergarten + this.occupationalRisk + this.retirementSaving + this.unemploymentAndEldEmployer + this.infonavit
+    (this.fixedFee + this.diseaseAndMaternityEmployer + this.pensionEmployer + this.loanEmployer + this.disabilityAndLifeEmployer + this.kindergarten + this.occupationalRisk + this.retirementSaving + this.unemploymentAndEldEmployer + this.infonavit).setScale(2, RoundingMode.HALF_UP)
   }
 
 }
