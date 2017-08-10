@@ -38,6 +38,8 @@ class BreakdownPaymentEmployeeService {
       unemploymentAndEldEmployer: getUnemploymentAndEldEmployer(baseQuotation),
       infonavit: getInfonavit(baseQuotation)
     )
+    breakdownPayment.save()
+    breakdownPayment
   }
 
   BigDecimal getIntegratedDailySalaryForEmployee(EmployeeLink employeeLink, Paysheet paysheet) {
