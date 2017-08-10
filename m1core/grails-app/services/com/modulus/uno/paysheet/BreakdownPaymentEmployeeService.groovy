@@ -4,6 +4,7 @@ import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import java.math.RoundingMode
+import grails.transaction.Transactional
 
 class BreakdownPaymentEmployeeService {
 
@@ -11,6 +12,7 @@ class BreakdownPaymentEmployeeService {
   DataImssEmployeeService dataImssEmployeeService
   PaysheetProjectService paysheetProjectService
 
+  @Transactional
   BreakdownPaymentEmployee generateBreakdownPaymentEmployee(PaysheetEmployee paysheetEmployee) {
     EmployeeLink employee = EmployeeLink.findByEmployeeRef(paysheetEmployee.prePaysheetEmployee.rfc)
     BigDecimal integratedDailySalary = getIntegratedDailySalaryForEmployee(employee, paysheetEmployee.paysheet)

@@ -4,6 +4,7 @@ import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import java.math.RoundingMode
+import grails.transaction.Transactional
 
 class PaysheetEmployeeService {
 
@@ -12,6 +13,7 @@ class PaysheetEmployeeService {
   DataImssEmployeeService dataImssEmployeeService
   def grailsApplication
 
+  @Transactional
   PaysheetEmployee createPaysheetEmployeeFromPrePaysheetEmployee(Paysheet paysheet, PrePaysheetEmployee prePaysheetEmployee) {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       prePaysheetEmployee:prePaysheetEmployee,
@@ -29,6 +31,7 @@ class PaysheetEmployeeService {
       paysheetEmployee.paysheetTax = calculatePaysheetTax(paysheetEmployee)
       paysheetEmployee.commission = calculateCommission(paysheetEmployee)
     }
+    paysheetEmployee.save()
   }
 
   BigDecimal calculateImssSalary(PaysheetEmployee paysheetEmployee) {
