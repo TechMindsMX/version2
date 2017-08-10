@@ -8,7 +8,9 @@ import java.math.RoundingMode
 class PaysheetEmployeeService {
 
   BreakdownPaymentEmployeeService breakdownPaymentEmployeeService
+  PaysheetProjectService paysheetProjectService
   DataImssEmployeeService dataImssEmployeeService
+  def grailsApplication
 
   PaysheetEmployee createPaysheetEmployeeFromPrePaysheetEmployee(Paysheet paysheet, PrePaysheetEmployee prePaysheetEmployee) {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
@@ -24,6 +26,8 @@ class PaysheetEmployeeService {
       paysheetEmployee.incomeTax = calculateIncomeTax(paysheetEmployee)
       paysheetEmployee.salaryAssimilable = calculateSalaryAssimilable(paysheetEmployee)
       paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee)
+      paysheetEmployee.paysheetTax = calculatePaysheetTax(paysheetEmployee)
+      paysheetEmployee.commission = calculateCommission(paysheetEmployee)
     }
   }
 
@@ -69,6 +73,15 @@ class PaysheetEmployeeService {
 
   BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee) {
     (paysheetEmployee.breakdownPayment.socialQuotaEmployer / paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculatePaysheetTax(PaysheetEmployee paysheetEmployee) {
+    (paysheetEmployee.imssSalaryNet * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateCommission(PaysheetEmployee paysheetEmployee) {
+    PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheetEmployee.paysheet.company, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
+    (paysheetEmployee.paysheetCost * (project.commission/100)).setScale(2, RoundingMode.HALF_UP)
   }
 
 }
