@@ -18,6 +18,8 @@ class PaysheetEmployeeService {
     paysheetEmployee.breakdownPayment = breakdownPaymentEmployeeService.generateBreakdownPaymentEmployee(paysheetEmployee)
     paysheetEmployee.salaryImss = calculateImssSalary(paysheetEmployee)
     paysheetEmployee.socialQuota = calculateSocialQuota(paysheetEmployee)
+    paysheetEmployee.subsidySalary = calculateSubsidySalary(paysheetEmployee)
+    paysheetEmployee.incomeTax = calculateIncomeTax(paysheetEmployee)
     paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee)
   }
 
@@ -33,6 +35,28 @@ class PaysheetEmployeeService {
 
   BigDecimal calculateSocialQuota(PaysheetEmployee paysheetEmployee) {
     (paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal / paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateSubsidySalary(PaysheetEmployee paysheetEmployee) {
+    BigDecimal baseImssMonthlySalary = getBaseMonthlyImssSalary(paysheetEmployee)
+    EmploymentSubsidy employmentSubsidy = EmploymentSubsidy.values().find { sb ->
+      baseImssMonthlySalary >= sb.lowerLimit && baseImssMonthlySalary <= sb.upperLimit
+    }
+    employmentSubsidy ? employmentSubsidy.getSubsidy().setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateIncomeTax(PaysheetEmployee paysheetEmployee) {
+    BigDecimal baseImssMonthlySalary = getBaseMonthlyImssSalary(paysheetEmployee)
+    RateTax rateTax = RateTax.values().find { rt ->
+      baseImssMonthlySalary >= rt.lowerLimit && baseImssMonthlySalary <= rt.upperLimit
+    }
+    if (!rateTax) {
+      return new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+    }
+
+    BigDecimal excess = baseImssMonthlySalary - rateTax.lowerLimit
+    BigDecimal marginalTax = excess * (rateTax.rate/100)
+    (marginalTax + rateTax.fixedQuota).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee) {
