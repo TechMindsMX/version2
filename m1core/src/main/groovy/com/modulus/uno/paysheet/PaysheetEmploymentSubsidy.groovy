@@ -17,7 +17,7 @@ enum EmploymentSubsidy {
   private final BigDecimal upperLimit
   private final BigDecimal subsidy
 
-  RateTax(BigDecimal lowLim, BigDecimal upLim, BigDecimal subsidy) {
+  EmploymentSubsidy(BigDecimal lowLim, BigDecimal upLim, BigDecimal subsidy) {
     this.lowerLimit = lowLim
     this.upperLimit = upLim
     this.subsidy = subsidy
