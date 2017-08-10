@@ -12,7 +12,7 @@ class PaysheetEmployee {
   BigDecimal paysheetTax = new BigDecimal(0)
   BigDecimal commission = new BigDecimal(0)
   BigDecimal ivaRate = new BigDecimal(0)
-  PaysheetEmployeeStatus status
+  PaysheetEmployeeStatus status = PaysheetEmployeeStatus.PENDING
   BreakdownPaymentEmployee breakdownPayment
 
   static belongsTo = [paysheet:Paysheet]
