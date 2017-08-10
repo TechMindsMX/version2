@@ -15,12 +15,16 @@ class PaysheetEmployeeService {
       prePaysheetEmployee:prePaysheetEmployee,
       paysheet:paysheet
     )
-    paysheetEmployee.breakdownPayment = breakdownPaymentEmployeeService.generateBreakdownPaymentEmployee(paysheetEmployee)
-    paysheetEmployee.salaryImss = calculateImssSalary(paysheetEmployee)
-    paysheetEmployee.socialQuota = calculateSocialQuota(paysheetEmployee)
-    paysheetEmployee.subsidySalary = calculateSubsidySalary(paysheetEmployee)
-    paysheetEmployee.incomeTax = calculateIncomeTax(paysheetEmployee)
-    paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee)
+
+    if (prePaysheetEmployee.netPayment > 0) {
+      paysheetEmployee.breakdownPayment = breakdownPaymentEmployeeService.generateBreakdownPaymentEmployee(paysheetEmployee)
+      paysheetEmployee.salaryImss = calculateImssSalary(paysheetEmployee)
+      paysheetEmployee.socialQuota = calculateSocialQuota(paysheetEmployee)
+      paysheetEmployee.subsidySalary = calculateSubsidySalary(paysheetEmployee)
+      paysheetEmployee.incomeTax = calculateIncomeTax(paysheetEmployee)
+      paysheetEmployee.salaryAssimilable = calculateSalaryAssimilable(paysheetEmployee)
+      paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee)
+    }
   }
 
   BigDecimal calculateImssSalary(PaysheetEmployee paysheetEmployee) {
@@ -57,6 +61,10 @@ class PaysheetEmployeeService {
     BigDecimal excess = baseImssMonthlySalary - rateTax.lowerLimit
     BigDecimal marginalTax = excess * (rateTax.rate/100)
     (marginalTax + rateTax.fixedQuota).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateSalaryAssimilable(PaysheetEmployee paysheetEmployee) {
+    (paysheetEmployee.prePaysheetEmployee.netPayment - paysheetEmployee.imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee) {
