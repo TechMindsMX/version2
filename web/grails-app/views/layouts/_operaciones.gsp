@@ -115,12 +115,14 @@
       <li>
         <ul class="collapse nav" id="paysheet-${action}">
           <li>
-            <g:link controller="PrePaysheet" action="create">Crear Pre-Nómina</a></g:link>
+            <g:link controller="prePaysheet" action="create">Crear Pre-Nómina</a></g:link>
           </li>
           <li>
-            <g:link controller="PrePaysheet" action="list">Lista de Pre-Nóminas</a></g:link>
+            <g:link controller="prePaysheet" action="list">Lista de Pre-Nóminas</a></g:link>
           </li>
-
+          <li>
+            <g:link controller="paysheet" action="list">Lista de Nóminas</a></g:link>
+          </li>
         </ul>
       </li>
   </li>
