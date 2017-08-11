@@ -13,4 +13,7 @@ class Paysheet {
   static belongsTo = [company:Company]
   static hasMany = [employees:PaysheetEmployee]
 
+  BigDecimal getTotal() {
+    employees*.totalToInvoice.sum() ?: 0
+  }
 }
