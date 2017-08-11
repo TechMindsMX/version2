@@ -5,6 +5,7 @@ import grails.transaction.Transactional
 class PaysheetService {
 
   PaysheetEmployeeService paysheetEmployeeService
+  PrePaysheetService prePaysheetService
 
   @Transactional
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
@@ -14,6 +15,7 @@ class PaysheetService {
     )
     paysheet.save()
     loadEmployeesToPaysheetFromPrePaysheet(paysheet, prePaysheet)
+    prePaysheetService.changeStatusToProcessed(prePaysheet)
     paysheet
   }
 
