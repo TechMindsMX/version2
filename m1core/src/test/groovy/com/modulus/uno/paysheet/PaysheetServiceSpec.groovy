@@ -11,9 +11,11 @@ import com.modulus.uno.Company
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
+  PrePaysheetService prePaysheetService = Mock(PrePaysheetService)
 
   def setup() {
     service.paysheetEmployeeService = paysheetEmployeeService
+    service.prePaysheetService = prePaysheetService
   }
 
   void "Should create paysheet from a prepaysheet"() {
