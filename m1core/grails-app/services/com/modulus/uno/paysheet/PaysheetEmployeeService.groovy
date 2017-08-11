@@ -17,7 +17,9 @@ class PaysheetEmployeeService {
   PaysheetEmployee createPaysheetEmployeeFromPrePaysheetEmployee(Paysheet paysheet, PrePaysheetEmployee prePaysheetEmployee) {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       prePaysheetEmployee:prePaysheetEmployee,
-      paysheet:paysheet
+      paysheet:paysheet,
+      breakdownPayment: new BreakdownPaymentEmployee(),
+      ivaRate: new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP)
     )
 
     if (prePaysheetEmployee.netPayment > 0) {
@@ -32,6 +34,7 @@ class PaysheetEmployeeService {
       paysheetEmployee.commission = calculateCommission(paysheetEmployee)
     }
     paysheetEmployee.save()
+    paysheetEmployee
   }
 
   BigDecimal calculateImssSalary(PaysheetEmployee paysheetEmployee) {
@@ -45,7 +48,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateSocialQuota(PaysheetEmployee paysheetEmployee) {
-    (paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal / paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+    (paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal / 30 * paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal calculateSubsidySalary(PaysheetEmployee paysheetEmployee) {
@@ -75,7 +78,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee) {
-    (paysheetEmployee.breakdownPayment.socialQuotaEmployer / paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+    (paysheetEmployee.breakdownPayment.socialQuotaEmployer / 30 * paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal calculatePaysheetTax(PaysheetEmployee paysheetEmployee) {
