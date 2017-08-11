@@ -76,6 +76,7 @@
     <g:if test="${prePaysheet.status == com.modulus.uno.paysheet.PrePaysheetStatus.IN_PROCESS}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-default" action="exportToXls" id="${prePaysheet.id}">XLS</g:link>
+      <g:link class="btn btn-default" controller="paysheet" action="createFromPrePaysheet" id="${prePaysheet.id}">Procesar</g:link>
     </div>
     </g:if>
   </div>
