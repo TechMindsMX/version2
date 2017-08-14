@@ -28,4 +28,12 @@ class PaysheetService {
     paysheet
   }
 
+  @Transactional
+  Paysheet sendToAuthorize(Paysheet paysheet) {
+    paysheet.status = PaysheetStatus.TO_AUTHORIZE
+    paysheet.save()
+    //TODO: enviar notificación a usuario autorizador de nómina
+    paysheet
+  }
+
 }
