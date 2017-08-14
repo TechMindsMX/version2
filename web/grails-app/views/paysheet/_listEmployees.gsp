@@ -91,7 +91,7 @@
   <div class="row">
     <g:if test="${paysheet.status == com.modulus.uno.paysheet.PaysheetStatus.TO_AUTHORIZE}">
     <div class="col-md-12 text-right">
-      <g:link class="btn btn-default" action="exportToXls" id="${prePaysheet.id}">XLS</g:link>
+      <g:link class="btn btn-default" action="exportToXls" id="${paysheet.id}">XLS</g:link>
     </div>
     </g:if>
   </div>
