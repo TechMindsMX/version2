@@ -67,4 +67,6 @@ databaseChangeLog = {
   include file: 'adding-attribute-to-menus.groovy'
   include file: 'adding-default-menus-for-user-m1.groovy'
   include file: 'create-domains-for-paysheet.groovy'
+  include file: 'create-domains-for-paysheet.groovy'
+  include file: 'adding-column-commission-to-paysheet-project.groovy'
 }
