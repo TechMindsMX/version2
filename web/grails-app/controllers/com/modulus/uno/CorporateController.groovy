@@ -62,7 +62,10 @@ class CorporateController {
                           "ROLE_AUTHORIZER_VISOR",
                           "ROLE_AUTHORIZER_EJECUTOR",
                           "ROLE_OPERATOR_VISOR",
-                          "ROLE_OPERATOR_EJECUTOR"]}
+                          "ROLE_OPERATOR_EJECUTOR",
+                          "ROLE_AUTHORIZER_PAYSHEET",
+                          "ROLE_OPERATOR_PAYSHEET"
+                          ]}
     List<UserRoleCompany> rolesOfUser = organizationService.findRolesForUserInCompanies(user.username,corporate)
     [companies:corporate.companies,roles:roles,user:user,rolesOfUser:rolesOfUser]
   }
