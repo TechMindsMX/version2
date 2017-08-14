@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%! import com.modulus.uno.paysheet.PaysheetStatus %>
 <html>
   <head>
     <meta name="layout" content="main" />
@@ -33,6 +34,14 @@
       <div class="row">
         <div class="col-md-12">
           <g:render template="listEmployees"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 text-right">
+          <g:if test="${paysheet.status == PaysheetStatus.CREATED}">
+            <g:link class="btn btn-primary" action="sendToAuthorize" id="${paysheet.id}">Solicitar Autorización</g:link>
+          </g:if>
         </div>
       </div>
 
