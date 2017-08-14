@@ -1,7 +1,7 @@
 <div class="portlet portlet-default">
   <div class="row">
     <div class="col-md-2 col-md-offset-10 text-right">
-      <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.CREATED}">
+      <g:if test="${prePaysheet.status == com.modulus.uno.paysheet.PrePaysheetStatus.CREATED}">
       <g:link class="btn btn-primary" action="addEmployees" id="${prePaysheet.id}">Agregar</g:link>
       </g:if>
     </div>
@@ -68,12 +68,12 @@
   </div>
 
   <div class="row">
-    <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.CREATED && prePaysheet.employees}">
+    <g:if test="${prePaysheet.status == com.modulus.uno.paysheet.PrePaysheetStatus.CREATED && prePaysheet.employees}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-primary" action="sendToProcess" id="${prePaysheet.id}">Enviar a Procesar</g:link>
     </div>
     </g:if>
-    <g:if test="${prePaysheet.status == com.modulus.uno.PrePaysheetStatus.IN_PROCESS}">
+    <g:if test="${prePaysheet.status == com.modulus.uno.paysheet.PrePaysheetStatus.IN_PROCESS}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-default" action="exportToXls" id="${prePaysheet.id}">XLS</g:link>
     </div>

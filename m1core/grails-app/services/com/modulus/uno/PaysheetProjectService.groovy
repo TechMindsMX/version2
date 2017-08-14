@@ -14,4 +14,9 @@ class PaysheetProjectService {
   void deletePaysheetProject(PaysheetProject paysheetProject) {
     paysheetProject.delete()
   }
+
+  PaysheetProject getPaysheetProjectByCompanyAndName(Company company, String name) {
+    PaysheetProject.findByCompanyAndName(company, name)
+  }
+
 }
