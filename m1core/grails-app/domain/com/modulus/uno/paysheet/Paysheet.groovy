@@ -5,7 +5,7 @@ import com.modulus.uno.Company
 class Paysheet {
 
   PrePaysheet prePaysheet
-  PaysheetStatus status
+  PaysheetStatus status = PaysheetStatus.CREATED
 
   Date dateCreated
   Date lastUpdated
@@ -13,4 +13,7 @@ class Paysheet {
   static belongsTo = [company:Company]
   static hasMany = [employees:PaysheetEmployee]
 
+  BigDecimal getTotal() {
+    employees*.totalToInvoice.sum() ?: 0
+  }
 }
