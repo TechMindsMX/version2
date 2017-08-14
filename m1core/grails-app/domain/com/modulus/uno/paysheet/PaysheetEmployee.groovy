@@ -3,16 +3,16 @@ package com.modulus.uno.paysheet
 class PaysheetEmployee {
 
   PrePaysheetEmployee prePaysheetEmployee
-  BigDecimal salaryImss
-  BigDecimal socialQuota
-  BigDecimal subsidySalary
-  BigDecimal incomeTax
-  BigDecimal salaryAssimilable
-  BigDecimal socialQuotaEmployer
-  BigDecimal paysheetTax
-  BigDecimal commission
-  BigDecimal ivaRate
-  PaysheetEmployeeStatus status
+  BigDecimal salaryImss = new BigDecimal(0)
+  BigDecimal socialQuota = new BigDecimal(0)
+  BigDecimal subsidySalary = new BigDecimal(0)
+  BigDecimal incomeTax = new BigDecimal(0)
+  BigDecimal salaryAssimilable = new BigDecimal(0)
+  BigDecimal socialQuotaEmployer = new BigDecimal(0)
+  BigDecimal paysheetTax = new BigDecimal(0)
+  BigDecimal commission = new BigDecimal(0)
+  BigDecimal ivaRate = new BigDecimal(0)
+  PaysheetEmployeeStatus status = PaysheetEmployeeStatus.PENDING
   BreakdownPaymentEmployee breakdownPayment
 
   static belongsTo = [paysheet:Paysheet]
