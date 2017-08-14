@@ -42,6 +42,9 @@
           <g:if test="${paysheet.status == PaysheetStatus.CREATED}">
             <g:link class="btn btn-primary" action="sendToAuthorize" id="${paysheet.id}">Solicitar Autorización</g:link>
           </g:if>
+          <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE}">
+            <g:link class="btn btn-primary" action="authorize" id="${paysheet.id}">Autorizar</g:link>
+          </g:if>
         </div>
       </div>
 
