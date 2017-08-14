@@ -28,4 +28,13 @@ class PaysheetController {
     redirect action:"list"
   }
 
+  def exportToXls(Paysheet paysheet) {
+    log.info "Exporting to Xls the paysheet: ${paysheet.dump()}"
+    def xls = paysheetService.exportPaysheetToXls(paysheet)
+    xls.with {
+      setResponseHeaders(response, "nomina-${paysheet.company}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
 }
