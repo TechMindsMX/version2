@@ -37,4 +37,9 @@ class PaysheetController {
     }
   }
 
+  def authorize(Paysheet paysheet) {
+    paysheetService.authorize(paysheet)
+    redirect action:"list"
+  }
+
 }
