@@ -57,4 +57,12 @@ class PaysheetService {
     employees
   }
 
+  @Transactional
+  Paysheet authorize(Paysheet paysheet) {
+    paysheet.status = PaysheetStatus.AUTHORIZED
+    paysheet.save()
+    //TODO: enviar notificación
+    paysheet
+  }
+
 }
