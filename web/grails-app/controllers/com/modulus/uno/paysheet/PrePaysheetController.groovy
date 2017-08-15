@@ -90,4 +90,11 @@ class PrePaysheetController {
     }
   }
 
+  def deleteEmployee(PrePaysheetEmployee prePaysheetEmployee) {
+    log.info "Deleting employee from prepaysheet: ${prePaysheetEmployee}"
+    PrePaysheet prePaysheet = prePaysheetEmployee.prePaysheet
+    prePaysheetService.deleteEmployeeFromPrePaysheet(prePaysheetEmployee)
+    redirect action:"show", id:prePaysheet.id
+  }
+
 }
