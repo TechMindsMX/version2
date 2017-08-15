@@ -65,4 +65,12 @@ class PaysheetService {
     paysheet
   }
 
+  @Transactional
+  Paysheet reject(Paysheet paysheet) {
+    paysheet.status = PaysheetStatus.REJECTED
+    paysheet.save()
+    //TODO: enviar notificación
+    paysheet
+  }
+
 }
