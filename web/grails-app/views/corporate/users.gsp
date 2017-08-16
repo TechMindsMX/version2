@@ -31,13 +31,23 @@
           <g:if test="${users}">
             <table class="table">
               <tr>
-                <th class="text-align:center;width:600px">Usuario</th>
+                <th>Nombre</th>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th></th>
               </tr>
               <g:each in="${users}" var="user">
                 <tr>
                   <td>
                     <g:link controller="corporate" action="assignRolesInCompaniesForUser" id="${user.id}">
                       ${user.profile.fullName}
+                    </g:link>
+                  </td>
+                  <td>${user.username}</td>
+                  <td>${user.profile.email}</td>
+                  <td class="text-right">
+                    <g:link class="btn btn-warning" action="changeStatusUser" id="${user.id}">
+                      <g:if test="${user.enabled}">Desactivar</g:if><g:else>Activar</g:else>
                     </g:link>
                   </td>
                 </tr>
