@@ -213,7 +213,13 @@ class CorporateController {
   def changeStatusUser(User user) {
     user.enabled = !user.enabled
     user.save()
-    redirect action:'show', id:params.corporateId.toLong()
+    if (session.corporate) {
+      redirect action:'users', id:session.corporate.id
+      return
+    } else {
+      redirect action:'show', id:params.corporateId.toLong()
+      return
+    }
   }
 
 }
