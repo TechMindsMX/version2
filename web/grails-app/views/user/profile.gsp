@@ -12,22 +12,13 @@
         Perfíl de usuario
         <small><g:message code="user.view.show.label" args="[entityName]" /></small>
       </h1>
-
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañia</li>
-        <li class="active">Informacion de Usuario</li>
-      </ol>
     </div>
     <div class="row">
       <div class="col-md-12">
         <div class="portlet portlet-blue">
           <div class="portlet-heading">
             <div class="portlet-title">
-              <br /><br />
             </div>
-            <div class="portlet-widgets">
-            </div>
-            <div class="clearfix"></div>
           </div>
           <div id="bluePortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
@@ -35,19 +26,21 @@
                 <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
                 </g:if>
-                <ul class="property-list user">
-                  <f:display bean="user" property="username" wrapper="show" />
-                  <f:display bean="user" property="profile.fullName" wrapper="show" />
-                  <f:display bean="user" property="profile.email" wrapper="show" />
-                  <f:display bean="user" property="profile.rfc" wrapper="show" />
-                  <f:display bean="user" property="profile.curp" wrapper="show" />
-                </ul>
+
+                <dl class="dl-horizontal">
+                  <dt>Nombre:</dt>
+                  <dd>${user.profile.fullName}</dd>
+                  <dt>Usuario:</dt>
+                  <dd>${user.username}</dd>
+                  <dt>Email:</dt>
+                  <dd>${user.profile.email}</dd>
+                </dl>
                 <br/>
-                <br/>
-                <g:link controller="user" action="edit" id="${user.id}" class="home btn btn-small btn-primary"> Editar</g:link>
-                <g:link controller="dashboard"  class="home btn small btn-primary">
-                Regresar
-                </g:link>
+                <div class="row">
+                  <div class="col-md-12 text-right">
+                    <g:link controller="dashboard"  class="home btn small btn-primary">Regresar</g:link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
