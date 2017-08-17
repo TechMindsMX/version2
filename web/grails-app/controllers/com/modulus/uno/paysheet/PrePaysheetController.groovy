@@ -97,4 +97,8 @@ class PrePaysheetController {
     redirect action:"show", id:prePaysheet.id
   }
 
+  def incidencesFromEmployee(PrePaysheetEmployee prePaysheetEmployee) {
+    respond prePaysheetEmployee
+  }
+
 }
