@@ -18,8 +18,8 @@
       <div class="portlet portlet-default">
         <div class="portlet-heading">
           <div class="row">
-            <div class="col-md-6 text-right">
-              <g:link class="btn btn-default" action="list">Lista</g:link>
+            <div class="col-md-12 text-right">
+              <g:link class="btn btn-default" controller="prePaysheet" action="show" id="${prePaysheetEmployee.prePaysheet.id}">Regresar</g:link>
             </div>
           </div>
         </div>
@@ -31,13 +31,11 @@
 
       <div class="row">
         <div class="col-md-12">
-          <g:render template="incidences/addIncidence"/>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-12">
-          <g:render template="incidences/listIncidences"/>
         </div>
       </div>
 
