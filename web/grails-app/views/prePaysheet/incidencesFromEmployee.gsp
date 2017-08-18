@@ -31,6 +31,9 @@
 
       <div class="row">
         <div class="col-md-12">
+          <g:form controller="prePaysheetEmployeeController" action="addIncidence">
+            <g:render template="incidences/addIncidence"/>
+          </g:form>
         </div>
       </div>
 
