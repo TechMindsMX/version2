@@ -31,14 +31,20 @@
 
       <div class="row">
         <div class="col-md-12">
-          <g:form controller="prePaysheetEmployeeController" action="addIncidence">
-            <g:render template="incidences/addIncidence"/>
-          </g:form>
+          <div class="portlet">
+            <g:form controller="prePaysheetEmployeeController" action="addIncidence">
+              <g:render template="incidences/addIncidence"/>
+            </g:form>
+          </div>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-12">
+          <div class="portlet">
+            <h2>Incidencias Registradas</h2>
+            <g:render template="incidences/listIncidences"/>
+          </div>
         </div>
       </div>
 
