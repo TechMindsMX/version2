@@ -65,4 +65,5 @@ databaseChangeLog = {
     include file: 'create-domains-for-paysheet.groovy'
     include file: 'adding-column-commission-to-paysheet-project.groovy'
     include file: 'adding-column-reject-reason-to-paysheet.groovy'
+    include file: 'create-domain-prepaysheet-employee-incidence.groovy'
 }
