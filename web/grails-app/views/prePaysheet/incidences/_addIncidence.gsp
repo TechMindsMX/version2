@@ -6,11 +6,11 @@
       <table class="table table-condensed">
         <thead>
           <tr>
-            <th class="col-xs-6">Descripción</th>
+            <th class="col-xs-5">Descripción</th>
             <th class="col-xs-2">Tipo</th>
             <th class="col-xs-2">Esquema</th>
             <th class="col-xs-2">Monto</th>
-            <th>&nbsp;</th>
+            <th class="col-xs-1">&nbsp;</th>
           </tr>
         </thead>
         <tbody>
