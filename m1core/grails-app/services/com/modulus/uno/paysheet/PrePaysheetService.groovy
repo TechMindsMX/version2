@@ -134,4 +134,16 @@ class PrePaysheetService {
     PrePaysheetEmployee.executeUpdate("delete PrePaysheetEmployee employee where employee.id = :id", [id: prePaysheetEmployee.id])
   }
 
+  @Transactional
+  PrePaysheetEmployeeIncidence saveIncidence(PrePaysheetEmployeeIncidence incidence) {
+    log.info "Saving incidence: ${incidence.dump()}"
+    incidence.save()
+    incidence
+  }
+
+  @Transactional
+  def deleteIncidenceFromPrePaysheetEmployee(PrePaysheetEmployeeIncidence incidence) {
+    PrePaysheetEmployee.executeUpdate("delete PrePaysheetEmployeeIncidence incidence where incidence.id = :id", [id: incidence.id])
+  }
+
 }
