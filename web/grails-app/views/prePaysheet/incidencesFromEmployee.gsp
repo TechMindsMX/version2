@@ -32,7 +32,8 @@
       <div class="row">
         <div class="col-md-12">
           <div class="portlet">
-            <g:form controller="prePaysheetEmployeeController" action="addIncidence">
+            <h2>Agregar incidencia</h2>
+            <g:form controller="prePaysheet" action="addIncidence">
               <g:render template="incidences/addIncidence"/>
             </g:form>
           </div>
