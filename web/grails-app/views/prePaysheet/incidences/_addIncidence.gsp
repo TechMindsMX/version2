@@ -14,7 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          <g:hiddenField name="prePaysheetEmployee.id" value="${prePaysheetEmployee.id}"/>
+          <g:hiddenField name="prePaysheetEmployeeId" value="${prePaysheetEmployee.id}"/>
           <tr>
             <td>
               <div class="input-group">
