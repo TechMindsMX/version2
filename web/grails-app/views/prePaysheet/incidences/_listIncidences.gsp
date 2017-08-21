@@ -6,7 +6,7 @@
     <tr>
       <td class="col-xs-5">${incidence.description}</td>
       <td class="col-xs-2">${incidence.type}</td>
-      <td class="col-xs-2">${incidence.schema}</td>
+      <td class="col-xs-2">${incidence.paymentSchema}</td>
       <td class="col-xs-2">${modulusuno.formatPrice(number:incidence.amount)}</td>
       <td class="col-xs-1 text-center">
         <g:if test="${prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.CREATED}">
