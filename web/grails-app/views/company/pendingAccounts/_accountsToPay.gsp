@@ -25,7 +25,7 @@
               <tbody>
                 <g:each var="payExpired" in="${pendingAccounts.listExpiredPayments.sort{it.fechaPago}}">
                   <tr class="warning">
-                    <td>${payExpired.providerName}</td>
+                    <td><g:link controller="purchaseOrder" action="show" id="${payExpired.id}" params="[backController:'company', backAction:'pendingAccounts']">${payExpired.providerName}</g:link></td>
                     <td class="text-center">
                       <button type="button" class="btn btn-link" data-toggle="modal" data-target="#changeDatePaymentModal" data-whatever="${payExpired.id}">
                         <g:formatDate format="dd-MM-yyyy" date="${payExpired.fechaPago}"/>
