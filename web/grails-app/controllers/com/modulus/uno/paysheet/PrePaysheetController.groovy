@@ -101,4 +101,33 @@ class PrePaysheetController {
     respond prePaysheetEmployee
   }
 
+  @Transactional
+  def addIncidence(PrePaysheetEmployeeIncidenceCommand incidenceCommand) {
+    log.info "Saving incidence: ${incidenceCommand.dump()}"
+    if (incidenceCommand.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      redirect action:"incidencesFromEmployee", id:incidenceCommand.prePaysheetEmployeeId
+      return
+    }
+
+    PrePaysheetEmployeeIncidence incidence = incidenceCommand.createPrePaysheetEmployeeIncidence()
+    prePaysheetService.saveIncidence(incidence)
+
+    if (incidence.hasErrors()) {
+      log.info "Error saving incidence: ${incidence.dump()}"
+      transactionStatus.setRollbackOnly()
+      redirect action:"incidencesFromEmployee", id:incidenceCommand.prePaysheetEmployeeId
+      return
+    }
+
+    redirect action:"incidencesFromEmployee", id:incidence.prePaysheetEmployee.id
+  }
+
+  def deleteIncidence(PrePaysheetEmployeeIncidence incidence) {
+    log.info "Deleting incidence from employee: ${incidence.dump()}"
+    PrePaysheetEmployee prePaysheetEmployee = incidence.prePaysheetEmployee
+    prePaysheetService.deleteIncidenceFromPrePaysheetEmployee(incidence)
+    redirect action:"incidencesFromEmployee", id:prePaysheetEmployee.id
+  }
+
 }
