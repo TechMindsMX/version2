@@ -25,7 +25,9 @@
             <tbody>
               <g:each var="chargeExpired" in="${pendingAccounts.listExpiredCharges.sort{it.fechaCobro}}">
                 <tr class="warning">
-                  <td>${chargeExpired.clientName}</td>
+                  <td>
+                    <g:link controller="saleOrder" action="show" id="${chargeExpired.id}" params="[backController:'company', backAction:'pendingAccounts']">${chargeExpired.clientName}</g:link>
+                  </td>
                   <td class="text-center">
                     <button type="button" class="btn btn-link" data-toggle="modal" data-target="#changeDateChargeModal" data-whatever="${chargeExpired.id}">
                       <g:formatDate format="dd-MM-yyyy" date="${chargeExpired.fechaCobro}"/>
