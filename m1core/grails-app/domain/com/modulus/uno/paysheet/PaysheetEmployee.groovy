@@ -18,7 +18,7 @@ class PaysheetEmployee {
   static belongsTo = [paysheet:Paysheet]
 
   BigDecimal getImssSalaryNet() {
-    this.salaryImss - this.socialQuota + this.subsidySalary - this.incomeTax
+    this.salaryImss - this.socialQuota + this.subsidySalary - this.incomeTax + getTotalIncidencesImssPerceptions() - getTotalIncidencesImssDeductions()
   }
 
   BigDecimal getTotalSalaryEmployee() {
