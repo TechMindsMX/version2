@@ -40,4 +40,44 @@ class PaysheetEmployee {
   BigDecimal getTotalToInvoice() {
     getPaysheetTotal() + getPaysheetIva()
   }
+
+  BigDecimal getTotalIncidencesImssPerceptions() {
+    def incidencesPerceptionImss = this.prePaysheetEmployee.incidences.collect { incidence ->
+      if (incidence.type == IncidenceType.PERCEPTION && incidence.paymentSchema == PaymentSchema.IMSS) {
+        incidence
+      }
+    }.grep()
+
+    incidencesPerceptionImss ? incidencesPerceptionImss*.amount.sum() : 0
+  }
+
+  BigDecimal getTotalIncidencesImssDeductions() {
+    def incidencesDeductionImss = this.prePaysheetEmployee.incidences.collect { incidence ->
+      if (incidence.type == IncidenceType.DEDUCTION && incidence.paymentSchema == PaymentSchema.IMSS) {
+        incidence
+      }
+    }.grep()
+
+    incidencesDeductionImss ? incidencesDeductionImss*.amount.sum() : 0
+  }
+
+  BigDecimal getTotalIncidencesAssimilablePerceptions() {
+    def incidencesPerceptionAssimilable = this.prePaysheetEmployee.incidences.collect { incidence ->
+      if (incidence.type == IncidenceType.PERCEPTION && incidence.paymentSchema == PaymentSchema.ASSIMILABLE) {
+        incidence
+      }
+    }.grep()
+
+    incidencesPerceptionAssimilable ? incidencesPerceptionAssimilable*.amount.sum() : 0
+  }
+
+  BigDecimal getTotalIncidencesAssimilableDeductions() {
+    def incidencesDeductionAssimilable = this.prePaysheetEmployee.incidences.collect { incidence ->
+      if (incidence.type == IncidenceType.DEDUCTION && incidence.paymentSchema == PaymentSchema.ASSIMILABLE) {
+        incidence
+      }
+    }.grep()
+
+    incidencesDeductionAssimilable ? incidencesDeductionAssimilable*.amount.sum() : 0
+  }
 }
