@@ -129,4 +129,9 @@ class PrePaysheetService {
     prePaysheet
   }
 
+  @Transactional
+  def deleteEmployeeFromPrePaysheet(PrePaysheetEmployee prePaysheetEmployee) {
+    PrePaysheetEmployee.executeUpdate("delete PrePaysheetEmployee employee where employee.id = :id", [id: prePaysheetEmployee.id])
+  }
+
 }
