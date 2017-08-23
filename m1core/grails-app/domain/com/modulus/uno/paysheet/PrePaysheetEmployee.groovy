@@ -15,6 +15,7 @@ class PrePaysheetEmployee {
   String note
 
   static belongsTo = [prePaysheet:PrePaysheet]
+  static hasMany = [incidences:PrePaysheetEmployeeIncidence]
 
   static constraints = {
     bank nullable:true
