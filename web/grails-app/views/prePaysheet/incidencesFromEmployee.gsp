@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%! import com.modulus.uno.paysheet.PrePaysheetStatus %>
 <html>
   <head>
     <meta name="layout" content="main" />
@@ -29,6 +30,7 @@
         </div>
       </div>
 
+      <g:if test="${prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.CREATED}">
       <div class="row">
         <div class="col-md-12">
           <div class="portlet">
@@ -39,6 +41,7 @@
           </div>
         </div>
       </div>
+      </g:if>
 
       <div class="row">
         <div class="col-md-12">
