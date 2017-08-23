@@ -69,10 +69,10 @@
                 <i class="fa fa-minus"></i> Quitar
               </g:link>
               <br/><br/>
-              <g:link action="incidencesFromEmployee" id="${employee.id}" class="btn btn-default">
-                <i class="fa fa-tasks"></i> Incidencias
-              </g:link>
             </g:if>
+            <g:link action="incidencesFromEmployee" id="${employee.id}" class="btn btn-default">
+              <i class="fa fa-tasks"></i> Incidencias
+            </g:link>            
           </td>
         </tr>
         </g:each>
