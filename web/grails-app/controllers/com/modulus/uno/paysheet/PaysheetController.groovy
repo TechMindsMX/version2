@@ -47,4 +47,13 @@ class PaysheetController {
     redirect action:"list"
   }
 
+  def exportToXlsImss(Paysheet paysheet) {
+    log.info "Exporting to Xls only Imss the paysheet: ${paysheet.dump()}"
+    def xls = paysheetService.exportPaysheetToXlsImss(paysheet)
+    xls.with {
+      setResponseHeaders(response, "nominaIMSS-${paysheet.company}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
 }
