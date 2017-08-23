@@ -42,4 +42,9 @@ class PaysheetController {
     redirect action:"list"
   }
 
+  def reject(Paysheet paysheet) {
+    paysheetService.reject(paysheet)
+    redirect action:"list"
+  }
+
 }

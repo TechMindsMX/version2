@@ -1,5 +1,5 @@
 package com.modulus.uno.paysheet
 
 enum PaysheetStatus {
-  CREATED, TO_AUTHORIZE, AUTHORIZED
+  CREATED, TO_AUTHORIZE, AUTHORIZED, REJECTED
 }
