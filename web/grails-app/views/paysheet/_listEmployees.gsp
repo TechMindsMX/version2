@@ -93,6 +93,7 @@
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
+      <g:link class="btn btn-default" action="exportToXlsAssimilable" id="${paysheet.id}">XLS Asimilables</g:link>
       <g:link class="btn btn-default" action="exportToXls" id="${paysheet.id}">XLS</g:link>
     </div>
     </g:if>

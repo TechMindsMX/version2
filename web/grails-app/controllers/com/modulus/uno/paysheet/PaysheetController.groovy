@@ -32,7 +32,7 @@ class PaysheetController {
     log.info "Exporting to Xls the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXls(paysheet)
     xls.with {
-      setResponseHeaders(response, "nomina-${paysheet.company}.xlsx")
+      setResponseHeaders(response, "nomina-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
@@ -51,7 +51,16 @@ class PaysheetController {
     log.info "Exporting to Xls only Imss the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXlsImss(paysheet)
     xls.with {
-      setResponseHeaders(response, "nominaIMSS-${paysheet.company}.xlsx")
+      setResponseHeaders(response, "nominaIMSS-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
+  def exportToXlsAssimilable(Paysheet paysheet) {
+    log.info "Exporting to Xls only assimilable the paysheet: ${paysheet.dump()}"
+    def xls = paysheetService.exportPaysheetToXlsAssimilable(paysheet)
+    xls.with {
+      setResponseHeaders(response, "nominaAsimilables-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
