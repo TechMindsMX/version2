@@ -3,11 +3,15 @@ package com.modulus.uno.paysheet
 import grails.transaction.Transactional
 import pl.touk.excel.export.WebXlsxExporter
 import java.text.SimpleDateFormat
+import java.text.DecimalFormat
+import com.modulus.uno.Bank
+import com.modulus.uno.BankAccount
 
 class PaysheetService {
 
   PaysheetEmployeeService paysheetEmployeeService
   PrePaysheetService prePaysheetService
+  def grailsApplication
 
   @Transactional
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
@@ -111,4 +115,60 @@ class PaysheetService {
     employees
   }
 
+  File generateImssPaymentsDispersionFileForCompanyBankWithChargeAccount(Paysheet paysheet, BankAccount chargeBankAccount) {
+    //obtener la lista de empleados con cuenta bancaria en el mismo banco al que usa la empresa para pagos
+    Bank bank = Bank.findByBankingCodeLike("%${grailsApplication.config.paysheet.paymentBankingCode}")
+    List<PaysheetEmployee> employees = getPaysheetEmployeesWithBankAccountInBank(paysheet.employees, bank)
+    //generar el archivo txt usando la lista
+  }
+
+  List<PaysheetEmployee> getPaysheetEmployeesWithBankAccountInBank(List<PaysheetEmployee> allEmployees, Bank bank) {
+    allEmployees.collect { employee ->
+      if (employee.prePaysheetEmployee.bank==bank) {
+        employee
+      }
+    }    
+  }
+
+  File createTxtImssDispersionFileForSameCompanyBank(List<PaysheetEmployee> employees, BankAccount chargeBankAccount) {
+    File file = File.createTempFile("txtDispersion",".txt")
+    employees.each { employee ->
+      String destinyAccount = "${employee.prePaysheetEmployee.account.padLeft(18,'0')}"
+      String sourceAccount = "${chargeBankAccount.accountNumber.padLeft(18,'0')}"
+      String currency = "MXN"
+      String amount = "${(new DecimalFormat('##0.00').format(employee.totalSalaryEmployee)).padLeft(16,'0')}"
+      String paymentMessage = "PAGO IMSS".padRight(30,' ')
+      file.write("${destinyAccount}${sourceAccount}${currency}${amount}${paymentMessage}\n")
+    }
+    log.info "File created: ${file.text}"
+    file
+  }
+
+
+  /* ---- Layout dispersión cuentas bancomer
+  lCap.u1_Cabono = Format(Hoja3.Cells(lFila, 1).Value, "000000000000000000")
+  lCap.u2_Ccargo = Format(Hoja3.Cells(lFila, 2).Value, "000000000000000000")
+  lCap.u3_Divisa = "MXP"
+  lCap.u4_Importe = Format(Hoja3.Cells(lFila, 3).Value, "0000000000000.00")
+  lCap.u5_Mpago = UCase(RemoveTrash(Hoja3.Cells(lFila, 4).Value)) --> Motivo de pago
+  lCap.u6_CRLF = vbCrLf -->Salto de línea
+  */
+
+  /* ---- Layout dispersión transferencias interbancarias
+  lCap.u1_Cabono = Format(Hoja4.Cells(lFila, 1).Value, "000000000000000000")
+  lCap.u2_Ccargo = Format(Hoja4.Cells(lFila, 2).Value, "000000000000000000")
+  lCap.u3_Divisa = "MXP"
+  lCap.u4_Importe = Format(Hoja4.Cells(lFila, 3).Value, "0000000000000.00")
+  lCap.u5_Titular = UCase(RemoveTrash(Hoja4.Cells(lFila, 4).Value))
+  lCap.u6_Tcuenta = "40"
+  lCap.u7_Nbanco = Mid(Hoja4.Cells(lFila, 1).Value, 1, 3)
+  lCap.u8_Mpago = UCase(RemoveTrash(Hoja4.Cells(lFila, 5).Value))
+  lCap.u9_Refnum = Format(Hoja4.Cells(lFila, 6).Value, "0000000")
+  lCap.u10_Disp = UCase(RemoveTrash(Hoja4.Cells(lFila, 7).Value))
+  lCap.u11_CRLF = vbCrLf
+  */
+
+  // |ARVIZU ESTRADA MARTIN         |
+  // |BERNABE CAMPOS JOEL           |
+  // 072180004686814140000000000105737036MXP0000000001022.60ARVIZU ESTRADA MARTIN         40072FAP BOSQ AZTEX INTER S21      0020617H
 }
