@@ -1,4 +1,5 @@
 <%! import com.modulus.uno.paysheet.PaysheetStatus %>
+<%! import com.modulus.uno.paysheet.PaymentSchema %>
 <div class="portlet portlet-default">
   <div class="portlet-heading">
     <div class="portlet-title">
@@ -91,13 +92,54 @@
 
   <div class="row">
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED}">
-    <div class="col-md-12 text-right">
-      <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
-      <g:link class="btn btn-default" action="exportToXlsAssimilable" id="${paysheet.id}">XLS Asimilables</g:link>
-      <g:link class="btn btn-default" action="exportToXls" id="${paysheet.id}">XLS</g:link>
-    </div>
+      <div class="col-md-4">
+        <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED}">
+          <a data-toggle="collapse" role="button" href="#paymentDispersion" class="btn btn-primary" aria-expanded="false" aria-controls="paymentDispersion">Dispersar Pagos</a>
+
+        </g:if>      
+      </div>
+      <div class="col-md-8 text-right">
+        <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
+        <g:link class="btn btn-default" action="exportToXlsAssimilable" id="${paysheet.id}">XLS Asimilables</g:link>
+        <g:link class="btn btn-default" action="exportToXls" id="${paysheet.id}">XLS</g:link>
+      </div>
     </g:if>
   </div>
-
-</div>
-
+  <div class="row">&nbsp;</div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="collapse" id="paymentDispersion">
+        <div class="well">
+          <g:form action="generatePaymentDispersion" id="${paysheet.id}">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Cuenta Origen de Dispersión:</label>
+                <g:select class="form-control" name="chargeBankAccountId" from="${chargeBanksAccounts}" required="" optionKey="id"/>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Esquema de Pago</label>
+                <g:select class="form-control" name="paymentSchema" from="${PaymentSchema.values()}"/>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Modo de Transferencia</label>
+                <g:select class="form-control" name="dispersionWay" from="${[[key:'SameBank', value:'MISMO BANCO'], [key:'InterBank', value:'INTERBANCARIO']]}" optionKey="key" optionValue="value"/>
+              </div>
+            </div>            
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-right">
+              <div class="form-group"> 
+                <button type="submit" class="btn btn-default">Generar Dispersión</button>
+              </div>
+            </div>
+          </div>
+          </g:form>
+        </div>
+      </div>
+    </div>
+  </div>
