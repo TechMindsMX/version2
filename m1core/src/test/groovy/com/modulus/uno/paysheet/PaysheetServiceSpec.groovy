@@ -46,7 +46,7 @@ class PaysheetServiceSpec extends Specification {
     when:
       def result = service.createTxtImssDispersionFileForSameCompanyBank(employees, chargeBankAccount)
     then:
-      result.text == "000EmployeeAccount0000CompanyAccountMXN0000000004200.00PAGO IMSS                     \n"
+      result.text == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00PAGO IMSS                     \n"
   }
 
   private PaysheetEmployee createPaysheetEmployee() {
