@@ -12,7 +12,7 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet
+    respond paysheet, model:[chargeBanksAccounts: paysheetService.getBanksAccountsToPay(paysheet)]
   }
 
   def list() {
@@ -65,4 +65,12 @@ class PaysheetController {
     }
   }
 
+  def generatePaymentDispersion(Paysheet paysheet) {
+    log.info "Generating txt payments dispersion file for schema ${params.paymentSchema}, charge bank account ${params.chargeBankAccountId} and disparsion way ${params.dispersionWay} from paysheet ${paysheet.id}"
+    File txtDispersion = paysheetService."generate${params.paymentSchema}${params.dispersionWay}FromPaysheet"(paysheet, params.chargeBankAccountId.toLong())
+    response.setHeader "Content-disposition", "attachment; filename=dispersion-nomina${paysheet.id}-${params.paymentSchema}-${params.dispersionWay}.txt"
+    response.contentType = 'text-plain'
+    response.outputStream << txtDispersion.text
+    response.outputStream.flush()
+  }
 }
