@@ -135,19 +135,46 @@ class PaysheetService {
   }
 
   File createTxtImssDispersionFileForSameCompanyBank(List<PaysheetEmployee> employees, BankAccount chargeBankAccount) {
-    log.info "Payment dispersion for employees: ${employees}"
+    log.info "Payment dispersion same bank for employees: ${employees}"
     File file = File.createTempFile("txtDispersion",".txt")
     employees.each { employee ->
-      log.info "Payment dispersion record for employee: ${employee?.dump()}"
+      log.info "Payment dispersion same bank record for employee: ${employee?.dump()}"
       String destinyAccount = "${employee.prePaysheetEmployee.account.padLeft(18,'0')}"
       String sourceAccount = "${chargeBankAccount.accountNumber.padLeft(18,'0')}"
       String currency = "MXN"
       String amount = "${(new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')}"
-      String paymentMessage = "PAGO IMSS".padRight(30,' ')
+      String paymentMessage = "DEP SS ${employee.paysheet.id}".padRight(30,' ')
       file.append("${destinyAccount}${sourceAccount}${currency}${amount}${paymentMessage}\n")
     }
     log.info "File created: ${file.text}"
     file
   }
 
+  File createTxtImssDispersionFileForInterBank(List<PaysheetEmployee> employees, BankAccount chargeBankAccount) {
+    log.info "Payment dispersion interbank for employees: ${employees}"
+    File file = File.createTempFile("txtDispersion",".txt")
+    employees.each { employee ->
+      log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
+      String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
+      String sourceAccount = chargeBankAccount.accountNumber.padLeft(18,'0')
+      String currency = "MXN"
+      String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).padLeft(16,'0')
+      String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
+      String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
+      String typeAccount = "40"
+      String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
+      String paymentMessage = "TRN SS ${employee.paysheet.id}".padRight(30,' ')
+      String reference = new Date().format("ddMMyy").padLeft(7,'0')
+      String disp = "H"      
+      file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${paymentMessage}${reference}${disp}\n")
+    }
+    log.info "File created: ${file.text}"
+    file
+  }
+
+  String clearSpecialCharsFromString(String text) {
+    text.toUpperCase().replace("Ñ","N").replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U").replace("Ü","U").replaceAll("[^a-zA-Z0-9 ]","")
+  }
+
+  // 072180004686814140000000000105737036MXP0000000001022.60ARVIZU ESTRADA MARTIN         40072FAP BOSQ AZTEX INTER S21      0020617H
 }
