@@ -139,10 +139,10 @@ class PaysheetService {
     File file = File.createTempFile("txtDispersion",".txt")
     employees.each { employee ->
       log.info "Payment dispersion same bank record for employee: ${employee?.dump()}"
-      String destinyAccount = "${employee.prePaysheetEmployee.account.padLeft(18,'0')}"
-      String sourceAccount = "${chargeBankAccount.accountNumber.padLeft(18,'0')}"
+      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
+      String sourceAccount = chargeBankAccount.accountNumber.padLeft(18,'0')
       String currency = "MXN"
-      String amount = "${(new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')}"
+      String amount = (new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')
       String paymentMessage = "DEP SS ${employee.paysheet.id}".padRight(30,' ')
       file.append("${destinyAccount}${sourceAccount}${currency}${amount}${paymentMessage}\n")
     }
