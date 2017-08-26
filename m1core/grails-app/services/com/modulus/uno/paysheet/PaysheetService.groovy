@@ -176,5 +176,4 @@ class PaysheetService {
     text.toUpperCase().replace("Ñ","N").replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U").replace("Ü","U").replaceAll("[^a-zA-Z0-9 ]","")
   }
 
-  // 072180004686814140000000000105737036MXP0000000001022.60ARVIZU ESTRADA MARTIN         40072FAP BOSQ AZTEX INTER S21      0020617H
 }
