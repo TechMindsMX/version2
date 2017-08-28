@@ -3,6 +3,7 @@ package com.modulus.uno.paysheet
 import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
+import com.modulus.uno.BusinessException
 import java.math.RoundingMode
 import grails.transaction.Transactional
 
@@ -15,6 +16,10 @@ class BreakdownPaymentEmployeeService {
   @Transactional
   BreakdownPaymentEmployee generateBreakdownPaymentEmployee(PaysheetEmployee paysheetEmployee) {
     EmployeeLink employee = EmployeeLink.findByEmployeeRef(paysheetEmployee.prePaysheetEmployee.rfc)
+    if (!employee) {
+      throw new BusinessException("El empleado de la prenómina con RFC ${paysheetEmployee.prePaysheetEmployee.rfc} ya no fue encontrado en los registros de la empresa")
+    }
+
     BigDecimal integratedDailySalary = getIntegratedDailySalaryForEmployee(employee, paysheetEmployee.paysheet)
     BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
     BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
@@ -45,6 +50,11 @@ class BreakdownPaymentEmployeeService {
   BigDecimal getIntegratedDailySalaryForEmployee(EmployeeLink employeeLink, Paysheet paysheet) {
     PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheet.company, paysheet.prePaysheet.paysheetProject)
     DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employeeLink)
+    if (!dataImssEmployee) {
+      log.error "Data Imss for employee not found: ${employeeLink.dump()}"
+      throw new BusinessException("El empleado con RFC ${employeeLink.employeeRef} no tiene los datos del IMSS requeridos")
+    }
+
     (dataImssEmployee.baseImssMonthlySalary / 30 * project.integrationFactor).setScale(2, RoundingMode.HALF_UP)
   }
 

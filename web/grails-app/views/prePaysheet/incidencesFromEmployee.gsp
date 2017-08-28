@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%! import com.modulus.uno.paysheet.PrePaysheetStatus %>
 <html>
   <head>
     <meta name="layout" content="main" />
@@ -18,8 +19,8 @@
       <div class="portlet portlet-default">
         <div class="portlet-heading">
           <div class="row">
-            <div class="col-md-6 text-right">
-              <g:link class="btn btn-default" action="list">Lista</g:link>
+            <div class="col-md-12 text-right">
+              <g:link class="btn btn-default" controller="prePaysheet" action="show" id="${prePaysheetEmployee.prePaysheet.id}">Regresar</g:link>
             </div>
           </div>
         </div>
@@ -29,15 +30,25 @@
         </div>
       </div>
 
+      <g:if test="${prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.CREATED}">
       <div class="row">
         <div class="col-md-12">
-          <g:render template="incidences/addIncidence"/>
+          <div class="portlet">
+            <h2>Agregar incidencia</h2>
+            <g:form controller="prePaysheet" action="addIncidence">
+              <g:render template="incidences/addIncidence"/>
+            </g:form>
+          </div>
         </div>
       </div>
+      </g:if>
 
       <div class="row">
         <div class="col-md-12">
-          <g:render template="incidences/listIncidences"/>
+          <div class="portlet">
+            <h2>Incidencias Registradas</h2>
+            <g:render template="incidences/listIncidences"/>
+          </div>
         </div>
       </div>
 
