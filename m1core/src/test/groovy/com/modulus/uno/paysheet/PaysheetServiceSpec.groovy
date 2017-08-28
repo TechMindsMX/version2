@@ -44,8 +44,10 @@ class PaysheetServiceSpec extends Specification {
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The charge bank account"
       BankAccount chargeBankAccount = new BankAccount(accountNumber:"CompanyAccount").save(validate:false)
+    and:"The payment message"
+      String paymentMessage = "DEP SS 1"
     when:
-      def result = service.createTxtImssDispersionFileForSameCompanyBank(employees, chargeBankAccount)
+      def result = service.createTxtImssDispersionFileForSameCompanyBank(employees, chargeBankAccount, paymentMessage)
     then:
       result.text == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00DEP SS 1                      \n"
   }
@@ -55,8 +57,10 @@ class PaysheetServiceSpec extends Specification {
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The charge bank account"
       BankAccount chargeBankAccount = new BankAccount(accountNumber:"CompanyAccount").save(validate:false)
+    and:"The payment message"
+      String paymentMessage = "TRN SS 1"
     when:
-      def result = service.createTxtImssDispersionFileForInterBank(employees, chargeBankAccount)
+      def result = service.createTxtImssDispersionFileForInterBank(employees, chargeBankAccount, paymentMessage)
     then:
       result.text == "Clabe interbanking0000CompanyAccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H\n"
   }  
