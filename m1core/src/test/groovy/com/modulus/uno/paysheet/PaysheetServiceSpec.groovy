@@ -3,6 +3,7 @@ package com.modulus.uno.paysheet
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import com.modulus.uno.Company
 import com.modulus.uno.BankAccount
@@ -39,31 +40,23 @@ class PaysheetServiceSpec extends Specification {
     prePaysheet
   }
 
-  void "Should create the payment dispersion imss file when charge account is of the company"() {
+  @Unroll
+  void "Should create the payment dispersion #paymentSchema file dispersion way is #dispersionWay"() {
     given:"employees list"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-    and:"The charge bank account"
-      BankAccount chargeBankAccount = new BankAccount(accountNumber:"CompanyAccount").save(validate:false)
-    and:"The payment message"
-      String paymentMessage = "DEP SS 1"
+    and:"The dispersion data"
+      Map dispersionData = [dispersionWay:dispersionWay, chargeAccountNumber:"CompanyAccount", salary:dispersionSalary, paymentMessage:paymentMessage, paymentSchema:paymentSchema]
     when:
-      def result = service.createTxtImssDispersionFileForSameCompanyBank(employees, chargeBankAccount, paymentMessage)
+      def result = service."createTxtDispersionFileFor${dispersionWay}"(employees, dispersionData)
     then:
-      result.text == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00DEP SS 1                      \n"
+      result.text == textResult
+    where:
+    paymentSchema   |   dispersionWay   |   dispersionSalary  |   paymentMessage  || textResult
+    "IMSS"  |   "SameBank"  | "imssSalaryNet" | "DEP ss 1"  || "000EmployeeAccount0000CompanyAccountMXN0000000001200.00DEP SS 1                      \n"
+    "IMSS"  |   "InterBank" |   "imssSalaryNet" |   "TRN ss 1" || "Clabe interbanking0000CompanyAccountMXN0000000001200.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H\n"
+    "Asimilable"  |   "SameBank"  | "salaryAssimilable" | "DEP ias 1"  || "000EmployeeAccount0000CompanyAccountMXN0000000003000.00DEP IAS 1                     \n"
+    "Asimilable"  |   "InterBank" |   "salaryAssimilable" |   "TRN ias 1" || "Clabe interbanking0000CompanyAccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN IAS 1                     ${new Date().format('ddMMyy').padLeft(7,'0')}H\n"
   }
-
-  void "Should create the payment dispersion imss file for interbankings"() {
-    given:"employees list"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-    and:"The charge bank account"
-      BankAccount chargeBankAccount = new BankAccount(accountNumber:"CompanyAccount").save(validate:false)
-    and:"The payment message"
-      String paymentMessage = "TRN SS 1"
-    when:
-      def result = service.createTxtImssDispersionFileForInterBank(employees, chargeBankAccount, paymentMessage)
-    then:
-      result.text == "Clabe interbanking0000CompanyAccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H\n"
-  }  
 
   private PaysheetEmployee createPaysheetEmployee() {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
