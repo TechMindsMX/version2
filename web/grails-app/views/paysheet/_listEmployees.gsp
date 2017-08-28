@@ -112,24 +112,32 @@
         <div class="well">
           <g:form action="generatePaymentDispersion" id="${paysheet.id}">
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="form-group">
                 <label>Cuenta Origen de Dispersión:</label>
                 <g:select class="form-control" name="chargeBankAccountId" from="${chargeBanksAccounts}" required="" optionKey="id"/>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="form-group">
                 <label>Esquema de Pago</label>
                 <g:select class="form-control" name="paymentSchema" from="${PaymentSchema.values()}"/>
               </div>
             </div>
-            <div class="col-md-4">
+          </div>
+          <div class="row">
+            <div class="col-md-6">
               <div class="form-group">
                 <label>Modo de Transferencia</label>
                 <g:select class="form-control" name="dispersionWay" from="${[[key:'SameBank', value:'MISMO BANCO'], [key:'InterBank', value:'INTERBANCARIO']]}" optionKey="key" optionValue="value"/>
               </div>
-            </div>            
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Mensaje del Pago</label>
+                <input class="form-control" type="text" name="paymentMessage" maxlength="30" pattern="[A-Za-z0-9\s]{1,30}" title="Sólo se permiten letras (sin acentos y sin 'ñ'), números y espacios en blanco" required="" />
+              </div>
+            </div>
           </div>
           <div class="row">
             <div class="col-md-12 text-right">
