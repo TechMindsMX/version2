@@ -68,6 +68,10 @@
               <g:link action="deleteEmployee" id="${employee.id}" class="btn btn-danger">
                 <i class="fa fa-minus"></i> Quitar
               </g:link>
+              <br/><br/>
+              <g:link action="incidencesFromEmployee" id="${employee.id}" class="btn btn-default">
+                <i class="fa fa-tasks"></i> Incidencias
+              </g:link>
             </g:if>
           </td>
         </tr>
@@ -91,4 +95,3 @@
   </div>
 
 </div>
-
