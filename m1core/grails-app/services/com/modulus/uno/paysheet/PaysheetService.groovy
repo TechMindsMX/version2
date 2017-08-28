@@ -126,9 +126,24 @@ class PaysheetService {
     createTxtImssDispersionFileForSameCompanyBank(employees, chargeBankAccount)
   }
 
+  File generateIMSSInterBankFromPaysheet(Paysheet paysheet, Long chargeBankAccountId) {
+    BankAccount chargeBankAccount = BankAccount.get(chargeBankAccountId)
+    Bank bank = Bank.findByBankingCodeLike("%${grailsApplication.config.paysheet.paymentBankingCode}")
+    List<PaysheetEmployee> employees = getPaysheetEmployeesWithBankAccountNotInBank(paysheet.employees, bank)
+    createTxtImssDispersionFileForInterBank(employees, chargeBankAccount)
+  }
+
   List<PaysheetEmployee> getPaysheetEmployeesWithBankAccountInBank(def allEmployees, Bank bank) {
     allEmployees.collect { employee ->
       if (employee.prePaysheetEmployee.bank==bank) {
+        employee
+      }
+    }.grep()
+  }
+
+  List<PaysheetEmployee> getPaysheetEmployeesWithBankAccountNotInBank(def allEmployees, Bank bank) {
+    allEmployees.collect { employee ->
+      if (employee.prePaysheetEmployee.bank!=bank) {
         employee
       }
     }.grep()
