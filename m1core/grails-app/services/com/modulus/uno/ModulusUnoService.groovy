@@ -80,6 +80,7 @@ class ModulusUnoService {
 
 
     BigDecimal amount = cashOutOrder.amount.setScale(2, RoundingMode.HALF_UP)
+    String payerName = cashOutOrder.company.bussinessName.length() > 40 ? cashOutOrder.company.bussinessName.substring(0,40) : cashOutOrder.company.bussinessName
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
@@ -90,11 +91,11 @@ class ModulusUnoService {
       montoDelPago: amount,
       tipoDelPago: "1",
       tipoDeLaCuentaDelOrdenante: "",
-      nombreDelOrdenante: cashOutOrder.company.bussinessName,
+      nombreDelOrdenante: payerName,
       cuentaDelOrdenante: "",
       rfcCurpDelOrdenante: "",
       tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
-      nombreDelBeneficiario: cashOutOrder.company.bussinessName,
+      nombreDelBeneficiario: payerName,
       cuentaDelBeneficiario: cashOutOrder.account.clabe,
       rfcCurpDelBeneficiario: "NA",
       emailDelBeneficiario: getMailFromLegalRepresentatitveCompany(cashOutOrder.company),
@@ -166,6 +167,8 @@ class ModulusUnoService {
 
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
     String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
+    String payerName = order.company.bussinessName.length() > 40 ? order.company.bussinessName.substring(0,40) : order.company.bussinessName
+    String beneficiaryName = order.providerName.length() > 40 ? order.providerName.substring(0,40) : order.providerName
     def data = [
         institucionContraparte: order.bankAccount.banco.bankingCode,
         empresa: order.company.accounts?.first()?.aliasStp,
@@ -176,11 +179,11 @@ class ModulusUnoService {
         montoDelPago: amountToPay.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
-        nombreDelOrdenante: order.company.bussinessName,
+        nombreDelOrdenante: payerName,
         cuentaDelOrdenante: "",
         rfcCurpDelOrdenante: "",
         tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
-        nombreDelBeneficiario: order.providerName,
+        nombreDelBeneficiario: beneficiaryName,
         cuentaDelBeneficiario: order.bankAccount.clabe,
         rfcCurpDelBeneficiario: "NA",
         emailDelBeneficiario: "mailBeneficiary@mail.com",
