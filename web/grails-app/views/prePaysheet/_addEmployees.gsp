@@ -1,4 +1,8 @@
 <style>
+	th {
+	  text-align:center;
+	}
+	
   th, td {
     white-space: nowrap;
     width: 1px;
