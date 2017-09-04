@@ -20,7 +20,7 @@ class SignService {
     "conceptoDelPago2","claveDelCatalogoDeUsuario1",
     "claveDelCatalogoDeUsuario2","claveDelPago",
     "referenciaDeCobranza","referenciaNumerica",
-    "tipoDeOperación","topologia","usuario",
+    "tipoDeOperacion","topologia","usuario",
     "medioDeEntrega","prioridad","iva"]
     if (!(listKeys == data*.key.intersect(listKeys))){
       throw new SignException("Datos faltantes para la generación de la firma")
