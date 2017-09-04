@@ -166,7 +166,7 @@ class ModulusUnoService {
     }
 
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
-    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
+    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40).trim() : fullConcept.trim()
     String payerName = order.company.bussinessName.length() > 40 ? order.company.bussinessName.substring(0,40).trim() : order.company.bussinessName.trim()
     String beneficiaryName = order.providerName.length() > 40 ? order.providerName.substring(0,40).trim() : order.providerName.trim()
     def data = [
