@@ -80,7 +80,7 @@ class ModulusUnoService {
 
 
     BigDecimal amount = cashOutOrder.amount.setScale(2, RoundingMode.HALF_UP)
-    String payerName = cashOutOrder.company.bussinessName.length() > 40 ? cashOutOrder.company.bussinessName.substring(0,40) : cashOutOrder.company.bussinessName
+    String payerName = cashOutOrder.company.bussinessName.length() > 40 ? cashOutOrder.company.bussinessName.substring(0,40).trim() : cashOutOrder.company.bussinessName.trim()
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
@@ -166,9 +166,9 @@ class ModulusUnoService {
     }
 
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
-    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
-    String payerName = order.company.bussinessName.length() > 40 ? order.company.bussinessName.substring(0,40) : order.company.bussinessName
-    String beneficiaryName = order.providerName.length() > 40 ? order.providerName.substring(0,40) : order.providerName
+    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40).trim() : fullConcept.trim()
+    String payerName = order.company.bussinessName.length() > 40 ? order.company.bussinessName.substring(0,40).trim() : order.company.bussinessName.trim()
+    String beneficiaryName = order.providerName.length() > 40 ? order.providerName.substring(0,40).trim() : order.providerName.trim()
     def data = [
         institucionContraparte: order.bankAccount.banco.bankingCode,
         empresa: order.company.accounts?.first()?.aliasStp,
