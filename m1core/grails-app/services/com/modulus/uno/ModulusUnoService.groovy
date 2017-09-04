@@ -80,6 +80,7 @@ class ModulusUnoService {
 
 
     BigDecimal amount = cashOutOrder.amount.setScale(2, RoundingMode.HALF_UP)
+    String payerName = cashOutOrder.company.bussinessName.length() > 40 ? cashOutOrder.company.bussinessName.substring(0,40).trim() : cashOutOrder.company.bussinessName.trim()
     def data = [
       institucionContraparte: cashOutOrder.account.banco.bankingCode,
       empresa: cashOutOrder.company.accounts?.first()?.aliasStp,
@@ -87,14 +88,14 @@ class ModulusUnoService {
       folioOrigen: "",
       claveDeRastreo: "${new Date().time}",
       institucionOperante: grailsApplication.config.stp.institutionOperation,
-      montoDelPago: amount,
+      montoDelPago: amount.setScale(2,RoundingMode.HALF_UP),
       tipoDelPago: "1",
       tipoDeLaCuentaDelOrdenante: "",
-      nombreDelOrdenante: cashOutOrder.company.bussinessName,
+      nombreDelOrdenante: payerName,
       cuentaDelOrdenante: "",
       rfcCurpDelOrdenante: "",
       tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
-      nombreDelBeneficiario: cashOutOrder.company.bussinessName,
+      nombreDelBeneficiario: payerName,
       cuentaDelBeneficiario: cashOutOrder.account.clabe,
       rfcCurpDelBeneficiario: "NA",
       emailDelBeneficiario: getMailFromLegalRepresentatitveCompany(cashOutOrder.company),
@@ -109,7 +110,7 @@ class ModulusUnoService {
       claveDelPago: "",
       referenciaDeCobranza: "",
       referenciaNumerica: "1${new Date().format("yyMMdd")}",
-      tipoDeOperación: "",
+      tipoDeOperacion: "",
       topologia: "",
       usuario: "",
       medioDeEntrega: "",
@@ -165,7 +166,9 @@ class ModulusUnoService {
     }
 
     String fullConcept = "${cashOutConcept.PurchaseOrder} ID:${order.id}, ${order.providerName.toUpperCase()}"
-    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40) : fullConcept
+    String adjustConcept = fullConcept.length() > 40 ? fullConcept.substring(0,40).trim() : fullConcept.trim()
+    String payerName = order.company.bussinessName.length() > 40 ? order.company.bussinessName.substring(0,40).trim() : order.company.bussinessName.trim()
+    String beneficiaryName = order.providerName.length() > 40 ? order.providerName.substring(0,40).trim() : order.providerName.trim()
     def data = [
         institucionContraparte: order.bankAccount.banco.bankingCode,
         empresa: order.company.accounts?.first()?.aliasStp,
@@ -176,11 +179,11 @@ class ModulusUnoService {
         montoDelPago: amountToPay.setScale(2, RoundingMode.HALF_UP),
         tipoDelPago: "1",
         tipoDeLaCuentaDelOrdenante: "",
-        nombreDelOrdenante: order.company.bussinessName,
+        nombreDelOrdenante: payerName,
         cuentaDelOrdenante: "",
         rfcCurpDelOrdenante: "",
         tipoDeCuentaDelBeneficiario: grailsApplication.config.stp.typeAccount,
-        nombreDelBeneficiario: order.providerName,
+        nombreDelBeneficiario: beneficiaryName,
         cuentaDelBeneficiario: order.bankAccount.clabe,
         rfcCurpDelBeneficiario: "NA",
         emailDelBeneficiario: "mailBeneficiary@mail.com",
@@ -195,7 +198,7 @@ class ModulusUnoService {
         claveDelPago: "",
         referenciaDeCobranza: "",
         referenciaNumerica: "1${new Date().format("yyMMdd")}",
-        tipoDeOperación: "",
+        tipoDeOperacion: "",
         topologia: "",
         usuario: "",
         medioDeEntrega: "",

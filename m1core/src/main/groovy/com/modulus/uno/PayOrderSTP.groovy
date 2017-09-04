@@ -36,7 +36,7 @@ class PayOrderSTP implements Validateable {
   String claveDelCatalogoDeUsuario2
   String claveDelPago
   String referenciaDeCobranza
-  String tipoDeOperación
+  String tipoDeOperacion
   String topologia
   String usuario
   String medioDeEntrega
@@ -77,7 +77,7 @@ class PayOrderSTP implements Validateable {
     claveDelCatalogoDeUsuario2 blank:true, nullable:false
     claveDelPago blank:true, nullable:false
     referenciaDeCobranza blank:true, nullable:false
-    tipoDeOperación blank:true, nullable:false
+    tipoDeOperacion blank:true, nullable:false
     topologia blank:true, nullable:false
     usuario blank:true, nullable:false
     medioDeEntrega blank:true, nullable:false
