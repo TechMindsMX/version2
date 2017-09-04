@@ -21,7 +21,7 @@
           <div id="horizontalFormExample" class="panel-collapse collapse in">
             <div class="portlet-body">
               <g:if test="${flash.message}">
-              <div class="message" role="status">${flash.message}</div>
+              <div class="alert alert-warning">${flash.message}</div>
               </g:if>
               <g:hasErrors bean="${this.businessEntity}">
                 <ul class="errors alert alert-danger" role="alert">
@@ -32,6 +32,7 @@
               </g:hasErrors>
               <g:form resource="${this.businessEntity}" method="PUT">
                 <g:hiddenField name="version" value="${this.businessEntity?.version}" />
+                <g:hiddenField name="backRfc" value="${this.businessEntity?.rfc}" />
                 <fieldset class="form">
                   <g:render template="form" bean="${businessEntity}"/>
                 </fieldset>
