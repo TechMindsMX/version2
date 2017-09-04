@@ -2,7 +2,7 @@
 <%! import com.modulus.uno.paysheet.PaymentSchema %>
 
 <style>
-  #table th,td {
+  th,td {
     white-space: nowrap;
     width: 1px;
   }

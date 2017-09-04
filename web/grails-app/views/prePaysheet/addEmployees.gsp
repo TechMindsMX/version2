@@ -24,7 +24,8 @@
         <div class="portlet-heading">
           <div class="row">
             <div class="col-md-12 text-right">
-              <g:link class="btn btn-default" action="list">Cancelar</g:link>
+              <g:link class="btn btn-default" action="show" id="${prePaysheet.id}">Terminar</g:link>
+              <g:link class="btn btn-default" action="list">Lista</g:link>
             </div>
           </div>
         </div>
