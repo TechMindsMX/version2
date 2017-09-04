@@ -56,4 +56,8 @@ databaseChangeLog = {
   include file: 'adding-status-to-payment-to-purchase.groovy'
   include file: 'rename-column-ieps-to-iva-retention-in-sale-order-item.groovy'
   include file: 'drop-domain-payment-m1-emitter.groovy'
+  include file: 'create-menu-domains.groovy'
+  include file: 'create-menu-link-domain.groovy'
+  include file: 'adding-attribute-to-menus.groovy'
+  include file: 'adding-default-menus-for-user-m1.groovy'
 }
