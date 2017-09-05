@@ -1,6 +1,8 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
 
 import grails.transaction.Transactional
+
+import com.modulus.uno.Company
 
 @Transactional(readOnly = true)
 class PrePaysheetController {
