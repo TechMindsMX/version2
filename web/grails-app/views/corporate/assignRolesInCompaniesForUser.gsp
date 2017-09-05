@@ -30,7 +30,11 @@
             <tr>
               <th></th>
               <g:each status="i" in="${roles}" var="role">
-                <th><g:message code="${role.authority.toLowerCase()}" /></th>
+                <th>
+                  <a role="button" data-toggle="popover" data-trigger="hover" data-placement="top" title="${message(code:role.authority.toLowerCase())}" data-content="${message(code:role.authority.toLowerCase())}" class="information">
+                    <g:message code="${role.authority.toLowerCase()}" />
+                  </a>
+                </th>
               </g:each>
             </tr>
           </thead>
