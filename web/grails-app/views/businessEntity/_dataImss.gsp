@@ -9,7 +9,7 @@
           <g:if test="${!dataImssEmployee}">
           <div class="property-value" aria-labelledby="company-label">
             <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-            <g:link action="create" controller="dataImssEmployee" params="[businessEntity:businessEntity.id]" class="btn btn-default">Registrar</g:link>
+            <g:link action="create" controller="dataImssEmployee" params="[businessEntityId:businessEntity.id]" class="btn btn-default">Registrar</g:link>
             </sec:ifAnyGranted>
           </div>
           </g:if>
@@ -19,19 +19,21 @@
   </div>
   <g:if test="${dataImssEmployee}">
   <div class="panel-body">
-    <dl class="dl-horizontal">
+    <dl>
+      <dt>Número de Seguro Social</dt>
+      <dd>${dataImssEmployee.nss}</dd>
       <dt>Fecha de Alta</dt>
-      <dd>dd-MM-yyyy</dd>
+      <dd><g:formatDate date="${dataImssEmployee.registrationDate}" format="dd-MM-yyyy"/></dd>
       <dt>Salario Base Mensual</dt>
-      <dd>$ 00,000.00</dd>
+      <dd>${modulusuno.formatPrice(number:dataImssEmployee.baseImssMonthlySalary)}</dd>
       <dt>Salario Neto Mensual</dt>
-      <dd>$ 00,000.00</dd>
+      <dd>${modulusuno.formatPrice(number:dataImssEmployee.netMonthlySalary)}</dd>
       <dt>Prima vacacional (%)</dt>
-      <dd>00</dd>
-      <dt>Días de Aguinaldo</dd>
-      <dd>00</dd>
+      <dd><g:formatNumber number="${dataImssEmployee.holidayBonusRate}" type="number" maxFractionDigits="2"/></dd>
+      <dt>Días de Aguinaldo</dt>
+      <dd><g:formatNumber number="${dataImssEmployee.annualBonusDays}" type="number" maxFractionDigits="2"/></dd>
       <dt>Periodicidad de pago</dt>
-      <dd>SEMANAL</dd>
+      <dd>${dataImssEmployee.paymentPeriod}</dd>
     </dl>
   </div>
   <div class="panel-footer">

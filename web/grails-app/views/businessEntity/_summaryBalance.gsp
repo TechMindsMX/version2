@@ -25,10 +25,10 @@
         </thead>
         <tbody>
           <tr>
-            <td>${modulusuno.formatPrice(number:totalSoldForClient)}</td>
-            <td>${modulusuno.formatPrice(number:totalSoldForClientStatusConciliated)}</td>
-            <td>${modulusuno.formatPrice(number:paymentsFromClientToPay)}</td>
-            <td>${modulusuno.formatPrice(number:totalPending)}</td>
+            <td>${modulusuno.formatPrice(number:clientData.totalSoldForClient)}</td>
+            <td>${modulusuno.formatPrice(number:clientData.totalSoldForClientStatusConciliated)}</td>
+            <td>${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}</td>
+            <td>${modulusuno.formatPrice(number:clientData.totalPending)}</td>
           </tr>
         </tbody>
       </table>
