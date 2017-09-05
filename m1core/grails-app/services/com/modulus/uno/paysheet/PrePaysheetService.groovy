@@ -122,4 +122,11 @@ class PrePaysheetService {
     employees
   }
 
+  @Transactional
+  PrePaysheet changeStatusToProcessed(PrePaysheet prePaysheet) {
+    prePaysheet.status = PrePaysheetStatus.PROCESSED
+    prePaysheet.save()
+    prePaysheet
+  }
+
 }
