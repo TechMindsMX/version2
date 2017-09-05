@@ -78,4 +78,14 @@ class PrePaysheetController {
     prePaysheetService.sendPrePaysheetToProcess(prePaysheet)
     redirect action:"list"
   }
+
+  def exportToXls(PrePaysheet prePaysheet) {
+    log.info "Exporting to Xls the prePaysheet: ${prePaysheet.dump()}"
+    def xls = prePaysheetService.exportPrePaysheetToXls(prePaysheet)
+    xls.with {
+      setResponseHeaders(response, "prenomina-${prePaysheet.company}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
 }
