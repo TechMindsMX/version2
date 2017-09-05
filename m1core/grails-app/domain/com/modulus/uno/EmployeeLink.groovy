@@ -12,6 +12,13 @@ class EmployeeLink {
 
   static constraints = {
     number nullable:true
+    curp blank:true, size:18..18, validator: { val, obj ->
+        if (val.substring(0,10) == obj.employeeRef.substring(0,10)) {
+          return true
+        } else {
+          return false
+        }
+      }
   }
 
 }

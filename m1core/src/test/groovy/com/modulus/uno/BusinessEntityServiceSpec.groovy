@@ -7,7 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
-@Mock([BusinessEntity, ComposeName, ClientLink, Company])
+@Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink, BankAccount, DataImssEmployee])
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
@@ -18,6 +18,8 @@ class BusinessEntityServiceSpec extends Specification {
   SaleOrderService saleOrderService = Mock(SaleOrderService)
   PaymentService paymentService = Mock(PaymentService)
   XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService = Mock(XlsLayoutsBusinessEntityService)
+  EmployeeService employeeService = Mock(EmployeeService)
+  DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
 
   def setup() {
     names.removeAll()
@@ -27,6 +29,8 @@ class BusinessEntityServiceSpec extends Specification {
     service.saleOrderService = saleOrderService
     service.paymentService = paymentService
     service.xlsLayoutsBusinessEntityService = xlsLayoutsBusinessEntityService
+    service.employeeService = employeeService
+    service.dataImssEmployeeService = dataImssEmployeeService
   }
 
   @Unroll
@@ -127,4 +131,66 @@ class BusinessEntityServiceSpec extends Specification {
       "PROVEEDOR"         ||  0           | 0                   | 1             | 0
       "EMPLEADO"          ||  0           | 0                   | 0             | 1
   }
+
+  void "Should create a compose name for row employee from file massive registration"() {
+    given:"The row"
+      Map rowEmployee = [PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre"]
+    and:"A businessEntity"
+      BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+    when:
+      def be = service.createComposeNameForBusinessEntityFromRowEmployee(businessEntity, rowEmployee)
+    then:
+      be.names[0].value == "ApPaterno"
+      be.names[0].type == NameType.APELLIDO_PATERNO
+      be.names[1].value == "ApMaterno"
+      be.names[1].type == NameType.APELLIDO_MATERNO
+      be.names[2].value == "Nombre"
+      be.names[2].type == NameType.NOMBRE
+  }
+
+  void "Should create a business entity for row employee from file massive"() {
+    given:"The row employee"
+      Map rowEmployee = [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre"]
+    when:
+      def be = service.createBusinessEntityForRowEmployee(rowEmployee)
+    then:
+      be.id
+      be.rfc == "PAGC770214422"
+  }
+
+  void "Should not create a business entity object for row employee when RFC is wrong"() {
+    given:"The row employee"
+      Map rowEmployee = [RFC:"XYZ123456ABC", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre"]
+    when:
+      def be = service.createBusinessEntityForRowEmployee(rowEmployee)
+    then:
+      be.hasErrors()
+  }
+
+  @Unroll
+  void "Should obtain #expected for row employee #row"() {
+    given:"A company"
+      Company company = new Company(rfc:"RFCCompany").save(validate:false)
+    and:"The row employee"
+      Map rowEmployee = row
+    and:"Find employee"
+      employeeService.employeeAlreadyExistsInCompany(_,_) >> existingEmployee
+      employeeService.createEmployeeForRowEmployee(_,_) >> employeeLink
+      bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(_,_) >> bankAccount
+      dataImssEmployeeService.createDataImssForRowEmployee(_,_) >> dataImss
+    when:
+      def result = service.saveEmployeeImportData(rowEmployee, company)
+    then:
+      result == expected
+    where:
+      row       | existingEmployee    | employeeLink    |   bankAccount | dataImss   ||  expected
+      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false) | null  | null || "Error: RFC"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   new EmployeeLink().save(validate:false)   |  null | null  | null  || "Error: el RFC del empleado ya existe"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   null   |  null | null | null  || "Error: CURP"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456"]  |   null   |  new EmployeeLink().save(validate:false) | null | null || "Error: datos bancarios"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   null   |  new EmployeeLink().save(validate:false) | new BankAccount().save(validate:false) | null  || "Error: datos de IMSS"
+
+      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   null   | new EmployeeLink().save(validate:false)  | new BankAccount().save(validate:false) | new DataImssEmployee().save(validate:false) || "Registrado"
+  }
+
 }
