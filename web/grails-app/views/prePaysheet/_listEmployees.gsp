@@ -1,4 +1,20 @@
 <%! import com.modulus.uno.paysheet.PrePaysheetStatus %>
+
+<style>
+	th {
+	  text-align:center;
+	}
+	
+  th, td {
+    white-space: nowrap;
+    width: 1px;
+  }
+
+	.fixwidth {
+	  width: 300px;
+	}
+</style>
+
 <div class="portlet portlet-default">
   <div class="row">
     <div class="col-md-2 col-md-offset-10 text-right">
@@ -17,50 +33,35 @@
 
   <div class="portlet-body">
     <div class="table-responsive">
-      <table class="table">
+      <table class="table table-striped table-condensed">
         <tr>
-          <th width="60%">Empleado/Datos Bancarios</th>
-          <th width="10%">Monto</th>
-          <th width="25%">Observaciones</th>
-          <th width="5%"></th>
+          <th>No. Empl.</th>
+          <th>Nombre</th>
+          <th>RFC</th>
+					<th>CURP</th>
+					<th>NSS</th>
+					<th>Cód. Banco</th>
+					<th>Banco</th>
+					<th>Clabe</th>
+					<th>Cuenta</th>
+					<th>Tarjeta</th>
+					<th>Neto a Pagar</th>
+					<th>Observaciones</th>
+          <th></th>
         </tr>
 
         <g:each in="${prePaysheet.employees.sort{ it.nameEmployee }}" var="employee">
         <tr>
-          <td>
-            <div class="table-responsive">
-            <table class="table">
-              <tr>
-                <td><strong>No. Empl</strong></td>
-                <td><strong>Nombre</strong></td>
-                <td><strong>RFC</strong></td>
-                <td><strong>CURP</strong></td>
-              </tr>
-              <tr>
-                <td>${employee.numberEmployee}</td>
-                <td>${employee.nameEmployee}</td>
-                <td>${employee.rfc}</td>
-                <td>${employee.curp}</td>
-              </tr>
-            </table>
-            <table class="table">
-              <tr>
-                <td><strong>Código Banco</strong></td>
-                <td><strong>Banco</strong></td>
-                <td><strong>Clabe</strong></td>
-                <td><strong>Cuenta</strong></td>
-                <td><strong>Tarjeta</strong></td>
-              </tr>
-              <tr>
-                <td>${employee.bank?.bankingCode}</td>
-                <td>${employee.bank?.name}</td>
-                <td>${employee.clabe}</td>
-                <td>${employee.account}</td>
-                <td>${employee.cardNumber}</td>
-              </tr>
-            </table>
-            </div>
-          </td>
+					<td>${employee.numberEmployee}</td>
+        	<td>${employee.nameEmployee}</td>
+        	<td>${employee.rfc}</td>
+        	<td>${employee.curp}</td>
+        	<td></td>					
+        	<td>${employee.bank?.bankingCode}</td>
+        	<td>${employee.bank?.name}</td>
+        	<td>${employee.clabe}</td>
+        	<td>${employee.account}</td>
+        	<td>${employee.cardNumber}</td>
           <td>${modulusuno.formatPrice(number:employee.netPayment)}</td>
           <td>${employee.note}</td>
           <td>
@@ -68,7 +69,6 @@
               <g:link action="deleteEmployee" id="${employee.id}" class="btn btn-danger">
                 <i class="fa fa-minus"></i> Quitar
               </g:link>
-              <br/><br/>
             </g:if>
             <g:link action="incidencesFromEmployee" id="${employee.id}" class="btn btn-default">
               <i class="fa fa-tasks"></i> Incidencias

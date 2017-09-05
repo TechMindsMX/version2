@@ -1,3 +1,19 @@
+<style>
+	th {
+	  text-align:center;
+	}
+	
+  th, td {
+    white-space: nowrap;
+    width: 1px;
+  }
+
+	.fixwidth {
+	  width: 300px;
+	}
+
+</style>
+
 <div class="portlet portlet-default">
   <div class="portlet-heading">
     <div class="portlet-title">
@@ -10,14 +26,18 @@
     <g:hiddenField id="entities" name="entities" value=""/>
     <g:hiddenField name="prePaysheet.id" value="${prePaysheet.id}"/>
     <div class="table-responsive">
-      <table class="table">
+			<div class="container-fluid">
+      <table class="table table-striped table-condensed">
         <tr>
-          <th width="5%"><g:checkBox id="selectAll" name="selectAll" title="Seleccionar Todos"/></th>
-          <th width="10%">No.Empl</th>
-          <th width="45%">Nombre</th>
-          <th width="13%">RFC</th>
-          <th width="14%">CURP</th>
-          <th width="13%">NSS</th>
+          <th><g:checkBox id="selectAll" name="selectAll" title="Seleccionar Todos"/></th>
+          <th>No.Empl</th>
+          <th>Nombre</th>
+          <th>RFC</th>
+          <th>CURP</th>
+          <th>NSS</th>
+					<th>Cuenta</th>
+					<th>Total a Pagar</th>
+					<th>Observaciones</th>
         </tr>
 
         <g:each in="${employeesAvailableToAdd}" var="employee" status="index">
@@ -28,26 +48,19 @@
           <td>${employee.rfc}</td>
           <td>${employee.curp}</td>
           <td>${dataImssEmployees[index]?.nss}</td>
-        </tr>
-        <tr>
-          <td colspan="5">
-            <table class="table">
-              <tr>
-                <td width="25%">
-                    <g:select class="form-control" id="bankAccount${employee.id}" name="bankAccount${employee.id}" from="${employee.banksAccounts}" noSelection="['':'Sin datos bancarios']" optionKey="id"/>
-                </td>
-                <td width="35%">
-                  <input type="text" id="netPayment${employee.id}" name="netPayment${employee.id}" class="form-control" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta 2 decimales)" value="${netPaymentEmployees[index]}" placeholder="Total a Pagar"/>
-                </td>
-                <td width="40%">
-                  <g:textField class="form-control" id="note${employee.id}" name="note${employee.id}" value="" placeholder="Observaciones"/>
-                </td>
-              </tr>
-            </table>
+          <td>
+						<g:select class="form-control fixwidth" id="bankAccount${employee.id}" name="bankAccount${employee.id}" from="${employee.banksAccounts}" noSelection="['':'Sin datos bancarios']" optionKey="id"/>
+          </td>
+          <td>
+						<input type="text" id="netPayment${employee.id}" name="netPayment${employee.id}" class="form-control text-right" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta 2 decimales)" value="${netPaymentEmployees[index]}" placeholder="Total a Pagar" style="width:100px"/>
+          </td>
+          <td>
+						<g:textField class="form-control fixwidth" id="note${employee.id}" name="note${employee.id}" value="" placeholder="Observaciones"/>
           </td>
         </tr>
         </g:each>
       </table>
+			</div>
     </div>
   </div>
 
