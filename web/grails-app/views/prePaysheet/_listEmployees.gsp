@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.paysheet.PrePaysheetStatus %>
 <div class="portlet portlet-default">
   <div class="row">
     <div class="col-md-2 col-md-offset-10 text-right">
@@ -20,7 +21,8 @@
         <tr>
           <th width="60%">Empleado/Datos Bancarios</th>
           <th width="10%">Monto</th>
-          <th width="30%">Observaciones</th>
+          <th width="25%">Observaciones</th>
+          <th width="5%"></th>
         </tr>
 
         <g:each in="${prePaysheet.employees.sort{ it.nameEmployee }}" var="employee">
@@ -61,6 +63,13 @@
           </td>
           <td>${modulusuno.formatPrice(number:employee.netPayment)}</td>
           <td>${employee.note}</td>
+          <td>
+            <g:if test="${prePaysheet.status == PrePaysheetStatus.CREATED}">
+              <g:link action="deleteEmployee" id="${employee.id}" class="btn btn-danger">
+                <i class="fa fa-minus"></i> Quitar
+              </g:link>
+            </g:if>
+          </td>
         </tr>
         </g:each>
       </table>
@@ -68,12 +77,12 @@
   </div>
 
   <div class="row">
-    <g:if test="${prePaysheet.status == com.modulus.uno.paysheet.PrePaysheetStatus.CREATED && prePaysheet.employees}">
+    <g:if test="${prePaysheet.status == PrePaysheetStatus.CREATED && prePaysheet.employees}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-primary" action="sendToProcess" id="${prePaysheet.id}">Enviar a Procesar</g:link>
     </div>
     </g:if>
-    <g:if test="${prePaysheet.status == com.modulus.uno.paysheet.PrePaysheetStatus.IN_PROCESS}">
+    <g:if test="${prePaysheet.status == PrePaysheetStatus.IN_PROCESS}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-default" action="exportToXls" id="${prePaysheet.id}">XLS</g:link>
       <g:link class="btn btn-default" controller="paysheet" action="createFromPrePaysheet" id="${prePaysheet.id}">Procesar</g:link>
