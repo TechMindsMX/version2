@@ -1,7 +1,8 @@
-package com.modulus.uno
+package com.modulus.uno.paysheet
 
 import java.text.*
 import grails.validation.Validateable
+import com.modulus.uno.Company
 
 class PaysheetProjectCommand implements Validateable {
 
@@ -10,6 +11,7 @@ class PaysheetProjectCommand implements Validateable {
   String description
   String integrationFactor
   String occupationalRiskRate
+  String commission
 
   static constrains = {
     companyId nullable:false
@@ -17,6 +19,7 @@ class PaysheetProjectCommand implements Validateable {
     description nullable:true, blank:true
     integrationFactor nullable:false
     occupationalRiskRate nullable:false
+    commission nullable:false
   }
 
   PaysheetProject createPaysheetProject() {
@@ -26,7 +29,8 @@ class PaysheetProjectCommand implements Validateable {
       name:this.name,
       description:this.name,
       integrationFactor:getValueInBigDecimal(this.integrationFactor),
-      occupationalRiskRate:getValueInBigDecimal(this.occupationalRiskRate)
+      occupationalRiskRate:getValueInBigDecimal(this.occupationalRiskRate),
+      commission:getValueInBigDecimal(this.commission)
     )
   }
 
