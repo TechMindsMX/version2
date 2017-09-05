@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.paysheet.PaysheetStatus %>
 <div class="portlet portlet-default">
   <div class="portlet-heading">
     <div class="portlet-title">
@@ -89,7 +90,7 @@
   </div>
 
   <div class="row">
-    <g:if test="${paysheet.status == com.modulus.uno.paysheet.PaysheetStatus.TO_AUTHORIZE}">
+    <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-default" action="exportToXls" id="${paysheet.id}">XLS</g:link>
     </div>
