@@ -16,6 +16,9 @@
     <g:link controller="businessEntity" action="index">Lista de Relaciones Comerciales</g:link>
   </li>
   <li>
+    <g:link controller="businessEntity" action="massiveRegistration">Alta Masiva de Relaciones Comerciales</g:link>
+  </li>
+  <li>
     <g:link controller="product" action="index">Mis Productos/Servicios</g:link>
   </li>
 </ul>

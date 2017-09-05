@@ -12,6 +12,7 @@ class BusinessEntityService {
   def emailSenderService
   SaleOrderService saleOrderService
   PaymentService paymentService
+  XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService
 
   def generatedBussinessEntityProperties(BusinessEntity businessEntity, def params, Company company) {
     LeadType leadType = LeadType."${params.clientProviderType}"
@@ -220,4 +221,9 @@ class BusinessEntityService {
     }
     dataImssEmployee
   }
+
+  def createLayoutForBusinessEntityType(String entityType) {
+    xlsLayoutsBusinessEntityService."generateLayoutFor${entityType.toUpperCase()}"()
+  }
+
 }
