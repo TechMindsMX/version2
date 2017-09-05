@@ -103,7 +103,7 @@ class PrePaysheetController {
 
   @Transactional
   def addIncidence(PrePaysheetEmployeeIncidenceCommand incidenceCommand) {
-    log.info "Saving incidence: ${incidenceCommand.dump()}"
+    log.info "Incidence command: ${incidenceCommand.dump()}"
     if (incidenceCommand.hasErrors()) {
       transactionStatus.setRollbackOnly()
       redirect action:"incidencesFromEmployee", id:incidenceCommand.prePaysheetEmployeeId
@@ -111,6 +111,7 @@ class PrePaysheetController {
     }
 
     PrePaysheetEmployeeIncidence incidence = incidenceCommand.createPrePaysheetEmployeeIncidence()
+    log.info "Incidence to save: ${incidence.dump()}"
     prePaysheetService.saveIncidence(incidence)
 
     if (incidence.hasErrors()) {

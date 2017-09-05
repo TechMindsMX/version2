@@ -21,7 +21,7 @@ class PrePaysheetEmployeeIncidenceCommand implements Validateable{
     new PrePaysheetEmployeeIncidence(
         description:this.description,
         type:IncidenceType.values().find { it.toString() == this.type },
-        schema:PaymentSchema.values().find { it.toString() == this.schema },
+        paymentSchema:PaymentSchema.values().find { it.toString() == this.schema },
         amount: getValueInBigDecimal(this.amount),
         prePaysheetEmployee: prePaysheetEmployee
     )

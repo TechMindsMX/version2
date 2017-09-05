@@ -3,6 +3,7 @@ package com.modulus.uno.paysheet
 import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
+import com.modulus.uno.PaymentPeriod
 import java.math.RoundingMode
 import grails.transaction.Transactional
 
@@ -38,7 +39,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateImssSalary(PaysheetEmployee paysheetEmployee) {
-    (getBaseMonthlyImssSalary(paysheetEmployee) / 30 * paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+    calculateProportionalAmountFromPaymentPeriod(getBaseMonthlyImssSalary(paysheetEmployee), paysheetEmployee.paysheet.prePaysheet.paymentPeriod)
   }
 
   BigDecimal getBaseMonthlyImssSalary(PaysheetEmployee paysheetEmployee) {
@@ -48,7 +49,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateSocialQuota(PaysheetEmployee paysheetEmployee) {
-    (paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal / 30 * paysheetEmployee.paysheet.prePaysheet.paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+    calculateProportionalAmountFromPaymentPeriod(paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal, paysheetEmployee.paysheet.prePaysheet.paymentPeriod)
   }
 
   BigDecimal calculateSubsidySalary(PaysheetEmployee paysheetEmployee) {
@@ -56,7 +57,7 @@ class PaysheetEmployeeService {
     EmploymentSubsidy employmentSubsidy = EmploymentSubsidy.values().find { sb ->
       baseImssMonthlySalary >= sb.lowerLimit && baseImssMonthlySalary <= sb.upperLimit
     }
-    employmentSubsidy ? employmentSubsidy.getSubsidy().setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+    employmentSubsidy ? calculateProportionalAmountFromPaymentPeriod(employmentSubsidy.getSubsidy(), paysheetEmployee.paysheet.prePaysheet.paymentPeriod) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal calculateIncomeTax(PaysheetEmployee paysheetEmployee) {
@@ -70,7 +71,7 @@ class PaysheetEmployeeService {
 
     BigDecimal excess = baseImssMonthlySalary - rateTax.lowerLimit
     BigDecimal marginalTax = excess * (rateTax.rate/100)
-    (marginalTax + rateTax.fixedQuota).setScale(2, RoundingMode.HALF_UP)
+    calculateProportionalAmountFromPaymentPeriod(marginalTax + rateTax.fixedQuota, paysheetEmployee.paysheet.prePaysheet.paymentPeriod)
   }
 
   BigDecimal calculateSalaryAssimilable(PaysheetEmployee paysheetEmployee) {
@@ -88,6 +89,10 @@ class PaysheetEmployeeService {
   BigDecimal calculateCommission(PaysheetEmployee paysheetEmployee) {
     PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheetEmployee.paysheet.company, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
     (paysheetEmployee.paysheetCost * (project.commission/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateProportionalAmountFromPaymentPeriod(BigDecimal amountMonthly, PaymentPeriod paymentPeriod) {
+    (amountMonthly / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
   }
 
 }
