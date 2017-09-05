@@ -13,6 +13,7 @@ class BusinessEntityService {
   SaleOrderService saleOrderService
   PaymentService paymentService
   XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService
+  XlsImportService xlsImportService
 
   def generatedBussinessEntityProperties(BusinessEntity businessEntity, def params, Company company) {
     LeadType leadType = LeadType."${params.clientProviderType}"
@@ -225,5 +226,41 @@ class BusinessEntityService {
   def createLayoutForBusinessEntityType(String entityType) {
     xlsLayoutsBusinessEntityService."generateLayoutFor${entityType.toUpperCase()}"()
   }
+
+  def processXlsMassiveForEMPLEADO(def file, Company company) {
+    log.info "Processing massive registration for Employee"
+    File xlsFile = new File(file.getOriginalFilename())
+    xlsFile.createNewFile()
+    FileOutputStream fos = new FileOutputStream(xlsFile);
+    fos.write(file.getBytes());
+    fos.close();
+    List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
+      //data.each { employee ->
+        //saveEmployeeImportData(employee)
+        //crear business entity
+        //crear employee link
+        //crear data imss employee
+      //}
+  }
+
+  /*@Transactional
+  def saveEmployeeImportData(Map employee) {
+    BusinessEntity businessEntity = createBusinessEntityForMapEmployee(company, employee)
+  }
+
+  def createBusinessEntityForRowEmployee(Company company, Map employeeMap) {
+    BusinessEntity businessEntity = new BusinessEntity(
+      rfc:employeeMap.RFC,
+      type:BusinessEntityType.FISICA,
+      status:BusinessEntityStatus.TO_AUTHORIZE
+    )
+    ComposeName lastName = new ComposeName(value:employeeMap.PATERNO, type:NameType.APELLIDO_PATERNO)
+    ComposeName motherLastName = new ComposeName(value:employeeMap.MATERNO, type:NameType.APELLIDO_MATERNO)
+    ComposeName name = new ComposeName(value:employeeMap.NOMBRE, type:NameType.NOMBRE)
+    businessEntity.addToNames(lastName)
+    businessEntity.addToNames(motherLastName)
+    businessEntity.addToNames(name)
+    businessEntity.save()
+  }*/
 
 }

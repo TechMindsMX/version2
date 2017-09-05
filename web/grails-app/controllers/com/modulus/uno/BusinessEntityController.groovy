@@ -179,5 +179,11 @@ class BusinessEntityController {
     }
   }
 
-
+  def uploadMassiveRecords() {
+    String entityType = params.entityType
+    def file = request.getFile('massiveRecordsFile')
+    Company company = Company.get(session.company)
+    businessEntityService."processXlsMassiveFor${entityType}"(file, company)
+    redirect action:"massiveRegistration"
+  }
 }
