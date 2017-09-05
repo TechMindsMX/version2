@@ -42,7 +42,7 @@ class CompanyController {
       }
       def isAvailable = companyService.isEnableToSendNotificationIntegrated(company)
 
-      respond company, model:[ clients:clientService.getClientsFromCompany(company),providers:providerService.getProvidersFromCompany(company),available:isAvailable,balance:balance,usd:new BigDecimal(0),documents:documents]
+      respond company, model:[available:isAvailable, balance:balance, usd:new BigDecimal(0), documents:documents]
     }
   }
 

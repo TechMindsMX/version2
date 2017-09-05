@@ -18,7 +18,7 @@ databaseChangeLog = {
                 constraints(nullable: "false")
             }
 
-            column(name: "integration_factor", type: "DECIMAL(19, 2)") {
+            column(name: "integration_factor", type: "DECIMAL(19, 6)") {
                 constraints(nullable: "false")
             }
 
@@ -26,7 +26,7 @@ databaseChangeLog = {
                 constraints(nullable: "false")
             }
 
-            column(name: "occupational_risk_rate", type: "DECIMAL(19, 2)") {
+            column(name: "occupational_risk_rate", type: "DECIMAL(19, 6)") {
                 constraints(nullable: "false")
             }
         }
