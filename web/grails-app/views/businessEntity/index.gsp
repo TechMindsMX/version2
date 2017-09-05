@@ -55,6 +55,7 @@
                   <th>Sitio web</th>
                   <th>Persona</th>
                   <th>Tipo de Relación</th>
+                  <th>Estatus</th>
                 </tr>
                 <g:each in="${businessEntityList.sort{it.id}}" var="be">
                   <tr>
@@ -64,6 +65,7 @@
                     <td>${be.website}</td>
                     <td>${be.type}</td>
                     <td><my:whatIsThisBusinessEntity be="${be}" /></td>
+                    <td><g:message code="businessEntity.status.${be.status}"/></td>
                   </tr>
                 </g:each>
               </table>

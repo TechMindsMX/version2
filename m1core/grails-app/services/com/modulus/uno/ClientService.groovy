@@ -8,7 +8,6 @@ import grails.transaction.Transactional
 class ClientService {
 
   def messageSource
-  def emailSenderService
   def stpClabeService
   def springSecurityService
 
@@ -16,7 +15,6 @@ class ClientService {
     if(isClientOfThisCompany(client, company))throw new BusinessException(messageSource.getMessage('exception.client.already.exist', null, LCH.getLocale()))
     def clientLink = new ClientLink(type:client.class.simpleName, clientRef: client.rfc, company: company).save()
     company.addToBusinessEntities(client)
-    emailSenderService.sendEmailForNewClient(company, client)
     clientLink
   }
 

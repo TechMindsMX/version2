@@ -11,12 +11,14 @@ class BusinessEntityCommand implements Validateable {
   String lastName
   String motherLastName
   String businessName
+  String number
 
   BusinessEntityType type
   LeadType clientProviderType
 
   static constraints = {
     website nullable:true,blank:false,size:5..50,url:true
+    number nullable:true
     curp(nullable:true, blank:true,size:10..50,validator: { val, obj ->
       if(obj.clientProviderType == LeadType.EMPLEADO && obj.type == BusinessEntityType.FISICA && !(val ==~ /^[A-Z]{4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]+)$/) ) {
         false
@@ -25,9 +27,9 @@ class BusinessEntityCommand implements Validateable {
       }
     })
     rfc(blank:false,size:10..50, validator: { val, obj ->
-      if(obj.type == BusinessEntityType.FISICA && !(val ==~ /^[A-Z]{4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/) ) {
+      if(obj.type == BusinessEntityType.FISICA && !(val.toUpperCase() ==~ /^[A-Z]{4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/) ) {
         return false
-      } else if (obj.type == BusinessEntityType.MORAL && !(val ==~ /^[A-Z]{3}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/) ) {
+      } else if (obj.type == BusinessEntityType.MORAL && !(val.toUpperCase() ==~ /^[A-Z]{3}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/) ) {
         return false
       }
     })

@@ -9,6 +9,7 @@ class BusinessEntityService {
   def providerService
   def employeeService
   def bankAccountService
+  def emailSenderService
 
   def generatedBussinessEntityProperties(BusinessEntity businessEntity, def params, Company company) {
     LeadType leadType = LeadType."${params.clientProviderType}"
@@ -25,13 +26,16 @@ class BusinessEntityService {
 
     if((leadType == LeadType.CLIENTE || leadType == LeadType.CLIENTE_PROVEEDOR) && businessEntity.id){
       clientService.addClientToCompany(businessEntity, company)
+      emailSenderService.sendEmailForNewClient(company, businessEntity)
     }
     if((leadType == LeadType.PROVEEDOR || leadType == LeadType.CLIENTE_PROVEEDOR) && businessEntity.id){
       providerService.addProviderToCompany(businessEntity, company)
+      emailSenderService.sendEmailForNewProvider(company, provider)
     }
     if(leadType == LeadType.EMPLEADO){
       businessEntity.website = null
-      employeeService.addEmployeeToCompany(businessEntity, company,params.curp)
+      employeeService.addEmployeeToCompany(businessEntity, company, params)
+      emailSenderService.sendEmailForNewEmployee(company, businessEntity)
     }
 
   }

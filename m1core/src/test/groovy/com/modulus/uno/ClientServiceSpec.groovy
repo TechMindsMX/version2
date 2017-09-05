@@ -13,11 +13,9 @@ import com.modulus.uno.BusinessException
 @Mock([Address,Company,BusinessEntity,ClientLink,ModulusUnoAccount,User])
 class ClientServiceSpec extends Specification {
 
-  def emailSenderService = Mock(EmailSenderService)
   def stpClabeService = Mock(StpClabeService)
 
   def setup(){
-    service.emailSenderService = emailSenderService
     service.stpClabeService = stpClabeService
     messageSource.addMessage('exception.client.already.exist', LCH.getLocale(), 'A client with same RFC already exist for this company')
   }
@@ -36,7 +34,6 @@ class ClientServiceSpec extends Specification {
     clientLink.clientRef == be.rfc
     clientLink.company == company
     isClient
-    1 * emailSenderService.sendEmailForNewClient(company, be)
   }
 
   void "should not save a be since already exist"(){
