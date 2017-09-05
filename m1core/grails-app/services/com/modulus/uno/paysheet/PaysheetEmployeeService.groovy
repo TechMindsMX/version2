@@ -83,7 +83,8 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculatePaysheetTax(PaysheetEmployee paysheetEmployee) {
-    (paysheetEmployee.imssSalaryNet * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100)).setScale(2, RoundingMode.HALF_UP)
+    BigDecimal baseImssMonthlySalary = getBaseMonthlyImssSalary(paysheetEmployee)
+    calculateProportionalAmountFromPaymentPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), paysheetEmployee.paysheet.prePaysheet.paymentPeriod)    
   }
 
   BigDecimal calculateCommission(PaysheetEmployee paysheetEmployee) {

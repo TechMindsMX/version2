@@ -3,11 +3,15 @@ package com.modulus.uno.paysheet
 import grails.transaction.Transactional
 import pl.touk.excel.export.WebXlsxExporter
 import java.text.SimpleDateFormat
+import java.text.DecimalFormat
+import com.modulus.uno.Bank
+import com.modulus.uno.BankAccount
 
 class PaysheetService {
 
   PaysheetEmployeeService paysheetEmployeeService
   PrePaysheetService prePaysheetService
+  def grailsApplication
 
   @Transactional
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
@@ -109,6 +113,41 @@ class PaysheetService {
     employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryAssimilable']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
+  }
+
+  def getBanksAccountsToPay(Paysheet paysheet) {
+    paysheet.company.banksAccounts.findAll { bA -> bA.banco.bankingCode.endsWith(grailsApplication.config.paysheet.paymentBankingCode) }
+  }
+
+  File generateIMSSSameBankFromPaysheet(Paysheet paysheet, Long chargeBankAccountId) {
+    BankAccount chargeBankAccount = BankAccount.get(chargeBankAccountId)
+    Bank bank = Bank.findByBankingCodeLike("%${grailsApplication.config.paysheet.paymentBankingCode}")
+    List<PaysheetEmployee> employees = getPaysheetEmployeesWithBankAccountInBank(paysheet.employees, bank)
+    createTxtImssDispersionFileForSameCompanyBank(employees, chargeBankAccount)
+  }
+
+  List<PaysheetEmployee> getPaysheetEmployeesWithBankAccountInBank(def allEmployees, Bank bank) {
+    allEmployees.collect { employee ->
+      if (employee.prePaysheetEmployee.bank==bank) {
+        employee
+      }
+    }.grep()
+  }
+
+  File createTxtImssDispersionFileForSameCompanyBank(List<PaysheetEmployee> employees, BankAccount chargeBankAccount) {
+    log.info "Payment dispersion for employees: ${employees}"
+    File file = File.createTempFile("txtDispersion",".txt")
+    employees.each { employee ->
+      log.info "Payment dispersion record for employee: ${employee?.dump()}"
+      String destinyAccount = "${employee.prePaysheetEmployee.account.padLeft(18,'0')}"
+      String sourceAccount = "${chargeBankAccount.accountNumber.padLeft(18,'0')}"
+      String currency = "MXN"
+      String amount = "${(new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')}"
+      String paymentMessage = "PAGO IMSS".padRight(30,' ')
+      file.append("${destinyAccount}${sourceAccount}${currency}${amount}${paymentMessage}\n")
+    }
+    log.info "File created: ${file.text}"
+    file
   }
 
 }
