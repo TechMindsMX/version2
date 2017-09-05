@@ -23,4 +23,9 @@ class PaysheetController {
     [paysheetList:paysheetList, paysheetCount:paysheetCount]
   }
 
+  def sendToAuthorize(Paysheet paysheet) {
+    paysheetService.sendToAuthorize(paysheet)
+    redirect action:"list"
+  }
+
 }
