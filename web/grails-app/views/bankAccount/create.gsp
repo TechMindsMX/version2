@@ -9,34 +9,18 @@
   <body>
     <div class="page-title">
       <h1>
+        <i class="fa fa-credit-card fa-3x"></i>
+        Cuenta Bancaria
         <g:if test="${params.companyBankAccount}">
-        <g:message code="bankAccount.new" args='["${companyInfo.companyInfo()}"]' />
+          <small>${companyInfo.companyInfo()}</small>
         </g:if>
         <g:else>
-        <g:message code="bankAccount.new.${relation}" args='["${params.businessEntityInfo}"]' default="Agregar Cuenta Bancaria para ${params.businessEntityInfo}" />
+          <small>${params.businessEntityInfo}</small>
         </g:else>
       </h1>
-      <ol class="breadcrumb">
-        <li>
-          <g:if test="${params.companyBankAccount}">
-          <i class="fa fa-caret-square-o-up"></i><g:link controller="company" action="show" id="${session.company}"> Compañía</g:link>
-          </g:if>
-          <g:else>
-          <i class="fa fa-caret-square-o-up"></i><g:link controller="businessEntity" action="show" id="${params.businessEntity}"> Relación Comercial </g:link>
-          </g:else>
-        </li>
-        <li class="active"><g:message code="businessEntity.label.bankAccounts.${relation}" default="Cuentas Bancarias"/></li>
-      </ol>
     </div>
     <div id="create-bankAccount" class="content scaffold-create" role="main">
       <div class="portlet portlet-blue">
-        <div class="portlet-heading">
-          <div class="portlet-title">
-            <br />
-            <br />
-          </div>
-          <div class="clearfix"></div>
-        </div>
         <div id="horizontalFormExample" class="panel-collapse collapse in">
           <div class="portlet-body">
             <g:if test="${flash.message}">
@@ -48,71 +32,33 @@
               <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
                 </g:eachError>
             </ul>
-              </g:hasErrors>
-              <g:form action="save" class="form-horizontal" role="form">
+            </g:hasErrors>
+
+            <g:form action="save" class="form-horizontal" role="form">
               <input type="hidden" name="businessEntityInfo" value="${params.businessEntityInfo}"/>
-
               <g:if test="${relation == 'CLIENTE'}">
-              <input type="hidden" name="clabe" value="002115016003269411"/>
-              <input type="hidden" name="branchNumber" value="115"/>
-              <input type="hidden" name="relation" value="${relation}"/>
-              <input type="hidden" name="businessEntity" value="${params.businessEntity}"/>
-
-              <div class="form-group">
-                <label class="col-sm-5 control-label">Últimos 4 dígitos del número de cuenta</label>
-                <div class="col-sm-4">
-                  <g:field class="form-control" name="accountNumber" value="${bankAccount?.accountNumber?.replace('*','')}" maxLength="4" pattern="[0-9]{4}" title="Ingrese 4 dígitos exactamente" required=""/>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-5 control-label">Banco</label>
-                <div class="col-sm-4">
-                  <g:select name="bank" from="${banks}" optionValue="name" optionKey="bankingCode" class="form-control" aria-controls="example-table" required="" noSelection="['':'']" value="${bankAccount?.banco?.bankingCode}"/>
-                </div>
-              </div>
-
+                <g:render template="formClient"/>
               </g:if>
               <g:else>
-                  <f:display id="clabe" bean="bankAccount" property="clabe" label="${message(code:"bankAccount.clabe")}" wrapper="editField" />
-                  <f:display id="branchNumber" bean="bankAccount" property="branchNumber" label="${message(code:"bankAccount.branchNumber")}" wrapper="editField" />
-                  <f:display id="accountNumber" bean="bankAccount" property="accountNumber" label="${message(code:"bankAccount.accountNumber")}" wrapper="editReadOnly" />
-                  <input id="bank" name="bank" type="hidden"/>
-                  <div class="form-group">
-                    <label class="col-sm-5 control-label">Banco</label>
-                    <div class="col-sm-4">
-                      <g:select name="banco" from="${banks}" optionValue="name" optionKey="bankingCode" class="form-control" aria-controls="example-table" readonly="true" noSelection="['':'']"/>
-                    </div>
-                  </div>
-                  <g:if test="${params.companyBankAccount}" >
-                  <g:if test="${bankLib.checkAccountForSTPAvailable() == '0' }" >
-                    <div class="center">
-                     <input type="radio" name="concentradora" value="true" class="control-form"> Cuenta Concentradora<br>
-                    </div>
-                  </g:if>
-                  </g:if>
-                  <g:if test="${params.companyBankAccount}">
-                  <input type="hidden" name="company" value="${session.company}" />
-                  <input type="hidden" name="companyBankAccount" value="${params.companyBankAccount}" />
-                  </g:if>
-                  <g:else>
-                  <input type="hidden" name="businessEntity" value="${params.businessEntity}" />
-                  </g:else>
+                <g:render template="form"/>
+              </g:else>
 
-             </g:else>
-                      <div class="form-group">
-                        <div class="col-sm-offset-4 col-sm-10">
-                          <g:submitButton name="create" class="save btn btn-default btn-lg" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-                        </div>
-                      </div>
-                          </g:form>
-             <g:if test="${params.companyBankAccount}">
-              <g:link controller="company" action="show" id="${session.company}" class="btn btn-default">
-                <g:message code="company.show.return"/>
-              </g:link>
-             </g:if>
-             <g:else>
-               <g:link controller="businessEntity" action="show" id="${params.businessEntity}" params="[company:session.company]" class="btn btn-default">Regresar</g:link>
-            </g:else>
+              <div class="form-group">
+                <div class="col-md-2 col-md-offset-8">
+                  <g:submitButton name="create" class="save btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+                </div>
+              </div>
+            </g:form>
+
+            <div class="text-right">
+              <g:if test="${params.companyBankAccount}">
+                <g:link class="btn btn-default" controller="company" action="show" id="${session.company}">Regresar</g:link>
+              </g:if>
+              <g:else>
+                <g:link controller="businessEntity" action="show" id="${params.businessEntity}" params="[company:session.company]" class="btn btn-default">Regresar</g:link>
+              </g:else>
+            </div>
+
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 databaseChangeLog = {
   include file: 'initial-structure.groovy'
   include file: 'create-m1-roles.groovy'
-  include file: 'adding-user-admin-production.groovy'
+  //include file: 'adding-user-admin-production.groovy'
   include file: 'adding-list-banks.groovy'
   include file: 'adding-colunm-reference-to-payment.groovy'
   include file: 'adding-uuid-to-purchase-order.groovy'
@@ -64,4 +64,5 @@ databaseChangeLog = {
 	include file: 'adding-column-number-to-employee-link.groovy'
   include file: 'create-domain-data-imss-employee.groovy'
     include file: 'create-domain-paysheet-project.groovy'
+    include file: 'adding-column-card-number-to-bank-account.groovy'
 }
