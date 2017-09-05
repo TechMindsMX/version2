@@ -87,4 +87,10 @@ class PrePaysheetService {
     prePaysheet
   }
 
+  @Transactional
+  def sendPrePaysheetToProcess(PrePaysheet prePaysheet) {
+    prePaysheet.status = PrePaysheetStatus.IN_PROCESS
+    prePaysheet.save()
+    //TODO: enviar notificación al ejecutivo de cuenta
+  }
 }
