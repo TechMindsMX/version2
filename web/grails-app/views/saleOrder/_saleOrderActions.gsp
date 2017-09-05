@@ -168,6 +168,10 @@
     <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-default">Acuse XML</a>
     <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default">Acuse PDF</a>
   </g:if>
+
+  <g:if test="${params.backController}">
+    <g:link class="btn btn-default text-right" controller="${params.backController}" action="${params.backAction}" id="${params.backId}">Regresar</g:link>
+  </g:if>
+
 </g:if>
 </p>
-

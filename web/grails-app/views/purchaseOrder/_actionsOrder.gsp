@@ -110,4 +110,8 @@
       </div>
     </g:if>
   </sec:ifAnyGranted>
+
+  <g:if test="${params.backController}">
+    <g:link class="btn btn-default text-right" controller="${params.backController}" action="${params.backAction}">Regresar</g:link>
+  </g:if>
 </div>
