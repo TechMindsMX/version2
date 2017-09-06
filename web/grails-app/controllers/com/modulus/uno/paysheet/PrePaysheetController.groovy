@@ -135,5 +135,14 @@ class PrePaysheetController {
 		Company company = Company.get(session.company)
 		render view:"import", model:[company:company]
 	}
+	
+  def downloadLayout() {
+    log.info "Downloading layout for import pre-paysheet"
+    def layout = prePaysheetService.createLayoutForPrePaysheet()
+    layout.with {
+      setResponseHeaders(response, "layoutPrenomina.xlsx")
+      save(response.outputStream)
+    }
+  }
 
 }
