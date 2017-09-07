@@ -241,21 +241,13 @@ class BusinessEntityService {
 
   def processXlsMassiveForEMPLEADO(def file, Company company) {
     log.info "Processing massive registration for Employee"
-    File xlsFile = getFileToProcess(file)
-    List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
+    List data = xlsImportService.parseXlsMassiveEmployee(file)
     List results = processDataFromXls(data, company)
     log.info "Data: ${data}"
     log.info "Results: ${results}"
     [data:data, results:results]
   }
 
-  File getFileToProcess(def file) {
-    File xlsFile = File.createTempFile("tmpMassiveRegistration${new Date().getTime()}",".xlsx")
-    FileOutputStream fos = new FileOutputStream(xlsFile)
-    fos.write(file.getBytes())
-    fos.close()
-    xlsFile
-  }
 
   List processDataFromXls(List data, Company company) {
     List results = []
