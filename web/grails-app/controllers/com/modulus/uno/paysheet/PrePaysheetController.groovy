@@ -131,9 +131,9 @@ class PrePaysheetController {
     redirect action:"incidencesFromEmployee", id:prePaysheetEmployee.id
   }
 
-	def importPrePaysheet() {
-		Company company = Company.get(session.company)
-		render view:"import", model:[company:company]
+	def importXlsPrePaysheet(PrePaysheet prePaysheet) {
+		log.info "Importing data from xls prepaysheet"
+		redirect action:"show", id:prePaysheet.id
 	}
 	
   def downloadLayout() {
