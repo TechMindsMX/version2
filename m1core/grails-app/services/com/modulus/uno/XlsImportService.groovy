@@ -10,6 +10,12 @@ class XlsImportService {
     startRow: 1,
     columnMap:  ['A':'RFC', 'B':'CURP', 'C':'PATERNO', 'D':'MATERNO', 'E':'NOMBRE', 'F':'NO_EMPL', 'G':'CLABE', 'H':'NUMTARJETA', 'I':'IMSS', 'J':'NSS', 'K':'FECHA_ALTA', 'L':'BASE_COTIZA', 'M':'NETO', 'N':'PRIMA_VAC', 'O':'DIAS_AGUINALDO', 'P':'PERIODO_PAGO']
   ]
+		
+
+	Map COLUMN_MAP_PREPAYSHEET = [
+		startRow:1,
+		columnMap: ['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'CLABE','E':'TARJETA','F':'NETO','G':'OBSERVACIONES']
+	]
 
   File getFileToProcess(def file) {
     File xlsFile = File.createTempFile("tmpXlsImport${new Date().getTime()}",".xlsx")
@@ -43,6 +49,18 @@ class XlsImportService {
     if (data.empty) {
       throw new BusinessException("El archivo está vacío")
     }
+  }
+
+  def parseXlsPrePaysheet(def file) {
+		File xlsFile = getFileToProcess(file)
+    Workbook workbook = getWorkbookFromXlsFile(xlsFile)
+    COLUMN_MAP_PREPAYSHEET.sheet = workbook.getSheetName(0)
+    log.info "Column Map: ${COLUMN_MAP_PREPAYSHEET}"
+    ExcelImportService excelImportService = new ExcelImportService()
+    List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_PREPAYSHEET)
+    log.info "Data: ${data}"
+    validateNotEmptyData(data)
+    data
   }
 
 }
