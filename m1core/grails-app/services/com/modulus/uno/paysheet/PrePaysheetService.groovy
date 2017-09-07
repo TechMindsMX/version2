@@ -6,6 +6,8 @@ import pl.touk.excel.export.WebXlsxExporter
 import java.text.SimpleDateFormat
 
 import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.XlsImportService
+import com.modulus.uno.EmployeeService
 import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.DataImssEmployee
@@ -15,6 +17,8 @@ import com.modulus.uno.BankAccount
 class PrePaysheetService {
 
   BusinessEntityService businessEntityService
+	XlsImportService xlsImportService
+	EmployeeService employeeService
 
   @Transactional
   PrePaysheet savePrePaysheet(PrePaysheet prePaysheet) {
@@ -147,12 +151,71 @@ class PrePaysheetService {
   }
 
 	def createLayoutForPrePaysheet() {
-		def headersPrePaysheet = ['PERIODO PAGO', 'FECHA INICIO', 'FECHA FIN', 'EJECUTIVO']
-		def headersEmployees = ['RFC', 'CURP', 'NO. EMPL.', 'CLABE', 'TARJETA', 'NETO A PAGAR', 'OBSERVACIONES']
+		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'CLABE', 'TARJETA', 'NETO', 'OBSERVACIONES']
     new WebXlsxExporter().with {
-      fillRow(headersPrePaysheet, 0)
-      fillRow(headersEmployees, 2)
+      fillRow(headersEmployees, 0)
     }
+	}
+
+	def processXlsPrePaysheet(def file, PrePaysheet prePaysheet) {
+	  log.info "Processing xls for prepaysheet: ${prePaysheet.id}"
+    List data = xlsImportService.parseXlsPrePaysheet(file)
+    List results = processDataFromXls(data, prePaysheet)
+    log.info "Data: ${data}"
+    log.info "Results: ${results}"
+    //[data:data, results:results]
+	}
+
+  List processDataFromXls(List data, PrePaysheet prePaysheet) {
+    List results = []
+    data.each { employee ->
+      String result = addPrePaysheetEmployeeFromData(employee, prePaysheet)
+      results.add(result)
+    }
+    results
+  }
+
+	@Transactional
+	String addPrePaysheetEmployeeFromData(Map dataEmployee, PrePaysheet prePaysheet) {
+		//verificar que exista el empleado
+	  if (!employeeService.employeeAlreadyExistsInCompany(dataEmployee.RFC, prePaysheet.company)) {
+      transactionStatus.setRollbackOnly()
+      return "Error: el empleado no está registrado en la empresa"
+    }
+
+		EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(dataEmployee.RFC, prePaysheet.company)
+		BusinessEntity businessEntity = prePaysheet.company.businessEntities.find { be -> be.rfc == dataEmployee.RFC }
+
+		//validar cuenta bancaria
+		BankAccount bankAccount = businessEntity.banksAccounts.find { ba -> ba.clabe == dataEmployee.CLABE }
+		if (!bankAccount) {
+			transactionStatus.setRollbackOnly()
+			return "Error: la cuenta CLABE no pertenece al empleado"
+		}
+
+		//validar el neto a pagar
+		if (dataEmployee.NETO instanceof String && !dataEmployee.NETO.isNumber()) {
+			transactionStatus.setRollbackOnly()
+			return "Error: el neto a pagar no es válido"
+		}
+
+		//crear el empleado de pre-nómina
+		PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(
+			rfc:employeeLink.rfc,
+			curp:employeeLink.curp,
+			numberEmployee:employeeLink.number,
+			nameEmployee:businessEntity.toString(),
+			bank:bankAccount.banco,
+			clabe:bankAccount.clabe,
+			account:bankAccount.accountNumber,
+			cardNumber:bankAccount.cardNumber,
+			netPayment:new BigDecimal(dataEmployee.NETO),
+			note:dataEmployee.OBSERVACIONES,
+			prePaysheet:prePaysheet
+		)
+
+		prePaysheet.save()
+		"Agregado"
 	}
 
 }
