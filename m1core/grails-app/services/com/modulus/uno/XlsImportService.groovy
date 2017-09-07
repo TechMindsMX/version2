@@ -11,7 +11,16 @@ class XlsImportService {
     columnMap:  ['A':'RFC', 'B':'CURP', 'C':'PATERNO', 'D':'MATERNO', 'E':'NOMBRE', 'F':'NO_EMPL', 'G':'CLABE', 'H':'NUMTARJETA', 'I':'IMSS', 'J':'NSS', 'K':'FECHA_ALTA', 'L':'BASE_COTIZA', 'M':'NETO', 'N':'PRIMA_VAC', 'O':'DIAS_AGUINALDO', 'P':'PERIODO_PAGO']
   ]
 
-  def parseXlsMassiveEmployee(File xlsFile) {
+  File getFileToProcess(def file) {
+    File xlsFile = File.createTempFile("tmpXlsImport${new Date().getTime()}",".xlsx")
+    FileOutputStream fos = new FileOutputStream(xlsFile)
+    fos.write(file.getBytes())
+    fos.close()
+    xlsFile
+  }
+
+  def parseXlsMassiveEmployee(def file) {
+		File xlsFile = getFileToProcess(file)
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_EMPLOYEE.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_EMPLOYEE}"
