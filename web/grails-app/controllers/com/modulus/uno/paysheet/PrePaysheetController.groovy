@@ -133,6 +133,8 @@ class PrePaysheetController {
 
 	def importXlsPrePaysheet(PrePaysheet prePaysheet) {
 		log.info "Importing data from xls prepaysheet"
+    def file = request.getFile('prePaysheetXlsFile')
+		prePaysheetService.processXlsPrePaysheet(file, prePaysheet)
 		redirect action:"show", id:prePaysheet.id
 	}
 	
