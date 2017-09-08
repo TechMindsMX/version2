@@ -177,7 +177,6 @@ class PrePaysheetService {
 
 	@Transactional
 	String addPrePaysheetEmployeeFromData(Map dataEmployee, PrePaysheet prePaysheet) {
-		//verificar que exista el empleado
 	  if (!employeeService.employeeAlreadyExistsInCompany(dataEmployee.RFC, prePaysheet.company)) {
       transactionStatus.setRollbackOnly()
       return "Error: el empleado no está registrado en la empresa"
@@ -186,14 +185,12 @@ class PrePaysheetService {
 		EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(dataEmployee.RFC, prePaysheet.company)
 		BusinessEntity businessEntity = prePaysheet.company.businessEntities.find { be -> be.rfc == dataEmployee.RFC }
 
-		//validar cuenta bancaria
 		BankAccount bankAccount = businessEntity.banksAccounts.find { ba -> ba.clabe == dataEmployee.CLABE }
 		if (!bankAccount) {
 			transactionStatus.setRollbackOnly()
 			return "Error: la cuenta CLABE no pertenece al empleado"
 		}
 
-		//validar el neto a pagar
 		if (dataEmployee.NETO instanceof String && !dataEmployee.NETO.isNumber()) {
 			transactionStatus.setRollbackOnly()
 			return "Error: el neto a pagar no es válido"
@@ -201,7 +198,7 @@ class PrePaysheetService {
 
 		//crear el empleado de pre-nómina
 		PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(
-			rfc:employeeLink.rfc,
+			rfc:businessEntity.rfc,
 			curp:employeeLink.curp,
 			numberEmployee:employeeLink.number,
 			nameEmployee:businessEntity.toString(),
@@ -214,7 +211,10 @@ class PrePaysheetService {
 			prePaysheet:prePaysheet
 		)
 
+		prePaysheetEmployee.save()
+		prePaysheet.addToEmployees(prePaysheetEmployee)
 		prePaysheet.save()
+		log.info "Pre-paysheet employee saved: ${prePaysheetEmployee.dump()}"
 		"Agregado"
 	}
 
