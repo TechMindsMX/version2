@@ -1,8 +1,7 @@
-package com.modulus.uno
+package com.modulus.uno.menu
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
-import com.modulus.uno.menu.Menu
 
 @Transactional(readOnly = true)
 class MenuController {
@@ -10,7 +9,7 @@ class MenuController {
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
   def index(Integer max) {
-    params.max = Math.min(max ?: 10, 100)
+    params.max = Math.min(max ?: 25, 100)
     respond Menu.list(params), model:[menuCount: Menu.count()]
   }
 
