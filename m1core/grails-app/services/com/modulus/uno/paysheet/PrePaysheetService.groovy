@@ -152,7 +152,7 @@ class PrePaysheetService {
   }
 
 	def createLayoutForPrePaysheet() {
-		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'CLABE', 'TARJETA', 'NETO', 'OBSERVACIONES']
+		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'NOMBRE', 'CLABE', 'TARJETA', 'NETO', 'OBSERVACIONES']
     new WebXlsxExporter().with {
       fillRow(headersEmployees, 0)
     }
@@ -164,7 +164,7 @@ class PrePaysheetService {
     List results = processDataFromXls(data, prePaysheet)
     log.info "Data: ${data}"
     log.info "Results: ${results}"
-    //[data:data, results:results]
+    [dataEmployees:data, results:results]
 	}
 
   List processDataFromXls(List data, PrePaysheet prePaysheet) {
