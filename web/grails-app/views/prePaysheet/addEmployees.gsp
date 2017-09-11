@@ -32,6 +32,37 @@
         <div class="portlet-body">
           <g:render template="prePaysheetData"/>
         </div>
+				<div class="portlet-footer">
+					<div class="row">
+						<div class="col-md-12">
+
+							<g:link class="btn btn-default" action="downloadLayout">Layout</g:link>
+
+							<a data-toggle="collapse" role="button" href="#importFile" class="btn btn-primary" aria-expanded="false" aria-controls="importFile">Importar</a>
+							<br/><br/>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="collapse" id="importFile">
+										<div class="well">
+											<g:form name="importXlsPrePaysheet" action="importXlsPrePaysheet" method="POST" enctype="multipart/form-data" id="${prePaysheet.id}">
+												<div class="form-group">
+													<label>Archivo XLS:</label>
+													<input type="file" name="prePaysheetXlsFile" class="form-control" required="required" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+												</div>
+												<div class="row">
+													<div class="col-md-12 text-right">
+														<input class="btn btn-primary" type="submit" value="Subir"/>
+													</div>
+												</div>
+											</g:form>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
       </div>
 
       <div class="row">
