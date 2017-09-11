@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import java.math.RoundingMode
 import pl.touk.excel.export.WebXlsxExporter
 import java.text.SimpleDateFormat
+import org.springframework.transaction.annotation.Propagation
 
 import com.modulus.uno.BusinessEntityService
 import com.modulus.uno.XlsImportService
@@ -169,18 +170,26 @@ class PrePaysheetService {
   List processDataFromXls(List data, PrePaysheet prePaysheet) {
     List results = []
     data.each { employee ->
-      String result = addPrePaysheetEmployeeFromData(employee, prePaysheet)
+      String result = createPrePaysheetEmployeeFromData(employee, prePaysheet)
       results.add(result)
+			if (result == "Agregado") {
+				addEmployeeToPrePaysheet(employee, prePaysheet)
+			}
     }
     results
   }
 
-	@Transactional
-	String addPrePaysheetEmployeeFromData(Map dataEmployee, PrePaysheet prePaysheet) {
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	String createPrePaysheetEmployeeFromData(Map dataEmployee, PrePaysheet prePaysheet) {
 	  if (!employeeService.employeeAlreadyExistsInCompany(dataEmployee.RFC, prePaysheet.company)) {
       transactionStatus.setRollbackOnly()
       return "Error: el empleado no está registrado en la empresa"
     }
+
+		if (prePaysheet.employees.find { employee -> employee.rfc == dataEmployee.RFC }) {
+			transactionStatus.setRollbackOnly()
+			return "Error: el empleado ya está agregado a la prenómina"
+		}
 
 		EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(dataEmployee.RFC, prePaysheet.company)
 		BusinessEntity businessEntity = prePaysheet.company.businessEntities.find { be -> be.rfc == dataEmployee.RFC }
@@ -212,10 +221,16 @@ class PrePaysheetService {
 		)
 
 		prePaysheetEmployee.save()
-		prePaysheet.addToEmployees(prePaysheetEmployee)
-		prePaysheet.save()
 		log.info "Pre-paysheet employee saved: ${prePaysheetEmployee.dump()}"
 		"Agregado"
+	}
+
+	@Transactional
+	def addEmployeeToPrePaysheet(Map dataEmployee, PrePaysheet prePaysheet) {
+		PrePaysheetEmployee prePaysheetEmployee = PrePaysheetEmployee.findByRfcAndPrePaysheet(dataEmployee.RFC, prePaysheet)
+		prePaysheet.addToEmployees(prePaysheetEmployee)
+		prePaysheet.save()
+		log.info "prePaysheet employees: ${prePaysheet.employees}"
 	}
 
 }
