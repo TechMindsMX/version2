@@ -122,13 +122,9 @@ class PrePaysheetServiceSpec extends Specification {
 		and:
 			employeeService.employeeAlreadyExistsInCompany(_, _) >> empLink
     when:
-      String result = service.addPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
+      String result = service.createPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
     then:
 			result == "Agregado"
-			prePaysheet.employees.size() == 1
-			prePaysheet.employees.first().rfc == "RFC"
-			prePaysheet.employees.first().clabe == "CLABE"
-			prePaysheet.employees.first().netPayment == 1000.0
   }
 
   void "Should return employee don't exists error when add a employee to prePaysheet from xls file to import"() {
@@ -140,7 +136,7 @@ class PrePaysheetServiceSpec extends Specification {
 		and:
 			employeeService.employeeAlreadyExistsInCompany(_, _) >> null
     when:
-      String result = service.addPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
+      String result = service.createPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
     then:
 			result == "Error: el empleado no está registrado en la empresa"
   }
@@ -163,7 +159,7 @@ class PrePaysheetServiceSpec extends Specification {
 		and:
 			employeeService.employeeAlreadyExistsInCompany(_, _) >> empLink
     when:
-      String result = service.addPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
+      String result = service.createPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
     then:
 			result == "Error: la cuenta CLABE no pertenece al empleado"
   }
@@ -186,9 +182,35 @@ class PrePaysheetServiceSpec extends Specification {
 		and:
 			employeeService.employeeAlreadyExistsInCompany(_, _) >> empLink
     when:
-      String result = service.addPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
+      String result = service.createPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
     then:
 			result == "Error: el neto a pagar no es válido"
+  }
+
+  void "Should return already exists employee in prepaysheet error when add a employee to prePaysheet from xls file to import"() {
+    given:"A prePaysheet"
+      Company company = new Company().save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
+			PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(rfc:"RFC").save(validate:false)
+			prePaysheet.addToEmployees(prePaysheetEmployee)
+			prePaysheet.save(validate:false)
+    and:"A data map employee to import"
+			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO:"Mil"]
+	  and:
+      BusinessEntity beEmployee = new BusinessEntity(rfc:"RFC").save(validate:false)
+			company.addToBusinessEntities(beEmployee)
+			company.save(validate:false)
+      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
+    and:"The bank account"
+      BankAccount bankAccount = new BankAccount(accountNumber:"cuenta", clabe:"CLABE", cardNumber:"tarjeta", banco:new Bank().save(validate:false)).save(validate:false)
+			beEmployee.addToBanksAccounts(bankAccount)
+			beEmployee.save(validate:false)
+		and:
+			employeeService.employeeAlreadyExistsInCompany(_, _) >> empLink
+    when:
+      String result = service.createPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
+    then:
+			result == "Error: el empleado ya está agregado a la prenómina"
   }
 
 }
