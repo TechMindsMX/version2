@@ -9,33 +9,21 @@
   </div>
   <div id="defaultPortlet" class="panel-collapse collapse in">
     <div class="portlet-body">
+			<div class="row">
+			<div class="col-md-6">
       <dl class="dl-horizontal">
         <dt>No. de Orden</dt>
-        <dd>
-        ${saleOrder.id}
-        </dd>
-        <dt>Cantidad de detalles</dt>
-        <dd>
-        ${saleOrder.items.size()}
-        </dd>
-
+        <dd>${saleOrder.id}</dd>
         <g:hiddenField name="saleCurrency" value="${saleOrder.currency}"/>
         <g:hiddenField name="saleChangeType" value="${saleOrder.changeType}"/>
         <dt>Moneda</dt>
-        <dd>
-        ${saleOrder.currency}
-        </dd>
+        <dd>${saleOrder.currency}</dd>
         <g:if test="${saleOrder.currency == 'USD' && saleOrder.status == SaleOrderStatus.PAGADA}">
-        <dt>Tipo de Cambio</dt>
-        <dd>
-        ${modulusuno.formatPrice(number:saleOrder.changeType)}
-        </dd>
+        	<dt>Tipo de Cambio</dt>
+        	<dd>${modulusuno.formatPrice(number:saleOrder.changeType)}</dd>
         </g:if>
-
         <dt>Subtotal</dt>
-        <dd>
-        ${modulusuno.formatPrice(number:saleOrder.subtotal)}
-        </dd>
+        <dd>${modulusuno.formatPrice(number:saleOrder.subtotal)}</dd>
         <dt>IVA</dt>
         <dd>${modulusuno.formatPrice(number:saleOrder.totalIVA)}</dd>
         <dt>Retención IVA</dt>
@@ -44,11 +32,38 @@
         <dd>${modulusuno.formatPrice(number:saleOrder.total)}</dd>
         <dt>Por pagar</dt>
         <dd>${modulusuno.formatPrice(number:saleOrder.amountToPay > 0 ? saleOrder.amountToPay : 0)}</dd>
+	      <dt>Método de Pago:</dt>
+        <dd>${saleOrder.paymentMethod}</dd>			
         <dt>Estado</dt>
         <dd><g:message code="saleOrder.status.${saleOrder.status}" default="${saleOrder.status}"/></dd>
         <dt>Notas</dt>
         <dd>${saleOrder?.note}</dd>
       </dl>
+			</div>
+			<div class="col-md-6">
+			<g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA || saleOrder.status == SaleOrderStatus.PAGADA}">
+				<h4>Pagos registrados</h4>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Fecha</th>
+								<th>Monto</th>
+							</tr>
+						</thead>
+						<tbody>
+							<g:each in="${saleOrder.payments.sort{it.dateCreated}}" var="payment">
+								<tr>
+									<td><g:formatDate format="dd-MM-yyyy" date="${payment.dateCreated}"/></td>
+									<td>${modulusuno.formatPrice(number:payment.amount)}</td>
+								</tr>
+							</g:each>
+						</tbody>
+					</table>
+				</div>
+			</g:if>
+			</div>
+			</div>
       <p>
       <g:if test="${saleOrder.status == SaleOrderStatus.CANCELADA || saleOrder.status == SaleOrderStatus.RECHAZADA}">
       <div class="alert alert-danger" role="alert">
