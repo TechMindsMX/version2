@@ -134,8 +134,9 @@ class PrePaysheetController {
 	def importXlsPrePaysheet(PrePaysheet prePaysheet) {
 		log.info "Importing data from xls prepaysheet"
     def file = request.getFile('prePaysheetXlsFile')
-		prePaysheetService.processXlsPrePaysheet(file, prePaysheet)
-		redirect action:"show", id:prePaysheet.id
+		Map importResults = prePaysheetService.processXlsPrePaysheet(file, prePaysheet)
+		log.info "Import results: ${importResults}"
+		render view:"show", model:[prePaysheet:prePaysheet, importResults:importResults]
 	}
 	
   def downloadLayout() {
