@@ -285,4 +285,12 @@ class SaleOrderController {
     redirect controller:"corporate", action:"commissions", id:corporate.id
   }
 
+	@Transactional
+	def abortBillCancellation(SaleOrder saleOrder) {
+		log.info "Aborting bill cancellation from sale order: ${saleOrder.id}"
+		saleOrder.status = SaleOrderStatus.EJECUTADA
+		saleOrder.save()
+		redirect action:"list"
+	}
+
 }
