@@ -90,8 +90,11 @@
     <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_POR_AUTORIZAR}">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-9">
-            <g:link action="authorizeCancelBill" class="btn btn-warning btn-block" id="${saleOrder.id}">Autorizar Cancelación de Factura</g:link>
+          <div class="col-md-6">
+            <g:link action="authorizeCancelBill" class="btn btn-danger btn-block" id="${saleOrder.id}">Autorizar Cancelación de Factura</g:link>
+          </div>
+	        <div class="col-md-6">
+            <g:link action="abortBillCancellation" class="btn btn-warning btn-block" id="${saleOrder.id}">Rechazar Cancelación de Factura</g:link>
           </div>
         </div>
       </div>
