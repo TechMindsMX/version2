@@ -30,6 +30,14 @@
         </div>
       </div>
 
+			<g:if test="${importResults}">
+			<div class="row">
+				<div class="col-md-12">
+					<g:render template="importResults"/>
+				</div>
+			</div>
+			</g:if>
+
       <div class="row">
         <div class="col-md-12">
           <g:render template="listEmployees"/>
