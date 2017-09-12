@@ -25,8 +25,6 @@
         ${address.city}, ${address.town}<br>
         </dd>
         </g:each>
-        <dt>Método de Pago:</dt>
-        <dd>${saleOrder.paymentMethod}</dd>
       </dl>
     </div>
   </div>
