@@ -146,4 +146,13 @@ class PrePaysheetService {
     PrePaysheetEmployee.executeUpdate("delete PrePaysheetEmployeeIncidence incidence where incidence.id = :id", [id: incidence.id])
   }
 
+	def createLayoutForPrePaysheet() {
+		def headersPrePaysheet = ['PERIODO PAGO', 'FECHA INICIO', 'FECHA FIN', 'EJECUTIVO']
+		def headersEmployees = ['RFC', 'CURP', 'NO. EMPL.', 'CLABE', 'TARJETA', 'NETO A PAGAR', 'OBSERVACIONES']
+    new WebXlsxExporter().with {
+      fillRow(headersPrePaysheet, 0)
+      fillRow(headersEmployees, 2)
+    }
+	}
+
 }
