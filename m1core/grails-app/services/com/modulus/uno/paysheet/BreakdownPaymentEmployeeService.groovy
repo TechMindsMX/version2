@@ -112,7 +112,7 @@ class BreakdownPaymentEmployeeService {
     BigDecimal limit = new BigDecimal(grailsApplication.config.paysheet.uma) * 25
     BigDecimal disabilityAndLifeEmployee = integratedDailySalary * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.disabilityAndLifeEmployee)/100)
     if (integratedDailySalary > limit) {
-      disabilityAndLifeEmployer = limit * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.disabilityAndLifeEmployee)/100)
+      disabilityAndLifeEmployee = limit * new BigDecimal(grailsApplication.config.paysheet.quotationDays) * (new BigDecimal(grailsApplication.config.paysheet.disabilityAndLifeEmployee)/100)
     }
     disabilityAndLifeEmployee.setScale(2, RoundingMode.HALF_UP)
   }
