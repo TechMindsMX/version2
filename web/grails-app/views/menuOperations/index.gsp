@@ -38,7 +38,7 @@
               <g:each in="${roles}" var="r">
                 <li>
                   <g:link controller="menuOperations" action="show" id="${r.id}">
-                    ${r.authority}
+                    <g:message code="role.authority.${r.authority.toLowerCase()}" default="${r.authority}" />
                   </g:link>
                 </li>
               </g:each>
