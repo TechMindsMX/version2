@@ -12,7 +12,7 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet, model:[chargeBanksAccounts: paysheetService.getBanksAccountsToPay(paysheet)]
+    respond paysheet, model:[chargeBanksAccounts: paysheet.company.banksAccounts]
   }
 
   def list() {
