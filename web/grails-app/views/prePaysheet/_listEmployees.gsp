@@ -89,7 +89,7 @@
     <g:if test="${prePaysheet.status == PrePaysheetStatus.IN_PROCESS}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-default" action="exportToXls" id="${prePaysheet.id}">XLS</g:link>
-			<sec:ifAnyGranted roles="ROLE_OPERATOR_EJECUTOR">
+			<sec:ifAnyGranted roles="ROLE_AUTHORIZER_PAYSHEET">
       <g:link class="btn btn-default" controller="paysheet" action="createFromPrePaysheet" id="${prePaysheet.id}">Procesar</g:link>
 			</sec:ifAnyGranted>
     </div>
