@@ -70,10 +70,11 @@
   <div class="row">
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED}">
       <div class="col-md-4">
+				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED}">
           <a data-toggle="collapse" role="button" href="#paymentDispersion" class="btn btn-primary" aria-expanded="false" aria-controls="paymentDispersion">Dispersar Pagos</a>
-
         </g:if>
+				</sec:ifAnyGranted>
       </div>
       <div class="col-md-8 text-right">
         <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
