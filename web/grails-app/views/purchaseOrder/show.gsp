@@ -52,7 +52,6 @@
       <g:if test="${amountExcceds}">
         <div class="alert alert-danger" role="alert">${amountExcceds}</div>
       </g:if>
-
         <div class="table-responsive">
           <table class="table">
             <thead>
@@ -142,5 +141,13 @@
       </div>
     </div>
     <asset:javascript src="purchaseOrder/show.js"/>
+
+
+
+
+        </div>
+      </div>
+    </div>
+    </div>
  </body>
 </html>
