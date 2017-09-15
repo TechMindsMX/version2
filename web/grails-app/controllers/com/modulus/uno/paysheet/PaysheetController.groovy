@@ -66,11 +66,14 @@ class PaysheetController {
   }
 
   def generatePaymentDispersion(Paysheet paysheet) {
-    log.info "Generating txt payments dispersion file for schema ${params.paymentSchema}, charge bank account ${params.chargeBankAccountId} and disparsion way ${params.dispersionWay} from paysheet ${paysheet.id}"
-    File txtDispersion = paysheetService.generateDispersionFromPaysheet(paysheet, params)
+    log.info "Generating txt payments dispersion charge bank account ${params.chargeBankAccountId} from paysheet ${paysheet.id}"
+    paysheetService.generateDispersionFilesFromPaysheet(paysheet, params)
+		redirect action:"show", id:paysheet.id
+		/*
     response.setHeader "Content-disposition", "attachment; filename=dispersion-nomina${paysheet.id}-${params.paymentSchema}-${params.dispersionWay}.txt"
     response.contentType = 'text-plain'
     response.outputStream << txtDispersion.text
     response.outputStream.flush()
+		*/
   }
 }
