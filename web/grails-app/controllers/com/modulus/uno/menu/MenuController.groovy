@@ -16,7 +16,18 @@ class MenuController {
   }
 
   def show(Menu menu) {
-    respond menu
+    def criteria = Menu.createCriteria()
+    def menusNotIncluded = []
+    if(menu.menus){
+      menusNotIncluded = criteria.list {
+        menus {
+          not {
+            'in'('id', menu.menus*.id)
+          }
+        }
+      }
+    }
+    respond menu, model:[menusNotIncluded: menusNotIncluded]
   }
 
   def create() {
