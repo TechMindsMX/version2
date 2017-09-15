@@ -25,7 +25,6 @@
     </g:if>
 
     <div class="row">
-
       <div class="col-md-6">
         <div class="portlet portlet-default">
           <div class="portlet-heading">
@@ -91,6 +90,38 @@
           </div>
         </div>
       </div>
+    </div>
 
+    <div class="row">
+      <div class="col-md-12">
+        <div class="portlet portlet-default">
+          <div class="portlet-heading">
+            <div class="portlet-title">
+              <h4>Menus no incluidos</h4>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="defaultPortlet" class="panel-collapse collapse in">
+            <div class="portlet-body">
+              <g:if test="${menusNotIncluded}">
+                <ul>
+                  <g:each in="${menusNotIncluded}" var="m">
+                  <li>
+                    <g:link action="show" id="${m.id}">
+                    ${m}
+                    </g:link>
+                  </li>
+                  </g:each>
+                </ul>
+              </g:if>
+              <g:else>
+                <b>No hay submenues</b>
+              </g:else>
+              <br></br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
