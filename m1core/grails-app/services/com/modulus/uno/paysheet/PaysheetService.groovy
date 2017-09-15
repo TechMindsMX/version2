@@ -119,27 +119,38 @@ class PaysheetService {
     paysheet.company.banksAccounts.findAll { bA -> bA.banco.bankingCode.endsWith(grailsApplication.config.paysheet.paymentBankingCode) }
   }
 
-  File generateDispersionFromPaysheet(Paysheet paysheet, Map dispersionData) {
-    Bank bank = Bank.findByBankingCodeLike("%${grailsApplication.config.paysheet.paymentBankingCode}")
+  File generateDispersionFilesFromPaysheet(Paysheet paysheet, Map dispersionData) {
     dispersionData = complementDispersionData(dispersionData)
-    List<PaysheetEmployee> employees = "getPaysheetEmployeesFor${dispersionData.dispersionWay}"(paysheet.employees, bank)
-    "createTxtDispersionFileFor${dispersionData.dispersionWay}"(employees, dispersionData)
+		generateDispersionFileSameBank(paysheet, dispersionData)
+		generateDispersionFileInterBank(paysheet, dispersionData)
   }
 
   Map complementDispersionData(Map dispersionData) {
     BankAccount chargeBankAccount = BankAccount.get(dispersionData.chargeBankAccountId)
-    dispersionData.chargeAccountNumber = chargeBankAccount.accountNumber
+    dispersionData.chargeBankAccount = chargeBankAccount
     dispersionData.salary = dispersionData.paymentSchema == 'IMSS' ? "imssSalaryNet" : "salaryAssimilable"
     dispersionData
   }
 
+	def generateDispersionFileSameBank(Paysheet paysheet, Map dispersionData){
+    List<PaysheetEmployee> employees = getPaysheetEmployeesForSameBank(paysheet.employees, dispersionData.chargeBankAccount.banco)
+    File dispersionFileSameBank = createTxtDispersionFileForSameBank(employees, dispersionData)
+		//TODO: upload file to s3
+	}
+
+	def generateDispersionFileInterBank(Paysheet paysheet, Map dispersionData){
+    List<PaysheetEmployee> employees = getPaysheetEmployeesForInterBank(paysheet.employees, dispersionData.chargeBankAccount.banco)
+    File dispersionFileInterBank = createTxtDispersionFileForInterBank(employees, dispersionData)
+		//TODO: upload file to s3
+	}
+
   File createTxtDispersionFileForSameBank(List<PaysheetEmployee> employees, Map dispersionData) {
-    log.info "Payment dispersion ${dispersionData.dispersionWay} same bank for employees: ${employees}"
+    log.info "Payment dispersion same bank for employees: ${employees}"
     File file = File.createTempFile("txtDispersion",".txt")
     employees.each { employee ->
-      log.info "Payment dispersion ${dispersionData.dispersionWay} same bank record for employee: ${employee?.dump()}"
+      log.info "Payment dispersion same bank record for employee: ${employee?.dump()}"
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-      String sourceAccount = dispersionData.chargeAccountNumber.padLeft(18,'0')
+      String sourceAccount = dispersionData.chargeBankAccountNumber.accountNumber.padLeft(18,'0')
       String currency = "MXN"
       String amount = (new DecimalFormat('##0.00').format(employee."${dispersionData.salary}")).padLeft(16,'0')
       String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
