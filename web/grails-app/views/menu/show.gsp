@@ -66,21 +66,29 @@
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              <g:if test="${menu.menus}">
-                <ul>
+              <table class="table table-condensed">
+                <thead>
+                  <tr>
+                    <th>Nombre del menú</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <g:if test="${menu.menus}">
                   <g:each in="${menu.menus}" var="m">
-                  <li>
-                    <g:link action="show" id="${m.id}">
-                    ${m}
-                    </g:link>
-                  </li>
+                  <tr>
+                    <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
+                    <td><button class="btn btn-danger">Quitar operación</button></td>
+                  </tr>
                   </g:each>
-                </ul>
-              </g:if>
-              <g:else>
-                <b>No hay submenues</b>
-              </g:else>
-              <br></br>
+                </g:if>
+                <g:else>
+                  <tr>
+                    <td colspan="2"><b>No hay submenues</b></td>
+                  </tr>
+                </g:else>
+                </tbody>
+              </table>
               <div class="property-value" aria-labelledby="menu-label">
                 <g:link class="edit btn btn-primary" action="create" resource="${this.menu}" params="['parentMenu.id': menu.id]">
                   <g:message code="default.button.submenu.label" default="New submenu" />
@@ -103,21 +111,35 @@
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              <g:if test="${menusNotIncluded}">
-                <ul>
+              <table class="table table-condensed">
+                <thead>
+                  <tr>
+                    <th>Nombre del menú</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <g:if test="${menusNotIncluded}">
+                <g:form action="addSubmenu" id="${menu.id}">
+                  <g:hiddenField name="parentMenuId" value="${menu.id}" />
                   <g:each in="${menusNotIncluded}" var="m">
-                  <li>
-                    <g:link action="show" id="${m.id}">
-                    ${m}
-                    </g:link>
-                  </li>
+                  <tr>
+                    <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
+                    <td>
+                      <g:checkBox name="menuOption" value="${m.id}" class="form-check-input" checked="false"></g:checkBox>
+                    </td>
+                  </tr>
                   </g:each>
-                </ul>
-              </g:if>
-              <g:else>
-                <b>No hay submenues</b>
-              </g:else>
-              <br></br>
+                  <g:submitButton name="submit" value="Agregar menues" class="btn btn-default"></g:submitButton>
+                  </g:form>
+                </g:if>
+                <g:else>
+                  <tr>
+                    <td colspan="2"><b>Todos los menues incluidos</b></td>
+                  </tr>
+                </g:else>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
