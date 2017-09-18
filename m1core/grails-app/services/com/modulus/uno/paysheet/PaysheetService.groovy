@@ -128,7 +128,6 @@ class PaysheetService {
   Map complementDispersionData(Map dispersionData) {
     BankAccount chargeBankAccount = BankAccount.get(dispersionData.chargeBankAccountId)
     dispersionData.chargeBankAccount = chargeBankAccount
-    dispersionData.salary = dispersionData.paymentSchema == 'IMSS' ? "imssSalaryNet" : "salaryAssimilable"
     dispersionData
   }
 
@@ -150,25 +149,26 @@ class PaysheetService {
     employees.each { employee ->
       log.info "Payment dispersion same bank record for employee: ${employee?.dump()}"
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-      String sourceAccount = dispersionData.chargeBankAccountNumber.accountNumber.padLeft(18,'0')
+      String sourceAccount = dispersionData.chargeBankAccount.accountNumber.padLeft(18,'0')
       String currency = "MXN"
-      String amount = (new DecimalFormat('##0.00').format(employee."${dispersionData.salary}")).padLeft(16,'0')
       String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
-      file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+			["imssSalaryNet", "salaryAssimilable"].each { salary ->
+      	String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+      	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+			}
     }
     log.info "File created: ${file.text}"
     file
   }
 
   File createTxtDispersionFileForInterBank(List<PaysheetEmployee> employees, Map dispersionData) {
-    log.info "Payment dispersion ${dispersionData.paymentSchema} interbank for employees: ${employees}"
+    log.info "Payment dispersion iinterbank for employees: ${employees}"
     File file = File.createTempFile("txtDispersion",".txt")
     employees.each { employee ->
-      log.info "Payment dispersion ${dispersionData.paymentSchema} interbank record for employee: ${employee?.dump()}"
+      log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
       String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
-      String sourceAccount = dispersionData.chargeAccountNumber.padLeft(18,'0')
+      String sourceAccount = dispersionData.chargeBankAccount.accountNumber.padLeft(18,'0')
       String currency = "MXN"
-      String amount = (new DecimalFormat('##0.00').format(employee."${dispersionData.salary}")).padLeft(16,'0')
       String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
       String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
       String typeAccount = "40"
@@ -176,7 +176,10 @@ class PaysheetService {
       String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
       String reference = new Date().format("ddMMyy").padLeft(7,'0')
       String disp = "H"      
-      file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+			["imssSalaryNet", "salaryAssimilable"].each { salary ->
+      	String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+      	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+			}
     }
     log.info "File created: ${file.text}"
     file
