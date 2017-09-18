@@ -12,7 +12,7 @@
     <tr>
       <td><g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}"/></td>
       <td>${modulusuno.formatPrice(number: payment.amount)}</td>
-      <td>${payments.clients.find { it.rfc == payment.rfc} }</td>
+      <td>${ payments.clients.find { it?.rfc == payment.rfc} ?: "EL CLIENTE CON RFC ${payment.rfc} YA NO FUE ENCONTRADO EN LOS REGISTROS DE RELACIONES COMERCIALES" }</td>
       <td class="text-center">
         <button class="btn btn-primary">Elegir Factura</button>
       </td>

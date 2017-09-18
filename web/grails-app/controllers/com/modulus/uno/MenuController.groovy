@@ -3,11 +3,14 @@ package com.modulus.uno
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 import com.modulus.uno.menu.Menu
+import com.modulus.uno.menu.MenuOperationsService
 
 @Transactional(readOnly = true)
 class MenuController {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+
+	MenuOperationsService menuOperationsService
 
   def index(Integer max) {
     params.max = Math.min(max ?: 10, 100)
@@ -85,6 +88,7 @@ class MenuController {
       return
     }
 
+		menuOperationsService.removeMenuForAllRolesAssigned(menu)
     menu.delete flush:true
 
     request.withFormat {

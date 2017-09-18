@@ -173,6 +173,7 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
       new BigDecimal(164.24).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(87.38).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(149.32).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(79.44).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(256.23).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(136.31).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(1004.02).setScale(2, RoundingMode.HALF_UP)
   }
 
   @Unroll
@@ -188,6 +189,7 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
       new BigDecimal(164.24).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(31.21).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(149.32).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(28.37).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(256.23).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(48.68).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(358.58).setScale(2, RoundingMode.HALF_UP)
   }
 
   @Unroll

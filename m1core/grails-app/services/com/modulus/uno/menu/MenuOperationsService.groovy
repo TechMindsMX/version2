@@ -12,4 +12,9 @@ class MenuOperationsService {
     }.flatten()*.menu.unique{ a, b -> a.id <=> b.id}
   }
 
+	def removeMenuForAllRolesAssigned(Menu menu) {
+    def menuLinks = MenuLink.findAllWhere(menu:menu)
+		menuLinks.each { it.delete() }
+	}
+
 }
