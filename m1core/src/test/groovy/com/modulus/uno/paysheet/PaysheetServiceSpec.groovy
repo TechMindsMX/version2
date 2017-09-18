@@ -41,24 +41,37 @@ class PaysheetServiceSpec extends Specification {
     prePaysheet
   }
 
-  @Unroll
-  void "Should create the payment dispersion #paymentSchema file dispersion way is #dispersionWay"() {
+  void "Should create the payment dispersion file for same bank"() {
     given:"employees list"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The dispersion data"
-      Map dispersionData = [dispersionWay:dispersionWay, chargeAccountNumber:"CompanyAccount", salary:dispersionSalary, paymentMessage:paymentMessage, paymentSchema:paymentSchema]
+			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+      Map dispersionData = [chargeBankAccount:bankAccount, paymentMessage:"DEP ss 1"]
     when:
-      def result = service."createTxtDispersionFileFor${dispersionWay}"(employees, dispersionData)
+      def result = service.createTxtDispersionFileForSameBank(employees, dispersionData)
     then:
-      result.text == textResult
-    where:
-    paymentSchema   |   dispersionWay   |   dispersionSalary  |   paymentMessage  || textResult
-    "IMSS"  |   "SameBank"  | "imssSalaryNet" | "DEP ss 1"  || "000EmployeeAccount0000CompanyAccountMXN0000000001200.00DEP SS 1                      \n"
-    "IMSS"  |   "InterBank" |   "imssSalaryNet" |   "TRN ss 1" || "Clabe interbanking0000CompanyAccountMXN0000000001200.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H\n"
-    "Asimilable"  |   "SameBank"  | "salaryAssimilable" | "DEP ias 1"  || "000EmployeeAccount0000CompanyAccountMXN0000000003000.00DEP IAS 1                     \n"
-    "Asimilable"  |   "InterBank" |   "salaryAssimilable" |   "TRN ias 1" || "Clabe interbanking0000CompanyAccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN IAS 1                     ${new Date().format('ddMMyy').padLeft(7,'0')}H\n"
-  }
+      result.readLines().size() == 2
+			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00DEP SS 1                      "
+			result.readLines()[1] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00DEP SS 1                      "
+	}
 
+  void "Should create the payment dispersion file for inter bank"() {
+    given:"employees list"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+    and:"The dispersion data"
+			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"900").save(validate:false)).save(validate:false)
+      Map dispersionData = [chargeBankAccount:bankAccount, paymentMessage:"TRN ss 1"]
+    when:
+      def result = service.createTxtDispersionFileForInterBank(employees, dispersionData)
+    then:
+      result.readLines().size() == 2
+			result.readLines()[0] == "Clabe interbanking0000CompanyAccountMXN0000000001200.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
+			result.readLines()[1] == "Clabe interbanking0000CompanyAccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
+	}
+
+/*
+
+*/
   private PaysheetEmployee createPaysheetEmployee() {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       paysheet: new Paysheet().save(validate:false),
