@@ -20,6 +20,11 @@ class MenuController {
     respond menu, model:[menusNotIncluded: menusNotIncluded]
   }
 
+  def addSubmenu(){
+    println params
+    redirect action:"show", id: params.id
+  }
+
   def create() {
     respond new Menu(params)
   }
