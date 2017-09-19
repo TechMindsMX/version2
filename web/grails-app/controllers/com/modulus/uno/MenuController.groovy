@@ -3,9 +3,12 @@ package com.modulus.uno
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 import com.modulus.uno.menu.Menu
+import com.modulus.uno.menu.MenuService
 
 @Transactional(readOnly = true)
 class MenuController {
+
+  MenuService menuService
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -22,6 +25,10 @@ class MenuController {
 
   def addSubmenu(){
     println params
+    println params.id.class
+    println params.menuOption.class
+    println params.menuOption*.toLong()*.class
+    menuService.addFewSubmenusToMenu(params.id.toLong(), params.menuOption*.toLong())
     redirect action:"show", id: params.id
   }
 
