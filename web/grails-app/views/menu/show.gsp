@@ -36,11 +36,6 @@
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
               <ul class="property-list menu">
-                <g:if test="${menu.parentMenu}">
-                  <g:link action="show" id="${menu.parentMenu.id}">
-                  <f:display bean="menu" property="parentMenu" wrapper="show" />
-                  </g:link>
-                </g:if>
                 <f:display bean="menu" property="name" wrapper="show" />
                 <f:display bean="menu" property="internalUrl" wrapper="show" />
                 <f:display bean="menu" property="parameters" wrapper="show" />
@@ -90,9 +85,6 @@
                 </tbody>
               </table>
               <div class="property-value" aria-labelledby="menu-label">
-                <g:link class="edit btn btn-primary" action="create" resource="${this.menu}" params="['parentMenu.id': menu.id]">
-                  <g:message code="default.button.submenu.label" default="New submenu" />
-                </g:link>
               </div>
             </div>
           </div>
