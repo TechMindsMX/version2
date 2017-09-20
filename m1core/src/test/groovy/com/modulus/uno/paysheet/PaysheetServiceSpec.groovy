@@ -84,4 +84,17 @@ class PaysheetServiceSpec extends Specification {
     paysheetEmployee.save(validate:false)
     paysheetEmployee
   }
+
+	void "Should complement the dispersion data"() {
+		given:
+			Map dispersionData = [chargeBankAccountsIds:"1,2,3"]
+		and:
+			BankAccount bankAccount1 = new BankAccount().save(validate:false)
+			BankAccount bankAccount2 = new BankAccount().save(validate:false)
+			BankAccount bankAccount3 = new BankAccount().save(validate:false)
+		when:
+			Map result = service.complementDispersionData(dispersionData)
+		then:
+			result.chargeBankAccountsList.size() == 3
+	}
 }
