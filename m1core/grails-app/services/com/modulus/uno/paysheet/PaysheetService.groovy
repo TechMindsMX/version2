@@ -126,8 +126,9 @@ class PaysheetService {
   }
 
   Map complementDispersionData(Map dispersionData) {
-    BankAccount chargeBankAccount = BankAccount.get(dispersionData.chargeBankAccountId)
-    dispersionData.chargeBankAccount = chargeBankAccount
+		List idsChargeBankAccounts = dispersionData.chargeBankAccountsIds.tokenize(",").collect { it.toLong() }
+    List<BankAccount> chargeBankAccountList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
+    dispersionData.chargeBankAccountsList = chargeBankAccountList
     dispersionData
   }
 
