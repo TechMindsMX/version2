@@ -37,4 +37,15 @@ class MenuService {
     menu.save()
     menu
   }
+
+  Menu removeSubmenuToMenu(Menu menu, Menu submenu){
+    menu.menus.remove(submenu)
+    menu.save()
+    menu
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  Menu removeSubmenuToMenu(Long menuId, Long submenuId){
+    removeSubmenuToMenu(Menu.get(menuId), Menu.get(submenuId))
+  }
 }
