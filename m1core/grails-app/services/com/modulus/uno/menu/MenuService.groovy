@@ -13,12 +13,9 @@ class MenuService {
   }
 
   Menu addSubmenuToMenu(Menu menu, Menu submenu){
+    if(!menu.menus) menu.menus = []
     menu.menus << submenu
-    //submenu.parentMenu = menu
     menu.save()
-    //submenu.save()
-    println menu.validate()
-    println menu.menus
     menu
   }
 
