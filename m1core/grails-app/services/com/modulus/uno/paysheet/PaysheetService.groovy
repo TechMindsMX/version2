@@ -138,7 +138,7 @@ class PaysheetService {
 		deleteCurrentDispersionFilesFromPaysheet(paysheet)
     dispersionData = complementDispersionData(dispersionData)
 		generateDispersionFileSameBank(paysheet, dispersionData)
-		generateDispersionFileInterBank(paysheet, dispersionData)
+		//generateDispersionFileInterBank(paysheet, dispersionData)
   }
 
 	def deleteCurrentDispersionFilesFromPaysheet(Paysheet paysheet){
