@@ -41,19 +41,59 @@ class PaysheetServiceSpec extends Specification {
     prePaysheet
   }
 
-  void "Should create the payment dispersion file for same bank"() {
+  void "Should create the payment dispersion SA BBVA file"() {
     given:"employees list"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The dispersion data"
 			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
-      Map dispersionData = [chargeBankAccount:bankAccount, paymentMessage:"DEP ss 1"]
+      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"PERIODO-PAGO"]
     when:
-      def result = service.createTxtDispersionFileForSameBank(employees, dispersionData)
+      def result = service.createTxtDispersionFileSAForBBVA(dispersionDataForBank)
     then:
-      result.readLines().size() == 2
-			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00DEP SS 1                      "
-			result.readLines()[1] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00DEP SS 1                      "
+      result.readLines().size() == 1
+			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00SSA-PERIODOPAGO               "
 	}
+
+  void "Should create the payment dispersion IAS BBVA file"() {
+    given:"employees list"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+    and:"The dispersion data"
+			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"PERIODO-PAGO"]
+    when:
+      def result = service.createTxtDispersionFileIASForBBVA(dispersionDataForBank)
+    then:
+      result.readLines().size() == 1
+			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00IAS-PERIODOPAGO               "
+	}
+
+  void "Should create the payment dispersion SA Default file"() {
+    given:"employees list"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+    and:"The dispersion data"
+			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"DEFAULTLAYOUT"]
+    when:
+      def result = service.createTxtDispersionFileSADefault(dispersionDataForBank)
+    then:
+      result.readLines().size() == 1
+			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00SSA-DEFAULTLAYOUT             "
+	}
+
+  void "Should create the payment dispersion IAS Default file"() {
+    given:"employees list"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+    and:"The dispersion data"
+			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"DEFAULTLAYOUT"]
+    when:
+      def result = service.createTxtDispersionFileIASDefault(dispersionDataForBank)
+    then:
+      result.readLines().size() == 1
+			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00IAS-DEFAULTLAYOUT             "
+	}
+
+
 
   void "Should create the payment dispersion file for inter bank"() {
     given:"employees list"
