@@ -10,7 +10,7 @@ class MenuController {
 
   MenuService menuService
 
-  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", removeSubmenu: "DELETE"]
 
   def index(Integer max) {
     params.max = Math.min(max ?: 10, 100)
@@ -24,11 +24,12 @@ class MenuController {
   }
 
   def addSubmenu(){
-    println params
-    println params.id.class
-    println params.menuOption.class
-    println params.menuOption*.toLong()*.class
     menuService.addFewSubmenusToMenu(params.id.toLong(), params.menuOption*.toLong())
+    redirect action:"show", id: params.id
+  }
+
+  def removeSubmenu(){
+    menuService.removeSubmenuToMenu(params.long('id'), params.long('submenuId'))
     redirect action:"show", id: params.id
   }
 
