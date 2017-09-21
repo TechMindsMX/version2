@@ -73,7 +73,14 @@
                   <g:each in="${menu.menus}" var="m">
                   <tr>
                     <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
-                    <td><button class="btn btn-danger">Quitar operación</button></td>
+                    <td>
+                      <g:form action="removeSubmenu" method="DELETE" id="${menu.id}">
+                      <g:hiddenField name="submenuId" value="${m.id}"></g:hiddenField>
+                      <button class="btn btn-danger" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Seguro?')}');">
+                        Quitar operación
+                      </button>
+                      </g:form>
+                    </td>
                   </tr>
                   </g:each>
                 </g:if>
@@ -102,6 +109,7 @@
             <div class="clearfix"></div>
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
+						<g:form action="addSubmenu" id="${menu.id}">
             <div class="portlet-body">
               <table class="table table-condensed">
                 <thead>
@@ -112,7 +120,6 @@
                 </thead>
                 <tbody>
                 <g:if test="${menusNotIncluded}">
-                <g:form action="addSubmenu" id="${menu.id}">
                   <g:hiddenField name="parentMenuId" value="${menu.id}" />
                   <g:each in="${menusNotIncluded}" var="m">
                   <tr>
@@ -122,8 +129,6 @@
                     </td>
                   </tr>
                   </g:each>
-                  <g:submitButton name="submit" value="Agregar menues" class="btn btn-default"></g:submitButton>
-                  </g:form>
                 </g:if>
                 <g:else>
                   <tr>
@@ -132,7 +137,9 @@
                 </g:else>
                 </tbody>
               </table>
+							<g:submitButton name="submit" value="Agregar submenues" class="btn btn-default"></g:submitButton>
             </div>
+						</g:form>
           </div>
         </div>
       </div>
