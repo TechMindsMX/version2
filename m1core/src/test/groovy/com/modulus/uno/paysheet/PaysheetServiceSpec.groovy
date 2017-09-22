@@ -146,4 +146,54 @@ class PaysheetServiceSpec extends Specification {
 		then:
 			result.chargeBankAccountsList.size() == 3
 	}
+
+	void "Should obtain the bank accounts list for payment dispersion"() {
+		given:"The paysheet with employees and each one with a bank account"
+			Bank bank = new Bank(name:"BANCO").save(validate:false)
+			PrePaysheetEmployee prePaysheetEmployee1 = new PrePaysheetEmployee(bank:bank).save(validate:false)
+			PaysheetEmployee paysheetEmployee1 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee1).save(validate:false)
+			PrePaysheetEmployee prePaysheetEmployee2 = new PrePaysheetEmployee(bank:new Bank(name:"OTRO BANCO").save(validate:false)).save(validate:false)
+			PaysheetEmployee paysheetEmployee2 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee2).save(validate:false)
+			Paysheet paysheet = new Paysheet().save(validate:false)
+			paysheet.addToEmployees(paysheetEmployee1)
+			paysheet.addToEmployees(paysheetEmployee2)
+			paysheet.save(validate:false)
+		and:"The company with bank accounts"
+			Company company = new Company().save(validate:false)
+			company.addToBanksAccounts(new BankAccount(banco:bank))
+			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
+			company.save(validate:false)
+			paysheet.company = company
+			paysheet.save(validate:false)
+		when:
+			def result = service.getBanksAccountsToPaymentDispersion(paysheet)
+	  then:
+			result.size() == 1
+			result.first().banco.name == "BANCO"
+	}
+
+	void "Should obtain empty bank accounts list for payment dispersion"() {
+		given:"The paysheet with employees and each one with a bank account"
+			PrePaysheetEmployee prePaysheetEmployee1 = new PrePaysheetEmployee(bank:new Bank(name:"BANCO A").save(validate:false)).save(validate:false)
+			PaysheetEmployee paysheetEmployee1 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee1).save(validate:false)
+			PrePaysheetEmployee prePaysheetEmployee2 = new PrePaysheetEmployee(bank:new Bank(name:"OTRO BANCO").save(validate:false)).save(validate:false)
+			PaysheetEmployee paysheetEmployee2 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee2).save(validate:false)
+			Paysheet paysheet = new Paysheet().save(validate:false)
+			paysheet.addToEmployees(paysheetEmployee1)
+			paysheet.addToEmployees(paysheetEmployee2)
+			paysheet.save(validate:false)
+		and:"The company with bank accounts"
+			Bank bank = new Bank(name:"BANCO").save(validate:false)
+			Company company = new Company().save(validate:false)
+			company.addToBanksAccounts(new BankAccount(banco:bank))
+			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
+			company.save(validate:false)
+			paysheet.company = company
+			paysheet.save(validate:false)
+		when:
+			def result = service.getBanksAccountsToPaymentDispersion(paysheet)
+	  then:
+			result.size() == 0
+	}
+
 }
