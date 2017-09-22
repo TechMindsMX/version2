@@ -115,8 +115,15 @@ class PaysheetService {
     employees
   }
 
-  def getBanksAccountsToPay(Paysheet paysheet) {
-    paysheet.company.banksAccounts.findAll { bA -> bA.banco.bankingCode.endsWith(grailsApplication.config.paysheet.paymentBankingCode) }
+  def getBanksAccountsToPaymentDispersion(Paysheet paysheet) {
+		def distinctBanksEmployees = [] as Set
+		paysheet.employees.each { emp ->
+			distinctBanksEmployees.add(emp.prePaysheetEmployee.bank)
+		}
+    def bankAccounts = paysheet.company.banksAccounts.collect { ba ->
+			if (distinctBanksEmployees.contains(ba.banco)) { return ba }
+		}.grep() 
+		bankAccounts
   }
 
   File generateDispersionFilesFromPaysheet(Paysheet paysheet, Map dispersionData) {
