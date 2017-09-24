@@ -6,11 +6,13 @@ import java.text.SimpleDateFormat
 import java.text.DecimalFormat
 import com.modulus.uno.Bank
 import com.modulus.uno.BankAccount
+import com.modulus.uno.S3AssetService
 
 class PaysheetService {
 
   PaysheetEmployeeService paysheetEmployeeService
   PrePaysheetService prePaysheetService
+  S3AssetService s3AssetService
   def grailsApplication
 
   @Transactional
@@ -126,11 +128,21 @@ class PaysheetService {
 		bankAccounts
   }
 
+	@Transactional
   def generateDispersionFilesFromPaysheet(Paysheet paysheet, Map dispersionData) {
+		deleteCurrentDispersionFilesFromPaysheet(paysheet)
     dispersionData = complementDispersionData(dispersionData)
 		generateDispersionFileSameBank(paysheet, dispersionData)
 		//generateDispersionFileInterBank(paysheet, dispersionData)
   }
+
+	def deleteCurrentDispersionFilesFromPaysheet(Paysheet paysheet){
+		def listFiles = paysheet.dispersionFiles.collect { it }
+		listFiles.each {
+			paysheet.removeFromDispersionFiles(it)
+		}
+		paysheet.save()
+	}
 
   Map complementDispersionData(Map dispersionData) {
 		List idsChargeBankAccounts = Arrays.asList(dispersionData.chargeBankAccountsIds)
@@ -140,19 +152,21 @@ class PaysheetService {
   }
 
 	def generateDispersionFileSameBank(Paysheet paysheet, Map dispersionData){
+		List dispersionFiles = []
 		dispersionData.chargeBankAccountsList.each { chargeBankAccount ->
-    	List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, chargeBankAccount.banco)
-			Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:dispersionData.paymentMessage]
-
-			String methodCreatorSATxtFileDispersion = getMethodCreatorOfSATxtDispersionFile(chargeBankAccount.banco.name)
-			String methodCreatorIASTxtFileDispersion = getMethodCreatorOfIASTxtDispersionFile(chargeBankAccount.banco.name)
-
-    	File dispersionFileSAForBank = "${methodCreatorSATxtFileDispersion}"(dispersionDataForBank)
-    	File dispersionFileIASForBank = "${methodCreatorIASTxtFileDispersion}"(dispersionDataForBank)
-			//TODO: subir los archivos a s3
-			//TODO: vincular las urls de los archivos de dispersion a la nómina
+			Map dispersionDataForBank = prepareDispersionDataForBank(paysheet, chargeBankAccount, dispersionData.paymentMessage)
+			List files = createDispersionFilesForDispersionData(dispersionDataForBank)
+			List s3Files = uploadDispersionFilesToS3(files)
+			dispersionFiles.addAll(s3Files)
 		}
+
+		addingDispersionFilesToPaysheet(paysheet, dispersionFiles)
 		log.info "Files dispersion same bank generated"
+	}
+
+	Map prepareDispersionDataForBank(Paysheet paysheet, BankAccount chargeBankAccount, String paymentMessage){
+		List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, chargeBankAccount.banco)
+		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:paymentMessage]
 	}
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
@@ -162,6 +176,29 @@ class PaysheetService {
       }
     }.grep()
   }
+
+	List createDispersionFilesForDispersionData(Map dispersionDataForBank){
+		List dispersionFiles = []
+
+		String methodCreatorSATxtFileDispersion = getMethodCreatorOfSATxtDispersionFile(dispersionDataForBank.chargeBankAccount.banco.name)
+		String methodCreatorIASTxtFileDispersion = getMethodCreatorOfIASTxtDispersionFile(dispersionDataForBank.chargeBankAccount.banco.name)
+
+    File dispersionFileSAForBank = "${methodCreatorSATxtFileDispersion}"(dispersionDataForBank)
+    File dispersionFileIASForBank = "${methodCreatorIASTxtFileDispersion}"(dispersionDataForBank)
+		
+		dispersionFiles.add(dispersionFileSAForBank)
+		dispersionFiles.add(dispersionFileIASForBank)
+		dispersionFiles
+	}
+
+	List uploadDispersionFilesToS3(List files){
+		List s3Files = []
+		files.each { file ->
+			def s3DispersionFile = s3AssetService.createFileToUpload(file, "${file.name.replaceAll('[0-9]','')}")
+			s3Files.add(s3DispersionFile)
+		}
+		s3Files
+	}
 
 	String getMethodCreatorOfSATxtDispersionFile(String bankName) {
 		bankName = bankName.replace(" ","")
@@ -251,7 +288,12 @@ class PaysheetService {
     text.toUpperCase().replace("Ñ","N").replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U").replace("Ü","U").replaceAll("[^a-zA-Z0-9 ]","")
   }
 
-
+	def addingDispersionFilesToPaysheet(Paysheet paysheet, List s3Files){
+		s3Files.each { file ->
+			paysheet.addToDispersionFiles(file)
+		}
+		paysheet.save()
+	}
 
 //TODO: Los interbancarios, se harán con M1
 	def generateDispersionFileInterBank(Paysheet paysheet, Map dispersionData){
@@ -282,7 +324,6 @@ class PaysheetService {
     log.info "File created: ${file.text}"
     file
   }
-
 
   List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, Bank bank) {
     allEmployees.collect { employee ->
