@@ -126,14 +126,14 @@ class PaysheetService {
 		bankAccounts
   }
 
-  File generateDispersionFilesFromPaysheet(Paysheet paysheet, Map dispersionData) {
+  def generateDispersionFilesFromPaysheet(Paysheet paysheet, Map dispersionData) {
     dispersionData = complementDispersionData(dispersionData)
 		generateDispersionFileSameBank(paysheet, dispersionData)
 		//generateDispersionFileInterBank(paysheet, dispersionData)
   }
 
   Map complementDispersionData(Map dispersionData) {
-		List idsChargeBankAccounts = dispersionData.chargeBankAccountsIds.tokenize(",").collect { it.toLong() }
+		List idsChargeBankAccounts = Arrays.asList(dispersionData.chargeBankAccountsIds)
     List<BankAccount> chargeBankAccountsList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
     dispersionData.chargeBankAccountsList = chargeBankAccountsList
     dispersionData
@@ -152,6 +152,7 @@ class PaysheetService {
 			//TODO: subir los archivos a s3
 			//TODO: vincular las urls de los archivos de dispersion a la nómina
 		}
+		log.info "Files dispersion same bank generated"
 	}
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
@@ -163,6 +164,7 @@ class PaysheetService {
   }
 
 	String getMethodCreatorOfSATxtDispersionFile(String bankName) {
+		bankName = bankName.replace(" ","")
 		String methodCreatorSATxtFileDispersion = "createTxtDispersionFileSADefault"
 		if (this.metaClass.respondsTo(this, "createTxtDispersionFileSAFor${bankName}")) {
 			methodCreatorSATxtFileDispersion = "createTxtDispersionFileSAFor${bankName}"
@@ -171,6 +173,7 @@ class PaysheetService {
 	}
 
 	String getMethodCreatorOfIASTxtDispersionFile(String bankName) {
+		bankName = bankName.replace(" ","")
 		String methodCreatorIASTxtFileDispersion = "createTxtDispersionFileIASDefault"
 		if (this.metaClass.respondsTo(this, "createTxtDispersionFileIASFor${bankName}")) {
 			methodCreatorIASTxtFileDispersion = "createTxtDispersionFileIASFor${bankName}"
@@ -212,7 +215,7 @@ class PaysheetService {
     file
   }
 
-  File createTxtDispersionFileSAForBBVA(Map dispersionDataForBank) {
+  File createTxtDispersionFileSAForBBVABANCOMER(Map dispersionDataForBank) {
     log.info "Payment dispersion same bank SA BBVA for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("txtDispersionSABBVA",".txt")
     dispersionDataForBank.employees.each { employee ->
@@ -228,7 +231,7 @@ class PaysheetService {
     file
   }
 
-  File createTxtDispersionFileIASForBBVA(Map dispersionDataForBank) {
+  File createTxtDispersionFileIASForBBVABANCOMER(Map dispersionDataForBank) {
     log.info "Payment dispersion same bank IAS BBVA for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("txtDispersionIASBBVA",".txt")
     dispersionDataForBank.employees.each { employee ->
