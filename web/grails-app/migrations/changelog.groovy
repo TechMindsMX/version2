@@ -73,6 +73,7 @@ databaseChangeLog = {
 	include file: 'create-domain-prepaysheet-employee-incidence.groovy'
   include file: 'modify-column-commission-to-paysheet-project.groovy'
 	include file: 'create-roles-for-queries.groovy'
-	include file: 'new-menu-relation.groovy'
   include file: 'modify-column-commission-to-paysheet-project.groovy'
+  include file: 'adding-dispersion-files-s3asset-to-paysheet.groovy'
+	include file: 'new-menu-relation.groovy'
 }
