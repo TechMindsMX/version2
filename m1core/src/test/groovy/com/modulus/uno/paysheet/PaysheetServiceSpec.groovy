@@ -5,21 +5,22 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
 import java.text.*
-
-import com.modulus.uno.Company
-import com.modulus.uno.BankAccount
 import com.modulus.uno.Bank
+import com.modulus.uno.S3Asset
+import com.modulus.uno.S3AssetService
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
   PrePaysheetService prePaysheetService = Mock(PrePaysheetService)
+  S3AssetService s3AssetService = Mock(S3AssetService)
 
   def setup() {
     service.paysheetEmployeeService = paysheetEmployeeService
     service.prePaysheetService = prePaysheetService
+    service.s3AssetService = s3AssetService
   }
 
   void "Should create paysheet from a prepaysheet"() {
@@ -40,6 +41,35 @@ class PaysheetServiceSpec extends Specification {
     prePaysheet.save(validate:false)
     prePaysheet
   }
+
+	void "Should prepare dispersion data for bank"() {
+		given:"The paysheet"
+			Bank bank = new Bank(name:"BANCO").save(validate:false)
+			Paysheet paysheet = new Paysheet().save(validate:false)
+			PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(bank:bank)
+			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee).save(validate:false))
+		and:"the charge bank account"
+			BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
+		and:"the payment message"
+			String paymentMessage = "Payment Message"
+		when:
+			def result = service.prepareDispersionDataForBank(paysheet, bankAccount, paymentMessage)
+		then:
+			result.employees.size() == 1
+			result.chargeBankAccount == bankAccount
+			result.paymentMessage == paymentMessage
+	}
+
+	void "Should create dispersion files for dispersion data"() {
+		given:"The dispersion data"
+			BankAccount chargeBankAccount = new BankAccount(banco:new Bank(name:"BANCO").save(validate:false), accountNumber:"NumCuenta").save(validate:false)
+			List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+			Map dispersionData = [chargeBankAccount:chargeBankAccount, employees:employees, paymentMessage:"Payment Message"]
+		when:
+			def result = service.createDispersionFilesForDispersionData(dispersionData)
+		then:
+			result.size() == 2
+	}
 
   void "Should create the payment dispersion SA BBVA file"() {
     given:"employees list"
@@ -93,7 +123,27 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00IAS-DEFAULTLAYOUT             "
 	}
 
+	void "Should upload dispersion files to S3"() {
+		given:"The files"
+			List files = [new File("/tmp/file01.txt"), new File("/tmp/file02.txt")]
+	  and:
+			s3AssetService.createFileToUpload(_, _) >> new S3Asset().save(validate:false)
+		when:
+			def result = service.uploadDispersionFilesToS3(files)
+		then:
+			result.size() == 2
+	}
 
+	void "Should add the dispersion files to paysheet"() {
+		given:"The paysheet"
+			Paysheet paysheet = new Paysheet().save(validate:false)
+		and:"The s3 files"
+			List s3Files = [new S3Asset().save(validate:false)]
+		when:
+			service.addingDispersionFilesToPaysheet(paysheet, s3Files)
+		then:
+			paysheet.dispersionFiles.size() == 1
+	}
 
   void "Should create the payment dispersion file for inter bank"() {
     given:"employees list"
