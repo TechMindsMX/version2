@@ -12,7 +12,7 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet, model:[chargeBanksAccounts: paysheetService.getBanksAccountsToPaymentDispersion(paysheet)]
+    respond paysheet, model:[chargeBanksAccounts: paysheetService.getBanksAccountsToPaymentDispersion(paysheet), baseUrlDocuments:grailsApplication.config.grails.url.base.images]
   }
 
   def list() {
@@ -69,11 +69,5 @@ class PaysheetController {
     log.info "Generating txt payments dispersion charge bank account ${params.chargeBankAccountsIds} from paysheet ${paysheet.id}"
     paysheetService.generateDispersionFilesFromPaysheet(paysheet, params)
 		redirect action:"show", id:paysheet.id
-		/*
-    response.setHeader "Content-disposition", "attachment; filename=dispersion-nomina${paysheet.id}-${params.paymentSchema}-${params.dispersionWay}.txt"
-    response.contentType = 'text-plain'
-    response.outputStream << txtDispersion.text
-    response.outputStream.flush()
-		*/
   }
 }
