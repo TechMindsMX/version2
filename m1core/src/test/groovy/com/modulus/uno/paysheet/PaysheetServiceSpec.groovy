@@ -48,7 +48,7 @@ class PaysheetServiceSpec extends Specification {
 			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
       Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"PERIODO-PAGO"]
     when:
-      def result = service.createTxtDispersionFileSAForBBVA(dispersionDataForBank)
+      def result = service.createTxtDispersionFileSAForBBVABANCOMER(dispersionDataForBank)
     then:
       result.readLines().size() == 1
 			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00SSA-PERIODOPAGO               "
@@ -61,7 +61,7 @@ class PaysheetServiceSpec extends Specification {
 			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
       Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"PERIODO-PAGO"]
     when:
-      def result = service.createTxtDispersionFileIASForBBVA(dispersionDataForBank)
+      def result = service.createTxtDispersionFileIASForBBVABANCOMER(dispersionDataForBank)
     then:
       result.readLines().size() == 1
 			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00IAS-PERIODOPAGO               "
@@ -136,7 +136,8 @@ class PaysheetServiceSpec extends Specification {
 
 	void "Should complement the dispersion data"() {
 		given:
-			Map dispersionData = [chargeBankAccountsIds:"1,2,3"]
+			String[] ids = ["1","2","3"]
+			Map dispersionData = [chargeBankAccountsIds:ids]
 		and:
 			BankAccount bankAccount1 = new BankAccount().save(validate:false)
 			BankAccount bankAccount2 = new BankAccount().save(validate:false)
