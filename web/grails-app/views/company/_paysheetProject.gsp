@@ -31,7 +31,7 @@
               <td>${project.description}</td>
               <td>${project.integrationFactor}</td>
               <td>${project.occupationalRiskRate}</td>
-              <td><g:formatNumber number="${project.commission}" format="#0.00"/></td>
+              <td><g:formatNumber number="${project.commission}" format="#0.000000"/></td>
             </tr>
           </g:each>
           </tbody>
