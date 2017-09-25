@@ -145,23 +145,28 @@ class PaysheetServiceSpec extends Specification {
 			paysheet.dispersionFiles.size() == 1
 	}
 
-  void "Should create the payment dispersion file for inter bank"() {
-    given:"employees list"
+  void "Should create the payment dispersion file inter bank SA"() {
+    given:"The dispersion data"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-    and:"The dispersion data"
-			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"900").save(validate:false)).save(validate:false)
-      Map dispersionData = [chargeBankAccount:bankAccount, paymentMessage:"TRN ss 1"]
+      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
     when:
-      def result = service.createTxtDispersionFileForInterBank(employees, dispersionData)
+      def result = service.createDispersionFileSAInterBank(dispersionData)
     then:
-      result.readLines().size() == 2
-			result.readLines()[0] == "Clabe interbanking0000CompanyAccountMXN0000000001200.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
-			result.readLines()[1] == "Clabe interbanking0000CompanyAccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
+      result.readLines().size() == 1
+			result.readLines()[0] == "Clabe interbanking000000000M1AccountMXN0000000001200.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
 	}
 
-/*
+  void "Should create the payment dispersion file inter bank IAS"() {
+    given:"The dispersion data"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
+    when:
+      def result = service.createDispersionFileIASInterBank(dispersionData)
+    then:
+      result.readLines().size() == 1
+			result.readLines()[0] == "Clabe interbanking000000000M1AccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
+	}
 
-*/
   private PaysheetEmployee createPaysheetEmployee() {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       paysheet: new Paysheet().save(validate:false),
