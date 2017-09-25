@@ -133,7 +133,7 @@ class PaysheetService {
 		deleteCurrentDispersionFilesFromPaysheet(paysheet)
     dispersionData = complementDispersionData(dispersionData)
 		generateDispersionFileSameBank(paysheet, dispersionData)
-		//generateDispersionFileInterBank(paysheet, dispersionData)
+		generateDispersionFileInterBank(paysheet, dispersionData)
   }
 
 	def deleteCurrentDispersionFilesFromPaysheet(Paysheet paysheet){
@@ -297,17 +297,32 @@ class PaysheetService {
 
 //TODO: Los interbancarios, se harán con M1
 	def generateDispersionFileInterBank(Paysheet paysheet, Map dispersionData){
-    List<PaysheetEmployee> employees = getPaysheetEmployeesForInterBank(paysheet.employees, dispersionData.chargeBankAccount.banco)
-    File dispersionFileInterBank = createTxtDispersionFileForInterBank(employees, dispersionData)
+    List<PaysheetEmployee> employees = getPaysheetEmployeesForInterBank(paysheet.employees, dispersionData.chargeBankAccountsList)
+		if (employees) {
+			Map dispersionDataInterBank = [employees: employees, paymentMessage:dispersionData.paymentMessage]
+			File dispersionFileSAInterBank = createDispersionFileSAInterBank(dispersionDataInterBank)
+			File dispersionFileIASInterBank = createDispersionFileIASInterBank(dispersionDataInterBank)
+			List dispersionFiles = [dispersionFileSAInterBank, dispersionFileIASInterBank]
+			List s3Files = uploadDispersionFilesToS3(dispersionFiles)
+			addingDispersionFilesToPaysheet(paysheet, s3Files)
+		}
 	}
 
-  File createTxtDispersionFileForInterBank(List<PaysheetEmployee> employees, Map dispersionData) {
-    log.info "Payment dispersion iinterbank for employees: ${employees}"
-    File file = File.createTempFile("txtDispersion",".txt")
-    employees.each { employee ->
+  List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, List chargeBankAccountsList) {
+    allEmployees.collect { employee ->
+      if (!chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank }) {
+        employee
+      }
+    }.grep()
+  }
+
+  File createDispersionFileSAInterBank(Map dispersionData) {
+    log.info "Payment dispersion SA interbank for employees: ${dispersionData.employees}"
+    File file = File.createTempFile("txtDispersionSAInterBank",".txt")
+    dispersionData.employees.each { employee ->
       log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
       String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
-      String sourceAccount = dispersionData.chargeBankAccount.accountNumber.padLeft(18,'0')
+      String sourceAccount = "M1Account".padLeft(18,'0')
       String currency = "MXN"
       String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
       String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
@@ -316,21 +331,33 @@ class PaysheetService {
       String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
       String reference = new Date().format("ddMMyy").padLeft(7,'0')
       String disp = "H"      
-			["imssSalaryNet", "salaryAssimilable"].each { salary ->
-      	String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-      	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
-			}
+			String amount = (new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')
+     	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
     }
     log.info "File created: ${file.text}"
     file
   }
 
-  List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, Bank bank) {
-    allEmployees.collect { employee ->
-      if (employee.prePaysheetEmployee.bank!=bank) {
-        employee
-      }
-    }.grep()
+  File createDispersionFileIASInterBank(Map dispersionData) {
+    log.info "Payment dispersion IAS interbank for employees: ${dispersionData.employees}"
+    File file = File.createTempFile("txtDispersionIASInterBank",".txt")
+    dispersionData.employees.each { employee ->
+      log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
+      String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
+      String sourceAccount = "M1Account".padLeft(18,'0')
+      String currency = "MXN"
+      String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
+      String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
+      String typeAccount = "40"
+      String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
+      String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
+      String reference = new Date().format("ddMMyy").padLeft(7,'0')
+      String disp = "H"      
+			String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).padLeft(16,'0')
+     	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+    }
+    log.info "File created: ${file.text}"
+    file
   }
 
 }
