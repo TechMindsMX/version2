@@ -76,5 +76,6 @@ databaseChangeLog = {
   include file: 'modify-column-commission-to-paysheet-project.groovy'
 	include file: 'adding-dispersion-files-s3asset-to-paysheet.groovy'
   include file: 'adding-column-client-number-to-bankaccount.groovy'
+  include file: 'adding-column-source-to-payment-to-purchase.groovy'
 	include file: 'new-menu-relation.groovy'
 }
