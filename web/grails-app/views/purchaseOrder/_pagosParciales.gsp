@@ -10,11 +10,18 @@
     <div id="defaultPortlet" class="panel-collapse collapse in">
       <div class="portlet-body">
         <table class="table table-condensed">
+					<tr>
+						<th>Fecha</th>
+						<th>Monto</th>
+						<th>Estatus</th>
+						<th>Orígen</th>
+					</tr>
           <g:each in="${purchaseOrder.payments.sort{ it.dateCreated}}" var="payment" >
             <tr>
-              <th>${payment.dateCreated.format("dd/MM/yyyy")}</th>
-              <th>${modulusuno.formatPrice(number:payment.amount)}</th>
-              <th><g:message code="purchase.payment.status.${payment.status}"/></th>
+              <td>${payment.dateCreated.format("dd/MM/yyyy")}</td>
+              <td>${modulusuno.formatPrice(number:payment.amount)}</td>
+              <td><g:message code="purchase.payment.status.${payment.status}"/></td>
+              <td><g:message code="purchase.payment.source.${payment.source}"/></td>
             </tr>
           </g:each>
         </table>
