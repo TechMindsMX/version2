@@ -4,6 +4,7 @@ class PaymentToPurchase {
 
   BigDecimal amount
   PaymentToPurchaseStatus status = PaymentToPurchaseStatus.APPLIED
+	SourcePayment source = SourcePayment.MODULUS_UNO
 
   Transaction transaction
 
