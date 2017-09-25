@@ -74,4 +74,5 @@ databaseChangeLog = {
   include file: 'modify-column-commission-to-paysheet-project.groovy'
 	include file: 'create-roles-for-queries.groovy'
 	include file: 'new-menu-relation.groovy'
+  include file: 'modify-column-commission-to-paysheet-project.groovy'
 }
