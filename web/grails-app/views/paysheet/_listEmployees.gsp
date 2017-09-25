@@ -68,7 +68,7 @@
   </div>
 
   <div class="row">
-    <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED}">
+    <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED || paysheet.status == PaysheetStatus.CREATED}">
       <div class="col-md-4">
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED}">
           <a data-toggle="collapse" role="button" href="#paymentDispersion" class="btn btn-primary" aria-expanded="false" aria-controls="paymentDispersion">Dispersar Pagos</a>
