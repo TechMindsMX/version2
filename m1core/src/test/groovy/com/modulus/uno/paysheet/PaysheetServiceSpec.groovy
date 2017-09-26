@@ -12,9 +12,12 @@ import com.modulus.uno.BankAccount
 import com.modulus.uno.Bank
 import com.modulus.uno.S3Asset
 import com.modulus.uno.S3AssetService
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.ComposeName
+import com.modulus.uno.NameType
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
@@ -171,20 +174,6 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[0] == "Clabe interbanking000000000M1AccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
 	}
 
-  private PaysheetEmployee createPaysheetEmployee() {
-    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-      paysheet: new Paysheet().save(validate:false),
-      prePaysheetEmployee: new PrePaysheetEmployee(account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: new Bank(bankingCode:"999").save(validate:false)).save(validate:false),
-      salaryImss: getValueInBigDecimal("1000"),
-      socialQuota: getValueInBigDecimal("100"),
-      subsidySalary: getValueInBigDecimal("500"),
-      incomeTax: getValueInBigDecimal("200"),
-      salaryAssimilable: getValueInBigDecimal("3000")
-    )
-    paysheetEmployee.save(validate:false)
-    paysheetEmployee
-  }
-
   private def getValueInBigDecimal(String value) {
     Locale.setDefault(new Locale("es","MX"));
     DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
@@ -255,5 +244,43 @@ class PaysheetServiceSpec extends Specification {
 	  then:
 			result.size() == 0
 	}
+
+	void "Should create dispersion file SA for SANTANDER bank"() {
+		given:"The dispersion data"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate]
+		and:
+			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC").save(validate:false)
+			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
+			ComposeName lastName = new ComposeName(value:"LastNameEmp", type:NameType.APELLIDO_PATERNO).save(validate:false)
+			ComposeName motherLastName = new ComposeName(value:"MotherLastNameEmp", type:NameType.APELLIDO_MATERNO).save(validate:false)
+			businessEntity.addToNames(name)
+			businessEntity.addToNames(lastName)
+			businessEntity.addToNames(motherLastName)
+			businessEntity.save(validate:false)
+		when:
+			def result = service.createTxtDispersionFileSAForSANTANDER(dispersionData)
+		then:
+			result.readLines().size() == 3
+			result.readLines()[0] == "100001E${new Date().format('MMddyyyy')}Account         ${applyDate.format('MMddyyyy')}"
+			result.readLines()[1] == "200002${'NUM'.padRight(7,' ')}${'LASTNAMEEMP'.padRight(30,' ')}${'MOTHERLASTNAMEEMP'.padRight(20,' ')}${'NAMEEMP'.padRight(30,' ')}${'EMPLOYEEACCOUNT'.padLeft(16,' ')}${'120000'.padLeft(18,'0')}01"
+			result.readLines()[2] == "30000200001${'120000'.padLeft(18,'0')}"
+	}
+
+  private PaysheetEmployee createPaysheetEmployee() {
+    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
+      paysheet: new Paysheet().save(validate:false),
+      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: new Bank(bankingCode:"999").save(validate:false), numberEmployee:"Num").save(validate:false),
+      salaryImss: new BigDecimal(1000),
+      socialQuota: new BigDecimal(100),
+      subsidySalary: new BigDecimal(500),
+      incomeTax: new BigDecimal(200),
+      salaryAssimilable: new BigDecimal(3000)
+    )
+    paysheetEmployee.save(validate:false)
+    paysheetEmployee
+  }
 
 }
