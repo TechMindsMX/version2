@@ -45,15 +45,11 @@
 							</g:radioGroup>
 						</div>
             <button type="submit" class="btn btn-primary">Agregar pago parcial</button>
+            <g:if test="${!purchaseOrder.payments}">
+							<button type="submit" class="btn btn-primary">Pagar Completo</button>
+						</g:if>
           </g:form>
           <br />
-          <g:if test="${purchaseOrder.status == PurchaseOrderStatus.AUTORIZADA }">
-            <g:if test="${purchaseOrder.bankAccount && !purchaseOrder.payments}">
-              <g:form controller="purchaseOrder" action="executePurchaseOrder" id="${purchaseOrder.id}">
-                <button type="submit" class="btn btn-info btn-block">Pagar Completo</button>
-              </g:form>
-            </g:if>
-          </g:if>
         </g:if>
         <g:else>
           <div class="alert alert-warning">
