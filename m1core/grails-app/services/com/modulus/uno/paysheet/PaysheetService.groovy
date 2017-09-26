@@ -133,6 +133,7 @@ class PaysheetService {
 
 	@Transactional
   def generateDispersionFilesFromPaysheet(Paysheet paysheet, Map dispersionData) {
+  	Locale.setDefault(new Locale("es","MX"));
 		deleteCurrentDispersionFilesFromPaysheet(paysheet)
     dispersionData = complementDispersionData(dispersionData)
 		generateDispersionFileSameBank(paysheet, dispersionData)
@@ -151,14 +152,14 @@ class PaysheetService {
 		List idsChargeBankAccounts = Arrays.asList(dispersionData.chargeBankAccountsIds)
     List<BankAccount> chargeBankAccountsList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
     dispersionData.chargeBankAccountsList = chargeBankAccountsList
-		dispersionData.applyDate = Date.parse("dd/MM/yyyy", dispersionData.applyDate)
+		dispersionData.applyDate = dispersionData.applyDate ? Date.parse("dd/MM/yyyy", dispersionData.applyDate) : null
     dispersionData
   }
 
 	def generateDispersionFileSameBank(Paysheet paysheet, Map dispersionData){
 		List dispersionFiles = []
 		dispersionData.chargeBankAccountsList.each { chargeBankAccount ->
-			Map dispersionDataForBank = prepareDispersionDataForBank(paysheet, chargeBankAccount, dispersionData.paymentMessage)
+			Map dispersionDataForBank = prepareDispersionDataForBank(paysheet, chargeBankAccount, dispersionData)
 			List files = createDispersionFilesForDispersionData(dispersionDataForBank)
 			List s3Files = uploadDispersionFilesToS3(files)
 			dispersionFiles.addAll(s3Files)
@@ -168,9 +169,9 @@ class PaysheetService {
 		log.info "Files dispersion same bank generated"
 	}
 
-	Map prepareDispersionDataForBank(Paysheet paysheet, BankAccount chargeBankAccount, String paymentMessage){
+	Map prepareDispersionDataForBank(Paysheet paysheet, BankAccount chargeBankAccount, Map dispersionData){
 		List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, chargeBankAccount.banco)
-		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:paymentMessage]
+		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate]
 	}
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
