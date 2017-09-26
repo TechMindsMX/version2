@@ -261,7 +261,7 @@ class PaysheetServiceSpec extends Specification {
 			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
 			Date applyDate = new Date()
 			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate]
-		and:
+		and:"The business entity"
 			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC").save(validate:false)
 			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
 			ComposeName lastName = new ComposeName(value:"LastNameEmp", type:NameType.APELLIDO_PATERNO).save(validate:false)
@@ -277,6 +277,30 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[0] == "100001E${new Date().format('MMddyyyy')}Account         ${applyDate.format('MMddyyyy')}"
 			result.readLines()[1] == "200002${'NUM'.padRight(7,' ')}${'LASTNAMEEMP'.padRight(30,' ')}${'MOTHERLASTNAMEEMP'.padRight(20,' ')}${'NAMEEMP'.padRight(30,' ')}${'EMPLOYEEACCOUNT'.padLeft(16,' ')}${'120000'.padLeft(18,'0')}01"
 			result.readLines()[2] == "30000200001${'120000'.padLeft(18,'0')}"
+	}
+
+	void "Should create dispersion file IAS for SANTANDER bank"() {
+		given:"The dispersion data"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate]
+		and:"The business entity"
+			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC").save(validate:false)
+			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
+			ComposeName lastName = new ComposeName(value:"LastNameEmp", type:NameType.APELLIDO_PATERNO).save(validate:false)
+			ComposeName motherLastName = new ComposeName(value:"MotherLastNameEmp", type:NameType.APELLIDO_MATERNO).save(validate:false)
+			businessEntity.addToNames(name)
+			businessEntity.addToNames(lastName)
+			businessEntity.addToNames(motherLastName)
+			businessEntity.save(validate:false)
+		when:
+			def result = service.createTxtDispersionFileIASForSANTANDER(dispersionData)
+		then:
+			result.readLines().size() == 3
+			result.readLines()[0] == "100001E${new Date().format('MMddyyyy')}Account         ${applyDate.format('MMddyyyy')}"
+			result.readLines()[1] == "200002${'NUM'.padRight(7,' ')}${'LASTNAMEEMP'.padRight(30,' ')}${'MOTHERLASTNAMEEMP'.padRight(20,' ')}${'NAMEEMP'.padRight(30,' ')}${'EMPLOYEEACCOUNT'.padLeft(16,' ')}${'300000'.padLeft(18,'0')}01"
+			result.readLines()[2] == "30000200001${'300000'.padLeft(18,'0')}"
 	}
 
 }
