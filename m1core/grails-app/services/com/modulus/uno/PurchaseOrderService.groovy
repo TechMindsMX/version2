@@ -162,9 +162,14 @@ class PurchaseOrderService {
     (order.authorizations?.size() ?: 0) >= order.company.numberOfAuthorizations
   }
 
-  def payPurchaseOrder(PurchaseOrder order, BigDecimal amount){
-    Transaction transaction = modulusUnoService.payPurchaseOrder(order, amount)
-    addingPaymentToPurchaseOrder(order, amount, transaction.id)
+  def payPurchaseOrder(PurchaseOrder order, Map paymentData){
+		Transaction transaction = null
+		if (paymentData.sourcePayment==SourcePayment.MODULUS_UNO){
+    	transaction = modulusUnoService.payPurchaseOrder(order, paymentData.amount)
+		}
+		paymentData.transaction = transaction
+    addingPaymentToPurchaseOrder(order, paymentData)
+		
     if (order.total <= order.totalPayments) {
       order.status = PurchaseOrderStatus.PAGADA
       order.save()
@@ -209,8 +214,8 @@ class PurchaseOrderService {
     purchaseOrder
   }
 
-  def addingPaymentToPurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal amount, Long transactionId) {
-    PaymentToPurchase payment = new PaymentToPurchase(amount:amount, transaction:Transaction.get(transactionId))
+  def addingPaymentToPurchaseOrder(PurchaseOrder purchaseOrder, Map paymentData) {
+    PaymentToPurchase payment = new PaymentToPurchase(amount:paymentData.amount, transaction:paymentData.transaction, source:paymentData.sourcePayment)
     purchaseOrder.addToPayments(payment)
     purchaseOrder.save()
     purchaseOrder
