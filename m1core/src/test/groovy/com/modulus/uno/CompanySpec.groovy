@@ -29,7 +29,7 @@ class CompanySpec extends Specification {
       "RODS861224NHA" | null          | "www.h2.com"     | 30              | 1                     || false
       "RODS861224NHA" | "prueba4"     | ""               | 30              | 1                     || true
       "RODS861224NHA" | "prueba5"     | null             | 30              | 1                     || true
-      "RODS121212NHA" | "prueba6"     | "www.h2.com"     | 51              | 1                     || false
+      "RODS121212NHA" | "prueba6"     | "www.h2.com"     | 51              | 1                     || true
       "ROS121212NHA" | "prueba7"     | "www.h2.com"     | 50              | 1                     || true
       "ROS121212NHA" | "prueba8"     | "www.h2.com"     | 50              | 250000000             || true
       "RODS121212NHA" | "prueba9"     | "www.h2.com"     | 50              | 250000000.01          || false
