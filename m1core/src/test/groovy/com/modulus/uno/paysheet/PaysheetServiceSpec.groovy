@@ -238,7 +238,7 @@ class PaysheetServiceSpec extends Specification {
 			result.size() == 0
 	}
 
-	void "Should create dispersion file for SANTANDER bank"() {
+	void "Should create dispersion file SA for SANTANDER bank"() {
 		given:"The dispersion data"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
 			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
@@ -335,7 +335,6 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
-
 
   private PaysheetEmployee createPaysheetEmployee() {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
