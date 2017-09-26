@@ -115,6 +115,10 @@
                 <label>Mensaje del Pago</label>
                 <input class="form-control" type="text" name="paymentMessage" maxlength="30" pattern="[A-Za-z0-9\s]{1,30}" title="Sólo se permiten letras (sin acentos y sin 'ñ'), números y espacios en blanco" required="" />
               </div>
+							<div class="form-group">
+								<label>Fecha de Aplicación</label>
+								<input type="text" id="dpApplyDate" name="applyDate" required="required">
+							</div>
             </div>
           </div>
           <div class="row">
