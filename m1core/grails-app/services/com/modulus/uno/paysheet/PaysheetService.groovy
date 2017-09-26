@@ -330,6 +330,39 @@ class PaysheetService {
     file
   }
 
+  File createTxtDispersionFileIASForSANTANDER(Map dispersionDataForBank) {
+    log.info "Payment dispersion same bank IAS SANTANDER for employees: ${dispersionDataForBank.employees}"
+    File file = File.createTempFile("txtDispersionIASSANTANDER",".txt")
+    String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padRight(11,'  ')
+		//HEADER
+		String header = "100001E${new Date().format('MMddyyyy')}${sourceAccount}     ${dispersionDataForBank.applyDate.format('MMddyyyy')}"
+		file.append("${header}\n")
+
+		//DETAIL
+		BigDecimal total = new BigDecimal(0)
+    dispersionDataForBank.employees.eachWithIndex { employee, index ->
+			String counter = "2${(index+2).toString().padLeft(5,'0')}"
+			String employeeNumber = employee.prePaysheetEmployee.numberEmployee ? (employee.prePaysheetEmployee.numberEmployee.length() > 7 ? employee.prePaysheetEmployee.numberEmployee.substring(0,7) : employee.prePaysheetEmployee.numberEmployee.padRight(7,' ')) : " ".padRight(7, " ") 
+			
+			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
+
+			String lastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ").padRight(30," ")
+			String motherLastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ").padRight(20," ")
+			String name = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ").padRight(30," ")
+      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
+      String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).replace(".","").padLeft(18,'0')
+      String concept = "01"
+			file.append("${counter}${employeeNumber}${lastName}${motherLastName}${name}${destinyAccount}${amount}${concept}\n".toUpperCase())
+			total += employee.salaryAssimilable
+    }
+
+		//FOOTER
+		String footer = "3${(dispersionDataForBank.employees.size()+1).toString().padLeft(5,'0')}${dispersionDataForBank.employees.size().toString().padLeft(5,'0')}${(new DecimalFormat('##0.00').format(total)).replace(".","").padLeft(18,'0')}"
+		file.append("${footer}\n")
+    log.info "File created: ${file.text}"
+    file
+  }
+
   String clearSpecialCharsFromString(String text) {
     text.toUpperCase().replace("Ñ","N").replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U").replace("Ü","U").replaceAll("[^a-zA-Z0-9 ]","")
   }
