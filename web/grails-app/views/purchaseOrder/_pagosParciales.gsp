@@ -1,4 +1,5 @@
 <%! import com.modulus.uno.PurchaseOrderStatus %>
+<%! import com.modulus.uno.SourcePayment %>
 <div class="col-md-12">
   <div class="portlet portlet-default">
     <div class="portlet-heading">
@@ -38,6 +39,11 @@
                 <input type="text" class="form-control" id="amount" placeholder="Monto" name="amount" pattern="[0-9]+(\.[0-9]{2})?">
               </div>
             </div>
+						<div class="form-group">
+							<g:radioGroup class="form-control" name="source" values="[SourcePayment.MODULUS_UNO, SourcePayment.BANKING]" value="${SourcePayment.MODULUS_UNO}" labels="['STP-M1','Bancario']">
+								${it.radio} ${it.label}
+							</g:radioGroup>
+						</div>
             <button type="submit" class="btn btn-primary">Agregar pago parcial</button>
           </g:form>
           <br />
