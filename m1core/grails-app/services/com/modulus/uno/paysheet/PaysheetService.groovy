@@ -151,6 +151,7 @@ class PaysheetService {
 		List idsChargeBankAccounts = Arrays.asList(dispersionData.chargeBankAccountsIds)
     List<BankAccount> chargeBankAccountsList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
     dispersionData.chargeBankAccountsList = chargeBankAccountsList
+		dispersionData.applyDate = Date.parse("dd/MM/yyyy", dispersionData.applyDate)
     dispersionData
   }
 
