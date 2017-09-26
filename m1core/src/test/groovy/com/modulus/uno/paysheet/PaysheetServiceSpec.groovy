@@ -54,13 +54,14 @@ class PaysheetServiceSpec extends Specification {
 		and:"the charge bank account"
 			BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
 		and:"the payment message"
-			String paymentMessage = "Payment Message"
+			Map dispersionData = [paymentMessage:"Payment Message"]
 		when:
-			def result = service.prepareDispersionDataForBank(paysheet, bankAccount, paymentMessage)
+			def result = service.prepareDispersionDataForBank(paysheet, bankAccount, dispersionData)
 		then:
 			result.employees.size() == 1
 			result.chargeBankAccount == bankAccount
-			result.paymentMessage == paymentMessage
+			result.paymentMessage == "Payment Message"
+			result.applyDate == null
 	}
 
 	void "Should create dispersion files for dispersion data"() {
