@@ -134,10 +134,10 @@ class PaymentController {
     render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
   }
 
-  def conciliateBankTransactions() {
+  def conciliateBankingDeposits() {
     Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankTransactions:"active"]
-    List<MovimientosBancarios> bankingsTransactions = movimientosBancariosService.findBankingsTransactionsToConciliateForCompany(company)
+    List<MovimientosBancarios> bankingsTransactions = movimientosBancariosService.findBankingsDepositsToConciliateForCompany(company)
     render view:"conciliation", model:[bankingsTransactions:bankingsTransactions, styleClasses:styleClasses]
   }
 
