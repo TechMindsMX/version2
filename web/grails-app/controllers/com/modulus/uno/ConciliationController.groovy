@@ -135,7 +135,7 @@ class ConciliationController {
     saleOrdersFiltered
   }
 
-  def chooseInvoiceToConciliateWithBankingTransaction(MovimientosBancarios bankingTransaction) {
+  def chooseInvoiceToConciliateWithBankingDeposit(MovimientosBancarios bankingTransaction) {
     log.info "Banking Transaction to conciliate: ${bankingTransaction.dump()}"
     BigDecimal toApply = conciliationService.getTotalToApplyForBankingTransaction(bankingTransaction)
     List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForBankingTransaction(bankingTransaction)
@@ -158,6 +158,27 @@ class ConciliationController {
     conciliationService.applyConciliationWithoutPayment(conciliation)
 
     redirect controller:"payment", action:"conciliation"
+  }
+
+  def choosePurchaseToConciliateWithBankingWithdraw(MovimientosBancarios bankingTransaction) {
+    log.info "Banking Transaction to conciliate: ${bankingTransaction.dump()}"
+    BigDecimal toApply = conciliationService.getTotalToApplyForBankingTransaction(bankingTransaction)
+    List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    List<PurchaseOrder> purchaseOrders = getPurchaseOrdersToListForBankingTransaction(bankingTransaction)
+
+    [bankingTransaction:bankingTransaction, purchaseOrders:purchaseOrders, toApply:toApply, conciliations:conciliations]
+  }
+
+  private List<PurchaseOrder> getPurchaseOrdersToListForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    Company company = Company.get(session.company)
+    List<PurchaseOrder> purchaseOrders = purchaseOrderService.findOrdersWithBankingPaymentsToConciliateForCompany(company)
+    List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
+    List<PurchaseOrder> purchaseOrdersFiltered = purchaseOrders.findAll { purchaseOrder ->
+      if (!conciliations.find { conciliation -> conciliation.purchaseOrder.id == purchaseOrder.id }){
+        purchaseOrder
+      }
+    }
+    purchaseOrdersFiltered
   }
 
 }
