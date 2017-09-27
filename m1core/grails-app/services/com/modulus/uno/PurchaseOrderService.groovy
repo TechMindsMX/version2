@@ -248,4 +248,19 @@ class PurchaseOrderService {
     }
   }
 
+  List<PurchaseOrder> findOrdersWithBankingPaymentsToConciliateForCompany(Company company) {
+    def poC = PurchaseOrder.createCriteria()
+		def listOrders = poC.listDistinct {
+			eq ('company', company)
+			or {
+				eq ('status', PurchaseOrderStatus.AUTORIZADA)
+				eq ('status', PurchaseOrderStatus.PAGADA)
+			}
+			payments {
+				eq ('status', PaymentToPurchaseStatus.APPLIED)
+				eq ('source', SourcePayment.BANKING)
+			}
+		}
+  }
+
 }
