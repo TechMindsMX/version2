@@ -28,7 +28,7 @@
                   <g:link action="notReferencedPayments">Cobros no Referenciados</g:link>
                 </li>
                 <li role="presentation" class="${styleClasses?.tabBankTransactions}">
-                  <g:link action="conciliateBankTransactions">Conciliar movimientos bancarios</g:link>
+                  <g:link action="conciliateBankingDeposits">Conciliar depósitos bancarios</g:link>
                 </li>
               </ul>
 
