@@ -87,27 +87,28 @@
   <div class="row">
     <div class="col-md-12">
       <div class="collapse" id="paymentDispersion">
+				<div class"=row">
+					<div class="col-md-12">
+						<g:if test="${paysheet.dispersionFiles}">
+							<h4>Archivos de dispersión generados</h4>
+							<ul>
+								<g:each in="${paysheet.dispersionFiles}" var="dispersionFile">
+									<li>
+         						<a href="${baseUrlDocuments}/${dispersionFile.title}.${dispersionFile.mimeType}"><i class="glyphicon glyphicon-download-alt"></i> ${dispersionFile.type}</a>
+									</li>
+								</g:each>
+							</ul>
+						</g:if>
+					</div>
+				</div>
         <div class="well">
+					<h4>Generar archivos de dispersión</h4>
           <g:form action="generatePaymentDispersion" id="${paysheet.id}">
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
                 <label>Cuenta Origen de Dispersión:</label>
-                <g:select class="form-control" name="chargeBankAccountId" from="${chargeBanksAccounts}" required="" optionKey="id"/>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Esquema de Pago</label>
-                <g:select class="form-control" name="paymentSchema" from="${PaymentSchema.values()}"/>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Modo de Transferencia</label>
-                <g:select class="form-control" name="dispersionWay" from="${[[key:'SameBank', value:'MISMO BANCO'], [key:'InterBank', value:'INTERBANCARIO']]}" optionKey="key" optionValue="value"/>
+                <g:select class="form-control" name="chargeBankAccountsIds" from="${chargeBanksAccounts}" required="" optionKey="id" multiple="true"/>
               </div>
             </div>
             <div class="col-md-6">
@@ -120,7 +121,7 @@
           <div class="row">
             <div class="col-md-12 text-right">
               <div class="form-group">
-                <button type="submit" class="btn btn-default">Generar Dispersión</button>
+                <button type="submit" class="btn btn-default" onclick="return confirm('Los archivos existentes serán reemplazados, ¿desea continuar?');">Generar Dispersión</button>
               </div>
             </div>
           </div>
