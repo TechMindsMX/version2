@@ -16,7 +16,7 @@
       <td>${transaction.reference}</td>
       <td>${modulusuno.formatPrice(number: transaction.amount)}</td>
       <td class="text-center">
-        <g:link class="btn btn-primary" controller="conciliation" action="chooseInvoiceToConciliateWithBankingTransaction" id="${transaction.id}">Elegir Factura</g:link>
+        <g:link class="btn btn-primary" controller="conciliation" action="chooseInvoiceToConciliateWithBankingDeposit" id="${transaction.id}">Elegir Factura</g:link>
       </td>
     </tr>
     </g:each>
