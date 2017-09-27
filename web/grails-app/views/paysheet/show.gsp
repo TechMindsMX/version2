@@ -72,6 +72,7 @@
       </div>
 
     </div>
+    <asset:javascript src="paysheet/show.js"/>
   </body>
 </html>
 
