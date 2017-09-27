@@ -24,7 +24,7 @@ class MovimientosBancariosService {
       return true
   }
 
-  List<MovimientosBancarios> findBankingsDepositsToConciliateForCompany(Company company) {
+  List<MovimientosBancarios> findBankingDepositsToConciliateForCompany(Company company) {
     MovimientosBancarios.findAllReconcilableByCuentaInListAndConciliationStatusAndType(company.banksAccounts, ConciliationStatus.TO_APPLY, MovimientoBancarioType.CREDITO, [sort:"dateEvent", order:"desc"])
   }
 
@@ -51,6 +51,10 @@ class MovimientosBancariosService {
       }
     }
     total
+  }
+
+  List<MovimientosBancarios> findBankingWithdrawsToConciliateForCompany(Company company) {
+    MovimientosBancarios.findAllReconcilableByCuentaInListAndConciliationStatusAndType(company.banksAccounts, ConciliationStatus.TO_APPLY, MovimientoBancarioType.DEBITO, [sort:"dateEvent", order:"desc"])
   }
 
 }
