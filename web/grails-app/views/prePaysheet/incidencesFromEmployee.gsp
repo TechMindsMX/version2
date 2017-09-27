@@ -20,7 +20,7 @@
         <div class="portlet-heading">
           <div class="row">
             <div class="col-md-12 text-right">
-              <g:link class="btn btn-default" controller="prePaysheet" action="show" id="${prePaysheetEmployee.prePaysheet.id}">Regresar</g:link>
+              <g:link class="btn btn-default" controller="prePaysheet" action="show" id="${prePaysheetEmployee.prePaysheet.id}">Terminar</g:link>
             </div>
           </div>
         </div>
