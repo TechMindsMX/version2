@@ -122,23 +122,30 @@ class PaymentController {
 
   def referencedPayments() {
     Company company = Company.get(session.company)
-    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabBankTransactions:""]
+    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabBankingDeposits:"", tabBankingWithdraws:""]
     Map payments = paymentService.findReferencedPaymentsForCompany(company)
     render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
   }
 
   def notReferencedPayments() {
     Company company = Company.get(session.company)
-    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabBankTransactions:""]
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabBankingDeposits:"", tabBankingWithdraws:""]
     Map payments = paymentService.findNotReferencedPaymentsForCompany(company)
     render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
   }
 
   def conciliateBankingDeposits() {
     Company company = Company.get(session.company)
-    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankTransactions:"active"]
-    List<MovimientosBancarios> bankingsTransactions = movimientosBancariosService.findBankingsDepositsToConciliateForCompany(company)
-    render view:"conciliation", model:[bankingsTransactions:bankingsTransactions, styleClasses:styleClasses]
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankingDeposits:"active", tabBankingWithdraws:""]
+    List<MovimientosBancarios> bankingDeposits = movimientosBancariosService.findBankingDepositsToConciliateForCompany(company)
+    render view:"conciliation", model:[bankingDeposits:bankingDeposits, styleClasses:styleClasses]
+  }
+
+  def conciliateBankingWithdraws() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankingDeposits:"", tabBankingWithdraws:"active"]
+    List<MovimientosBancarios> bankingWithdraws = movimientosBancariosService.findBankingWithdrawsToConciliateForCompany(company)
+    render view:"conciliation", model:[bankingWithdraws:bankingWithdraws, styleClasses:styleClasses]
   }
 
 }
