@@ -27,8 +27,11 @@
                 <li role="presentation" class="${styleClasses?.tabNotReferenced}">
                   <g:link action="notReferencedPayments">Cobros no Referenciados</g:link>
                 </li>
-                <li role="presentation" class="${styleClasses?.tabBankTransactions}">
+                <li role="presentation" class="${styleClasses?.tabBankingDeposits}">
                   <g:link action="conciliateBankingDeposits">Conciliar depósitos bancarios</g:link>
+                </li>
+                <li role="presentation" class="${styleClasses?.tabBankingWithdraws}">
+                  <g:link action="conciliateBankingWithdraws">Conciliar retiros bancarios</g:link>
                 </li>
               </ul>
 
@@ -40,9 +43,13 @@
                 <div role="tabpanel" class="tab-pane ${styleClasses?.tabNotReferenced}" id="notReferenced">
                   <g:render template="notReferencedPayments"/>
                 </div>
-                <div role="tabpanel" class="tab-pane ${styleClasses?.tabBankTransactions}" id="bankTransactions">
-                  <g:render template="bankTransactions"/>
+                <div role="tabpanel" class="tab-pane ${styleClasses?.tabBankingDeposits}" id="bankingDeposits">
+                  <g:render template="bankingDeposits"/>
                 </div>
+                <div role="tabpanel" class="tab-pane ${styleClasses?.tabBankingWithdraws}" id="bankingWithdraws">
+                  <g:render template="bankingWithdraws"/>
+                </div>
+
               </div>
 
             </div>
