@@ -35,7 +35,7 @@
     </div>
   </div>
   <div class="col-md-6">
-    <div class="form-group" id="reconcilable" style="display:none">
+    <div class="form-group">
       <label>Es conciliable:</label>
       <g:checkBox class="form-control" name="reconcilable" value="${false}" />
     </div>
