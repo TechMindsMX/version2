@@ -73,4 +73,5 @@ databaseChangeLog = {
   include file: 'create-domain-prepaysheet-employee-incidence.groovy'
 	include file: 'create-roles-for-queries.groovy'
 	include file: 'adding-dispersion-files-s3asset-to-paysheet.groovy'
+	include file: 'adding-column-source-to-payment-to-purchase.groovy'
 }
