@@ -8,7 +8,7 @@
       <th>Monto</th>
       <th></th>
     </tr>
-    <g:each in="${bankingsTransactions}" var="transaction">
+    <g:each in="${bankingDeposits}" var="transaction">
     <tr>
       <td><g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/></td>
       <td>${transaction.cuenta}</td>
