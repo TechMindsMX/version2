@@ -161,25 +161,25 @@ class ConciliationController {
     redirect controller:"payment", action:"conciliation"
   }
 
-  def choosePurchaseToConciliateWithBankingWithdraw(MovimientosBancarios bankingTransaction) {
+  def choosePaymentToPurchaseToConciliateWithBankingWithdraw(MovimientosBancarios bankingTransaction) {
     log.info "Banking Transaction to conciliate: ${bankingTransaction.dump()}"
     BigDecimal toApply = conciliationService.getTotalToApplyForBankingTransaction(bankingTransaction)
     List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForBankingTransaction(bankingTransaction)
-    List<PurchaseOrder> purchaseOrders = getPurchaseOrdersToListForBankingTransaction(bankingTransaction)
+    List<PaymentToPurchase> paymentsToPurchase = getPaymentsToPurchaseToListForBankingTransaction(bankingTransaction)
 
-    [bankingTransaction:bankingTransaction, purchaseOrders:purchaseOrders, toApply:toApply, conciliations:conciliations]
+    [bankingTransaction:bankingTransaction, paymentsToPurchase:paymentsToPurchase, toApply:toApply, conciliations:conciliations]
   }
 
-  private List<PurchaseOrder> getPurchaseOrdersToListForBankingTransaction(MovimientosBancarios bankingTransaction) {
+  private List<PaymentToPurchase> getPaymentsToPurchaseToListForBankingTransaction(MovimientosBancarios bankingTransaction) {
     Company company = Company.get(session.company)
-    List<PurchaseOrder> purchaseOrders = purchaseOrderService.findOrdersWithBankingPaymentsToConciliateForCompany(company)
+    List<PaymentToPurchase> payments = purchaseOrderService.findBankingPaymentsToPurchaseToConciliateForCompany(company)
     List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
-    List<PurchaseOrder> purchaseOrdersFiltered = purchaseOrders.findAll { purchaseOrder ->
-      if (!conciliations.find { conciliation -> conciliation.purchaseOrder?.id == purchaseOrder.id }){
-        purchaseOrder
+    List<PaymentToPurchase> paymentsFiltered = payments.findAll { payment ->
+      if (!conciliations.find { conciliation -> conciliation.paymentToPurchase?.id == payment.id }){
+        payment
       }
     }
-    purchaseOrdersFiltered
+    paymentsFiltered
   }
 
 }
