@@ -248,19 +248,14 @@ class PurchaseOrderService {
     }
   }
 
-  List<PurchaseOrder> findOrdersWithBankingPaymentsToConciliateForCompany(Company company) {
-    def poC = PurchaseOrder.createCriteria()
-		def listOrders = poC.listDistinct {
-			eq ('company', company)
-			or {
-				eq ('status', PurchaseOrderStatus.AUTORIZADA)
-				eq ('status', PurchaseOrderStatus.PAGADA)
-			}
-			payments {
-				eq ('status', PaymentToPurchaseStatus.APPLIED)
-				eq ('source', SourcePayment.BANKING)
-			}
+  List<PaymentToPurchase> findBankingPaymentsToPurchaseToConciliateForCompany(Company company) {
+		def purchaseOrdersCompany = PurchaseOrder.findAllByCompanyAndStatusInList(company, [PurchaseOrderStatus.AUTORIZADA, PurchaseOrderStatus.PAGADA])
+		List<PaymentToPurchase> payments = []
+		purchaseOrdersCompany.each { purchase ->
+			def bankingPayments = purchase.payments.findAll {it.source==SourcePayment.BANKING && it.status==PaymentToPurchaseStatus.APPLIED}
+			payments.addAll(bankingPayments)
 		}
+		payments
   }
 
 }
