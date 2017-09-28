@@ -9,6 +9,7 @@ class ConciliationController {
 
   def saleOrderService
   def conciliationService
+	def purchaseOrderService
 
   def chooseInvoiceToConciliate(Payment payment) {
     log.info "Payment to conciliate: ${payment.dump()}"
@@ -128,7 +129,7 @@ class ConciliationController {
     List<SaleOrder> saleOrders = saleOrderService.findOrdersToConciliateForCompany(company)
     List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
     List<SaleOrder> saleOrdersFiltered = saleOrders.findAll { saleOrder ->
-      if (!conciliations.find { conciliation -> conciliation.saleOrder.id == saleOrder.id }){
+      if (!conciliations.find { conciliation -> conciliation.saleOrder?.id == saleOrder.id }){
         saleOrder
       }
     }
@@ -174,7 +175,7 @@ class ConciliationController {
     List<PurchaseOrder> purchaseOrders = purchaseOrderService.findOrdersWithBankingPaymentsToConciliateForCompany(company)
     List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
     List<PurchaseOrder> purchaseOrdersFiltered = purchaseOrders.findAll { purchaseOrder ->
-      if (!conciliations.find { conciliation -> conciliation.purchaseOrder.id == purchaseOrder.id }){
+      if (!conciliations.find { conciliation -> conciliation.purchaseOrder?.id == purchaseOrder.id }){
         purchaseOrder
       }
     }
