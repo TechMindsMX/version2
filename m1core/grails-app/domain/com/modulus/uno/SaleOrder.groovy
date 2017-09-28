@@ -74,11 +74,12 @@ class SaleOrder {
     items*.appliedDiscount.sum() ?: 0
   }
 
-  BigDecimal getAmountToPay() {
-    getTotal() - (payments*.amount.sum() ?: 0)
-  }
   BigDecimal getAmountPayed(){
     payments*.amount.sum() ?: 0
+  }
+
+  BigDecimal getAmountToPay() {
+    getTotal() - getAmountPayed()
   }
 
   String toString(){
