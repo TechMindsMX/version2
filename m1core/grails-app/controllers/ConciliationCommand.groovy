@@ -10,12 +10,14 @@ class ConciliationCommand implements Validateable {
   String saleOrderId
   String changeType
   String amountToApply
+	String paymentToPurchaseId
   String comment
 
   static constraints = {
     paymentId nullable:true
     bankingTransactionId nullable:true
     saleOrderId nullable:true
+		paymentToPurchaseId nullable:true
     comment nullable:true
   }
 
