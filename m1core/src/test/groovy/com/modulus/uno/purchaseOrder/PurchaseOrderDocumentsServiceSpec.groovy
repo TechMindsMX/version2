@@ -70,7 +70,7 @@ class PurchaseOrderDocumentsServiceSpec extends Specification {
       def result = service.loadItemsToOrderFromDocumentXml(order, document)
     then:
       result.items.size() == 1
-      result.items.first().name == "algo cinco"
+      result.items.first().name == "ALGO CINCO"
   }
 
   void "Should create item from xml file with two concept into purchase order without current items"() {
@@ -84,8 +84,8 @@ class PurchaseOrderDocumentsServiceSpec extends Specification {
       def result = service.loadItemsToOrderFromDocumentXml(order, document)
     then:
       result.items.size() == 2
-      result.items.first().name == "Producto Cinco"
-      result.items[1].name == "Producto Dos ST"
+      result.items.first().name == "PRODUCTO CINCO"
+      result.items[1].name == "PRODUCTO DOS ST"
   }
 
 }

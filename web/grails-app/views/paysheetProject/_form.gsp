@@ -30,7 +30,7 @@
   <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="paysheetProject.label.commission"/></label>
-      <input class="form-control" type="number" min="0.00" max="100.00" step="0.01" name="commission" value="${paysheetProject?.commission}" required=""/>
+      <input class="form-control" type="number" min="0.000000" max="100.00" step="0.000001" name="commission" value="${paysheetProject?.commission}" required=""/>
     </div>
   </div>
 </div>
