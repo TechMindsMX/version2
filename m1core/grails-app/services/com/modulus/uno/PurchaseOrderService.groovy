@@ -258,4 +258,12 @@ class PurchaseOrderService {
 		payments
   }
 
+	PurchaseOrder getPurchaseOrderOfPaymentToPurchase(PaymentToPurchase payment){
+		def poc = PurchaseOrder.createCriteria()
+		def purchase = poc.get {
+			payments {
+				eq('id', payment.id)
+			}
+		}
+	}
 }
