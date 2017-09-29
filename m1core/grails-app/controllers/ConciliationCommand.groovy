@@ -28,6 +28,7 @@ class ConciliationCommand implements Validateable {
       bankingTransaction:this.bankingTransactionId ? MovimientosBancarios.get(this.bankingTransactionId) : null,
       changeType:getValueInBigDecimal(this.changeType),
       amount:getValueInBigDecimal(this.amountToApply),
+			paymentToPurchase:this.paymentToPurchaseId ? PaymentToPurchase.get(this.paymentToPurchaseId) : null,
       comment:this.comment
     )
   }
