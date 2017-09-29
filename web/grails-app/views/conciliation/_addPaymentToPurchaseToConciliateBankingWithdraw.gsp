@@ -1,8 +1,9 @@
 <div class="row">
   <g:hiddenField name="bankingTransactionId" value="${bankingTransaction.id}"/>
+  <g:hiddenField name="changeType" value="0.00"/>
   <div class="col-md-12">
     <label>Pagos de Compras disponibles:</label>
-		<select class="form-control" name="paymentId" required="">
+		<select class="form-control" name="paymentToPurchaseId" required="">
 			<option value="">Elegir compra...</option>
 			<g:each in="${paymentsToPurchase.paymentsFiltered}" var="payment" status="index">
 				<option value="${payment.id}">${paymentsToPurchase.purchaseOrders[index].id} / ${paymentsToPurchase.purchaseOrders[index].providerName} / Total: ${modulusuno.formatPrice(number:paymentsToPurchase.purchaseOrders[index].total)} - Monto Pago: ${modulusuno.formatPrice(number:payment.amount)}</option>
