@@ -26,8 +26,8 @@
                   <div class="alert alert-danger" role="alert">${flash.message}</div>
                 </g:if>
 
-                <g:form action="addPurchaseOrderToConciliate">
-                  <g:render template="addPurchaseToConciliateBankingWithdraw"/>
+                <g:form action="addPaymentToPurchaseToConciliate">
+                  <g:render template="addPaymentToPurchaseToConciliateBankingWithdraw"/>
                 </g:form>
                 <hr>
               </g:if>
