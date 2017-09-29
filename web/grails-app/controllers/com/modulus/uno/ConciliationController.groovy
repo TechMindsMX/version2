@@ -165,13 +165,14 @@ class ConciliationController {
     log.info "Banking Transaction to conciliate: ${bankingTransaction.dump()}"
     BigDecimal toApply = conciliationService.getTotalToApplyForBankingTransaction(bankingTransaction)
     List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForBankingTransaction(bankingTransaction)
-    List<PaymentToPurchase> paymentsToPurchase = getPaymentsToPurchaseToListForBankingTransaction(bankingTransaction)
+    Map paymentsToPurchase = getPaymentsToPurchaseToListForBankingTransaction(bankingTransaction)
 
     [bankingTransaction:bankingTransaction, paymentsToPurchase:paymentsToPurchase, toApply:toApply, conciliations:conciliations]
   }
 
-  private List<PaymentToPurchase> getPaymentsToPurchaseToListForBankingTransaction(MovimientosBancarios bankingTransaction) {
+  private Map getPaymentsToPurchaseToListForBankingTransaction(MovimientosBancarios bankingTransaction) {
     Company company = Company.get(session.company)
+		Map paymentsAndPurchases = [:]
     List<PaymentToPurchase> payments = purchaseOrderService.findBankingPaymentsToPurchaseToConciliateForCompany(company)
     List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
     List<PaymentToPurchase> paymentsFiltered = payments.findAll { payment ->
@@ -179,7 +180,13 @@ class ConciliationController {
         payment
       }
     }
-    paymentsFiltered
+		List<PurchaseOrder> purchaseOrders = []
+		paymentsFiltered.each { payment ->
+			purchaseOrders.add(purchaseOrderService.getPurchaseOrderOfPaymentToPurchase(payment))
+		}
+    paymentsAndPurchases.paymentsFiltered = paymentsFiltered
+		paymentsAndPurchases.purchaseOrders = purchaseOrders
+		paymentsAndPurchases
   }
 
 }
