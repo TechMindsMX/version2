@@ -384,7 +384,7 @@ class NotifyServiceSpec extends Specification {
     params.trackingKey == "Rastreo"
     params.referenceNumber == "Referencia"
     params.amount == "1500"
-    params.dateCreated == payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
+    params.dateCreated.substring(0,10) == payment.dateCreated.format("dd-MM-yyyy")
     params.destinyBank == "BankName"
     params.destinyBankAccount == "Clabe"
     params.aliasStp == "AliasStp"

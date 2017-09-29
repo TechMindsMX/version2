@@ -5,7 +5,6 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
 import java.text.*
-import spock.lang.Ignore
 
 import com.modulus.uno.Company
 import com.modulus.uno.BankAccount
@@ -175,14 +174,6 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[0] == "Clabe interbanking000000000M1AccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
 	}
 
-  private def getValueInBigDecimal(String value) {
-    Locale.setDefault(new Locale("es","MX"));
-    DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
-    df.setParseBigDecimal(true);
-    BigDecimal bd = (BigDecimal) df.parse(value);
-    bd
-  }
-
 	void "Should complement the dispersion data"() {
 		given:
 			String[] ids = ["1","2","3"]
@@ -298,14 +289,22 @@ class PaysheetServiceSpec extends Specification {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       paysheet: new Paysheet().save(validate:false),
       prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: new Bank(bankingCode:"999").save(validate:false), numberEmployee:"Num").save(validate:false),
-      salaryImss: new BigDecimal(1000),
-      socialQuota: new BigDecimal(100),
-      subsidySalary: new BigDecimal(500),
-      incomeTax: new BigDecimal(200),
-      salaryAssimilable: new BigDecimal(3000)
+	  salaryImss: getValueInBigDecimal("1000"),
+      socialQuota: getValueInBigDecimal("100"),
+      subsidySalary: getValueInBigDecimal("500"),
+      incomeTax: getValueInBigDecimal("200"),
+      salaryAssimilable: getValueInBigDecimal("3000")
     )
     paysheetEmployee.save(validate:false)
     paysheetEmployee
+  }
+
+  private def getValueInBigDecimal(String value) {
+    Locale.setDefault(new Locale("es","MX"));
+    DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
+    df.setParseBigDecimal(true);
+    BigDecimal bd = (BigDecimal) df.parse(value);
+    bd
   }
 
 }
