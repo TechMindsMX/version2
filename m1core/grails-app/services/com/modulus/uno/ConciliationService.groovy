@@ -33,7 +33,7 @@ class ConciliationService {
 
   void saveConciliationForCompany(Conciliation conciliation, Company company) {
     if (!validateAmountToApply(conciliation)) {
-      throw new BusinessException("El monto a conciliar (${conciliation.amount.setScale(2, RoundingMode.HALF_UP)}) no puede ser mayor al monto por pagar de la factura (${conciliation.saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP)})")
+      throw new BusinessException("El monto a conciliar (${conciliation.amount.setScale(2, RoundingMode.HALF_UP)}) no puede ser mayor al monto por pagar  (${conciliation.saleOrder ? conciliation.saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP) : conciliation.paymentToPurchase.amount.setScale(2, RoundingMode.HALF_UP)})")
     }
 
     conciliation.company = company
@@ -44,10 +44,11 @@ class ConciliationService {
 
   private validateAmountToApply(Conciliation conciliation) {
     BigDecimal amountToConciliate = conciliation.amount
-    if (conciliation.saleOrder.currency=="USD") {
+		BigDecimal maxAmount = conciliation.saleOrder ? conciliation.saleOrder.amountToPay : conciliation.paymentToPurchase.amount
+    if (conciliation.saleOrder?.currency=="USD") {
       amountToConciliate = conciliation.amount/conciliation.changeType
     }
-    amountToConciliate <= conciliation.saleOrder.amountToPay
+    amountToConciliate <= maxAmount
   }
 
   void deleteConciliation(Conciliation conciliation) {
