@@ -33,28 +33,22 @@
               </g:if>
 
               <g:if test="${conciliations}">
-              <label>Compras seleccionadas:</label>
+              <label>Pagos de Compras seleccionadas:</label>
               <div class="table-responsive">
                 <table class="table">
                   <tr>
-                    <th class="col-md-4">Compra</th>
-                    <th>Total</th>
-                    <th>Por pagar</th>
+                    <th class="col-md-4">Pago</th>
+                    <th>Monto del Pago</th>
                     <th>Monto a aplicar (MXN)</th>
                     <th>Nuevo Saldo</th>
-                    <th>Moneda</th>
-                    <th>Tipo Cambio</th>
                     <th></th>
                   </tr>
                   <g:each in="${conciliations}" var="conciliation">
                   <tr>
-                    <td>${conciliation.purchaseOrder.id} / ${conciliation.purchaseOrder.providerName}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.purchaseOrder.total)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.purchaseOrder.amountToPay)}</td>
+                    <td>${conciliation.paymentToPurchase.id}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.paymentToPurchase.amount)}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.amount)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.purchaseOrder.currency == "MXN" ? conciliation.purchaseOrder.amountToPay - conciliation.amount : conciliation.purchaseOrder.amountToPay - (conciliation.amount/conciliation.changeType)) }</td>
-                    <td>${conciliation.purchaseOrder.currency}</td>
-                    <td>${conciliation.changeType ?: "NA"}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: (conciliation.paymentToPurchase.amount - conciliation.amount)) }</td>
                     <td class="text-center">
                       <g:form action="deleteConciliation" id="${conciliation.id}">
                         <button class="btn btn-danger">Quitar</button>
@@ -74,6 +68,5 @@
         </div>
       </div>
     </div>
-    <asset:javascript src="conciliation/chooseInvoice.js"/>
   </body>
 </html>
