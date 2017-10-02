@@ -10,6 +10,7 @@ class ConciliationService {
   def saleOrderService
   def paymentService
   def movimientosBancariosService
+  def purchaseOrderService
 
   def getTotalToApplyForPayment(Payment payment) {
     def conciliations = getConciliationsToApplyForPayment(payment)
@@ -48,7 +49,7 @@ class ConciliationService {
     if (conciliation.saleOrder?.currency=="USD") {
       amountToConciliate = conciliation.amount/conciliation.changeType
     }
-    amountToConciliate <= maxAmount
+    amountToConciliate.setScale(2, RoundingMode.HALF_UP) <= maxAmount.setScale(2, RoundingMode.HALF_UP)
   }
 
   void deleteConciliation(Conciliation conciliation) {
@@ -94,7 +95,12 @@ class ConciliationService {
   }
 
   private applyConciliation(Conciliation conciliation) {
-    saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
+		if (conciliation.saleOrder) {
+    	saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
+		}
+		if (conciliation.paymentToPurchase) {
+			purchaseOrderService.conciliatePaymentToPurchase(conciliation.paymentToPurchase)
+		}
     conciliation.status = ConciliationStatus.APPLIED
     conciliation.save()
   }
