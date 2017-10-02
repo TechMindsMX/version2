@@ -9,6 +9,7 @@ class ConciliationController {
 
   def saleOrderService
   def conciliationService
+	def purchaseOrderService
 
   def chooseInvoiceToConciliate(Payment payment) {
     log.info "Payment to conciliate: ${payment.dump()}"
@@ -52,7 +53,7 @@ class ConciliationController {
       redirect action:"chooseInvoiceToConciliate", id:command.paymentId
       return
     } else if (conciliation.bankingTransaction) {
-      redirect action:"chooseInvoiceToConciliateWithBankingTransaction", id:command.bankingTransactionId
+      redirect action:"chooseInvoiceToConciliateWithBankingDeposit", id:command.bankingTransactionId
       return
     }
   }
@@ -128,14 +129,14 @@ class ConciliationController {
     List<SaleOrder> saleOrders = saleOrderService.findOrdersToConciliateForCompany(company)
     List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
     List<SaleOrder> saleOrdersFiltered = saleOrders.findAll { saleOrder ->
-      if (!conciliations.find { conciliation -> conciliation.saleOrder.id == saleOrder.id }){
+      if (!conciliations.find { conciliation -> conciliation.saleOrder?.id == saleOrder.id }){
         saleOrder
       }
     }
     saleOrdersFiltered
   }
 
-  def chooseInvoiceToConciliateWithBankingTransaction(MovimientosBancarios bankingTransaction) {
+  def chooseInvoiceToConciliateWithBankingDeposit(MovimientosBancarios bankingTransaction) {
     log.info "Banking Transaction to conciliate: ${bankingTransaction.dump()}"
     BigDecimal toApply = conciliationService.getTotalToApplyForBankingTransaction(bankingTransaction)
     List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForBankingTransaction(bankingTransaction)
@@ -158,6 +159,61 @@ class ConciliationController {
     conciliationService.applyConciliationWithoutPayment(conciliation)
 
     redirect controller:"payment", action:"conciliation"
+  }
+
+  def choosePaymentToPurchaseToConciliateWithBankingWithdraw(MovimientosBancarios bankingTransaction) {
+    log.info "Banking Transaction to conciliate: ${bankingTransaction.dump()}"
+    BigDecimal toApply = conciliationService.getTotalToApplyForBankingTransaction(bankingTransaction)
+    List<Conciliation> conciliations = conciliationService.getConciliationsToApplyForBankingTransaction(bankingTransaction)
+    Map paymentsToPurchase = getPaymentsToPurchaseToListForBankingTransaction(bankingTransaction)
+
+    [bankingTransaction:bankingTransaction, paymentsToPurchase:paymentsToPurchase, toApply:toApply, conciliations:conciliations]
+  }
+
+  private Map getPaymentsToPurchaseToListForBankingTransaction(MovimientosBancarios bankingTransaction) {
+    Company company = Company.get(session.company)
+		Map paymentsAndPurchases = [:]
+    List<PaymentToPurchase> payments = purchaseOrderService.findBankingPaymentsToPurchaseToConciliateForCompany(company)
+    List<Conciliation> conciliations = Conciliation.findAllByCompanyAndStatus(company, ConciliationStatus.TO_APPLY)
+    List<PaymentToPurchase> paymentsFiltered = payments.findAll { payment ->
+      if (!conciliations.find { conciliation -> conciliation.paymentToPurchase?.id == payment.id }){
+        payment
+      }
+    }
+		List<PurchaseOrder> purchaseOrders = []
+		paymentsFiltered.each { payment ->
+			purchaseOrders.add(purchaseOrderService.getPurchaseOrderOfPaymentToPurchase(payment))
+		}
+    paymentsAndPurchases.paymentsFiltered = paymentsFiltered
+		paymentsAndPurchases.purchaseOrders = purchaseOrders
+		paymentsAndPurchases
+  }
+
+  @Transactional
+  def addPaymentToPurchaseToConciliate(ConciliationCommand command) {
+    log.info "Adding conciliation to apply: ${command.dump()}"
+
+    if (command.hasErrors()){
+      transactionStatus.setRollbackOnly()
+      redirect action:"chooseInvoiceToConciliate", id:command.payment.id
+      return
+    }
+
+    Conciliation conciliation = command.createConciliation()
+    Company company = Company.get(session.company)
+    try {
+      conciliationService.saveConciliationForCompany(conciliation, company)
+    } catch (BusinessException ex) {
+      flash.message = ex.message
+    }
+
+    if (conciliation.payment) {
+      redirect action:"chooseInvoiceToConciliate", id:command.paymentId
+      return
+    } else if (conciliation.bankingTransaction) {
+      redirect action:"choosePaymentToPurchaseToConciliateWithBankingWithdraw", id:command.bankingTransactionId
+      return
+    }
   }
 
 }

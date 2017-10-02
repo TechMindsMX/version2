@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-3 text-center">
-    <strong>Fecha del Pago</strong><br>
+    <strong>Fecha del Movimiento</strong><br>
     <g:formatDate format="dd-MM-yyyy" date="${bankingTransaction.dateEvent}"/>
   </div>
   <div class="col-md-3 text-center">

@@ -1,5 +1,5 @@
 package com.modulus.uno
 
 enum PaymentToPurchaseStatus {
-  APPLIED, REFUND
+  APPLIED, REFUND, CONCILIATED
 }

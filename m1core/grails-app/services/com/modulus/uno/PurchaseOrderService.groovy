@@ -248,4 +248,27 @@ class PurchaseOrderService {
     }
   }
 
+  List<PaymentToPurchase> findBankingPaymentsToPurchaseToConciliateForCompany(Company company) {
+		def purchaseOrdersCompany = PurchaseOrder.findAllByCompanyAndStatusInList(company, [PurchaseOrderStatus.AUTORIZADA, PurchaseOrderStatus.PAGADA])
+		List<PaymentToPurchase> payments = []
+		purchaseOrdersCompany.each { purchase ->
+			def bankingPayments = purchase.payments.findAll {it.source==SourcePayment.BANKING && it.status==PaymentToPurchaseStatus.APPLIED}
+			payments.addAll(bankingPayments)
+		}
+		payments
+  }
+
+	PurchaseOrder getPurchaseOrderOfPaymentToPurchase(PaymentToPurchase payment){
+		def poc = PurchaseOrder.createCriteria()
+		def purchase = poc.get {
+			payments {
+				eq('id', payment.id)
+			}
+		}
+	}
+
+	def conciliatePaymentToPurchase(PaymentToPurchase payment) {
+		payment.status = PaymentToPurchaseStatus.CONCILIATED
+		payment.save()
+	} 
 }
