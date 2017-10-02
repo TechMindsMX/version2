@@ -6,7 +6,7 @@ import spock.lang.Unroll
 import grails.test.mixin.Mock
 
 @TestFor(NotifyService)
-@Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, PurchaseOrder,Corporate,SaleOrderItem, Bank, BankAccount, PaymentToPurchase, Transaction, ModulusUnoAccount, Payment, ComposeName])
+@Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, PurchaseOrder,Corporate,SaleOrderItem, Bank, BankAccount, PaymentToPurchase, Transaction, ModulusUnoAccount, Payment, ComposeName, PurchaseOrderItem])
 class NotifyServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
@@ -123,6 +123,9 @@ class NotifyServiceSpec extends Specification {
     given:"a purchase order"
       def purchaseOrder = new PurchaseOrder(providerName:"Fake Inc", rejectReason: RejectReason.DOCUMENTO_INVALIDO, rejectComment:"Fake")
       purchaseOrder.save(validate:false)
+			PurchaseOrderItem item = new PurchaseOrderItem(name:"Item", unitType:"PIECE").save(validate:false)
+			purchaseOrder.addToItems(item)
+			purchaseOrder.save(validate:false)
     and:
       def company = new Company().save(validate:false)
       purchaseOrder.company = company
@@ -358,6 +361,8 @@ class NotifyServiceSpec extends Specification {
     given:"a purchase order"
       BankAccount bankAccount = new BankAccount(clabe:"Clabe", banco:new Bank(name:"BankName").save(validate:false)).save(validate:false)
       def purchaseOrder = new PurchaseOrder(providerName:"Fake Inc", bankAccount:bankAccount)
+			PurchaseOrderItem item = new PurchaseOrderItem(name:"Item", unitType:"PIECE").save(validate:false)
+			purchaseOrder.addToItems(item)
       purchaseOrder.save(validate:false)
     and:
       ModulusUnoAccount m1Account = new ModulusUnoAccount(aliasStp:"AliasStp").save(validate:false)
