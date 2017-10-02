@@ -266,4 +266,9 @@ class PurchaseOrderService {
 			}
 		}
 	}
+
+	def conciliatePaymentToPurchase(PaymentToPurchase payment) {
+		payment.status = PaymentToPurchaseStatus.CONCILIATED
+		payment.save()
+	} 
 }
