@@ -72,4 +72,5 @@ databaseChangeLog = {
 	include file: 'adding-column-reject-reason-to-paysheet.groovy'
 	include file: 'create-domain-prepaysheet-employee-incidence.groovy'
   include file: 'modify-column-commission-to-paysheet-project.groovy'
+	include file: 'adding-dispersion-files-s3asset-to-paysheet.groovy'
 }
