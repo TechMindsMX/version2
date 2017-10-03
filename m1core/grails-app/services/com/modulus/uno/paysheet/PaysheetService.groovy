@@ -311,13 +311,14 @@ class PaysheetService {
 		BigDecimal total = new BigDecimal(0)
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
 			String counter = "2${(index+2).toString().padLeft(5,'0')}"
-			String employeeNumber = employee.prePaysheetEmployee.numberEmployee ? (employee.prePaysheetEmployee.numberEmployee.length() > 7 ? employee.prePaysheetEmployee.numberEmployee.substring(0,7) : employee.prePaysheetEmployee.numberEmployee.padRight(7,' ')) : " ".padRight(7, " ") 
+			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+			String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
 			
 			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
 
-			String lastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ").padRight(30," ")
-			String motherLastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ").padRight(20," ")
-			String name = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ").padRight(30," ")
+			String lastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ")).padRight(30," ")
+			String motherLastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ")).padRight(20," ")
+			String name = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ")).padRight(30," ")
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
       String amount = (new DecimalFormat('##0.00').format(employee.imssSalaryNet)).replace(".","").padLeft(18,'0')
       String concept = "01"
@@ -344,13 +345,14 @@ class PaysheetService {
 		BigDecimal total = new BigDecimal(0)
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
 			String counter = "2${(index+2).toString().padLeft(5,'0')}"
-			String employeeNumber = employee.prePaysheetEmployee.numberEmployee ? (employee.prePaysheetEmployee.numberEmployee.length() > 7 ? employee.prePaysheetEmployee.numberEmployee.substring(0,7) : employee.prePaysheetEmployee.numberEmployee.padRight(7,' ')) : " ".padRight(7, " ") 
+			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+			String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
 			
 			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
+			String lastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ")).padRight(30," ")
+			String motherLastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ")).padRight(20," ")
+			String name = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ")).padRight(30," ")
 
-			String lastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ").padRight(30," ")
-			String motherLastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ").padRight(20," ")
-			String name = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ").padRight(30," ")
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
       String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).replace(".","").padLeft(18,'0')
       String concept = "01"
