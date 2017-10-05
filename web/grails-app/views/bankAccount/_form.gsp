@@ -29,6 +29,12 @@
     <input class="form-control" type="number" id="cardNumber" name="cardNumber" max="9999999999999999" value="${bankAccount?.cardNumber}"/>
   </div>
 </div>
+<div class="form-group">
+  <label class="col-sm-5">Número de Cliente</label>
+  <div class="col-sm-4">
+    <input class="form-control" type="number" id="clientNumber" name="clientNumber" max="999999999999" value="${bankAccount?.clientNumber}"/>
+  </div>
+</div>
 
 <g:if test="${params.companyBankAccount}" >
   <g:if test="${bankLib.checkAccountForSTPAvailable() == '0' || bankAccount?.concentradora }" >
