@@ -119,6 +119,15 @@
 								<label>Fecha de Aplicación</label>
 								<input type="text" id="dpApplyDate" name="applyDate" required="required">
 							</div>
+							<div class="form-group">
+								<label>Secuencia</label>
+								<input type="number" name="sequence" max="9999" required="required">
+							</div>
+							<div class="form-group">
+								<label>Nombre de la Empresa Pagadora</label>
+								<input type="text" name="nameCompany" maxlength="36" required="required">
+							</div>
+
             </div>
           </div>
           <div class="row">
