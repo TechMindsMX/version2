@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import pl.touk.excel.export.WebXlsxExporter
 import java.text.SimpleDateFormat
 import java.text.DecimalFormat
+import java.math.RoundingMode
 
 import com.modulus.uno.Bank
 import com.modulus.uno.BankAccount
@@ -289,57 +290,30 @@ class PaysheetService {
     file
   }
 
-	//BANAMEX
-	//Linea control: 84 caracteres
-		// "1" | No.Cliente.padLeft(12,"0") | FechaPago.format("yymmdd") | SecuenciaPago.padLeft(4,"0") | NombreEmpresa.padRight(36," ") | MensajePago.padRight(20, " ") | "15D01"
-	//Linea registro global: 51 caracteres
-		//"21001" | (Total.setScale(2, RoundingMode.HALF_UP) * 100).toString().padLeft(18,"0") | "03" | Sucursal.padLeft(13,"0") | CuentaOrigen.padLeft(7,"0") | NumRegistros.padLeft(6,"0")
-	//Linea totales: 52 caracteres
-		//"4001" | NumRegistros.padLeft(6,"0") | (Total.setScale(2, RoundingMode.HALF_UP) * 100).toString().padLeft(18,"0") | "000001"
-	//Layout de empleados:
-		//1: "30"
-		//2: "001"
-		//3: "01"
-		//4: "001"
-		//5: (Salario.setScale(2, RoundingMode.HALF_UP)*100).toString().padLeft(18,"0)
-		//6: "01"
-		//7: Sucursal.padLeft(13,"0") | cuenta.padLeft(7,"0")
-		//8: ReferenciaPago.padRight(16," ") * Este campo es nuevo, usar mientras:  id.nom+id.empleado
-		//9: clearSpecialCharsFromString(FullName.length()>55 ? FullName.substring(0,55) : FullName.padRight(55," "))
-		//10: "".padRight(140," ")
-		//11: "0000"
-		//12: "00"
-		//13: "".padRight(152," ")
-	
-	//Orden en el archivo:
   File createTxtDispersionFileForBANAMEX(Map dispersionDataForBank, String schema) {
     log.info "Payment dispersion same bank ${schema} BANAMEX for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_BANAMEX",".txt")
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
     String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,"0")
 		String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
-	//linea control: campos nuevos clientNumber, secuence, nameCompany
 		String lineControl = "1${dispersionDataForBank.chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.secuence.padLeft(4,'0')}${dispersionDataForBank.nameCompany.padRight(36,'  ')}${message}15D01"
 		file.append("${lineControl}\n")
-		//linea global
 		BigDecimal totalDispersion = dispersionDataForBank.employees*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
-		String lineGlobal = "21001${(totalDispersion*100).toString().padLeft(18,'0')}03${dispersionDataForBank.chargeBankAccount.branchNumber.padLeft(13,'0')}${dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
+		String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${dispersionDataForBank.chargeBankAccount.branchNumber.padLeft(13,'0')}${dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
 		file.append("${lineGlobal}\n")
-		//lineas empleados
 		dispersionDataForBank.employees.eachWithIndex { employee, index ->
-			String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).toString().padLeft(18,"0")
+			String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
       String destinyBranchAccount = employee.prePaysheetEmployee.clabe.substring(3,6).padLeft(13,"0")
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(7," ")
 			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
 			String reference = "${dispersionDataForBank.idPaysheet}${employeeNumberCleaned ?: index}".padRight(16," ")
 			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
-			String fullName = clearSpecialCharsFromString(businessEntityEmployee.length()>55 ? businessEntityEmployee.substring(0,55) : businessEntity).padRight(55, " ")
+			String fullName = clearSpecialCharsFromString(businessEntityEmployee.toString().length()>55 ? businessEntityEmployee.toString().substring(0,55) : businessEntityEmployee.toString()).padRight(55, " ")
 			String ending = "${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			String lineEmployee = "3000101001${amount}01${destinyBranchAccount}${destinyAccount}${reference}${fullName}${ending}"
 			file.append("${lineEmployee}\n")
 		}
-		//linea totales
-		String lineTotals = "4001${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}${(totalDispersion*100).toString().padLeft(18,'0')}000001${(totalDispersion*100).toString().padLeft(18,'0')}"
+		String lineTotals = "4001${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}${(totalDispersion*100).intValue().toString().padLeft(18,'0')}000001${(totalDispersion*100).intValue().toString().padLeft(18,'0')}"
 		file.append("${lineTotals}\n")
     log.info "File created: ${file.text}"
     file
