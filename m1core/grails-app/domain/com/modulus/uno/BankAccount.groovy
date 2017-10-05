@@ -9,6 +9,7 @@ class BankAccount {
   String clabe
   String cardNumber
   boolean concentradora = false
+	String clientNumber
 
   static hasMany = [accountStatements:AccountStatementBankAccount]
   static belongsTo = [banco:Bank]
@@ -21,6 +22,7 @@ class BankAccount {
         return ['wrongClabe']
     }
     cardNumber nullable:true, blank:true
+		clientNumber nullable:true
   }
 
   private static Integer getControlDigit(def clabe){
