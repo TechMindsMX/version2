@@ -9,6 +9,7 @@ import com.modulus.uno.Bank
 import com.modulus.uno.S3Asset
 import com.modulus.uno.S3AssetService
 import com.modulus.uno.BusinessEntity
+import com.modulus.uno.BusinessEntityType
 import com.modulus.uno.ComposeName
 import com.modulus.uno.NameType
 
@@ -171,28 +172,6 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[0] == "Clabe interbanking000000000M1AccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
 	}
 
-  private PaysheetEmployee createPaysheetEmployee() {
-    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-      paysheet: new Paysheet().save(validate:false),
-      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: new Bank(bankingCode:"999").save(validate:false), numberEmployee:"Num").save(validate:false),
-      salaryImss: getValueInBigDecimal("1000"),
-      socialQuota: getValueInBigDecimal("100"),
-      subsidySalary: getValueInBigDecimal("500"),
-      incomeTax: getValueInBigDecimal("200"),
-      salaryAssimilable: getValueInBigDecimal("3000")
-    )
-    paysheetEmployee.save(validate:false)
-    paysheetEmployee
-  }
-
-  private def getValueInBigDecimal(String value) {
-    Locale.setDefault(new Locale("es","MX"));
-    DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
-    df.setParseBigDecimal(true);
-    BigDecimal bd = (BigDecimal) df.parse(value);
-    bd
-  }
-
 	void "Should complement the dispersion data"() {
 		given:
 			String[] ids = ["1","2","3"]
@@ -303,5 +282,78 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[1] == "200002${'NUM'.padRight(7,' ')}${'LASTNAMEEMP'.padRight(30,' ')}${'MOTHERLASTNAMEEMP'.padRight(20,' ')}${'NAMEEMP'.padRight(30,' ')}${'EMPLOYEEACCOUNT'.padLeft(16,' ')}${'300000'.padLeft(18,'0')}01"
 			result.readLines()[2] == "30000200001${'300000'.padLeft(18,'0')}"
 	}
+
+	void "Should create dispersion file SA for BANAMEX bank"() {
+		given:"The dispersion data"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, secuence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
+		and:"The business entity"
+			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC", type: BusinessEntityType.FISICA).save(validate:false)
+			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
+			ComposeName lastName = new ComposeName(value:"LastNameEmp", type:NameType.APELLIDO_PATERNO).save(validate:false)
+			ComposeName motherLastName = new ComposeName(value:"MotherLastNameEmp", type:NameType.APELLIDO_MATERNO).save(validate:false)
+			businessEntity.addToNames(name)
+			businessEntity.addToNames(lastName)
+			businessEntity.addToNames(motherLastName)
+			businessEntity.save(validate:false)
+		when:
+			def result = service.createTxtDispersionFileForBANAMEX(dispersionData, "SA")
+		then:
+			result.readLines().size() == 4
+			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'BILLING COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
+			result.readLines()[1] == "21001${'120000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'Account'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
+			result.readLines()[2] == "3000101001${'120000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'120000'.padLeft(18,'0')}000001${'120000'.padLeft(18,'0')}"
+	}
+
+	void "Should create dispersion file IAS for BANAMEX bank"() {
+		given:"The dispersion data"
+      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, secuence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
+		and:"The business entity"
+			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC", type: BusinessEntityType.FISICA).save(validate:false)
+			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
+			ComposeName lastName = new ComposeName(value:"LastNameEmp", type:NameType.APELLIDO_PATERNO).save(validate:false)
+			ComposeName motherLastName = new ComposeName(value:"MotherLastNameEmp", type:NameType.APELLIDO_MATERNO).save(validate:false)
+			businessEntity.addToNames(name)
+			businessEntity.addToNames(lastName)
+			businessEntity.addToNames(motherLastName)
+			businessEntity.save(validate:false)
+		when:
+			def result = service.createTxtDispersionFileForBANAMEX(dispersionData, "IAS")
+		then:
+			result.readLines().size() == 4
+			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'BILLING COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
+			result.readLines()[1] == "21001${'300000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'Account'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
+			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
+	}
+
+
+  private PaysheetEmployee createPaysheetEmployee() {
+    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
+      paysheet: new Paysheet().save(validate:false),
+      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: new Bank(bankingCode:"999").save(validate:false), numberEmployee:"Num").save(validate:false),
+      salaryImss: getValueInBigDecimal("1000"),
+      socialQuota: getValueInBigDecimal("100"),
+      subsidySalary: getValueInBigDecimal("500"),
+      incomeTax: getValueInBigDecimal("200"),
+      salaryAssimilable: getValueInBigDecimal("3000")
+    )
+    paysheetEmployee.save(validate:false)
+    paysheetEmployee
+  }
+
+  private def getValueInBigDecimal(String value) {
+    Locale.setDefault(new Locale("es","MX"));
+    DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
+    df.setParseBigDecimal(true);
+    BigDecimal bd = (BigDecimal) df.parse(value);
+    bd
+  }
 
 }
