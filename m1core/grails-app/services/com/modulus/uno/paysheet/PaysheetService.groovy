@@ -172,7 +172,7 @@ class PaysheetService {
 
 	Map prepareDispersionDataForBank(Paysheet paysheet, BankAccount chargeBankAccount, Map dispersionData){
 		List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, chargeBankAccount.banco)
-		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate, idPaysheet:paysheet.id]
+		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate, idPaysheet:paysheet.id, sequence:dispersionData.sequence, nameCompany:dispersionData.nameCompany]
 	}
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
@@ -293,10 +293,17 @@ class PaysheetService {
   File createTxtDispersionFileForBANAMEX(Map dispersionDataForBank, String schema) {
     log.info "Payment dispersion same bank ${schema} BANAMEX for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_BANAMEX",".txt")
+		
+		if (!dispersionDataForBank.chargeBankAccount.clientNumber){
+			log.info "La cuenta no tiene registrado el número de cliente"
+			file.append("La cuenta Banamex ${dispersionDataForBank.chargeBankAccount.accountNumber} no tiene número de cliente registrado")
+		} else {
+
+		log.info "Dispersion data for bank: ${dispersionDataForBank}"
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
     String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,"0")
 		String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
-		String lineControl = "1${dispersionDataForBank.chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.secuence.padLeft(4,'0')}${dispersionDataForBank.nameCompany.padRight(36,'  ')}${message}15D01"
+		String lineControl = "1${dispersionDataForBank.chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(dispersionDataForBank.nameCompany).padRight(36,'  ')}${message}15D01"
 		file.append("${lineControl}\n")
 		BigDecimal totalDispersion = dispersionDataForBank.employees*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
 		String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${dispersionDataForBank.chargeBankAccount.branchNumber.padLeft(13,'0')}${dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
@@ -315,6 +322,9 @@ class PaysheetService {
 		}
 		String lineTotals = "4001${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}${(totalDispersion*100).intValue().toString().padLeft(18,'0')}000001${(totalDispersion*100).intValue().toString().padLeft(18,'0')}"
 		file.append("${lineTotals}\n")
+
+		}
+
     log.info "File created: ${file.text}"
     file
 	}
