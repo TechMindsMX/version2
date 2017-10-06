@@ -77,4 +77,5 @@ databaseChangeLog = {
 	include file: 'adding-column-source-to-payment-to-purchase.groovy'
 	include file: 'adding-column-payment-to-purchase-to-conciliation.groovy'
 	include file: 'adding-column-client-number-to-bankaccount.groovy'
+	include file: 'adding-column-paymentway-to-paysheet-employee.groovy'
 }
