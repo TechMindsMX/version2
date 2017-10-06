@@ -14,6 +14,7 @@ class PaysheetEmployee {
   BigDecimal ivaRate = new BigDecimal(0)
   PaysheetEmployeeStatus status = PaysheetEmployeeStatus.PENDING
   BreakdownPaymentEmployee breakdownPayment
+	PaymentWay paymentWay = PaymentWay.BANKING
 
   static belongsTo = [paysheet:Paysheet]
 
