@@ -5,6 +5,7 @@ import com.modulus.uno.Company
 class PaysheetController {
 
   PaysheetService paysheetService
+  PaysheetEmployeeService paysheetEmployeeService
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
@@ -80,4 +81,8 @@ class PaysheetController {
     }
   }
 
+	def changePaymentWayFromEmployee(PaysheetEmployee employee) {
+		paysheetEmployeeService.changePaymentWayFromEmployee(employee)
+		redirect action:"show", id:employee.paysheet.id
+	}
 }
