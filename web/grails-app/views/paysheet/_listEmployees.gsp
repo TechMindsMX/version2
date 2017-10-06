@@ -48,7 +48,7 @@
                 <td>${employee.prePaysheetEmployee.rfc}</td>
                 <td>${employee.prePaysheetEmployee.curp}</td>
                 <td>${employee.prePaysheetEmployee.bank?.bankingCode}</td>
-                <td>${employee.prePaysheetEmployee.bank?.name}</td>
+                <td>${employee.prePaysheetEmployee.bank ? employee.prePaysheetEmployee.bank.name : "EFECTIVO/CHEQUE"}</td>
                 <td>${employee.prePaysheetEmployee.clabe}</td>
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>

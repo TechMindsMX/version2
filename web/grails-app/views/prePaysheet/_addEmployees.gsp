@@ -49,7 +49,8 @@
           <td>${employee.curp}</td>
           <td>${dataImssEmployees[index]?.nss}</td>
           <td>
-						<g:select class="form-control fixwidth" id="bankAccount${employee.id}" name="bankAccount${employee.id}" from="${employee.banksAccounts}" noSelection="['':'Sin datos bancarios']" optionKey="id"/>
+						<g:set var="bankAccount" value="${employee.banksAccounts ? employee.banksAccounts.first().id : ""}"/> 
+						<g:select class="form-control fixwidth" id="bankAccount${employee.id}" name="bankAccount${employee.id}" from="${employee.banksAccounts}" noSelection="['':'EFECTIVO/CHEQUE']" optionKey="id" value="${bankAccount}"/>
           </td>
           <td>
 						<input type="text" id="netPayment${employee.id}" name="netPayment${employee.id}" class="form-control text-right" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta 2 decimales)" value="${netPaymentEmployees[index]}" placeholder="Total a Pagar" style="width:100px"/>
