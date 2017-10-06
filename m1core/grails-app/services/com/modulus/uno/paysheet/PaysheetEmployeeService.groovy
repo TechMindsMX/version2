@@ -97,4 +97,9 @@ class PaysheetEmployeeService {
     (amountMonthly / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
   }
 
+	@Transactional
+	void changePaymentWayFromEmployee(PaysheetEmployee employee){
+		employee.paymentWay = employee.paymentWay == PaymentWay.BANKING ? PaymentWay.CASH : PaymentWay.BANKING
+		employee.save()
+	}
 }
