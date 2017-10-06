@@ -355,7 +355,7 @@ class PaysheetService {
 
   List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, List chargeBankAccountsList) {
     allEmployees.collect { employee ->
-      if (!chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank }) {
+      if (employee.prePaysheetEmployee.bank && !chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank }) {
         employee
       }
     }.grep()
