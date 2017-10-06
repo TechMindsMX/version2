@@ -20,7 +20,8 @@ class PaysheetEmployeeService {
       prePaysheetEmployee:prePaysheetEmployee,
       paysheet:paysheet,
       breakdownPayment: new BreakdownPaymentEmployee(),
-      ivaRate: new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP)
+      ivaRate: new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
+			paymentWay: prePaysheetEmployee.bank ? PaymentWay.BANKING : PaymentWay.CASH
     )
 
     if (prePaysheetEmployee.netPayment > 0) {
