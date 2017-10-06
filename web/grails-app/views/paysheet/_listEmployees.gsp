@@ -53,7 +53,15 @@
                 <td>${employee.prePaysheetEmployee.clabe}</td>
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>
-                <td><g:message code="paysheet.payment.way.${employee.paymentWay}"/></td>
+                <td>
+									<g:if test="${employee.prePaysheetEmployee.bank}">
+										<g:link action="changePaymentWayFromEmployee" id="${employee.id}" title="Cambiar forma de pago">
+											<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
+										</g:link>
+									</g:if><g:else>
+										<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
+									</g:else>
+								</td>
                 <td>${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
                 <td>${modulusuno.formatPrice(number:employee.salaryAssimilable)}</td>
                 <td>${modulusuno.formatPrice(number:employee.totalSalaryEmployee)}</td>
