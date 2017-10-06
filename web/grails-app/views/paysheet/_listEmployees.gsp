@@ -31,6 +31,7 @@
               <th>Clabe</th>
               <th>Cuenta</th>
               <th>Tarjeta</th>
+							<th>Forma de Pago</th>
               <th>IMSS</th>
               <th>Asimilable</th>
               <th>Subtotal</th>
@@ -52,6 +53,7 @@
                 <td>${employee.prePaysheetEmployee.clabe}</td>
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>
+                <td><g:message code="paysheet.payment.way.${employee.paymentWay}"/></td>
                 <td>${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
                 <td>${modulusuno.formatPrice(number:employee.salaryAssimilable)}</td>
                 <td>${modulusuno.formatPrice(number:employee.totalSalaryEmployee)}</td>
