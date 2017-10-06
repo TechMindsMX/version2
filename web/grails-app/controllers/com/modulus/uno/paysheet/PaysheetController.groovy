@@ -73,4 +73,14 @@ class PaysheetController {
     response.outputStream << txtDispersion.text
     response.outputStream.flush()
   }
+
+  def exportToXlsCash(Paysheet paysheet) {
+    log.info "Exporting to Xls only Cash the paysheet: ${paysheet.dump()}"
+    def xls = paysheetService.exportPaysheetToXlsCash(paysheet)
+    xls.with {
+      setResponseHeaders(response, "nominaEfectivo-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
 }
