@@ -10,6 +10,7 @@ class ConciliationService {
   def saleOrderService
   def paymentService
   def movimientosBancariosService
+  def purchaseOrderService
 
   def getTotalToApplyForPayment(Payment payment) {
     def conciliations = getConciliationsToApplyForPayment(payment)
@@ -33,7 +34,7 @@ class ConciliationService {
 
   void saveConciliationForCompany(Conciliation conciliation, Company company) {
     if (!validateAmountToApply(conciliation)) {
-      throw new BusinessException("El monto a conciliar (${conciliation.amount.setScale(2, RoundingMode.HALF_UP)}) no puede ser mayor al monto por pagar de la factura (${conciliation.saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP)})")
+      throw new BusinessException("El monto a conciliar (${conciliation.amount.setScale(2, RoundingMode.HALF_UP)}) no puede ser mayor al monto por pagar  (${conciliation.saleOrder ? conciliation.saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP) : conciliation.paymentToPurchase.amount.setScale(2, RoundingMode.HALF_UP)})")
     }
 
     conciliation.company = company
@@ -44,10 +45,11 @@ class ConciliationService {
 
   private validateAmountToApply(Conciliation conciliation) {
     BigDecimal amountToConciliate = conciliation.amount
-    if (conciliation.saleOrder.currency=="USD") {
+		BigDecimal maxAmount = conciliation.saleOrder ? conciliation.saleOrder.amountToPay : conciliation.paymentToPurchase.amount
+    if (conciliation.saleOrder?.currency=="USD") {
       amountToConciliate = conciliation.amount/conciliation.changeType
     }
-    amountToConciliate <= conciliation.saleOrder.amountToPay
+    amountToConciliate.setScale(2, RoundingMode.HALF_UP) <= maxAmount.setScale(2, RoundingMode.HALF_UP)
   }
 
   void deleteConciliation(Conciliation conciliation) {
@@ -93,7 +95,12 @@ class ConciliationService {
   }
 
   private applyConciliation(Conciliation conciliation) {
-    saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
+		if (conciliation.saleOrder) {
+    	saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
+		}
+		if (conciliation.paymentToPurchase) {
+			purchaseOrderService.conciliatePaymentToPurchase(conciliation.paymentToPurchase)
+		}
     conciliation.status = ConciliationStatus.APPLIED
     conciliation.save()
   }
