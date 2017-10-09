@@ -386,4 +386,27 @@ class PaysheetService {
     file
   }
 
+	List prepareDispersionSummary(Paysheet paysheet){
+		List summary = []
+		List bankAccounts = getBanksAccountsToPaymentDispersion(paysheet)
+		def banks = getListBanksFromBankAccountsToPaymentDispersion(bankAccounts)
+		banks.each { bank ->
+			Map summaryBank = [:]
+			summaryBank.bank = bank
+			summaryBank.accounts = bankAccounts.collect { ba -> if (ba.banco == bank) { ba } }.grep()
+			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.imssSalaryNet.sum()
+			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.salaryAssimilable.sum()
+			summary.add(summaryBank)
+		}
+		summary
+	}
+
+	def getListBanksFromBankAccountsToPaymentDispersion(List bankAccounts){
+		def banks = [] as Set
+		bankAccounts.each { ba ->
+			banks.add(ba.banco)
+		}
+		banks
+	}
+
 }
