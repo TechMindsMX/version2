@@ -71,8 +71,7 @@
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED}">
       <div class="col-md-4">
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED}">
-          <a data-toggle="collapse" role="button" href="#paymentDispersion" class="btn btn-primary" aria-expanded="false" aria-controls="paymentDispersion">Dispersar Pagos</a>
-
+					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
       </div>
       <div class="col-md-8 text-right">
