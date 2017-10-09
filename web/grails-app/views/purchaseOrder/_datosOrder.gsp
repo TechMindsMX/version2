@@ -40,7 +40,7 @@
             <dt>Monto Pagado </dt>
             <dd>${modulusuno.formatPrice(number: purchaseOrder.totalPayments)}</dd>
             <dt>Monto por Pagar</dt>
-            <dd>${modulusuno.formatPrice(number: purchaseOrder.total - purchaseOrder.totalPayments)}</dd>
+            <dd>${modulusuno.formatPrice(number: purchaseOrder.amountToPay)}</dd>
           </font>
           </g:if>
         </dl>
