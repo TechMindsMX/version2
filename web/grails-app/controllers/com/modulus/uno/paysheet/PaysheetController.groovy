@@ -12,7 +12,7 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet, model:[chargeBanksAccounts: paysheetService.getBanksAccountsToPaymentDispersion(paysheet), baseUrlDocuments:grailsApplication.config.grails.url.base.images]
+    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images]
   }
 
   def list() {
@@ -64,6 +64,12 @@ class PaysheetController {
       save(response.outputStream)
     }
   }
+
+	def prepareDispersion(Paysheet paysheet){
+		log.info "Preparing summary for dispersion from paysheet: ${paysheet.id}"
+		List dispersionSummary = paysheetService.prepareSummaryDispersion(paysheet)
+		render view:"show", model:[paysheet:paysheet, dispersionSummary:dispersionSummary]
+	}
 
   def generatePaymentDispersion(Paysheet paysheet) {
     log.info "Generating txt payments dispersion charge bank account ${params.chargeBankAccountsIds} from paysheet ${paysheet.id}"
