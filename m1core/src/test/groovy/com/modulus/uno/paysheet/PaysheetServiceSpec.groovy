@@ -176,7 +176,7 @@ class PaysheetServiceSpec extends Specification {
 	void "Should complement the dispersion data"() {
 		given:
 			String[] ids = ["1","2","3"]
-			Map dispersionData = [chargeBankAccountsIds:ids]
+			Map dispersionData = [dispersionAccount:ids]
 		and:
 			BankAccount bankAccount1 = new BankAccount().save(validate:false)
 			BankAccount bankAccount2 = new BankAccount().save(validate:false)
