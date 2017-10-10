@@ -396,8 +396,11 @@ class PaysheetService {
 			summaryBank.accounts = bankAccounts.collect { ba -> if (ba.banco == bank) { ba } }.grep()
 			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.imssSalaryNet.sum()
 			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.salaryAssimilable.sum()
+			summaryBank.type = "SameBank"
 			summary.add(summaryBank)
 		}
+		//inter bank data
+		summary = addInterBankSummary(summary, paysheet, banks)
 		summary
 	}
 
@@ -407,6 +410,17 @@ class PaysheetService {
 			banks.add(ba.banco)
 		}
 		banks
+	}
+
+	def addInterBankSummary(List summary, Paysheet paysheet, def banks){
+		Map summaryInterBank = [:]
+		summaryInterBank.bank = Bank.findByName("STP")
+		summaryInterBank.accounts = paysheet.company.accounts.first()
+		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.imssSalaryNet.sum()
+		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.salaryAssimilable.sum()
+		summaryInterBank.type = "InterBank"
+		summary.add(summaryInterBank)
+		summary
 	}
 
 }
