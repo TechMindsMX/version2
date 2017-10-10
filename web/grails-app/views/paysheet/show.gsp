@@ -37,6 +37,14 @@
         </div>
       </div>
 
+			<g:if test="${dispersionSummary}">
+      <div class="row">
+        <div class="col-md-12">
+ 					<g:render template="dispersion"/>
+        </div>
+      </div>
+			</g:if>
+
       <div class="row">
         <div class="col-md-12 text-right">
           <g:if test="${paysheet.status == PaysheetStatus.CREATED}">
