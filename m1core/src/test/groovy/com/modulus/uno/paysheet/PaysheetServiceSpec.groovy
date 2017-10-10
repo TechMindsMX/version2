@@ -333,11 +333,37 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
 
+	void "Should get banks list from bank accounts to payment dispersion"(){
+		given:"Bank accounts list"
+			Bank bank01 = new Bank(name:"BANCO-1").save(validate:false)
+			Bank bank02 = new Bank(name:"BANCO-2").save(validate:false)
+			List bankAccounts = [new BankAccount(banco:bank01).save(validate:false), new BankAccount(banco:bank02).save(validate:false), new BankAccount(banco:bank01).save(validate:false)]
+		when:
+			def result = service.getListBanksFromBankAccountsToPaymentDispersion(bankAccounts)
+		then:
+			result.size() == 2
+	}
+
+	void "Should get dispersion summary for paysheet"() {
+		given:"The paysheet"
+			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+		when:
+			def result = service.prepareDispersionSummary(paysheetEmployee.paysheet)
+		then:
+			result.size() == 1
+			result.first().bank.bankingCode == "999"
+			result.first().accounts.size() == 1
+	}
 
   private PaysheetEmployee createPaysheetEmployee() {
+		Company company = new Company().save(validate:false)
+		Bank bank = new Bank(bankingCode:"999").save(validate:false)
+		BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
+		company.addToBanksAccounts(bankAccount)
+		company.save(validate:false)
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-      paysheet: new Paysheet().save(validate:false),
-      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: new Bank(bankingCode:"999").save(validate:false), numberEmployee:"Num").save(validate:false),
+      paysheet: new Paysheet(company:company).save(validate:false),
+      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num").save(validate:false),
       salaryImss: getValueInBigDecimal("1000"),
       socialQuota: getValueInBigDecimal("100"),
       subsidySalary: getValueInBigDecimal("500"),
