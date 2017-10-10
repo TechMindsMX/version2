@@ -12,9 +12,10 @@ import com.modulus.uno.BusinessEntity
 import com.modulus.uno.BusinessEntityType
 import com.modulus.uno.ComposeName
 import com.modulus.uno.NameType
+import com.modulus.uno.ModulusUnoAccount
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
@@ -347,16 +348,39 @@ class PaysheetServiceSpec extends Specification {
 	void "Should get dispersion summary for paysheet"() {
 		given:"The paysheet"
 			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+		and:"Stp bank"
+			Bank stpBank = new Bank(name:"STP").save(validate:false)
 		when:
 			def result = service.prepareDispersionSummary(paysheetEmployee.paysheet)
 		then:
-			result.size() == 1
+			result.size() == 2
 			result.first().bank.bankingCode == "999"
 			result.first().accounts.size() == 1
 	}
 
+	void "Should add inter bank summary for dispersion paysheet"(){
+		given:"The paysheet"
+			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+		and:"Stp bank"
+			Bank stpBank = new Bank(name:"STP").save(validate:false)
+		and:"List banks for same bank dispersion"
+			def banks = [new Bank(bankingCode:"100").save(validate:false)]
+	  and:"Summary"
+			List summary = []
+	  when:
+			def result = service.addInterBankSummary(summary, paysheetEmployee.paysheet, banks) 
+		then:
+			result.size() == 1
+			result.first().bank.name == "STP"
+			result.first().totalSA == new BigDecimal(1200)
+			result.first().totalIAS == new BigDecimal(3000)
+	}
+
   private PaysheetEmployee createPaysheetEmployee() {
 		Company company = new Company().save(validate:false)
+		ModulusUnoAccount m1Account = new ModulusUnoAccount().save(validate:false)
+		company.addToAccounts(m1Account)
+		company.save(validate:false)
 		Bank bank = new Bank(bankingCode:"999").save(validate:false)
 		BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
 		company.addToBanksAccounts(bankAccount)
