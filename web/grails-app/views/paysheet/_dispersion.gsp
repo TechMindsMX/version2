@@ -25,9 +25,11 @@
 						<tbody>
 						<g:each in="${dispersionSummary}" var="summaryBank">
 							<tr>
-								<td>${summaryBank.bank.name}</td>
+								<td>${summaryBank.type=="SameBank" ? summaryBank.bank.name : "INTERBANCARIO"}</td>
 								<td>
-									<g:select class="form-control" name="dispersionAccount" from="${summaryBank.accounts}" required=""/>
+									<g:if test="${summaryBank.type=='SameBank'}">
+										<g:select class="form-control" name="dispersionAccount" from="${summaryBank.accounts}" required="" optionKey="id"/>
+									</g:if>
 								</td>
 								<td class="text-right">${modulusuno.formatPrice(number:summaryBank.totalSA)}</td>
 								<td class="text-right">${modulusuno.formatPrice(number:summaryBank.totalIAS)}</td>
