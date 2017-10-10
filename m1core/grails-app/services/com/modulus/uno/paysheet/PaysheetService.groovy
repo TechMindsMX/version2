@@ -150,7 +150,7 @@ class PaysheetService {
 	}
 
   Map complementDispersionData(Map dispersionData) {
-		List idsChargeBankAccounts = Arrays.asList(dispersionData.chargeBankAccountsIds)
+		List idsChargeBankAccounts = Arrays.asList(dispersionData.dispersionAccount)
     List<BankAccount> chargeBankAccountsList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
     dispersionData.chargeBankAccountsList = chargeBankAccountsList
 		dispersionData.applyDate = dispersionData.applyDate ? Date.parse("dd/MM/yyyy", dispersionData.applyDate) : null
