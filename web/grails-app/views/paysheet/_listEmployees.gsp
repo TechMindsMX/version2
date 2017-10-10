@@ -70,9 +70,11 @@
   <div class="row">
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED}">
       <div class="col-md-4">
+				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary}">
 					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
+				</sec:ifAnyGranted>
       </div>
       <div class="col-md-8 text-right">
         <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
