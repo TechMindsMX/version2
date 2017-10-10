@@ -81,26 +81,4 @@
       </div>
     </g:if>
   </div>
-  <div class="row">&nbsp;</div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <div class="collapse" id="paymentDispersion">
-				<div class"=row">
-					<div class="col-md-12">
-						<g:if test="${paysheet.dispersionFiles}">
-							<h4>Archivos de dispersión generados</h4>
-							<ul>
-								<g:each in="${paysheet.dispersionFiles}" var="dispersionFile">
-									<li>
-         						<a href="${baseUrlDocuments}/${dispersionFile.title}.${dispersionFile.mimeType}"><i class="glyphicon glyphicon-download-alt"></i> ${dispersionFile.type}</a>
-									</li>
-								</g:each>
-							</ul>
-						</g:if>
-					</div>
-				</div>
-
-      </div>
-    </div>
-  </div>
+</div>
