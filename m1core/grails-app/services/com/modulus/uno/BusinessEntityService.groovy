@@ -4,7 +4,7 @@ import grails.transaction.Transactional
 import org.springframework.transaction.annotation.Propagation
 
 @Transactional
-class BusinessEntityService {
+class BusinessEntityService { 
 
   def clientService
   def providerService
@@ -242,7 +242,17 @@ class BusinessEntityService {
     log.info "Processing massive registration for Employee"
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
-    List results = processDataFromXls(data, company)
+    List results = processDataFromXlsEMPLEADO(data, company)
+    log.info "Data: ${data}"
+    log.info "Results: ${results}"
+    [data:data, results:results]
+  }
+
+  def processXlsMassiveForCLIENTE(def file, Company company) {
+    log.info "Processing massive registration for Client"
+    File xlsFile = getFileToProcess(file)
+    List data = xlsImportService.parseXlsMassiveClient(xlsFile)
+    List results = processDataFromXlsCLIENTE(data, company)
     log.info "Data: ${data}"
     log.info "Results: ${results}"
     [data:data, results:results]
@@ -256,7 +266,7 @@ class BusinessEntityService {
     xlsFile
   }
 
-  List processDataFromXls(List data, Company company) {
+  List processDataFromXlsEMPLEADO(List data, Company company) {
     List results = []
     data.each { employee ->
       String result = saveEmployeeImportData(employee, company)
@@ -268,9 +278,29 @@ class BusinessEntityService {
     results
   }
 
+  List processDataFromXlsCLIENTE(List data, Company company) {
+    List results = []
+    data.each { client ->
+      String result = saveClientImportData(client, company)
+      results.add(result)
+      if (result == "Registrado") {
+        addClientToCompany(client.RFC, company)
+      }
+    }
+    results
+  }
+
   @Transactional
   def addEmployeeToCompany(String rfc, Company company) {
     log.debug "Adding employee to company: ${rfc}"
+    BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
+    company.addToBusinessEntities((EmployeeBusinessEntity) businessEntity)
+    company.save()
+  }
+
+  @Transactional
+  def addClientToCompany(String rfc, Company company) {
+    log.debug "Adding client to company: ${rfc}"
     BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
     company.addToBusinessEntities((EmployeeBusinessEntity) businessEntity)
     company.save()
@@ -312,6 +342,22 @@ class BusinessEntityService {
     "Registrado"
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  def saveClientImportData(Map rowClient, Company company) {
+    if (clientService.clientAlreadyExistsInCompany(rowClient.RFC, company)){
+      transactionStatus.setRollbackOnly()
+      return "Error: el RFC del cliente ya existe"
+    }
+
+    BusinessEntity businessEntity = createBusinessEntityForRowClient(rowClient)
+    if(businessEntity.hasErrors()){
+      transactionStatus.setRollbackOnly()
+      return "Error: RFC"
+    }   
+
+    "Registrado"
+  }
+
   def createBusinessEntityForRowEmployee(Map employeeMap) {
     BusinessEntity businessEntity = new BusinessEntity(
       rfc:employeeMap.RFC,
@@ -324,10 +370,32 @@ class BusinessEntityService {
     createComposeNameForBusinessEntityFromRowEmployee(businessEntity, employeeMap)
   }
 
+  def createBusinessEntityForRowClient(Map clientMap) {
+    BusinessEntity businessEntity = new BusinessEntity(
+      rfc:clientMap.RFC,
+      status:BusinessEntityStatus.TO_AUTHORIZE
+      )
+
+    businessEntity.save()
+
+    createComposeNameForBusinessEntityFromRowClient(businessEntity, clientMap)
+  }
+
   def createComposeNameForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map employeeMap) {
     ComposeName lastName = new ComposeName(value:employeeMap.PATERNO, type:NameType.APELLIDO_PATERNO)
     ComposeName motherLastName = new ComposeName(value:employeeMap.MATERNO, type:NameType.APELLIDO_MATERNO)
     ComposeName name = new ComposeName(value:employeeMap.NOMBRE, type:NameType.NOMBRE)
+    businessEntity.addToNames(lastName)
+    businessEntity.addToNames(motherLastName)
+    businessEntity.addToNames(name)
+    businessEntity.save()
+    businessEntity
+  }
+
+  def createComposeNameForBusinessEntityFromRowClient(BusinessEntity businessEntity, Map clientMap) {
+    ComposeName lastName = new ComposeName(value:clientMap.PATERNO, type:NameType.APELLIDO_PATERNO)
+    ComposeName motherLastName = new ComposeName(value:clientMap.MATERNO, type:NameType.APELLIDO_MATERNO)
+    ComposeName name = new ComposeName(value:clientMap.NOMBRE, type:NameType.NOMBRE)
     businessEntity.addToNames(lastName)
     businessEntity.addToNames(motherLastName)
     businessEntity.addToNames(name)
