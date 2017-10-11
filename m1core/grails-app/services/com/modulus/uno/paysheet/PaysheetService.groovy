@@ -177,7 +177,7 @@ class PaysheetService {
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
     allEmployees.collect { employee ->
-      if (employee.prePaysheetEmployee.bank==bank) {
+      if (employee.prePaysheetEmployee.bank==bank && employee.paymentWay == PaymentWay.BANKING) {
         employee
       }
     }.grep()
@@ -355,7 +355,7 @@ class PaysheetService {
 
   List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, List chargeBankAccountsList) {
     allEmployees.collect { employee ->
-      if (!chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank }) {
+      if (employee.prePaysheetEmployee.bank && !chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank } && employee.paymentWay == PaymentWay.BANKING) {
         employee
       }
     }.grep()
@@ -384,6 +384,25 @@ class PaysheetService {
     }
     log.info "File created: ${file.text}"
     file
+  }
+
+  def exportPaysheetToXlsCash(Paysheet paysheet) {
+    Map employees = getEmployeesOnCashToExport(paysheet)
+    new WebXlsxExporter().with {
+      fillRow(["PROYECTO:", paysheet.prePaysheet.paysheetProject, "NÓMINA EFECTIVO/CHEQUE"],0)
+      fillRow(["PERIODO DE PAGO:", paysheet.prePaysheet.paymentPeriod, "DEL:", new SimpleDateFormat("dd-MM-yyyy").format(paysheet.prePaysheet.initPeriod), "AL:", new SimpleDateFormat("dd-MM-yyyy").format(paysheet.prePaysheet.endPeriod)],1)
+      fillRow(["RESIDENTE:", paysheet.prePaysheet.accountExecutive,"TOTAL:", paysheet.total], 2)
+      fillRow(employees.headers, 4)
+      add(employees.data, employees.properties, 5)
+    }
+  }
+
+  Map getEmployeesOnCashToExport(Paysheet paysheet) {
+    Map employees = [:]
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'salaryAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
+    employees.data = paysheet.employees.findAll { emp -> !emp.prePaysheetEmployee.bank }.sort { it.prePaysheetEmployee.nameEmployee }
+    employees
   }
 
 	List prepareDispersionSummary(Paysheet paysheet){
