@@ -81,7 +81,10 @@ class PurchaseOrderServiceSpec extends Specification {
 	@Unroll
   void "should add the payment with data=#thePaymentData to purchase order"() {
     given:"The purchase order"
-      PurchaseOrder purchaseOrder = new PurchaseOrder().save(validate:false)
+      PurchaseOrder purchaseOrder = new PurchaseOrder(payments:[]).save(validate:false)
+			purchaseOrder.metaClass.addToPayments = {
+				payments.add(new PaymentToPurchase().save(validate:false))
+			}
     and:"The payment data"
 			Map paymentData = thePaymentData
     when:
