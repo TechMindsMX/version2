@@ -82,7 +82,7 @@
       <div class="col-md-4">
 				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED}">
-          <a data-toggle="collapse" role="button" href="#paymentDispersion" class="btn btn-primary" aria-expanded="false" aria-controls="paymentDispersion">Dispersar Pagos</a>
+					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
 				</sec:ifAnyGranted>
       </div>
