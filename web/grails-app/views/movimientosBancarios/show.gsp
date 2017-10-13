@@ -41,7 +41,9 @@
             <g:each in="${movimientosBancarios}" var="movimiento">
               <tr>
                 <td>
-                  ${movimiento.dateEvent.format('dd/MMM/yyyy')}
+									<g:link action="edit" id="${movimiento.id}">
+                  	${movimiento.dateEvent.format('dd/MMM/yyyy')}
+									</g:link>
                 </td>
                 <td>${movimiento.concept}</td>
                 <td>${movimiento.reference}</td>
