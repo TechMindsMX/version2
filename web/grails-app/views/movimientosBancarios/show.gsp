@@ -36,6 +36,7 @@
                 <th scope="col">Abono</th>
                 <th scope="col">Cargo</th>
                 <th scope="col"></th>
+                <th scope="col">Conciliable</th>
               </tr>
             <g:each in="${movimientosBancarios}" var="movimiento">
               <tr>
@@ -66,6 +67,19 @@
                   </span>
                   </g:else>
                 </td>
+								<td class="text-center">
+									<g:if test="${movimiento.reconcilable}">
+	                  <span class="label label-primary">
+      	              <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+  	                </span>
+									</g:if>
+									<g:else>
+	                  <span class="label label-info">
+      	              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+  	                </span>
+								
+									</g:else>
+								</td>
               </tr>
             </g:each>
 
