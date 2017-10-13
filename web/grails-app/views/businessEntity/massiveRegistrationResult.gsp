@@ -23,13 +23,12 @@
                 <div class="table-responsive">
                   <table class="table">
                     <tr>
-                      <th>RFC</th>
-                      <th>CURP</th>
-                      <th>Paterno</th>
-                      <th>Materno</th>
-                      <th>Nombre</th>
-                      <th>No. Empl.</th>
-                      <th>Resultado</th>
+                    <g:each in="${resultImport.headers}" var="header" status="index">
+                    
+                      <th>${header}</th>
+                     
+                    </g:each>
+                    <th>RESULTADO</th>
                     </tr>
                     <g:each in="${resultImport.data}" var="employee" status="index">
                       <tr>
