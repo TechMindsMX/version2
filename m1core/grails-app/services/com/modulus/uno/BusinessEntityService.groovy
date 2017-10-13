@@ -111,10 +111,11 @@ class BusinessEntityService {
 
     }
     list.collect {
-      if ((entity.equals("CLIENT") && clientService.isClientOfThisCompany(it, company))
+      if (((entity.equals("CLIENT") && clientService.isClientOfThisCompany(it, company))
           || (entity.equals("PROVIDER") && providerService.isProviderOfThisCompany(it, company))
           || (entity.equals("EMPLOYEE") && employeeService.isEmployeeOfThisCompany(it, company))
-          || (entity.equals("") && (clientService.isClientOfThisCompany(it, company) || providerService.isProviderOfThisCompany(it, company) || employeeService.isEmployeeOfThisCompany(it, company)))
+					|| entity=="")
+          && company.businessEntities.contains(it)
       )
         it
     }.findResults{it}.unique()
