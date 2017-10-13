@@ -4,7 +4,7 @@ import grails.transaction.Transactional
 import org.springframework.transaction.annotation.Propagation
 
 @Transactional
-class BusinessEntityService { 
+class BusinessEntityService {
 
   def clientService
   def providerService
@@ -242,10 +242,16 @@ class BusinessEntityService {
     log.info "Processing massive registration for Employee"
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
+    def headers = getKeyForDataEmployee(data)
     List results = processDataFromXlsEMPLEADO(data, company)
     log.info "Data: ${data}"
+    log.info "Headers: ${headers}"
     log.info "Results: ${results}"
-    [data:data, results:results]
+    [data:data, results:results, headers:headers]
+  }
+
+  def getKeyForDataEmployee(List data) {
+    def headers = data.first().keySet()
   }
 
   def processXlsMassiveForCLIENTE(def file, Company company) {
@@ -277,7 +283,7 @@ class BusinessEntityService {
     }
     results
   }
-
+ 
   List processDataFromXlsCLIENTE(List data, Company company) {
     List results = []
     data.each { client ->
