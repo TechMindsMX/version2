@@ -266,10 +266,24 @@ class BusinessEntityService {
     log.info "Processing massive registration for Client"
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveClient(xlsFile)
+    def headers = getKeyForDataEmployee(data)
+    def information = getValuesForDataEmployee(data)
     List results = processDataFromXlsCLIENTE(data, company)
     log.info "Data: ${data}"
+    log.info "Headers: ${headers}"
     log.info "Results: ${results}"
-    [data:data, results:results]
+    log.info "Datos: ${information}"
+    [results:results, headers:headers, information:information]
+  }
+
+  def getKeyForDataClient(List data) {
+    def headers = data.first().keySet()
+    headers
+  }
+
+  def getValuesForDataClient(List data) {
+    def information = data.first().values()
+    information
   }
 
   File getFileToProcess(def file) {
