@@ -9,13 +9,9 @@
       <div class="page-title">
         <h1>
         <i class="fa fa-plus-circle fa-3x"></i>
-        Empresas integradas / Nueva solicitud de integrado
+        Registrar Nueva Empresa
         <small><g:message code="company.new" /></small>
         </h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Compañia</li>
-          <li class="active">Creación de Compañia</li>
-        </ol>
       </div>
         <div class="portlet portlet-blue">
             <div class="portlet-heading">
