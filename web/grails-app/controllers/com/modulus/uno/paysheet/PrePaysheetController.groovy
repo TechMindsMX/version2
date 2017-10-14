@@ -131,4 +131,21 @@ class PrePaysheetController {
     redirect action:"incidencesFromEmployee", id:prePaysheetEmployee.id
   }
 
+	def importXlsPrePaysheet(PrePaysheet prePaysheet) {
+		log.info "Importing data from xls prepaysheet"
+    def file = request.getFile('prePaysheetXlsFile')
+		Map importResults = prePaysheetService.processXlsPrePaysheet(file, prePaysheet)
+		log.info "Import results: ${importResults}"
+		render view:"show", model:[prePaysheet:prePaysheet, importResults:importResults]
+	}
+	
+  def downloadLayout() {
+    log.info "Downloading layout for import pre-paysheet"
+    def layout = prePaysheetService.createLayoutForPrePaysheet()
+    layout.with {
+      setResponseHeaders(response, "layoutPrenomina.xlsx")
+      save(response.outputStream)
+    }
+  }
+
 }
