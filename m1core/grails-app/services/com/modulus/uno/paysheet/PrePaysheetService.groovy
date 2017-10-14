@@ -4,8 +4,11 @@ import grails.transaction.Transactional
 import java.math.RoundingMode
 import pl.touk.excel.export.WebXlsxExporter
 import java.text.SimpleDateFormat
+import org.springframework.transaction.annotation.Propagation
 
 import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.XlsImportService
+import com.modulus.uno.EmployeeService
 import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.DataImssEmployee
@@ -15,6 +18,8 @@ import com.modulus.uno.BankAccount
 class PrePaysheetService {
 
   BusinessEntityService businessEntityService
+	XlsImportService xlsImportService
+	EmployeeService employeeService
 
   @Transactional
   PrePaysheet savePrePaysheet(PrePaysheet prePaysheet) {
@@ -145,5 +150,87 @@ class PrePaysheetService {
   def deleteIncidenceFromPrePaysheetEmployee(PrePaysheetEmployeeIncidence incidence) {
     PrePaysheetEmployee.executeUpdate("delete PrePaysheetEmployeeIncidence incidence where incidence.id = :id", [id: incidence.id])
   }
+
+	def createLayoutForPrePaysheet() {
+		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'NOMBRE', 'CLABE', 'TARJETA', 'NETO', 'OBSERVACIONES']
+    new WebXlsxExporter().with {
+      fillRow(headersEmployees, 0)
+    }
+	}
+
+	def processXlsPrePaysheet(def file, PrePaysheet prePaysheet) {
+	  log.info "Processing xls for prepaysheet: ${prePaysheet.id}"
+    List data = xlsImportService.parseXlsPrePaysheet(file)
+    List results = processDataFromXls(data, prePaysheet)
+    log.info "Data: ${data}"
+    log.info "Results: ${results}"
+    [dataEmployees:data, results:results]
+	}
+
+  List processDataFromXls(List data, PrePaysheet prePaysheet) {
+    List results = []
+    data.each { employee ->
+      String result = createPrePaysheetEmployeeFromData(employee, prePaysheet)
+      results.add(result)
+			if (result == "Agregado") {
+				addEmployeeToPrePaysheet(employee, prePaysheet)
+			}
+    }
+    results
+  }
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	String createPrePaysheetEmployeeFromData(Map dataEmployee, PrePaysheet prePaysheet) {
+	  if (!employeeService.employeeAlreadyExistsInCompany(dataEmployee.RFC, prePaysheet.company)) {
+      transactionStatus.setRollbackOnly()
+      return "Error: el empleado no está registrado en la empresa"
+    }
+
+		if (prePaysheet.employees.find { employee -> employee.rfc == dataEmployee.RFC }) {
+			transactionStatus.setRollbackOnly()
+			return "Error: el empleado ya está agregado a la prenómina"
+		}
+
+		EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(dataEmployee.RFC, prePaysheet.company)
+		BusinessEntity businessEntity = prePaysheet.company.businessEntities.find { be -> be.rfc == dataEmployee.RFC }
+
+		BankAccount bankAccount = businessEntity.banksAccounts.find { ba -> ba.clabe == dataEmployee.CLABE }
+		if (!bankAccount) {
+			transactionStatus.setRollbackOnly()
+			return "Error: la cuenta CLABE no pertenece al empleado"
+		}
+
+		if (dataEmployee.NETO instanceof String && !dataEmployee.NETO.isNumber()) {
+			transactionStatus.setRollbackOnly()
+			return "Error: el neto a pagar no es válido"
+		}
+
+		//crear el empleado de pre-nómina
+		PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(
+			rfc:businessEntity.rfc,
+			curp:employeeLink.curp,
+			numberEmployee:employeeLink.number,
+			nameEmployee:businessEntity.toString(),
+			bank:bankAccount.banco,
+			clabe:bankAccount.clabe,
+			account:bankAccount.accountNumber,
+			cardNumber:bankAccount.cardNumber,
+			netPayment:new BigDecimal(dataEmployee.NETO),
+			note:dataEmployee.OBSERVACIONES,
+			prePaysheet:prePaysheet
+		)
+
+		prePaysheetEmployee.save()
+		log.info "Pre-paysheet employee saved: ${prePaysheetEmployee.dump()}"
+		"Agregado"
+	}
+
+	@Transactional
+	def addEmployeeToPrePaysheet(Map dataEmployee, PrePaysheet prePaysheet) {
+		PrePaysheetEmployee prePaysheetEmployee = PrePaysheetEmployee.findByRfcAndPrePaysheet(dataEmployee.RFC, prePaysheet)
+		prePaysheet.addToEmployees(prePaysheetEmployee)
+		prePaysheet.save()
+		log.info "prePaysheet employees: ${prePaysheet.employees}"
+	}
 
 }
