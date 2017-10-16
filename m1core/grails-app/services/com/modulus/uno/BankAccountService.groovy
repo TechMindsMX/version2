@@ -111,6 +111,26 @@ class BankAccountService {
     bankAccount
   }
 
+  BankAccount createBankAccountForBusinessEntityFromRowProvider(BusinessEntity businessEntity, Map rowProvider) {
+    Map dataBank = getDataBankFromClabe(rowProvider.CLABE)
+    BankAccount bankAccount = new BankAccount(
+      accountNumber:dataBank.accountNumber,
+      branchNumber:dataBank.branchNumber,
+      clabe:rowProvider.CLABE,
+      cardNumber:rowProvider.NUMTARJETA,
+      banco:dataBank.bank
+    )
+
+    bankAccount.save()
+
+    if (bankAccount.id) {
+      businessEntity.addToBanksAccounts(bankAccount)
+      businessEntity.save()
+    }
+
+    bankAccount
+  }
+
   Map getDataBankFromClabe(String clabe) {
     Map data = [:]
     if (clabe.length() == 18) {
