@@ -32,4 +32,25 @@ class ProviderService {
   def isProvider(instance){
     ProviderLink.countByTypeAndProviderRef(instance.class.simpleName, instance.rfc)
   }
+
+  def updateProviderToCompany(BusinessEntity businessEntity, String backRfc) {
+    ProviderLink providerLink = ProviderLink.findByProviderRef(backRfc)
+    providerLink.providerRef = businessEntity.rfc
+    providerLink.save()
+    providerLink
+  }
+
+  ProviderLink providerAlreadyExistsInCompany(String rfc, Company company){
+    ProviderLink.findByProviderRefAndCompany(rfc, company)
+  }
+
+  ProviderLink createProviderForRowProvider(Map rowProvider, Company company) {
+    ProviderLink providerLink = new ProviderLink(
+      type:"BusinessEntity",
+      clientRef:rowProvider.RFC,
+      company:company
+    )
+    providerLink.save()
+    providerLink
+    }   
 }
