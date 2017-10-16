@@ -242,46 +242,47 @@ class BusinessEntityService {
     log.info "Processing massive registration for Employee"
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
-    def headers = getKeyForDataEmployee(data)
-    def information = getValuesForDataEmployee(data)
+    def headers = getKeyForData(data)
+    def information = getValuesForData(data)
     List results = processDataFromXlsEMPLEADO(data, company)
-    log.info "Data: ${data}"
     log.info "Headers: ${headers}"
     log.info "Results: ${results}"
     log.info "Datos: ${information}"
     [results:results, headers:headers, information:information]
-  }
-
-  def getKeyForDataEmployee(List data) {
-    def headers = data.first().keySet()
-    headers
-  }
-
-  def getValuesForDataEmployee(List data) {
-    def information = data.first().values()
-    information
   }
 
   def processXlsMassiveForCLIENTE(def file, Company company) {
     log.info "Processing massive registration for Client"
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveClient(xlsFile)
-    def headers = getKeyForDataEmployee(data)
-    def information = getValuesForDataEmployee(data)
+    def headers = getKeyForData(data)
+    def information = getValuesForData(data)
     List results = processDataFromXlsCLIENTE(data, company)
-    log.info "Data: ${data}"
     log.info "Headers: ${headers}"
     log.info "Results: ${results}"
     log.info "Datos: ${information}"
     [results:results, headers:headers, information:information]
   }
 
-  def getKeyForDataClient(List data) {
+  def processXlsMassiveForPROVEEDOR(def file, Company company) {
+    log.info "Processing massive registration for Provider"
+    File xlsFile = getFileToProcess(file)
+    List data = xlsImportService.parseXlsMassiveProvider(xlsFile)
+    def headers = getKeyForData(data)
+    def information = getValuesForData(data)
+    List results = processDataFromXlsPROVEEDOR(data, company)
+    log.info "Headers: ${headers}"
+    log.info "Results: ${results}"
+    log.info "Datos: ${information}"
+    [results:results, headers:headers, information:information]
+  }
+
+  def getKeyForData(List data) {
     def headers = data.first().keySet()
     headers
   }
 
-  def getValuesForDataClient(List data) {
+  def getValuesForData(List data) {
     def information = data.first().values()
     information
   }
@@ -318,6 +319,18 @@ class BusinessEntityService {
     results
   }
 
+  List processDataFromXlsPROVEEDOR(List data, Company company) {
+    List results = []
+    data.each { provider ->
+      String result = saveProviderImportData(provider, company)
+      results.add(result)
+      if (result == "Registrado") {
+        addProviderToCompany(provider.RFC, company)
+      }
+    }
+    results
+  }
+
   @Transactional
   def addEmployeeToCompany(String rfc, Company company) {
     log.debug "Adding employee to company: ${rfc}"
@@ -330,7 +343,15 @@ class BusinessEntityService {
   def addClientToCompany(String rfc, Company company) {
     log.debug "Adding client to company: ${rfc}"
     BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
-    company.addToBusinessEntities((EmployeeBusinessEntity) businessEntity)
+    company.addToBusinessEntities((ClientBusinessEntity) businessEntity)
+    company.save()
+  }
+
+  @Transactional
+  def addProviderToCompany(String rfc, Company company) {
+    log.debug "Adding provider to company: ${rfc}"
+    BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
+    company.addToBusinessEntities((ProviderBusinessEntity) businessEntity)
     company.save()
   }
 
@@ -366,7 +387,6 @@ class BusinessEntityService {
         return "Error: datos de IMSS"
       }
     }
-
     "Registrado"
   }
 
@@ -382,7 +402,27 @@ class BusinessEntityService {
       transactionStatus.setRollbackOnly()
       return "Error: RFC"
     }   
+    "Registrado"
+  }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  def saveProviderImportData(Map rowProvider, Company company) {
+    if (providerService.providerAlreadyExistsInCompany(rowProvider.RFC, company)){
+      transactionStatus.setRollbackOnly()
+      return "Error: el RFC del proveedor ya existe"
+    }
+
+    BusinessEntity businessEntity = createBusinessEntityForRowProvider(rowProvider)
+    if(businessEntity.hasErrors()){
+      transactionStatus.setRollbackOnly()
+      return "Error: RFC"
+    }
+
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowProvider(businessEntity, rowProvider)
+    if (!bankAccount || bankAccount?.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      return "Error: datos bancarios"
+    }
     "Registrado"
   }
 
@@ -409,6 +449,17 @@ class BusinessEntityService {
     createComposeNameForBusinessEntityFromRowClient(businessEntity, clientMap)
   }
 
+  def createBusinessEntityForRowProvider(Map providerMap) {
+    BusinessEntity businessEntity = new BusinessEntity(
+      rfc:providerMap.RFC,
+      status:BusinessEntityStatus.TO_AUTHORIZE
+      )
+
+    businessEntity.save()
+
+    createComposeNameForBusinessEntityFromRowProvider(businessEntity, providerMap)
+  }
+
   def createComposeNameForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map employeeMap) {
     ComposeName lastName = new ComposeName(value:employeeMap.PATERNO, type:NameType.APELLIDO_PATERNO)
     ComposeName motherLastName = new ComposeName(value:employeeMap.MATERNO, type:NameType.APELLIDO_MATERNO)
@@ -424,6 +475,17 @@ class BusinessEntityService {
     ComposeName lastName = new ComposeName(value:clientMap.PATERNO, type:NameType.APELLIDO_PATERNO)
     ComposeName motherLastName = new ComposeName(value:clientMap.MATERNO, type:NameType.APELLIDO_MATERNO)
     ComposeName name = new ComposeName(value:clientMap.NOMBRE, type:NameType.NOMBRE)
+    businessEntity.addToNames(lastName)
+    businessEntity.addToNames(motherLastName)
+    businessEntity.addToNames(name)
+    businessEntity.save()
+    businessEntity
+  }
+
+  def createComposeNameForBusinessEntityFromRowProvider(BusinessEntity businessEntity, Map providerMap) {
+    ComposeName lastName = new ComposeName(value:providerMap.PATERNO, type:NameType.APELLIDO_PATERNO)
+    ComposeName motherLastName = new ComposeName(value:providerMap.MATERNO, type:NameType.APELLIDO_MATERNO)
+    ComposeName name = new ComposeName(value:providerMap.NOMBRE, type:NameType.NOMBRE)
     businessEntity.addToNames(lastName)
     businessEntity.addToNames(motherLastName)
     businessEntity.addToNames(name)
