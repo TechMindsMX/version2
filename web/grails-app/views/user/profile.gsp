@@ -9,7 +9,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-user fa-3x"></i>
-        Perfíl de usuario
+        Perfil de usuario
         <small><g:message code="user.view.show.label" args="[entityName]" /></small>
       </h1>
     </div>
@@ -38,6 +38,7 @@
                 <br/>
                 <div class="row">
                   <div class="col-md-12 text-right">
+                    <g:link class="home btn small btn-primary" action="edit" id="${user.id}">Editar</g:link>
                     <g:link controller="dashboard"  class="home btn small btn-primary">Regresar</g:link>
                   </div>
                 </div>

@@ -624,5 +624,4 @@ and:
     then:
       result == new BigDecimal(2000)
   }
-
 }

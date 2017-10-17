@@ -150,7 +150,7 @@ class PaysheetService {
 	}
 
   Map complementDispersionData(Map dispersionData) {
-		List idsChargeBankAccounts = Arrays.asList(dispersionData.chargeBankAccountsIds)
+		List idsChargeBankAccounts = Arrays.asList(dispersionData.dispersionAccount)
     List<BankAccount> chargeBankAccountsList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
     dispersionData.chargeBankAccountsList = chargeBankAccountsList
 		dispersionData.applyDate = dispersionData.applyDate ? Date.parse("dd/MM/yyyy", dispersionData.applyDate) : null
@@ -403,5 +403,42 @@ class PaysheetService {
     employees.data = paysheet.employees.findAll { emp -> !emp.prePaysheetEmployee.bank }.sort { it.prePaysheetEmployee.nameEmployee }
     employees
   }
+
+	List prepareDispersionSummary(Paysheet paysheet){
+		List summary = []
+		List bankAccounts = getBanksAccountsToPaymentDispersion(paysheet)
+		def banks = getListBanksFromBankAccountsToPaymentDispersion(bankAccounts)
+		banks.each { bank ->
+			Map summaryBank = [:]
+			summaryBank.bank = bank
+			summaryBank.accounts = bankAccounts.collect { ba -> if (ba.banco == bank) { ba } }.grep()
+			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.imssSalaryNet.sum()
+			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.salaryAssimilable.sum()
+			summaryBank.type = "SameBank"
+			summary.add(summaryBank)
+		}
+		//inter bank data
+		summary = addInterBankSummary(summary, paysheet, banks)
+		summary
+	}
+
+	def getListBanksFromBankAccountsToPaymentDispersion(List bankAccounts){
+		def banks = [] as Set
+		bankAccounts.each { ba ->
+			banks.add(ba.banco)
+		}
+		banks
+	}
+
+	def addInterBankSummary(List summary, Paysheet paysheet, def banks){
+		Map summaryInterBank = [:]
+		summaryInterBank.bank = Bank.findByName("STP")
+		summaryInterBank.accounts = paysheet.company.accounts.first()
+		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.imssSalaryNet.sum()
+		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.salaryAssimilable.sum()
+		summaryInterBank.type = "InterBank"
+		summary.add(summaryInterBank)
+		summary
+	}
 
 }

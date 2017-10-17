@@ -29,6 +29,7 @@ class MenuServiceSpec extends Specification {
       Menu menu = new Menu(name: "Tesorero/Contador")
       Menu submenu = new Menu(name:"Menu", internalUrl:"/menu")
       menu.save(validate:false)
+      submenu.save(validate:false)
     when: "Add menu for a role"
       Menu newMenu = service.addSubmenuToMenu(menu, submenu)
     then: "Check structure"
@@ -47,4 +48,19 @@ class MenuServiceSpec extends Specification {
       mainMenu.menus.size() == 1
       mainMenu.menus[0].name == "Administrar"
   }
+
+  void "Remove operation to an existing menu"() {
+    given: "An existing menu"
+      Menu menu = new Menu(name: "Tesorero/Contador")
+      Menu submenu = new Menu(name:"Menu", internalUrl:"/menu")
+      menu.save(validate:false)
+      submenu.save(validate:false)
+    and: "Add menu for a role"
+      Menu newMenu = service.addSubmenuToMenu(menu, submenu)
+    when:
+      Menu updatedMenu = service.removeSubmenuToMenu(menu, submenu)
+    then: "Check structure"
+      updatedMenu.menus.size() == 0
+  }
+
 }

@@ -215,7 +215,7 @@ class PurchaseOrderService {
   }
 
   def addingPaymentToPurchaseOrder(PurchaseOrder purchaseOrder, Map paymentData) {
-    PaymentToPurchase payment = new PaymentToPurchase(amount:paymentData.amount, transaction:paymentData.transaction, source:paymentData.sourcePayment)
+    PaymentToPurchase payment = new PaymentToPurchase(amount:paymentData.amount, transaction:paymentData.transaction, source:paymentData.sourcePayment).save()
     purchaseOrder.addToPayments(payment)
     purchaseOrder.save()
     purchaseOrder
