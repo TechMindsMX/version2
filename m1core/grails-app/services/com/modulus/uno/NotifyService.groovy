@@ -316,8 +316,14 @@ class NotifyService {
   def parametersForPaymentToPurchase(PurchaseOrder purchaseOrder){
     PaymentToPurchase payment = purchaseOrder.payments.sort{it.id}.last()
     def paramsMap = [:]
-    def paramsFields = ["paymentConcept", "trackingKey", "referenceNumber"]
-    paramsMap = buildParamsEmailMap(payment.transaction, paramsFields)
+		if (payment.transaction) {
+    	def paramsFields = ["paymentConcept", "trackingKey", "referenceNumber"]
+    	paramsMap = buildParamsEmailMap(payment.transaction, paramsFields)
+		} else {
+			paramsMap.paymentConcept = "Pago Bancario"
+			paramsMap.trackingKey = ""
+			paramsMap.referenceNumber = ""
+		}
     paramsMap.amount = payment.amount.toString()
     paramsMap.dateCreated = payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
     paramsMap.providerName = purchaseOrder.providerName

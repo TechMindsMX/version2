@@ -36,15 +36,15 @@
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              
-              ${role.authority}
+
+              <g:message code="role.authority.${role.authority.toLowerCase()}" default="${role.authority}" />
 
               <h2>Menus asignados al role</h2>
-              <table class="table table-striped"> 
+              <table class="table table-striped">
                 <tbody>
                   <g:each in="${menusOfInstance}" var="m">
                     <tr>
-                      <td>${m.menu.name}</td> 
+                      <td>${m.menu.name}</td>
                       <td>
                         <g:link class="btn btn-danger pull-right" controller="menuOperations" action="delete" id="${m.menu.id}" params="[roleId:role.id]">
                           Quitar
@@ -69,16 +69,16 @@
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              <table class="table table-striped"> 
+              <table class="table table-striped">
                 <tbody>
                   <g:each in="${menus}" var="m">
                     <tr>
-                      <td>${m.name}</td> 
+                      <td>${m.name}</td>
                       <td>
                         <g:link  class="btn btn-primary pull-right" controller="menuOperations" action="save" id="${m.id}" params="[roleId:role.id]">
                           Agregar
                         </g:link>
-                      </td> 
+                      </td>
                     </tr>
                   </g:each>
                 </tbody>

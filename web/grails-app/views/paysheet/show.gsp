@@ -39,9 +39,12 @@
 
       <div class="row">
         <div class="col-md-12 text-right">
+					<sec:ifAnyGranted roles="ROLE_OPERATOR_PAYSHEET">
           <g:if test="${paysheet.status == PaysheetStatus.CREATED}">
             <g:link class="btn btn-primary" action="sendToAuthorize" id="${paysheet.id}">Solicitar Autorización</g:link>
           </g:if>
+					</sec:ifAnyGranted>
+					<sec:ifAnyGranted roles="ROLE_AUTHORIZER_PAYSHEET">
           <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE}">
             <g:link class="btn btn-primary" action="authorize" id="${paysheet.id}">Autorizar</g:link>
 
@@ -64,10 +67,12 @@
             </div>
 
           </g:if>
+					</sec:ifAnyGranted>
         </div>
       </div>
 
     </div>
+    <asset:javascript src="paysheet/show.js"/>
   </body>
 </html>
 

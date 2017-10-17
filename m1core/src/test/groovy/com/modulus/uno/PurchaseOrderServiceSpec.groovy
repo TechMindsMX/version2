@@ -78,18 +78,20 @@ class PurchaseOrderServiceSpec extends Specification {
 
   }
 
-  void "verify purchase order had one payment"() {
-    given:
-      def purchaseOrder = new PurchaseOrder()
-      purchaseOrder.providerName = "prueba"
-      purchaseOrder.save(validate:false)
-    and:
-      BigDecimal amount = new BigDecimal(10)
-      Transaction transaction = new Transaction().save(validate:false)
+	@Unroll
+  void "should add the payment with data=#thePaymentData to purchase order"() {
+    given:"The purchase order"
+      PurchaseOrder purchaseOrder = new PurchaseOrder().save(validate:false)
+    and:"The payment data"
+			Map paymentData = thePaymentData
     when:
-      def purchaseOrderResult = service.addingPaymentToPurchaseOrder(purchaseOrder, amount, transaction.id)
+      def result = service.addingPaymentToPurchaseOrder(purchaseOrder, paymentData)
     then:
-      purchaseOrderResult.payments.size() == 1
+      result.payments.size() == totalPayments
+		where:
+			thePaymentData 	|| 	totalPayments
+			[amount:1000, transaction:new Transaction().save(validate:false), source:SourcePayment.MODULUS_UNO] || 1
+			[amount:1000, transaction:null, source:SourcePayment.BANKING] || 1
   }
 
   void "verify if payment not exceeds amount of order"() {
@@ -122,38 +124,26 @@ class PurchaseOrderServiceSpec extends Specification {
 
   }
 
-  @Ignore
-  void "Should recording the payment to purchase order"() {
+  @Unroll
+  void "Should save the payment to purchase order when source is #theSource"() {
     given: "A purchase order"
-      def purchaseOrder = new PurchaseOrder()
-      purchaseOrder.providerName = "prueba"
-      purchaseOrder.status = PurchaseOrderStatus.AUTORIZADA
-      Company company = new Company().save(validate:false)
-      Commission commission = new Commission(fee:10, percentage:0, type:CommissionType.PAGO)
-      company.addToCommissions(commission)
-      ModulusUnoAccount m1Account = new ModulusUnoAccount(stpClabe:"stpClabe").save(validate:false)
-      company.addToAccounts(m1Account)
-      company.save(validate:false)
-      purchaseOrder.company = company
-      purchaseOrder.save(validate:false)
-    and: "The items of purchase order"
-      def item1 = new PurchaseOrderItem(name:'item1',quantity:1,price:new BigDecimal(1000), unitType:"UNIDADES", purchaseOrder:purchaseOrder )
-      purchaseOrder.addToItems(item1)
-      purchaseOrder.save(validate:false)
-    and: "Amount to pay"
-      BigDecimal amount = new BigDecimal(100)
+      PurchaseOrder purchaseOrder = createPurchaseOrderForTest()
+		and:"Payment data"
+			Map paymentData = [amount:theAmount, sourcePayment:theSource]
     and:
       modulusUnoService.payPurchaseOrder(_,_) >> new Transaction().save(validate:false)
     when:
-      def result = service.payPurchaseOrder(purchaseOrder, amount)
+      def result = service.payPurchaseOrder(purchaseOrder, paymentData)
     then:
-      result.totalPayments == amount
-      1 * modulusUnoService.payPurchaseOrder(_, _)
-      1 * emailSenderService.notifyPurchaseOrderChangeStatus(_)
-  }
-
-  private PaymentToPurchase createPayment(String amount) {
-    new PaymentToPurchase(amount: new BigDecimal(amount)).save()
+      result.payments.size() == totalPayments
+      callsM1Service * modulusUnoService.payPurchaseOrder(_, _)
+      callsEmailer * emailSenderService.notifyPurchaseOrderChangeStatus(_)
+			result.status == finalStatus
+		where:
+			theAmount 	| theSource 	|| 	totalPayments 	| callsM1Service 	| callsEmailer | finalStatus
+			1000 		| SourcePayment.MODULUS_UNO 	|| 1 	| 1 	| 1 	| PurchaseOrderStatus.PAGADA
+			1000 		| SourcePayment.BANKING 	|| 1 	| 0 	| 1 	| PurchaseOrderStatus.PAGADA
+			800 		| SourcePayment.BANKING 	|| 1 	| 0 	| 0 	| PurchaseOrderStatus.AUTORIZADA
   }
 
   void "Should change status of purchase order payment for a reverted transaction and purchase order is authorized"() {
@@ -188,4 +178,15 @@ class PurchaseOrderServiceSpec extends Specification {
       purchaseOrder.status == PurchaseOrderStatus.AUTORIZADA
   }
 
+  private PaymentToPurchase createPayment(String amount) {
+    new PaymentToPurchase(amount: new BigDecimal(amount)).save()
+  }
+
+	private PurchaseOrder createPurchaseOrderForTest() {
+		PurchaseOrder purchaseOrder = new PurchaseOrder(status:PurchaseOrderStatus.AUTORIZADA).save(validate:false)
+		PurchaseOrderItem item = new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0, purchaseOrder:purchaseOrder).save(validate:false)
+		purchaseOrder.addToItems(item)
+		purchaseOrder.save(validate:false)
+		purchaseOrder
+	}
 }
