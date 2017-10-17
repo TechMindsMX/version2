@@ -31,6 +31,7 @@
               <th>Clabe</th>
               <th>Cuenta</th>
               <th>Tarjeta</th>
+							<th>Forma de Pago</th>
               <th>IMSS</th>
               <th>Asimilable</th>
               <th>Subtotal</th>
@@ -48,10 +49,19 @@
                 <td>${employee.prePaysheetEmployee.rfc}</td>
                 <td>${employee.prePaysheetEmployee.curp}</td>
                 <td>${employee.prePaysheetEmployee.bank?.bankingCode}</td>
-                <td>${employee.prePaysheetEmployee.bank?.name}</td>
+                <td>${employee.prePaysheetEmployee.bank ? employee.prePaysheetEmployee.bank.name : "EFECTIVO/CHEQUE"}</td>
                 <td>${employee.prePaysheetEmployee.clabe}</td>
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>
+                <td>
+									<g:if test="${employee.prePaysheetEmployee.bank}">
+										<g:link action="changePaymentWayFromEmployee" id="${employee.id}" title="Cambiar forma de pago">
+											<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
+										</g:link>
+									</g:if><g:else>
+										<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
+									</g:else>
+								</td>
                 <td>${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
                 <td>${modulusuno.formatPrice(number:employee.salaryAssimilable)}</td>
                 <td>${modulusuno.formatPrice(number:employee.totalSalaryEmployee)}</td>
@@ -77,6 +87,7 @@
 				</sec:ifAnyGranted>
       </div>
       <div class="col-md-8 text-right">
+        <g:link class="btn btn-default" action="exportToXlsCash" id="${paysheet.id}">XLS EFECTIVO/CHEQUE</g:link>
         <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
         <g:link class="btn btn-default" action="exportToXlsAssimilable" id="${paysheet.id}">XLS Asimilables</g:link>
         <g:link class="btn btn-default" action="exportToXls" id="${paysheet.id}">XLS</g:link>
@@ -119,6 +130,14 @@
 							<div class="form-group">
 								<label>Fecha de Aplicación</label>
 								<input type="text" id="dpApplyDate" name="applyDate" required="required">
+							</div>
+							<div class="form-group">
+								<label>Secuencia</label>
+								<input type="number" name="sequence" max="9999" required="required">
+							</div>
+							<div class="form-group">
+								<label>Nombre de la Empresa Pagadora</label>
+								<input type="text" name="nameCompany" maxlength="36" required="required">
 							</div>
             </div>
           </div>

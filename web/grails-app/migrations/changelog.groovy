@@ -77,4 +77,6 @@ databaseChangeLog = {
 	include file: 'create-roles-for-queries.groovy'
   include file: 'adding-dispersion-files-s3asset-to-paysheet.groovy'
   include file: 'adding-column-payment-to-purchase-to-conciliation.groovy'
+  include file: 'adding-column-client-number-to-bankaccount.groovy'
+  include file: 'adding-column-paymentway-to-paysheet-employee.groovy'
 }

@@ -58,7 +58,7 @@
         	<td>${employee.curp}</td>
         	<td></td>					
         	<td>${employee.bank?.bankingCode}</td>
-        	<td>${employee.bank?.name}</td>
+        	<td>${employee.bank ? employee.bank.name : "EFECTIVO/CHEQUE"}</td>
         	<td>${employee.clabe}</td>
         	<td>${employee.account}</td>
         	<td>${employee.cardNumber}</td>
