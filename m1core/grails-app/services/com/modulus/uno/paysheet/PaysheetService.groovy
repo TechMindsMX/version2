@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import pl.touk.excel.export.WebXlsxExporter
 import java.text.SimpleDateFormat
 import java.text.DecimalFormat
+import java.math.RoundingMode
 
 import com.modulus.uno.Bank
 import com.modulus.uno.BankAccount
@@ -171,12 +172,12 @@ class PaysheetService {
 
 	Map prepareDispersionDataForBank(Paysheet paysheet, BankAccount chargeBankAccount, Map dispersionData){
 		List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, chargeBankAccount.banco)
-		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate]
+		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate, idPaysheet:paysheet.id, sequence:dispersionData.sequence, nameCompany:dispersionData.nameCompany]
 	}
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
     allEmployees.collect { employee ->
-      if (employee.prePaysheetEmployee.bank==bank) {
+      if (employee.prePaysheetEmployee.bank==bank && employee.paymentWay == PaymentWay.BANKING) {
         employee
       }
     }.grep()
@@ -185,11 +186,10 @@ class PaysheetService {
 	List createDispersionFilesForDispersionData(Map dispersionDataForBank){
 		List dispersionFiles = []
 
-		String methodCreatorSATxtFileDispersion = getMethodCreatorOfSATxtDispersionFile(dispersionDataForBank.chargeBankAccount.banco.name)
-		String methodCreatorIASTxtFileDispersion = getMethodCreatorOfIASTxtDispersionFile(dispersionDataForBank.chargeBankAccount.banco.name)
+		String methodCreatorTxtFileDispersion = getMethodCreatorOfTxtDispersionFile(dispersionDataForBank.chargeBankAccount.banco.name)
 
-    File dispersionFileSAForBank = "${methodCreatorSATxtFileDispersion}"(dispersionDataForBank)
-    File dispersionFileIASForBank = "${methodCreatorIASTxtFileDispersion}"(dispersionDataForBank)
+    File dispersionFileSAForBank = "${methodCreatorTxtFileDispersion}"(dispersionDataForBank, "SA")
+    File dispersionFileIASForBank = "${methodCreatorTxtFileDispersion}"(dispersionDataForBank, "IAS")
 		
 		dispersionFiles.add(dispersionFileSAForBank)
 		dispersionFiles.add(dispersionFileIASForBank)
@@ -205,35 +205,29 @@ class PaysheetService {
 		s3Files
 	}
 
-	String getMethodCreatorOfSATxtDispersionFile(String bankName) {
+	String getMethodCreatorOfTxtDispersionFile(String bankName) {
 		bankName = bankName.replace(" ","")
-		String methodCreatorSATxtFileDispersion = "createTxtDispersionFileSADefault"
-		if (this.metaClass.respondsTo(this, "createTxtDispersionFileSAFor${bankName}")) {
-			methodCreatorSATxtFileDispersion = "createTxtDispersionFileSAFor${bankName}"
+		String methodCreatorTxtFileDispersion = "createTxtDispersionFileDefault"
+		if (this.metaClass.respondsTo(this, "createTxtDispersionFileFor${bankName}")) {
+			methodCreatorTxtFileDispersion = "createTxtDispersionFileFor${bankName}"
 		}
-		methodCreatorSATxtFileDispersion
-	}
-
-	String getMethodCreatorOfIASTxtDispersionFile(String bankName) {
-		bankName = bankName.replace(" ","")
-		String methodCreatorIASTxtFileDispersion = "createTxtDispersionFileIASDefault"
-		if (this.metaClass.respondsTo(this, "createTxtDispersionFileIASFor${bankName}")) {
-			methodCreatorIASTxtFileDispersion = "createTxtDispersionFileIASFor${bankName}"
-		}
-		methodCreatorIASTxtFileDispersion
+		methodCreatorTxtFileDispersion
 	}
 
 	//TODO: Definir el layout a usar por default, actualmente es igual al de BBVA
-  File createTxtDispersionFileSADefault(Map dispersionDataForBank) {
-    log.info "Payment dispersion same bank SA Default for employees: ${dispersionDataForBank.employees}"
-    File file = File.createTempFile("txtDispersionSADefault",".txt")
+  File createTxtDispersionFileDefault(Map dispersionDataForBank, String schema) {
+    log.info "Payment dispersion same bank ${schema} Default for employees: ${dispersionDataForBank.employees}"
+    File file = File.createTempFile("dispersion_${schema}_Default",".txt")
+
+		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
 		String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(18,'0')
 		String currency = "MXN"
-		String message = "SSA-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
+		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
     dispersionDataForBank.employees.each { employee ->
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-      String amount = (new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')
+
+      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
 			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
     }
 
@@ -241,17 +235,18 @@ class PaysheetService {
     file
   }
 
-	//TODO: Definir el layout a usar por default, actualmente es igual al de BBVA
-  File createTxtDispersionFileIASDefault(Map dispersionDataForBank) {
-    log.info "Payment dispersion same bank IAS Default for employees: ${dispersionDataForBank.employees}"
-    File file = File.createTempFile("txtDispersionIASDefault",".txt")
+  File createTxtDispersionFileForBBVABANCOMER(Map dispersionDataForBank, String schema) {
+    log.info "Payment dispersion same bank ${schema} BBVA for employees: ${dispersionDataForBank.employees}"
+    File file = File.createTempFile("dispersion_${schema}_BBVA",".txt")
+
+		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
 		String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(18,'0')
 		String currency = "MXN"
-		String message = "IAS-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
+		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
     dispersionDataForBank.employees.each { employee ->
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-      String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).padLeft(16,'0')
+      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
 			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
     }
 
@@ -259,45 +254,11 @@ class PaysheetService {
     file
   }
 
-  File createTxtDispersionFileSAForBBVABANCOMER(Map dispersionDataForBank) {
-    log.info "Payment dispersion same bank SA BBVA for employees: ${dispersionDataForBank.employees}"
-    File file = File.createTempFile("txtDispersionSABBVA",".txt")
-		String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(18,'0')
-		String currency = "MXN"
-		String message = "SSA-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
+  File createTxtDispersionFileForSANTANDER(Map dispersionDataForBank, String schema) {
+    log.info "Payment dispersion same bank ${schema} SANTANDER for employees: ${dispersionDataForBank.employees}"
+    File file = File.createTempFile("dispersion_${schema}_SANTANDER",".txt")
 
-    dispersionDataForBank.employees.each { employee ->
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-      String amount = (new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')
-			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
-    }
-
-    log.info "File created: ${file.text}"
-    file
-  }
-
-  File createTxtDispersionFileIASForBBVABANCOMER(Map dispersionDataForBank) {
-    log.info "Payment dispersion same bank IAS BBVA for employees: ${dispersionDataForBank.employees}"
-    File file = File.createTempFile("txtDispersionIASBBVA",".txt")
-
-		String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(18,'0')
-		String currency = "MXN"
-		String message = "IAS-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
-
-    dispersionDataForBank.employees.each { employee ->
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-
-      String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).padLeft(16,'0')
-			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
-    }
-
-    log.info "File created: ${file.text}"
-    file
-  }
-
-  File createTxtDispersionFileSAForSANTANDER(Map dispersionDataForBank) {
-    log.info "Payment dispersion same bank SA SANTANDER for employees: ${dispersionDataForBank.employees}"
-    File file = File.createTempFile("txtDispersionSASANTANDER",".txt")
+		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
     String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padRight(11,'  ')
 		//HEADER
 		String header = "100001E${new Date().format('MMddyyyy')}${sourceAccount}     ${dispersionDataForBank.applyDate.format('MMddyyyy')}"
@@ -307,18 +268,19 @@ class PaysheetService {
 		BigDecimal total = new BigDecimal(0)
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
 			String counter = "2${(index+2).toString().padLeft(5,'0')}"
-			String employeeNumber = employee.prePaysheetEmployee.numberEmployee ? (employee.prePaysheetEmployee.numberEmployee.length() > 7 ? employee.prePaysheetEmployee.numberEmployee.substring(0,7) : employee.prePaysheetEmployee.numberEmployee.padRight(7,' ')) : " ".padRight(7, " ") 
+			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+			String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
 			
 			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
 
-			String lastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ").padRight(30," ")
-			String motherLastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ").padRight(20," ")
-			String name = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ").padRight(30," ")
+			String lastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ")).padRight(30," ")
+			String motherLastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ")).padRight(20," ")
+			String name = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ")).padRight(30," ")
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
-      String amount = (new DecimalFormat('##0.00').format(employee.imssSalaryNet)).replace(".","").padLeft(18,'0')
+      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(18,'0')
       String concept = "01"
 			file.append("${counter}${employeeNumber}${lastName}${motherLastName}${name}${destinyAccount}${amount}${concept}\n".toUpperCase())
-			total += employee.imssSalaryNet
+			total += employee."${salary}"
     }
 
 		//FOOTER
@@ -328,38 +290,44 @@ class PaysheetService {
     file
   }
 
-  File createTxtDispersionFileIASForSANTANDER(Map dispersionDataForBank) {
-    log.info "Payment dispersion same bank IAS SANTANDER for employees: ${dispersionDataForBank.employees}"
-    File file = File.createTempFile("txtDispersionIASSANTANDER",".txt")
-    String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padRight(11,'  ')
-		//HEADER
-		String header = "100001E${new Date().format('MMddyyyy')}${sourceAccount}     ${dispersionDataForBank.applyDate.format('MMddyyyy')}"
-		file.append("${header}\n")
+  File createTxtDispersionFileForBANAMEX(Map dispersionDataForBank, String schema) {
+    log.info "Payment dispersion same bank ${schema} BANAMEX for employees: ${dispersionDataForBank.employees}"
+    File file = File.createTempFile("dispersion_${schema}_BANAMEX",".txt")
+		
+		if (!dispersionDataForBank.chargeBankAccount.clientNumber){
+			log.info "La cuenta no tiene registrado el número de cliente"
+			file.append("La cuenta Banamex ${dispersionDataForBank.chargeBankAccount.accountNumber} no tiene número de cliente registrado")
+		} else {
 
-		//DETAIL
-		BigDecimal total = new BigDecimal(0)
-    dispersionDataForBank.employees.eachWithIndex { employee, index ->
-			String counter = "2${(index+2).toString().padLeft(5,'0')}"
-			String employeeNumber = employee.prePaysheetEmployee.numberEmployee ? (employee.prePaysheetEmployee.numberEmployee.length() > 7 ? employee.prePaysheetEmployee.numberEmployee.substring(0,7) : employee.prePaysheetEmployee.numberEmployee.padRight(7,' ')) : " ".padRight(7, " ") 
-			
+		log.info "Dispersion data for bank: ${dispersionDataForBank}"
+		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+    String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,"0")
+		String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
+		String lineControl = "1${dispersionDataForBank.chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(dispersionDataForBank.nameCompany).padRight(36,'  ')}${message}15D01"
+		file.append("${lineControl}\n")
+		BigDecimal totalDispersion = dispersionDataForBank.employees*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
+		String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${dispersionDataForBank.chargeBankAccount.branchNumber.padLeft(13,'0')}${dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
+		file.append("${lineGlobal}\n")
+		dispersionDataForBank.employees.eachWithIndex { employee, index ->
+			String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
+      String destinyBranchAccount = employee.prePaysheetEmployee.clabe.substring(3,6).padLeft(13,"0")
+      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(7," ")
+			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+			String reference = "${dispersionDataForBank.idPaysheet}${employeeNumberCleaned ?: index}".padRight(16," ")
 			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
+			String fullName = clearSpecialCharsFromString(businessEntityEmployee.toString().length()>55 ? businessEntityEmployee.toString().substring(0,55) : businessEntityEmployee.toString()).padRight(55, " ")
+			String ending = "${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+			String lineEmployee = "3000101001${amount}01${destinyBranchAccount}${destinyAccount}${reference}${fullName}${ending}"
+			file.append("${lineEmployee}\n")
+		}
+		String lineTotals = "4001${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}${(totalDispersion*100).intValue().toString().padLeft(18,'0')}000001${(totalDispersion*100).intValue().toString().padLeft(18,'0')}"
+		file.append("${lineTotals}\n")
 
-			String lastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ").padRight(30," ")
-			String motherLastName = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ").padRight(20," ")
-			String name = (businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ").padRight(30," ")
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
-      String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).replace(".","").padLeft(18,'0')
-      String concept = "01"
-			file.append("${counter}${employeeNumber}${lastName}${motherLastName}${name}${destinyAccount}${amount}${concept}\n".toUpperCase())
-			total += employee.salaryAssimilable
-    }
+		}
 
-		//FOOTER
-		String footer = "3${(dispersionDataForBank.employees.size()+1).toString().padLeft(5,'0')}${dispersionDataForBank.employees.size().toString().padLeft(5,'0')}${(new DecimalFormat('##0.00').format(total)).replace(".","").padLeft(18,'0')}"
-		file.append("${footer}\n")
     log.info "File created: ${file.text}"
     file
-  }
+	}
 
   String clearSpecialCharsFromString(String text) {
     text.toUpperCase().replace("Ñ","N").replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U").replace("Ü","U").replaceAll("[^a-zA-Z0-9 ]","")
@@ -377,8 +345,8 @@ class PaysheetService {
     List<PaysheetEmployee> employees = getPaysheetEmployeesForInterBank(paysheet.employees, dispersionData.chargeBankAccountsList)
 		if (employees) {
 			Map dispersionDataInterBank = [employees: employees, paymentMessage:dispersionData.paymentMessage]
-			File dispersionFileSAInterBank = createDispersionFileSAInterBank(dispersionDataInterBank)
-			File dispersionFileIASInterBank = createDispersionFileIASInterBank(dispersionDataInterBank)
+			File dispersionFileSAInterBank = createDispersionFileInterBank(dispersionDataInterBank, "SA")
+			File dispersionFileIASInterBank = createDispersionFileInterBank(dispersionDataInterBank, "IAS")
 			List dispersionFiles = [dispersionFileSAInterBank, dispersionFileIASInterBank]
 			List s3Files = uploadDispersionFilesToS3(dispersionFiles)
 			addingDispersionFilesToPaysheet(paysheet, s3Files)
@@ -387,54 +355,54 @@ class PaysheetService {
 
   List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, List chargeBankAccountsList) {
     allEmployees.collect { employee ->
-      if (!chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank }) {
+      if (employee.prePaysheetEmployee.bank && !chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank } && employee.paymentWay == PaymentWay.BANKING) {
         employee
       }
     }.grep()
   }
 
-  File createDispersionFileSAInterBank(Map dispersionData) {
-    log.info "Payment dispersion SA interbank for employees: ${dispersionData.employees}"
-    File file = File.createTempFile("txtDispersionSAInterBank",".txt")
+  File createDispersionFileInterBank(Map dispersionData, String schema) {
+    log.info "Payment dispersion ${schema} interbank for employees: ${dispersionData.employees}"
+    File file = File.createTempFile("dispersion_${schema}_InterBank",".txt")
+
+		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String sourceAccount = "M1Account".padLeft(18,'0')
+		String currency = "MXN"
+		String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
+		String reference = new Date().format("ddMMyy").padLeft(7,'0')
+		String typeAccount = "40"
+		String disp = "H"      
+
     dispersionData.employees.each { employee ->
       log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
       String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
-      String sourceAccount = "M1Account".padLeft(18,'0')
-      String currency = "MXN"
       String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
       String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
-      String typeAccount = "40"
       String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
-      String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
-      String reference = new Date().format("ddMMyy").padLeft(7,'0')
-      String disp = "H"      
-			String amount = (new DecimalFormat('##0.00').format(employee.imssSalaryNet)).padLeft(16,'0')
+			String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
      	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
     }
     log.info "File created: ${file.text}"
     file
   }
 
-  File createDispersionFileIASInterBank(Map dispersionData) {
-    log.info "Payment dispersion IAS interbank for employees: ${dispersionData.employees}"
-    File file = File.createTempFile("txtDispersionIASInterBank",".txt")
-    dispersionData.employees.each { employee ->
-      log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
-      String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
-      String sourceAccount = "M1Account".padLeft(18,'0')
-      String currency = "MXN"
-      String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
-      String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
-      String typeAccount = "40"
-      String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
-      String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
-      String reference = new Date().format("ddMMyy").padLeft(7,'0')
-      String disp = "H"      
-			String amount = (new DecimalFormat('##0.00').format(employee.salaryAssimilable)).padLeft(16,'0')
-     	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+  def exportPaysheetToXlsCash(Paysheet paysheet) {
+    Map employees = getEmployeesOnCashToExport(paysheet)
+    new WebXlsxExporter().with {
+      fillRow(["PROYECTO:", paysheet.prePaysheet.paysheetProject, "NÓMINA EFECTIVO/CHEQUE"],0)
+      fillRow(["PERIODO DE PAGO:", paysheet.prePaysheet.paymentPeriod, "DEL:", new SimpleDateFormat("dd-MM-yyyy").format(paysheet.prePaysheet.initPeriod), "AL:", new SimpleDateFormat("dd-MM-yyyy").format(paysheet.prePaysheet.endPeriod)],1)
+      fillRow(["RESIDENTE:", paysheet.prePaysheet.accountExecutive,"TOTAL:", paysheet.total], 2)
+      fillRow(employees.headers, 4)
+      add(employees.data, employees.properties, 5)
     }
-    log.info "File created: ${file.text}"
-    file
+  }
+
+  Map getEmployeesOnCashToExport(Paysheet paysheet) {
+    Map employees = [:]
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'salaryAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
+    employees.data = paysheet.employees.findAll { emp -> !emp.prePaysheetEmployee.bank }.sort { it.prePaysheetEmployee.nameEmployee }
+    employees
   }
 
 }
