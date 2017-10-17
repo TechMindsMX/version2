@@ -34,16 +34,6 @@ class EmployeeService {
     EmployeeLink.countByTypeAndEmployeeRef(instance.class.simpleName, instance.rfc)
   }
 
-  def updateEmployeeToCompany(BusinessEntity businessEntity, Company company, Map params) {
-    if (businessEntity.rfc.substring(0,10) != params.curp.substring(0,10)) {
-      throw new BusinessException("La CURP no corresponde al RFC")
-    }
-    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRef(params.backRfc)
-    employeeLink.employeeRef = businessEntity.rfc
-    employeeLink.curp = params.curp
-		employeeLink
-	}
-
   EmployeeLink employeeAlreadyExistsInCompany(String rfc, Company company) {
     EmployeeLink.findByEmployeeRefAndCompany(rfc, company)
   }
@@ -61,6 +51,16 @@ class EmployeeService {
       company:company
     )
     employeeLink.save()
+    employeeLink
+  }
+
+  def updateEmployeeToCompany(BusinessEntity businessEntity, Company company, Map params) {
+    if (businessEntity.rfc.substring(0,10) != params.curp.substring(0,10)) {
+      throw new BusinessException("La CURP no corresponde al RFC")
+    }
+    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRef(params.backRfc)
+    employeeLink.employeeRef = businessEntity.rfc
+    employeeLink.curp = params.curp
     employeeLink
   }
 

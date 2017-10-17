@@ -15,10 +15,9 @@
 
     <div class="row">
       <div class="col-lg-12">
-        <div class="panel panel-primary">
-          <div class="panel-body">
+        <div class="portlet">
+          <div class="portlet-body">
             <div class="container-fluid">
-
               <g:render template="dataPayment"/>
               <hr>
               <g:if test="${toApply > 0}">
