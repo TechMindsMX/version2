@@ -8,17 +8,18 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-usd fa-3x"></i>
-        Conciliación de Cobros M1
+        Conciliación de Depósitos Bancarios
         <small>Elegir factura(s)</small>
       </h1>
     </div>
 
     <div class="row">
       <div class="col-lg-12">
-        <div class="portlet">
-          <div class="portlet-body">
+        <div class="panel panel-primary">
+          <div class="panel-body">
             <div class="container-fluid">
-              <g:render template="dataPayment"/>
+
+              <g:render template="dataBankingTransaction"/>
               <hr>
               <g:if test="${toApply > 0}">
                 <g:if test="${flash.message}">
@@ -26,7 +27,7 @@
                 </g:if>
 
                 <g:form action="addSaleOrderToConciliate">
-                  <g:render template="addInvoiceToConciliate"/>
+                  <g:render template="addInvoiceToConciliateBankingTransaction"/>
                 </g:form>
                 <hr>
               </g:if>
@@ -66,7 +67,7 @@
               <hr>
               </g:if>
 
-              <g:render template="actions"/>
+              <g:render template="actionsToConciliateBankingTransaction"/>
 
             </div>
           </div>
