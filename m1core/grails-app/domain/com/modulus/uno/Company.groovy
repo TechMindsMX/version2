@@ -34,7 +34,6 @@ class Company implements Linker {
   static constraints = {
     bussinessName blank:false,size:1..100
     webSite nullable:true,size:5..50
-    employeeNumbers max: 50
     grossAnnualBilling max:250000000.00
     rfc unique:true,blank:false,size:10..50,matches:/^[A-Z]{3,4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/
     numberOfAuthorizations nullable:false
