@@ -209,10 +209,6 @@ class BusinessEntityService {
 
   }
 
-  boolean existsBusinessEntityInCompany(String rfc, Company company) {
-    ProviderLink.findByProviderRef(rfc) || ClientLink.findByClientRef(rfc) || EmployeeLink.findByEmployeeRef(rfc)
-  }
-
   Map getClientData(Company company, BusinessEntity businessEntity, LeadType relation) {
     Map clientData = [:]
     if (relation == LeadType.CLIENTE || relation == LeadType.CLIENTE_PROVEEDOR) {
@@ -359,6 +355,10 @@ class BusinessEntityService {
     company.businessEntities.findAll { be ->
       (be.status == BusinessEntityStatus.ACTIVE) && (EmployeeLink.findByEmployeeRef(be.rfc))
     }.sort { it.id }
+  }
+
+  boolean existsBusinessEntityInCompany(String rfc, Company company) {
+    ProviderLink.findByProviderRef(rfc) || ClientLink.findByClientRef(rfc) || EmployeeLink.findByEmployeeRef(rfc)
   }
 
 }

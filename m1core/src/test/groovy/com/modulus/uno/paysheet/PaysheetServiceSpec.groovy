@@ -291,11 +291,7 @@ class PaysheetServiceSpec extends Specification {
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
 			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
-<<<<<<< HEAD
 			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, sequence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
-=======
-			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, secuence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
->>>>>>> #232 Creando tests del método que crea los archivos de dispersión de banamex
 		and:"The business entity"
 			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC", type: BusinessEntityType.FISICA).save(validate:false)
 			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
@@ -320,11 +316,7 @@ class PaysheetServiceSpec extends Specification {
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
 			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
-<<<<<<< HEAD
 			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, sequence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
-=======
-			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, secuence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
->>>>>>> #232 Creando tests del método que crea los archivos de dispersión de banamex
 		and:"The business entity"
 			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC", type: BusinessEntityType.FISICA).save(validate:false)
 			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
@@ -344,10 +336,6 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
 
-<<<<<<< HEAD
-=======
-
->>>>>>> #232 Creando tests del método que crea los archivos de dispersión de banamex
   private PaysheetEmployee createPaysheetEmployee() {
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       paysheet: new Paysheet().save(validate:false),

@@ -1,4 +1,5 @@
 <%! import com.modulus.uno.PurchaseOrderStatus %>
+<%! import com.modulus.uno.SourcePayment %>
 <div class="col-md-12">
   <div class="portlet portlet-default">
     <div class="portlet-heading">
@@ -10,11 +11,18 @@
     <div id="defaultPortlet" class="panel-collapse collapse in">
       <div class="portlet-body">
         <table class="table table-condensed">
+					<tr>
+						<th>Fecha</th>
+						<th>Monto</th>
+						<th>Estatus</th>
+						<th>Orígen</th>
+					</tr>
           <g:each in="${purchaseOrder.payments.sort{ it.dateCreated}}" var="payment" >
             <tr>
-              <th>${payment.dateCreated.format("dd/MM/yyyy")}</th>
-              <th>${modulusuno.formatPrice(number:payment.amount)}</th>
-              <th><g:message code="purchase.payment.status.${payment.status}"/></th>
+              <td>${payment.dateCreated.format("dd/MM/yyyy")}</td>
+              <td>${modulusuno.formatPrice(number:payment.amount)}</td>
+              <td><g:message code="purchase.payment.status.${payment.status}"/></td>
+              <td><g:message code="purchase.payment.source.${payment.source}"/></td>
             </tr>
           </g:each>
         </table>
@@ -31,16 +39,17 @@
                 <input type="text" class="form-control" id="amount" placeholder="Monto" name="amount" pattern="[0-9]+(\.[0-9]{2})?">
               </div>
             </div>
+						<div class="form-group">
+							<g:radioGroup class="form-control" name="source" values="[SourcePayment.MODULUS_UNO, SourcePayment.BANKING]" value="${SourcePayment.MODULUS_UNO}" labels="['STP-M1','Bancario']">
+								${it.radio} ${it.label}
+							</g:radioGroup>
+						</div>
             <button type="submit" class="btn btn-primary">Agregar pago parcial</button>
+            <g:if test="${!purchaseOrder.payments}">
+							<button type="submit" class="btn btn-primary">Pagar Completo</button>
+						</g:if>
           </g:form>
           <br />
-          <g:if test="${purchaseOrder.status == PurchaseOrderStatus.AUTORIZADA }">
-            <g:if test="${purchaseOrder.bankAccount && !purchaseOrder.payments}">
-              <g:form controller="purchaseOrder" action="executePurchaseOrder" id="${purchaseOrder.id}">
-                <button type="submit" class="btn btn-info btn-block">Pagar Completo</button>
-              </g:form>
-            </g:if>
-          </g:if>
         </g:if>
         <g:else>
           <div class="alert alert-warning">

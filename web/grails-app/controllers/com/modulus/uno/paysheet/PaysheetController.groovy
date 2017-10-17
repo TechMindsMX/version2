@@ -9,7 +9,7 @@ class PaysheetController {
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
-    redirect action:"show", id:paysheet.id
+    redirect controller:"prePaysheet", action:"list"
   }
 
   def show(Paysheet paysheet) {

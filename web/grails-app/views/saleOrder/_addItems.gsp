@@ -1,6 +1,7 @@
 <%! import com.modulus.uno.UnitType %>
 <%! import com.modulus.uno.SaleOrderStatus %>
-
+<div class="portlet">
+  <div class="portlet-body">
 <div class="table-responsive">
   <table class="table table-condensed">
     <thead>
@@ -77,4 +78,7 @@
     </tbody>
   </table>
 </div>
+  </div>
+</div>
+
 
