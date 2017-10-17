@@ -178,6 +178,21 @@ class PurchaseOrderServiceSpec extends Specification {
       purchaseOrder.status == PurchaseOrderStatus.AUTORIZADA
   }
 
+	void "Should get the purchase order of a payment to purchase"() {
+		given:"The payment"
+			PaymentToPurchase paymentToPurchase = new PaymentToPurchase().save(validate:false)
+		and:"The purchase orders"
+			PurchaseOrder po1 = new PurchaseOrder().save(validate:false)
+			PurchaseOrder po2 = new PurchaseOrder().save(validate:false)
+			po2.addToPayments(paymentToPurchase)
+			po2.save(validate:false)
+			PurchaseOrder po3 = new PurchaseOrder().save(validate:false)
+		when:
+			def result = service.getPurchaseOrderOfPaymentToPurchase(paymentToPurchase)
+	  then:
+			result.id == po2.id
+	}
+
   private PaymentToPurchase createPayment(String amount) {
     new PaymentToPurchase(amount: new BigDecimal(amount)).save()
   }

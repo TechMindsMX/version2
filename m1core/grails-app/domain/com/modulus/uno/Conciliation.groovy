@@ -10,6 +10,7 @@ class Conciliation {
   BigDecimal amount
   BigDecimal changeType
   ConciliationStatus status = ConciliationStatus.TO_APPLY
+	PaymentToPurchase paymentToPurchase
   String comment
 
   Date dateCreated
@@ -22,6 +23,7 @@ class Conciliation {
     saleOrder nullable:true
     payment nullable:true
     bankingTransaction nullable:true
+		paymentToPurchase nullable:true
     comment nullable:true, blank:true
   }
 }

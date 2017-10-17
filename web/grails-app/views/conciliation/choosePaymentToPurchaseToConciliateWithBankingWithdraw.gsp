@@ -8,8 +8,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-usd fa-3x"></i>
-        Conciliación de Cobro
-        <small>Elegir factura(s)</small>
+        Conciliación de Retiros Bancarios
+        <small>Elegir compra(s)</small>
       </h1>
     </div>
 
@@ -26,35 +26,29 @@
                   <div class="alert alert-danger" role="alert">${flash.message}</div>
                 </g:if>
 
-                <g:form action="addSaleOrderToConciliate">
-                  <g:render template="addInvoiceToConciliateBankingTransaction"/>
+                <g:form action="addPaymentToPurchaseToConciliate">
+                  <g:render template="addPaymentToPurchaseToConciliateBankingWithdraw"/>
                 </g:form>
                 <hr>
               </g:if>
 
               <g:if test="${conciliations}">
-              <label>Facturas seleccionadas:</label>
+              <label>Pagos de Compras seleccionadas:</label>
               <div class="table-responsive">
                 <table class="table">
                   <tr>
-                    <th class="col-md-4">Factura</th>
-                    <th>Total</th>
-                    <th>Por pagar</th>
+                    <th class="col-md-4">Pago</th>
+                    <th>Monto del Pago</th>
                     <th>Monto a aplicar (MXN)</th>
                     <th>Nuevo Saldo</th>
-                    <th>Moneda</th>
-                    <th>Tipo Cambio</th>
                     <th></th>
                   </tr>
                   <g:each in="${conciliations}" var="conciliation">
                   <tr>
-                    <td>${conciliation.saleOrder.id} / ${conciliation.saleOrder.clientName}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.total)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay)}</td>
+                    <td>${conciliation.paymentToPurchase.id}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.paymentToPurchase.amount)}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.amount)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.currency == "MXN" ? conciliation.saleOrder.amountToPay - conciliation.amount : conciliation.saleOrder.amountToPay - (conciliation.amount/conciliation.changeType)) }</td>
-                    <td>${conciliation.saleOrder.currency}</td>
-                    <td>${conciliation.changeType ?: "NA"}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number: (conciliation.paymentToPurchase.amount - conciliation.amount)) }</td>
                     <td class="text-center">
                       <g:form action="deleteConciliation" id="${conciliation.id}">
                         <button class="btn btn-danger">Quitar</button>
@@ -74,6 +68,5 @@
         </div>
       </div>
     </div>
-    <asset:javascript src="conciliation/chooseInvoice.js"/>
   </body>
 </html>
