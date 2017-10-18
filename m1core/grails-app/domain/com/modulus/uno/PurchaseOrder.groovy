@@ -64,7 +64,7 @@ class PurchaseOrder implements Machinery {
   }
 
   BigDecimal getAmountToPay() {
-    getTotal() - getTotalPayments()
+    (getTotal() - getTotalPayments()) > 0 ? getTotal() - getTotalPayments() : 0
   }
 
   String toString(){
