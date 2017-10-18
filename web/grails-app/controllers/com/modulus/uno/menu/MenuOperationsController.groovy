@@ -7,12 +7,12 @@ class MenuOperationsController {
 
   def index() {
     def roles = Role.list()
-    def menus = Menu.findAllWhere(parentMenu: null)
+    def menus = Menu.findAll { it.menus }
     [roles:roles, menus:menus]
   }
 
   def show(Role role){
-    def menus = Menu.findAllWhere(parentMenu: null)
+    def menus = Menu.findAll { it.menus }
     def menusOfInstance = Role.getMenusForThisIntance(role.id)
     [role:role, menus:menus, menusOfInstance:menusOfInstance]
   }
