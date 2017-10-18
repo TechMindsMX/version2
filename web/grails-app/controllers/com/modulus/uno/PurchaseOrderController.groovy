@@ -122,7 +122,7 @@ class PurchaseOrderController {
       return
     }
     String messageSuccess = message(code:"purchaseOrder.already.executed")
-    if (companyService.enoughBalanceCompany(order.company, amount)){
+    if (sourcePayment == SourcePayment.BANKING || companyService.enoughBalanceCompany(order.company, amount)){
       if (purchaseOrderIsInStatus(order, PurchaseOrderStatus.AUTORIZADA)) {
 				Map paymentData = [amount:amount, sourcePayment:sourcePayment]
         purchaseOrderService.payPurchaseOrder(order, paymentData)
