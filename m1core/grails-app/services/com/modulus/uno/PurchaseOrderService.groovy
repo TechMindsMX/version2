@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import java.math.RoundingMode
 
 @Transactional
 class PurchaseOrderService {
@@ -222,8 +223,7 @@ class PurchaseOrderService {
   }
 
   Boolean amountExceedsTotal(def amount, PurchaseOrder order) {
-    BigDecimal pendingToPay = order.total - order.totalPayments
-    amount > pendingToPay
+    amount.setScale(2, RoundingMode.HALF_UP) > order.amountToPay.setScale(2, RoundingMode.HALF_UP)
   }
 
   def reversePaymentPurchaseForTransaction(Transaction transaction) {
