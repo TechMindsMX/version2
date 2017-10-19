@@ -238,7 +238,7 @@ class PaysheetServiceSpec extends Specification {
 			result.size() == 0
 	}
 
-	void "Should create dispersion file for SANTANDER bank"() {
+	void "Should create dispersion file SA for SANTANDER bank"() {
 		given:"The dispersion data"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
 			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)

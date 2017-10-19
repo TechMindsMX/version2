@@ -41,10 +41,6 @@
             </g:hasErrors>
             <g:form action="save">
               <fieldset class="form">
-                <g:if test="${menu.parentMenu}">
-                  <h3>Submenú para <b>${menu.parentMenu.name}</b></h3>
-                  <g:hiddenField name="parentMenu.id" value="${menu.parentMenu.id}"></g:hiddenField>
-                </g:if>
                 <f:field bean="menu" property="name" wrapper="create"/>
                 <f:field bean="menu" property="internalUrl" wrapper="create"/>
                 <f:field bean="menu" property="parameters" wrapper="create"/>
