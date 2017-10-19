@@ -34,7 +34,6 @@ class MovimientosBancariosController {
     @Transactional
     def save(MovimientosBancariosCommand command) {
       def movimientosBancarios = command.createObject()
-      movimientosBancarios.cuenta = BankAccount.findById(params.cuenta)
       if (movimientosBancarios.hasErrors()) {
         transactionStatus.setRollbackOnly()
         respond movimientosBancarios.errors, view:'create'
@@ -87,28 +86,25 @@ class MovimientosBancariosController {
     }
 
     @Transactional
-    def update(MovimientosBancarios movimientosBancarios) {
-        if (movimientosBancarios == null) {
+    def update(MovimientosBancariosCommand command) {
+			log.info "Updating bank transaction: ${command.dump()}"
+        if (command == null) {
             transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
-        if (movimientosBancarios.hasErrors()) {
+        if (command.hasErrors()) {
             transactionStatus.setRollbackOnly()
-            respond movimientosBancarios.errors, view:'edit'
+            respond command.errors, view:'edit'
             return
         }
 
-        movimientosBancarios.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'movimientosBancarios.label', default: 'MovimientosBancarios'), movimientosBancarios.id])
-                redirect movimientosBancarios
-            }
-            '*'{ respond movimientosBancarios, [status: OK] }
-        }
+				MovimientosBancarios transactionBanking = command.getTransactionBankingToUpdate()
+        transactionBanking.save()
+				log.info "Bank transaction updated: ${transactionBanking.dump()}"
+				
+    	redirect action:"show", id:"${transactionBanking.cuenta.id}"
     }
 
     @Transactional
