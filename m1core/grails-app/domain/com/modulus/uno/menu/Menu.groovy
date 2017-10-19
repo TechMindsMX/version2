@@ -7,12 +7,11 @@ class Menu {
   String parameters
 
   static hasMany = [menus: Menu]
-  static belongsTo = [parentMenu: Menu]
 
   static constraints = {
     name()
     internalUrl()
-    parentMenu nullable: true
+    //parentMenu nullable: true
     parameters nullable: true
   }
 
