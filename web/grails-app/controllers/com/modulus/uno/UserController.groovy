@@ -36,11 +36,16 @@ class UserController {
     respond user,model:[company:session.company]
   }
 
-  def update() {
-    def user = User.get(params.user)
+  def update(User user) {
+    if (user.hasErrors()) {
+      log.error "Error updating user ${user.id}"
+      render view:"edit", model:[user:user]
+      return
+    }
+
     Company company = Company.get(session.company)
-    user = userService.addInformationToLegalRepresentative(user,params)
-    render view:"show", model:[user:user,company:session.company]
+		user.save()
+    render view:"profile", model:[user:user]
   }
 
   def delete(User user) {
