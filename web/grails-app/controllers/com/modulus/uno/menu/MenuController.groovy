@@ -23,7 +23,8 @@ class MenuController {
   }
 
   def addSubmenu(){
-    menuService.addFewSubmenusToMenu(params.id.toLong(), params.menuOption*.toLong())
+    def submenus = params.menuOption.class.simpleName == 'String' ? [params.menuOption] : params.menuOption
+    menuService.addFewSubmenusToMenu(params.id.toLong(), submenus*.toLong())
     redirect action:"show", id: params.id
   }
 
