@@ -16,7 +16,7 @@ class PaysheetContractController {
   def create() {
     Company company = Company.get(session.company)
     def clients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
-    List<User> users = companyService.getUsersWithRoleForCompany("ROLE_PAYSHEET_OPERATOR", company)
+    List<User> users = companyService.getUsersWithRoleForCompany("ROLE_OPERATOR_PAYSHEET", company)
     respond new PaysheetContract(), model:[company:company, clients:clients, users:users]
   }
 
