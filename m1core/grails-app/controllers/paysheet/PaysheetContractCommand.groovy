@@ -3,6 +3,7 @@ package com.modulus.uno.paysheet
 import grails.validation.Validateable
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.User
+import com.modulus.uno.Company
 
 class PaysheetContractCommand implements Validateable {
   
