@@ -16,7 +16,7 @@
           <th></th>
         </tr>
 
-        <g:each in="${paysheetContract.employees}" var="employee" status="index">
+        <g:each in="${paysheetContract.employees.sort{it.toString()}}" var="employee" status="index">
         <tr>
           <td>${employee}</td>
           <td>${employee.rfc}</td>
