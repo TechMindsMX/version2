@@ -7,7 +7,7 @@ import com.modulus.uno.Company
 class PaysheetContract {
   
   Date dateCreated
-  Date dateUpdated
+  Date lastUpdated
   
   BusinessEntity client
   Date initDate
