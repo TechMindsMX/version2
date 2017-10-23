@@ -91,43 +91,21 @@ class BankAccountService {
     bankAccount
   }
 
-  BankAccount createBankAccountForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map rowEmployee) {
-    Map dataBank = getDataBankFromClabe(rowEmployee.CLABE)
+  BankAccount createBankAccountForBusinessEntityFromRowBusinessEntity(BusinessEntity businessEntity, Map rowBusinessEntity) {
+    Map dataBank = getDataBankFromClabe(rowBusinessEntity.CLABE)
     BankAccount bankAccount = new BankAccount(
       accountNumber:dataBank.accountNumber,
       branchNumber:dataBank.branchNumber,
-      clabe:rowEmployee.CLABE,
-      cardNumber:rowEmployee.NUMTARJETA,
+      clabe:rowBusinessEntity.CLABE,
+      cardNumber:rowBusinessEntity.NUMTARJETA,
       banco:dataBank.bank
     )
 
     bankAccount.save()
-
     if (bankAccount.id) {
       businessEntity.addToBanksAccounts(bankAccount)
       businessEntity.save()
     }
-
-    bankAccount
-  }
-
-  BankAccount createBankAccountForBusinessEntityFromRowProvider(BusinessEntity businessEntity, Map rowProvider) {
-    Map dataBank = getDataBankFromClabe(rowProvider.CLABE)
-    BankAccount bankAccount = new BankAccount(
-      accountNumber:dataBank.accountNumber,
-      branchNumber:dataBank.branchNumber,
-      clabe:rowProvider.CLABE,
-      cardNumber:rowProvider.NUMTARJETA,
-      banco:dataBank.bank
-    )
-
-    bankAccount.save()
-
-    if (bankAccount.id) {
-      businessEntity.addToBanksAccounts(bankAccount)
-      businessEntity.save()
-    }
-
     bankAccount
   }
 

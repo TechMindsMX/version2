@@ -371,7 +371,7 @@ class BusinessEntityService {
       return "Error: RFC"
     }
 
-    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(businessEntity, rowEmployee)
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowEmployee)
     if (!bankAccount || bankAccount?.hasErrors()) {
       transactionStatus.setRollbackOnly()
       return "Error: datos bancarios"
@@ -427,7 +427,7 @@ class BusinessEntityService {
         return "Error: RFC"
       }
 
-    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowProvider(businessEntity, rowProvider)
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowProvider)
     if (!bankAccount || bankAccount?.hasErrors()) {
       transactionStatus.setRollbackOnly()
       return "Error: datos bancarios"
