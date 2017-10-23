@@ -6,6 +6,7 @@ import com.modulus.uno.BusinessEntityService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.Company
 import com.modulus.uno.User
+import com.modulus.uno.BusinessEntity
 
 @Transactional(readOnly = true)
 class PaysheetContractController {
@@ -64,4 +65,15 @@ class PaysheetContractController {
   def show(PaysheetContract paysheetContract){
     respond paysheetContract
   }
+
+  def addEmployees(PaysheetContract paysheetContract){
+    List<BusinessEntity> availableEmployees = paysheetContractService.getEmployeesAvailableToAdd(paysheetContract)
+    render view:"show", model:[paysheetContract:paysheetContract, availableEmployees:availableEmployees]
+  }
+
+  def saveEmployees(PaysheetContract paysheetContract) {
+    log.info "Saving employees selected"
+    redirect action:"show", id:paysheetContract.id 
+  }
+
 }
