@@ -43,4 +43,15 @@ class PaysheetContractServiceSpec extends Specification {
       result.size() == 2
   }
 
+  void "Should add employees into paysheet contract"() {
+    given:
+      PaysheetContract paysheetContract = new PaysheetContract(employees:[]).save(validate:false)
+    and:
+      def params = [entities:"1,2"]
+      businessEntityService.getBusinessEntitiesFromIds(_) >> [new BusinessEntity().save(validate:false), new BusinessEntity().save(validate:false)]
+    when:
+      def result = service.addEmployeesToPaysheetContract(paysheetContract, params)
+    then:
+      result.employees.size() == 2
+  }
 }
