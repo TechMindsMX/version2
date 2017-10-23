@@ -13,7 +13,7 @@ class ClientService {
 
   def addClientToCompany(ClientBusinessEntity client, Company company){
     if(isClientOfThisCompany(client, company))throw new BusinessException(messageSource.getMessage('exception.client.already.exist', null, LCH.getLocale()))
-    def clientLink = new ClientLink(type:client.class.simpleName, clientRef: client.rfc, company: company).save()
+    def clientLink = new ClientLink(type:client.class.simpleName, clientRef: client.rfc, company: company)
     clientLink.save()
     if (clientLink.hasErrors()){
       log.error "Error al guardar el client ${clientLink.dump()}"
