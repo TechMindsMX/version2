@@ -14,13 +14,6 @@
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
-        <div class="portlet-heading">
-          <div class="portlet-title">
-            <br />
-            <br />
-          </div>
-          <div class="clearfix"></div>
-        </div>
         <div id="horizontalFormExample" class="panel-collapse collapse in">
           <div class="portlet-body">
             <g:if test="${flash.message}">
