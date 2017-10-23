@@ -314,7 +314,7 @@ class BusinessEntityService {
       String result = saveEmployeeImportData(employee, company)
       results.add(result)
       if (result == "Registrado") {
-        addEmployeeToCompany(employee.RFC, company)
+        addBusinessEntityToCompany(employee.RFC, company)
       }
     }
     results
@@ -326,7 +326,7 @@ class BusinessEntityService {
       String result = saveClientImportData(client, company)
       results.add(result)
       if (result == "Registrado") {
-        addClientToCompany(client.RFC, company)
+        addBusinessEntityToCompany(client.RFC, company)
       }
     }
     results
@@ -338,33 +338,17 @@ class BusinessEntityService {
       String result = saveProviderImportData(provider, company)
       results.add(result)
       if (result == "Registrado") {
-        addProviderToCompany(provider.RFC, company)
+        addBusinessEntityToCompany(provider.RFC, company)
       }
     }
     results
   }
 
   @Transactional
-  def addEmployeeToCompany(String rfc, Company company) {
-    log.debug "Adding employee to company: ${rfc}"
+  def addBusinessEntityToCompany(String rfc, Company company) {
+    log.debug "Adding business entity to company: ${rfc}"
     BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
-    company.addToBusinessEntities((EmployeeBusinessEntity) businessEntity)
-    company.save()
-  }
-
-  @Transactional
-  def addClientToCompany(String rfc, Company company) {
-    log.debug "Adding client to company: ${rfc}"
-    BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
-    company.addToBusinessEntities((ClientBusinessEntity) businessEntity)
-    company.save()
-  }
-
-  @Transactional
-  def addProviderToCompany(String rfc, Company company) {
-    log.debug "Adding provider to company: ${rfc}"
-    BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
-    company.addToBusinessEntities((ProviderBusinessEntity) businessEntity)
+    company.addToBusinessEntities(businessEntity)
     company.save()
   }
 
@@ -405,16 +389,22 @@ class BusinessEntityService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveClientImportData(Map rowClient, Company company) {
+    if(rowClient.PERSONA.toUpperCase().replace('Í', 'I') != "FISICA" && rowClient.PERSONA.toUpperCase() != "MORAL") {
+      transactionStatus.setRollbackOnly()
+      return "Error: tipo de cliente"
+    }
+
     if (clientService.clientAlreadyExistsInCompany(rowClient.RFC, company)){
       transactionStatus.setRollbackOnly()
       return "Error: el RFC del cliente ya existe"
     }
-
+    
+    ClientLink clientLink = clientService.createClientForRowClient(rowClient, company)
     BusinessEntity businessEntity = createBusinessEntityForRowClient(rowClient)
-    if(businessEntity.hasErrors()){
-      transactionStatus.setRollbackOnly()
-      return "Error: RFC"
-    }   
+     if(businessEntity.hasErrors()){
+        transactionStatus.setRollbackOnly()
+        return "Error: RFC"
+      }
     "Registrado"
   }
 
@@ -425,11 +415,13 @@ class BusinessEntityService {
       return "Error: el RFC del proveedor ya existe"
     }
 
+    ProviderLink providerLink = providerService.createProviderForRowProvider(rowProvider, company)
+
     BusinessEntity businessEntity = createBusinessEntityForRowProvider(rowProvider)
-    if(businessEntity.hasErrors()){
-      transactionStatus.setRollbackOnly()
-      return "Error: RFC"
-    }
+      if(businessEntity.hasErrors()){
+        transactionStatus.setRollbackOnly()
+        return "Error: RFC"
+      }
 
     BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowProvider(businessEntity, rowProvider)
     if (!bankAccount || bankAccount?.hasErrors()) {
@@ -454,17 +446,21 @@ class BusinessEntityService {
   def createBusinessEntityForRowClient(Map clientMap) {
     BusinessEntity businessEntity = new BusinessEntity(
       rfc:clientMap.RFC,
+      type:BusinessEntityType."${clientMap.PERSONA}",
       status:BusinessEntityStatus.TO_AUTHORIZE
       )
 
     businessEntity.save()
-
-    createComposeNameForBusinessEntityFromRowClient(businessEntity, clientMap)
+    if("${clientMap.PERSONA}" == "FISICA")
+      return createComposeNameForBusinessEntityFromRowClient(businessEntity, clientMap)
+    else if("${clientMap.PERSONA}" == "MORAL")
+      return appendDataToBusinessEntityFromClientMap(businessEntity, clientMap)
   }
 
   def createBusinessEntityForRowProvider(Map providerMap) {
     BusinessEntity businessEntity = new BusinessEntity(
       rfc:providerMap.RFC,
+      type:BusinessEntityType."${providerMap.PERSONA}",
       status:BusinessEntityStatus.TO_AUTHORIZE
       )
 
@@ -491,6 +487,12 @@ class BusinessEntityService {
     businessEntity.addToNames(lastName)
     businessEntity.addToNames(motherLastName)
     businessEntity.addToNames(name)
+    businessEntity.save()
+    businessEntity
+  }
+
+  def appendDataToBusinessEntityFromClientMap(BusinessEntity businessEntity, Map clientMap) {
+    businessEntity.addToNames(new ComposeName(value:clientMap.RAZON_SOCIAL, type:NameType.RAZON_SOCIAL))
     businessEntity.save()
     businessEntity
   }
