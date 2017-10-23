@@ -11,7 +11,12 @@ class ProviderService {
 
   def addProviderToCompany(ProviderBusinessEntity provider, Company company){
     if(isProviderOfThisCompany(provider, company))throw new BusinessException(messageSource.getMessage('exception.provider.already.exist', null, LCH.getLocale()))
-    def providerLink = new ProviderLink(type:provider.class.simpleName, providerRef: provider.rfc, company: company).save()
+    def providerLink = new ProviderLink(type:provider.class.simpleName, providerRef: provider.rfc, company: company)
+    providerLink.save()
+    if (providerLink.hasErrors()){
+      log.error "Error al guardar el provider ${providerLink.dump()}"
+      throw new BusinessException("Los datos del cliente son erroneos")
+    }
     company.addToBusinessEntities(provider)
     providerLink
   }
