@@ -400,7 +400,7 @@ class BusinessEntityService {
     }
     
     ClientLink clientLink = clientService.createClientForRowClient(rowClient, company)
-    BusinessEntity businessEntity = createBusinessEntityForRowClient(rowClient)
+    BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowClient)
      if(businessEntity.hasErrors()){
         transactionStatus.setRollbackOnly()
         return "Error: RFC"
@@ -410,14 +410,18 @@ class BusinessEntityService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveProviderImportData(Map rowProvider, Company company) {
+    if(rowProvider.PERSONA.toUpperCase().replace('Í', 'I') != "FISICA" && rowProvider.PERSONA.toUpperCase() != "MORAL") {
+      transactionStatus.setRollbackOnly()
+      return "Error: tipo de proveedor"
+    }
+
     if (providerService.providerAlreadyExistsInCompany(rowProvider.RFC, company)){
       transactionStatus.setRollbackOnly()
       return "Error: el RFC del proveedor ya existe"
     }
 
     ProviderLink providerLink = providerService.createProviderForRowProvider(rowProvider, company)
-
-    BusinessEntity businessEntity = createBusinessEntityForRowProvider(rowProvider)
+    BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowProvider)
       if(businessEntity.hasErrors()){
         transactionStatus.setRollbackOnly()
         return "Error: RFC"
@@ -439,40 +443,27 @@ class BusinessEntityService {
     )
 
     businessEntity.save()
-
-    createComposeNameForBusinessEntityFromRowEmployee(businessEntity, employeeMap)
+    createComposeNameForBusinessEntityFromRowBusinessEntity(businessEntity, employeeMap)
   }
 
-  def createBusinessEntityForRowClient(Map clientMap) {
+  def createBusinessEntityForRowBusinessEntity(Map businessMap) {
     BusinessEntity businessEntity = new BusinessEntity(
-      rfc:clientMap.RFC,
-      type:BusinessEntityType."${clientMap.PERSONA}",
+      rfc:businessMap.RFC,
+      type:BusinessEntityType."${businessMap.PERSONA}",
       status:BusinessEntityStatus.TO_AUTHORIZE
       )
 
     businessEntity.save()
-    if("${clientMap.PERSONA}" == "FISICA")
-      return createComposeNameForBusinessEntityFromRowClient(businessEntity, clientMap)
-    else if("${clientMap.PERSONA}" == "MORAL")
-      return appendDataToBusinessEntityFromClientMap(businessEntity, clientMap)
+    if("${businessMap.PERSONA}" == "FISICA")
+      return createComposeNameForBusinessEntityFromRowBusinessEntity(businessEntity, businessMap)
+    else if("${businessMap.PERSONA}" == "MORAL")
+      return appendDataToBusinessEntityFromMap(businessEntity, businessMap)
   }
 
-  def createBusinessEntityForRowProvider(Map providerMap) {
-    BusinessEntity businessEntity = new BusinessEntity(
-      rfc:providerMap.RFC,
-      type:BusinessEntityType."${providerMap.PERSONA}",
-      status:BusinessEntityStatus.TO_AUTHORIZE
-      )
-
-    businessEntity.save()
-
-    createComposeNameForBusinessEntityFromRowProvider(businessEntity, providerMap)
-  }
-
-  def createComposeNameForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map employeeMap) {
-    ComposeName lastName = new ComposeName(value:employeeMap.PATERNO, type:NameType.APELLIDO_PATERNO)
-    ComposeName motherLastName = new ComposeName(value:employeeMap.MATERNO, type:NameType.APELLIDO_MATERNO)
-    ComposeName name = new ComposeName(value:employeeMap.NOMBRE, type:NameType.NOMBRE)
+  def createComposeNameForBusinessEntityFromRowBusinessEntity(BusinessEntity businessEntity, Map businessMap) {
+    ComposeName lastName = new ComposeName(value:businessMap.PATERNO, type:NameType.APELLIDO_PATERNO)
+    ComposeName motherLastName = new ComposeName(value:businessMap.MATERNO, type:NameType.APELLIDO_MATERNO)
+    ComposeName name = new ComposeName(value:businessMap.NOMBRE, type:NameType.NOMBRE)
     businessEntity.addToNames(lastName)
     businessEntity.addToNames(motherLastName)
     businessEntity.addToNames(name)
@@ -480,30 +471,8 @@ class BusinessEntityService {
     businessEntity
   }
 
-  def createComposeNameForBusinessEntityFromRowClient(BusinessEntity businessEntity, Map clientMap) {
-    ComposeName lastName = new ComposeName(value:clientMap.PATERNO, type:NameType.APELLIDO_PATERNO)
-    ComposeName motherLastName = new ComposeName(value:clientMap.MATERNO, type:NameType.APELLIDO_MATERNO)
-    ComposeName name = new ComposeName(value:clientMap.NOMBRE, type:NameType.NOMBRE)
-    businessEntity.addToNames(lastName)
-    businessEntity.addToNames(motherLastName)
-    businessEntity.addToNames(name)
-    businessEntity.save()
-    businessEntity
-  }
-
-  def appendDataToBusinessEntityFromClientMap(BusinessEntity businessEntity, Map clientMap) {
-    businessEntity.addToNames(new ComposeName(value:clientMap.RAZON_SOCIAL, type:NameType.RAZON_SOCIAL))
-    businessEntity.save()
-    businessEntity
-  }
-
-  def createComposeNameForBusinessEntityFromRowProvider(BusinessEntity businessEntity, Map providerMap) {
-    ComposeName lastName = new ComposeName(value:providerMap.PATERNO, type:NameType.APELLIDO_PATERNO)
-    ComposeName motherLastName = new ComposeName(value:providerMap.MATERNO, type:NameType.APELLIDO_MATERNO)
-    ComposeName name = new ComposeName(value:providerMap.NOMBRE, type:NameType.NOMBRE)
-    businessEntity.addToNames(lastName)
-    businessEntity.addToNames(motherLastName)
-    businessEntity.addToNames(name)
+  def appendDataToBusinessEntityFromMap(BusinessEntity businessEntity, Map businessMap) {
+    businessEntity.addToNames(new ComposeName(value:businessMap.RAZON_SOCIAL, type:NameType.RAZON_SOCIAL))
     businessEntity.save()
     businessEntity
   }
