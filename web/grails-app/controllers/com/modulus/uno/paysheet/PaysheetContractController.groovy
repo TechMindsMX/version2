@@ -71,8 +71,19 @@ class PaysheetContractController {
     render view:"show", model:[paysheetContract:paysheetContract, availableEmployees:availableEmployees]
   }
 
+  @Transactional
   def saveEmployees(PaysheetContract paysheetContract) {
-    log.info "Saving employees selected"
+    log.info "Saving employees selected into paysheet contract: ${paysheetContract.id}"
+    log.info "Employees to save: ${params.entities}"
+
+    if (!params.entities) {
+      flash.message = "No seleccionó empleados"
+      redirect action:"addEmployees", id:paysheetContract.id
+      return
+    }
+
+    paysheetContractService.addEmployeesToPaysheetContract(paysheetContract, params)
+
     redirect action:"show", id:paysheetContract.id 
   }
 
