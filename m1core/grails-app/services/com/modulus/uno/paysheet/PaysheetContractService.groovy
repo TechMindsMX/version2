@@ -19,4 +19,12 @@ class PaysheetContractService {
     }.grep()
     availableEmployees
   }
+
+  def addEmployeesToPaysheetContract(PaysheetContract paysheetContract, def params) {
+    List<BusinessEntity> employees = businessEntityService.getBusinessEntitiesFromIds(params.entities)
+    paysheetContract.employees.addAll(employees)
+    paysheetContract.save()
+    log.info "Employees in paysheetContract: ${paysheetContract.employees}"
+    paysheetContract
+  }
 }
