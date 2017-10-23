@@ -22,7 +22,7 @@ databaseChangeLog = {
                 constraints(nullable: "false")
             }
 
-            column(name: "date_updated", type: "datetime") {
+            column(name: "last_updated", type: "datetime") {
                 constraints(nullable: "false")
             }
 
