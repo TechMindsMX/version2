@@ -14,6 +14,14 @@ class PaysheetContractController {
   CompanyService companyService
   PaysheetContractService paysheetContractService
   
+  def list() {
+    params.max = 25
+    Company company = Company.get(session.company)
+    List<PaysheetContract> paysheetContractList = PaysheetContract.findAllByCompany(company, params)
+    Integer paysheetContractCount = PaysheetContract.countByCompany(company)
+    [company:company, paysheetContractList:paysheetContractList, paysheetContractCount:paysheetContractCount]
+  }
+
   def create() {
     Company company = Company.get(session.company)
     def clients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
