@@ -52,7 +52,7 @@ class ProviderService {
   ProviderLink createProviderForRowProvider(Map rowProvider, Company company) {
     ProviderLink providerLink = new ProviderLink(
       type:"BusinessEntity",
-      clientRef:rowProvider.RFC,
+      providerRef:rowProvider.RFC,
       company:company
     )
     providerLink.save()
