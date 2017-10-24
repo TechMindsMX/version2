@@ -79,4 +79,5 @@ databaseChangeLog = {
   include file: 'adding-column-client-number-to-bankaccount.groovy'
   include file: 'adding-column-paymentway-to-paysheet-employee.groovy'
     include file: 'create-domain-paysheet-contract.groovy'
+    include file: 'modify-paysheet-project-into-paysheet-contract.groovy'
 }
