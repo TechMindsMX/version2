@@ -11,8 +11,8 @@
       <div class="container-fluid">
       <table class="table table-striped table-condensed">
         <tr>
-          <th>Nombre</th>
-          <th>RFC</th>
+          <th class="text-center">Nombre</th>
+          <th class="text-center">RFC</th>
           <th></th>
         </tr>
 
