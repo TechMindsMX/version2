@@ -87,4 +87,10 @@ class PaysheetContractController {
     redirect action:"show", id:paysheetContract.id 
   }
 
+  @Transactional
+  def deleteEmployee(PaysheetContract paysheetContract) {
+    log.info "Delete employee ${params.employeeId} from paysheet contract ${paysheetContract.id}"
+    paysheetContractService.deleteEmployeeFromPaysheetContract(paysheetContract, params.employeeId.toLong()) 
+    redirect action:"show", id:paysheetContract.id 
+  }
 }
