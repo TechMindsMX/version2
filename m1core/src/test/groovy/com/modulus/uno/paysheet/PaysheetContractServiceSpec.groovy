@@ -54,4 +54,21 @@ class PaysheetContractServiceSpec extends Specification {
     then:
       result.employees.size() == 2
   }
+
+  void "Should remove employee from paysheet contract"() {
+    given:
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      BusinessEntity be1 = new BusinessEntity().save(validate:false)
+      BusinessEntity be2 = new BusinessEntity().save(validate:false)
+      paysheetContract.addToEmployees(be1)
+      paysheetContract.addToEmployees(be2)
+      paysheetContract.save(validate:false)
+    and:
+      Long idEmployee = 1
+    when:
+      def result = service.deleteEmployeeFromPaysheetContract(paysheetContract, idEmployee)
+    then:
+      result.employees.size() == 1
+  }
+
 }
