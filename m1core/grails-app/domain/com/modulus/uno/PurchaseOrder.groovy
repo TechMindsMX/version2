@@ -2,6 +2,7 @@ package com.modulus.uno
 
 import grails.converters.JSON
 import com.modulus.uno.machine.Machinery
+import java.math.RoundingMode
 
 class PurchaseOrder implements Machinery {
 
@@ -62,6 +63,13 @@ class PurchaseOrder implements Machinery {
     payments*.amount?.sum() ?: 0
   }
 
+  BigDecimal getAmountToPay() {
+    getTotal() - getTotalPayments()
+  }
+
+  String toString(){
+    "${id} / ${providerName} / Total:\$ ${total.setScale(2, RoundingMode.HALF_UP)} / Por pagar: \$ ${amountToPay.setScale(2, RoundingMode.HALF_UP)}"
+  }
 
   static marshaller = {
     JSON.registerObjectMarshaller(PurchaseOrder, 1) { m ->

@@ -14,18 +14,18 @@ class S3AssetService {
     def nameFile = document.filename
     def file = File.createTempFile(nameFile,".${nameFile.tokenize('.').last()}")
     document.transferTo(file)
-    def s3AsseetProperties = createElenmetsOfS3Asset(file,type)
+    def s3AsseetProperties = createElementsOfS3Asset(file,type)
     amazonWebService.s3.putObject(new PutObjectRequest(s3AsseetProperties.bucket, "${s3AsseetProperties.title}.${s3AsseetProperties.mimeType}",file).withCannedAcl(CannedAccessControlList.PublicRead))
     saveS3Asset(s3AsseetProperties)
   }
 
   def createFileToUpload(File file, def type){
-    def s3AsseetProperties = createElenmetsOfS3Asset(file,type)
+    def s3AsseetProperties = createElementsOfS3Asset(file,type)
     amazonWebService.s3.putObject(new PutObjectRequest(s3AsseetProperties.bucket, "${s3AsseetProperties.title}.${s3AsseetProperties.mimeType}",file).withCannedAcl(CannedAccessControlList.PublicRead))
     saveS3Asset(s3AsseetProperties)
   }
 
-  private def createElenmetsOfS3Asset(file,type) {
+  private def createElementsOfS3Asset(file,type) {
     def name = file.name
     def extention = name.tokenize('.').last()
     def hash = MessageDigest.getInstance("MD5").digest(name.bytes).encodeHex().toString()

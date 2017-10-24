@@ -58,7 +58,7 @@
         	<td>${employee.curp}</td>
         	<td></td>					
         	<td>${employee.bank?.bankingCode}</td>
-        	<td>${employee.bank?.name}</td>
+        	<td>${employee.bank ? employee.bank.name : "EFECTIVO/CHEQUE"}</td>
         	<td>${employee.clabe}</td>
         	<td>${employee.account}</td>
         	<td>${employee.cardNumber}</td>
@@ -89,7 +89,9 @@
     <g:if test="${prePaysheet.status == PrePaysheetStatus.IN_PROCESS}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-default" action="exportToXls" id="${prePaysheet.id}">XLS</g:link>
+			<sec:ifAnyGranted roles="ROLE_AUTHORIZER_PAYSHEET">
       <g:link class="btn btn-default" controller="paysheet" action="createFromPrePaysheet" id="${prePaysheet.id}">Procesar</g:link>
+			</sec:ifAnyGranted>
     </div>
     </g:if>
   </div>
