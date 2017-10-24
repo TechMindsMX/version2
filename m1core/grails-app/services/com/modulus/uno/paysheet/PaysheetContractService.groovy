@@ -27,4 +27,11 @@ class PaysheetContractService {
     log.info "Employees in paysheetContract: ${paysheetContract.employees}"
     paysheetContract
   }
+
+  def deleteEmployeeFromPaysheetContract(PaysheetContract paysheetContract, Long idEmployee){
+    BusinessEntity employee = BusinessEntity.get(idEmployee)
+    paysheetContract.removeFromEmployees(employee)
+    paysheetContract.save()
+    paysheetContract
+  }
 }
