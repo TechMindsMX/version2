@@ -20,7 +20,7 @@
         <tr>
           <td>${employee}</td>
           <td>${employee.rfc}</td>
-          <td><g:link class="btn btn-danger" action="deleteEmployee" id="${employee.id}">Quitar</g:link></td>
+          <td><g:link class="btn btn-danger" action="deleteEmployee" id="${paysheetContract.id}" params="[employeeId:employee.id]">Quitar</g:link></td>
         </tr>
         </g:each>
       </table>
