@@ -15,14 +15,14 @@
       </div>
       <g:if test="${paysheetContract.projects}">
       <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped table-condensed">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th width="45%">Descripción</th>
-              <th>F.I.</th>
-              <th>R.T. (%)</th>
-              <th>Comisión (%)</th>
+              <th class="text-center">Nombre</th>
+              <th class="text-center" width="45%">Descripción</th>
+              <th class="text-center">F.I.</th>
+              <th class="text-center">R.T. (%)</th>
+              <th class="text-center">Comisión (%)</th>
             </tr>
           </thead>
           <tbody>
@@ -30,9 +30,9 @@
             <tr>
               <td><g:link controller="paysheetProject" action="edit" id="${project.id}">${project.name}</g:link></td>
               <td>${project.description}</td>
-              <td>${project.integrationFactor}</td>
-              <td>${project.occupationalRiskRate}</td>
-              <td><g:formatNumber number="${project.commission}" format="#0.000000"/></td>
+              <td class="text-right">${project.integrationFactor}</td>
+              <td class="text-right">${project.occupationalRiskRate}</td>
+              <td class="text-right"><g:formatNumber number="${project.commission}" format="#0.000000" locale="es_MX"/></td>
             </tr>
           </g:each>
           </tbody>
