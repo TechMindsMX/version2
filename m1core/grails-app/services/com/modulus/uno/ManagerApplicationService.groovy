@@ -174,4 +174,13 @@ class ManagerApplicationService {
     textPrivacy
   }
 
+  String conciliateStpTransactionsForAllCompanies(Date date) {
+    String result = "OK"
+    List<Company> companies = companyService.getAllCompaniesAcceptedAndWithAliasStp()
+    companies.each { company ->
+      companyService.conciliateStpTransactionsForCompany(company)
+    }
+    result
+  }
+
 }
