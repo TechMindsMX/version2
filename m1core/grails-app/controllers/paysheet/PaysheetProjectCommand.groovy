@@ -26,7 +26,7 @@ class PaysheetProjectCommand implements Validateable {
     new PaysheetProject(
       paysheetContract:paysheetContract,
       name:this.name,
-      description:this.name,
+      description:this.description,
       integrationFactor:getValueInBigDecimal(this.integrationFactor),
       occupationalRiskRate:getValueInBigDecimal(this.occupationalRiskRate),
       commission:getValueInBigDecimal(this.commission)
