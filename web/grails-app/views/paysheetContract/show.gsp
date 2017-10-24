@@ -16,6 +16,7 @@
     <div id="edit-address" class="content scaffold-edit" role="main">
 
       <g:render template="paysheetContractData"/>
+      <g:render template="paysheetContractProjects"/>
       <g:render template="paysheetContractEmployees"/>
       
       <g:if test="${availableEmployees}">
