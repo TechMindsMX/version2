@@ -2,6 +2,7 @@ package com.modulus.uno.paysheet
 
 import com.modulus.uno.BusinessEntityService
 import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
 
 class PaysheetContractService {
   
@@ -33,5 +34,15 @@ class PaysheetContractService {
     paysheetContract.removeFromEmployees(employee)
     paysheetContract.save()
     paysheetContract
+  }
+
+  List<PaysheetContract> getPaysheetContractsWithProjectsOfCompany(Company company){
+    List<PaysheetContract> all = PaysheetContract.findAllByCompany(company)
+    List<PaysheetContract> result = all.collect {
+      if (it.projects) {
+        return it
+      }
+    }.grep()
+    result
   }
 }
