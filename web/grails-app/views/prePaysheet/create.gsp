@@ -10,7 +10,7 @@
       <h1>
         <i class="fa fa-credit-card-alt fa-3x"></i>
         Crear Pre-Nómina
-        <small>${company}</small>
+        <small>${prePaysheet?.paysheetContract?.client}</small>
       </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
@@ -29,6 +29,13 @@
                 </ul>
               </g:hasErrors>
 
+              <g:if test="${!prePaysheet.paysheetContract}">
+                <g:form action="choosePaysheetContract">
+                  <g:render template="choosePaysheetContract"/>
+                </g:form>
+              </g:if>
+
+              <g:if test="${prePaysheet.paysheetContract}">
               <g:form action="save">
                 <fieldset class="form">
                   <g:render template="form" bean="${prePaysheet}"/>
@@ -43,6 +50,7 @@
                   </div>
                 </div>
               </g:form>
+              </g:if>
           </div>
         </div>
       </div>
