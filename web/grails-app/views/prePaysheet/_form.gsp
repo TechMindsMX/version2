@@ -1,9 +1,9 @@
-<input type="hidden" name="companyId" value="${company.id}"/>
+<input type="hidden" name="contractId" value="${prePaysheet?.paysheetContract?.id}"/>
 <div class="row">
   <div class="col-md-12">
     <div class="form-group">
       <label><g:message code="prePaysheet.label.paysheetProject"/></label>
-      <g:select class="form-control" name="paysheetProject" from="${company.paysheetProjects.sort{it.name}}" optionKey="name" optionValue="name" value="${prePaysheet?.paysheetProject}"/>
+      <g:select class="form-control" name="paysheetProject" from="${prePaysheet?.paysheetContract?.projects.sort{it.name}}" optionKey="name" optionValue="name" value="${prePaysheet?.paysheetProject}"/>
     </div>
   </div>
 </div>
@@ -32,7 +32,7 @@
   <div class="col-md-12">
     <div class="form-group">
       <label><g:message code="prePaysheet.label.accountExecutive"/></label>
-      <input class="form-control" type="text" name="accountExecutive" value="${prePaysheet?.accountExecutive}" required="" maxLength="200"/>
+      <input class="form-control" type="text" name="accountExecutive" value="${prePaysheet?.accountExecutive?:prePaysheet?.paysheetContract?.executive.name}" required="" maxLength="200"/>
     </div>
   </div>
 </div>
