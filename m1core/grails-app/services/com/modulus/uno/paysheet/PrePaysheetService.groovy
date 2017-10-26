@@ -28,10 +28,10 @@ class PrePaysheetService {
     prePaysheet
   }
 
-  Map getListAndCountPrePaysheetsForCompany(Company company, Map params) {
+  Map getListAndCountPrePaysheetsForPaysheetContract(PaysheetContract paysheetContract, Map params) {
     Map prePaysheets = [:]
-    prePaysheets.list = PrePaysheet.findAllByCompany(company, params)
-    prePaysheets.total = PrePaysheet.countByCompany(company)
+    prePaysheets.list = PrePaysheet.findAllByPaysheetContract(paysheetContract, params)
+    prePaysheets.total = PrePaysheet.countByPaysheetContract(paysheetContract)
     prePaysheets
   }
 
