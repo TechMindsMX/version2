@@ -8,7 +8,7 @@
 </div>
 <div class="row">
   <div class="col-md-12 text-right">
-    <g:submitButton name="choose" class="btn btn-primary" value="Crear" />
+    <g:submitButton name="choose" class="btn btn-primary" value="Siguiente" />
     <g:link class="btn btn-default" controller="dashboard" action="index">Cancelar</g:link>
   </div>
 </div>
