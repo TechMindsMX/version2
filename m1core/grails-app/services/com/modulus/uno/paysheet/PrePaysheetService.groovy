@@ -180,7 +180,7 @@ class PrePaysheetService {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	String createPrePaysheetEmployeeFromData(Map dataEmployee, PrePaysheet prePaysheet) {
-	  if (!employeeService.employeeAlreadyExistsInCompany(dataEmployee.RFC, prePaysheet.company)) {
+	  if (!employeeService.employeeAlreadyExistsInCompany(dataEmployee.RFC, prePaysheet.paysheetContract.company)) {
       transactionStatus.setRollbackOnly()
       return "Error: el empleado no está registrado en la empresa"
     }
@@ -190,8 +190,13 @@ class PrePaysheetService {
 			return "Error: el empleado ya está agregado a la prenómina"
 		}
 
-		EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(dataEmployee.RFC, prePaysheet.company)
-		BusinessEntity businessEntity = prePaysheet.company.businessEntities.find { be -> be.rfc == dataEmployee.RFC }
+    if (!prePaysheet.paysheetContract.employees.find { employee -> employee.rfc==dataEmployee.RFC }) {
+			transactionStatus.setRollbackOnly()
+			return "Error: el empleado no está asociado al contrato de nómina"
+    }
+
+		EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(dataEmployee.RFC, prePaysheet.paysheetContract.company)
+		BusinessEntity businessEntity = prePaysheet.paysheetContract.employees.find { be -> be.rfc == dataEmployee.RFC }
 
 		BankAccount bankAccount = businessEntity.banksAccounts.find { ba -> ba.clabe == dataEmployee.CLABE }
 		if (!bankAccount) {
