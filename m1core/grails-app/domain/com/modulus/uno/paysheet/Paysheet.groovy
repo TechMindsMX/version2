@@ -1,6 +1,5 @@
 package com.modulus.uno.paysheet
 
-import com.modulus.uno.Company
 import com.modulus.uno.S3Asset
 
 class Paysheet {
@@ -12,7 +11,7 @@ class Paysheet {
   Date dateCreated
   Date lastUpdated
 
-  static belongsTo = [company:Company]
+  static belongsTo = [paysheetContract:PaysheetContract]
   static hasMany = [employees:PaysheetEmployee, dispersionFiles:S3Asset]
 
   static constraints = {
