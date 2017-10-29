@@ -11,7 +11,7 @@
       <h1>
         <i class="fa fa-credit-card-alt fa-3x"></i>
         Nómina
-        <small>${paysheet.company}</small>
+        <small>${paysheet.paysheetContract.client}</small>
       </h1>
     </div>
 
