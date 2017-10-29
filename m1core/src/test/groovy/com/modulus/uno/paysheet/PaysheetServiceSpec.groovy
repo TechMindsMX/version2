@@ -17,7 +17,7 @@ import com.modulus.uno.ComposeName
 import com.modulus.uno.NameType
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, PaysheetContract])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
@@ -43,7 +43,8 @@ class PaysheetServiceSpec extends Specification {
   }
 
   private PrePaysheet createPrePaysheet() {
-    PrePaysheet prePaysheet = new PrePaysheet(company: new Company().save(validate:false)).save(validate:false)
+    PaysheetContract paysheetContract = new PaysheetContract(company: new Company().save(validate:false)).save(validate:false)
+    PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
     prePaysheet.addToEmployees(new PrePaysheetEmployee().save(validate:false))
     prePaysheet.save(validate:false)
     prePaysheet
