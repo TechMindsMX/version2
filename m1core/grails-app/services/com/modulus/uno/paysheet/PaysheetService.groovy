@@ -23,7 +23,7 @@ class PaysheetService {
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = new Paysheet(
       prePaysheet:prePaysheet,
-      company:prePaysheet.company
+      paysheetContract:prePaysheet.paysheetContract
     )
     paysheet.save()
     loadEmployeesToPaysheetFromPrePaysheet(paysheet, prePaysheet)
