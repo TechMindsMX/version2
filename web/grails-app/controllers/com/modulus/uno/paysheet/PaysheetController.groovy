@@ -6,6 +6,7 @@ class PaysheetController {
 
   PaysheetService paysheetService
   PaysheetEmployeeService paysheetEmployeeService
+  PaysheetContractService paysheetContractService
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
@@ -17,11 +18,17 @@ class PaysheetController {
   }
 
   def list() {
-    params.max = 25
     Company company = Company.get(session.company)
-    List<Paysheet> paysheetList = Paysheet.findAllByCompany(company, params)
-    Integer paysheetCount = Paysheet.countByCompany(company)
-    [paysheetList:paysheetList, paysheetCount:paysheetCount]
+    List<PaysheetContract> paysheetContracts = paysheetContractService.getPaysheetContractsWithProjectsOfCompany(company)
+    [paysheetContracts:paysheetContracts]
+  }
+
+  def listPaysheetsForPaysheetContract() {
+    params.max = 25
+    PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
+    List<Paysheet> paysheetList = Paysheet.findAllByPaysheetContract(paysheetContract, params)
+    Integer paysheetCount = Paysheet.countByPaysheetContract(paysheetContract)
+    render view:"list", model:[client:paysheetContract.client, paysheetList:paysheetList, paysheetCount:paysheetCount]
   }
 
   def sendToAuthorize(Paysheet paysheet) {
