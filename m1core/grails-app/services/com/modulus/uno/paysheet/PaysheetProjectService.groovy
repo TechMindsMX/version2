@@ -16,8 +16,8 @@ class PaysheetProjectService {
     paysheetProject.delete()
   }
 
-  PaysheetProject getPaysheetProjectByCompanyAndName(Company company, String name) {
-    PaysheetProject.findByCompanyAndName(company, name)
+  PaysheetProject getPaysheetProjectByPaysheetContractAndName(PaysheetContract paysheetContract, String name) {
+    PaysheetProject.findByPaysheetContractAndName(paysheetContract, name)
   }
 
 }
