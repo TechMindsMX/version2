@@ -40,7 +40,7 @@ class PaysheetController {
     log.info "Exporting to Xls the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXls(paysheet)
     xls.with {
-      setResponseHeaders(response, "nomina-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nomina-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
@@ -59,7 +59,7 @@ class PaysheetController {
     log.info "Exporting to Xls only Imss the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXlsImss(paysheet)
     xls.with {
-      setResponseHeaders(response, "nominaIMSS-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nominaIMSS-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
@@ -68,7 +68,7 @@ class PaysheetController {
     log.info "Exporting to Xls only assimilable the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXlsAssimilable(paysheet)
     xls.with {
-      setResponseHeaders(response, "nominaAsimilables-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nominaAsimilables-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
@@ -83,7 +83,7 @@ class PaysheetController {
     log.info "Exporting to Xls only Cash the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXlsCash(paysheet)
     xls.with {
-      setResponseHeaders(response, "nominaEfectivo-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nominaEfectivo-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
