@@ -2,61 +2,69 @@
 <html>
     <head>
         <meta name="layout" content="main" />
+        <g:set var="entityName" value="${message(code: 'quotationContract.label', default: 'QuotationContract')}" />
+    <title><g:message code="default.create.label" args="[entityName]" /></title>
     </head>
     <body>
-      <div class="page-title">
-        <h1><g:message code="document.create"/></h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Compañia</li>
-          <li class="active">Visor de Documentos</li>
-        </ol>
-      </div>
-      <div id="create-address" class="content scaffold-create" role="main">
-        <div class="portlet portlet-blue">
-          <div class="portlet-heading">
-            <div class="portlet-title">
-              <br />
-              <br />
+    <div class="page-title">
+      <h1>
+        <i class="fa fa-list-alt fa-3x"></i>
+        Cotización
+        <small>${company}</small>
+      </h1>
+    </div>
+
+    <div id="edit-address" class="content scaffold-edit" role="main">
+      <div class="portlet portlet-blue">
+        <div class="portlet-heading">
+          <div class="portlet-title">
+           <div class="portlet-title">
             </div>
             <div class="clearfix"></div>
           </div>
-          <div id="horizontalFormExample" class="panel-collapse collapse in">
-            <div class="portlet-body clearfix">
-              <div class="col-sm-4 col-md-4">
-                <ul class="not-style">
-                  <g:each var="document" in="${documents}">
-                  <li>
-                    <p>
-                    <a href="${baseUrlDocuments}/${document.title}.${document.mimeType}" class="btn btn-default" download><i class="fa fa-download"></i></a>
-                      <a href="#" class="documentIframe" path="${baseUrlDocuments}/${document.title}.${document.mimeType}" ><g:message code="document.type.${document.type}" /> </a>
-                    </p>
-                  </li>
-                  </g:each>
-                  <p><hr></p>
-                  <g:if test="${infoUser}">
-                    <g:render template="infoUser" bean="${infoUser}" />
-                  </g:if>
-                  <g:if test="${infoCompany}">
-                    <g:render template="infoCompany" bean="${infoCompany}" />
-                  </g:if>
-                </ul>
-              </div>
-              <div class="col-sm-8 col-md-8">
-                <iframe id="frameView" src="" width="100%" height="400px">
-                </iframe>
-              </div>
-              <p align="center">
-                <a href='${createLink(controller:"company",action:"show", id:"${company}")}' class="btn btn-default">Regresar</a>
-              </p>
+
+        <div id="horizontalFormExample" class="panel-collapse collapse in">
+          <div class="portlet-body">
+            <g:if test="${flash.message}">
+              <div class="message" role="status">${flash.message}</div>
+            </g:if>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-11">
+            <div class="form-group">
+              <label><g:message code="Clientes"/></label>
+              <input class="form-control" type="text" name="client" required="" maxLength="50"/>
             </div>
           </div>
         </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3">
+            <label><g:message code="Fecha Inicio" /></label>
+            <input class="form-control" type="text" id="datepicker" name="fechaInicio" required="required">
+          </div>
+          <div class="col-md-4">
+            <label><g:message code="Comisión"/></label>
+            <input class="form-control" type="number" min="0.00" max="16.00" step="0.01" name="commission" required=""/>
+          </div>
+        </div> 
+        <br>
+        <br>
+        <div class="row">
+          <div class="col-md-6">
+            <g:link class="btn btn-default" controller="dashboard" action="index">Cancelar</g:link>
+          </div>
+          <div class="col-md-6 text-right">
+            <g:submitButton name="create" class="btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+          </div>
+        </div>
+
+        </div>
       </div>
-      <g:javascript>
-        $(".documentIframe").on("click",function(){
-          var url = $(this).attr("path");
-          $("#frameView").attr("src",url);
-        });
-      </g:javascript>
+    </div>
+    
+    <asset:javascript src="quotationContract/create.js"/>  
     </body>
 </html>
