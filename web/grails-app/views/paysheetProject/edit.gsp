@@ -70,7 +70,7 @@
                 </sec:ifAnyGranted>
                   </div>
                   <div class="col-md-6 text-right">
-                    <g:link class="btn btn-primary" controller="paysheetContract" action="show" id="${paysheetProject.paysheetContract.id}">Cancelar</g:link>
+                    <g:link class="btn btn-primary" controller="paysheetProject" action="show" id="${paysheetProject.id}">Cancelar</g:link>
                   </div>
                 </div>
               </g:form>
