@@ -66,5 +66,10 @@ class PaysheetProjectController {
   def show(PaysheetProject paysheetProject) {
     respond paysheetProject
   }
+  
+  def choosePayers(PaysheetProject paysheetProject) {
+    List<Company> corporateCompanies = paysheetProjectService.getCompaniesInCorporate(session.company.toLong())
+    render view:"show", model:[paysheetProject:paysheetProject, payersList:corporateCompanies]
+  }
 
 }
