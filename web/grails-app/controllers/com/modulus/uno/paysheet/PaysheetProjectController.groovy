@@ -47,7 +47,7 @@ class PaysheetProjectController {
     paysheetProjectService.savePaysheetProject(paysheetProject)
 
     if (paysheetProject.hasErrors()) {
-      render view:"edit", model:[paysheetProject:paysheetProject]
+      redirect action:"show", id:paysheetProject.id
       return
     }
 
@@ -61,6 +61,10 @@ class PaysheetProjectController {
     PaysheetContract paysheetContract = paysheetProject.paysheetContract
     paysheetProjectService.deletePaysheetProject(paysheetProject)
     redirect controller:"paysheetContract", action:"show", id:paysheetContract.id
+  }
+
+  def show(PaysheetProject paysheetProject) {
+    respond paysheetProject
   }
 
 }
