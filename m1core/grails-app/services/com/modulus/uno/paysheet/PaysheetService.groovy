@@ -433,7 +433,7 @@ class PaysheetService {
 	def addInterBankSummary(List summary, Paysheet paysheet, def banks){
 		Map summaryInterBank = [:]
 		summaryInterBank.bank = Bank.findByName("STP")
-		summaryInterBank.accounts = paysheet.company.accounts.first()
+		summaryInterBank.accounts = paysheet.paysheetContract.company.accounts.first()
 		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.imssSalaryNet.sum()
 		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.salaryAssimilable.sum()
 		summaryInterBank.type = "InterBank"
