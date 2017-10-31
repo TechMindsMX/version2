@@ -6,16 +6,29 @@
         <title><g:message code="default.edit.label" args="[entityName]" /></title>
     </head>
     <body>
-        <a href="#edit-movimientosBancarios" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-        <div class="nav" role="navigation">
-            <ul>
-                <li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-                <li><g:link class="list" action="index"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-                <li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-            </ul>
-        </div>
+      <div class="page-title">
+        <h1>
+          <i class="icon-retiro fa-3x"></i>
+          Cuenta ${movimientosBancarios.cuenta}
+          <small>Editar Movimiento Bancario</small>
+        </h1>
+      </div>
+      <div class="col-lg-12">
+        <div class="portlet portlet-blue">
+          <div class="portlet-heading">
+            <div class="portlet-title">
+              <br /><br />
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="defaultPortlet" class="panel-collapse collapse in">
+            <div class="portlet-body">
+
+
+
+
+
         <div id="edit-movimientosBancarios" class="content scaffold-edit" role="main">
-            <h1><g:message code="default.edit.label" args="[entityName]" /></h1>
             <g:if test="${flash.message}">
             <div class="message" role="status">${flash.message}</div>
             </g:if>
@@ -27,14 +40,21 @@
             </ul>
             </g:hasErrors>
             <g:form resource="${this.movimientosBancarios}" method="PUT">
+                <g:hiddenField name="id" value="${this.movimientosBancarios?.id}" />
                 <g:hiddenField name="version" value="${this.movimientosBancarios?.version}" />
                 <fieldset class="form">
-                    <f:all bean="movimientosBancarios"/>
+                	<g:render template="form"/>
                 </fieldset>
                 <fieldset class="buttons">
-                    <input class="save" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+                    <input class="btn btn-primary" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
                 </fieldset>
             </g:form>
         </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <asset:javascript src="movimientosBancarios/create.js"/>
     </body>
 </html>

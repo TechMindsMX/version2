@@ -35,7 +35,6 @@
             </ul>
             </g:hasErrors>
             <g:form action="save">
-              <input type="hidden" name="cuenta" value="${movimientosBancarios.cuenta.id}" />
                 <fieldset class="form">
                  <g:render template="form"  />
                 </fieldset>
