@@ -72,4 +72,13 @@ class PaysheetProjectController {
     render view:"show", model:[paysheetProject:paysheetProject, payersList:corporateCompanies]
   }
 
+  def addPayerCompany(PayerPaysheetProjectCommand command) {
+    log.info "Payer Paysheet project command: ${command.dump()}"
+    PayerPaysheetProject payerPaysheetProject = command.createPayerPaysheetProject()
+    log.info "Payer Paysheet project to save: ${payerPaysheetProject.dump()}"
+    paysheetProjectService.savePayerPaysheetProject(payerPaysheetProject)
+   
+    redirect action:"show", id:payerPaysheetProject.paysheetProject.id
+  }
+
 }
