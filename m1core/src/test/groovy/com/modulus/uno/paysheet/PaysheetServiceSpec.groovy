@@ -206,7 +206,8 @@ class PaysheetServiceSpec extends Specification {
 			company.addToBanksAccounts(new BankAccount(banco:bank))
 			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
 			company.save(validate:false)
-			paysheet.company = company
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+			paysheet.paysheetContract = paysheetContract
 			paysheet.save(validate:false)
 		when:
 			def result = service.getBanksAccountsToPaymentDispersion(paysheet)
@@ -231,7 +232,8 @@ class PaysheetServiceSpec extends Specification {
 			company.addToBanksAccounts(new BankAccount(banco:bank))
 			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
 			company.save(validate:false)
-			paysheet.company = company
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+			paysheet.paysheetContract = paysheetContract
 			paysheet.save(validate:false)
 		when:
 			def result = service.getBanksAccountsToPaymentDispersion(paysheet)

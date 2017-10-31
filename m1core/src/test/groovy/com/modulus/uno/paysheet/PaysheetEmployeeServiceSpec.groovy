@@ -14,7 +14,7 @@ import com.modulus.uno.Company
 import com.modulus.uno.Bank
 
 @TestFor(PaysheetEmployeeService)
-@Mock([PaysheetEmployee, Paysheet, PrePaysheet, PrePaysheetEmployee, DataImssEmployee, EmployeeLink, Company, BreakdownPaymentEmployee, PaysheetProject, Bank])
+@Mock([PaysheetEmployee, Paysheet, PrePaysheet, PrePaysheetEmployee, DataImssEmployee, EmployeeLink, Company, BreakdownPaymentEmployee, PaysheetProject, Bank, PaysheetContract])
 class PaysheetEmployeeServiceSpec extends Specification {
 
   DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
@@ -118,7 +118,8 @@ class PaysheetEmployeeServiceSpec extends Specification {
   void "Should create a paysheet employee from a prepaysheet employee"() {
     given:"the paysheet"
       PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.WEEKLY).save(validate:false)
-      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet, company:new Company().save(validate:false)).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:new Company().save(validate:false)).save(validate:false)
+      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet, paysheetContract:paysheetContract).save(validate:false)
     and:"the prePaysheet Employee"
       PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(rfc:"RFC", netPayment:new BigDecimal(5000), bank:new Bank().save(validate:false)).save(validate:false)
       PaysheetEmployee paysheetEmployee = new PaysheetEmployee(paysheet:paysheet, prePaysheetEmployee:prePaysheetEmployee).save(validate:false)
@@ -129,7 +130,7 @@ class PaysheetEmployeeServiceSpec extends Specification {
     and:
       breakdownPaymentEmployeeService.generateBreakdownPaymentEmployee(_) >> breakdownPaymentEmployee
       dataImssEmployeeService.getDataImssForEmployee(_) >> dataImssEmployee
-      paysheetProjectService.getPaysheetProjectByCompanyAndName(_, _) >> paysheetProject
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
     when:
       PaysheetEmployee result = service.createPaysheetEmployeeFromPrePaysheetEmployee(paysheet, prePaysheetEmployee)
     then:
