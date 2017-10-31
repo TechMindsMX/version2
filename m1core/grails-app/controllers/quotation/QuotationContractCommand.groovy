@@ -6,15 +6,13 @@ import com.modulus.uno.quotation.QuotationContract
 import grails.validation.Validateable
 import java.text.*
 
-class QuotationContractCommand {
+class QuotationContractCommand implements Validateable {
 
   String clients
   String commission
   String initDate
 
   QuotationContract getQuotationContract(Company company){
-    println "OOCOmando"*10
-    println company.dump()
     new QuotationContract(
                           client: BusinessEntity.get(clients.toInteger()),
                           commission:getValueInBigDecimal(commission),
