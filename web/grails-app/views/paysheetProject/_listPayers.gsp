@@ -25,7 +25,7 @@
               </tr>
             </thead>
             <tbody>
-              <g:each in="${paysheetProject.payers}" var="payer">
+              <g:each in="${paysheetProject.payers.sort{it.company.bussinessName}}" var="payer">
                 <tr>
                   <td>${payer.company}</td>
                   <td class="text-center">${payer.paymentSchema}</td>
