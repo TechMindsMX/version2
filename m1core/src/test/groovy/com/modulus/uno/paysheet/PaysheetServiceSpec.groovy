@@ -391,8 +391,9 @@ class PaysheetServiceSpec extends Specification {
 		BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
 		company.addToBanksAccounts(bankAccount)
 		company.save(validate:false)
+    PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-      paysheet: new Paysheet(company:company).save(validate:false),
+      paysheet: new Paysheet(paysheetContract:paysheetContract).save(validate:false),
       prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num").save(validate:false),
       salaryImss: getValueInBigDecimal("1000"),
       socialQuota: getValueInBigDecimal("100"),
