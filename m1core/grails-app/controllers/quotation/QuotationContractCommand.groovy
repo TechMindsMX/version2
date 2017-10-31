@@ -1,6 +1,7 @@
 package com.modulus.uno.quotation
 
 import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
 import com.modulus.uno.quotation.QuotationContract
 import grails.validation.Validateable
 import java.text.*
@@ -11,11 +12,14 @@ class QuotationContractCommand {
   String commission
   String initDate
 
-  QuotationContract getQuotationContract(){
+  QuotationContract getQuotationContract(Company company){
+    println "OOCOmando"*10
+    println company.dump()
     new QuotationContract(
                           client: BusinessEntity.get(clients.toInteger()),
-                          commision:getValueInBigDecimal(commission),
-                          initDate: new Date().parse("dd/MM/yyyy", initDate)
+                          commission:getValueInBigDecimal(commission),
+                          initDate: new Date().parse("dd/MM/yyyy", initDate),
+                          company:company
     )
   }
 

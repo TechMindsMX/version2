@@ -6,7 +6,7 @@ import com.modulus.uno.Company
 class QuotationContract {
 
   BusinessEntity client
-  BigDecimal commision
+  BigDecimal commission
   Date initDate
   QuotationContractStatus status = QuotationContractStatus.ACTIVE
 
