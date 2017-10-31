@@ -32,4 +32,10 @@ class PaysheetProjectService {
     companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED, corporate.id)
   }
 
+  @Transactional
+  PayerPaysheetProject savePayerPaysheetProject(PayerPaysheetProject payerPaysheetProject) {
+    payerPaysheetProject.save()
+    log.info "Payer Paysheet project saved: ${payerPaysheetProject.dump()}"
+    payerPaysheetProject  
+  }
 }
