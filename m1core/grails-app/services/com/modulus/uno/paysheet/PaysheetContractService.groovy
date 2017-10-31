@@ -1,0 +1,48 @@
+package com.modulus.uno.paysheet
+
+import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
+
+class PaysheetContractService {
+  
+  BusinessEntityService businessEntityService
+
+  def savePaysheetContract(PaysheetContract paysheetContract){
+    paysheetContract.save()
+    paysheetContract
+  }
+ 
+  def getEmployeesAvailableToAdd(PaysheetContract paysheetContract){
+    List<BusinessEntity> allEmployees = businessEntityService.getAllActiveEmployeesForCompany(paysheetContract.company)
+    List<BusinessEntity> availableEmployees = allEmployees.collect { employee ->
+      if (!paysheetContract.employees.contains(employee)) { employee }
+    }.grep()
+    availableEmployees
+  }
+
+  def addEmployeesToPaysheetContract(PaysheetContract paysheetContract, def params) {
+    List<BusinessEntity> employees = businessEntityService.getBusinessEntitiesFromIds(params.entities)
+    paysheetContract.employees.addAll(employees)
+    paysheetContract.save()
+    log.info "Employees in paysheetContract: ${paysheetContract.employees}"
+    paysheetContract
+  }
+
+  def deleteEmployeeFromPaysheetContract(PaysheetContract paysheetContract, Long idEmployee){
+    BusinessEntity employee = BusinessEntity.get(idEmployee)
+    paysheetContract.removeFromEmployees(employee)
+    paysheetContract.save()
+    paysheetContract
+  }
+
+  List<PaysheetContract> getPaysheetContractsWithProjectsOfCompany(Company company){
+    List<PaysheetContract> all = PaysheetContract.findAllByCompany(company)
+    List<PaysheetContract> result = all.collect {
+      if (it.projects) {
+        return it
+      }
+    }.grep()
+    result
+  }
+}

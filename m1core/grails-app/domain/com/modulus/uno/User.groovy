@@ -51,6 +51,10 @@ class User implements Serializable {
 		password column: '`password`'
 	}
 
+  String getName() {
+    profile.fullName
+  }
+
 	static marshaller = {
 		JSON.registerObjectMarshaller(User, 1) { m ->
 			return [

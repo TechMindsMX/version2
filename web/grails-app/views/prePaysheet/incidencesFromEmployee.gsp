@@ -10,8 +10,11 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-credit-card-alt fa-3x"></i>
-        Pre-Nómina / ${prePaysheetEmployee.prePaysheet.company}
-        <small>Incidencias / ${prePaysheetEmployee.rfc} - ${prePaysheetEmployee.nameEmployee}</small>
+        Pre-Nómina / ${prePaysheetEmployee.prePaysheet.paysheetContract.client}
+        <small>
+          Proyecto / ${prePaysheetEmployee.prePaysheet.paysheetProject}<br/>
+          Incidencias / ${prePaysheetEmployee.rfc} - ${prePaysheetEmployee.nameEmployee}
+        </small>
       </h1>
     </div>
 

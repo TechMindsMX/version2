@@ -1,7 +1,5 @@
 package com.modulus.uno.paysheet
 
-import com.modulus.uno.Company
-
 class PaysheetProject {
 
   String name
@@ -10,7 +8,8 @@ class PaysheetProject {
   BigDecimal occupationalRiskRate
   BigDecimal commission
 
-  static belongsTo = [company:Company]
+  static belongsTo = [paysheetContract:PaysheetContract]
+  static hasMany = [payers:PayerPaysheetProject]
 
   static constrains = {
     name nullable:false, blank:false

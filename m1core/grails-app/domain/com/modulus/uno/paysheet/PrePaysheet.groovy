@@ -1,7 +1,6 @@
 package com.modulus.uno.paysheet
 
 import com.modulus.uno.PaymentPeriod
-import com.modulus.uno.Company
 
 class PrePaysheet {
   String paysheetProject
@@ -14,7 +13,7 @@ class PrePaysheet {
   Date dateCreated
   Date lastUpdated
 
-  static belongsTo = [company:Company]
+  static belongsTo = [paysheetContract:PaysheetContract]
   static hasMany = [employees:PrePaysheetEmployee]
 
   BigDecimal getTotal() {

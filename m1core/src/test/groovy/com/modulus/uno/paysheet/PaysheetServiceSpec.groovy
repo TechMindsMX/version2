@@ -18,7 +18,7 @@ import com.modulus.uno.NameType
 import com.modulus.uno.ModulusUnoAccount
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount, PaysheetContract])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
@@ -44,7 +44,8 @@ class PaysheetServiceSpec extends Specification {
   }
 
   private PrePaysheet createPrePaysheet() {
-    PrePaysheet prePaysheet = new PrePaysheet(company: new Company().save(validate:false)).save(validate:false)
+    PaysheetContract paysheetContract = new PaysheetContract(company: new Company().save(validate:false)).save(validate:false)
+    PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
     prePaysheet.addToEmployees(new PrePaysheetEmployee().save(validate:false))
     prePaysheet.save(validate:false)
     prePaysheet
@@ -206,7 +207,8 @@ class PaysheetServiceSpec extends Specification {
 			company.addToBanksAccounts(new BankAccount(banco:bank))
 			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
 			company.save(validate:false)
-			paysheet.company = company
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+			paysheet.paysheetContract = paysheetContract
 			paysheet.save(validate:false)
 		when:
 			def result = service.getBanksAccountsToPaymentDispersion(paysheet)
@@ -231,7 +233,8 @@ class PaysheetServiceSpec extends Specification {
 			company.addToBanksAccounts(new BankAccount(banco:bank))
 			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
 			company.save(validate:false)
-			paysheet.company = company
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+			paysheet.paysheetContract = paysheetContract
 			paysheet.save(validate:false)
 		when:
 			def result = service.getBanksAccountsToPaymentDispersion(paysheet)

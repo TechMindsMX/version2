@@ -10,7 +10,7 @@
       <h1>
         <i class="fa fa-credit-card-alt fa-3x"></i>
         Agregar Empleados a Pre-Nómina
-        <small>${prePaysheet.company}</small>
+        <small>${prePaysheet.paysheetContract.client}</small>
       </h1>
     </div>
 

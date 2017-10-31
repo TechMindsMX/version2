@@ -89,7 +89,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateCommission(PaysheetEmployee paysheetEmployee) {
-    PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheetEmployee.paysheet.company, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
+    PaysheetProject project = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheetEmployee.paysheet.paysheetContract, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
     (paysheetEmployee.paysheetCost * (project.commission/100)).setScale(2, RoundingMode.HALF_UP)
   }
 

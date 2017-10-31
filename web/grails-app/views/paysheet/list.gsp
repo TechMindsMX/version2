@@ -10,12 +10,21 @@
       <h1>
         <i class="fa fa-credit-card-alt fa-3x"></i>
         Lista de Nóminas
-        <small>${company}</small>
+        <small>${client}</small>
       </h1>
     </div>
     <div class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div id="horizontalFormExample" class="panel-collapse collapse in">
+
+        <g:if test="${!paysheetList}">
+          <g:form action="listPaysheetsForPaysheetContract">
+            <g:render template="/prePaysheet/choosePaysheetContract"/>
+          </g:form>
+        </g:if>
+
+        <g:if test="${paysheetList}">
+
 
           <div class="portlet-body">
             <div class="table-responsive">
@@ -58,6 +67,7 @@
               </div>
             </div>
           </div>
+        </g:if>
 
         </div>
       </div>

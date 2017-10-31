@@ -13,7 +13,7 @@ import com.modulus.uno.Company
 
 
 @TestFor(BreakdownPaymentEmployeeService)
-@Mock([Paysheet, PrePaysheetEmployee, PaysheetEmployee, BreakdownPaymentEmployee, EmployeeLink, PaysheetProject, DataImssEmployee, PrePaysheet, Company])
+@Mock([Paysheet, PrePaysheetEmployee, PaysheetEmployee, BreakdownPaymentEmployee, EmployeeLink, PaysheetProject, DataImssEmployee, PrePaysheet, Company, PaysheetContract])
 class BreakdownPaymentEmployeeServiceSpec extends Specification {
 
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
@@ -45,10 +45,11 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
       EmployeeLink employee = new EmployeeLink(employeeRef:"RFC").save(validate:false)
     and:
       PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"proyecto").save(validate:false)
-      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
     and:
       PaysheetProject paysheetProject = new PaysheetProject(integrationFactor:new BigDecimal(1.0452)).save(validate:false)
-      paysheetProjectService.getPaysheetProjectByCompanyAndName(_, _) >> paysheetProject
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
       DataImssEmployee dataImssEmployee = new DataImssEmployee(baseImssMonthlySalary:new BigDecimal(5000)).save(validate:false)
       dataImssEmployeeService.getDataImssForEmployee(_) >> dataImssEmployee
     when:
@@ -213,10 +214,11 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
       BigDecimal baseQuotation = bq
     and:
       PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"proyecto").save(validate:false)
-      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
     and:
       PaysheetProject paysheetProject = new PaysheetProject(occupationalRiskRate:new BigDecimal(0.54355)).save(validate:false)
-      paysheetProjectService.getPaysheetProjectByCompanyAndName(_, _) >> paysheetProject
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
     when:
       BigDecimal occupationalRisk = service.getOccupationalRisk(baseQuotation, paysheet)
     then:
@@ -294,12 +296,13 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
       Company company = new Company().save(validate:false)
       PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(rfc:"RFC").save(validate:false)
       PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"proyecto").save(validate:false)
-      Paysheet paysheet = new Paysheet(company:company, prePaysheet:prePaysheet).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
       PaysheetEmployee paysheetEmployee = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee, paysheet:paysheet).save(validate:false)
       EmployeeLink employee = new EmployeeLink(employeeRef:"RFC").save(validate:false)
     and:
       PaysheetProject paysheetProject = new PaysheetProject(integrationFactor:new BigDecimal(1.0452), occupationalRiskRate:new BigDecimal(0.54355)).save(validate:false)
-      paysheetProjectService.getPaysheetProjectByCompanyAndName(_, _) >> paysheetProject
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
       DataImssEmployee dataImssEmployee = new DataImssEmployee(baseImssMonthlySalary:bimss).save(validate:false)
       dataImssEmployeeService.getDataImssForEmployee(_) >> dataImssEmployee
     when:
