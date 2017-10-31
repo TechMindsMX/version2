@@ -31,11 +31,15 @@
           </div>
         </div>
 
+        <g:form name="saveCommission" url="[action:'save',controller:'QuotationContract']">
+
         <div class="row">
           <div class="col-md-11">
             <div class="form-group">
               <label><g:message code="Clientes"/></label>
-              <input class="form-control" type="text" name="client" required="" maxLength="50"/>
+              <g:select name="clients" class="form-control"
+              from="${clients}"
+              optionKey="id" />
             </div>
           </div>
         </div>
@@ -49,7 +53,7 @@
             <label><g:message code="Comisión"/></label>
             <input class="form-control" type="number" min="0.00" max="16.00" step="0.01" name="commission" required=""/>
           </div>
-        </div> 
+        </div>
         <br>
         <br>
         <div class="row">
@@ -60,11 +64,12 @@
             <g:submitButton name="create" class="btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
           </div>
         </div>
+        </g:form>
 
         </div>
       </div>
     </div>
-    
-    <asset:javascript src="quotationContract/create.js"/>  
+
+    <asset:javascript src="quotationContract/create.js"/>
     </body>
 </html>
