@@ -410,4 +410,19 @@ class CompanyService {
     list
   }
 
+  List<User> getUsersWithRoleForCompany(String role, Company company) {
+    def crit = UserRoleCompany.createCriteria()
+    def urc = crit.list {
+      roles {
+        eq("authority", role)
+      }
+      eq("company", company)
+    }
+    List<User> users = []
+    urc.each {
+      users.add(it.user)
+    }
+    users
+  }
+
 }

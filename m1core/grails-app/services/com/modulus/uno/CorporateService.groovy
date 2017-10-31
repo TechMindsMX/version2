@@ -145,4 +145,14 @@ class CorporateService {
     copyAndReplaceTextInFile(fileDefaultApi,fileNewApi) { it.replaceAll('urlCorporate',"${corporate.corporateUrl}-api${baseUrl}" )}
   }
 
+  Corporate getCorporateFromCompany(Long idCompany) {
+    def c = Corporate.createCriteria()
+    def corporate = c.get {
+      companies {
+        eq("id", idCompany)
+      }
+    }
+    corporate
+  }
+
 }
