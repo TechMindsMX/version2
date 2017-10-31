@@ -18,7 +18,7 @@
         <g:render template="listPayers"/>
 
         <g:if test="${payersList}">
-          <g:form action="addPayerCompany" id="${paysheetProject.id}">
+          <g:form action="addPayerCompany">
             <g:render template="choosePayerCompany"/>
           </g:form>
         </g:if>
@@ -31,7 +31,7 @@
 
         <div class="row">
           <div class="col-md-12 text-right">
-            <g:link class="btn btn-primary" controller="paysheetContract" action="list">Salir</g:link>
+            <g:link class="btn btn-primary" controller="paysheetContract" action="show" id="${paysheetProject.paysheetContract.id}">Salir</g:link>
           </div>
         </div>
 
