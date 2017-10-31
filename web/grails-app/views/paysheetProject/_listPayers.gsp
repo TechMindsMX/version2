@@ -21,13 +21,15 @@
               <tr>
                 <th class="text-center">Empresa</th>
                 <th class="text-center">Esquema</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               <g:each in="${paysheetProject.payers}" var="payer">
                 <tr>
                   <td>${payer.company}</td>
-                  <td>${payer.schema}</td>
+                  <td class="text-center">${payer.paymentSchema}</td>
+                  <td class="text-center"><g:link class="btn btn-danger" action="deletePayer" id="${payer.id}">Quitar</g:link>
                 </tr>
               </g:each>
             </tbody>
