@@ -81,4 +81,10 @@ class PaysheetProjectController {
     redirect action:"show", id:payerPaysheetProject.paysheetProject.id
   }
 
+  def deletePayer(PayerPaysheetProject payer) {
+    log.info "Deleting payer paysheet project: ${payer.dump()}"
+    PaysheetProject paysheetProject = payer.paysheetProject
+    paysheetProjectService.deletePayer(payer)
+    redirect action:"show", id:paysheetProject.id
+  }
 }
