@@ -8,11 +8,12 @@
   </div>
 
   <div class="portlet-body">
+    <g:hiddenField name="paysheetProject" value="${paysheetProject.id}"/>
     <div class="row">
       <div class="col-md-6">
         <div class="form-group">
           <label>Empresa:</label>
-          <g:select class="form-control" name="company" from="${payersList.sort{it.bussinessName}}" required="" noSelection="['':'- Elija la empresa']"/>
+          <g:select class="form-control" name="company" from="${payersList.sort{it.bussinessName}}" required="" noSelection="['':'- Elija la empresa']" optionKey="id"/>
         </div>
       </div>
       <div class="col-md-6">
