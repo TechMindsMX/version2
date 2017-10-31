@@ -6,6 +6,7 @@ import com.modulus.uno.Company
 class QuotationContractController {
 
     BusinessEntityService businessEntityService
+    QuotationContractService quotationContractService
 
     def show(){
     	Company company = Company.get(session.company)
@@ -16,9 +17,8 @@ class QuotationContractController {
                                               ]
     }
 
-    def save(){
-       println "Estamos en el guardado"
-       println params.dump()
+    def save(QuotationContractCommand quotationContractCommand){
+      quotationContractService.create(quotationContractCommand)
        redirect action: 'show'
     }
 
