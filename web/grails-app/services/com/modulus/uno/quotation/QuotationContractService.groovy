@@ -13,9 +13,6 @@ class QuotationContractService {
     @Transactional
     def create(QuotationContractCommand quotationContractCommand, Company company){
       def quotationContract = quotationContractCommand.getQuotationContract(company)
-      println quotationContractCommand.dump()
-      println "*"*100
-      println quotationContract.dump()
       quotationContract.save()
 
     }
