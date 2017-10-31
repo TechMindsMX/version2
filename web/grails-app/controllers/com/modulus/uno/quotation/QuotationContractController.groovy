@@ -18,7 +18,9 @@ class QuotationContractController {
     }
 
     def save(QuotationContractCommand quotationContractCommand){
-      quotationContractService.create(quotationContractCommand)
+    	Company company = Company.get(session.company)
+      println company.dump()
+      quotationContractService.create(quotationContractCommand, company)
        redirect action: 'show'
     }
 
