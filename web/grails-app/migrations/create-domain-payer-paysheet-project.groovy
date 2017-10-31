@@ -26,7 +26,7 @@ databaseChangeLog = {
                 constraints(nullable: "false")
             }
 
-            column(name: "schema", type: "VARCHAR(255)") {
+            column(name: "payment_schema", type: "VARCHAR(255)") {
                 constraints(nullable: "false")
             }
         }
