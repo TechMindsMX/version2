@@ -5,7 +5,7 @@ import com.modulus.uno.Company
 class PayerPaysheetProject {
   
   Company company
-  PaymentSchema schema
+  PaymentSchema paymentSchema
 
   static belongsTo = [paysheetProject:PaysheetProject]
 
