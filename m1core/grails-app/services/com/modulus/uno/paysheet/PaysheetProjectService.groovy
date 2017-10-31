@@ -38,4 +38,10 @@ class PaysheetProjectService {
     log.info "Payer Paysheet project saved: ${payerPaysheetProject.dump()}"
     payerPaysheetProject  
   }
+
+  @Transactional
+  def deletePayer(PayerPaysheetProject payerPaysheetProject) {
+    payerPaysheetProject.delete()
+  }
+
 }
