@@ -38,7 +38,7 @@
             <div class="form-group">
               <label><g:message code="Clientes"/></label>
               <g:select name="clients" class="form-control"
-              from="${clients}"
+              from="${clients.sort{it.toString()}}"
               optionKey="id" />
             </div>
           </div>
@@ -58,7 +58,7 @@
         <br>
         <div class="row">
           <div class="col-md-6">
-            <g:link class="btn btn-default" controller="dashboard" action="index">Cancelar</g:link>
+            <g:link class="btn btn-default" controller="quotationContract" action="index">Cancelar</g:link>
           </div>
           <div class="col-md-6 text-right">
             <g:submitButton name="create" class="btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />

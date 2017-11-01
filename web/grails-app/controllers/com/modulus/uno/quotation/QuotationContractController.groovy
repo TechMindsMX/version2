@@ -11,11 +11,7 @@ class QuotationContractController {
     def index(){
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      quotationContractList.each{
-            println it.client
-      }
-
-      [quotationContractList: quotationContractList]
+      respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
     }
 
     def create(){
@@ -42,6 +38,12 @@ class QuotationContractController {
     def update(QuotationContractCommand quotationContractCommand){
       quotationContractService.update(params.id, quotationContractCommand.getCommission())
        redirect(action: 'edit', id: params.id)
+    }
+
+    def show(String id){
+      Company company = Company.get(session.company)
+      QuotationContract quotationContract = QuotationContract.get(id.toInteger())
+      [quotationContract:quotationContract, company:company]
     }
 
 
