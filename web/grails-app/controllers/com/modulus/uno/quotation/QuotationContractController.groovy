@@ -9,7 +9,8 @@ class QuotationContractController {
     QuotationContractService quotationContractService
 
     def index(){
-      List<QuotationContract> quotationContractList = QuotationContract.list()
+    	Company company = Company.get(session.company)
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
       quotationContractList.each{
             println it.client
       }
