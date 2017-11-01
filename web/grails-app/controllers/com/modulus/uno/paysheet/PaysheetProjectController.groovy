@@ -53,7 +53,7 @@ class PaysheetProjectController {
 
     log.info "Paysheet Project Instance updated: ${paysheetProject.dump()}"
 
-    redirect controller:"paysheetContract", action:"show", id:paysheetProject.paysheetContract.id
+    redirect controller:"paysheetProject", action:"show", id:paysheetProject.id
   }
 
   def delete(PaysheetProject paysheetProject) {
