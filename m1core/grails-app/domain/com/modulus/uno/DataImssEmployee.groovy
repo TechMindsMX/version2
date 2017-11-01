@@ -23,9 +23,6 @@ class DataImssEmployee {
   }
 
   /*
-  //BigDecimal assimilableMonthlySalary (calculado) //diferencia del neto a pagar en el periodo de pago menos el salario imss calculado del periodo de pago
-  //getIntegratedDailySalary salario base mensual / 30 * factor de integración 1.05452 (definido en los datos imss de la empresa)
-
   Integer getAntiquityInWeeks() {
   }
 

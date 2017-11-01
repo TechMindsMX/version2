@@ -59,5 +59,6 @@
         </div>
       </div>
     </div>
+    <asset:javascript src="dataImssEmployee/salaries.js"/>
   </body>
 </html>
