@@ -61,10 +61,10 @@ class XlsImportService {
 
   def parseXlsMassiveClient_Provider(File xlsFile) {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
-    COLUMN_MAP_PROVIDER.sheet = workbook.getSheetName(0)
-    log.info "Column Map: ${COLUMN_MAP_PROVIDER}"
+    COLUMN_MAP_CLIENT_PROVIDER.sheet = workbook.getSheetName(0)
+    log.info "Column Map: ${COLUMN_MAP_CLIENT_PROVIDER}"
     ExcelImportService excelImportService = new ExcelImportService()
-    List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_PROVIDER)
+    List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_CLIENT_PROVIDER)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
     data

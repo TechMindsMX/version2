@@ -389,7 +389,7 @@ class BusinessEntityService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveClientImportData(Map rowClient, Company company) {
-    if(rowClient.PERSONA.toUpperCase().replace('Í', 'I') != "FISICA" && rowClient.PERSONA.toUpperCase() != "MORAL") {
+    if(checkIfTypeOfBusinessEntityIsCorrect(rowClient.PERSONA)) {
       transactionStatus.setRollbackOnly()
       return "Error: tipo de cliente"
     }
@@ -410,7 +410,7 @@ class BusinessEntityService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveProviderImportData(Map rowProvider, Company company) {
-    if(rowProvider.PERSONA.toUpperCase().replace('Í', 'I') != "FISICA" && rowProvider.PERSONA.toUpperCase() != "MORAL") {
+    if(checkIfTypeOfBusinessEntityIsCorrect(rowProvider.PERSONA)) {
       transactionStatus.setRollbackOnly()
       return "Error: tipo de proveedor"
     }
@@ -433,6 +433,10 @@ class BusinessEntityService {
       return "Error: datos bancarios"
     }
     "Registrado"
+  }
+
+  def checkIfTypeOfBusinessEntityIsCorrect(String persona){
+    persona.toUpperCase().replace('Í', 'I') != "FISICA" && persona.toUpperCase() != "MORAL"
   }
 
   def createBusinessEntityForRowEmployee(Map employeeMap) {
