@@ -29,5 +29,9 @@ class QuotationContractCommand implements Validateable {
     bd
   }
 
+  BigDecimal getCommission(){
+    getValueInBigDecimal(commission)
+  }
+
 
 }

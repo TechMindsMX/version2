@@ -16,4 +16,12 @@ class QuotationContractService {
       quotationContract.save()
 
     }
+
+    @Transactional
+    def update(id, commission){
+      QuotationContract quotationContract = QuotationContract.get(id.toInteger())
+      quotationContract.commission = commission
+      quotationContract.save()
+      println "En el servicio"
+    }
 }

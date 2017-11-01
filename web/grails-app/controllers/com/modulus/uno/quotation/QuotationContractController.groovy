@@ -17,7 +17,7 @@ class QuotationContractController {
       [quotationContractList: quotationContractList]
     }
 
-    def show(){
+    def create(){
     	Company company = Company.get(session.company)
 
       def clients = businessEntityService.findBusinessEntityByKeyword("","CLIENT" , company)
@@ -29,7 +29,18 @@ class QuotationContractController {
     def save(QuotationContractCommand quotationContractCommand){
     	Company company = Company.get(session.company)
       quotationContractService.create(quotationContractCommand, company)
-       redirect action: 'show'
+       redirect action: 'create'
+    }
+
+    def edit(String id){
+      QuotationContract quotationContract = QuotationContract.get(id.toInteger())
+
+      [quotationContract:quotationContract]
+    }
+
+    def update(QuotationContractCommand quotationContractCommand){
+      quotationContractService.update(params.id, quotationContractCommand.getCommission())
+       redirect(action: 'edit', id: params.id)
     }
 
 
