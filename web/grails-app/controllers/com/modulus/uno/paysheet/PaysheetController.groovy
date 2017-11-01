@@ -14,7 +14,7 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet, model:[chargeBanksAccounts: paysheetService.getBanksAccountsToPaymentDispersion(paysheet), baseUrlDocuments:grailsApplication.config.grails.url.base.images]
+    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images]
   }
 
   def list() {
@@ -73,19 +73,16 @@ class PaysheetController {
     }
   }
 
+	def prepareDispersion(Paysheet paysheet){
+		log.info "Preparing summary for dispersion from paysheet: ${paysheet.id}"
+		List dispersionSummary = paysheetService.prepareDispersionSummary(paysheet)
+		render view:"show", model:[paysheet:paysheet, dispersionSummary:dispersionSummary]
+	}
+
   def generatePaymentDispersion(Paysheet paysheet) {
-    log.info "Generating txt payments dispersion charge bank account ${params.chargeBankAccountsIds} from paysheet ${paysheet.id}"
+    log.info "Generating txt payments dispersion ${params} from paysheet ${paysheet.id}"
     paysheetService.generateDispersionFilesFromPaysheet(paysheet, params)
 		redirect action:"show", id:paysheet.id
-  }
-
-  def exportToXlsCash(Paysheet paysheet) {
-    log.info "Exporting to Xls only Cash the paysheet: ${paysheet.dump()}"
-    def xls = paysheetService.exportPaysheetToXlsCash(paysheet)
-    xls.with {
-      setResponseHeaders(response, "nominaEfectivo-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
-      save(response.outputStream)
-    }
   }
 
 	def changePaymentWayFromEmployee(PaysheetEmployee employee) {

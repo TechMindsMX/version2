@@ -15,9 +15,10 @@ import com.modulus.uno.BusinessEntity
 import com.modulus.uno.BusinessEntityType
 import com.modulus.uno.ComposeName
 import com.modulus.uno.NameType
+import com.modulus.uno.ModulusUnoAccount
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, PaysheetContract])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount, PaysheetContract])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
@@ -179,7 +180,7 @@ class PaysheetServiceSpec extends Specification {
 	void "Should complement the dispersion data"() {
 		given:
 			String[] ids = ["1","2","3"]
-			Map dispersionData = [chargeBankAccountsIds:ids]
+			Map dispersionData = [dispersionAccount:ids]
 		and:
 			BankAccount bankAccount1 = new BankAccount().save(validate:false)
 			BankAccount bankAccount2 = new BankAccount().save(validate:false)
@@ -339,10 +340,61 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
 
+	void "Should get banks list from bank accounts to payment dispersion"(){
+		given:"Bank accounts list"
+			Bank bank01 = new Bank(name:"BANCO-1").save(validate:false)
+			Bank bank02 = new Bank(name:"BANCO-2").save(validate:false)
+			List bankAccounts = [new BankAccount(banco:bank01).save(validate:false), new BankAccount(banco:bank02).save(validate:false), new BankAccount(banco:bank01).save(validate:false)]
+		when:
+			def result = service.getListBanksFromBankAccountsToPaymentDispersion(bankAccounts)
+		then:
+			result.size() == 2
+	}
+
+	void "Should get dispersion summary for paysheet"() {
+		given:"The paysheet"
+			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+		and:"Stp bank"
+			Bank stpBank = new Bank(name:"STP").save(validate:false)
+		when:
+			def result = service.prepareDispersionSummary(paysheetEmployee.paysheet)
+		then:
+			result.size() == 2
+			result.first().bank.bankingCode == "999"
+			result.first().accounts.size() == 1
+	}
+
+	void "Should add inter bank summary for dispersion paysheet"(){
+		given:"The paysheet"
+			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+		and:"Stp bank"
+			Bank stpBank = new Bank(name:"STP").save(validate:false)
+		and:"List banks for same bank dispersion"
+			def banks = [new Bank(bankingCode:"100").save(validate:false)]
+	  and:"Summary"
+			List summary = []
+	  when:
+			def result = service.addInterBankSummary(summary, paysheetEmployee.paysheet, banks) 
+		then:
+			result.size() == 1
+			result.first().bank.name == "STP"
+			result.first().totalSA == new BigDecimal(1200)
+			result.first().totalIAS == new BigDecimal(3000)
+	}
+
   private PaysheetEmployee createPaysheetEmployee() {
+		Company company = new Company().save(validate:false)
+		ModulusUnoAccount m1Account = new ModulusUnoAccount().save(validate:false)
+		company.addToAccounts(m1Account)
+		company.save(validate:false)
+		Bank bank = new Bank(bankingCode:"999").save(validate:false)
+		BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
+		company.addToBanksAccounts(bankAccount)
+		company.save(validate:false)
+    PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-      paysheet: new Paysheet().save(validate:false),
-      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: new Bank(bankingCode:"999").save(validate:false), numberEmployee:"Num").save(validate:false),
+      paysheet: new Paysheet(paysheetContract:paysheetContract).save(validate:false),
+      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num").save(validate:false),
       salaryImss: getValueInBigDecimal("1000"),
       socialQuota: getValueInBigDecimal("100"),
       subsidySalary: getValueInBigDecimal("500"),
