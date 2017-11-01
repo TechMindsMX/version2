@@ -28,10 +28,19 @@
             <g:if test="${flash.message}">
               <div class="message" role="status">${flash.message}</div>
             </g:if>
+
+
+              <g:hasErrors bean="${paysheetProject}">
+                <ul class="error alert alert-danger" role="alert">
+                  <g:eachError bean="${paysheetProject}" var="error">
+                  <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message code="paysheetProject.error.${error.field}" args="${[error.defaultMessage.replace('{0}','')]}"/></li>
+                    </g:eachError>
+                </ul>
+              </g:hasErrors>            
           </div>
         </div>
 
-        <g:form name="saveCommission" url="[action:'save',controller:'QuotationContract']">
+        <g:form action="save">
 
         <div class="row">
           <div class="col-md-11">

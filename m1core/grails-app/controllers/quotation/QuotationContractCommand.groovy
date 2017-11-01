@@ -14,9 +14,9 @@ class QuotationContractCommand implements Validateable {
 
   QuotationContract getQuotationContract(Company company){
     new QuotationContract(
-                          client: BusinessEntity.get(clients.toInteger()),
-                          commission:getValueInBigDecimal(commission),
-                          initDate: new Date().parse("dd/MM/yyyy", initDate),
+                          client: BusinessEntity.get(this.clients.toInteger()),
+                          commission:getValueInBigDecimal(this.commission),
+                          initDate: new Date().parse("dd/MM/yyyy", this.initDate),
                           company:company
     )
   }
@@ -29,7 +29,7 @@ class QuotationContractCommand implements Validateable {
     bd
   }
 
-  BigDecimal getCommission(){
+  BigDecimal getCommission(String commission){
     getValueInBigDecimal(commission)
   }
 

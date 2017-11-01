@@ -24,25 +24,41 @@ class QuotationContractController {
     }
 
     def save(QuotationContractCommand quotationContractCommand){
-    	Company company = Company.get(session.company)
-      quotationContractService.create(quotationContractCommand, company)
-       redirect action: 'create'
+      log.info "command: ${quotationContractCommand.dump()}"
+      Company company = Company.get(session.company)
+      def clients = businessEntityService.findBusinessEntityByKeyword("","CLIENT" , company)
+
+      if (quotationContractCommand.hasErrors()) {
+        render view:"create", model:[quotationContract:quotationContractCommand, company:company, clients:clients]
+        return
+      }
+    	
+      QuotationContract quotationContract = quotationContractCommand.getQuotationContract(company)
+
+      quotationContractService.create(quotationContract)
+
+      if (quotationContract.hasErrors()){
+        render view:"create", model:[quotationContract:quotationContract, company:company, clients:clients]
+        return
+      }
+      
+      redirect action: 'show', id:quotationContract.id
     }
 
-    def edit(String id){
-      QuotationContract quotationContract = QuotationContract.get(id.toInteger())
-
+    def edit(QuotationContract quotationContract) {
       [quotationContract:quotationContract]
     }
 
-    def update(QuotationContractCommand quotationContractCommand){
-      quotationContractService.update(params.id, quotationContractCommand.getCommission())
+    def update(QuotationContractCommand quotationContractCommand) {
+     println  quotationContractCommand.dump()
+     println params.dump()
+     Integer id = params.id.toInteger()
+      quotationContractService.update(quotationContractCommand, id)
        redirect(action: 'edit', id: params.id)
     }
 
-    def show(String id){
+    def show(QuotationContract quotationContract) {
       Company company = Company.get(session.company)
-      QuotationContract quotationContract = QuotationContract.get(id.toInteger())
       [quotationContract:quotationContract, company:company]
     }
 

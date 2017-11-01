@@ -31,14 +31,15 @@
           </div>
         </div>
 
-        <g:form name="saveCommission" url="[action:'update',controller:'QuotationContract']">
+        <g:form action="update">
 
         <div class="row">
           <div class="col-md-11">
             <div class="form-group">
               <label><g:message code="Clientes"/></label>
               <input name="id" value="${quotationContract.id}" type="hidden"/>
-              <input name="clients" class="form-control" value="${quotationContract.client}" disabled/>
+              <input name="clientsName"  class="form-control" value="${quotationContract.client}" disabled/>
+              <input name="clients" type="hidden" class="form-control" value="${quotationContract.client.id}"/>
             </div>
           </div>
         </div>
@@ -46,8 +47,7 @@
         <div class="row">
           <div class="col-md-3">
             <label><g:message code="Fecha Apertura" /></label>
-            <g:formatDate format="yyyy-MM-dd" date="${quotationContract.initDate}" class="form-control"/>
-            <input class="form-control" type="hidden" id="datepicker" name="initDate" required="required" value="">
+            <input class="form-control" id="datepicker" name="initDate" required="required" value="">
           </div>
           <div class="col-md-4">
             <label><g:message code="Comisión"/></label>
