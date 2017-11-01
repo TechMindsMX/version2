@@ -24,8 +24,10 @@
       <dd>${dataImssEmployee.nss}</dd>
       <dt>Fecha de Alta</dt>
       <dd><g:formatDate date="${dataImssEmployee.registrationDate}" format="dd-MM-yyyy"/></dd>
-      <dt>Salario Base Mensual</dt>
+      <dt>Salario SA Mensual</dt>
       <dd>${modulusuno.formatPrice(number:dataImssEmployee.baseImssMonthlySalary)}</dd>
+      <dt>Salario IAS Mensual</dt>
+      <dd>${modulusuno.formatPrice(number:(dataImssEmployee.netMonthlySalary - dataImssEmployee.baseImssMonthlySalary))}</dd>
       <dt>Salario Neto Mensual</dt>
       <dd>${modulusuno.formatPrice(number:dataImssEmployee.netMonthlySalary)}</dd>
       <dt>Prima vacacional (%)</dt>

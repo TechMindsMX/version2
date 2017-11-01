@@ -32,7 +32,7 @@ var options = {
             return false;
           } else {
             if(data.sku!==undefined){$('#sku').val(data.sku);}
-            if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}//data.price.toFixed(2)
+            if(data.price!==undefined){$('#price').val(calculatePriceWithCurrency(data.price, data.currency));}//data.price.toFixed(2)
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
             calculateAmountAndNetPrice()
@@ -85,7 +85,7 @@ var optionsBySku = {
             return false;
           } else {
             if(data.productName!==undefined){$('#product-name').val(data.productName);}
-            if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}
+            if(data.price!==undefined){$('#price').val(calculatePriceWithCurrency(data.price, data.currency));}
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
             calculateAmountAndNetPrice()
@@ -130,7 +130,7 @@ $('#products').on('blur',function(){
         return false;
       } else {
         if(data.sku!==undefined){$('#sku').val(data.sku);}
-        if(data.price!==undefined){$('#price').val(caculatePriceWithCurrency(data.price, data.currency));}
+        if(data.price!==undefined){$('#price').val(calculatePriceWithCurrency(data.price, data.currency));}
         if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
         if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
         calculateAmountAndNetPrice()
@@ -147,7 +147,7 @@ $('#products').on('blur',function(){
   }
 });
 
-function caculatePriceWithCurrency(prodPrice, prodCurrency) {
+function calculatePriceWithCurrency(prodPrice, prodCurrency) {
   if (($("#saleCurrency").val()=='MXN' && prodCurrency=='PESOS')
      || ($("#saleCurrency").val()=='USD' && prodCurrency=='USD')) {
     return prodPrice
