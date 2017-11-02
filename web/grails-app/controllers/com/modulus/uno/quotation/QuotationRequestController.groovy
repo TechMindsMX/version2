@@ -4,7 +4,7 @@ import com.modulus.uno.Company
 
 class QuotationRequestController {
 
-  QuotationRequestService quotationRequestService
+    QuotationRequestService quotationRequestService
 
     def index() { }
 
@@ -18,13 +18,8 @@ class QuotationRequestController {
     }
 
     def save(QuotationRequestCommand quotationRequestCommand ){
-      println quotationRequestCommand.dump()
       def quotationRequest = quotationRequestCommand.getQuotationRequest()
-      println "*"*101
-      println quotationRequest.dump()
-
-      println quotationRequestService
-      //quotationRequestService.create(quotationRequest)
+      quotationRequestService.create(quotationRequest)
       redirect(action: 'create')
     }
 }
