@@ -370,6 +370,30 @@ class PaysheetServiceSpec extends Specification {
     new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.ASSIMILABLE  || "UNO"
 	}
 
+	void "Should obtain the banks list from paysheet payers"() {
+		given:"The companies"
+      Company companyOne = new Company(rfc:"UNO").save(validate:false)
+      BankAccount account1 = new BankAccount(banco:new Bank(name:"BANK01")).save(validate:false)
+      BankAccount account2 = new BankAccount(banco:new Bank(name:"BANK02")).save(validate:false)
+      companyOne.addToBanksAccounts(account1)
+      companyOne.save(validate:false)
+      Company companyTwo = new Company(rfc:"DOS").save(validate:false)
+      Bank anotherBank = new Bank(name:"ANOTHER").save(validate:false)
+      BankAccount another = new BankAccount(banco:anotherBank).save(validate:false)
+      companyTwo.addToBanksAccounts(account2)
+      companyTwo.addToBanksAccounts(another)
+      companyTwo.save(validate:false)
+    and:"The payers"
+      List payers = [new PayerPaysheetProject(paymentSchema:PaymentSchema.IMSS, company:companyOne).save(validate:false), new PayerPaysheetProject(paymentSchema:PaymentSchema.ASSIMILABLE, company:companyTwo)]
+		when:
+			def result = service.getBanksFromPayers(payers)
+	  then:
+			result.size() == 3
+      result[0].name == "BANK01"
+      result[1].name == "BANK02"
+      result[2].name == "ANOTHER"
+	}
+
   private PaysheetEmployee createPaysheetEmployee() {
 		Company company = new Company().save(validate:false)
 		ModulusUnoAccount m1Account = new ModulusUnoAccount().save(validate:false)
