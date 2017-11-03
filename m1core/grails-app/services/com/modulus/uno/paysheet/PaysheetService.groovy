@@ -398,18 +398,19 @@ class PaysheetService {
 	List prepareDispersionSummary(Paysheet paysheet){
 		List summary = []
 		List payers = getPayersToPaymentDispersion(paysheet)
-		def banks = getBanksToPaymentDispersion(paysheet)
+		def banks = getBanksFromPayers(payers)
 		banks.each { bank ->
 			Map summaryBank = [:]
 			summaryBank.bank = bank
 			summaryBank.saPayers = getPayersForBankAndSchema(payers, bank, PaymentSchema.IMSS)
-			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.imssSalaryNet.sum()
-			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.salaryAssimilable.sum()
+			summaryBank.iasPayers = getPayersForBankAndSchema(payers, bank, PaymentSchema.ASSIMILABLE)
+			summaryBank.allPayers = payers
+			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
+			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.salaryAssimilable.sum()
 			summaryBank.type = "SameBank"
 			summary.add(summaryBank)
 		}
-		//inter bank data
-		summary = addInterBankSummary(summary, paysheet, banks)
+		summary = addInterBankSummary(summary, paysheet, payers)
 		summary
 	}
 
@@ -417,14 +418,6 @@ class PaysheetService {
     PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
     paysheetProject.payers
   }
-
-	def getBanksToPaymentDispersion(Paysheet paysheet){
-		def banks = [] as Set
-    paysheet.employees.each { employee ->
-      banks.add(employee.prePaysheetEmployee.bank)
-    }
-		banks
-	}
 
   def getPayersForBankAndSchema(List payers, Bank bank, PaymentSchema schema) {
     payers.collect { payer ->
@@ -434,15 +427,28 @@ class PaysheetService {
     }.grep()
   }
 
-	def addInterBankSummary(List summary, Paysheet paysheet, def banks){
+	def addInterBankSummary(List summary, Paysheet paysheet, List payers){
+    def banksPayers = getBanksFromPayers(payers)
 		Map summaryInterBank = [:]
 		summaryInterBank.bank = Bank.findByName("STP")
-		summaryInterBank.accounts = paysheet.paysheetContract.company.accounts.first()
-		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.imssSalaryNet.sum()
-		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.salaryAssimilable.sum()
+    summaryBank.saPayers = payers.findAll { it.paymentSchema == PaymentSchema.IMSS }
+    summaryBank.iasPayers = payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }
+    summaryBank.allPayers = payers
+		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
+		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.salaryAssimilable.sum()
 		summaryInterBank.type = "InterBank"
 		summary.add(summaryInterBank)
 		summary
 	}
+
+  def getBanksFromPayers(List payers) {
+    def banksPayers = [] as Set
+    payers.each { payer ->
+      payer.company.banksAccounts.each { bankAccount ->
+        banksPayers.add(bankAccount.banco)
+      }
+    }
+    banksPayers
+  }
 
 }
