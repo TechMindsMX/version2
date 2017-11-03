@@ -33,11 +33,9 @@
             <div class="col-md-6">
               <dl>
                 <dt>Cliente para cotización</dt>
-                <dd>${quotationRequest.biller}</dd>
+                <dd>${quotationRequest.quotationContract.client}</dd>
                 <dt>Fecha de apertura de la cotización</dt>
                 <dd><g:formatDate format="yyyy-MM-dd" date="${quotationRequest.quotationContract.initDate}" class="form-control"/></dd>
-                <dt>Comisión</dt>
-                <dd>${quotationRequest.commission}</dd>
               </dl>
             </div>
             <div class="col-md-6">
