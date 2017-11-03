@@ -24,8 +24,6 @@ class QuotationRequestController {
     }
 
     def save(QuotationRequestCommand quotationRequestCommand ){
-      println "*"*100
-      println quotationRequestCommand.dump()
       def quotationRequest = quotationRequestCommand.getQuotationRequest()
       quotationRequestService.create(quotationRequest)
       redirect(action: 'show', id: quotationRequest.id)

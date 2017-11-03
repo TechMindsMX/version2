@@ -61,8 +61,7 @@
             <input class="form-control" type="text" id="description" name="description" required="required">
           </div>
           <div class="col-md-4">
-            <label><g:message code="Comisión"/></label>
-            <input class="form-control" type="number" min="0.00" max="16.00" step="0.01" name="commission" required=""/>
+            <input class="form-control" min="0.00" max="16.00" step="0.01" name="commission" value="1.00" type="hidden" required=""/>
           </div>
         </div>
          <div class="row">
