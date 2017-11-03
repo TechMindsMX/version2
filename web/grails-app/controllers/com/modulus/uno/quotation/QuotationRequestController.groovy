@@ -9,7 +9,9 @@ class QuotationRequestController {
     def index() {
     	Company company = Company.get(session.company)
       List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByBiller(company)
-      [quotationRequestList:quotationRequestList]
+      [quotationRequestList:quotationRequestList,
+       company:company
+      ]
     }
 
 
@@ -22,6 +24,8 @@ class QuotationRequestController {
     }
 
     def save(QuotationRequestCommand quotationRequestCommand ){
+      println "*"*100
+      println quotationRequestCommand.dump()
       def quotationRequest = quotationRequestCommand.getQuotationRequest()
       quotationRequestService.create(quotationRequest)
       redirect(action: 'show', id: quotationRequest.id)
@@ -46,4 +50,11 @@ class QuotationRequestController {
         quotationRequestService.update(quotationRequest)
       redirect(action: 'show', id: quotationRequest.id)
     }
+
+    def delete(QuotationRequest quotationRequest){
+      quotationRequestService.delete(quotationRequest)
+      redirect(action: 'index')
+    }
+
+
 }
