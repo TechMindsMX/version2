@@ -13,4 +13,9 @@ class QuotationRequestService {
       quotationRequest.save()
 
     }
+
+    QuotationRequest update(QuotationRequest quotationRequest){
+      quotationRequest.save()
+
+    }
 }
