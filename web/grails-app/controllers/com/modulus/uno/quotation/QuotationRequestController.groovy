@@ -20,6 +20,27 @@ class QuotationRequestController {
     def save(QuotationRequestCommand quotationRequestCommand ){
       def quotationRequest = quotationRequestCommand.getQuotationRequest()
       quotationRequestService.create(quotationRequest)
-      redirect(action: 'create')
+      redirect(action: 'show', id: quotationRequest.id)
+    }
+
+    def show(QuotationRequest quotationRequest){
+
+      [quotationRequest: quotationRequest]
+    }
+
+    def edit(QuotationRequest quotationRequest){
+
+      [quotationRequest:quotationRequest]
+    }
+
+    def update(QuotationRequestCommand quotationRequestCommand){
+        QuotationRequest quotationRequestUpdate = quotationRequestCommand.getQuotationRequest()
+        QuotationRequest quotationRequest = QuotationRequest.get(params.id.toInteger())
+        quotationRequest.description = quotationRequestUpdate.description
+        quotationRequest.commission = quotationRequestCommand.getCommission(quotationRequestCommand.commission)
+        quotationRequest.amount = quotationRequestUpdate.amount
+        quotationRequestService.update(quotationRequest)
+
+      redirect(action: 'show', id: quotationRequest.id)
     }
 }
