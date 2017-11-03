@@ -416,7 +416,7 @@ class PaysheetService {
 
   def getPayersToPaymentDispersion(Paysheet paysheet) {
     PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
-    paysheetProject.payers
+    paysheetProject.payers.toList()
   }
 
   def getPayersForBankAndSchema(List payers, Bank bank, PaymentSchema schema) {
