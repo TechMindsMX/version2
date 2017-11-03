@@ -367,6 +367,7 @@ class PaysheetServiceSpec extends Specification {
     where:
     theBank   |   theSchema   ||  theRfc
     new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.IMSS  || "UNO"
+    new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.ASSIMILABLE  || "UNO"
 	}
 
   private PaysheetEmployee createPaysheetEmployee() {
