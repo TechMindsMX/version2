@@ -18,4 +18,8 @@ class QuotationRequestService {
       quotationRequest.save()
 
     }
+
+    def delete(QuotationRequest quotationRequest){
+      quotationRequest.delete()
+    }
 }
