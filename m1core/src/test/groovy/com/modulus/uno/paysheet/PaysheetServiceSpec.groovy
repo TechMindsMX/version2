@@ -18,17 +18,19 @@ import com.modulus.uno.NameType
 import com.modulus.uno.ModulusUnoAccount
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount, PaysheetContract])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount, PaysheetContract, PayerPaysheetProject, PaysheetProject])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
   PrePaysheetService prePaysheetService = Mock(PrePaysheetService)
   S3AssetService s3AssetService = Mock(S3AssetService)
+  PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
 
   def setup() {
     service.paysheetEmployeeService = paysheetEmployeeService
     service.prePaysheetService = prePaysheetService
     service.s3AssetService = s3AssetService
+    service.paysheetProjectService = paysheetProjectService
   }
 
   void "Should create paysheet from a prepaysheet"() {
@@ -191,55 +193,21 @@ class PaysheetServiceSpec extends Specification {
 			result.chargeBankAccountsList.size() == 3
 	}
 
-	void "Should obtain the bank accounts list for payment dispersion"() {
-		given:"The paysheet with employees and each one with a bank account"
-			Bank bank = new Bank(name:"BANCO").save(validate:false)
-			PrePaysheetEmployee prePaysheetEmployee1 = new PrePaysheetEmployee(bank:bank).save(validate:false)
-			PaysheetEmployee paysheetEmployee1 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee1).save(validate:false)
-			PrePaysheetEmployee prePaysheetEmployee2 = new PrePaysheetEmployee(bank:new Bank(name:"OTRO BANCO").save(validate:false)).save(validate:false)
-			PaysheetEmployee paysheetEmployee2 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee2).save(validate:false)
-			Paysheet paysheet = new Paysheet().save(validate:false)
-			paysheet.addToEmployees(paysheetEmployee1)
-			paysheet.addToEmployees(paysheetEmployee2)
-			paysheet.save(validate:false)
-		and:"The company with bank accounts"
-			Company company = new Company().save(validate:false)
-			company.addToBanksAccounts(new BankAccount(banco:bank))
-			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
-			company.save(validate:false)
-      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
-			paysheet.paysheetContract = paysheetContract
-			paysheet.save(validate:false)
+	void "Should obtain the payers list for payment dispersion"() {
+		given:"The paysheet project"
+      PaysheetProject paysheetProject = new PaysheetProject(payers:[new PayerPaysheetProject().save(validate:false)]).save(validate:false)
+    and:"The PrePaysheet"
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"SomeProject").save(validate:false)
+    and:"The paysheet contract"
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+    and:"The paysheet"
+			Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
+		and:
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
 		when:
-			def result = service.getBanksAccountsToPaymentDispersion(paysheet)
+			def result = service.getPayersToPaymentDispersion(paysheet)
 	  then:
 			result.size() == 1
-			result.first().banco.name == "BANCO"
-	}
-
-	void "Should obtain empty bank accounts list for payment dispersion"() {
-		given:"The paysheet with employees and each one with a bank account"
-			PrePaysheetEmployee prePaysheetEmployee1 = new PrePaysheetEmployee(bank:new Bank(name:"BANCO A").save(validate:false)).save(validate:false)
-			PaysheetEmployee paysheetEmployee1 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee1).save(validate:false)
-			PrePaysheetEmployee prePaysheetEmployee2 = new PrePaysheetEmployee(bank:new Bank(name:"OTRO BANCO").save(validate:false)).save(validate:false)
-			PaysheetEmployee paysheetEmployee2 = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee2).save(validate:false)
-			Paysheet paysheet = new Paysheet().save(validate:false)
-			paysheet.addToEmployees(paysheetEmployee1)
-			paysheet.addToEmployees(paysheetEmployee2)
-			paysheet.save(validate:false)
-		and:"The company with bank accounts"
-			Bank bank = new Bank(name:"BANCO").save(validate:false)
-			Company company = new Company().save(validate:false)
-			company.addToBanksAccounts(new BankAccount(banco:bank))
-			company.addToBanksAccounts(new BankAccount(banco:new Bank(name:"BANCO2").save(validate:false)))
-			company.save(validate:false)
-      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
-			paysheet.paysheetContract = paysheetContract
-			paysheet.save(validate:false)
-		when:
-			def result = service.getBanksAccountsToPaymentDispersion(paysheet)
-	  then:
-			result.size() == 0
 	}
 
 	void "Should create dispersion file SA for SANTANDER bank"() {
@@ -340,17 +308,7 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
 
-	void "Should get banks list from bank accounts to payment dispersion"(){
-		given:"Bank accounts list"
-			Bank bank01 = new Bank(name:"BANCO-1").save(validate:false)
-			Bank bank02 = new Bank(name:"BANCO-2").save(validate:false)
-			List bankAccounts = [new BankAccount(banco:bank01).save(validate:false), new BankAccount(banco:bank02).save(validate:false), new BankAccount(banco:bank01).save(validate:false)]
-		when:
-			def result = service.getListBanksFromBankAccountsToPaymentDispersion(bankAccounts)
-		then:
-			result.size() == 2
-	}
-
+/*
 	void "Should get dispersion summary for paysheet"() {
 		given:"The paysheet"
 			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
@@ -381,6 +339,7 @@ class PaysheetServiceSpec extends Specification {
 			result.first().totalSA == new BigDecimal(1200)
 			result.first().totalIAS == new BigDecimal(3000)
 	}
+*/
 
   private PaysheetEmployee createPaysheetEmployee() {
 		Company company = new Company().save(validate:false)
