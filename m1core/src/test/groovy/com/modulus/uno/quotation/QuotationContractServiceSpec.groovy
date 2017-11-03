@@ -21,11 +21,6 @@ class QuotationContractServiceSpec extends Specification {
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
-    }
-
     void "Save quotation"(){
       given:"A quotation and BusinessEntity"
         BusinessEntity client = new BusinessEntity(
