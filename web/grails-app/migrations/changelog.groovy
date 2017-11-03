@@ -86,4 +86,5 @@ databaseChangeLog = {
   include file: 'create-domain-payer-paysheet-project.groovy'
   include file: 'create-domain-quotation-contract.groovy'
   include file: 'update-column-quotationContract.groovy'
+  include file: 'add-domain-quotationRequest.groovy'
 }
