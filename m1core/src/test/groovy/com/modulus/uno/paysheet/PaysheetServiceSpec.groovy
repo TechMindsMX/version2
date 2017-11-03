@@ -321,25 +321,24 @@ class PaysheetServiceSpec extends Specification {
 			result.first().bank.bankingCode == "999"
 			result.first().accounts.size() == 1
 	}
-
+*/
 	void "Should add inter bank summary for dispersion paysheet"(){
 		given:"The paysheet"
 			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
 		and:"Stp bank"
 			Bank stpBank = new Bank(name:"STP").save(validate:false)
-		and:"List banks for same bank dispersion"
-			def banks = [new Bank(bankingCode:"100").save(validate:false)]
+		and:"Payers list"
+      List payers = createPayersList()
 	  and:"Summary"
 			List summary = []
 	  when:
-			def result = service.addInterBankSummary(summary, paysheetEmployee.paysheet, banks) 
+			def result = service.addInterBankSummary(summary, paysheetEmployee.paysheet, payers) 
 		then:
 			result.size() == 1
 			result.first().bank.name == "STP"
 			result.first().totalSA == new BigDecimal(1200)
 			result.first().totalIAS == new BigDecimal(3000)
 	}
-*/
 
   @Unroll
 	void "Should obtain the payers with bank accounts in bank=#theBank and with schema=#theSchema"() {
@@ -371,20 +370,8 @@ class PaysheetServiceSpec extends Specification {
 	}
 
 	void "Should obtain the banks list from paysheet payers"() {
-		given:"The companies"
-      Company companyOne = new Company(rfc:"UNO").save(validate:false)
-      BankAccount account1 = new BankAccount(banco:new Bank(name:"BANK01")).save(validate:false)
-      BankAccount account2 = new BankAccount(banco:new Bank(name:"BANK02")).save(validate:false)
-      companyOne.addToBanksAccounts(account1)
-      companyOne.save(validate:false)
-      Company companyTwo = new Company(rfc:"DOS").save(validate:false)
-      Bank anotherBank = new Bank(name:"ANOTHER").save(validate:false)
-      BankAccount another = new BankAccount(banco:anotherBank).save(validate:false)
-      companyTwo.addToBanksAccounts(account2)
-      companyTwo.addToBanksAccounts(another)
-      companyTwo.save(validate:false)
-    and:"The payers"
-      List payers = [new PayerPaysheetProject(paymentSchema:PaymentSchema.IMSS, company:companyOne).save(validate:false), new PayerPaysheetProject(paymentSchema:PaymentSchema.ASSIMILABLE, company:companyTwo)]
+    given:"The payers"
+      List payers = createPayersList()
 		when:
 			def result = service.getBanksFromPayers(payers)
 	  then:
@@ -415,6 +402,21 @@ class PaysheetServiceSpec extends Specification {
     )
     paysheetEmployee.save(validate:false)
     paysheetEmployee
+  }
+
+  private def createPayersList() {
+    Company companyOne = new Company(rfc:"UNO").save(validate:false)
+    BankAccount account1 = new BankAccount(banco:new Bank(name:"BANK01")).save(validate:false)
+    BankAccount account2 = new BankAccount(banco:new Bank(name:"BANK02")).save(validate:false)
+    companyOne.addToBanksAccounts(account1)
+    companyOne.save(validate:false)
+    Company companyTwo = new Company(rfc:"DOS").save(validate:false)
+    Bank anotherBank = new Bank(name:"ANOTHER").save(validate:false)
+    BankAccount another = new BankAccount(banco:anotherBank).save(validate:false)
+    companyTwo.addToBanksAccounts(account2)
+    companyTwo.addToBanksAccounts(another)
+    companyTwo.save(validate:false)
+    [new PayerPaysheetProject(paymentSchema:PaymentSchema.IMSS, company:companyOne).save(validate:false), new PayerPaysheetProject(paymentSchema:PaymentSchema.ASSIMILABLE, company:companyTwo)] 
   }
 
   private def getValueInBigDecimal(String value) {
