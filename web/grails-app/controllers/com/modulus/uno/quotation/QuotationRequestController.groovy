@@ -6,7 +6,11 @@ class QuotationRequestController {
 
     QuotationRequestService quotationRequestService
 
-    def index() { }
+    def index() {
+    	Company company = Company.get(session.company)
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByBiller(company)
+      [quotationRequestList:quotationRequestList]
+    }
 
 
     def create(){
@@ -40,7 +44,6 @@ class QuotationRequestController {
         quotationRequest.commission = quotationRequestCommand.getCommission(quotationRequestCommand.commission)
         quotationRequest.amount = quotationRequestUpdate.amount
         quotationRequestService.update(quotationRequest)
-
       redirect(action: 'show', id: quotationRequest.id)
     }
 }
