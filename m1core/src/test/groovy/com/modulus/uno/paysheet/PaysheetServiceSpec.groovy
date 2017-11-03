@@ -308,20 +308,22 @@ class PaysheetServiceSpec extends Specification {
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
 
-/*
 	void "Should get dispersion summary for paysheet"() {
 		given:"The paysheet"
 			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
 		and:"Stp bank"
 			Bank stpBank = new Bank(name:"STP").save(validate:false)
+    and:
+      PaysheetProject paysheetProject = new PaysheetProject(payers:createPayersList()).save(validate:false)
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
 		when:
 			def result = service.prepareDispersionSummary(paysheetEmployee.paysheet)
 		then:
-			result.size() == 2
-			result.first().bank.bankingCode == "999"
-			result.first().accounts.size() == 1
+			result.size() == 4
+      result.count { it.type=="SameBank" } == 3
+      result.count { it.type=="InterBank" } == 1
 	}
-*/
+
 	void "Should add inter bank summary for dispersion paysheet"(){
 		given:"The paysheet"
 			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
@@ -391,8 +393,9 @@ class PaysheetServiceSpec extends Specification {
 		company.addToBanksAccounts(bankAccount)
 		company.save(validate:false)
     PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+    PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"SOMEPROJECT").save(validate:false)
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-      paysheet: new Paysheet(paysheetContract:paysheetContract).save(validate:false),
+      paysheet: new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false),
       prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num").save(validate:false),
       salaryImss: getValueInBigDecimal("1000"),
       socialQuota: getValueInBigDecimal("100"),
@@ -406,7 +409,7 @@ class PaysheetServiceSpec extends Specification {
 
   private def createPayersList() {
     Company companyOne = new Company(rfc:"UNO").save(validate:false)
-    BankAccount account1 = new BankAccount(banco:new Bank(name:"BANK01")).save(validate:false)
+    BankAccount account1 = new BankAccount(banco:new Bank(name:"BANK01", bankingCode:"999")).save(validate:false)
     BankAccount account2 = new BankAccount(banco:new Bank(name:"BANK02")).save(validate:false)
     companyOne.addToBanksAccounts(account1)
     companyOne.save(validate:false)
