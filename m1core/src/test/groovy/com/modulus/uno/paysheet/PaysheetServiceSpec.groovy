@@ -341,6 +341,34 @@ class PaysheetServiceSpec extends Specification {
 	}
 */
 
+  @Unroll
+	void "Should obtain the payers with bank accounts in bank=#theBank and with schema=#theSchema"() {
+		given:"The companies"
+      Company companyOne = new Company(rfc:"UNO").save(validate:false)
+      BankAccount account1 = new BankAccount(banco:theBank).save(validate:false)
+      companyOne.addToBanksAccounts(account1)
+      companyOne.save(validate:false)
+      Company companyTwo = new Company(rfc:"DOS").save(validate:false)
+      Bank anotherBank = new Bank(name:"IASBANK").save(validate:false)
+      BankAccount account2 = new BankAccount(banco:anotherBank).save(validate:false)
+      companyTwo.addToBanksAccounts(account2)
+      companyTwo.save(validate:false)
+    and:"The payers"
+      List payers = [new PayerPaysheetProject(paymentSchema:theSchema, company:companyOne).save(validate:false), new PayerPaysheetProject(paymentSchema:theSchema, company:companyTwo)]
+    and:"The bank"
+      Bank bank = theBank
+    and:"The schema"
+      PaymentSchema schema = theSchema
+		when:
+			def result = service.getPayersForBankAndSchema(payers, bank, schema)
+	  then:
+			result.size() == 1
+      result.first().company.rfc == theRfc
+    where:
+    theBank   |   theSchema   ||  theRfc
+    new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.IMSS  || "UNO"
+	}
+
   private PaysheetEmployee createPaysheetEmployee() {
 		Company company = new Company().save(validate:false)
 		ModulusUnoAccount m1Account = new ModulusUnoAccount().save(validate:false)
