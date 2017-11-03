@@ -16,6 +16,7 @@ class PaysheetService {
 
   PaysheetEmployeeService paysheetEmployeeService
   PrePaysheetService prePaysheetService
+  PaysheetProjectService paysheetProjectService
   S3AssetService s3AssetService
   def grailsApplication
 
@@ -119,17 +120,6 @@ class PaysheetService {
     employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryAssimilable']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
-  }
-
-  def getBanksAccountsToPaymentDispersion(Paysheet paysheet) {
-		def distinctBanksEmployees = [] as Set
-		paysheet.employees.each { emp ->
-			distinctBanksEmployees.add(emp.prePaysheetEmployee.bank)
-		}
-    def bankAccounts = paysheet.paysheetContract.company.banksAccounts.collect { ba ->
-			if (distinctBanksEmployees.contains(ba.banco)) { return ba }
-		}.grep() 
-		bankAccounts
   }
 
 	@Transactional
@@ -407,12 +397,12 @@ class PaysheetService {
 
 	List prepareDispersionSummary(Paysheet paysheet){
 		List summary = []
-		List bankAccounts = getBanksAccountsToPaymentDispersion(paysheet)
-		def banks = getListBanksFromBankAccountsToPaymentDispersion(bankAccounts)
+		List payers = getPayersToPaymentDispersion(paysheet)
+		def banks = getBanksToPaymentDispersion(paysheet)
 		banks.each { bank ->
 			Map summaryBank = [:]
 			summaryBank.bank = bank
-			summaryBank.accounts = bankAccounts.collect { ba -> if (ba.banco == bank) { ba } }.grep()
+			summaryBank.saPayers = getPayersForBankAndSchema(payers, bank, PaymentSchema.IMSS)
 			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.imssSalaryNet.sum()
 			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.salaryAssimilable.sum()
 			summaryBank.type = "SameBank"
@@ -423,13 +413,26 @@ class PaysheetService {
 		summary
 	}
 
-	def getListBanksFromBankAccountsToPaymentDispersion(List bankAccounts){
+  def getPayersToPaymentDispersion(Paysheet paysheet) {
+    PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
+    paysheetProject.payers
+  }
+
+	def getBanksToPaymentDispersion(Paysheet paysheet){
 		def banks = [] as Set
-		bankAccounts.each { ba ->
-			banks.add(ba.banco)
-		}
+    paysheet.employees.each { employee ->
+      banks.add(employee.prePaysheetEmployee.bank)
+    }
 		banks
 	}
+
+  def getPayersForBankAndSchema(List payers, Bank bank, PaymentSchema schema) {
+    payers.collect { payer ->
+      if (payer.paymentSchema == schema && payer.company.banksAccounts.findAll { it.banco == bank }) {
+        payer
+      }
+    }.grep()
+  }
 
 	def addInterBankSummary(List summary, Paysheet paysheet, def banks){
 		Map summaryInterBank = [:]
