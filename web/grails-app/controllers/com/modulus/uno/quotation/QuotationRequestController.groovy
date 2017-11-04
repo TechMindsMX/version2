@@ -54,5 +54,15 @@ class QuotationRequestController {
       redirect(action: 'index')
     }
 
+    def processed(){
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByStatus(QuotationRequestStatus.PROCESSED)
+
+      [quotationRequestList:quotationRequestList]
+    }
+
+    def requestProcessed(QuotationRequest quotationRequest){
+      quotationRequestService.requestProcessed(quotationRequest)
+      redirect(action: 'index')
+    }
 
 }

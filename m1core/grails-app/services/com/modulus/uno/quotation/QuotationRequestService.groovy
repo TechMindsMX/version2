@@ -22,4 +22,9 @@ class QuotationRequestService {
     def delete(QuotationRequest quotationRequest){
       quotationRequest.delete()
     }
+
+    QuotationRequest requestProcessed(QuotationRequest quotationRequest){
+      quotationRequest.status = QuotationRequestStatus.PROCESSED
+      quotationRequest.save()
+    }
 }

@@ -55,7 +55,7 @@
             <div class="col-md-6 text-right">
               <br>
               <div class="col-md-6">
-                <g:link class="btn btn-success" controller="quotationRequest" action="index" id="${quotationRequest.id}">Solicitar</g:link>
+                <g:link class="btn btn-success" controller="quotationRequest" action="requestProcessed" id="${quotationRequest.id}">Solicitar</g:link>
               </div>
               <div class="col-md-2">
                 <g:link class="btn btn-default" controller="quotationRequest" action="edit" id="${quotationRequest.id}">Editar</g:link>
