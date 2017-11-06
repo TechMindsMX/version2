@@ -174,11 +174,11 @@ class ManagerApplicationService {
     textPrivacy
   }
 
-  String conciliateStpTransactionsForAllCompanies(Date date) {
+  String applyFinalTransactionForAllCompaniesInDate(Date date) {
     String result = "OK"
     List<Company> companies = companyService.getAllCompaniesAcceptedAndWithAliasStp()
     companies.each { company ->
-      companyService.conciliateStpTransactionsForCompany(company)
+      companyService.executeOperationsCloseForCompanyInDate(company, date)
     }
     result
   }
