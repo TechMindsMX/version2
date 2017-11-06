@@ -408,7 +408,8 @@ class PaysheetService {
 			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
 			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.salaryAssimilable.sum()
 			summaryBank.type = "SameBank"
-			summary.add(summaryBank)
+      if (summaryBank.totalSA > 0 || summaryBank.totalIAS >0)
+			  summary.add(summaryBank)
 		}
 		summary = addInterBankSummary(summary, paysheet, payers)
 		summary
@@ -425,30 +426,35 @@ class PaysheetService {
         payer
       }
     }.grep()
-    
+    getDataPayersFromPayers(schemaBankPayers)
+  }
+
+  def getDataPayersFromPayers(List payers) {
     List dataPayers = []
-    schemaBankPayers.each { payer ->
-      Map dataPayer = [:]
+    payers.each { payer ->
       payer.company.banksAccounts.each { bankAccount ->
+        Map dataPayer = [:]
         dataPayer.payer = payer.company.bussinessName
-        dataPayer.bankAccount = bankAccount
+        dataPayer.bankAccountId = bankAccount.id
+        dataPayer.description = "${payer.company.bussinessName} - ${bankAccount}"
+        dataPayers.add(dataPayer)
       }
-      dataPayers.add(dataPayer)
     }
-    dataPayers
+    dataPayers 
   }
 
 	def addInterBankSummary(List summary, Paysheet paysheet, List payers){
     def banksPayers = getBanksFromPayers(payers)
 		Map summaryInterBank = [:]
 		summaryInterBank.bank = Bank.findByName("STP")
-    summaryInterBank.saPayers = payers.findAll { it.paymentSchema == PaymentSchema.IMSS }
-    summaryInterBank.iasPayers = payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }
+    summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS })
+    summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE })
     summaryInterBank.allPayers = payers
 		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
 		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.salaryAssimilable.sum()
 		summaryInterBank.type = "InterBank"
-		summary.add(summaryInterBank)
+    if (summaryInterBank.totalSA > 0 || summaryInterBank.totalIAS >0)
+      summary.add(summaryInterBank)
 		summary
 	}
 
