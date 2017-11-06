@@ -15,6 +15,7 @@
 					<table class="table table-striped table-condensed">
 						<tbody>
 						<g:each in="${dispersionSummary}" var="summaryBank">
+              <g:hiddenField name="bank" value="${summaryBank.bank.id}"/>
 							<tr>
 								<td colspan="3">${summaryBank.type=="SameBank" ? summaryBank.bank.name : "INTERBANCARIO"}</td>
               </tr>
@@ -22,14 +23,14 @@
 								<td style="width:20%">SA</td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalSA)}</td>
 								<td style="width:60%" class="text-center">
-                  <g:select class="form-control" name="sourceBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                  <g:select class="form-control" name="saBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/> 
                 </td>
 							</tr>
               <tr>
 								<td style="width:20%">IAS</td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalIAS)}</td>
 								<td style="width:60%" class="text-center">
-                  <g:select class="form-control" name="sourceBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                  <g:select class="form-control" name="iasBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
                 </td>
 							</tr>
 
