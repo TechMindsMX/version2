@@ -13,28 +13,26 @@
 			<div class="col-md-12">
 				<div class="table-responsive">
 					<table class="table table-striped table-condensed">
-						<thead>
-							<tr>
-								<th class="text-center" style="width:20%">Banco</th>
-								<th class="text-center" style="width:40%">Cuenta</th>
-								<th class="text-center">Total SA</th>
-								<th class="text-center">Total IAS</th>
-								<th class="text-center"></th>
-							</tr>
-						</thead>
 						<tbody>
 						<g:each in="${dispersionSummary}" var="summaryBank">
 							<tr>
-								<td>${summaryBank.type=="SameBank" ? summaryBank.bank.name : "INTERBANCARIO"}</td>
-								<td>
-									<g:if test="${summaryBank.type=='SameBank'}">
-										<g:select class="form-control" name="dispersionAccount" from="${summaryBank.accounts}" required="" optionKey="id"/>
-									</g:if>
-								</td>
-								<td class="text-right">${modulusuno.formatPrice(number:summaryBank.totalSA)}</td>
-								<td class="text-right">${modulusuno.formatPrice(number:summaryBank.totalIAS)}</td>
-								<td class="text-center"></td>
+								<td colspan="3">${summaryBank.type=="SameBank" ? summaryBank.bank.name : "INTERBANCARIO"}</td>
+              </tr>
+              <tr>
+								<td style="width:20%">SA</td>
+								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalSA)}</td>
+								<td style="width:60%" class="text-center">
+                  <g:select class="form-control" name="sourceBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                </td>
 							</tr>
+              <tr>
+								<td style="width:20%">IAS</td>
+								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalIAS)}</td>
+								<td style="width:60%" class="text-center">
+                  <g:select class="form-control" name="sourceBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                </td>
+							</tr>
+
 						</g:each>
 						</tbody>
 					</table>
