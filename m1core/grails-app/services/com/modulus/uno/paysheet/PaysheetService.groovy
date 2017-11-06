@@ -127,8 +127,9 @@ class PaysheetService {
   	Locale.setDefault(new Locale("es","MX"));
 		deleteCurrentDispersionFilesFromPaysheet(paysheet)
     dispersionData = complementDispersionData(dispersionData)
-		generateDispersionFileSameBank(paysheet, dispersionData)
-		generateDispersionFileInterBank(paysheet, dispersionData)
+		generateDispersionFiles(paysheet, dispersionData)
+		/*generateDispersionFileSameBank(paysheet, dispersionData)
+		generateDispersionFileInterBank(paysheet, dispersionData)*/
   }
 
 	def deleteCurrentDispersionFilesFromPaysheet(Paysheet paysheet){
@@ -140,12 +141,34 @@ class PaysheetService {
 	}
 
   Map complementDispersionData(Map dispersionData) {
-		List idsChargeBankAccounts = Arrays.asList(dispersionData.dispersionAccount)
-    List<BankAccount> chargeBankAccountsList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
-    dispersionData.chargeBankAccountsList = chargeBankAccountsList
+		List idsBanks = Arrays.asList(dispersionData.bank)
+		List idsSaBankAccounts = Arrays.asList(dispersionData.saBankAccount)
+		List idsIasBankAccounts = Arrays.asList(dispersionData.iasBankAccount)
+    List<Bank> banks = Bank.findAllByIdInList(idsBanks)
+    List<BankAccount> saBankAccounts = BankAccount.findAllByIdInList(idsSaBankAccounts)
+    List<BankAccount> iasBankAccounts = BankAccount.findAllByIdInList(idsIasBankAccounts)
+    dispersionData.banks = banks
+    dispersionData.saBankAccounts = saBankAccounts
+    dispersionData.iasBankAccounts = iasBankAccounts
 		dispersionData.applyDate = dispersionData.applyDate ? Date.parse("dd/MM/yyyy", dispersionData.applyDate) : null
     dispersionData
   }
+
+	def generateDispersionFiles(Paysheet paysheet, Map dispersionData){
+		List dispersionFiles = []
+		dispersionData.banks.eachWithIndex { bank ->
+			Map dispersionDataForBank = prepareDispersionDataForBank(paysheet, bank, dispersionData)
+      dispersionDataForBank.saBankAccount = dispersionData.saBankAccounts[index]
+      dispersionDataForBank.iasBankAccount = dispersionData.iasBankAccounts[index]
+      dispersionDataForBank = getPayersForPaysheetAndBank(paysheet, dispersionDataForBank)
+			List files = createDispersionFilesForDispersionData(dispersionDataForBank)
+			List s3Files = uploadDispersionFilesToS3(files)
+			dispersionFiles.addAll(s3Files)
+		}
+
+		addingDispersionFilesToPaysheet(paysheet, dispersionFiles)
+		log.info "Files dispersion same bank generated"
+	}
 
 	def generateDispersionFileSameBank(Paysheet paysheet, Map dispersionData){
 		List dispersionFiles = []
@@ -160,9 +183,9 @@ class PaysheetService {
 		log.info "Files dispersion same bank generated"
 	}
 
-	Map prepareDispersionDataForBank(Paysheet paysheet, BankAccount chargeBankAccount, Map dispersionData){
-		List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, chargeBankAccount.banco)
-		Map dispersionDataForBank = [employees: employees, chargeBankAccount:chargeBankAccount, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate, idPaysheet:paysheet.id, sequence:dispersionData.sequence, nameCompany:dispersionData.nameCompany]
+	Map prepareDispersionDataForBank(Paysheet paysheet, Bank bank, Map dispersionData){
+		List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, bank)
+		Map dispersionDataForBank = [employees:employees, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate, idPaysheet:paysheet.id, sequence:dispersionData.sequence]
 	}
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
@@ -173,13 +196,26 @@ class PaysheetService {
     }.grep()
   }
 
+  String getPayersForPaysheetAndBank(Paysheet paysheet, Map dispersionDataForBank) {
+    List payers = getPayersToPaymentDispersion(paysheet)
+    payers.each { payer ->
+      if (payer.company.banksAccounts.contains(dispersionDataForBank.saBankAccount)) {
+        dispersionDataForBank.saPayer = payer.company.bussinessName
+      } else if (payer.company.banksAccounts.contains(dispersionDataForBank.iasBankAccount)) {
+        dispersionDataForBank.iasPayer = payer.company.bussinessName
+      }
+    }
+    dispersionDataForBank
+  }
+
 	List createDispersionFilesForDispersionData(Map dispersionDataForBank){
 		List dispersionFiles = []
 
-		String methodCreatorTxtFileDispersion = getMethodCreatorOfTxtDispersionFile(dispersionDataForBank.chargeBankAccount.banco.name)
+		String methodCreatorTxtFileDispersionSA = getMethodCreatorOfTxtDispersionFile(dispersionDataForBank.saBankAccount.banco.name)
+		String methodCreatorTxtFileDispersionIAS = getMethodCreatorOfTxtDispersionFile(dispersionDataForBank.iasBankAccount.banco.name)
 
-    File dispersionFileSAForBank = "${methodCreatorTxtFileDispersion}"(dispersionDataForBank, "SA")
-    File dispersionFileIASForBank = "${methodCreatorTxtFileDispersion}"(dispersionDataForBank, "IAS")
+    File dispersionFileSAForBank = "${methodCreatorTxtFileDispersionSA}"(dispersionDataForBank, "SA")
+    File dispersionFileIASForBank = "${methodCreatorTxtFileDispersionIAS}"(dispersionDataForBank, "IAS")
 		
 		dispersionFiles.add(dispersionFileSAForBank)
 		dispersionFiles.add(dispersionFileIASForBank)
@@ -210,7 +246,8 @@ class PaysheetService {
     File file = File.createTempFile("dispersion_${schema}_Default",".txt")
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
-		String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(18,'0')
+		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+		String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(18,'0')
 		String currency = "MXN"
 		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
@@ -230,7 +267,8 @@ class PaysheetService {
     File file = File.createTempFile("dispersion_${schema}_BBVA",".txt")
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
-		String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(18,'0')
+		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+		String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(18,'0')
 		String currency = "MXN"
 		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
@@ -249,7 +287,8 @@ class PaysheetService {
     File file = File.createTempFile("dispersion_${schema}_SANTANDER",".txt")
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
-    String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padRight(11,'  ')
+		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+    String sourceAccount = dispersionDataForBank."${account}".accountNumber.padRight(11,'  ')
 		//HEADER
 		String header = "100001E${new Date().format('MMddyyyy')}${sourceAccount}     ${dispersionDataForBank.applyDate.format('MMddyyyy')}"
 		file.append("${header}\n")
@@ -284,19 +323,23 @@ class PaysheetService {
     log.info "Payment dispersion same bank ${schema} BANAMEX for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_BANAMEX",".txt")
 		
-		if (!dispersionDataForBank.chargeBankAccount.clientNumber){
+		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+    BankAccount chargeBankAccount = dispersionDataForBank."${account}"
+		if (!chargeBankAccount.clientNumber){
 			log.info "La cuenta no tiene registrado el número de cliente"
-			file.append("La cuenta Banamex ${dispersionDataForBank.chargeBankAccount.accountNumber} no tiene número de cliente registrado")
+			file.append("La cuenta Banamex ${chargeBankAccount.accountNumber} no tiene número de cliente registrado")
 		} else {
 
 		log.info "Dispersion data for bank: ${dispersionDataForBank}"
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
-    String sourceAccount = dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,"0")
+		String namePayer = schema == "SA" ? dispersionDataForBank.saPayer : dispersionDataForBank.iasPayer
+    String nameCompany = namePayer.length() > 36 ? namePayer.substring(0,36) : namePayer
+    String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(7,"0")
 		String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
-		String lineControl = "1${dispersionDataForBank.chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(dispersionDataForBank.nameCompany).padRight(36,'  ')}${message}15D01"
+		String lineControl = "1${chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(nameCompany).padRight(36,'  ')}${message}15D01"
 		file.append("${lineControl}\n")
 		BigDecimal totalDispersion = dispersionDataForBank.employees*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
-		String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${dispersionDataForBank.chargeBankAccount.branchNumber.padLeft(13,'0')}${dispersionDataForBank.chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
+		String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${chargeBankAccount.branchNumber.padLeft(13,'0')}${chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
 		file.append("${lineGlobal}\n")
 		dispersionDataForBank.employees.eachWithIndex { employee, index ->
 			String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
@@ -356,6 +399,7 @@ class PaysheetService {
     File file = File.createTempFile("dispersion_${schema}_InterBank",".txt")
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
 		String sourceAccount = "M1Account".padLeft(18,'0')
 		String currency = "MXN"
 		String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
