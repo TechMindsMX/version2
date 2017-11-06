@@ -410,20 +410,11 @@ class CompanyService {
     list
   }
 
-  String conciliateStpTransactionsForCompany(Company company, Date date) {
-    log.info "Init conciliation stp for company ${company}"
+  String executeOperationsCloseForCompanyInDate(Company company, Date date) {
+    log.info "Init operation close for company ${company} in date ${date}"
     Period period = collaboratorService.getPeriodStpConciliationInDate(date)
     Map transactions = stpService.getTransactionsForCompanyInPeriod(company, period)
     applyConciliationStpTransaction(company, transactions)
-  }
-
-  @Transactional
-  private String applyConciliationStpTransaction(Company company, Map transactions) {
-    log.info "Applying conciliation stp for ${company} with transactions ${transactions}"
-    String status = "OK"
-		//para cada transacción stp, buscar si existe en M1 con el campo clave de transacción, clave de rastreo y monto
-		//si no existe, registrar la transacción
-    status
   }
 
 }
