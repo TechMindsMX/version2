@@ -41,29 +41,43 @@
                 <dt>Descripción</dt>
                 <dd>${quotationRequest.description}</dd>
                 <dt>Monto para la cotización</dt>
-                <dd><g:formatNumber number="${quotationRequest.amount}" type="currency" currencyCode="MXN" /></dd>
+                <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
               </dl>
             </div>
           </div>
         </div>    
 
-        <div class="portlet-footer">
-          <div class="row">
-            <div class="col-md-6">
-              <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
-            </div>
-            <div class="col-md-6 text-right">
+        <div class=" portlet-footer">
+          <g:if test="${quotationRequest.status == quotationRequestStatus.SEND}">
+            <div class="row">
               <div class="col-md-6">
-                <g:link class="btn btn-primary" controller="quotationRequest" action="sendQuotation" id="${quotationRequest.id}">Solicitar</g:link>
+                <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
               </div>
-              <div class="col-md-2">
-                <g:link class="btn btn-primary" controller="quotationRequest" action="edit" id="${quotationRequest.id}">Editar</g:link>
-              </div>
-              <div class="col-md-2">
-                <g:link class="btn btn-primary" controller="quotationRequest" action="delete" id="${quotationRequest.id}">Borrar</g:link>
+              <div class="col-md-6 text-right">
+                <div class="col-md-6">
+                  <g:link class="btn btn-primary" controller="quotationRequest" action="requestProcessed" id="${quotationRequest.id}">Procesar</g:link>
+                </div>
               </div>
             </div>
-          </div>
+          </g:if>
+          <g:else>
+            <div class="row">
+              <div class="col-md-6">
+                <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
+              </div>
+              <div class="col-md-6 text-right">
+                <div class="col-md-6">
+                  <g:link class="btn btn-primary" controller="quotationRequest" action="sendQuotation" id="${quotationRequest.id}">Solicitar</g:link>
+                </div>
+                <div class="col-md-2">
+                  <g:link class="btn btn-primary" controller="quotationRequest" action="edit" id="${quotationRequest.id}">Editar</g:link>
+                </div>
+                <div class="col-md-2">
+                  <g:link class="btn btn-primary" controller="quotationRequest" action="delete" id="${quotationRequest.id}">Borrar</g:link>
+                </div>
+              </div>
+            </div>  
+          </g:else>
         </div>
       </div>
     </div>

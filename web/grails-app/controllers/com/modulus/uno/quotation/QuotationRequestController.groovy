@@ -31,7 +31,8 @@ class QuotationRequestController {
 
     def show(QuotationRequest quotationRequest){
 
-      [quotationRequest: quotationRequest]
+      [quotationRequest: quotationRequest,
+      quotationRequestStatus:QuotationRequestStatus]
     }
 
     def edit(QuotationRequest quotationRequest){
