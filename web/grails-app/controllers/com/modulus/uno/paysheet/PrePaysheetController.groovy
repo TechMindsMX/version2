@@ -8,16 +8,24 @@ import com.modulus.uno.Company
 class PrePaysheetController {
 
   PrePaysheetService prePaysheetService
+  PaysheetContractService paysheetContractService
 
   def create() {
     Company company = Company.get(session.company)
-    respond new PrePaysheet(), model:[company:company]
+    List<PaysheetContract> paysheetContracts = paysheetContractService.getPaysheetContractsWithProjectsOfCompany(company)
+    respond new PrePaysheet(), model:[paysheetContracts:paysheetContracts]
+  }
+
+  def choosePaysheetContract(){
+    PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
+    render view:"create", model:[prePaysheet:new PrePaysheet(paysheetContract:paysheetContract)]
   }
 
   @Transactional
   def save(PrePaysheetCommand command) {
     log.info "Saving prePaysheet: ${command.dump()}"
-    Company company = Company.get(session.company)
+    PaysheetContract paysheetContract = PaysheetContract.get(command.contractId)
+
     if (!command) {
       transactionStatus.setRollbackOnly()
       notFound()
@@ -26,7 +34,7 @@ class PrePaysheetController {
 
     if (command.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      respond command.errors, view:"create", model:[company:company]
+      respond command.errors, view:"create", model:[prePaysheet:new PrePaysheet(paysheetContract:paysheetContract)]
       return
     }
 
@@ -35,7 +43,7 @@ class PrePaysheetController {
 
     if (prePaysheet.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      respond prePaysheet.errors, view:"create", model:[company:company]
+      respond prePaysheet.errors, view:"create"
       return
     }
 
@@ -54,10 +62,17 @@ class PrePaysheetController {
   }
 
   def list() {
-    params.max = 25
     Company company = Company.get(session.company)
-    Map prePaysheets = prePaysheetService.getListAndCountPrePaysheetsForCompany(company, params)
-    [prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
+    List<PaysheetContract> paysheetContracts = paysheetContractService.getPaysheetContractsWithProjectsOfCompany(company)
+    [paysheetContracts:paysheetContracts]
+  }
+
+  def listPrePaysheetsForPaysheetContract() {
+    params.max = 25
+    PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
+    Map prePaysheets = prePaysheetService.getListAndCountPrePaysheetsForPaysheetContract(paysheetContract, params)
+    render view:"list", model:[client:paysheetContract.client, prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
+   
   }
 
   @Transactional
@@ -85,7 +100,7 @@ class PrePaysheetController {
     log.info "Exporting to Xls the prePaysheet: ${prePaysheet.dump()}"
     def xls = prePaysheetService.exportPrePaysheetToXls(prePaysheet)
     xls.with {
-      setResponseHeaders(response, "prenomina-${prePaysheet.company}.xlsx")
+      setResponseHeaders(response, "prenomina-${prePaysheet.paysheetContract.client}.xlsx")
       save(response.outputStream)
     }
   }

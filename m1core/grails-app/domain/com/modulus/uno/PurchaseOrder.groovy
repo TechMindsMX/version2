@@ -60,11 +60,11 @@ class PurchaseOrder implements Machinery {
   }
 
   BigDecimal getTotalPayments() {
-    payments*.amount?.sum() ?: 0
+    payments.findAll{ it.status != PaymentToPurchaseStatus.REFUND }*.amount?.sum() ?: 0
   }
 
   BigDecimal getAmountToPay() {
-    getTotal() - getTotalPayments()
+    (getTotal() - getTotalPayments()) > 0 ? getTotal() - getTotalPayments() : 0
   }
 
   String toString(){

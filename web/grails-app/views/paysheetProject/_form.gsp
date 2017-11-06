@@ -1,4 +1,4 @@
-<input type="hidden" name="companyId" value="${company.id}"/>
+<input type="hidden" name="contractId" value="${paysheetProject.paysheetContract.id}"/>
 <div class="row">
   <div class="col-md-6">
     <div class="form-group">

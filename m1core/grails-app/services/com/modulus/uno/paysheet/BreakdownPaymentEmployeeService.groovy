@@ -48,7 +48,7 @@ class BreakdownPaymentEmployeeService {
   }
 
   BigDecimal getIntegratedDailySalaryForEmployee(EmployeeLink employeeLink, Paysheet paysheet) {
-    PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheet.company, paysheet.prePaysheet.paysheetProject)
+    PaysheetProject project = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
     DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employeeLink)
     if (!dataImssEmployee) {
       log.error "Data Imss for employee not found: ${employeeLink.dump()}"
@@ -122,7 +122,7 @@ class BreakdownPaymentEmployeeService {
   }
 
   BigDecimal getOccupationalRisk(BigDecimal baseQuotation, Paysheet paysheet) {
-    PaysheetProject project = paysheetProjectService.getPaysheetProjectByCompanyAndName(paysheet.company, paysheet.prePaysheet.paysheetProject)
+    PaysheetProject project = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
     (baseQuotation * (project.occupationalRiskRate/100)).setScale(2, RoundingMode.HALF_UP)
   }
 

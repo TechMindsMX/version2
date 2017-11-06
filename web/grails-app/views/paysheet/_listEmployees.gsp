@@ -81,8 +81,8 @@
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED || paysheet.status == PaysheetStatus.CREATED}">
       <div class="col-md-4">
 				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-        <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED}">
-          <a data-toggle="collapse" role="button" href="#paymentDispersion" class="btn btn-primary" aria-expanded="false" aria-controls="paymentDispersion">Dispersar Pagos</a>
+        <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary}">
+					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
 				</sec:ifAnyGranted>
       </div>
@@ -94,62 +94,5 @@
       </div>
     </g:if>
   </div>
-  <div class="row">&nbsp;</div>
-  <div class="row">
-    <div class="col-md-12">
-      <div class="collapse" id="paymentDispersion">
-				<div class"=row">
-					<div class="col-md-12">
-						<g:if test="${paysheet.dispersionFiles}">
-							<h4>Archivos de dispersión generados</h4>
-							<ul>
-								<g:each in="${paysheet.dispersionFiles}" var="dispersionFile">
-									<li>
-         						<a href="${baseUrlDocuments}/${dispersionFile.title}.${dispersionFile.mimeType}"><i class="glyphicon glyphicon-download-alt"></i> ${dispersionFile.type}</a>
-									</li>
-								</g:each>
-							</ul>
-						</g:if>
-					</div>
-				</div>
-        <div class="well">
-					<h4>Generar archivos de dispersión</h4>
-          <g:form action="generatePaymentDispersion" id="${paysheet.id}">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Cuenta Origen de Dispersión:</label>
-                <g:select class="form-control" name="chargeBankAccountsIds" from="${chargeBanksAccounts}" required="" optionKey="id" multiple="true"/>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Mensaje del Pago</label>
-                <input class="form-control" type="text" name="paymentMessage" maxlength="30" pattern="[A-Za-z0-9\s]{1,30}" title="Sólo se permiten letras (sin acentos y sin 'ñ'), números y espacios en blanco" required="" />
-              </div>
-							<div class="form-group">
-								<label>Fecha de Aplicación</label>
-								<input type="text" id="dpApplyDate" name="applyDate" required="required">
-							</div>
-							<div class="form-group">
-								<label>Secuencia</label>
-								<input type="number" name="sequence" max="9999" required="required">
-							</div>
-							<div class="form-group">
-								<label>Nombre de la Empresa Pagadora</label>
-								<input type="text" name="nameCompany" maxlength="36" required="required">
-							</div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12 text-right">
-              <div class="form-group">
-                <button type="submit" class="btn btn-default" onclick="return confirm('Los archivos existentes serán reemplazados, ¿desea continuar?');">Generar Dispersión</button>
-              </div>
-            </div>
-          </div>
-          </g:form>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
+

@@ -6,6 +6,7 @@ class PaysheetController {
 
   PaysheetService paysheetService
   PaysheetEmployeeService paysheetEmployeeService
+  PaysheetContractService paysheetContractService
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
@@ -13,15 +14,21 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet, model:[chargeBanksAccounts: paysheetService.getBanksAccountsToPaymentDispersion(paysheet), baseUrlDocuments:grailsApplication.config.grails.url.base.images]
+    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images]
   }
 
   def list() {
-    params.max = 25
     Company company = Company.get(session.company)
-    List<Paysheet> paysheetList = Paysheet.findAllByCompany(company, params)
-    Integer paysheetCount = Paysheet.countByCompany(company)
-    [paysheetList:paysheetList, paysheetCount:paysheetCount]
+    List<PaysheetContract> paysheetContracts = paysheetContractService.getPaysheetContractsWithProjectsOfCompany(company)
+    [paysheetContracts:paysheetContracts]
+  }
+
+  def listPaysheetsForPaysheetContract() {
+    params.max = 25
+    PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
+    List<Paysheet> paysheetList = Paysheet.findAllByPaysheetContract(paysheetContract, params)
+    Integer paysheetCount = Paysheet.countByPaysheetContract(paysheetContract)
+    render view:"list", model:[client:paysheetContract.client, paysheetList:paysheetList, paysheetCount:paysheetCount]
   }
 
   def sendToAuthorize(Paysheet paysheet) {
@@ -33,7 +40,7 @@ class PaysheetController {
     log.info "Exporting to Xls the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXls(paysheet)
     xls.with {
-      setResponseHeaders(response, "nomina-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nomina-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
@@ -52,7 +59,7 @@ class PaysheetController {
     log.info "Exporting to Xls only Imss the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXlsImss(paysheet)
     xls.with {
-      setResponseHeaders(response, "nominaIMSS-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nominaIMSS-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
@@ -61,13 +68,19 @@ class PaysheetController {
     log.info "Exporting to Xls only assimilable the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXlsAssimilable(paysheet)
     xls.with {
-      setResponseHeaders(response, "nominaAsimilables-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nominaAsimilables-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }
 
+	def prepareDispersion(Paysheet paysheet){
+		log.info "Preparing summary for dispersion from paysheet: ${paysheet.id}"
+		List dispersionSummary = paysheetService.prepareDispersionSummary(paysheet)
+		render view:"show", model:[paysheet:paysheet, dispersionSummary:dispersionSummary]
+	}
+
   def generatePaymentDispersion(Paysheet paysheet) {
-    log.info "Generating txt payments dispersion charge bank account ${params.chargeBankAccountsIds} from paysheet ${paysheet.id}"
+    log.info "Generating txt payments dispersion ${params} from paysheet ${paysheet.id}"
     paysheetService.generateDispersionFilesFromPaysheet(paysheet, params)
 		redirect action:"show", id:paysheet.id
   }
@@ -76,7 +89,7 @@ class PaysheetController {
     log.info "Exporting to Xls only Cash the paysheet: ${paysheet.dump()}"
     def xls = paysheetService.exportPaysheetToXlsCash(paysheet)
     xls.with {
-      setResponseHeaders(response, "nominaEfectivo-${paysheet.company}-${paysheet.prePaysheet.paysheetProject}.xlsx")
+      setResponseHeaders(response, "nominaEfectivo-${paysheet.paysheetContract.client}-${paysheet.prePaysheet.paysheetProject}.xlsx")
       save(response.outputStream)
     }
   }

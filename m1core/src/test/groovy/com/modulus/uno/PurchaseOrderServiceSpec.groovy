@@ -81,7 +81,10 @@ class PurchaseOrderServiceSpec extends Specification {
 	@Unroll
   void "should add the payment with data=#thePaymentData to purchase order"() {
     given:"The purchase order"
-      PurchaseOrder purchaseOrder = new PurchaseOrder().save(validate:false)
+      PurchaseOrder purchaseOrder = new PurchaseOrder(payments:[]).save(validate:false)
+			purchaseOrder.metaClass.addToPayments = {
+				payments.add(new PaymentToPurchase().save(validate:false))
+			}
     and:"The payment data"
 			Map paymentData = thePaymentData
     when:
@@ -94,7 +97,8 @@ class PurchaseOrderServiceSpec extends Specification {
 			[amount:1000, transaction:null, source:SourcePayment.BANKING] || 1
   }
 
-  void "verify if payment not exceeds amount of order"() {
+  @Unroll
+  void "verify if payment not exceeds amount of order when amountItem=#amountItem1, payment1=#paymentAmount1, and payment2=#paymentAmount2"() {
      given: "create a purchase order"
       def purchaseOrder = new PurchaseOrder()
       purchaseOrder.providerName = "prueba"
@@ -121,7 +125,10 @@ class PurchaseOrderServiceSpec extends Specification {
         "355"     | "390"          | new BigDecimal("900")  || true
         "1600"    | "100"          | new BigDecimal("860")  || false
         "123.12"  | "600.32"       | new BigDecimal("1000") || true
-
+        "123.125" | "50"           | new BigDecimal("50.13") || false
+        "123.125" | "50"           | new BigDecimal("73.13") || false
+        "123.125" | "50"           | new BigDecimal("92.832") || false
+        "123.125" | "50"           | new BigDecimal("92.835") || true
   }
 
   @Unroll

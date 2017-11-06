@@ -40,7 +40,7 @@
 					<th>Observaciones</th>
         </tr>
 
-        <g:each in="${employeesAvailableToAdd}" var="employee" status="index">
+        <g:each in="${employeesAvailableToAdd.sort{it.toString()}}" var="employee" status="index">
         <tr>
           <td><g:checkBox class="entity" id="checkBe" name="checkBe" value="${employee.id}" checked="false"/></td>
           <td>${employee.number}</td>

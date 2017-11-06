@@ -2,11 +2,10 @@ package com.modulus.uno.paysheet
 
 import grails.validation.Validateable
 import com.modulus.uno.PaymentPeriod
-import com.modulus.uno.Company
 
 class PrePaysheetCommand implements Validateable {
 
-  String companyId
+  String contractId
   String paysheetProject
   String paymentPeriod
   Date initDatePeriod
@@ -28,7 +27,7 @@ class PrePaysheetCommand implements Validateable {
       initPeriod:this.initDatePeriod,
       endPeriod:this.endDatePeriod,
       accountExecutive:this.accountExecutive,
-      company:Company.get(this.companyId)
+      paysheetContract:PaysheetContract.get(this.contractId)
     )
   }
 

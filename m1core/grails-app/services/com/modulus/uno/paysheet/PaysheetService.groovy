@@ -23,7 +23,7 @@ class PaysheetService {
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = new Paysheet(
       prePaysheet:prePaysheet,
-      company:prePaysheet.company
+      paysheetContract:prePaysheet.paysheetContract
     )
     paysheet.save()
     loadEmployeesToPaysheetFromPrePaysheet(paysheet, prePaysheet)
@@ -126,7 +126,7 @@ class PaysheetService {
 		paysheet.employees.each { emp ->
 			distinctBanksEmployees.add(emp.prePaysheetEmployee.bank)
 		}
-    def bankAccounts = paysheet.company.banksAccounts.collect { ba ->
+    def bankAccounts = paysheet.paysheetContract.company.banksAccounts.collect { ba ->
 			if (distinctBanksEmployees.contains(ba.banco)) { return ba }
 		}.grep() 
 		bankAccounts
@@ -150,7 +150,7 @@ class PaysheetService {
 	}
 
   Map complementDispersionData(Map dispersionData) {
-		List idsChargeBankAccounts = Arrays.asList(dispersionData.chargeBankAccountsIds)
+		List idsChargeBankAccounts = Arrays.asList(dispersionData.dispersionAccount)
     List<BankAccount> chargeBankAccountsList = BankAccount.findAllByIdInList(idsChargeBankAccounts)
     dispersionData.chargeBankAccountsList = chargeBankAccountsList
 		dispersionData.applyDate = dispersionData.applyDate ? Date.parse("dd/MM/yyyy", dispersionData.applyDate) : null
@@ -226,7 +226,6 @@ class PaysheetService {
 
     dispersionDataForBank.employees.each { employee ->
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-
       String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
 			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
     }
@@ -404,5 +403,42 @@ class PaysheetService {
     employees.data = paysheet.employees.findAll { emp -> !emp.prePaysheetEmployee.bank }.sort { it.prePaysheetEmployee.nameEmployee }
     employees
   }
+
+	List prepareDispersionSummary(Paysheet paysheet){
+		List summary = []
+		List bankAccounts = getBanksAccountsToPaymentDispersion(paysheet)
+		def banks = getListBanksFromBankAccountsToPaymentDispersion(bankAccounts)
+		banks.each { bank ->
+			Map summaryBank = [:]
+			summaryBank.bank = bank
+			summaryBank.accounts = bankAccounts.collect { ba -> if (ba.banco == bank) { ba } }.grep()
+			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.imssSalaryNet.sum()
+			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank){ return e} }*.salaryAssimilable.sum()
+			summaryBank.type = "SameBank"
+			summary.add(summaryBank)
+		}
+		//inter bank data
+		summary = addInterBankSummary(summary, paysheet, banks)
+		summary
+	}
+
+	def getListBanksFromBankAccountsToPaymentDispersion(List bankAccounts){
+		def banks = [] as Set
+		bankAccounts.each { ba ->
+			banks.add(ba.banco)
+		}
+		banks
+	}
+
+	def addInterBankSummary(List summary, Paysheet paysheet, def banks){
+		Map summaryInterBank = [:]
+		summaryInterBank.bank = Bank.findByName("STP")
+		summaryInterBank.accounts = paysheet.paysheetContract.company.accounts.first()
+		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.imssSalaryNet.sum()
+		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banks.contains(e.prePaysheetEmployee.bank)){ return e} }*.salaryAssimilable.sum()
+		summaryInterBank.type = "InterBank"
+		summary.add(summaryInterBank)
+		summary
+	}
 
 }
