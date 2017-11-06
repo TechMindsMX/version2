@@ -345,11 +345,11 @@ class PaysheetServiceSpec extends Specification {
   @Unroll
 	void "Should obtain the payers with bank accounts in bank=#theBank and with schema=#theSchema"() {
 		given:"The companies"
-      Company companyOne = new Company(rfc:"UNO").save(validate:false)
+      Company companyOne = new Company(rfc:"UNO", bussinessName:"ONE").save(validate:false)
       BankAccount account1 = new BankAccount(banco:theBank).save(validate:false)
       companyOne.addToBanksAccounts(account1)
       companyOne.save(validate:false)
-      Company companyTwo = new Company(rfc:"DOS").save(validate:false)
+      Company companyTwo = new Company(rfc:"DOS", bussinessName:"TWO").save(validate:false)
       Bank anotherBank = new Bank(name:"IASBANK").save(validate:false)
       BankAccount account2 = new BankAccount(banco:anotherBank).save(validate:false)
       companyTwo.addToBanksAccounts(account2)
@@ -364,11 +364,11 @@ class PaysheetServiceSpec extends Specification {
 			def result = service.getPayersForBankAndSchema(payers, bank, schema)
 	  then:
 			result.size() == 1
-      result.first().company.rfc == theRfc
+      result.first().payer == thePayer
     where:
-    theBank   |   theSchema   ||  theRfc
-    new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.IMSS  || "UNO"
-    new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.ASSIMILABLE  || "UNO"
+    theBank   |   theSchema   ||  thePayer
+    new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.IMSS  || "ONE"
+    new Bank(name:"BANK").save(validate:false)    |   PaymentSchema.ASSIMILABLE  || "ONE"
 	}
 
 	void "Should obtain the banks list from paysheet payers"() {
