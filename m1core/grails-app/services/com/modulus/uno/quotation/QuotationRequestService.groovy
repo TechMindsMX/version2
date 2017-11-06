@@ -27,4 +27,9 @@ class QuotationRequestService {
       quotationRequest.status = QuotationRequestStatus.PROCESSED
       quotationRequest.save()
     }
+
+    QuotationRequest sendQuotation(QuotationRequest quotationRequest){
+      quotationRequest.status = QuotationRequestStatus.SEND
+      quotationRequest.save()
+    }
 }

@@ -65,4 +65,15 @@ class QuotationRequestController {
       redirect(action: 'index')
     }
 
+    def send(){
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByStatus(QuotationRequestStatus.SEND)
+
+      [quotationRequestList:quotationRequestList]
+    }
+
+    def sendQuotation(QuotationRequest quotationRequest){
+      quotationRequestService.sendQuotation(quotationRequest)
+      redirect(action: 'index')
+    }
+
 }
