@@ -420,11 +420,22 @@ class PaysheetService {
   }
 
   def getPayersForBankAndSchema(List payers, Bank bank, PaymentSchema schema) {
-    payers.collect { payer ->
+    def schemaBankPayers = payers.collect { payer ->
       if (payer.paymentSchema == schema && payer.company.banksAccounts.findAll { it.banco == bank }) {
         payer
       }
     }.grep()
+    
+    List dataPayers = []
+    schemaBankPayers.each { payer ->
+      Map dataPayer = [:]
+      payer.company.banksAccounts.each { bankAccount ->
+        dataPayer.payer = payer.company.bussinessName
+        dataPayer.bankAccount = bankAccount
+      }
+      dataPayers.add(dataPayer)
+    }
+    dataPayers
   }
 
 	def addInterBankSummary(List summary, Paysheet paysheet, List payers){
