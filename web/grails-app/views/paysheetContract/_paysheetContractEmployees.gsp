@@ -7,6 +7,14 @@
   </div>
 
   <div class="portlet-body">
+    <div class="row">
+      <div class="col-md-12 text-right">
+        <g:if test="${!availableEmployees}">
+          <g:link class="btn btn-primary" action="addEmployees" id="${paysheetContract.id}">Agregar Empleados</g:link>
+        </g:if>
+      </div>
+    </div>
+    <br/>
     <div class="table-responsive">
       <div class="container-fluid">
       <table class="table table-striped table-condensed">
