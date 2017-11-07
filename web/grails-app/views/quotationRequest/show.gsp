@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.quotation.SatConcept %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -21,46 +22,89 @@
             <div class="portlet-title"></div>
             <div class="clearfix"></div>
           </div>
-        </div> 
-
-        <div class="portlet-body">
-          <g:if test="${flash.message}">
-            <div class="message" role="status">${flash.message}</div>
-          </g:if>
-          <div class="row">
-            <div class="col-md-6">
-              <dl>
-                <dt>Cliente para cotización</dt>
-                <dd>${quotationRequest.quotationContract.client}</dd>
-                <dt>Fecha de apertura de la cotización</dt>
-                <dd><g:formatDate format="dd-MM-yyyy" date="${quotationRequest.quotationContract.initDate}" class="form-control"/></dd>
-              </dl>
-            </div>
-            <div class="col-md-6">
-              <dl>
-                <dt>Descripción</dt>
-                <dd>${quotationRequest.description}</dd>
-                <dt>Monto para la cotización</dt>
-                <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
-              </dl>
-            </div>
-          </div>
         </div>    
-
-        <div class=" portlet-footer">
-          <g:if test="${quotationRequest.status == quotationRequestStatus.SEND}">
-            <div class="row">
-              <div class="col-md-6">
-                <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
-              </div>
-              <div class="col-md-6 text-right">
+        
+        <g:if test="${quotationRequest.status == quotationRequestStatus.SEND}">
+          <g:form action="update">
+            <div class="portlet-body">
+              <g:if test="${flash.message}">
+                <div class="message" role="status">${flash.message}</div>
+              </g:if>
+              <div class="row">
                 <div class="col-md-6">
-                  <g:link class="btn btn-primary" controller="quotationRequest" action="requestProcessed" id="${quotationRequest.id}">Procesar</g:link>
+                  <dl>
+                    <dt>Cliente para cotización</dt>
+                    <dd>${quotationRequest.quotationContract.client}</dd>
+                    <dt>Fecha de apertura de la cotización</dt>
+                    <dd><g:formatDate format="dd-MM-yyyy" date="${quotationRequest.quotationContract.initDate}" class="form-control"/></dd>
+                  </dl>
+                </div>
+                <div class="col-md-6">
+                  <dl>
+                    <dt>Descripción</dt>
+                    <dd>${quotationRequest.description}</dd>
+                    <dt>Monto para la cotización</dt>
+                    <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                  </dl>
+                </div>
+                <div class="col-md-12">
+                  <dt>Facturadora </dt>
+                  <g:select class="form-control" name="Facturadora" from="['Facturadora Uno','Facturadora Dos','Facturadora Tres']"/>
+                </div>
+                <div class="col-md-12">
+                  <br>
+                  <dt>Concepto </dt>
+                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}"/>
+                </div>
+                <div class="col-md-3">
+                  <br>
+                  <dt><g:message code="Comisión"/></dt>
+                  <input class="form-control" type="text" id="amount" name="amount" value="${quotationRequest.commission}" required="required">
+                </div>
+              </div>
+            </div> 
+
+            <div class=" portlet-footer">
+              <div class="row">
+                <div class="col-md-6">
+                  <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
+                </div>
+                <div class="col-md-6 text-right">
+                  <div class="col-md-6">
+                    <g:link class="btn btn-primary" controller="quotationRequest" action="requestProcessed" id="${quotationRequest.id}">Procesar</g:link>
+                  </div>
                 </div>
               </div>
             </div>
-          </g:if>
-          <g:else>
+          </g:form>
+        </g:if>
+          
+        <g:else>
+          <div class="portlet-body">
+            <g:if test="${flash.message}">
+              <div class="message" role="status">${flash.message}</div>
+            </g:if>
+            <div class="row">
+              <div class="col-md-6">
+                <dl>
+                  <dt>Cliente para cotización</dt>
+                  <dd>${quotationRequest.quotationContract.client}</dd>
+                  <dt>Fecha de apertura de la cotización</dt>
+                  <dd><g:formatDate format="dd-MM-yyyy" date="${quotationRequest.quotationContract.initDate}" class="form-control"/></dd>
+                </dl>
+              </div>
+              <div class="col-md-6">
+                <dl>
+                  <dt>Descripción</dt>
+                  <dd>${quotationRequest.description}</dd>
+                  <dt>Monto para la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                </dl>
+              </div>
+            </div>
+          </div> 
+
+          <div class=" portlet-footer">
             <div class="row">
               <div class="col-md-6">
                 <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
@@ -77,8 +121,9 @@
                 </div>
               </div>
             </div>  
-          </g:else>
-        </div>
+          </div>
+        </g:else>
+
       </div>
     </div>
   </body>
