@@ -62,21 +62,24 @@ class PaysheetServiceSpec extends Specification {
 		and:"the charge bank account"
 			BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
 		and:"the payment message"
-			Map dispersionData = [paymentMessage:"Payment Message"]
+			Date applyDate = new Date()
+			Map dispersionData = [paymentMessage:"Payment Message", applyDate:applyDate]
 		when:
-			def result = service.prepareDispersionDataForBank(paysheet, bankAccount, dispersionData)
+			def result = service.prepareDispersionDataForBank(paysheet, bank, dispersionData)
 		then:
 			result.employees.size() == 1
-			result.chargeBankAccount == bankAccount
 			result.paymentMessage == "Payment Message"
-			result.applyDate == null
+			result.applyDate == applyDate
+      result.idPaysheet == 1
 	}
 
 	void "Should create dispersion files for dispersion data"() {
 		given:"The dispersion data"
-			BankAccount chargeBankAccount = new BankAccount(banco:new Bank(name:"BANCO").save(validate:false), accountNumber:"NumCuenta").save(validate:false)
 			List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-			Map dispersionData = [chargeBankAccount:chargeBankAccount, employees:employees, paymentMessage:"Payment Message"]
+ 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(name:"SABANK", bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(name:"IASBANK", bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionData = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
 		when:
 			def result = service.createDispersionFilesForDispersionData(dispersionData)
 		then:
@@ -87,52 +90,60 @@ class PaysheetServiceSpec extends Specification {
     given:"employees list"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The dispersion data"
-			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
-      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"PERIODO-PAGO"]
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionDataForBank = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"BBVA-LAYOUT", idPaysheet:1]
     when:
       def result = service.createTxtDispersionFileForBBVABANCOMER(dispersionDataForBank, "SA")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00SSA-PERIODOPAGO               "
+			result.readLines()[0] == "000EmployeeAccount000000000AccountSAMXN0000000001200.00SSA-BBVALAYOUT                "
 	}
 
   void "Should create the payment dispersion IAS BBVA file"() {
     given:"employees list"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The dispersion data"
-			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
-      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"PERIODO-PAGO"]
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionDataForBank = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"BBVA-LAYOUT", idPaysheet:1]
     when:
       def result = service.createTxtDispersionFileForBBVABANCOMER(dispersionDataForBank, "IAS")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00IAS-PERIODOPAGO               "
+			result.readLines()[0] == "000EmployeeAccount00000000AccountIASMXN0000000003000.00IAS-BBVALAYOUT                "
 	}
 
   void "Should create the payment dispersion SA Default file"() {
     given:"employees list"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The dispersion data"
-			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
-      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"DEFAULTLAYOUT"]
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionDataForBank = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"DEFAULT-LAYOUT", idPaysheet:1]
     when:
       def result = service.createTxtDispersionFileDefault(dispersionDataForBank, "SA")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000001200.00SSA-DEFAULTLAYOUT             "
+			result.readLines()[0] == "000EmployeeAccount000000000AccountSAMXN0000000001200.00SSA-DEFAULTLAYOUT             "
 	}
 
   void "Should create the payment dispersion IAS Default file"() {
     given:"employees list"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
     and:"The dispersion data"
-			BankAccount bankAccount = new BankAccount(accountNumber:"CompanyAccount", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
-      Map dispersionDataForBank = [employees:employees, chargeBankAccount:bankAccount, paymentMessage:"DEFAULTLAYOUT"]
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			Date applyDate = new Date()
+			Map dispersionDataForBank = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"DEFAULT-LAYOUT", idPaysheet:1]
     when:
       def result = service.createTxtDispersionFileDefault(dispersionDataForBank, "IAS")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "000EmployeeAccount0000CompanyAccountMXN0000000003000.00IAS-DEFAULTLAYOUT             "
+			result.readLines()[0] == "000EmployeeAccount00000000AccountIASMXN0000000003000.00IAS-DEFAULTLAYOUT             "
 	}
 
 	void "Should upload dispersion files to S3"() {
@@ -182,15 +193,18 @@ class PaysheetServiceSpec extends Specification {
 	void "Should complement the dispersion data"() {
 		given:
 			String[] ids = ["1","2","3"]
-			Map dispersionData = [dispersionAccount:ids]
+			Map dispersionData = [bank:ids, saBankAccount:ids, iasBankAccount:ids]
 		and:
 			BankAccount bankAccount1 = new BankAccount().save(validate:false)
 			BankAccount bankAccount2 = new BankAccount().save(validate:false)
 			BankAccount bankAccount3 = new BankAccount().save(validate:false)
+      Bank bank1 = new Bank().save(validate:false)
+      Bank bank2 = new Bank().save(validate:false)
+      Bank bank3 = new Bank().save(validate:false)
 		when:
 			Map result = service.complementDispersionData(dispersionData)
 		then:
-			result.chargeBankAccountsList.size() == 3
+			result.banks.size() == 3
 	}
 
 	void "Should obtain the payers list for payment dispersion"() {
@@ -213,9 +227,10 @@ class PaysheetServiceSpec extends Specification {
 	void "Should create dispersion file SA for SANTANDER bank"() {
 		given:"The dispersion data"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
-			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate]
+			Map dispersionData = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"SANTANDER-LAYOUT", idPaysheet:1]
 		and:"The business entity"
 			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC").save(validate:false)
 			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
@@ -229,7 +244,7 @@ class PaysheetServiceSpec extends Specification {
 			def result = service.createTxtDispersionFileForSANTANDER(dispersionData, "SA")
 		then:
 			result.readLines().size() == 3
-			result.readLines()[0] == "100001E${new Date().format('MMddyyyy')}Account         ${applyDate.format('MMddyyyy')}"
+			result.readLines()[0] == "100001E${new Date().format('MMddyyyy')}AccountSA       ${applyDate.format('MMddyyyy')}"
 			result.readLines()[1] == "200002${'NUM'.padRight(7,' ')}${'LASTNAMEEMP'.padRight(30,' ')}${'MOTHERLASTNAMEEMP'.padRight(20,' ')}${'NAMEEMP'.padRight(30,' ')}${'EMPLOYEEACCOUNT'.padLeft(16,' ')}${'120000'.padLeft(18,'0')}01"
 			result.readLines()[2] == "30000200001${'120000'.padLeft(18,'0')}"
 	}
@@ -237,9 +252,10 @@ class PaysheetServiceSpec extends Specification {
 	void "Should create dispersion file IAS for SANTANDER bank"() {
 		given:"The dispersion data"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false)).save(validate:false)
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
-			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate]
+			Map dispersionData = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"SANTANDER-LAYOUT", idPaysheet:1]
 		and:"The business entity"
 			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC").save(validate:false)
 			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
@@ -253,7 +269,7 @@ class PaysheetServiceSpec extends Specification {
 			def result = service.createTxtDispersionFileForSANTANDER(dispersionData, "IAS")
 		then:
 			result.readLines().size() == 3
-			result.readLines()[0] == "100001E${new Date().format('MMddyyyy')}Account         ${applyDate.format('MMddyyyy')}"
+			result.readLines()[0] == "100001E${new Date().format('MMddyyyy')}AccountIAS      ${applyDate.format('MMddyyyy')}"
 			result.readLines()[1] == "200002${'NUM'.padRight(7,' ')}${'LASTNAMEEMP'.padRight(30,' ')}${'MOTHERLASTNAMEEMP'.padRight(20,' ')}${'NAMEEMP'.padRight(30,' ')}${'EMPLOYEEACCOUNT'.padLeft(16,' ')}${'300000'.padLeft(18,'0')}01"
 			result.readLines()[2] == "30000200001${'300000'.padLeft(18,'0')}"
 	}
@@ -261,9 +277,10 @@ class PaysheetServiceSpec extends Specification {
 	void "Should create dispersion file SA for BANAMEX bank"() {
 		given:"The dispersion data"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
-			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, sequence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
+			Map dispersionData = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
 		and:"The business entity"
 			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC", type: BusinessEntityType.FISICA).save(validate:false)
 			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
@@ -277,8 +294,8 @@ class PaysheetServiceSpec extends Specification {
 			def result = service.createTxtDispersionFileForBANAMEX(dispersionData, "SA")
 		then:
 			result.readLines().size() == 4
-			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'BILLING COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
-			result.readLines()[1] == "21001${'120000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'Account'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
+			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'SA COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
+			result.readLines()[1] == "21001${'120000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'AccountSA'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
 			result.readLines()[2] == "3000101001${'120000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'120000'.padLeft(18,'0')}000001${'120000'.padLeft(18,'0')}"
 	}
@@ -286,9 +303,10 @@ class PaysheetServiceSpec extends Specification {
 	void "Should create dispersion file IAS for BANAMEX bank"() {
 		given:"The dispersion data"
       List<PaysheetEmployee> employees = [createPaysheetEmployee()]
-			BankAccount bankAccount = new BankAccount(accountNumber:"Account", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
+			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
-			Map dispersionData = [employees:employees, chargeBankAccount:bankAccount, applyDate:applyDate, sequence:"1", nameCompany:"BILLING COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
+			Map dispersionData = [employees:employees, saBankAccount:saBankAccount, iasBankAccount:iasBankAccount, applyDate:applyDate, sequence:"1", saPayer:"SA COMPANY", iasPayer:"IAS COMPANY", paymentMessage:"BANAMEX-LAYOUT", idPaysheet:1]
 		and:"The business entity"
 			BusinessEntity businessEntity = new BusinessEntity(rfc:"RFC", type: BusinessEntityType.FISICA).save(validate:false)
 			ComposeName name = new ComposeName(value:"NameEmp", type:NameType.NOMBRE).save(validate:false)
@@ -302,8 +320,8 @@ class PaysheetServiceSpec extends Specification {
 			def result = service.createTxtDispersionFileForBANAMEX(dispersionData, "IAS")
 		then:
 			result.readLines().size() == 4
-			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'BILLING COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
-			result.readLines()[1] == "21001${'300000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'Account'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
+			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'IAS COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
+			result.readLines()[1] == "21001${'300000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'AccountIAS'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
 			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
@@ -319,8 +337,8 @@ class PaysheetServiceSpec extends Specification {
 		when:
 			def result = service.prepareDispersionSummary(paysheetEmployee.paysheet)
 		then:
-			result.size() == 4
-      result.count { it.type=="SameBank" } == 3
+			result.size() == 1
+      result.count { it.type=="SameBank" } == 0
       result.count { it.type=="InterBank" } == 1
 	}
 
