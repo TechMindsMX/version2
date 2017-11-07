@@ -27,10 +27,6 @@ class QuotationRequestServiceSpec extends Specification {
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
-    }
 
     void "Should get Sale order when send one quotationRequest"(){
       given:"get quotationRequest"
@@ -56,12 +52,12 @@ class QuotationRequestServiceSpec extends Specification {
                                                     quotationContract: quotationContract
 
                                                     ).save(validate:false)
+      and:"get params"
+        Map params = service.getParams(quotationRequest)
       when:
-        //service.requestProcessed(QuotationRequest quotationRequest)
-        saleOrderServise.createOrderForQuotationRequest()
         def quotation = service.requestProcessed(quotationRequest)
-
       then:
-        1==1
+        1 * saleOrderServise.createSaleOrderWithAddress(_)
+        quotation
     }
 }

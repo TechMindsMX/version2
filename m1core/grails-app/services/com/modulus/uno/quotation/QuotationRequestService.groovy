@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import com.modulus.uno.SaleOrderService
 import com.modulus.uno.PaymentMethod
 import com.modulus.uno.SaleOrder
+import com.modulus.uno.SaleOrderItem
 
 @Transactional
 class QuotationRequestService {
@@ -32,8 +33,23 @@ class QuotationRequestService {
 
       Map params = getParams(quotationRequest)
       println params.dump()
-      def sale = saleOrderServise.createSaleOrderWithAddress(params)
-      println sale
+      def saleOrder = saleOrderServise.createSaleOrderWithAddress(params)
+      if(!saleOrder){
+        log.error "No se creo la Sale Order"
+      }
+      else{
+        def saleOrderItem = new SaleOrderItem(
+                                             sku:"A98GB",
+                                             name: quotationRequest.satConcet.getConcetp(),
+                                             quantity:1,
+                                             price: quotationRequest.amount,
+                                             discount:0,
+                                             ivaRetention: 0,
+                                             iva: 16,
+                                             unitType:"UNIDADES",
+                                             saleOerder:saleOerder
+                                             )
+      }
       quotationRequest.status = QuotationRequestStatus.PROCESSED
       quotationRequest.save()
     }
