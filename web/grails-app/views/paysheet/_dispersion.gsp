@@ -23,17 +23,20 @@
 								<td style="width:20%">SA</td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalSA)}</td>
 								<td style="width:60%" class="text-center">
-                  <g:select class="form-control" name="saBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                  <g:if test="${summaryBank.bank.name!='STP'}">
+                    <g:select class="form-control" name="saBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/>
+                  </g:if>
                 </td>
 							</tr>
               <tr>
 								<td style="width:20%">IAS</td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalIAS)}</td>
 								<td style="width:60%" class="text-center">
-                  <g:select class="form-control" name="iasBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                  <g:if test="${summaryBank.bank.name!='STP'}">
+                    <g:select class="form-control" name="iasBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                  </g:if>
                 </td>
 							</tr>
-
 						</g:each>
 						</tbody>
 					</table>
@@ -52,19 +55,17 @@
 					<label>Mensaje del Pago</label>
 					<input class="form-control" type="text" name="paymentMessage" maxlength="30" pattern="[A-Za-z0-9\s]{1,30}" title="Sólo se permiten letras (sin acentos y sin 'ñ'), números y espacios en blanco" required="" />
 				</div>
+			</div>
+			<div class="col-md-3">
 				<div class="form-group">
 					<label>Fecha de Aplicación</label>
 					<input class="form-control" type="text" id="dpApplyDate" name="applyDate" required="required">
 				</div>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-3">
 				<div class="form-group">
 					<label>Secuencia</label>
 					<input class="form-control" type="number" name="sequence" max="9999" required="required">
-				</div>
-				<div class="form-group">
-					<label>Nombre de la Empresa Pagadora</label>
-					<input class="form-control" type="text" name="nameCompany" maxlength="36" required="required">
 				</div>
 			</div>
 		</div>
