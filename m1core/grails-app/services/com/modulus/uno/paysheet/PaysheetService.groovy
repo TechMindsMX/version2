@@ -124,7 +124,7 @@ class PaysheetService {
 
 	@Transactional
   def generateDispersionFilesFromPaysheet(Paysheet paysheet, Map dispersionData) {
-  	Locale.setDefault(new Locale("es","MX"));
+  	Locale.setDefault(new Locale("es","MX"))
 		deleteCurrentDispersionFilesFromPaysheet(paysheet)
     dispersionData = complementDispersionData(dispersionData)
 		generateDispersionFiles(paysheet, dispersionData)
@@ -142,11 +142,11 @@ class PaysheetService {
 
   Map complementDispersionData(Map dispersionData) {
 		List idsBanks = Arrays.asList(dispersionData.bank)
-		List idsSaBankAccounts = Arrays.asList(dispersionData.saBankAccount)
-		List idsIasBankAccounts = Arrays.asList(dispersionData.iasBankAccount)
+		List idsSaBankAccounts = dispersionData.saBankAccount ? Arrays.asList(dispersionData.saBankAccount) : []
+		List idsIasBankAccounts = dispersionData.iasBankAccount ? Arrays.asList(dispersionData.iasBankAccount) : []
     List<Bank> banks = Bank.findAllByIdInList(idsBanks)
-    List<BankAccount> saBankAccounts = BankAccount.findAllByIdInList(idsSaBankAccounts)
-    List<BankAccount> iasBankAccounts = BankAccount.findAllByIdInList(idsIasBankAccounts)
+    List<BankAccount> saBankAccounts = idsSaBankAccounts ? BankAccount.findAllByIdInList(idsSaBankAccounts) : []
+    List<BankAccount> iasBankAccounts = idsIasBankAccounts ? BankAccount.findAllByIdInList(idsIasBankAccounts) : []
     dispersionData.banks = banks
     dispersionData.saBankAccounts = saBankAccounts
     dispersionData.iasBankAccounts = iasBankAccounts
@@ -156,17 +156,21 @@ class PaysheetService {
 
 	def generateDispersionFiles(Paysheet paysheet, Map dispersionData){
 		List dispersionFiles = []
-		dispersionData.banks.eachWithIndex { bank ->
-			Map dispersionDataForBank = prepareDispersionDataForBank(paysheet, bank, dispersionData)
-      dispersionDataForBank.saBankAccount = dispersionData.saBankAccounts[index]
-      dispersionDataForBank.iasBankAccount = dispersionData.iasBankAccounts[index]
-      dispersionDataForBank = getPayersForPaysheetAndBank(paysheet, dispersionDataForBank)
-			List files = createDispersionFilesForDispersionData(dispersionDataForBank)
-			List s3Files = uploadDispersionFilesToS3(files)
-			dispersionFiles.addAll(s3Files)
+		dispersionData.banks.eachWithIndex { bank, index ->
+      if (bank.name!="STP") {
+        Map dispersionDataForBank = prepareDispersionDataForBank(paysheet, bank, dispersionData)
+        dispersionDataForBank.saBankAccount = dispersionData.saBankAccounts[index]
+        dispersionDataForBank.iasBankAccount = dispersionData.iasBankAccounts[index]
+        dispersionDataForBank = getPayersForPaysheetAndBank(paysheet, dispersionDataForBank)
+        List files = createDispersionFilesForDispersionData(dispersionDataForBank)
+        List s3Files = uploadDispersionFilesToS3(files)
+        dispersionFiles.addAll(s3Files)
+		    addingDispersionFilesToPaysheet(paysheet, dispersionFiles)
+      } else {
+        generateDispersionFileInterBank(paysheet, dispersionData)
+      }
 		}
 
-		addingDispersionFilesToPaysheet(paysheet, dispersionFiles)
 		log.info "Files dispersion same bank generated"
 	}
 
@@ -185,7 +189,7 @@ class PaysheetService {
 
 	Map prepareDispersionDataForBank(Paysheet paysheet, Bank bank, Map dispersionData){
 		List<PaysheetEmployee> employees = getPaysheetEmployeesForBank(paysheet.employees, bank)
-		Map dispersionDataForBank = [employees:employees, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate, idPaysheet:paysheet.id, sequence:dispersionData.sequence]
+		[employees:employees, paymentMessage:dispersionData.paymentMessage, applyDate:dispersionData.applyDate, idPaysheet:paysheet.id, sequence:dispersionData.sequence]
 	}
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
@@ -196,7 +200,7 @@ class PaysheetService {
     }.grep()
   }
 
-  String getPayersForPaysheetAndBank(Paysheet paysheet, Map dispersionDataForBank) {
+  Map getPayersForPaysheetAndBank(Paysheet paysheet, Map dispersionDataForBank) {
     List payers = getPayersToPaymentDispersion(paysheet)
     payers.each { payer ->
       if (payer.company.banksAccounts.contains(dispersionDataForBank.saBankAccount)) {
@@ -375,7 +379,7 @@ class PaysheetService {
 
 //TODO: Los interbancarios, se harán con M1
 	def generateDispersionFileInterBank(Paysheet paysheet, Map dispersionData){
-    List<PaysheetEmployee> employees = getPaysheetEmployeesForInterBank(paysheet.employees, dispersionData.chargeBankAccountsList)
+    List<PaysheetEmployee> employees = getPaysheetEmployeesForInterBank(paysheet.employees, dispersionData.banks)
 		if (employees) {
 			Map dispersionDataInterBank = [employees: employees, paymentMessage:dispersionData.paymentMessage]
 			File dispersionFileSAInterBank = createDispersionFileInterBank(dispersionDataInterBank, "SA")
@@ -386,9 +390,9 @@ class PaysheetService {
 		}
 	}
 
-  List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, List chargeBankAccountsList) {
+  List<PaysheetEmployee> getPaysheetEmployeesForInterBank(def allEmployees, List banks) {
     allEmployees.collect { employee ->
-      if (employee.prePaysheetEmployee.bank && !chargeBankAccountsList.find { it.banco==employee.prePaysheetEmployee.bank } && employee.paymentWay == PaymentWay.BANKING) {
+      if (employee.prePaysheetEmployee.bank && !banks.contains(employee.prePaysheetEmployee.bank) && employee.paymentWay == PaymentWay.BANKING) {
         employee
       }
     }.grep()
@@ -399,7 +403,6 @@ class PaysheetService {
     File file = File.createTempFile("dispersion_${schema}_InterBank",".txt")
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
-		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
 		String sourceAccount = "M1Account".padLeft(18,'0')
 		String currency = "MXN"
 		String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
