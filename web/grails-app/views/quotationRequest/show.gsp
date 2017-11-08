@@ -1,4 +1,5 @@
 <%! import com.modulus.uno.quotation.SatConcept %>
+<%! import com.modulus.uno.quotation.QuotationRequestStatus %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -24,7 +25,7 @@
           </div>
         </div>
 
-        <g:if test="${quotationRequest.status == quotationRequestStatus.SEND}">
+        <g:if test="${quotationRequest.status == QuotationRequestStatus.SEND}">
           <g:form action="requestProcessed">
             <div class="portlet-body">
               <g:if test="${flash.message}">
@@ -49,7 +50,7 @@
                 </div>
                 <div class="col-md-12">
                   <dt>Facturadora </dt>
-                  <g:select class="form-control" name="Facturadora" from="['Facturadora Uno','Facturadora Dos','Facturadora Tres']"/>
+                  <g:select class="form-control" name="Facturadora" from="${billers}" optionKey="id"/>
                 </div>
                 <div class="col-md-12">
                   <br>

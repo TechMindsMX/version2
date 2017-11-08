@@ -30,9 +30,8 @@ class QuotationRequestController {
     }
 
     def show(QuotationRequest quotationRequest){
-
-      [quotationRequest: quotationRequest,
-      quotationRequestStatus:QuotationRequestStatus]
+      println session.company
+      respond quotationRequest, model:[billers:quotationRequestService.getBillerCompanies(session.company.toLong())]
     }
 
     def edit(QuotationRequest quotationRequest){

@@ -7,11 +7,18 @@ import com.modulus.uno.SaleOrder
 import com.modulus.uno.SaleOrderItem
 import com.modulus.uno.SaleOrderItemCommand
 import com.modulus.uno.SaleOrderCommand
+import com.modulus.uno.Corporate
+import com.modulus.uno.CorporateService
+import com.modulus.uno.CompanyService
+import com.modulus.uno.CompanyStatus
+import com.modulus.uno.quotation.QuotationRequestCommand
 
 @Transactional
 class QuotationRequestService {
 
     SaleOrderService saleOrderService
+    CorporateService corporateService
+    CompanyService companyService
 
     def serviceMethod() {
 
@@ -85,5 +92,11 @@ class QuotationRequestService {
                   note:"",
                   paymentMethod:"03 - TRANSFERENCIA ELECTRONICA"
                   ]
+    }
+
+    def getBillerCompanies(Long company){
+      def corporate = corporateService.getCorporateFromCompany(company)
+      List<Corporate> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED, corporate.id)
+      companies
     }
 }
