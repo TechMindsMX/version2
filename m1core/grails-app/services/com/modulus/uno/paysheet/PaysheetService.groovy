@@ -159,8 +159,8 @@ class PaysheetService {
 		dispersionData.banks.eachWithIndex { bank, index ->
       if (bank.name!="STP") {
         Map dispersionDataForBank = prepareDispersionDataForBank(paysheet, bank, dispersionData)
-        dispersionDataForBank.saBankAccount = dispersionData.saBankAccounts[index]
-        dispersionDataForBank.iasBankAccount = dispersionData.iasBankAccounts[index]
+        dispersionDataForBank.saBankAccount = dispersionData.saBankAccounts.find { ba -> ba.banco == bank }
+        dispersionDataForBank.iasBankAccount = dispersionData.iasBankAccounts.find { ba -> ba.banco == bank }
         dispersionDataForBank = getPayersForPaysheetAndBank(paysheet, dispersionDataForBank)
         List files = createDispersionFilesForDispersionData(dispersionDataForBank)
         List s3Files = uploadDispersionFilesToS3(files)
@@ -171,7 +171,7 @@ class PaysheetService {
       }
 		}
 
-		log.info "Files dispersion same bank generated"
+		log.info "Files dispersion files generated"
 	}
 
 	def generateDispersionFileSameBank(Paysheet paysheet, Map dispersionData){
@@ -473,13 +473,14 @@ class PaysheetService {
         payer
       }
     }.grep()
-    getDataPayersFromPayers(schemaBankPayers)
+    getDataPayersFromPayers(schemaBankPayers, bank)
   }
 
-  def getDataPayersFromPayers(List payers) {
+  def getDataPayersFromPayers(List payers, Bank bank) {
     List dataPayers = []
     payers.each { payer ->
-      payer.company.banksAccounts.each { bankAccount ->
+      def banksAccounts = bank ? payer.company.banksAccounts.findAll {it.banco == bank} : payer.company.banksAccounts
+      banksAccounts.each { bankAccount ->
         Map dataPayer = [:]
         dataPayer.payer = payer.company.bussinessName
         dataPayer.bankAccountId = bankAccount.id
@@ -494,8 +495,8 @@ class PaysheetService {
     def banksPayers = getBanksFromPayers(payers)
 		Map summaryInterBank = [:]
 		summaryInterBank.bank = Bank.findByName("STP")
-    summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS })
-    summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE })
+    summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS }, null)
+    summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
     summaryInterBank.allPayers = payers
 		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
 		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.salaryAssimilable.sum()
@@ -512,7 +513,7 @@ class PaysheetService {
         banksPayers.add(bankAccount.banco)
       }
     }
-    banksPayers
+    banksPayers.sort{it.name}
   }
 
 }
