@@ -105,4 +105,13 @@ class ManagerApplicationController {
     [privacyNotice:managerApplicationService.getPrivacyNotice()]
   }
 
+  def executeFinalTransaction() {
+  }
+
+  def applyFinalTransactionForAllCompanies() {
+    Date date = Date.parse("dd-MM-yyyy", params.date)
+    managerApplicationService.applyFinalTransactionForAllCompaniesInDate(date)
+    redirect action:"executeFinalTransaction"
+  }
+
 }
