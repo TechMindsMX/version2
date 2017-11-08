@@ -11,6 +11,7 @@ import com.modulus.uno.Corporate
 import com.modulus.uno.CorporateService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CompanyStatus
+import com.modulus.uno.SaleOrderStatus
 
 @Transactional
 class QuotationRequestService {
@@ -48,6 +49,7 @@ class QuotationRequestService {
                                                               paymentMethod: params.paymentMethod
                                                               )
       def saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
+      saleOrder.status = SaleOrderStatus.AUTORIZADA
       if(saleOrder.save()){
         SaleOrderItemCommand saleOrderItemCommand = new SaleOrderItemCommand(
                                                                             sku:"FACTURA-10",
@@ -83,7 +85,7 @@ class QuotationRequestService {
         throw new QuotationException("Este cliente no tiene dirección Fiscal")
       }
       Map params= [
-                  companyId:quotationRequest.quotationContract.company.id,
+                  companyId:quotationRequest.biller.id,
                   clientId:quotationRequest.quotationContract.client.id,
                   addressId:quotationRequest.quotationContract.client.addresses?.first()?.id ?: 0,
                   fechaCobro: new Date().format( 'dd/MM/yyyy' ),
