@@ -62,9 +62,10 @@ class QuotationRequestController {
     }
 
     def requestProcessed(QuotationRequestCommand quotationRequestCommand){
+      println params.dump()
       QuotationRequest quotationRequestUpdate=quotationRequestCommand.getQuotationRequest()
       QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
-      quotationRequest.satConcept = SatConcept.S1
+      quotationRequest.satConcept = SatConcept.values().find(){it.toString() == params.satConcept }
       quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
       quotationRequestService.requestProcessed(quotationRequest)
       redirect(action: 'index')

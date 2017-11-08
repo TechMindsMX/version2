@@ -40,9 +40,6 @@ class SaleOrderService {
     addTheAddressToSaleOrder(saleOrder, address)
     saleOrder
   }
-  def createOrderForQuotationRequest(){
-      println "Toco Sericio"
-  }
 
   def createSaleOrder(BusinessEntity businessEntity, Company company, def fechaCobro, String externalId, String note, PaymentMethod paymentMethod) {
     def saleOrder = new SaleOrder(rfc:businessEntity.rfc, clientName: businessEntity.toString(), company:company, externalId:externalId, note:note, paymentMethod:paymentMethod)

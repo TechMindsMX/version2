@@ -54,7 +54,7 @@
                 <div class="col-md-12">
                   <br>
                   <dt>Concepto </dt>
-                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}" optionKey="key"/>
+                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}"/>
                 </div>
                 <div class="col-md-3">
                   <br>
