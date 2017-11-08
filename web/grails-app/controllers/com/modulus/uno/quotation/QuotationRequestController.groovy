@@ -61,7 +61,11 @@ class QuotationRequestController {
       [quotationRequestList:quotationRequestList]
     }
 
-    def requestProcessed(QuotationRequest quotationRequest){
+    def requestProcessed(QuotationRequestCommand quotationRequestCommand){
+      QuotationRequest quotationRequestUpdate=quotationRequestCommand.getQuotationRequest()
+      QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
+      quotationRequest.satConcept = SatConcept.S1
+      quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
       quotationRequestService.requestProcessed(quotationRequest)
       redirect(action: 'index')
     }

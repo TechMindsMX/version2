@@ -6,7 +6,7 @@
     <g:set var="entityName" value="${message(code: 'quotationContract.label', default: 'QuotationContract')}" />
     <title><g:message code="default.create.label" args="[entityName]" /></title>
   </head>
-  
+
   <body>
     <div class="page-title">
       <h1>
@@ -22,10 +22,10 @@
             <div class="portlet-title"></div>
             <div class="clearfix"></div>
           </div>
-        </div>    
-        
+        </div>
+
         <g:if test="${quotationRequest.status == quotationRequestStatus.SEND}">
-          <g:form action="update">
+          <g:form action="requestProcessed">
             <div class="portlet-body">
               <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
@@ -54,16 +54,19 @@
                 <div class="col-md-12">
                   <br>
                   <dt>Concepto </dt>
-                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}"/>
+                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}" optionKey="key"/>
                 </div>
                 <div class="col-md-3">
                   <br>
                   <dt><g:message code="Comisión"/></dt>
-                  <input class="form-control" type="text" id="amount" name="amount" value="${quotationRequest.commission}" required="required">
+                  <input class="form-control" type="text" id="commission" name="commission" value="${quotationRequest.commission}" required="required">
                 </div>
               </div>
-            </div> 
-
+            </div>
+            <input id="id" name="id" type="hidden" value="${quotationRequest.id}"/>
+            <input id="quotation" name="quotation" value="${quotationRequest.quotationContract.id}" type="hidden"/>
+            <input id="amount" name="amount" value="${quotationRequest.amount}" type="hidden"/>
+            <input id="description" name="description" value="${quotationRequest?.description}" type="hidden"/>
             <div class=" portlet-footer">
               <div class="row">
                 <div class="col-md-6">
@@ -71,14 +74,14 @@
                 </div>
                 <div class="col-md-6 text-right">
                   <div class="col-md-6">
-                    <g:link class="btn btn-primary" controller="quotationRequest" action="requestProcessed" id="${quotationRequest.id}">Procesar</g:link>
+                    <button class="btn btn-primary" type="submit"  id="${quotationRequest.id}">Procesar</button>
                   </div>
                 </div>
               </div>
             </div>
           </g:form>
         </g:if>
-          
+
         <g:else>
           <div class="portlet-body">
             <g:if test="${flash.message}">
@@ -102,7 +105,7 @@
                 </dl>
               </div>
             </div>
-          </div> 
+          </div>
 
           <div class=" portlet-footer">
             <div class="row">
@@ -120,7 +123,7 @@
                   <g:link class="btn btn-primary" controller="quotationRequest" action="delete" id="${quotationRequest.id}">Borrar</g:link>
                 </div>
               </div>
-            </div>  
+            </div>
           </div>
         </g:else>
 

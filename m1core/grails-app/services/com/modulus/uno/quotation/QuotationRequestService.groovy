@@ -5,11 +5,13 @@ import com.modulus.uno.SaleOrderService
 import com.modulus.uno.PaymentMethod
 import com.modulus.uno.SaleOrder
 import com.modulus.uno.SaleOrderItem
+import com.modulus.uno.SaleOrderItemCommand
+import com.modulus.uno.SaleOrderCommand
 
 @Transactional
 class QuotationRequestService {
 
-    SaleOrderService saleOrderServise
+    SaleOrderService saleOrderService
 
     def serviceMethod() {
 
@@ -30,27 +32,38 @@ class QuotationRequestService {
     }
 
     QuotationRequest requestProcessed(QuotationRequest quotationRequest){
-
       Map params = getParams(quotationRequest)
-      println params.dump()
-      def saleOrder = saleOrderServise.createSaleOrderWithAddress(params)
-      if(!saleOrder){
-        log.error "No se creo la Sale Order"
+      SaleOrderCommand saleOrderCommand = new SaleOrderCommand(
+                                                              addressId:params.addressId,
+                                                              companyId:params.companyId,
+                                                              clientId:params.clientId,
+                                                              note:params.note,
+                                                              fechaCobro:params.fechaCobro,
+                                                              paymentMethod: params.paymentMethod
+                                                              )
+      def saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
+      if(saleOrder.save()){
+        SaleOrderItemCommand saleOrderItemCommand = new SaleOrderItemCommand(
+                                                                            sku:"FACTURA-10",
+                                                                            name:quotationRequest.satConcept.getConcept(),
+                                                                            quantity:"1",
+                                                                            price:quotationRequest.amount.toString(),
+                                                                            discount:"0",
+                                                                            ivaRetention:"0",
+                                                                            iva:"16",
+                                                                            unitType:"UNIDAD"
+                                                                            )
+        def saleOrderItem  = saleOrderItemCommand.createSaleOrderItem()
+        saleOrderItem.saleOrder = saleOrder
+        saleOrderItem.save()
+        if(saleOrderItem){
+         quotationRequest.saleOrder = saleOrder
+         quotationRequest.status = QuotationRequestStatus.PROCESSED
+        }
       }
       else{
-        def saleOrderItem = new SaleOrderItem(
-                                             sku:"A98GB",
-                                             name: quotationRequest.satConcet.getConcetp(),
-                                             quantity:1,
-                                             price: quotationRequest.amount,
-                                             discount:0,
-                                             ivaRetention: 0,
-                                             iva: 16,
-                                             unitType:"UNIDADES",
-                                             saleOerder:saleOerder
-                                             )
+        log.erro "Ocurrio Un error al generar la Sale Order"
       }
-      quotationRequest.status = QuotationRequestStatus.PROCESSED
       quotationRequest.save()
     }
 
@@ -63,11 +76,11 @@ class QuotationRequestService {
       Map params= [
                   companyId:quotationRequest.quotationContract.company.id,
                   clientId:quotationRequest.quotationContract.client.id,
-                  addressId:quotationRequest.quotationContract.client.addresses?.id ?: 2,
-                  fechaCobro: new Date(),
+                  addressId:quotationRequest.quotationContract.client.addresses.first().id,
+                  fechaCobro: new Date().format( 'dd/MM/yyyy' ),
                   externalId:"",
                   note:"",
-                  paymentMethod:PaymentMethod.EFECTIVO
+                  paymentMethod:"03 - TRANSFERENCIA ELECTRONICA"
                   ]
     }
 }
