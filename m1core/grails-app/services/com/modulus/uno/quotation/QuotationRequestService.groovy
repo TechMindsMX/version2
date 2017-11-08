@@ -62,7 +62,7 @@ class QuotationRequestService {
         }
       }
       else{
-        log.erro "Ocurrio Un error al generar la Sale Order"
+        log.error "Ocurrio Un error al generar la Sale Order"
       }
       quotationRequest.save()
     }
