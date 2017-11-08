@@ -492,16 +492,19 @@ class PaysheetService {
 
 	def addInterBankSummary(List summary, Paysheet paysheet, List payers){
     def banksPayers = getBanksFromPayers(payers)
-		Map summaryInterBank = [:]
-		summaryInterBank.bank = Bank.findByName("STP")
-    summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS }, null)
-    summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
-    summaryInterBank.allPayers = payers
-		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
-		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.salaryAssimilable.sum()
-		summaryInterBank.type = "InterBank"
-    if (summaryInterBank.totalSA > 0 || summaryInterBank.totalIAS >0)
-      summary.add(summaryInterBank)
+    def employees = paysheet.employees.findAll{ e-> !banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING }
+    if (employees) {
+      Map summaryInterBank = [:]
+      summaryInterBank.bank = Bank.findByName("STP")
+      summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS }, null)
+      summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
+      summaryInterBank.allPayers = payers
+      summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
+      summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.salaryAssimilable.sum()
+      summaryInterBank.type = "InterBank"
+      if (summaryInterBank.totalSA > 0 || summaryInterBank.totalIAS >0)
+        summary.add(summaryInterBank)
+    }
 		summary
 	}
 
