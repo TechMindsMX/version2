@@ -76,7 +76,7 @@ class QuotationRequestService {
       Map params= [
                   companyId:quotationRequest.quotationContract.company.id,
                   clientId:quotationRequest.quotationContract.client.id,
-                  addressId:quotationRequest.quotationContract.client.addresses.first().id,
+                  addressId:quotationRequest.quotationContract.client.addresses?.first()?.id ?: 0,
                   fechaCobro: new Date().format( 'dd/MM/yyyy' ),
                   externalId:"",
                   note:"",
