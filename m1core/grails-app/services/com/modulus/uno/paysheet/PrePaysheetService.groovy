@@ -58,7 +58,7 @@ class PrePaysheetService {
 
   List<BusinessEntity> getEmployeesAvailableToAdd(PrePaysheet prePaysheet) {
     List<BusinessEntity> currentEmployees = obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet)
-    prePaysheet.paysheetContract.employees.toList() - currentEmployees
+    (prePaysheet.paysheetContract.employees.toList() - currentEmployees).sort {it.toString()}
   }
 
   List<BusinessEntity> obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet) {
