@@ -396,9 +396,9 @@ class PaysheetServiceSpec extends Specification {
 			def result = service.getBanksFromPayers(payers)
 	  then:
 			result.size() == 3
-      result[0].name == "BANK01"
-      result[1].name == "BANK02"
-      result[2].name == "ANOTHER"
+      result[0].name == "ANOTHER"
+      result[1].name == "BANK01"
+      result[2].name == "BANK02"
 	}
 
   private PaysheetEmployee createPaysheetEmployee() {
