@@ -73,6 +73,9 @@ class QuotationRequestService {
     }
 
     Map getParams(QuotationRequest quotationRequest){
+      if(!quotationRequest.quotationContract.client.addresses){
+        throw new QuotationException("Este cliente no tiene dirección Fiscal")
+      }
       Map params= [
                   companyId:quotationRequest.quotationContract.company.id,
                   clientId:quotationRequest.quotationContract.client.id,
