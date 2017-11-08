@@ -11,7 +11,6 @@ import com.modulus.uno.Corporate
 import com.modulus.uno.CorporateService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CompanyStatus
-import com.modulus.uno.quotation.QuotationRequestCommand
 
 @Transactional
 class QuotationRequestService {

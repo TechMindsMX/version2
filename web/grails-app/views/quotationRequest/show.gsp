@@ -50,7 +50,7 @@
                 </div>
                 <div class="col-md-12">
                   <dt>Facturadora </dt>
-                  <g:select class="form-control" name="Facturadora" from="${billers}" optionKey="id"/>
+                  <g:select class="form-control" name="biller" from="${billers}" optionKey="id"/>
                 </div>
                 <div class="col-md-12">
                   <br>

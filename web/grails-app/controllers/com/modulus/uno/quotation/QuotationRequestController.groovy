@@ -30,7 +30,6 @@ class QuotationRequestController {
     }
 
     def show(QuotationRequest quotationRequest){
-      println session.company
       respond quotationRequest, model:[billers:quotationRequestService.getBillerCompanies(session.company.toLong())]
     }
 
@@ -61,11 +60,11 @@ class QuotationRequestController {
     }
 
     def requestProcessed(QuotationRequestCommand quotationRequestCommand){
-      println params.dump()
       QuotationRequest quotationRequestUpdate = quotationRequestCommand.getQuotationRequest()
       QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
       quotationRequest.satConcept = SatConcept.values().find(){it.toString() == params.satConcept }
       quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
+      quotationRequest.biller = Company.get(quotationRequestCommand.biller.toLong())
       quotationRequestService.requestProcessed(quotationRequest)
       redirect(action: 'index')
     }
