@@ -85,4 +85,19 @@ class CollaboratorService {
     new Period(init:new Date().parse("dd-MM-yyyy", init), end:new Date().parse("dd-MM-yyyy", end))
   }
 
+  Period getPeriodStpConciliationInDate(Date date) {
+    Period period = new Period()
+    Calendar cal = date.toCalendar()
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    period.init = cal.time
+
+    cal.set(Calendar.HOUR_OF_DAY, new Integer(grailsApplication.config.stp.finalTransfer.hour))
+    cal.set(Calendar.MINUTE, new Integer(grailsApplication.config.stp.finalTransfer.minute))
+    cal.set(Calendar.SECOND, new Integer(grailsApplication.config.stp.finalTransfer.second))
+    period.end = cal.time
+    period
+  }
+
 }
