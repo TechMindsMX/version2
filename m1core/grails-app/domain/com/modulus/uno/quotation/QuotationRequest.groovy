@@ -13,6 +13,8 @@ class QuotationRequest {
   SaleOrder saleOrder
   SatConcept satConcept
 
+  Date dateCreated
+  Date lastUpdated
 
     static belongsTo = [quotationContract: QuotationContract]
 
