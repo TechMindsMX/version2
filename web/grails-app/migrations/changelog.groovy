@@ -82,4 +82,5 @@ databaseChangeLog = {
     include file: 'update-column-quotationContract.groovy'
     include file: 'add-domain-quotationRequest.groovy'
     include file: 'adding-column-date-quotation-request.groovy'
+    include file: 'create-domain-quotation-payment-request.groovy'
 }
