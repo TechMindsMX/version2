@@ -414,7 +414,7 @@ class CompanyService {
     log.info "Init operation close for company ${company} in date ${date}"
     Period period = collaboratorService.getPeriodStpConciliationInDate(date)
     Map transactions = stpService.getTransactionsForCompanyInPeriod(company, period)
-    applyConciliationStpTransaction(company, transactions)
+    applyOperationsCloseTransaction(company, transactions)
   }
 
 }
