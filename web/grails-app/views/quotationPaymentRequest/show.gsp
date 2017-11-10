@@ -49,17 +49,18 @@
               <g:link class="btn btn-default" controller="quotationPaymentRequest" action="process" id="${quotationPaymentRequest.id}">Procesar</g:link>
             </div>
             </g:if>
-            <g:else>
-            <div class="col-md-2 text-right">
+
+            <g:elseif test="${quotationPaymentRequest.status == QuotationPaymentRequestStatus.CREATED}">
+              <div class="col-md-2 text-right">
               <g:link class="btn btn-default" controller="quotationPaymentRequest" action="edit" id="${quotationPaymentRequest.id}">Editar</g:link>
             </div>
-            <div class="col-md-2 text-right">
-              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="send" id="${quotationPaymentRequest.id}">Enviar</g:link>
-            </div>
+              <div class="col-md-2 text-right">
+                <g:link class="btn btn-default" controller="quotationPaymentRequest" action="send" id="${quotationPaymentRequest.id}">Enviar</g:link>
+              </div>
             <div class="col-md-2 text-right">
               <g:link class="btn btn-default" controller="quotationPaymentRequest" action="delete" id="${quotationPaymentRequest.id}">Borrar</g:link>
             </div>
-            </g:else>
+            </g:elseif>
           </div>
         </div>
       </div>
