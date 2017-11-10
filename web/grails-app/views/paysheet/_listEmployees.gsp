@@ -62,13 +62,13 @@
 										<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
 									</g:else>
 								</td>
-                <td>${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
-                <td>${modulusuno.formatPrice(number:employee.salaryAssimilable)}</td>
-                <td>${modulusuno.formatPrice(number:employee.totalSalaryEmployee)}</td>
-                <td>${modulusuno.formatPrice(number:employee.paysheetCost)}</td>
-                <td>${modulusuno.formatPrice(number:employee.commission)}</td>
-                <td>${modulusuno.formatPrice(number:employee.paysheetIva)}</td>
-                <td>${modulusuno.formatPrice(number:employee.totalToInvoice)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.salaryAssimilable)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.totalSalaryEmployee)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.paysheetCost)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.commission)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.paysheetIva)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.totalToInvoice)}</td>
               </tr>
             </g:each>
           </tbody>
