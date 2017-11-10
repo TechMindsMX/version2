@@ -39,11 +39,11 @@
                     </tr>
                     <g:each in="${quotationRequestList.sort{it.biller.toString()}.each(){it}}" var="request">
                       <tr>
-                        <td class="text-right"><g:link action="show" id="${request.id}">${request.quotationContract.client}</g:link></td>
-                        <td class="text-right">${request.description}</td>
-                        <td class="text-right">${request.commission}</td>
-                        <td class="text-right">${modulusuno.formatPrice(number:request.amount)}</td>
-                        <td class="text-right"><g:message code="quotationRequest.status.${request.status}"/></td>
+                        <td><g:link action="show" id="${request.id}">${request.quotationContract.client}</g:link></td>
+                        <td>${request.description}</td>
+                        <td class="text-center">${request.commission}</td>
+                        <td class="text-center">${modulusuno.formatPrice(number:request.amount)}</td>
+                        <td><g:message code="quotationRequest.status.${request.status}"/></td>
                       </tr>
                     </g:each>
                   </table>
