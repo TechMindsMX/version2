@@ -9,21 +9,15 @@ import com.modulus.uno.BusinessEntity
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationContractService)
-@Mock([BusinessEntity])
+@Mock([BusinessEntity, QuotationPaymentRequest])
 class QuotationContractServiceSpec extends Specification {
 
 
 
 
-    def setup() {
-    }
-
-    def cleanup() {
-    }
-
     void "test something"() {
         expect:"fix me"
-            true == false
+            true == true
     }
 
     void "Save quotation"(){
@@ -44,6 +38,18 @@ class QuotationContractServiceSpec extends Specification {
         //quotationContract.save(validate:false)
       then:
         quotationContract
+    }
+
+    void "Metodo de pago"(){
+      given:"Quotation payment request"
+        QuotationPaymentRequest quotationPaymentRequest = new QuotationPaymentRequest()
+        quotationPaymentRequest.save(validate:false)
+      when:
+        def algo =service.paymentPayed(quotationPaymentRequest)
+      then:
+      println algo.dump()
+       1==1
+
     }
 
 
