@@ -19,4 +19,15 @@ class QuotationContractService {
       quotationContract.initDate = quotationContractCommand.getQuotationContract().initDate
       quotationContract.save()
     }
+
+    @Transactional
+    def paymentPayed(QuotationPaymentRequest quotationPaymentRequest){
+      def type
+      Map typeProcess =[
+                       'SEND': {respond -> type ="Enviand...."},
+                       'PAYED':{respond -> type= "Pagando..."}
+                       ]
+
+      typeProcess['SEND']
+    }
 }
