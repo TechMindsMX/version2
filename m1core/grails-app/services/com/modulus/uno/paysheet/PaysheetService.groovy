@@ -499,7 +499,6 @@ class PaysheetService {
     summaryInterBank.allPayers = payers
 		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
 		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.salaryAssimilable.sum()
->>>>>>> origin/feature/467
 		summaryInterBank.type = "InterBank"
     if (summaryInterBank.totalSA > 0 || summaryInterBank.totalIAS >0)
       summary.add(summaryInterBank)
