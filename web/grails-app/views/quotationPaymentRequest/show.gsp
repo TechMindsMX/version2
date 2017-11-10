@@ -1,4 +1,4 @@
-
+<%! import com.modulus.uno.quotation.QuotationPaymentRequestStatus %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -42,11 +42,24 @@
         <div class="portlet-footer">
           <div class="row">
             <div class="col-md-6">
-              <g:link class="btn btn-default" controller="quotationPaymentRequestController" action="index">Regresar</g:link>
+              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="index">Regresar</g:link>
             </div>
-            <div class="col-md-6 text-right">
-              <g:link class="btn btn-default" controller="quotationPaymentRequestController" action="edit" id="${quotationPaymentRequest.id}">Editar</g:link>
+            <g:if test="${quotationPaymentRequest.status == QuotationPaymentRequestStatus.SEND}">
+            <div class="col-md-2 text-right">
+              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="process" id="${quotationPaymentRequest.id}">Procesar</g:link>
             </div>
+            </g:if>
+            <g:else>
+            <div class="col-md-2 text-right">
+              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="edit" id="${quotationPaymentRequest.id}">Editar</g:link>
+            </div>
+            <div class="col-md-2 text-right">
+              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="send" id="${quotationPaymentRequest.id}">Enviar</g:link>
+            </div>
+            <div class="col-md-2 text-right">
+              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="delete" id="${quotationPaymentRequest.id}">Borrar</g:link>
+            </div>
+            </g:else>
           </div>
         </div>
       </div>

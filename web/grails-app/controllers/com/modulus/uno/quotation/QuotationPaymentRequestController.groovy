@@ -37,4 +37,34 @@ class QuotationPaymentRequestController {
       quotationPaymentRequestService.create(quotationPaymentRequest)
       redirect(action: 'show', id: quotationPaymentRequest.id)
     }
+
+    def update(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
+      QuotationPaymentRequest quotationPaymentRequestUpdate = quotationPaymentRequestCommand.getQuotationPaymentRequest()
+      QuotationPaymentRequest quotationPaymentRequest = QuotationPaymentRequest.get(params.id.toLong())
+      quotationPaymentRequest.amount = quotationPaymentRequestUpdate.amount
+      quotationPaymentRequest.note = quotationPaymentRequestUpdate.note
+      quotationPaymentRequest.paymentWay = quotationPaymentRequestUpdate.paymentWay
+      quotationPaymentRequestService.update(quotationPaymentRequest)
+      redirect(action:'show', id:quotationPaymentRequest.id)
+    }
+
+    def edit(QuotationPaymentRequest quotationPaymentRequest){
+      respond quotationPaymentRequest
+    }
+
+    def send(QuotationPaymentRequest quotationPaymentRequest){
+      quotationPaymentRequestService.send(quotationPaymentRequest)
+      redirect(action:'index')
+    }
+
+    def delete(QuotationPaymentRequest quotationPaymentRequest){
+      quotationPaymentRequestService.delete(quotationPaymentRequest)
+      redirect(action:'index')
+    }
+
+    def process(QuotationPaymentRequest quotationPaymentRequest){
+      quotationPaymentRequestService.process(quotationPaymentRequest)
+      redirect(action:'index')
+    }
+
 }
