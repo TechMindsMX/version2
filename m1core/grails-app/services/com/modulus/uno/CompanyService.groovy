@@ -381,11 +381,11 @@ class CompanyService {
     if (movFinal) {
       log.info "Recording final transfer for ${company} of the ${dateTransaction}"
       transactionService.createFinalTransferTransaction(movFinal)
-      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:dateTransaction, status:FinalTransactionResultStatus.SUCCESSFUL, comment:"Final Transfer Transaction executed"])
+      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:Date.parse("yyyyMMdd",dateTransaction), status:FinalTransactionResultStatus.SUCCESSFUL, comment:"Final Transfer Transaction executed"])
     } else {
       status = "NOT FOUND"
       log.error "No se encontró registro del traspaso final para la empresa ${company} del día ${dateTransaction}"
-      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:dateTransaction, status:FinalTransactionResultStatus.FAILED, comment:"Final Transfer NOT FOUND"])
+      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:Date.parse("yyyyMMdd",dateTransaction), status:FinalTransactionResultStatus.FAILED, comment:"Final Transfer NOT FOUND"])
     }
     status
   }
