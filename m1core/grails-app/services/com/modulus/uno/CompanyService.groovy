@@ -6,6 +6,8 @@ import org.springframework.context.i18n.LocaleContextHolder as LCH
 import org.springframework.transaction.annotation.Propagation
 
 import com.modulus.uno.stp.StpService
+import com.modulus.uno.stp.FinalTransactionResultService
+import com.modulus.uno.stp.FinalTransactionResultStatus
 
 @Transactional
 class CompanyService {
@@ -26,6 +28,7 @@ class CompanyService {
   CommissionTransactionService commissionTransactionService
   StpService stpService
   MovimientosBancariosService movimientosBancariosService
+  FinalTransactionResultService finalTransactionResultService
 
   def addingActorToCompany(Company company, User user) {
     company.addToActors(user)
@@ -378,9 +381,11 @@ class CompanyService {
     if (movFinal) {
       log.info "Recording final transfer for ${company} of the ${dateTransaction}"
       transactionService.createFinalTransferTransaction(movFinal)
+      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:dateTransaction, status:FinalTransactionResultStatus.SUCCESSFUL, comment:"Final Transfer Transaction executed"])
     } else {
       status = "NOT FOUND"
-      log.warn "No se encontró registro del traspaso final para la empresa ${company} del día ${dateTransaction}"
+      log.error "No se encontró registro del traspaso final para la empresa ${company} del día ${dateTransaction}"
+      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:dateTransaction, status:FinalTransactionResultStatus.FAILED, comment:"Final Transfer NOT FOUND"])
     }
     status
   }
