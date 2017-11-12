@@ -11,6 +11,7 @@ import spock.lang.Unroll
 import spock.lang.Ignore
 
 import com.modulus.uno.stp.StpService
+import com.modulus.uno.stp.FinalTransactionResultService
 
 @TestFor(CompanyService)
 @Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission, Bank, Transaction, MovimientosBancarios, BankAccount])
@@ -29,6 +30,7 @@ class CompanyServiceSpec extends Specification {
   CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
   StpService stpService = Mock(StpService)
   MovimientosBancariosService movimientosBancariosService = Mock(MovimientosBancariosService)
+  FinalTransactionResultService finalTransactionResultService = Mock(FinalTransactionResultService)
 
   def setup(){
     service.modulusUnoService = modulusUnoService
@@ -44,6 +46,7 @@ class CompanyServiceSpec extends Specification {
     service.commissionTransactionService = commissionTransactionService
     service.stpService = stpService
     service.movimientosBancariosService = movimientosBancariosService
+    service.finalTransactionResultService = finalTransactionResultService
   }
 
   Should "create a direction for a Company"(){
