@@ -1,7 +1,9 @@
-package com.modulus.uno
+package com.modulus.uno.stp
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
+
+import com.modulus.uno.SignException
 
 @TestFor(SignService)
 class SignServiceSpec extends Specification {

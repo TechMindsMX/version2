@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat
 import org.springframework.context.i18n.LocaleContextHolder as LCH
 import org.springframework.transaction.annotation.Propagation
 
+import com.modulus.uno.stp.StpService
+
 @Transactional
 class CompanyService {
 

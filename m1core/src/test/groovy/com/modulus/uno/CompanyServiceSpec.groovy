@@ -10,6 +10,8 @@ import static java.util.Calendar.*
 import spock.lang.Unroll
 import spock.lang.Ignore
 
+import com.modulus.uno.stp.StpService
+
 @TestFor(CompanyService)
 @Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission, Bank, Transaction, MovimientosBancarios, BankAccount])
 class CompanyServiceSpec extends Specification {
