@@ -1,4 +1,8 @@
-package com.modulus.uno
+package com.modulus.uno.stp
+
+import com.modulus.uno.ModulusUnoAccount
+import com.modulus.uno.ClientLink
+import com.modulus.uno.BusinessException
 
 class StpClabeService {
 

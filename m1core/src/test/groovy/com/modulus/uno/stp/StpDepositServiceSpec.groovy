@@ -1,8 +1,21 @@
-package com.modulus.uno
+package com.modulus.uno.stp
 
 import spock.lang.Specification
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
+
+import com.modulus.uno.Payment
+import com.modulus.uno.Company
+import com.modulus.uno.Commission
+import com.modulus.uno.CommissionType
+import com.modulus.uno.Transaction
+import com.modulus.uno.ModulusUnoAccount
+import com.modulus.uno.ClientLink
+import com.modulus.uno.BusinessException
+
+import com.modulus.uno.TransactionService
+import com.modulus.uno.CommissionTransactionService
+import com.modulus.uno.EmailSenderService
 
 @TestFor(StpDepositService)
 @Mock([StpDeposit, Payment, Company, Commission, Transaction, ModulusUnoAccount, ClientLink])

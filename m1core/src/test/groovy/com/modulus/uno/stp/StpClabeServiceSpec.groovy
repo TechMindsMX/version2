@@ -1,9 +1,13 @@
-package com.modulus.uno
+package com.modulus.uno.stp
 
 import spock.lang.Specification
 import spock.lang.Unroll
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
+
+import com.modulus.uno.ModulusUnoAccount
+import com.modulus.uno.ClientLink
+import com.modulus.uno.BusinessException
 
 @TestFor(StpClabeService)
 @Mock([ModulusUnoAccount, ClientLink])
