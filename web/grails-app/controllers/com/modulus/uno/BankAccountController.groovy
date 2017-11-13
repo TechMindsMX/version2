@@ -26,26 +26,21 @@ class BankAccountController {
   def save(BankAccountCommand command) {
     def bankAccount = command.createBankAccount()
     bankAccount.banco = Bank.findByBankingCode(command.bank)
-    log.info "Bank Account to save: ${bankAccount.dump()}"
     if(bankAccount.hasErrors()) {
       transactionStatus.setRollbackOnly()
       respond bankAccount.errors, view:'create', model:[banks:Bank.list().sort{ it.name }, params:params]
       return
     }
-    try {
-      List domainClassReturn = bankAccountService.addBankAccountToRelationShip(bankAccount,session.company.toLong(), params.long('businessEntity') ?: 0, params)
 
-      if(bankAccount.hasErrors()) {
-        transactionStatus.setRollbackOnly()
-        respond bankAccount.errors, view:'create', model:[banks:Bank.list().sort{ it.name }, params:params]
-        return
-      }
+    Map result = bankAccountService.saveAndAsociateBankAccount(bankAccount, params)
 
-      redirect(controller:domainClassReturn.get(0),action:"show",id:domainClassReturn.get(1))
-    } catch (Exception e) {
-      flash.message = e.message
-      render view:'create', model:[bankAccount:bankAccount, banks:Bank.list().sort{it.name}, params:params, relation:params.relation]
+    if(bankAccount.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      respond bankAccount.errors, view:'create', model:[banks:Bank.list().sort{ it.name }, params:params]
+      return
     }
+
+    redirect controller:result.controller, action:"show", id:result.id
   }
 
   def edit(BankAccount bankAccount) {
