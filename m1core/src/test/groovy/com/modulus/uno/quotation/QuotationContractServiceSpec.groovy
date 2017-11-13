@@ -12,10 +12,13 @@ import com.modulus.uno.BusinessEntity
 @Mock([BusinessEntity, QuotationPaymentRequest])
 class QuotationContractServiceSpec extends Specification {
 
-    void "test something"() {
-        expect:"fix me"
-            true == true
+
+    def setup() {
     }
+
+    def cleanup() {
+    }
+
 
     void "Save quotation"(){
       given:"A quotation and BusinessEntity"
