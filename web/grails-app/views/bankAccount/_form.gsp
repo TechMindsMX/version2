@@ -1,7 +1,7 @@
 <div class="form-group">
-  <label class="col-sm-5">Clabe <span class="required-indicator">*</span></label>
+  <label class="col-sm-5">Clabe</label>
   <div class="col-sm-4">
-    <input class="form-control" type="number" id="clabe" name="clabe" max="999999999999999999" required="" value="${bankAccount?.clabe}"/>
+    <input class="form-control" type="number" id="clabe" name="clabe" max="999999999999999999" value="${bankAccount?.clabe}"/>
   </div>
 </div>
 <div class="form-group">
@@ -13,14 +13,13 @@
 <div class="form-group">
   <label class="col-sm-5">Número de Cuenta</label>
   <div class="col-sm-4">
-    <input class="form-control" type="number" id="accountNumber" name="accountNumber" readonly="" value="${bankAccount?.accountNumber}"/>
+    <input class="form-control" type="number" id="accountNumber" name="accountNumber" value="${bankAccount?.accountNumber}" max="99999999999" min="0"/>
   </div>
 </div>
-<input id="bank" name="bank" type="hidden" value="${bankAccount?.banco?.bankingCode}"/>
 <div class="form-group">
   <label class="col-sm-5">Banco <span class="required-indicator">*</span></label>
   <div class="col-sm-4">
-    <g:select name="banco" from="${banks}" optionValue="name" optionKey="bankingCode" class="form-control" aria-controls="example-table" readonly="true" noSelection="['':'']" value ="${bankAccount?.banco?.bankingCode}"/>
+    <g:select name="bank" from="${banks}" optionValue="name" optionKey="bankingCode" class="form-control" aria-controls="example-table" noSelection="['':'']" value ="${bankAccount?.banco?.bankingCode}"/>
   </div>
 </div>
 <div class="form-group">
