@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import com.modulus.uno.stp.StpDeposit
+
 class StpDepositSwagger{
 
   String clave

@@ -5,6 +5,10 @@ import com.wordnik.swagger.annotations.*
 import static org.springframework.http.HttpStatus.*
 import grails.converters.JSON
 
+import com.modulus.uno.stp.StpDepositService
+import com.modulus.uno.stp.StpService
+import com.modulus.uno.stp.StpDeposit
+
 @Api
 class STPController {
 
