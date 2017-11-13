@@ -35,6 +35,8 @@
             </g:hasErrors>
 
             <g:form action="save" class="form-horizontal" role="form">
+              <input type="hidden" name="company" value="${params.company}"/>
+              <input type="hidden" name="companyBankAccount" value="${params.companyBankAccount}"/>
               <input type="hidden" name="businessEntityInfo" value="${params.businessEntityInfo}"/>
               <g:if test="${relation == 'CLIENTE'}">
                 <g:render template="formClient"/>
