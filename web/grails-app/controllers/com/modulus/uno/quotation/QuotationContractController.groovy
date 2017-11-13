@@ -62,6 +62,13 @@ class QuotationContractController {
       [quotationContract:quotationContract, company:company]
     }
 
+    def balance(QuotationContract quotationContract){
+      println quotationContract.dump()
+      //Map balance = quotationContractService.getBalance(quotationContract)
+
+      [balance:balance]
+    }
+
 
 
 }
