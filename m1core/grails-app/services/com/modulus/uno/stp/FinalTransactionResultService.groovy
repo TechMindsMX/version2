@@ -22,4 +22,9 @@ class FinalTransactionResultService {
   private ExecutionMode getExecutionMode(Date dateTransaction) {
     new Date().format("ddMMyyyy") == dateTransaction.format("ddMMyyyy") ? ExecutionMode.AUTOMATIC : ExecutionMode.MANUAL
   }
+
+  List<FinalTransactionResult> getFinalTransactionResultsAtDate(Date date) {
+    FinalTransactionResult.findAllByTransactionDate(date)
+  }
+
 }
