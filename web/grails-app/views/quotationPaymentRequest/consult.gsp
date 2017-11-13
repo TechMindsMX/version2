@@ -31,19 +31,19 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                       <tr>
-                        <th>id</th>
-                        <th>Monto</th>
-                        <th>Nota</th>
-                        <th>Metodo de pago</th>
-                        <th>Estado</th>
+                        <th>Concepto</th>
+                        <th>Fecha</th>
+                        <th>Abono</th>
+                        <th>Cargo</th>
+                        <th>Saldo</th>
                       </tr>
-                      <g:each in="${quotationPaymentRequestList}" var="paymentReques">
+                      <g:each in="${quotationPaymentRequestList}" var="paymentRequest">
                         <tr>
-                          <td><g:link action="show" id="${paymentReques.id}">${paymentReques.id}</g:link></td>
-                          <td>${paymentReques.amount}</td>
-                          <td>${paymentReques.note}</td>
-                          <td>${paymentReques.paymentWay}</td>
-                          <td><g:message code="quotationPaymentRequest.status.${paymentReques.status}"/></td>
+                          <td><g:message code="quotationPaymentRequest.paymentWay.${paymentRequest.paymentWay}"/></td>
+                          <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.dateCreated}"/></td>
+                          <td>${paymentRequest.amount}</td>
+                          <td>${paymentRequest.paymentWay}</td>
+                          <td>total</td>
                         </tr>
                       </g:each>
                     </table>
