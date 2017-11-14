@@ -37,9 +37,8 @@ class QuotationContractService {
        List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.PAYED)
        List<QuotationPaymentRequest> quotationPaymentRequestlistSend = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.SEND)
        BigDecimal income = quotationRequest.collect{ it.amount }.sum() ?: 0
-       BigDecimal transit = quotationPaymentRequestlistSend.collect{ it.amount }.sum()
-       BigDecimal expenses = quotationPaymentRequestlistPayed.collect{ it.amount }.sum()
-        println "${income} ---- ${transit} ----${expenses}"
+       BigDecimal transit = quotationPaymentRequestlistSend.collect{ it.amount }.sum() ?: 0
+       BigDecimal expenses = quotationPaymentRequestlistPayed.collect{ it.amount }.sum() ?: 0
        BigDecimal available = income - transit - expenses
        BigDecimal total = available + transit
        quotationRequest
@@ -48,8 +47,12 @@ class QuotationContractService {
       income:income,
       transit:transit,
       expenses:expenses,
-      //available:available,
-     // total:total
+      available:available,
+      total:total
       ]
+    }
+
+    List<QuotationPaymentRequest> getQuotationPaymentRequestList(QuotationContract quotationContract, Date initDate, Date lastDate){
+      QuotationPaymentRequest.findAllByQuotationContractAndDateCreatedBetween(quotationContract, initDate, lastDate)
     }
 }

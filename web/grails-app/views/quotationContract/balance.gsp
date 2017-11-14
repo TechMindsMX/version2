@@ -36,41 +36,52 @@
                   <g:message message="${balance.quotationContract.client}" />
                 </label>
                 </h1>
+                <g:form action="getQuotationPaymentRequest">
                 <div class="row">
                   <div class="col-md-6">
                   <label>
                     <g:message code="Del" />
                   </label>
                   <input class="form-control" type="text" id="datepicker" name="initDate" required="required">
+                  <input type="hidden" value="${balance.quotationContract.id}" name="id" />
                   </div>
                   <div class="col-md-6">
                   <label>
                     <g:message code="Al" />
                   </label>
-                  <input class="form-control" type="text" id="datepicker1" name="initDate" required="required">
+                  <input class="form-control" type="text" id="datepicker1" name="lastDate" required="required">
                   </div>
                 </div>
+                <div class="row">
+                  <div class="col-md-6">
+                  <g:submitButton name="consultar" class="btn btn-primary marginP" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"
+                  />
+                  </div>
+                </div>
+                </g:form>
+
               </div>
               <div class="col-md-4 vertical-bar">
                 <div class="row">
                   <h2>
-                    Disponible:
+                    Disponible:  <g:formatNumber number="${balance.available}" type="currency" currencyCode="MXN" />
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    En transito:
+                    En transito: <g:formatNumber number="${balance.transit}" type="currency" currencyCode="MXN" />
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    Total:
+                    Total: <g:formatNumber number="${balance.total}" type="currency" currencyCode="MXN" />
                   </h2>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12">
+                <g:if test="${quotationPaymentRequestList}">
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                       <tr>
@@ -90,6 +101,7 @@
                         </tr>
                       </g:each>
                     </table>
+                    </g:if>
                   </div>
 
                 <nav>

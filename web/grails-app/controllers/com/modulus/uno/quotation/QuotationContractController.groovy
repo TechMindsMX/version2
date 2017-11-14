@@ -63,10 +63,22 @@ class QuotationContractController {
     }
 
     def balance(QuotationContract quotationContract){
-      println quotationContract.dump()
       Map balance = quotationContractService.getBalance(quotationContract)
+      List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, new Date(), new Date())
 
-      [balance:balance]
+      [balance:balance,
+      quotationPaymentRequestList: quotationPaymentRequestList]
+    }
+
+    def getQuotationPaymentRequest(){
+      println params.dump()
+      QuotationContract quotationContract = QuotationContract.get(1)
+      Map balance = quotationContractService.getBalance(quotationContract)
+      Date firstDate = Date.parse( 'dd/MM/yyyy', params.initDate)
+      Date lastDate = Date.parse('dd/MM/yyyy', params.lastDate)
+      List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, firstDate, lastDate)
+
+      render view: 'balance', model:[balance:balance, quotationPaymentRequestList:quotationPaymentRequestList]
     }
 
 
