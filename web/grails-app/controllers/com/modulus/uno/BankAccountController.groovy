@@ -25,7 +25,6 @@ class BankAccountController {
   @Transactional
   def save(BankAccountCommand command) {
     def bankAccount = command.createBankAccount()
-    bankAccount.banco = Bank.findByBankingCode(command.bank)
     if(bankAccount.hasErrors()) {
       transactionStatus.setRollbackOnly()
       respond bankAccount.errors, view:'create', model:[banks:Bank.list().sort{ it.name }, params:params]
@@ -51,13 +50,7 @@ class BankAccountController {
   def update(BankAccountCommand command) {
     BankAccount bankAccount = BankAccount.get(params.id)
     bankAccount.properties = command.createBankAccount().properties
-    bankAccount.banco = Bank.findByBankingCode(command.bank)
     log.info "Bank account to update: ${bankAccount.dump()}"
-
-    if (params.relation == "CLIENTE"){
-      bankAccount.branchNumber = "*".padLeft(5,"0")
-      bankAccount.accountNumber = params.accountNumber.padLeft(11,"*")
-    }
 
     if (bankAccount == null) {
       transactionStatus.setRollbackOnly()
@@ -71,33 +64,15 @@ class BankAccountController {
       return
     }
 
-    def resultBankAccount = null
-    def domain
-    try{
-      if (params.companyBankAccount){
-        domain = Company.get(session.company)
-        resultBankAccount = bankAccountService.updateBankAccountCompany(bankAccount, session.company)
-      } else {
-        domain = BusinessEntity.get(params.businessEntity)
-        resultBankAccount = bankAccountService.updateBankAccountBusinessEntity(bankAccount, domain)
-      }
+    Map result = bankAccountService.saveAndAsociateBankAccount(bankAccount, params)
 
-      log.info "Bank account updated: ${bankAccount.dump()}"
-
-      if(bankAccount.hasErrors()) {
-        transactionStatus.setRollbackOnly()
-        respond bankAccount.errors, view:'edit', model:[banks:Bank.list().sort{it.name}, params:params, relation:params.relation]
-        return
-      }
-
-      redirect(controller:domain.class.simpleName, action:"show", id:domain.id)
-
-    } catch (Exception e){
+    if(bankAccount.hasErrors() || result.error) {
       transactionStatus.setRollbackOnly()
-      flash.message = e.message
-      render view:'edit', model:[bankAccount:bankAccount, banks:Bank.list().sort{it.name}, params:params,relation:params.relation]
+      respond bankAccount.errors, view:'edit', model:[banks:Bank.list().sort{ it.name }, params:params, error:result.error]
+      return
     }
 
+    redirect controller:result.controller, action:"show", id:result.id
   }
 
   @Transactional
