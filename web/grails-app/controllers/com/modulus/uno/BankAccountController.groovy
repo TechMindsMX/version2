@@ -34,9 +34,9 @@ class BankAccountController {
 
     Map result = bankAccountService.saveAndAsociateBankAccount(bankAccount, params)
 
-    if(bankAccount.hasErrors()) {
+    if(bankAccount.hasErrors() || result.error) {
       transactionStatus.setRollbackOnly()
-      respond bankAccount.errors, view:'create', model:[banks:Bank.list().sort{ it.name }, params:params]
+      respond bankAccount.errors, view:'create', model:[banks:Bank.list().sort{ it.name }, params:params, error:result.error]
       return
     }
 
