@@ -91,37 +91,57 @@ class BankAccountServiceSpec extends Specification {
     then:
       savedBankAccount.id
   }
-
-  Should "find bank account repeated for company"() {
+  
+  @Unroll
+  Should "return #result for bank account = #theBankAccount when check if it is repeated for company"() {
     given:"A bank account"
-      BankAccount bankAccount = createBankAccount()
+      Bank bank = new Bank().save(validate:false)
+      BankAccount bankAccount = theBankAccount
+      bankAccount.banco = bank
     and:"A company with bank accounts"
-      BankAccount bankExisting = createBankAccount()
-      bankExisting.banco = bankAccount.banco
+      BankAccount bankExisting = theBankAccountExisting
+      bankExisting.banco = bank
       bankExisting.save(validate:false)
       Company company = createCompany()
       company.banksAccounts = [bankExisting]
     when:
       def repeated = service.repeatedBankAccountCompany(bankAccount, company)
     then:
-      repeated
+      repeated ? true : false == result
+    where:
+      theBankAccount      |   theBankAccountExisting    ||  result
+      createBankAccount() |   createBankAccount()       ||  true
+      new BankAccount(accountNumber:"123", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | true
+      new BankAccount(accountNumber:"1234", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | false
+      new BankAccount(cardNumber:"123", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | true
+      new BankAccount(cardNumber:"1234", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | false
   }
 
-  Should "not found bank account repeated for company"() {
+  @Unroll
+  Should "return #result for bank account = #theBankAccount when check if it is repeated for business entity"() {
     given:"A bank account"
-      BankAccount bankAccount = createBankAccount()
-    and:"A company with bank accounts"
-      BankAccount bankExisting = createBankAccount()
-      bankExisting.accountNumber = "09876543210"
-      bankExisting.banco = bankAccount.banco
+      Bank bank = new Bank().save(validate:false)
+      BankAccount bankAccount = theBankAccount
+      bankAccount.banco = bank
+    and:"A business entity with bank accounts"
+      BankAccount bankExisting = theBankAccountExisting
+      bankExisting.banco = bank
       bankExisting.save(validate:false)
-      Company company = createCompany()
-      company.banksAccounts = [bankExisting]
+      BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+      businessEntity.banksAccounts = [bankExisting]
     when:
-      def repeated = service.repeatedBankAccountCompany(bankAccount, company)
+      def repeated = service.repeatedBankAccountBusinessEntity(bankAccount, businessEntity)
     then:
-      !repeated
+      repeated ? true : false == result
+    where:
+      theBankAccount      |   theBankAccountExisting    ||  result
+      createBankAccount() |   createBankAccount()       ||  true
+      new BankAccount(accountNumber:"123", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | true
+      new BankAccount(accountNumber:"1234", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | false
+      new BankAccount(cardNumber:"123", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | true
+      new BankAccount(cardNumber:"1234", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | false
   }
+
 
   Should "create a bank account"() {
     given:"A bank account command"
