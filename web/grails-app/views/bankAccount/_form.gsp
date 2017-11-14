@@ -50,6 +50,7 @@
 </g:if>
 <g:else>
   <input type="hidden" name="businessEntity" value="${params.businessEntity}" />
+  <input type="hidden" name="businessEntityBankAccount" value="${params.businessEntityBankAccount}" />
 </g:else>
 
 
