@@ -95,9 +95,9 @@
                         <tr>
                           <td><g:message code="quotationPaymentRequest.paymentWay.${paymentRequest.paymentWay}"/></td>
                           <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.dateCreated}"/></td>
-                          <td>${balance.available}</td>
-                          <td>${balance.transit}</td>
-                          <td>${balance.total}</td>
+                          <td>${saldoAnterior.quotationRequest}</td>
+                          <td>${saldoAnterior.quotationPaymentRequest}</td>
+                          <td>${saldoAnterior.saldoAnterior}</td>
                         </tr>
                       </g:each>
                     </table>

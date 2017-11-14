@@ -76,9 +76,10 @@ class QuotationContractController {
       Map balance = quotationContractService.getBalance(quotationContract)
       Date firstDate = Date.parse( 'dd/MM/yyyy', params.initDate)
       Date lastDate = Date.parse('dd/MM/yyyy', params.lastDate)
+      def saldoAnterior = quotationContractService.caculateData(quotationContract, new Date())
       List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, firstDate, lastDate)
 
-      render view: 'balance', model:[balance:balance, quotationPaymentRequestList:quotationPaymentRequestList]
+      render view: 'balance', model:[balance:balance, quotationPaymentRequestList:quotationPaymentRequestList, saldoAnterior:saldoAnterior]
     }
 
 
