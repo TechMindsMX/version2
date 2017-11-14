@@ -19,7 +19,8 @@ class BankAccountCommand implements Validateable {
       clabe:this.clabe ?: "",
       concentradora: this.concentradora,
       cardNumber: this.cardNumber ?: "",
-      clientNumber: this.clientNumber
+      clientNumber: this.clientNumber,
+      banco:Bank.findByBankingCode(this.bank)
     )
   }
 }
