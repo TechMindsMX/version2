@@ -28,7 +28,6 @@ class BankAccountService {
       Company company = Company.get(params.company)
       if (repeatedBankAccountCompany(bankAccount, company)) {
         result = [error:"La cuenta ya está registrada"]
-        println result
         return result
       }
 
@@ -57,7 +56,7 @@ class BankAccountService {
 
   def repeatedBankAccountCompany(BankAccount bankAccount, Company company){
     def repeatedAccount = company.banksAccounts.find{ cuenta ->
-      cuenta.banco.id == bankAccount.banco.id && cuenta.accountNumber == bankAccount.accountNumber && cuenta.id != bankAccount.id
+      cuenta.banco.id == bankAccount.banco.id && (bankAccount.accountNumber ? cuenta.accountNumber == bankAccount.accountNumber : bankAccount.cardNumber ? cuenta.cardNumber == bankAccount.cardNumber : false) && cuenta.id != bankAccount.id
     }
 
   }
@@ -99,7 +98,7 @@ class BankAccountService {
 
   def repeatedBankAccountBusinessEntity(BankAccount bankAccount, BusinessEntity businessEntity){
     def repeatedAccount = businessEntity?.banksAccounts?.find{ cuenta ->
-      cuenta.banco.id == bankAccount.banco.id && cuenta.accountNumber == bankAccount.accountNumber && cuenta.id != bankAccount.id
+      cuenta.banco.id == bankAccount.banco.id && (bankAccount.accountNumber ? cuenta.accountNumber == bankAccount.accountNumber : bankAccount.cardNumber ? cuenta.cardNumber == bankAccount.cardNumber : false) && cuenta.id != bankAccount.id
     }
   }
 
