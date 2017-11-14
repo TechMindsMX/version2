@@ -32,7 +32,7 @@ class QuotationContractController {
         render view:"create", model:[quotationContract:quotationContractCommand, company:company, clients:clients]
         return
       }
-    	
+
       QuotationContract quotationContract = quotationContractCommand.getQuotationContract(company)
 
       quotationContractService.create(quotationContract)
@@ -41,7 +41,7 @@ class QuotationContractController {
         render view:"create", model:[quotationContract:quotationContract, company:company, clients:clients]
         return
       }
-      
+
       redirect action: 'show', id:quotationContract.id
     }
 
@@ -64,7 +64,7 @@ class QuotationContractController {
 
     def balance(QuotationContract quotationContract){
       println quotationContract.dump()
-      //Map balance = quotationContractService.getBalance(quotationContract)
+      Map balance = quotationContractService.getBalance(quotationContract)
 
       [balance:balance]
     }

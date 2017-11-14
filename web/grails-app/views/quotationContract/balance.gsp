@@ -4,6 +4,7 @@
     <meta name="layout" content="main" />
     <g:set var="entityName" value="${message(code: 'quotationContract.label', default: 'QuotationContract')}" />
     <title><g:message code="default.create.label" args="[entityName]" /></title>
+    <asset:stylesheet src="quotationContract/balance.css" />
   </head>
 
   <body>
@@ -26,8 +27,50 @@
               <div class="message" role="status">${flash.message}</div>
             </g:if>
             <div class="row">
+              <div class="col-md-8">
+                <h1>
+                <label>
+                  <g:message code="Cliente: " />
+                </label>
+                <label>
+                  <g:message message="${balance.quotationContract.client}" />
+                </label>
+                </h1>
+                <div class="row">
+                  <div class="col-md-6">
+                  <label>
+                    <g:message code="Del" />
+                  </label>
+                  <input class="form-control" type="text" id="datepicker" name="initDate" required="required">
+                  </div>
+                  <div class="col-md-6">
+                  <label>
+                    <g:message code="Al" />
+                  </label>
+                  <input class="form-control" type="text" id="datepicker1" name="initDate" required="required">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 vertical-bar">
+                <div class="row">
+                  <h2>
+                    Disponible:
+                  </h2>
+                </div>
+                <div class="row">
+                  <h2>
+                    En transito:
+                  </h2>
+                </div>
+                <div class="row">
+                  <h2>
+                    Total:
+                  </h2>
+                </div>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-md-12">
-                <g:if test="${quotationPaymentRequestList}">
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                       <tr>
@@ -48,30 +91,7 @@
                       </g:each>
                     </table>
                   </div>
-                </g:if>
-                    
-                <g:else>
-                  <g:form action="selectPaymentRequest">
-                    <div class="row">
-                      <div class="col-md-11">
-                        <div class="form-group">
-                          <label><g:message code="Clientes"/></label>
-                          <g:select name="quotation" class="form-control"
-                                                     from="${quotationContractList}"
-                                                     optionValue="client"
-                                                     optionKey="id">
-                          </g:select>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6 text-right">
-                          <g:submitButton name="seleccionar" class="btn btn-primary" value="${message(code: 'default.button.seleccionar.label', default: 'Seleccionar')}" />
-                        </div>
-                      </div>
-                    </div>
-                  </g:form>
-                </g:else>
-                            
+
                 <nav>
                   <div class="pagination">
                     <g:paginate class="pagination" controller="businessEntity" action="index" total="${businessEntityCount ?: 0}" />
@@ -83,5 +103,6 @@
         </div>
       </div>
     </div>
+    <asset:javascript src="quotationContract/create.js"/>
   </body>
 </html>
