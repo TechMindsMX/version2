@@ -10,6 +10,68 @@ import java.lang.Void as Should
 @Mock([Bank,BankAccount,Company,BusinessEntity])
 class BankAccountServiceSpec extends Specification {
 
+  Should "save and asociate bank account with company"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+    and: "The bank account to save"
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:new Bank(name:"Bank").save(validate:false))
+    and:"The params"
+      Map params = [companyBankAccount:true, company:company.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(bankAccount, params)
+    then:
+      bankAccount.id
+      result.controller == "company"
+  }
+
+  Should "save and asociate bank account with business entity"() {
+    given:"A company"
+      BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+    and: "The bank account to save"
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:new Bank(name:"Bank").save(validate:false))
+    and:"The params"
+      Map params = [businessEntityBankAccount:true, businessEntity:businessEntity.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(bankAccount, params)
+    then:
+      bankAccount.id
+      result.controller == "businessEntity"
+  }
+
+  Should "don't save and asociate bank account with company because already exists"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+      Bank bank = new Bank(name:"Bank").save(validate:false)
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank).save(validate:false)
+      company.addToBanksAccounts(bankAccount)
+      company.save(validate:false)
+    and: "The bank account to save"
+      BankAccount repeatedBankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank)
+    and:"The params"
+      Map params = [companyBankAccount:true, company:company.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(repeatedBankAccount, params)
+    then:
+      result.error == "La cuenta ya está registrada"
+  }
+
+  Should "don't save and asociate bank account with business entity because already exists"() {
+    given:"A company"
+      BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+      Bank bank = new Bank(name:"Bank").save(validate:false)
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank).save(validate:false)
+      businessEntity.addToBanksAccounts(bankAccount)
+      businessEntity.save(validate:false)
+    and: "The bank account to save"
+      BankAccount repeatedBankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank)
+    and:"The params"
+      Map params = [businessEntityBankAccount:true, businessEntity:businessEntity.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(repeatedBankAccount, params)
+    then:
+      result.error == "La cuenta ya está registrada"
+  }
+
   Should "add an account to a company"(){
     given:"a bank account"
       BankAccount bankAccount = createBankAccount()
@@ -69,7 +131,7 @@ class BankAccountServiceSpec extends Specification {
     when:
       def bankAccount = service.createABankAccount(bankAccountCommand)
     then:
-      bankAccount.accountNumber == "12345"
+      bankAccount.accountNumber == "00000012345"
       bankAccount.branchNumber == "120"
       bankAccount.clabe == "123456789123456789"
       bankAccount.banco.bankingCode == "90902"
