@@ -55,4 +55,10 @@ class QuotationContractService {
     List<QuotationPaymentRequest> getQuotationPaymentRequestList(QuotationContract quotationContract, Date initDate, Date lastDate){
       QuotationPaymentRequest.findAllByQuotationContractAndDateCreatedBetween(quotationContract, initDate, lastDate)
     }
+
+    @Transactional
+    def caculateData(QuotationContract quotationContract, Date initDate){
+      def saldoAnterior = QuotationRequest.findAllByContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.SEND, initDate)*.amount.sum() - 
+        QuotationPaymentRequest.findAllByContractAndStatusInAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], <<fecha inicial del periodo>>)*.amount.sum()
+    }
 }
