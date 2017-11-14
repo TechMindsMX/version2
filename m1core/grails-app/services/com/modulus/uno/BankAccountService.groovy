@@ -22,6 +22,39 @@ class BankAccountService {
 
   }
 
+  def saveAndAsociateBankAccount(BankAccount bankAccount, Map params) {
+    Map result = [:]
+    if (params.companyBankAccount) {
+      Company company = Company.get(params.company)
+      if (repeatedBankAccountCompany(bankAccount, company)) {
+        result = [error:"La cuenta ya está registrada"]
+        println result
+        return result
+      }
+
+      bankAccount.save()
+      company.addToBanksAccounts(bankAccount)
+      company.save()
+      result = [controller:"company", id:company.id]
+    } else if (params.businessEntityBankAccount) {
+      BusinessEntity businessEntity = BusinessEntity.get(params.businessEntity)
+      if (repeatedBankAccountBusinessEntity(bankAccount, businessEntity)) {
+        result = [error:"La cuenta ya está registrada"]
+        return result
+      }
+
+      if (params.relation == "CLIENTE"){
+        bankAccount.branchNumber = "*".padLeft(5,"0")
+        bankAccount.accountNumber = bankAccount.accountNumber.padLeft(11,"*")
+      }
+      bankAccount.save()
+      businessEntity.addToBanksAccounts(bankAccount)
+      businessEntity.save()
+      result = [controller:"businessEntity", id:businessEntity.id]
+    }
+    result
+  } 
+
   def repeatedBankAccountCompany(BankAccount bankAccount, Company company){
     def repeatedAccount = company.banksAccounts.find{ cuenta ->
       cuenta.banco.id == bankAccount.banco.id && cuenta.accountNumber == bankAccount.accountNumber && cuenta.id != bankAccount.id
@@ -50,6 +83,7 @@ class BankAccountService {
     if(repeatedBankAccountCompany(bankAccount, company))
       throw new Exception("La cuenta indicada ya existe")
     bankAccount.save()
+    log.info "BankAccount saved: ${bankAccount}"
     company.addToBanksAccounts(bankAccount)
     company.save()
 
