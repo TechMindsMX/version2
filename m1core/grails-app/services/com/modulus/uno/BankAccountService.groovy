@@ -44,7 +44,7 @@ class BankAccountService {
 
       if (params.relation == "CLIENTE"){
         bankAccount.branchNumber = "*".padLeft(5,"0")
-        bankAccount.accountNumber = bankAccount.accountNumber.padLeft(11,"*")
+        bankAccount.accountNumber = (bankAccount.accountNumber - bankAccount.accountNumber.substring(0,7)).padLeft(11,"*")
       }
       bankAccount.save()
       businessEntity.addToBanksAccounts(bankAccount)
