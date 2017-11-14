@@ -32,22 +32,24 @@ class QuotationContractService {
     }
 
     @Transactional
-       Map getBalance(QuotationContract quotationContract){
+    Map getBalance(QuotationContract quotationContract){
        List<QuotationRequest> quotationRequest = QuotationRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationRequestStatus.PROCESSED)
        List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.PAYED)
        List<QuotationPaymentRequest> quotationPaymentRequestlistSend = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.SEND)
-       BigDecimal income = quotationRequest.collect{ it.amount }.sum()
+       BigDecimal income = quotationRequest.collect{ it.amount }.sum() ?: 0
        BigDecimal transit = quotationPaymentRequestlistSend.collect{ it.amount }.sum()
        BigDecimal expenses = quotationPaymentRequestlistPayed.collect{ it.amount }.sum()
+        println "${income} ---- ${transit} ----${expenses}"
        BigDecimal available = income - transit - expenses
        BigDecimal total = available + transit
        quotationRequest
-      
+
       [quotationContract:quotationContract,
       income:income,
       transit:transit,
       expenses:expenses,
-      available:available,
-      total:total]
+      //available:available,
+     // total:total
+      ]
     }
 }
