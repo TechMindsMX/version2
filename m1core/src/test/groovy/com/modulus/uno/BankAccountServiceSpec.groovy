@@ -225,6 +225,7 @@ class BankAccountServiceSpec extends Specification {
     when:
       def result = service.getDataBankFromClabe(clabe)
     then:
+      result.clabe == "036180009876543217"
       result.branchNumber == "180"
       result.accountNumber == "00987654321"
       result.bank.bankingCode.endsWith("036")
@@ -246,4 +247,26 @@ class BankAccountServiceSpec extends Specification {
       "12345678901234567890"  ||  [:]
   }
 
+  @Unroll
+  Should "obtain the data bank from a row employee map"() {
+    given:"The row employee"
+      Map rowEmployee = theRowEmployee
+    and:"The bank"
+      Bank bank = new Bank(bankingCode:"40036").save(validate:false)
+    when:
+      def result = service.getDataBankFromRowEmployee(rowEmployee)
+    then:
+      result.clabe == theClabe
+      result.branchNumber == theBranchNumber
+      result.accountNumber == theAccountNumber
+      result.cardNumber == theCardNumber
+      result.bank.bankingCode == theBankingCode
+    where:
+      theRowEmployee  ||  theClabe  | theBranchNumber   | theAccountNumber  | theCardNumber   | theBankingCode
+      [CLABE:"036180009876543217"]  || "036180009876543217"   |  "180"  |  "00987654321"  | null  | "40036"
+      [CLABE:"036180009876543217", TARJETA:"12345"]  || "036180009876543217"   |  "180"  |  "00987654321"  | "12345"  | "40036"
+      [CLABE:null, CUENTA:"99999", SUCURSAL:"100", BANCO:"036", TARJETA:"12345"]  || null   |  "100"  |  "99999"  | "12345"  | "40036"
+      [CLABE:null, CUENTA:null, SUCURSAL:"100", BANCO:"036", TARJETA:"12345"]  || null   |  "100"  |  null  | "12345"  | "40036"
+
+  }
 }
