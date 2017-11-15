@@ -92,13 +92,13 @@
                         <th>Cargo</th>
                         <th>Saldo</th>
                       </tr>
-                      <g:each in="${quotationPaymentRequestList}" var="paymentRequest">
+                      <g:each in="${balance.mergeConcept.quotationConceptList.sort{it.date}}" var="paymentRequest">
                         <tr>
-                          <td><g:message code="quotationPaymentRequest.paymentWay.${paymentRequest.paymentWay}"/></td>
-                          <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.dateCreated}"/></td>
-                          <td>${saldoAnterior.quotationRequest}</td>
-                          <td>${saldoAnterior.quotationPaymentRequest}</td>
-                          <td>${saldoAnterior.saldoAnterior}</td>
+                          <td>${paymentRequest.concept}</td>
+                          <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
+                          <td>${paymentRequest.payment}</td>
+                          <td>${paymentRequest.charge}</td>
+                          <td>${paymentRequest.saldo}</td>
                         </tr>
                       </g:each>
                     </table>
