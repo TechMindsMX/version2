@@ -5,7 +5,7 @@
       labels="['Cliente', 'Proveedor', 'Cliente/Proveedor', 'Emp/Colaborador']"
       values="[LeadType.CLIENTE, LeadType.PROVEEDOR, LeadType.CLIENTE_PROVEEDOR, LeadType.EMPLEADO]"
       value="${clientProviderType}" >
-    ${it.radio} ${it.label}
+    <label>&nbsp; &nbsp; ${it.radio} ${it.label}</label>
   </g:radioGroup>
 </div>
 
