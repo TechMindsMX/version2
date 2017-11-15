@@ -10,6 +10,68 @@ import java.lang.Void as Should
 @Mock([Bank,BankAccount,Company,BusinessEntity])
 class BankAccountServiceSpec extends Specification {
 
+  Should "save and asociate bank account with company"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+    and: "The bank account to save"
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:new Bank(name:"Bank").save(validate:false))
+    and:"The params"
+      Map params = [companyBankAccount:true, company:company.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(bankAccount, params)
+    then:
+      bankAccount.id
+      result.controller == "company"
+  }
+
+  Should "save and asociate bank account with business entity"() {
+    given:"A company"
+      BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+    and: "The bank account to save"
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:new Bank(name:"Bank").save(validate:false))
+    and:"The params"
+      Map params = [businessEntityBankAccount:true, businessEntity:businessEntity.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(bankAccount, params)
+    then:
+      bankAccount.id
+      result.controller == "businessEntity"
+  }
+
+  Should "don't save and asociate bank account with company because already exists"() {
+    given:"A company"
+      Company company = new Company().save(validate:false)
+      Bank bank = new Bank(name:"Bank").save(validate:false)
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank).save(validate:false)
+      company.addToBanksAccounts(bankAccount)
+      company.save(validate:false)
+    and: "The bank account to save"
+      BankAccount repeatedBankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank)
+    and:"The params"
+      Map params = [companyBankAccount:true, company:company.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(repeatedBankAccount, params)
+    then:
+      result.error == "La cuenta ya está registrada"
+  }
+
+  Should "don't save and asociate bank account with business entity because already exists"() {
+    given:"A company"
+      BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+      Bank bank = new Bank(name:"Bank").save(validate:false)
+      BankAccount bankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank).save(validate:false)
+      businessEntity.addToBanksAccounts(bankAccount)
+      businessEntity.save(validate:false)
+    and: "The bank account to save"
+      BankAccount repeatedBankAccount = new BankAccount(clabe:null, accountNumber:"00012345678", branchNumber:"111", banco:bank)
+    and:"The params"
+      Map params = [businessEntityBankAccount:true, businessEntity:businessEntity.id]
+    when:
+      def result = service.saveAndAsociateBankAccount(repeatedBankAccount, params)
+    then:
+      result.error == "La cuenta ya está registrada"
+  }
+
   Should "add an account to a company"(){
     given:"a bank account"
       BankAccount bankAccount = createBankAccount()
@@ -29,37 +91,57 @@ class BankAccountServiceSpec extends Specification {
     then:
       savedBankAccount.id
   }
-
-  Should "find bank account repeated for company"() {
+  
+  @Unroll
+  Should "return #result for bank account = #theBankAccount when check if it is repeated for company"() {
     given:"A bank account"
-      BankAccount bankAccount = createBankAccount()
+      Bank bank = new Bank().save(validate:false)
+      BankAccount bankAccount = theBankAccount
+      bankAccount.banco = bank
     and:"A company with bank accounts"
-      BankAccount bankExisting = createBankAccount()
-      bankExisting.banco = bankAccount.banco
+      BankAccount bankExisting = theBankAccountExisting
+      bankExisting.banco = bank
       bankExisting.save(validate:false)
       Company company = createCompany()
       company.banksAccounts = [bankExisting]
     when:
       def repeated = service.repeatedBankAccountCompany(bankAccount, company)
     then:
-      repeated
+      repeated ? true : false == result
+    where:
+      theBankAccount      |   theBankAccountExisting    ||  result
+      createBankAccount() |   createBankAccount()       ||  true
+      new BankAccount(accountNumber:"123", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | true
+      new BankAccount(accountNumber:"1234", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | false
+      new BankAccount(cardNumber:"123", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | true
+      new BankAccount(cardNumber:"1234", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | false
   }
 
-  Should "not found bank account repeated for company"() {
+  @Unroll
+  Should "return #result for bank account = #theBankAccount when check if it is repeated for business entity"() {
     given:"A bank account"
-      BankAccount bankAccount = createBankAccount()
-    and:"A company with bank accounts"
-      BankAccount bankExisting = createBankAccount()
-      bankExisting.accountNumber = "09876543210"
-      bankExisting.banco = bankAccount.banco
+      Bank bank = new Bank().save(validate:false)
+      BankAccount bankAccount = theBankAccount
+      bankAccount.banco = bank
+    and:"A business entity with bank accounts"
+      BankAccount bankExisting = theBankAccountExisting
+      bankExisting.banco = bank
       bankExisting.save(validate:false)
-      Company company = createCompany()
-      company.banksAccounts = [bankExisting]
+      BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+      businessEntity.banksAccounts = [bankExisting]
     when:
-      def repeated = service.repeatedBankAccountCompany(bankAccount, company)
+      def repeated = service.repeatedBankAccountBusinessEntity(bankAccount, businessEntity)
     then:
-      !repeated
+      repeated ? true : false == result
+    where:
+      theBankAccount      |   theBankAccountExisting    ||  result
+      createBankAccount() |   createBankAccount()       ||  true
+      new BankAccount(accountNumber:"123", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | true
+      new BankAccount(accountNumber:"1234", branchNumber:"100") | new BankAccount(accountNumber:"123", branchNumber:"100") | false
+      new BankAccount(cardNumber:"123", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | true
+      new BankAccount(cardNumber:"1234", branchNumber:"100") | new BankAccount(cardNumber:"123", branchNumber:"100") | false
   }
+
 
   Should "create a bank account"() {
     given:"A bank account command"
@@ -69,7 +151,7 @@ class BankAccountServiceSpec extends Specification {
     when:
       def bankAccount = service.createABankAccount(bankAccountCommand)
     then:
-      bankAccount.accountNumber == "12345"
+      bankAccount.accountNumber == "00000012345"
       bankAccount.branchNumber == "120"
       bankAccount.clabe == "123456789123456789"
       bankAccount.banco.bankingCode == "90902"
@@ -143,6 +225,7 @@ class BankAccountServiceSpec extends Specification {
     when:
       def result = service.getDataBankFromClabe(clabe)
     then:
+      result.clabe == "036180009876543217"
       result.branchNumber == "180"
       result.accountNumber == "00987654321"
       result.bank.bankingCode.endsWith("036")
@@ -164,4 +247,26 @@ class BankAccountServiceSpec extends Specification {
       "12345678901234567890"  ||  [:]
   }
 
+  @Unroll
+  Should "obtain the data bank from a row employee map"() {
+    given:"The row employee"
+      Map rowEmployee = theRowEmployee
+    and:"The bank"
+      Bank bank = new Bank(bankingCode:"40036").save(validate:false)
+    when:
+      def result = service.getDataBankFromRowEmployee(rowEmployee)
+    then:
+      result.clabe == theClabe
+      result.branchNumber == theBranchNumber
+      result.accountNumber == theAccountNumber
+      result.cardNumber == theCardNumber
+      result.bank.bankingCode == theBankingCode
+    where:
+      theRowEmployee  ||  theClabe  | theBranchNumber   | theAccountNumber  | theCardNumber   | theBankingCode
+      [CLABE:"036180009876543217"]  || "036180009876543217"   |  "180"  |  "00987654321"  | null  | "40036"
+      [CLABE:"036180009876543217", NUMTARJETA:"12345"]  || "036180009876543217"   |  "180"  |  "00987654321"  | "12345"  | "40036"
+      [CLABE:null, CUENTA:"99999", SUCURSAL:"100", BANCO:"036", NUMTARJETA:"12345"]  || null   |  "100"  |  "99999"  | "12345"  | "40036"
+      [CLABE:null, CUENTA:null, SUCURSAL:"100", BANCO:"036", NUMTARJETA:"12345"]  || null   |  "100"  |  null  | "12345"  | "40036"
+
+  }
 }
