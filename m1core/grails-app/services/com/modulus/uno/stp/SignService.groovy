@@ -1,6 +1,7 @@
-package com.modulus.uno
+package com.modulus.uno.stp
 
 import com.stp.h2h.CryptoHandler.STPCryptoHandler
+import com.modulus.uno.SignException
 
 class SignService {
 

@@ -1,6 +1,14 @@
-package com.modulus.uno
+package com.modulus.uno.stp
 
 import wslite.soap.*
+
+import com.modulus.uno.GenerateXMLService
+import com.modulus.uno.RequestSOAPService
+
+import com.modulus.uno.Company
+import com.modulus.uno.Period
+import com.modulus.uno.RestException
+
 
 class StpService {
 

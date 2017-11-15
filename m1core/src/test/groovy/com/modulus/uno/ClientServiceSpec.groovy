@@ -8,6 +8,7 @@ import spock.lang.Specification
 import spock.lang.Ignore
 
 import com.modulus.uno.BusinessException
+import com.modulus.uno.stp.StpClabeService
 
 @TestFor(ClientService)
 @Mock([Address,Company,BusinessEntity,ClientLink,ModulusUnoAccount,User])
