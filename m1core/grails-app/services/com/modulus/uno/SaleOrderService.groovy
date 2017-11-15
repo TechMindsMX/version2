@@ -25,7 +25,10 @@ class SaleOrderService {
     def fechaCobro = params.fechaCobro
     String externalId = params.externalId ?: ""
     def note = params.note
-    PaymentMethod paymentMethod = PaymentMethod.values().find { it.toString() == params.paymentMethod }
+    PaymentMethod paymentMethod = PaymentMethod.values().find {
+      println it.toString()
+      it.toString() == params.paymentMethod }
+
 
     if(!companyId && !clientId && !addressId){
       throw new BusinessException("No se puede crear la orden de venta...")

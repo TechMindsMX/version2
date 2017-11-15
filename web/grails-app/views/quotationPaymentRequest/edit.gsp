@@ -1,4 +1,6 @@
+<%! import com.modulus.uno.paysheet.PaymentWay%>
 <!DOCTYPE html>
+
 <html>
     <head>
         <meta name="layout" content="main" />
@@ -9,7 +11,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Editar la solicitud
+        Solicitud de pago de cotización
         <small>${company}</small>
       </h1>
     </div>
@@ -43,38 +45,40 @@
         <g:form action="update">
 
         <div class="row">
-          <div class="">
+          <div class="col-md-11">
             <div class="form-group">
-              <label><g:message code="Cotizacion con el cliente"/></label>
-              <input name="id" value="${quotationRequest.id}" type="hidden"/>
-              <input name="clientsName"  class="form-control" value="${quotationRequest.quotationContract.client}" disabled/>
-              <input name="quotation"  class="form-control" value="${quotationRequest.quotationContract.id}" type="hidden"/>
+              <label><g:message code="Cliente"/></label>
+              <input name="quotationClient" class="form-control" value="${quotationPaymentRequest.quotationContract.client}">
+              <input name="quotation" class="form-control" value="${quotationPaymentRequest.quotationContract.id}"type="hidden">
+              <input name="id" class="form-control" value="${quotationPaymentRequest.id}"type="hidden">
+            </div>
           </div>
         </div>
         <br>
         <div class="row">
           <div class="col-md-3">
-            <label><g:message code="Descripción" /></label>
-            <input class="form-control" type="text" id="description" name="description" required="required">
+            <label><g:message code="Monto" /></label>
+            <input class="form-control" type="text" id="amonut" value="${quotationPaymentRequest.amount}" name="amount" required="required">
           </div>
           <div class="col-md-4">
-            <input class="form-control" value="${quotationRequest.commission}" type="hidden" min="0.00" max="16.00" step="0.01" name="commission" required=""/>
+            <label><g:message code="Nota" /></label>
+            <input class="form-control" name="note" value="${quotationPaymentRequest.note}" type="text" required=""/>
           </div>
         </div>
          <div class="row">
           <div class="col-md-3">
-            <label><g:message code="Presupuesto Maximo" /></label>
-            <input class="form-control" type="text" id="amount" name="amount" value="${quotationRequest.amount}" required="required">
+            <label><g:message code="Modo de Pago" /></label>
+            <g:select class="form-control" name="paymentWay" from="${PaymentWay.values()}"/>
           </div>
          </div>
         <br>
         <br>
         <div class="row">
           <div class="col-md-6">
-            <g:link class="btn btn-default" controller="quotationRequest" action="index">Cancelar</g:link>
+            <g:link class="btn btn-default" controller="quotationContract" action="index">Cancelar</g:link>
           </div>
           <div class="col-md-6 text-right">
-            <g:submitButton name="Save" class="btn btn-primary" value="${message(code: 'default.button.guardar.label', default: 'Guardar')}" />
+            <g:submitButton name="Guardar" class="btn btn-primary" value="${message(code: 'default.button.guardar.label', default: 'Guardar')}" />
           </div>
         </div>
         </g:form>
@@ -86,4 +90,3 @@
     <asset:javascript src="quotationContract/create.js"/>
     </body>
 </html>
-

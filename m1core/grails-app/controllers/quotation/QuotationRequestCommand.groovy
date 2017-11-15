@@ -12,6 +12,7 @@ class QuotationRequestCommand implements Validateable {
   String commission
   String quotation
   String amount
+  String biller
 
   QuotationRequest getQuotationRequest(){
     new QuotationRequest(
@@ -34,6 +35,5 @@ class QuotationRequestCommand implements Validateable {
   BigDecimal getCommission(String commission){
     getValueInBigDecimal(commission)
   }
-
 
 }
