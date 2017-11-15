@@ -59,8 +59,10 @@ class QuotationContractService {
     @Transactional
     Map caculateData(QuotationContract quotationContract, Date initDate){
       def quotationRequest = QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.SEND, initDate)*.amount.sum() ?: 0
+      println "Request Status SEND" 
       println quotationRequest
       def quotationPaymentRequest = QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], initDate)*.amount.sum() ?: 0
+      println "QuotationPaymentRequest" 
       println quotationPaymentRequest
       def saldoAnterior = quotationRequest - quotationPaymentRequest
       [saldoAnterior:saldoAnterior, 
