@@ -2,6 +2,7 @@
 <input type="hidden" name="branchNumber" value="115"/>
 <input type="hidden" name="relation" value="${relation}"/>
 <input type="hidden" name="businessEntity" value="${params.businessEntity}"/>
+<input type="hidden" name="businessEntityBankAccount" value="${params.businessEntityBankAccount}"/>
 
 <div class="form-group">
   <label class="col-sm-5 control-label">Últimos 4 dígitos del número de cuenta</label>

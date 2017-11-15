@@ -36,6 +36,13 @@
                 </div>
               </g:hasErrors>
 
+            <g:if test="${error}">
+              <div class="alert alert-danger">
+                ${error}
+              </div>
+            </g:if>
+
+
               <g:form resource="${this.bankAccount}" method="PUT" class="form-horizontal" role="form">
                 <input type="hidden" name="businessEntityInfo" value="${params.businessEntityInfo}"/>
                 <g:hiddenField name="id" value="${this.bankAccount?.id}" />

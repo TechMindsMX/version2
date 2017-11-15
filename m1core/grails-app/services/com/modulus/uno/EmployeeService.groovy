@@ -4,11 +4,11 @@ import org.springframework.context.i18n.LocaleContextHolder as LCH
 
 import grails.transaction.Transactional
 
-@Transactional
 class EmployeeService {
 
   def messageSource
 
+  @Transactional
   def addEmployeeToCompany(EmployeeBusinessEntity employee, Company company, Map params){
     if (isEmployeeOfThisCompany(employee, company)) {
       throw new BusinessException(messageSource.getMessage('exception.employee.already.exist', null, LCH.getLocale()))
@@ -54,6 +54,7 @@ class EmployeeService {
     employeeLink
   }
 
+  @Transactional
   def updateEmployeeToCompany(BusinessEntity businessEntity, Company company, Map params) {
     if (businessEntity.rfc.substring(0,10) != params.curp.substring(0,10)) {
       throw new BusinessException("La CURP no corresponde al RFC")

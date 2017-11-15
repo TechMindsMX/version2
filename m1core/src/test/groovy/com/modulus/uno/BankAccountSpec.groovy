@@ -22,7 +22,7 @@ class BankAccountSpec extends Specification{
      _accountNumber   | _branchNumber | _clabe               | _result
      "12345678901"   | "12345"         | "002115016003269411" | true
      "1368067893"    | "56789"         | "033333333377844923" | false
-     "789654"        | "98865"         | "032180000118359719" | false
+     "789654"        | "98865"         | "032180000118359719" | true
   }
 
 }
