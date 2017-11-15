@@ -80,4 +80,5 @@ databaseChangeLog = {
   include file: 'adding-column-paymentway-to-paysheet-employee.groovy'
 	include file: 'new-menu-relation.groovy'
     include file: 'drop-unique-constraint-to-column-email-in-profile.groovy'
+    include file: 'adding-column-username-to-registration-code.groovy'
 }
