@@ -35,7 +35,6 @@
                   <div class="form-group">
                     <div class="col-sm-6">
                       <input type="text" name="rfc" class="form-control" placeholder="RFC ó Nombre" maxlength="20"/>
-                      <input type="hidden" name="company" value="${session.company}" />
                     </div>
                     <div class="col-sm-2">
                       <button class="btn btn-default">Buscar</button>
@@ -44,7 +43,9 @@
                 </g:form>
               </div>
               <div class="col-md-2 text-right">
+                <g:if test="${businessEntityToAuthorize}">
                 <g:link class="btn btn-primary" action="showToAuthorizeEntities">Autorizar Registros</g:link>
+                </g:if>
               </div>
             </div>
 
