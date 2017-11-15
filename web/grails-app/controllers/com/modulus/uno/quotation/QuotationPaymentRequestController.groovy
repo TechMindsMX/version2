@@ -26,7 +26,7 @@ class QuotationPaymentRequestController {
     def selectPaymentRequest(String quotation){
       QuotationContract quotationContract = QuotationContract.get(quotation.toLong())
       def quotationPaymentRequestList = QuotationPaymentRequest.findAllByQuotationContract(quotationContract)
-      render view: 'consult', model:[quotationPaymentRequestList: quotationPaymentRequestList]
+      render view: 'index', model:[quotationPaymentRequestList: quotationPaymentRequestList]
     }
 
     def create(){

@@ -63,11 +63,15 @@ class QuotationContractController {
     }
 
     def balance(QuotationContract quotationContract){
+      Company company = Company.get(session.company)
+      List<QuotationContract> quotationContractList =  QuotationContract.findAllByCompany(company)
       Map balance = quotationContractService.getBalance(quotationContract)
       List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, new Date(), new Date())
 
       [balance:balance,
-      quotationPaymentRequestList: quotationPaymentRequestList]
+      quotationPaymentRequestList: quotationPaymentRequestList,
+      quotationContractList: quotationContractList
+      ]
     }
 
     def getQuotationPaymentRequest(){
