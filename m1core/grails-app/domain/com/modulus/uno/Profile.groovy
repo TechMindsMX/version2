@@ -29,7 +29,7 @@ class Profile {
     name blank:false,size:1..100
     lastName blank:false,size:1..100
     motherLastName blank:false,size:1..100
-    email blank:false,email:true,unique:true,size:6..200
+    email blank:false,email:true,size:6..200
     birthDate nullable:true
     gender nullable:true
     nationality nullable:true
