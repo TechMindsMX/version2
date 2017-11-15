@@ -75,8 +75,7 @@ class QuotationContractController {
     }
 
     def getQuotationPaymentRequest(){
-      println params.dump()
-      QuotationContract quotationContract = QuotationContract.get(1)
+      QuotationContract quotationContract = QuotationContract.get(params.id.toLong())
       Map balance = quotationContractService.getBalance(quotationContract)
       Date firstDate = Date.parse( 'dd/MM/yyyy', params.initDate)
       Date lastDate = Date.parse('dd/MM/yyyy', params.lastDate)
