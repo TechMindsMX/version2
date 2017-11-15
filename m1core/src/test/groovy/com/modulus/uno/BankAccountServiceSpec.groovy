@@ -264,9 +264,9 @@ class BankAccountServiceSpec extends Specification {
     where:
       theRowEmployee  ||  theClabe  | theBranchNumber   | theAccountNumber  | theCardNumber   | theBankingCode
       [CLABE:"036180009876543217"]  || "036180009876543217"   |  "180"  |  "00987654321"  | null  | "40036"
-      [CLABE:"036180009876543217", TARJETA:"12345"]  || "036180009876543217"   |  "180"  |  "00987654321"  | "12345"  | "40036"
-      [CLABE:null, CUENTA:"99999", SUCURSAL:"100", BANCO:"036", TARJETA:"12345"]  || null   |  "100"  |  "99999"  | "12345"  | "40036"
-      [CLABE:null, CUENTA:null, SUCURSAL:"100", BANCO:"036", TARJETA:"12345"]  || null   |  "100"  |  null  | "12345"  | "40036"
+      [CLABE:"036180009876543217", NUMTARJETA:"12345"]  || "036180009876543217"   |  "180"  |  "00987654321"  | "12345"  | "40036"
+      [CLABE:null, CUENTA:"99999", SUCURSAL:"100", BANCO:"036", NUMTARJETA:"12345"]  || null   |  "100"  |  "99999"  | "12345"  | "40036"
+      [CLABE:null, CUENTA:null, SUCURSAL:"100", BANCO:"036", NUMTARJETA:"12345"]  || null   |  "100"  |  null  | "12345"  | "40036"
 
   }
 }
