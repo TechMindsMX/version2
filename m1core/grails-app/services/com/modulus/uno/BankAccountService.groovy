@@ -130,7 +130,7 @@ class BankAccountService {
   }
 
   BankAccount createBankAccountForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map rowEmployee) {
-    Map dataBank = getDataBankFromRowEmployeee(rowEmployee)
+    Map dataBank = getDataBankFromRowEmployee(rowEmployee)
     BankAccount bankAccount = new BankAccount(
       accountNumber:dataBank.accountNumber,
       branchNumber:dataBank.branchNumber,
@@ -140,6 +140,7 @@ class BankAccountService {
     )
 
     bankAccount.save()
+    log.info "Bank account employee saved: ${bankAccount.dump()}"
 
     if (bankAccount.id) {
       businessEntity.addToBanksAccounts(bankAccount)
@@ -154,14 +155,16 @@ class BankAccountService {
     if (rowEmployee.CLABE) {
       dataBank = getDataBankFromClabe(rowEmployee.CLABE)
     } else if (rowEmployee.CUENTA && rowEmployee.SUCURSAL) {
+      log.info "Data for account and sucursal only"
       dataBank.accountNumber = rowEmployee.CUENTA
       dataBank.branchNumber = rowEmployee.SUCURSAL
       dataBank.bank = Bank.findByBankingCodeLike("%${rowEmployee.BANCO}")
-    } else if (rowEmployee.TARJETA && !rowEmployee.CLABE && !rowEmployee.CUENTA) {
+    } else if (rowEmployee.NUMTARJETA && !rowEmployee.CLABE && !rowEmployee.CUENTA) {
+      log.info "Data for card number only"
       dataBank.bank = Bank.findByBankingCodeLike("%${rowEmployee.BANCO}")
       dataBank.branchNumber = rowEmployee.SUCURSAL
     }
-    dataBank.cardNumber = rowEmployee.TARJETA
+    dataBank.cardNumber = rowEmployee.NUMTARJETA
     dataBank
   }
 
