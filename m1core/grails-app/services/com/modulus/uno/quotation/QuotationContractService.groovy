@@ -2,9 +2,11 @@ package com.modulus.uno.quotation
 
 import grails.transaction.Transactional
 import com.modulus.uno.Company
+import com.modulus.uno.Period
+import com.modulus.uno.CollaboratorService
 
 class QuotationContractService {
-  
+
   CollaboratorService collaboratorService
 
     @Transactional
@@ -57,11 +59,11 @@ class QuotationContractService {
       ]
     }
 
-    List<QuotationConcept> getConceptListForBalance(QuotationContract contract, Period period) {
+    List<QuotationConcept> getConceptListForBalance(QuotationContract quotationContract, Period period) {
       List<QuotationRequest> quotationRequest = QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedBetween(quotationContract, QuotationRequestStatus.PROCESSED, period.init, period.end)
       List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedBetween(quotationContract, QuotationPaymentRequestStatus.PAYED, period.init, period.end)
       List<QuotationConcept> conceptList = mergeList(quotationRequest,quotationPaymentRequestlistPayed)
-      calculateBalancesForConcepts(conceptList)
+      calculateBalancesForConcepts(conceptList, quotationContract, period)
     }
 
     Map calculateSummaryForBalance(QuotationContract quotationContract) {
@@ -82,12 +84,13 @@ class QuotationContractService {
       ]
     }
 
-    List<QuotationConcept> calculateBalancesForConcepts(List<QuotationConcept> conceptList) {
+    List<QuotationConcept> calculateBalancesForConcepts(List<QuotationConcept> conceptList, QuotationContract quotationContract, Period period) {
       BigDecimal previousBalance = getPreviousBalance(quotationContract, period.init)
-      conceptList.collect { concept ->
-         previousBalance = previousBalance + (concept.payment?:0) - (concept.charge?:0)
+      conceptList.each { concept ->
+         previousBalance = previousBalance + (concept.deposit?:0) - (concept.charge?:0)
          concept.balance = previousBalance
       }
+      conceptList
     }
 
     BigDecimal getPreviousBalance(QuotationContract quotationContract, Date initDate){
