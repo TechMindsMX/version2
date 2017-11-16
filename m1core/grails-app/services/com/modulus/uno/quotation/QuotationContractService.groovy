@@ -42,12 +42,13 @@ class QuotationContractService {
        BigDecimal available = income - transit - expenses
        BigDecimal total = available + transit
        def mergeConcept = mergeList(quotationRequest,quotationPaymentRequestlistPayed, saldoAnterior)
-       println "..."*100
        mergeConcept.quotationConceptList = mergeConcept.quotationConceptList.sort{it.date}
-       mergeConcept.quotationConceptList.each{
-        println it.dump()
-
+       BigDecimal saldoBeforeOneList = 0 + saldoAnterior
+       mergeConcept.quotationConceptList.each{ concept ->
+         saldoBeforeOneList = saldoBeforeOneList + (concept.payment?:0) - (concept.charge?:0)
+         concept.saldo = saldoBeforeOneList
        }
+
 
       [quotationContract:quotationContract,
       income:income,
@@ -75,25 +76,25 @@ class QuotationContractService {
 
     def mergeList(List<QuotationRequest> quotationRequestList, List<QuotationPaymentRequest> quotationPaymentRequestlistPayed, BigDecimal saldoAnterior){
       def mergeLists = quotationRequestList + quotationPaymentRequestlistPayed
-      BigDecimal saldoBeforeOneList = 0 + saldoAnterior
+//      BigDecimal saldoBeforeOneList = 0 + saldoAnterior
       List<QuotationConcept> quotationConceptList = []
       quotationRequestList.each{ request ->
-        saldoBeforeOneList = saldoBeforeOneList + request.amount
+    //    saldoBeforeOneList = saldoBeforeOneList + request.amount
         QuotationConcept quotationConcept = new QuotationConcept()
         quotationConcept.concept = "Deposito"
         quotationConcept.date = request.dateCreated
         quotationConcept.payment = request.amount
-        quotationConcept.saldo = saldoBeforeOneList
+  //      quotationConcept.saldo = saldoBeforeOneList
         quotationConceptList << quotationConcept
       }
 
       quotationPaymentRequestlistPayed.each{ paymentRequest ->
-         saldoBeforeOneList = saldoBeforeOneList - paymentRequest.amount
+     //    saldoBeforeOneList = saldoBeforeOneList - paymentRequest.amount
          QuotationConcept quotationConcept = new QuotationConcept()
          quotationConcept.concept = "Pago"
          quotationConcept.date = paymentRequest.dateCreated
          quotationConcept.charge = paymentRequest.amount
-         quotationConcept.saldo = saldoBeforeOneList
+    //     quotationConcept.saldo = saldoBeforeOneList
 
         quotationConceptList << quotationConcept
       }

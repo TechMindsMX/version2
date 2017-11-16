@@ -9,6 +9,7 @@ class QuotationRequestController {
     def index() {
     	Company company = Company.get(session.company)
       List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByBiller(company)
+      println quotationRequestList.dump()
       [quotationRequestList:quotationRequestList,
        company:company
       ]

@@ -96,9 +96,9 @@
                         <tr>
                           <td>${paymentRequest.concept}</td>
                           <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
-                          <td>${paymentRequest.payment}</td>
-                          <td>${paymentRequest.charge}</td>
-                          <td>${paymentRequest.saldo}</td>
+                          <td> <g:formatNumber number="${paymentRequest.payment}" type="currency" currencyCode="MXN" /></td>
+                          <td> <g:formatNumber number="${paymentRequest.charge}" type="currency" currencyCode="MXN" /></td>
+                          <td> <g:formatNumber number="${paymentRequest.saldo}" type="currency" currencyCode="MXN" /></td>
                         </tr>
                       </g:each>
                     </table>
