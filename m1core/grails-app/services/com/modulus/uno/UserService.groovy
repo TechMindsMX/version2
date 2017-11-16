@@ -88,4 +88,14 @@ class UserService {
     telephone.save()
   }
 
+  User findUserFromUsernameAndEmail(String username, String email) {
+    def criteria = User.createCriteria()
+    criteria.get {
+      eq("username", username)
+      profile {
+        eq("email", email)
+      }
+    }
+  }
+
 }
