@@ -11,6 +11,7 @@ class RecoveryService {
   def messageSource
   def emailSenderService
   CorporateService corporateService
+  UserService userService
 
   def sendConfirmationAccountToken(User user){
     String urlCorporate = corporateService.findUrlCorporateOfUser(user)
@@ -35,13 +36,7 @@ class RecoveryService {
     def registrationCode = RegistrationCode.findByToken(token)
     def user
     if (registrationCode) {
-      def criteria = User.createCriteria()
-      user = criteria.get {
-        eq("username", registrationCode.username)
-        profile {
-          eq("email", registrationCode.email)
-        }
-      }
+      user = userService.findUserFromUsernameAndEmail(registrationCode.username, registrationCode.email)
     }
     user
   }
@@ -52,9 +47,8 @@ class RecoveryService {
       registrationCode
   }
 
-  def generateRegistrationCodeForEmail(String email) {
-    def profile = Profile.findByEmail(email)
-    def user = User.findByProfile(profile)
+  def generateRegistrationCodeForUsernameAndEmail(String username, String email) {
+    User user = userService.findUserFromUsernameAndEmail(username, email)
     if(!user) throw new UserNotFoundException(messageSource.getMessage('exception.user.not.found', null, LCH.getLocale()))
     if(!user.enabled) throw new AccountNoActivatedException(messageSource.getMessage('exception.account.not.activated', null, LCH.getLocale()))
     String urlCorporate = corporateService.findUrlCorporateOfUser(user)
