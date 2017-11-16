@@ -9,7 +9,7 @@
     <title><g:message code="recovery.password.label" /></title>
   </head>
   <body class="login">
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-lg-4 col-lg-offset-4">
           <div class="login-banner text-center">
@@ -34,17 +34,20 @@
                 </g:if>
 
                 <g:form name="recovery" action="save" class="form-signin form-horizontal">
-                  <br/>
+                  <div class="row">
                   <div class="col-md-12">
+                    <label class="control-label" for="username">Nombre de Usuario</label>
+                    <input type="text" name="username" class="form-control" placeholder="Ingrese su nombre de usuario">
                     <label class="control-label" for="email"><g:message code="email.label" /></label>
-                    <br/><br/>
                     <input type="email" name="email" class="form-control" placeholder="${message(code:'recovery.password.text.placeholder')}">
                     <br/>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 text-center">
                     <button type="submit" class="btn btn-primary"><g:message code="recovery.password.button.label" /></button>
+                    </div>
                   </div>
                 </g:form>
-              <br/><br/><br/><br/>
-              <br/><br/><br/><br/>
               </div>
             </div>
             <div class="portlet-footer">
