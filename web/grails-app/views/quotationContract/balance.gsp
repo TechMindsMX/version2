@@ -32,7 +32,7 @@
                 <g:render template="balance/chooseClient"/>
               </g:form>
             </g:if><g:else>
-            
+
 
 
             <g:if test="${balance.quotationContract}">
@@ -46,7 +46,7 @@
                   <g:message message="${balance.quotationContract.client}" />
                 </label>
                 </h1>
-                <g:form action="getQuotationPaymentRequest">
+                <g:form action="balance">
                 <div class="row">
                   <div class="col-md-6">
                   <label>
@@ -74,24 +74,23 @@
               <div class="col-md-4 vertical-bar">
                 <div class="row">
                   <h2>
-                    Disponible:  <g:formatNumber number="${balance.available}" type="currency" currencyCode="MXN" />
+                    Disponible:  <g:formatNumber number="${balance.summary.available}" type="currency" currencyCode="MXN" />
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    En transito: <g:formatNumber number="${balance.transit}" type="currency" currencyCode="MXN" />
+                    En transito: <g:formatNumber number="${balance.summary.transit}" type="currency" currencyCode="MXN" />
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    Total: <g:formatNumber number="${balance.total}" type="currency" currencyCode="MXN" />
+                    Total: <g:formatNumber number="${balance.summary.total}" type="currency" currencyCode="MXN" />
                   </h2>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12">
-                <g:if test="${quotationPaymentRequestList}">
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                       <tr>
@@ -101,21 +100,20 @@
                         <th>Cargo</th>
                         <th>Saldo</th>
                       </tr>
-                      <g:each in="${balance.mergeConcept.quotationConceptList.sort{it.date}}" var="paymentRequest">
+                      <g:each in="${balance.conceptList}" var="paymentRequest">
                         <tr>
                           <td>${paymentRequest.concept}</td>
                           <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
-                          <td> <g:formatNumber number="${paymentRequest.payment}" type="currency" currencyCode="MXN" /></td>
+                          <td> <g:formatNumber number="${paymentRequest.deposit}" type="currency" currencyCode="MXN" /></td>
                           <td> <g:formatNumber number="${paymentRequest.charge}" type="currency" currencyCode="MXN" /></td>
-                          <td> <g:formatNumber number="${paymentRequest.saldo}" type="currency" currencyCode="MXN" /></td>
+                          <td> <g:formatNumber number="${paymentRequest.balance}" type="currency" currencyCode="MXN" /></td>
                         </tr>
                       </g:each>
                     </table>
-                    </g:if>
                   </div>
 
             </g:if>
-            
+
             </g:else>
              </div>
             </div>
