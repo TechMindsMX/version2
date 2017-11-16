@@ -14,6 +14,7 @@ class RecoveryServiceSpec extends Specification {
   def grailsApplication = new GrailsApplicationMock()
   def emailSenderService = Mock(EmailSenderService)
   def corporateService = Mock(CorporateService)
+  UserService userService = Mock(UserService)
 
   def setup() {
     service.recoveryCollaboratorService = recoveryCollaboratorService
@@ -22,6 +23,7 @@ class RecoveryServiceSpec extends Specification {
     service.grailsApplication = grailsApplication
     service.messageSource = messageSource
     service.emailSenderService = emailSenderService
+    service.userService = userService
   }
 
   void "should send confirmation account token"() {
@@ -50,6 +52,8 @@ class RecoveryServiceSpec extends Specification {
       User user = new User(username:"theUser", password:"oldPass", profile:profile, enabled:false).save(validate:false)
     and:"the code"
       RegistrationCode code = new RegistrationCode(username:"theUser", email:email, token:token).save(validate:false)
+    and:
+      userService.findUserFromUsernameAndEmail(_, _) >> user
     when: "We confirm account for token"
       service.confirmAccountForToken(token)
     then: "We expect user enabled"
@@ -61,47 +65,42 @@ class RecoveryServiceSpec extends Specification {
     given: "An email"
       def email = 'josdem@email.com'
     and: "User mock"
-      def user = Mock(User)
-      def profile = new Profile(email:email, firsName:'firsName', motherLastName:'motherLastName', lastName:'lastName')
+      Profile profile = new Profile(email:email, name:"Some", lastName:"Body", motherLastName:"Any").save(validate:false)
+      User user = new User(username:"theUser", password:"oldPass", profile:profile, enabled:true).save(validate:false)
       def message = Mock(TokenCommand)
-      user.profile >> profile
-      Profile.metaClass.static.findByEmail = { profile }
-      User.metaClass.static.findByProfile = { user }
+    and:
+      recoveryCollaboratorService.generateToken(_, _) >> message
+      userService.findUserFromUsernameAndEmail(_, _) >> user
     when: "We find user by email"
-      recoveryCollaboratorService.generateToken('http://url.comforgot', user) >> message
-      user.enabled >> true
-      service.generateRegistrationCodeForEmail(email)
+      service.generateRegistrationCodeForUsernameAndEmail("theUser", email)
     then: "We expect send message to the email service"
-      1 * corporateService.findUrlCorporateOfUser(_) >> "http://url.com"
-      1 * emailSenderService.sendEmailForRegistrationCode(message, email)
+      1 * corporateService.findUrlCorporateOfUser(_)
+      1 * emailSenderService.sendEmailForRegistrationCode(_, _)
   }
 
 
   void "should not generate registration code for email since user not found"() {
-  given: "An email"
-    def email = 'josdem@email.com'
-  and: "User mock"
-    def profile = new Profile(email:email, firsName:'firsName', motherLastName:'motherLastName', lastName:'lastName')
-    def message = Mock(TokenCommand)
-    Profile.metaClass.static.findByEmail = { profile }
-    User.metaClass.static.findByProfile = { null }
-  when: "We find user by email"
-    service.generateRegistrationCodeForEmail(email)
-  then: "We expect get an exception since user not found"
-    thrown UserNotFoundException
+    given: "An email"
+      def email = 'josdem@email.com'
+    and: "User mock"
+      Profile profile = new Profile(email:email, name:"Some", lastName:"Body", motherLastName:"Any").save(validate:false)
+      User user = new User(username:"theUser", password:"oldPass", profile:profile, enabled:true).save(validate:false)
+      userService.findUserFromUsernameAndEmail(_, _) >> null
+    when: "We find user by email"
+      service.generateRegistrationCodeForUsernameAndEmail("otherUser", email)
+    then: "We expect get an exception since user not found"
+      thrown UserNotFoundException
   }
 
   void "should not generate registration code for email since account is not activated"() {
     given: "An email"
       def email = 'josdem@email.com'
     and: "User mock"
-      def user = Mock(User)
-      def profile = new Profile(email:email, firsName:'firsName', motherLastName:'motherLastName', lastName:'lastName')
-      def message = Mock(TokenCommand)
-      Profile.metaClass.static.findByEmail = { profile }
-      User.metaClass.static.findByProfile = { user }
+      Profile profile = new Profile(email:email, name:"Some", lastName:"Body", motherLastName:"Any").save(validate:false)
+      User user = new User(username:"theUser", password:"oldPass", profile:profile, enabled:false).save(validate:false)
+      userService.findUserFromUsernameAndEmail(_, _) >> user
     when: "We find user by email"
-      service.generateRegistrationCodeForEmail(email)
+      service.generateRegistrationCodeForUsernameAndEmail("theUser", email)
     then: "We expect get an exception since account is not activated"
       thrown AccountNoActivatedException
   }
@@ -116,6 +115,8 @@ class RecoveryServiceSpec extends Specification {
       User user = new User(username:"theUser", password:"oldPass", profile:profile).save(validate:false)
     and:"the code"
       RegistrationCode code = new RegistrationCode(username:"theUser", email:email, token:token).save(validate:false)
+    and:
+      userService.findUserFromUsernameAndEmail(_, _) >> user
     and:
       registrationService.isValidToken(_) >> true
     when: "We send change password for token"
