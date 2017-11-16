@@ -60,22 +60,23 @@ class QuotationContractController {
       [quotationContract:quotationContract, company:company]
     }
 
-    def balance(QuotationContract quotationContract){
+    def chooseClientForBalance(){
       Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList =  QuotationContract.findAllByCompany(company)
+      render view:"balance", model:[quotationContractList:quotationContractList]
+      /*
       Map balance = quotationContractService.getBalance(quotationContract, 1)
       List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, new Date(), new Date())
 
       [balance:balance,
       quotationPaymentRequestList: quotationPaymentRequestList,
       quotationContractList: quotationContractList
-      ]
+      ]*/
     }
 
-    def getQuotationPaymentRequest(){
-      QuotationContract quotationContract = QuotationContract.get(params.id.toLong())
-      Date firstDate = Date.parse( 'dd/MM/yyyy', params.initDate)
-      Date lastDate = Date.parse('dd/MM/yyyy', params.lastDate)
+    def balance(QuotationContract quotationContract){
+      //Date firstDate = Date.parse( 'dd/MM/yyyy', params.initDate)
+      //Date lastDate = Date.parse('dd/MM/yyyy', params.lastDate)
       def saldoAnterior = quotationContractService.caculateData(quotationContract, firstDate)
       Map balance = quotationContractService.getBalance(quotationContract, saldoAnterior.saldoAnterior)
       List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, firstDate, lastDate)
