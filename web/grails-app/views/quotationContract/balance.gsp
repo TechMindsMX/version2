@@ -11,7 +11,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Lista de Solicitudes
+        Lista de Solicitudes de Cotizaciones
         <small>${company}</small>
       </h1>
     </div>
@@ -26,6 +26,15 @@
             <g:if test="${flash.message}">
               <div class="message" role="status">${flash.message}</div>
             </g:if>
+
+            <g:if test="${!balance}">
+              <g:form action="balance">
+                <g:render template="balance/chooseClient"/>
+              </g:form>
+            </g:if><g:else>
+            
+
+
             <g:if test="${balance.quotationContract}">
             <div class="row">
               <div class="col-md-8">
@@ -106,33 +115,9 @@
                   </div>
 
             </g:if>
-            <g:else>
-              <g:form action="balance">
-                <div class="row">
-                  <div class="col-md-11">
-                    <div class="form-group">
-                      <label>
-                        <g:message code="Clientes" />
-                      </label>
-                      <g:select name="id" class="form-control" from="${quotationContractList}" optionValue="client" optionKey="id">
-                      </g:select>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 text-right">
-                      <g:submitButton name="seleccionar" class="btn btn-primary" value="${message(code: 'default.button.seleccionar.label', default: 'Seleccionar')}"
-                      />
-                    </div>
-                  </div>
-                    </div>
-                  </g:form>
+            
             </g:else>
-                <nav>
-                  <div class="pagination">
-                    <g:paginate class="pagination" controller="businessEntity" action="index" total="${businessEntityCount ?: 0}" />
-                  </div>
-                </nav>
-              </div>
+             </div>
             </div>
           </div>
         </div>
