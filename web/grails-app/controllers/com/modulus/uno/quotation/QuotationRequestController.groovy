@@ -8,11 +8,16 @@ class QuotationRequestController {
 
     def index() {
     	Company company = Company.get(session.company)
-      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByBiller(company)
-      println quotationRequestList.dump()
-      [quotationRequestList:quotationRequestList,
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      [quotationContractList:quotationContractList,
        company:company
       ]
+    }
+
+    def chooseClient(QuotationContract quotationContract){
+    	Company company = Company.get(session.company)
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByQuotationContract(quotationContract)
+      render view:'index', model:[quotationRequestList:quotationRequestList, company:company]
     }
 
 
