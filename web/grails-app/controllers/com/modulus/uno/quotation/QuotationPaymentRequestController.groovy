@@ -75,7 +75,7 @@ class QuotationPaymentRequestController {
     }
 
     def process(QuotationPaymentRequest quotationPaymentRequest){
-      Map process = quotationPaymentRequestService.process(quotationPaymentRequest)
+      quotationPaymentRequestService.process(quotationPaymentRequest)
       redirect(action:'index')
     }
 
