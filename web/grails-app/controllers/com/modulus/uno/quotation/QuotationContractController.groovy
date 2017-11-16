@@ -68,7 +68,8 @@ class QuotationContractController {
 
     def balance(QuotationContract quotationContract){
       Map balance = quotationContractService.getBalance(quotationContract, params)
-      render view: 'balance', model:[balance:balance, quotationPaymentRequestList:quotationPaymentRequestList, saldoAnterior:saldoAnterior]
+      render view: 'balance', model:[balance:balance]
+
     }
 
 
