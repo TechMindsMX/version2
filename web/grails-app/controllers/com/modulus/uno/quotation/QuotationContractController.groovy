@@ -14,6 +14,18 @@ class QuotationContractController {
       respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
     }
 
+    def generalBalance(){
+      Company company = Company.get(session.company)
+      def detailGeneralBalance = [
+                                  [client:"Brandon", totalRequest:10, totalPayments:5],
+                                  [client:"Temoc", totalRequest:20, totalPayments:10],
+                                  [client:"Luis", totalRequest:30, totalPayments:15]
+                                  ]
+      model:[company:company,
+            detailGeneralBalance:detailGeneralBalance
+            ]
+    }
+
     def create(){
     	Company company = Company.get(session.company)
 
