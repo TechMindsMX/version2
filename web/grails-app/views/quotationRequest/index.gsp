@@ -47,6 +47,7 @@
               </div>
             </div>
             </g:form>
+            
             </g:if>
             <g:else>
             <div class="row">

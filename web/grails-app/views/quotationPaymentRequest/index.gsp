@@ -10,14 +10,22 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Lista de Solicitudes
-        <small>${company}</small>
+        Lista de Solicitudes de Pago
+        <small>${quotationContract?.client}</small>
       </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
-          <div class="portlet-title"></div>
+          <div class="portlet-title">
+            <g:if test="${quotationContract}">
+            <div class="row">
+              <div class="col-md-12">
+              <g:link class="btn btn-primary" action="index">Regresar</g:link>
+              </div>
+            </div>
+            </g:if>
+          </div>
           <div class="clearfix"></div>
         </div>
         <div id="horizontalFormExample" class="panel-collapse collapse in">
@@ -27,7 +35,7 @@
             </g:if>
             <div class="row">
               <div class="col-md-12">
-                <g:if test="${quotationPaymentRequestList}">
+                <g:if test="${quotationContract}">
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                       <tr>
