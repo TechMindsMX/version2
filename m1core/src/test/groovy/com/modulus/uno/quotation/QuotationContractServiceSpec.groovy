@@ -58,6 +58,29 @@ class QuotationContractServiceSpec extends Specification {
         summary.transit == new BigDecimal(0)
     }
 
+
+    void "Merge list quotationPaymentRquest and Quotation rquest"(){
+      given:"Give list quotation payment request "
+        List<QuotationRequest> quotationRequestList = []
+        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, amount:1000).save(validate:false)
+        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
+        quotationRequestList << request1
+        quotationRequestList << request2
+
+      and:"give list og quotation request in status payed"
+        List<QuotationPaymentRequest> quotationPaymentRequestList = []
+        QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(dateCreated: new Date(), status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
+        QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(dateCreated: new Date(), status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
+        quotationPaymentRequestList << quotationPaymentRequest1
+        quotationPaymentRequestList << quotationPaymentRequest2
+
+      when:
+        def merge = service.mergeList(quotationRequestList, quotationPaymentRequestList)
+      then:
+        println merge.dump()
+        merge
+    }
+
     QuotationContract getQuotationContract(){
         BusinessEntity client = new BusinessEntity(
                                                   rfc:"BDJBDYHSGGDVVD",
