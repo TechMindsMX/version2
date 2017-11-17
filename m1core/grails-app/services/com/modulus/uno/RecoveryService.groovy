@@ -11,10 +11,11 @@ class RecoveryService {
   def messageSource
   def emailSenderService
   CorporateService corporateService
+  UserService userService
 
   def sendConfirmationAccountToken(User user){
     String urlCorporate = corporateService.findUrlCorporateOfUser(user)
-    def message = recoveryCollaboratorService.generateToken("${urlCorporate}${grailsApplication.config.recovery.register}", user?.profile?.email)
+    def message = recoveryCollaboratorService.generateToken("${urlCorporate}${grailsApplication.config.recovery.register}", user)
     emailSenderService.sendEmailForConfirmAccount(message, user?.profile?.email)
   }
 
@@ -32,9 +33,12 @@ class RecoveryService {
   }
 
   def getUserByToken(String token){
-    def email = registrationService.findEmailByToken(token)
-    def profile = Profile.findByEmail(email)
-    User.findByProfile(profile)
+    def registrationCode = RegistrationCode.findByToken(token)
+    def user
+    if (registrationCode) {
+      user = userService.findUserFromUsernameAndEmail(registrationCode.username, registrationCode.email)
+    }
+    user
   }
 
   def obtainRegistrationCodeForToken(String token) {
@@ -43,13 +47,12 @@ class RecoveryService {
       registrationCode
   }
 
-  def generateRegistrationCodeForEmail(String email) {
-    def profile = Profile.findByEmail(email)
-    def user = User.findByProfile(profile)
+  def generateRegistrationCodeForUsernameAndEmail(String username, String email) {
+    User user = userService.findUserFromUsernameAndEmail(username, email)
     if(!user) throw new UserNotFoundException(messageSource.getMessage('exception.user.not.found', null, LCH.getLocale()))
     if(!user.enabled) throw new AccountNoActivatedException(messageSource.getMessage('exception.account.not.activated', null, LCH.getLocale()))
     String urlCorporate = corporateService.findUrlCorporateOfUser(user)
-    def message = recoveryCollaboratorService.generateToken("${urlCorporate}${grailsApplication.config.recovery.forgot}", email)
+    def message = recoveryCollaboratorService.generateToken("${urlCorporate}${grailsApplication.config.recovery.forgot}", user)
     emailSenderService.sendEmailForRegistrationCode(message, email)
   }
 
@@ -64,6 +67,7 @@ class RecoveryService {
     log.info "Updating password for user: ${user.username}"
     user.password = password
     user.save()
+    user
   }
 
   def activateAccountByToken(String token) {

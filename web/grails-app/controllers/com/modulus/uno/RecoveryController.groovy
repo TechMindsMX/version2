@@ -20,9 +20,10 @@ class RecoveryController {
 
   @Transactional
   def save() {
-    def email = params.email
+    String email = params.email
+    String username = params.username
     try {
-    recoveryService.generateRegistrationCodeForEmail(email)
+    recoveryService.generateRegistrationCodeForUsernameAndEmail(username, email)
     } catch (Exception e) {
       flash.message = e.message
       redirect action:'forgotPassword'
