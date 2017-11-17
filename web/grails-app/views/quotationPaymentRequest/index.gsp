@@ -53,7 +53,7 @@
                 <g:else>
                   <g:form action="selectPaymentRequest">
                     <div class="row">
-                      <div class="col-md-11">
+                      <div class="col-md-12">
                         <div class="form-group">
                           <label><g:message code="Clientes"/></label>
                           <g:select name="quotation" class="form-control"
@@ -61,10 +61,11 @@
                                                      optionValue="client"
                                                      optionKey="id">
                           </g:select>
+                          <br>
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-6 text-right">
+                        <div class="col-md-12 text-right">
                           <g:submitButton name="seleccionar" class="btn btn-primary" value="${message(code: 'default.button.seleccionar.label', default: 'Seleccionar')}" />
                         </div>
                       </div>

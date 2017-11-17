@@ -29,7 +29,7 @@
             <g:if test="${!quotationRequestList}">
             <g:form action="chooseClient">
             <div class="row">
-              <div class="col-md-11">
+              <div class="col-md-12">
                 <div class="form-group">
                   <label><g:message code="Clientes"/></label>
                   <g:select name="id" class="form-control"
@@ -38,9 +38,10 @@
                   optionKey="id">
                   </g:select>
                 </div>
+                <br>
               </div>
               <div class="row">
-                <div class="col-md-6 text-right">
+                <div class="col-md-12 text-right">
                   <g:submitButton name="seleccionar" class="btn btn-primary" value="${message(code: 'default.button.seleccionar.label', default: 'Seleccionar')}" />
                 </div>
               </div>
@@ -61,7 +62,8 @@
                     </tr>
                     <g:each in="${quotationRequestList.sort{it.biller.toString()}.each(){it}}" var="request">
                       <tr>
-                        <td class="text-center"><g:link action="show" id="${request.id}">${request.quotationContract.client}</g:link></td>
+                        <td 
+                        ><g:link action="show" id="${request.id}">${request.quotationContract.client}</g:link></td>
                         <td class="text-center">${request.description}</td>
                         <td class="text-right">${request.commission}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:request.amount)}</td>
