@@ -108,23 +108,20 @@ class MovimientosBancariosController {
     }
 
     @Transactional
-    def delete(MovimientosBancarios movimientosBancarios) {
+    def deleteTransaction() {
+      MovimientosBancarios movimientosBancarios = MovimientosBancarios.get(params.id)
+      log.info "Deleting transaction bank account: ${movimientosBancarios.dump()}"
 
-        if (movimientosBancarios == null) {
-            transactionStatus.setRollbackOnly()
-            notFound()
-            return
-        }
+      if (movimientosBancarios == null) {
+        transactionStatus.setRollbackOnly()
+        return
+      }
+      
+      def bankAccount = movimientosBancarios.cuenta
 
-        movimientosBancarios.delete flush:true
+      movimientosBancarios.delete()
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'movimientosBancarios.label', default: 'MovimientosBancarios'), movimientosBancarios.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
+      redirect action:"show", id:"${bankAccount.id}"
     }
 
     protected void notFound() {
