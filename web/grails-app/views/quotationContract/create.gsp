@@ -36,7 +36,7 @@
                   <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message code="paysheetProject.error.${error.field}" args="${[error.defaultMessage.replace('{0}','')]}"/></li>
                     </g:eachError>
                 </ul>
-              </g:hasErrors>            
+              </g:hasErrors>
           </div>
         </div>
 
@@ -56,7 +56,7 @@
         <div class="row">
           <div class="col-md-3">
             <label><g:message code="Fecha Inicio" /></label>
-            <input class="form-control" type="text" id="datepicker" name="initDate" required="required">
+            <input class="form-control" type="text" id="datepickerQuotation" name="initDate" required="required">
           </div>
           <div class="col-md-4">
             <label><g:message code="Comisión"/></label>

@@ -5,6 +5,12 @@ $( window ).on( "load", function() {
       dateFormat: 'dd-mm-yy'
     });
   } );
+  $( function() {
+    $( "#datepickerQuotation" ).datepicker({
+      setDate: new Date(),
+      dateFormat: 'dd/mm/yy'
+    });
+  } );
 
   $( function() {
     $( "#datepicker1" ).datepicker({
