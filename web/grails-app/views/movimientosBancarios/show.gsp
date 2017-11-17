@@ -20,7 +20,14 @@
             <div class="portlet-body">
 
         <div id="show-movimientosBancarios" class="content scaffold-show" role="main">
-          <p><g:link controller="movimientosBancarios" action="create" class="btn btn-green" id="${bankAccount.id}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo movimiento</g:link></p>
+          <div class="row">
+            <div class="col-md-6">
+              <g:link controller="movimientosBancarios" action="create" class="btn btn-green" id="${bankAccount.id}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo movimiento</g:link>
+            </div>
+            <div class="col-md-6 text-right">
+              <g:link action="index" class="btn btn-primary">Regresar</g:link>
+            </div>
+          </div>
 
             <g:if test="${flash.message}">
               <div class="message" role="status">${flash.message}</div>
