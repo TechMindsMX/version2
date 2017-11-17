@@ -74,11 +74,25 @@ class QuotationContractServiceSpec extends Specification {
         quotationPaymentRequestList << quotationPaymentRequest1
         quotationPaymentRequestList << quotationPaymentRequest2
 
-      when:
+      when:"Merge two list"
         def merge = service.mergeList(quotationRequestList, quotationPaymentRequestList)
       then:
-        println merge.dump()
         merge
+    }
+
+    void "Calculate balance before"(){
+      given:"Give quotation contract"
+        QuotationContract quotationContract = new QuotationContract().save(validate:false)
+      and:"Two request quotation"
+        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:4000).save(validate:false)
+        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
+      and:"give payment rquest quotation"
+        QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(quotationContract:quotationContract ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
+        QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(quotationContract:quotationContract, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
+      when:
+        BigDecimal beforeBalance= service.getPreviousBalance(quotationContract, new Date()+90)
+      then:
+        beforeBalance == 6000
     }
 
     QuotationContract getQuotationContract(){
