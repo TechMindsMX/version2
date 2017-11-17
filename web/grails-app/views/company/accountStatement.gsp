@@ -87,7 +87,7 @@
                 </tr>
                 <g:each in="${accountStatement.balanceSummary}" var="account">
                 <tr>
-                  <td>${account.bank} - ${account.account}</td>
+                  <td>${account.account}</td>
                   <td class="text-right">${modulusuno.formatPrice(number: account.balance)}</td>
                 </tr>
                 </g:each>
@@ -168,7 +168,7 @@
                       <g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${mov.date}"/>
                     </td>
                     <td>
-                      ${mov.account}
+                      ${mov.account.clabe ?: mov.account.accountNumber}
                     </td>
                     <td>
                       ${mov.concept}
