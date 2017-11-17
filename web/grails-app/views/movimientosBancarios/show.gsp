@@ -37,6 +37,7 @@
                 <th scope="col">Cargo</th>
                 <th scope="col"></th>
                 <th scope="col">Conciliable</th>
+                <th scope="col"></th>
               </tr>
             <g:each in="${movimientosBancarios}" var="movimiento">
               <tr>
@@ -79,9 +80,34 @@
 	                  <span class="label label-info">
       	              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
   	                </span>
-								
 									</g:else>
 								</td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteTransaction" data-whatever="${movimiento.id}">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                  </button>
+
+                  <div class="modal fade" id="deleteTransaction" tabindex="-1" role="dialog" aria-labelledby="deleteTransactionLabel">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title" id="deleteTransactionLabel">Confirme la acción</h4>
+                        </div>
+                        <g:form controller="movimientosBancarios" action="deleteTransaction">
+                        <div class="modal-body">
+                          <input type="hidden" class="form-control" id="transactionId" name="id">
+                          ¿Está seguro de eliminar el movimiento?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                          <button type="submit" class="btn btn-danger">Sí</button>
+                        </div>
+                        </g:form>
+                      </div>
+                    </div>
+                  </div>
+                </td>
               </tr>
             </g:each>
 
@@ -94,5 +120,6 @@
 
             </div>
         </div>
+        <asset:javascript src="movimientosBancarios/delete.js"/>
     </body>
 </html>
