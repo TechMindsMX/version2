@@ -16,21 +16,15 @@ class QuotationContractController {
 
     def generalBalance(){
       Company company = Company.get(session.company)
-      def detailGeneralBalance = [
-                                  [client:"Brandon", totalRequest:10, totalPayments:5],
-                                  [client:"Temoc", totalRequest:20, totalPayments:10],
-                                  [client:"Luis", totalRequest:30, totalPayments:15]
-                                  ]
-
+      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
       model:[company:company,
             detailGeneralBalance:detailGeneralBalance
             ]
     }
 
     def getBalanceGeneral(){
-
-      def deatilBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
-      render view:'generalBalance', model:[deatilBalance:deatilBalance]
+      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
+      render view:'generalBalance', model:[detailGeneralBalance:detailGeneralBalance]
     }
 
     def create(){
