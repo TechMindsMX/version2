@@ -42,7 +42,7 @@ class QuotationContractService {
 
     List<QuotationBalanceGeneralConcept> getQuotationBalanceGeneralConceptForPeriod(Map params){
       Period period = getPeriodForBalance(params)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByStatusAndDateCreatedBetween(QuotationContractStatus.ACTIVED, period.init, period.end)
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByStatusAndDateCreatedBetween(QuotationContractStatus.ACTIVE, period.init, period.end)
       List<QuotationBalanceGeneralConcept> quotationBalanceGeneralConceptList = quotationBalanceGeneralConcept(quotationContractList)
     }
 
