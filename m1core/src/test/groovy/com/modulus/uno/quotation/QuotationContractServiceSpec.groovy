@@ -101,7 +101,7 @@ class QuotationContractServiceSpec extends Specification {
       when:"was created quotation balance general concep"
         def listBalanceGeneral = service.quotationBalanceGeneralConcept(quotationContractList) 
       then:
-        listBalanceGeneral
+        listBalanceGeneral.first().request == 6000
     }
 
     QuotationContract getQuotationContract(){
