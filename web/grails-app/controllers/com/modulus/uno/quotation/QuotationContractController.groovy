@@ -21,9 +21,16 @@ class QuotationContractController {
                                   [client:"Temoc", totalRequest:20, totalPayments:10],
                                   [client:"Luis", totalRequest:30, totalPayments:15]
                                   ]
+
       model:[company:company,
             detailGeneralBalance:detailGeneralBalance
             ]
+    }
+
+    def getBalanceGeneral(){
+
+      def deatilBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
+      render view:'generalBalance', model:[deatilBalance:deatilBalance]
     }
 
     def create(){
