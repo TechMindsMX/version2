@@ -84,6 +84,20 @@ class QuotationContractService {
       ]
     }
 
+    List<QuotationBalanceGeneralConcept> quotationBalanceGeneralConcept(List<QuotationContract> quotationContractList){
+      List<QuotationBalanceGeneralConcept> quotationBalanceGeneralConceptList = []
+      quotationContractList.each{ quotation ->
+        QuotationBalanceGeneralConcept quotationBalanceGeneralConcept = new QuotationBalanceGeneralConcept()
+        quotationBalanceGeneralConcept.quotationContract = quotation
+        Map summary = calculateSummaryForBalance(quotation)
+        quotationBalanceGeneralConcept.request = summary.income
+        quotationBalanceGeneralConcept.payment = summary.transit + summary.expenses
+        quotationBalanceGeneralConcept.balance = (summary.income) - (summary.transit + summary.expenses)
+        quotationBalanceGeneralConceptList << quotationBalanceGeneralConcept
+      }
+      quotationBalanceGeneralConceptList
+    }
+
     List<QuotationConcept> calculateBalancesForConcepts(List<QuotationConcept> conceptList, QuotationContract quotationContract, Period period) {
       BigDecimal previousBalance = getPreviousBalance(quotationContract, period.init)
       conceptList.each { concept ->
