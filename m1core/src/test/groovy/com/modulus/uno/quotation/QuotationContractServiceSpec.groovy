@@ -104,6 +104,13 @@ class QuotationContractServiceSpec extends Specification {
         listBalanceGeneral.first().request == 6000
     }
 
+    void "Create list of maps of quotation with commissions"(){
+      give:
+      when:
+      then:
+      
+    }
+
     QuotationContract getQuotationContract(){
         BusinessEntity client = new BusinessEntity(
                                                   rfc:"BDJBDYHSGGDVVD",

@@ -138,4 +138,10 @@ class QuotationContractService {
 
       quotationConceptList.sort {it.date}
     }
+
+    List<Map> getQuotationWithCommision(){
+      List<Map> quotationWithCommission = []
+      
+      quotationWithCommission
+    }
 }
