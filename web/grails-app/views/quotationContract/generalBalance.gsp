@@ -28,7 +28,7 @@
               <div class="message" role="status">${flash.message}</div>
             </g:if>
 
-            <g:form action="balance">
+            <g:form action="getBalanceGeneral">
               <div class="row">
                 <div class="col-md-4">
                   <label>
@@ -40,7 +40,7 @@
                   <label>
                     <g:message code="Al:"/>
                   </label>
-                  <input class="form-control" type="text" id="datepicker2" name="lastDate" required="required">
+                  <input class="form-control" type="text" id="datepicker1" name="lastDate" required="required">
                 </div>
                 <div class="col-md-4 text-center">
                   <g:submitButton name="consultar" class="btn btn-primary" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"/>
@@ -63,17 +63,17 @@
                     </tr>
                     <g:each in="${detailGeneralBalance}" var="generalBalance">
                       <tr>
-                        <td>${generalBalance.client}</td>
-                        <td>${generalBalance.totalRequest}</td>
-                        <td>${generalBalance.totalPayments}</td>
-                        <td>${generalBalance.totalRequest - generalBalance.totalPayments}</td>
+                        <td>${generalBalance.quotationContract?.client}</td>
+                        <td><g:formatNumber number="${generalBalance.request}" type="currency" currencyCode="MXN" /></td>
+                        <td><g:formatNumber number="${generalBalance.payment}" type="currency" currencyCode="MXN" /></td>
+                        <td><g:formatNumber number="${generalBalance.balance}" type="currency" currencyCode="MXN" /></td>
                       </tr>
                     </g:each> 
                     <tr>
                       <th>Total</th>
-                      <th>${detailGeneralBalance.sum { it.totalRequest }}</th>
-                      <th>${detailGeneralBalance.sum { it.totalPayments }}</th>
-                      <th>${detailGeneralBalance.sum { it.totalRequest - it.totalPayments }}</th>
+                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.request }}" type="currency" currencyCode="MXN" /></th>
+                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.payment }}" type="currency" currencyCode="MXN" /></th>
+                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.balance }}" type="currency" currencyCode="MXN" /></th>
                     </tr>
                   </table>
                   
