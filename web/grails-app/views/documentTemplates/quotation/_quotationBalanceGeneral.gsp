@@ -20,8 +20,8 @@
 <body>
   <h1></h1>
   <h1>Balance general ${company}</h1>
-  <h2>Fecha de inicio: ${period.init}</h2>
-  <h2>Fecha de cierre: ${period.end}</h2>
+  <h3>Desde el: <g:formatDate format="yyyy-MM-dd" date="${period.init}"/></h3>
+  <h3>Hasta el: <g:formatDate format="yyyy-MM-dd" date="${period.end}"/></h3>
   <div>
     <table>
       <tr>
