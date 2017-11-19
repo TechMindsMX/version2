@@ -65,6 +65,7 @@
                                         <th>Cliente</th>
                                         <th>Monto</th>
                                         <th>Comisión</th>
+                                        <th>Monto de Comisión</th>
                                     </tr>
                                     <g:each in="${feeIncomes}" var="feeIncome">
                                         <tr>
@@ -76,6 +77,10 @@
                                             <td>
                                                 ${feeIncome.commission}
                                             </td>
+                                            <td>
+                                                <g:formatNumber number="${feeIncome.commissionAmount}" type="currency" currencyCode="MXN"
+                                                />
+                                            </td>
                                         </tr>
                                     </g:each>
                                     <tr>
@@ -85,7 +90,9 @@
                                             />
                                         </th>
                                         <th>
-                                            <g:formatNumber number="${feeIncomes.sum { it.commission }}" type="currency" currencyCode="MXN"
+                                        </th>
+                                        <th>
+                                            <g:formatNumber number="${feeIncomes.sum { it.commissionAmount }}" type="currency" currencyCode="MXN"
                                             />
                                         </th>
                                     </tr>

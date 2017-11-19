@@ -152,7 +152,8 @@ class QuotationContractService {
         Map quotationWithCommission = [
           client: quotation.client,
           amount: summary.income,
-          commission: quotation.commission
+          commission: quotation.commission,
+          commissionAmount: summary.income * (quotation.commission/100)
         ]
         quotationWithCommissionList << quotationWithCommission
       }
