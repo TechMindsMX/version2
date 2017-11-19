@@ -52,9 +52,13 @@ class QuotationContractService {
       List<Map> quotationWithCommissionList = getQuotationWithCommision(quotationContractList)
     }
 
+    Period getPeriodForPdf(Map params){
+      Period period = getPeriodForBalance(params)
+    }
+
     private Period getPeriodForBalance(Map params) {
       Period period
-      if (params.initDate && params.lastDate) {
+      if (params?.initDate && params?.lastDate) {
         period = collaboratorService.createPeriod(params.initDate, params.lastDate)
       } else {
         period = collaboratorService.getCurrentMonthPeriod()
