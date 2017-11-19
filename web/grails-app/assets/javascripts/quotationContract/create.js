@@ -1,4 +1,5 @@
 //= require ../third-party/jquery-validation/dist/jquery.validate.js
+// //= require ../third-party/jquery-validation-bootstrap-tooltip/jquery-validate.bootstrap-tooltip.js
 'use strict';
 
 var QuotationController = (function(){
@@ -11,15 +12,22 @@ var QuotationController = (function(){
     $("#formGeneralBalance").validate({
       rules:{
         initDate:{
-          australianDate : true
+          australianDate : true,
+          required:true
+        },
+        lastDate:{
+          required: true
         }
-
       },
       messages:{
         lastDate:{
           required:"Porfavor llene este campo"
         }
       },
+   //   tooltip_options: {
+   //     initDate: { placement: 'left' },
+   //     lastDate: { placement: 'left' }
+   //   },
       submitHandler: function(form) {
         // some other code
         // maybe disabling submit button
