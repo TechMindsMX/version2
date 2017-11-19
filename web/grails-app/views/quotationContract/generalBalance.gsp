@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-md-4 text-center">
                   <g:submitButton name="consultar" class="btn btn-primary" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"/>
-                  <g:link class="btn btn-default" controller="quotationContract" action="index">PDF</g:link>
+                  <g:link class="btn btn-default" controller="quotationContract" action="pdfGeneralBalance" params="[initDate:'01-11-2017',lastDate:'30-11-2017']" target="_blank">PDF</g:link>
                 </div>
               </div>
               <br>
