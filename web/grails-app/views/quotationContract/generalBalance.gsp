@@ -28,7 +28,7 @@
               <div class="message" role="status">${flash.message}</div>
             </g:if>
 
-            <g:form action="getBalanceGeneral">
+            <g:form action="getBalanceGeneral" name="formGeneralBalance">
               <div class="row">
                 <div class="col-md-4">
                   <label>
