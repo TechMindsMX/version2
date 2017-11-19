@@ -16,10 +16,7 @@ class QuotationContractController {
 
     def feeIncome(){
       Company company = Company.get(session.company)
-      def feeIncomes =[ 
-                        [client:"Brandon", amount:100, commission:10],
-                        [client:"Diego", amount:100, commission:15]
-                        ]
+      Lis<Map> feeIncomes = quotationContractService.getQuotationWithCommisionPeriod(params)
       model:[company:company,
             feeIncomes:feeIncomes
             ]
