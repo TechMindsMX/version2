@@ -30,6 +30,12 @@ class QuotationContractController {
             ]
     }
 
+    def pdfGeneralBalance(){
+      Company company = Company.get(session.company)
+      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
+      renderPdf(template: "/documentTemplates/quotation/quotationBalanceGeneral", model:[company:company, detailGeneralBalance:detailGeneralBalance])
+    }
+
     def getBalanceGeneral(){
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
       render view:'generalBalance', model:[detailGeneralBalance:detailGeneralBalance]
