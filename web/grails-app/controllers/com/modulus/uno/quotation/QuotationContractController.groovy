@@ -7,6 +7,7 @@ class QuotationContractController {
 
     BusinessEntityService businessEntityService
     QuotationContractService quotationContractService
+    Map paramsDate
 
     def index(){
     	Company company = Company.get(session.company)
@@ -23,6 +24,7 @@ class QuotationContractController {
     }
 
     def generalBalance(){
+      paramsDate = params
       Company company = Company.get(session.company)
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
       model:[company:company,
@@ -31,12 +33,14 @@ class QuotationContractController {
     }
 
     def pdfGeneralBalance(){
+      println paramsDate.dump()
       Company company = Company.get(session.company)
-      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
+      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(paramsDate)
       renderPdf(template: "/documentTemplates/quotation/quotationBalanceGeneral", model:[company:company, detailGeneralBalance:detailGeneralBalance])
     }
 
     def getBalanceGeneral(){
+      paramsDate = params
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
       render view:'generalBalance', model:[detailGeneralBalance:detailGeneralBalance]
     }
