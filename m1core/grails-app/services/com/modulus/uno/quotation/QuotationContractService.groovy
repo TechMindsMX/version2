@@ -47,9 +47,9 @@ class QuotationContractService {
     }
 
     List<Map> getQuotationWithCommisionPeriod(Map params){
-      Period period
+      Period period = getPeriodForBalance(params)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByStatusAndDateCreatedBetween(QuotationContractStatus.ACTIVE, period.init, period.end)
-      List<Map> quotationWithCommissionList = getQuotationWithCommision(quotationConcepList)
+      List<Map> quotationWithCommissionList = getQuotationWithCommision(quotationContractList)
     }
 
     private Period getPeriodForBalance(Map params) {
