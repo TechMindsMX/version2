@@ -18,29 +18,31 @@
   </style>
 </head>
 <body>
-  <h1>${company}</h1>
-  <h3>Balance general</h3>
+  <h1></h1>
+  <h1>Balance general ${company}</h1>
+  <h2>Fecha de inicio: ${period.init}</h2>
+  <h2>Fecha de cierre: ${period.end}</h2>
   <div>
     <table>
       <tr>
-        <th style="width:10%">Cliente</th>
-        <th style="width:30%">Solicitudes</th>
+        <th style="width:40%">Cliente</th>
+        <th style="width:20%">Solicitudes</th>
         <th style="width:20%">Pagos</th>
         <th style="width:20%">Saldo</th>
       </tr>
       <g:each in="${detailGeneralBalance}" var="generalBalance">
       <tr>
         <td style="text-align:center">${generalBalance.quotationContract?.client}</td>
-        <td style="text-align:center"><g:formatNumber number="${generalBalance.request}" type="currency" currencyCode="MXN" /></td>
-        <td style="text-align:center"><g:formatNumber number="${generalBalance.payment}" type="currency" currencyCode="MXN" /></td>
-        <td style="text-align:center"><g:formatNumber number="${generalBalance.balance}" type="currency" currencyCode="MXN" /></td>
+        <td style="text-align:right"><g:formatNumber number="${generalBalance.request}" type="currency" currencyCode="MXN" /></td>
+        <td style="text-align:right"><g:formatNumber number="${generalBalance.payment}" type="currency" currencyCode="MXN" /></td>
+        <td style="text-align:right"><g:formatNumber number="${generalBalance.balance}" type="currency" currencyCode="MXN" /></td>
       </tr>
      </g:each>
       <tr>
         <th style="width:10%">Total</th>
-        <th style="width:10%"><g:formatNumber number="${detailGeneralBalance.sum { it.request }}" type="currency" currencyCode="MXN" /></th>
-        <th style="width:10%"><g:formatNumber number="${detailGeneralBalance.sum { it.payment }}" type="currency" currencyCode="MXN" /></th>
-        <th style="width:10%"><g:formatNumber number="${detailGeneralBalance.sum { it.balance }}" type="currency" currencyCode="MXN" /></th>
+        <th style="width:10%; text-align:right"><g:formatNumber number="${detailGeneralBalance.sum { it.request }}" type="currency" currencyCode="MXN" /></th>
+        <th style="width:10%; text-align:right"><g:formatNumber number="${detailGeneralBalance.sum { it.payment }}" type="currency" currencyCode="MXN" /></th>
+        <th style="width:10%; text-align:right"><g:formatNumber number="${detailGeneralBalance.sum { it.balance }}" type="currency" currencyCode="MXN" /></th>
       </tr>
     </table>
   </div>
