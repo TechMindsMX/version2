@@ -74,8 +74,7 @@
                                                 />
                                             </td>
                                             <td>
-                                                <g:formatNumber number="${feeIncome.commission}" type="currency" currencyCode="MXN"
-                                                />
+                                                ${feeIncome.commission}
                                             </td>
                                         </tr>
                                     </g:each>
