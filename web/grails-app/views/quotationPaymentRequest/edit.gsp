@@ -68,7 +68,7 @@
          <div class="row">
           <div class="col-md-3">
             <label><g:message code="Modo de Pago" /></label>
-            <g:select class="form-control" name="paymentWay" from="${PaymentMethod.values()}"/>
+            <g:select class="form-control" name="paymentMethod" from="${PaymentMethod.values()}"/>
           </div>
          </div>
         <br>
