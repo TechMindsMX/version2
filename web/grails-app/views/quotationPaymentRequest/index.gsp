@@ -42,7 +42,7 @@
                           <td><g:link action="show" id="${paymentRequest.id}">${paymentRequest.id}</g:link></td>
                           <td>${paymentRequest.amount}</td>
                           <td>${paymentRequest.note}</td>
-                          <td><g:message code="quotationPaymentRequest.paymentWay.${paymentRequest.paymentWay}"/></td>
+                          <td><g:message code="${paymentRequest.paymentMethod}"/></td>
                           <td><g:message code="quotationPaymentRequest.status.${paymentRequest.status}"/></td>
                         </tr>
                       </g:each>
