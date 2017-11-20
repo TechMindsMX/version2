@@ -33,16 +33,16 @@
       <g:each in="${detailGeneralBalance}" var="generalBalance">
       <tr>
         <td style="text-align:center">${generalBalance.quotationContract?.client}</td>
-        <td style="text-align:right"><g:formatNumber number="${generalBalance.request}" type="currency" currencyCode="MXN" /></td>
-        <td style="text-align:right"><g:formatNumber number="${generalBalance.payment}" type="currency" currencyCode="MXN" /></td>
-        <td style="text-align:right"><g:formatNumber number="${generalBalance.balance}" type="currency" currencyCode="MXN" /></td>
+        <td style="text-align:right">${modulusuno.formatPrice(number:generalBalance.request)}</td>
+        <td style="text-align:right">${modulusuno.formatPrice(number:generalBalance.payment)}</td>
+        <td style="text-align:right">${modulusuno.formatPrice(number:generalBalance.balance)}</td>
       </tr>
      </g:each>
       <tr>
         <th style="width:10%">Total</th>
-        <th style="width:10%; text-align:right"><g:formatNumber number="${detailGeneralBalance.sum { it.request }}" type="currency" currencyCode="MXN" /></th>
-        <th style="width:10%; text-align:right"><g:formatNumber number="${detailGeneralBalance.sum { it.payment }}" type="currency" currencyCode="MXN" /></th>
-        <th style="width:10%; text-align:right"><g:formatNumber number="${detailGeneralBalance.sum { it.balance }}" type="currency" currencyCode="MXN" /></th>
+        <th style="width:10%; text-align:right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.request })}</th>
+        <th style="width:10%; text-align:right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.payment })}</th>
+        <th style="width:10%; text-align:right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.balance })}</th>
       </tr>
     </table>
   </div>
