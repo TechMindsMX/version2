@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.paysheet.PaymentWay%>
+<%! import com.modulus.uno.PaymentMethod%>
 <!DOCTYPE html>
 
 <html>
