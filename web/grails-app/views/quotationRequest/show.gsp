@@ -60,7 +60,7 @@
                 <div class="col-md-3">
                   <br>
                   <dt><g:message code="Comisión"/></dt>
-                  <input class="form-control" type="text" id="commission" name="commission" value="${quotationRequest.commission}" required="required">
+                  <input class="form-control" type="number" id="commission" name="commission" value="${quotationRequest.commission}" required="required">
                 </div>
               </div>
             </div>
@@ -82,6 +82,40 @@
             </div>
           </g:form>
         </g:if>
+
+        <g:elseif test="${quotationRequest.status == QuotationRequestStatus.PROCESSED}">
+          <div class="portlet-body">
+            <g:if test="${flash.message}">
+              <div class="message" role="status">${flash.message}</div>
+            </g:if>
+            <div class="row">
+              <div class="col-md-6">
+                <dl>
+                  <dt>Cliente para cotización</dt>
+                  <dd>${quotationRequest.quotationContract.client}</dd>
+                  <dt>Fecha de apertura de la cotización</dt>
+                  <dd><g:formatDate format="dd-MM-yyyy" date="${quotationRequest.quotationContract.initDate}" class="form-control"/></dd>
+                </dl>
+              </div>
+              <div class="col-md-6">
+                <dl>
+                  <dt>Descripción</dt>
+                  <dd>${quotationRequest.description}</dd>
+                  <dt>Monto para la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class=" portlet-footer">
+            <div class="row">
+              <div class="col-md-6">
+                <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
+              </div>
+            </div>
+          </div>
+        </g:elseif>
 
         <g:else>
           <div class="portlet-body">
