@@ -31,7 +31,8 @@ class QuotationPaymentRequestCommand implements Validateable  {
   }
 
   PaymentMethod getPaymentWay(String paymentWay){
-    PaymentMethod.EFECTIVO
+    PaymentMethod.values().find(){it.toString() == paymentWay }
+    //PaymentMethod.EFECTIVO
  }
 
 }
