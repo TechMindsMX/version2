@@ -67,7 +67,7 @@
         <div class="row">
           <div class="col-md-3">
             <label><g:message code="Presupuesto Maximo" /></label>
-            <input class="form-control" type="number" id="amount" name="amount" required="required">
+            <input class="form-control" type="text" id="amount" name="amount" required="required" pattern="([0-9]*[.])?[0-9]+">
           </div>
         </div>
         <br>
