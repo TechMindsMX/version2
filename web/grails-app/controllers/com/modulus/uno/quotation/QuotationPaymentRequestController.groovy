@@ -46,7 +46,6 @@ class QuotationPaymentRequestController {
 
     def save(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
       QuotationPaymentRequest quotationPaymentRequest = quotationPaymentRequestCommand.getQuotationPaymentRequest()
-      println "*"*100
       quotationPaymentRequestService.create(quotationPaymentRequest)
       redirect(action: 'show', id: quotationPaymentRequest.id)
     }
@@ -56,7 +55,7 @@ class QuotationPaymentRequestController {
       QuotationPaymentRequest quotationPaymentRequest = QuotationPaymentRequest.get(params.id.toLong())
       quotationPaymentRequest.amount = quotationPaymentRequestUpdate.amount
       quotationPaymentRequest.note = quotationPaymentRequestUpdate.note
-      quotationPaymentRequest.paymentWay = quotationPaymentRequestUpdate.paymentWay
+      quotationPaymentRequest.paymentMethod = quotationPaymentRequestUpdate.paymentMethod
       quotationPaymentRequestService.update(quotationPaymentRequest)
       redirect(action:'show', id:quotationPaymentRequest.id)
     }
