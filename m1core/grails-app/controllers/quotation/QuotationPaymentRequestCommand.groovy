@@ -8,7 +8,7 @@ class QuotationPaymentRequestCommand implements Validateable  {
 
   String quotation
   String amount
-  String paymentWay
+  String paymentMethod
   String note
 
 
@@ -16,7 +16,7 @@ class QuotationPaymentRequestCommand implements Validateable  {
     new QuotationPaymentRequest(
                                quotationContract:  QuotationContract.get(quotation.toInteger()),
                                amount:getValueInBigDecimal(amount),
-                               paymentMethod:getPaymentWay(paymentWay),
+                               paymentMethod:getPaymentWay(paymentMethod),
                                note:note
                                )
   }
@@ -30,8 +30,8 @@ class QuotationPaymentRequestCommand implements Validateable  {
     bd
   }
 
-  PaymentMethod getPaymentWay(String paymentWay){
-    PaymentMethod.values().find(){it.toString() == paymentWay }
+  PaymentMethod getPaymentWay(String paymentMethod){
+    PaymentMethod.values().find(){it.toString() == paymentMethod }
     //PaymentMethod.EFECTIVO
  }
 
