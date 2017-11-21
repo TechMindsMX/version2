@@ -11,7 +11,7 @@ databaseChangeLog = {
   changeSet(author: "brandonVergara (manual)", id: "updating-payment-method") {
     grailsChange {
       change {
-        sql.execute("update quotation_payment_request set payment_method='EFECTIVO' where payment_method=NULL")
+        sql.execute("update quotation_payment_request set payment_method='EFECTIVO'")
       }
     }
   }
