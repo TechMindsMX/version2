@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="layout" content="main" />
+    <title><g:message code="default.create.label" args="[entityName]" /></title>
+  </head>
+  <body>
+    <div class="page-title">
+      <h1>
+        <i class="fa fa-user-plus fa-3x"></i>
+        Simulador de nomina
+      </h1>
+    </div>
+    <div id="edit-address" class="content scaffold-edit" role="main">
+      <div class="portlet portlet-blue">
+        <div id="horizontalFormExample" class="panel-collapse collapse in">
+          <div class="portlet-heading">
+            <div class="row">
+                <g:link action="downloadLayout" class="btn btn-primary" id="1">Layout</g:link> 
+            </div>
+          </div>
+          <div class="portlet-body">
+            <div class="row">
+              <div class="col-md-12">
+                <g:form name="uploadMassiveRecords" action="uploadMassiveRecords" method="POST" enctype="multipart/form-data">
+                  <g:hiddenField id="entityType" name="entityType" value="${clientProviderType}"/>
+                  <div class="form-group">
+                    <label>Archivo XLS de registros:</label>
+                    <input type="file" name="massiveRecordsFile" class="form-control" required="required" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 text-right">
+                      <input class="btn btn-primary" type="submit" value="Subir"/>
+                    </div>
+                  </div>
+                </g:form>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <asset:javascript src="businessEntity/entityType.js"/>
+
+  </body>
+</html>
+
