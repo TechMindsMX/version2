@@ -98,6 +98,10 @@ class PaysheetController {
   }
 
   def downloadLayout(){
-    simulatorPaysheetService.testService()
+    def layout = simulatorPaysheetService.generateLayoutForSimulator()
+    layout.with {
+      setResponseHeaders(response, "layoutForSimulator.xlsx")
+      save(response.outputStream)
+    }
   }
 }
