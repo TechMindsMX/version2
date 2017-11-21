@@ -16,12 +16,13 @@
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
-        <div class="portlet-heading">
+        <div class="portlet-body">
           <div class="portlet-title">
             <g:if test="${quotationContract}">
             <div class="row">
               <div class="col-md-12">
-              <g:link class="btn btn-primary" action="index">Regresar</g:link>
+                <h4>${quotationContract?.client}</h4>
+                <g:link class="btn btn-primary" action="index">Regresar</g:link>
               </div>
             </div>
             </g:if>
