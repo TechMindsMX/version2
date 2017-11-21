@@ -91,4 +91,8 @@ class PaysheetController {
 		paysheetEmployeeService.changePaymentWayFromEmployee(employee)
 		redirect action:"show", id:employee.paysheet.id
 	}
+
+  def simulatorPaysheet(){
+    render view: 'simulatorPaysheet'
+  }
 }
