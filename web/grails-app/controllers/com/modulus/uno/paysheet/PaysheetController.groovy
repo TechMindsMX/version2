@@ -6,6 +6,7 @@ class PaysheetController {
 
   PaysheetService paysheetService
   PaysheetEmployeeService paysheetEmployeeService
+  SimulatorPaysheetService simulatorPaysheetService
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
@@ -94,5 +95,9 @@ class PaysheetController {
 
   def simulatorPaysheet(){
     render view: 'simulatorPaysheet'
+  }
+
+  def downloadLayout(){
+    simulatorPaysheetService.testService()
   }
 }
