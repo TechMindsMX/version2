@@ -9,6 +9,12 @@ class QuotationPaymentRequestController {
     def index() {
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      [quotationContractList: quotationContractList, company:company]
+    }
+
+    def consult() {
+      Company company = Company.get(session.company)
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
       respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
     }
 
@@ -20,7 +26,7 @@ class QuotationPaymentRequestController {
     def selectPaymentRequest(String quotation){
       QuotationContract quotationContract = QuotationContract.get(quotation.toLong())
       def quotationPaymentRequestList = QuotationPaymentRequest.findAllByQuotationContract(quotationContract)
-      render view: 'index', model:[quotationPaymentRequestList: quotationPaymentRequestList]
+      render view: 'index', model:[quotationContract:quotationContract, quotationPaymentRequestList: quotationPaymentRequestList]
     }
 
     def create(){
@@ -43,7 +49,7 @@ class QuotationPaymentRequestController {
       QuotationPaymentRequest quotationPaymentRequest = QuotationPaymentRequest.get(params.id.toLong())
       quotationPaymentRequest.amount = quotationPaymentRequestUpdate.amount
       quotationPaymentRequest.note = quotationPaymentRequestUpdate.note
-      quotationPaymentRequest.paymentWay = quotationPaymentRequestUpdate.paymentWay
+      quotationPaymentRequest.paymentMethod = quotationPaymentRequestUpdate.paymentMethod
       quotationPaymentRequestService.update(quotationPaymentRequest)
       redirect(action:'show', id:quotationPaymentRequest.id)
     }
