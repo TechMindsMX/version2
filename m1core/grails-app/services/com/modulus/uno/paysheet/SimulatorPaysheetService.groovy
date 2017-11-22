@@ -3,6 +3,7 @@ package com.modulus.uno.paysheet
 import pl.touk.excel.export.WebXlsxExporter
 import com.modulus.uno.XlsImportService
 import java.math.RoundingMode
+import com.modulus.uno.PaymentPeriod
 
 class SimulatorPaysheetService {
 
@@ -36,7 +37,7 @@ class SimulatorPaysheetService {
 
     def processForSalaryNetoAndIASNeto(def row){
       println "SA y IA Netos"
-      PaysheetEmployee paysheetEmployee = createPaysheetEmployee() 
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
       println "********"
       println row.SA_MENSUAL.class
       println paysheetEmployee.dump()
@@ -77,32 +78,76 @@ class SimulatorPaysheetService {
        ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
        paymentWay: PaymentWay.BANKING
      )
+    paysheetEmployee = setAttributesPaysheetEmployee(paysheetEmployee, row)
+  }
+
+  PaysheetEmployee setAttributesPaysheetEmployee(PaysheetEmployee paysheetEmployee, def row){
+    paysheetEmployee.breakdownPayment = breakdownPaymentEmployee(row) 
+    paysheetEmployee.salaryImss = calculateAmountForPeriod(row.SA_MENSUAL,row.PERIODO)
+    paysheetEmployee.socialQuota = calculateAmountForPeriod(paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal,row.PERIODO) 
+    paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_NETO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
+    paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_NETO, row.PERIODO) // Salario neto
+    paysheetEmployee.salaryAssimilable = row.IAS_NETO // IAS NETO
+    paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee, row.PERIODO)
+    paysheetEmployee
+  }
+
+  BigDecimal calculateAmountForPeriod(BigDecimal amount, String period){
+    PaymentPeriod paymentPeriod = PaymentPeriod.values().find(){it.toString() == period.toUpperCase()}
+    (amount / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateSubsidySalary(BigDecimal salaryNeto, String period){
+    BigDecimal baseImssMonthlySalary = salaryNeto
+    println baseImssMonthlySalary 
+    EmploymentSubsidy employmentSubsidy = EmploymentSubsidy.values().find { sb ->
+      baseImssMonthlySalary >= sb.lowerLimit && baseImssMonthlySalary <= sb.upperLimit
+    }
+    employmentSubsidy ? calculateAmountForPeriod(employmentSubsidy.getSubsidy(), period) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee, String period) {
+    PaymentPeriod paymentPeriod = PaymentPeriod.values().find(){it.toString() == period.toUpperCase()}
+    (paysheetEmployee.breakdownPayment.socialQuotaEmployer / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateIncomeTax(BigDecimal salaryNeto, String period){
+    BigDecimal baseImssMonthlySalary = salaryNeto
+    RateTax rateTax = RateTax.values().find { rt ->
+      baseImssMonthlySalary >= rt.lowerLimit && baseImssMonthlySalary <= rt.upperLimit
+    }
+    if (!rateTax) {
+      return new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+    }
+
+    BigDecimal excess = baseImssMonthlySalary - rateTax.lowerLimit
+    BigDecimal marginalTax = excess * (rateTax.rate/100)
+    calculateAmountForPeriod(marginalTax + rateTax.fixedQuota, period)
   }
 
   BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
     BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_MENSUAL, row.FACT_INTEGRA)
-    println integratedDailySalary 
     BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
     BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
     BreakdownPaymentEmployee breakdownPaymentEmployee = new BreakdownPaymentEmployee(
       integratedDailySalary: integratedDailySalary,
       baseQuotation: baseQuotation,
-      fixedFee: breakdownPaymentEmployeeService.getFixedFee(),
+      fixedFee: breakdownPaymentEmployeeService.getFixedFee() ?: 0,
       diseaseAndMaternityBase: diseaseAndMaternityBase,
-      diseaseAndMaternityEmployer: breakdownPaymentEmployeeService.getDiseaseAndMaternityEmployer(diseaseAndMaternityBase),
-      diseaseAndMaternity: breakdownPaymentEmployeeService.getDiseaseAndMaternityEmployee(diseaseAndMaternityBase),
-      pension: breakdownPaymentEmployeeService.getPensionEmployee(baseQuotation),
-      pensionEmployer: breakdownPaymentEmployeeService.getPensionEmployer(baseQuotation),
-      loan: breakdownPaymentEmployeeService.getLoanEmployee(baseQuotation),
-      loanEmployer: breakdownPaymentEmployeeService.getLoanEmployer(baseQuotation),
-      disabilityAndLife: breakdownPaymentEmployeeService.getDisabilityAndLifeEmployee(integratedDailySalary),
-      disabilityAndLifeEmployer: breakdownPaymentEmployeeService.getDisabilityAndLifeEmployer(integratedDailySalary),
-      kindergarten: breakdownPaymentEmployeeService.getKindergarten(baseQuotation),
+      diseaseAndMaternityEmployer: breakdownPaymentEmployeeService.getDiseaseAndMaternityEmployer(diseaseAndMaternityBase) ?:0,
+      diseaseAndMaternity: breakdownPaymentEmployeeService.getDiseaseAndMaternityEmployee(diseaseAndMaternityBase) ?:0,
+      pension: breakdownPaymentEmployeeService.getPensionEmployee(baseQuotation) ?:0,
+      pensionEmployer: breakdownPaymentEmployeeService.getPensionEmployer(baseQuotation) ?: 0,
+      loan: breakdownPaymentEmployeeService.getLoanEmployee(baseQuotation) ?:0,
+      loanEmployer: breakdownPaymentEmployeeService.getLoanEmployer(baseQuotation) ?:0,
+      disabilityAndLife: breakdownPaymentEmployeeService.getDisabilityAndLifeEmployee(integratedDailySalary) ?:0,
+      disabilityAndLifeEmployer: breakdownPaymentEmployeeService.getDisabilityAndLifeEmployer(integratedDailySalary) ?:0,
+      kindergarten: breakdownPaymentEmployeeService.getKindergarten(baseQuotation) ?:0,
       occupationalRisk: getOccupationalRisk(baseQuotation, row.RIESGO_TRAB),
-      retirementSaving: breakdownPaymentEmployeeService.getRetirementSaving(baseQuotation),
-      unemploymentAndEld: breakdownPaymentEmployeeService.getUnemploymentAndEldEmployee(baseQuotation),
-      unemploymentAndEldEmployer: breakdownPaymentEmployeeService.getUnemploymentAndEldEmployer(baseQuotation),
-      infonavit: breakdownPaymentEmployeeService.getInfonavit(baseQuotation)
+      retirementSaving: breakdownPaymentEmployeeService.getRetirementSaving(baseQuotation) ?:0,
+      unemploymentAndEld: breakdownPaymentEmployeeService.getUnemploymentAndEldEmployee(baseQuotation) ?:0,
+      unemploymentAndEldEmployer: breakdownPaymentEmployeeService.getUnemploymentAndEldEmployer(baseQuotation) ?:0,
+      infonavit: breakdownPaymentEmployeeService.getInfonavit(baseQuotation) ?:0
     )
   }
 
