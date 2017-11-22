@@ -21,11 +21,23 @@ import com.modulus.uno.ModulusUnoAccount
 @Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount])
 class SimulatorPaysheetServiceSpec extends Specification {
 
-    void "create BreakdownPaymentEmployee from list of maps"(){
-        given:
-        when:
+  def grailsAplication
+  BreakdownPaymentEmployeeService breakdownPaymentEmployeeService = Mock(BreakdownPaymentEmployeeService)
+
+  def setup() {
+    grailsApplication.config.paysheet.quotationDays = 30
+    grailsApplication.config.paysheet.uma = 75.9
+    service.breakdownPaymentEmployeeService = breakdownPaymentEmployeeService
+  }
+
+    void "create BreakdownPaymentEmployee from map"(){
+        given:"One list of maps"
+            def paysheet = [CONSECUTIVO:1.0, SA_MENSUAL:300.0, SA_NETO:100.0, IAS_NETO:150.0, SA_BRUTO:null, IAS_BRUTO:null, PERIODO:'Mensual', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
+        when:"create break"
+            def breakdownPaymentEmployee = service.breakdownPaymentEmployee(paysheet)
         then:
-            1==2
+          println breakdownPaymentEmployee.dump()
+          breakdownPaymentEmployee
     }
 
 }
