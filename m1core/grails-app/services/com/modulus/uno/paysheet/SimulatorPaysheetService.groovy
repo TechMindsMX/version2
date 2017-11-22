@@ -22,12 +22,33 @@ class SimulatorPaysheetService {
         println data.class
         data.each{ row ->
             println row
+            if(row.SA_NETO && row.IAS_NETO){ processForSalaryNetoAndIASNeto(row)}
+            if(row.IAS_NETO && row.SA_BRUTO){ processForIASNetoAndSalaryBruto(row) }
+            if(row.SA_BRUTO && row.IAS_BRUTO){ processForSalaryBrutoAndIASBruto(row) }
+            if(row.SA_NETO && row.IAS_BRUTO){ processForSalaryNetoAndIASBruto(row)}
+            if(row.IAS_NETO && row.IAS_BRUTO){processIASNetoAndIASBruto(row) }
         }
         data
     }
 
-    def salaryProcess(row){
+    def processForSalaryNetoAndIASNeto(row){
+      println "SA y IA Netos"
+    }
 
+    def processForIASNetoAndSalaryBruto(row){
+      println "IAS_NETO y SA_BRUTO" 
+    }
+
+    def processForSalaryBrutoAndIASBruto(row){
+      println "SA_BRUTO y IAS_BRUTO" 
+    }
+
+    def processForSalaryNetoAndIASBruto(row){
+      println "SA_NETO y IAS_BRUTO"
+    }
+
+    def processIASNetoAndIASBruto(row){
+      println "IAS_NETO y IAS_BRUTO"
     }
 
     
