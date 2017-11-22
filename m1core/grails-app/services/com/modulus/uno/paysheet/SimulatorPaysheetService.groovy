@@ -33,25 +33,25 @@ class SimulatorPaysheetService {
         data
     }
 
-    def processForSalaryNetoAndIASNeto(row){
+    def processForSalaryNetoAndIASNeto(def row){
       println "SA y IA Netos"
       PaysheetEmployee paysheetEmployee = createPaysheetEmployee() 
       println paysheetEmployee.dump()
     }
 
-    def processForIASNetoAndSalaryBruto(row){
+    def processForIASNetoAndSalaryBruto(def row){
       println "IAS_NETO y SA_BRUTO" 
     }
 
-    def processForSalaryBrutoAndIASBruto(row){
+    def processForSalaryBrutoAndIASBruto(def row){
       println "SA_BRUTO y IAS_BRUTO" 
     }
 
-    def processForSalaryNetoAndIASBruto(row){
+    def processForSalaryNetoAndIASBruto(def row){
       println "SA_NETO y IAS_BRUTO"
     }
 
-    def processIASNetoAndIASBruto(row){
+    def processIASNetoAndIASBruto(def row){
       println "IAS_NETO y IAS_BRUTO"
     }
 
@@ -68,7 +68,7 @@ class SimulatorPaysheetService {
     results
   }
 
-  PaysheetEmployee createPaysheetEmployee(){
+  PaysheetEmployee createPaysheetEmployee(def row){
      PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
        breakdownPayment: new BreakdownPaymentEmployee(),
        ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
@@ -76,8 +76,11 @@ class SimulatorPaysheetService {
      )
   }
 
-  BreakdownPaymentEmployee breakdownPaymentEmployee(PaysheetEmployee paysheetEmployee){
-    
+  BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
+    BigDecimal integratedDailySalary = getIntegratedDailySalaryForEmployee(employee, paysheetEmployee.paysheet)
+    BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
+    BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
+
   }
 
 
