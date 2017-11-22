@@ -17,6 +17,11 @@ class XlsImportService {
 		columnMap: ['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'NOMBRE','E':'CLABE','F':'TARJETA','G':'NETO','H':'OBSERVACIONES']
 	]
 
+  Map COLUMN_MAP_SIMULATOR = [
+    startRow:1,
+    columnMap:['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'NOMBRE','E':'CLABE','F':'TARJETA','G':'NETO','H':'OBSERVACIONES','N':'SALARY']
+  ]
+
   File getFileToProcess(def file) {
     File xlsFile = File.createTempFile("tmpXlsImport${new Date().getTime()}",".xlsx")
     FileOutputStream fos = new FileOutputStream(xlsFile)
@@ -58,6 +63,18 @@ class XlsImportService {
     log.info "Column Map: ${COLUMN_MAP_PREPAYSHEET}"
     ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_PREPAYSHEET)
+    log.info "Data: ${data}"
+    validateNotEmptyData(data)
+    data
+  }
+
+  def parseXlsPaysheetSimulator(def file){
+		File xlsFile = getFileToProcess(file)
+    Workbook workbook = getWorkbookFromXlsFile(xlsFile)
+    COLUMN_MAP_PREPAYSHEET.sheet = workbook.getSheetName(0)
+    log.info "Column Map: ${COLUMN_MAP_SIMULATOR}"
+    ExcelImportService excelImportService = new ExcelImportService()
+    List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_SIMULATOR)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
     data
