@@ -49,8 +49,9 @@ class QuotationContractController {
 
     def getBalanceGeneral(){
       paramsDate = params
+      def period = quotationContractService.getPeriodForPdf(params)
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
-      render view:'generalBalance', model:[detailGeneralBalance:detailGeneralBalance]
+      render view:'generalBalance', model:[detailGeneralBalance:detailGeneralBalance,period:period]
     }
 
     def create(){
