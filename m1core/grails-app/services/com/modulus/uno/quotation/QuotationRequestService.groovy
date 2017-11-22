@@ -16,6 +16,7 @@ import com.modulus.uno.SaleOrderStatus
 @Transactional
 class QuotationRequestService {
 
+    def grailsApplication
     SaleOrderService saleOrderService
     CorporateService corporateService
     CompanyService companyService
@@ -58,7 +59,7 @@ class QuotationRequestService {
                                                                             price:quotationRequest.amount.toString(),
                                                                             discount:"0",
                                                                             ivaRetention:"0",
-                                                                            iva:"16",
+                                                                            iva:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
                                                                             unitType:"UNIDAD"
                                                                             )
         def saleOrderItem  = saleOrderItemCommand.createSaleOrderItem()
