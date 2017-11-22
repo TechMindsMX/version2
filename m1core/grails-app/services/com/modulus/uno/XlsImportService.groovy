@@ -22,6 +22,10 @@ class XlsImportService {
     columnMap:['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'NOMBRE','E':'CLABE','F':'TARJETA','G':'NETO','H':'OBSERVACIONES','N':'SALARY']
   ]
 
+  Map CELL_MAP_SIMULATOR = [
+    cellMap:['B1':'PERIODO']
+  ]
+
   File getFileToProcess(def file) {
     File xlsFile = File.createTempFile("tmpXlsImport${new Date().getTime()}",".xlsx")
     FileOutputStream fos = new FileOutputStream(xlsFile)
@@ -80,5 +84,15 @@ class XlsImportService {
     data
   }
 
+  def parseXlsPaysheetSimulatorHeaders(def file) {
+		File xlsFile = getFileToProcess(file)
+    Workbook workbook = getWorkbookFromXlsFile(xlsFile)
+    CELL_MAP_SIMULATOR.sheet = workbook.getSheetName(0)
+    log.info "Column Map: ${CELL_MAP_SIMULATOR}"
+    ExcelImportService excelImportService = new ExcelImportService()
+    Map data = excelImportService.convertFromCellMapToMapWithValues(workbook, CELL_MAP_SIMULATOR)
+    log.info "Data: ${data}"
+    data
+  }
 
 }

@@ -28,6 +28,8 @@ class SimulatorPaysheetService {
         data.each{ row ->
             println row.SALARY
        }
+       Map dataHeaders = xlsImportService.parseXlsPaysheetSimulatorHeaders(file)
+       println dataHeaders.dump()
         data
 
 
