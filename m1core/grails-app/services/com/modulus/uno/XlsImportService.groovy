@@ -18,7 +18,7 @@ class XlsImportService {
 	]
 
   Map COLUMN_MAP_SIMULATOR = [
-    startRow:1,
+    startRow:3,
     columnMap:['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'NOMBRE','E':'CLABE','F':'TARJETA','G':'NETO','H':'OBSERVACIONES','N':'SALARY']
   ]
 
@@ -60,7 +60,7 @@ class XlsImportService {
 		File xlsFile = getFileToProcess(file)
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_PREPAYSHEET.sheet = workbook.getSheetName(0)
-    log.info "Column Map: ${COLUMN_MAP_PREPAYSHEET}"
+    log.info "Column Map: ${COLUMN_MAP_SIMULATOR}"
     ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_PREPAYSHEET)
     log.info "Data: ${data}"
@@ -68,10 +68,10 @@ class XlsImportService {
     data
   }
 
-  def parseXlsPaysheetSimulator(def file){
+  def parseXlsPaysheetSimulator(def file) {
 		File xlsFile = getFileToProcess(file)
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
-    COLUMN_MAP_PREPAYSHEET.sheet = workbook.getSheetName(0)
+    COLUMN_MAP_SIMULATOR.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_SIMULATOR}"
     ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_SIMULATOR)
@@ -79,5 +79,6 @@ class XlsImportService {
     validateNotEmptyData(data)
     data
   }
+
 
 }

@@ -22,7 +22,6 @@ class SimulatorPaysheetService {
     }
 
     def processXlsSimulator(file) {
-
         log.info "Processing massive registration for Employee"
         List data = xlsImportService.parseXlsPaysheetSimulator(file)
         println data.class
