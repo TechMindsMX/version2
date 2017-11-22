@@ -74,6 +74,7 @@ class SimulatorPaysheetService {
 
   PaysheetEmployee createPaysheetEmployee(def row){
      PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
+       prePaysheetEmployee:new PrePaysheetEmployee(),
        breakdownPayment: new BreakdownPaymentEmployee(),
        ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
        paymentWay: PaymentWay.BANKING
@@ -89,6 +90,8 @@ class SimulatorPaysheetService {
     paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_NETO, row.PERIODO) // Salario neto
     paysheetEmployee.salaryAssimilable = row.IAS_NETO // IAS NETO
     paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee, row.PERIODO)
+    paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_NETO, row.PERIODO) // Salario Neto
+    paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
     paysheetEmployee
   }
 
@@ -106,9 +109,18 @@ class SimulatorPaysheetService {
     employmentSubsidy ? calculateAmountForPeriod(employmentSubsidy.getSubsidy(), period) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
   }
 
+  BigDecimal calculatePaysheetTax(BigDecimal salaryNeto, String period) {
+    BigDecimal baseImssMonthlySalary = salaryNeto
+    calculateAmountForPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), period)    
+  }
+
   BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee, String period) {
     PaymentPeriod paymentPeriod = PaymentPeriod.values().find(){it.toString() == period.toUpperCase()}
     (paysheetEmployee.breakdownPayment.socialQuotaEmployer / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal calculateCommission(PaysheetEmployee paysheetEmployee, BigDecimal commission) {
+    (paysheetEmployee.paysheetCost * (commission/100)).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal calculateIncomeTax(BigDecimal salaryNeto, String period){

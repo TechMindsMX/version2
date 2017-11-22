@@ -59,20 +59,19 @@ class SimulatorPaysheetServiceSpec extends Specification {
     void "create paymentSheetEmployee"(){
         given:"give one paysheet map"
             def paysheet = [CONSECUTIVO:1.0, SA_MENSUAL:300.0, SA_NETO:100.0, IAS_NETO:150.0, SA_BRUTO:null, IAS_BRUTO:null, PERIODO:'Semanal', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
-        and:
-            PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
         when:
-            //paymentSheetEmployee.breakdownPaymentEmployee = service.breakdownPaymentEmployee(paysheet)
-            println paymentSheetEmployee.breakdownPayment
-            println paymentSheetEmployee.breakdownPayment.baseQuotation
-            println paymentSheetEmployee.socialQuota
-            println paymentSheetEmployee.subsidySalary
-            println paymentSheetEmployee.incomeTax
-            println paymentSheetEmployee.salaryAssimilable
-            println paymentSheetEmployee.socialQuotaEmployer
+            PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
 
         then:
-            1==2
+             paymentSheetEmployee.breakdownPayment
+             paymentSheetEmployee.breakdownPayment.baseQuotation == 334.400
+             paymentSheetEmployee.socialQuota == 0
+             paymentSheetEmployee.subsidySalary == 94.97
+             paymentSheetEmployee.incomeTax == 0.45
+             paymentSheetEmployee.salaryAssimilable == 150
+             paymentSheetEmployee.socialQuotaEmployer == 1.09
+             paymentSheetEmployee.paysheetTax == 0.70
+             paymentSheetEmployee.commission == 9.49
 
     }
 
