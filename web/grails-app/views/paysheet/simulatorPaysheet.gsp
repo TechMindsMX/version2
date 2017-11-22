@@ -7,7 +7,7 @@
   <body>
     <div class="page-title">
       <h1>
-        <i class="fa fa-user-plus fa-3x"></i>
+        <i class="fa fa fa-book fa-3x"></i>
         Simulador de nomina
       </h1>
     </div>
@@ -22,11 +22,10 @@
           <div class="portlet-body">
             <div class="row">
               <div class="col-md-12">
-                <g:form name="uploadMassiveRecords" action="uploadMassiveRecords" method="POST" enctype="multipart/form-data">
-                  <g:hiddenField id="entityType" name="entityType" value="${clientProviderType}"/>
+                <g:form name="uploadLayoutForSimulator" action="uploadLayoutForSimulator" method="POST" enctype="multipart/form-data">
                   <div class="form-group">
                     <label>Archivo XLS de registros:</label>
-                    <input type="file" name="massiveRecordsFile" class="form-control" required="required" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                    <input type="file" name="layoutSimulator" class="file" required="required" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
                   </div>
                   <div class="row">
                     <div class="col-md-12 text-right">
