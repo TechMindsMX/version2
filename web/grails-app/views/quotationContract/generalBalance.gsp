@@ -34,13 +34,13 @@
                   <label>
                     <g:message code="Del:"/>
                   </label>
-                  <input class="form-control" type="text" value="${formatDate(format:'dd/MM/yyyy', date:period.init)}" id="datepicker" name="initDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required">
                 </div>
                 <div class="col-md-4">
                   <label>
                     <g:message code="Al:"/>
                   </label>
-                  <input class="form-control" type="text" value="${formatDate(format:'dd/MM/yyyy', date:period.end)}" id="datepicker1" name="lastDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.end)}" id="datepicker1" name="lastDate" required="required">
                 </div>
                 <div class="col-md-4 text-center">
                   <g:submitButton name="consultar" class="btn btn-primary" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"/>
@@ -63,7 +63,7 @@
                     </tr>
                     <g:each in="${detailGeneralBalance}" var="generalBalance">
                       <tr>
-                        <td>${generalBalance.quotationContract?.client}</td>
+                        <td><g:link action="show" id="${generalBalance.quotationContract.id}">${generalBalance.quotationContract?.client}</g:link></td>
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.request)}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.payment)}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.balance)}</td>
