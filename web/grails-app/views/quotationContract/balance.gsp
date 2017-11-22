@@ -74,17 +74,17 @@
               <div class="col-md-4 vertical-bar">
                 <div class="row">
                   <h2>
-                    Disponible:  <g:formatNumber number="${balance.summary.available}" type="currency" currencyCode="MXN" />
+                    Disponible: ${modulusuno.formatPrice(number:balance.summary.available)}
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    En transito: <g:formatNumber number="${balance.summary.transit}" type="currency" currencyCode="MXN" />
+                    En transito: ${modulusuno.formatPrice(number:balance.summary.transit)}
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    Total: <g:formatNumber number="${balance.summary.total}" type="currency" currencyCode="MXN" />
+                    Total: ${modulusuno.formatPrice(number:balance.summary.total)}
                   </h2>
                 </div>
               </div>
@@ -104,9 +104,9 @@
                         <tr>
                           <td>${paymentRequest.concept}</td>
                           <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
-                          <td> <g:formatNumber number="${paymentRequest.deposit}" type="currency" currencyCode="MXN" /></td>
-                          <td> <g:formatNumber number="${paymentRequest.charge}" type="currency" currencyCode="MXN" /></td>
-                          <td> <g:formatNumber number="${paymentRequest.balance}" type="currency" currencyCode="MXN" /></td>
+                          <td>${modulusuno.formatPrice(number:paymentRequest.deposit)}</td>
+                          <td>${modulusuno.formatPrice(number:paymentRequest.charge)}</td>
+                          <td>${modulusuno.formatPrice(number:paymentRequest.balance)}</td>
                         </tr>
                       </g:each>
                     </table>
