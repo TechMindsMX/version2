@@ -104,4 +104,10 @@ class PaysheetController {
       save(response.outputStream)
     }
   }
+
+  def uploadLayoutForSimulator(){
+    def file = request.getFile('layoutSimulator')
+    def resultUnpload = simulatorPaysheetService.processXlsSimulator(file)
+    render view:'simulatorPaysheet'
+  }
 }
