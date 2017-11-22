@@ -7,11 +7,6 @@ class SimulatorPaysheetService {
 
   XlsImportService xlsImportService
 
-    void testService(){
-        
-        log.info "Test..."*100
-    }
-
     def generateLayoutForSimulator() {
        def headers = ['RFC','CURP','NOMBRE','NUM_EMPL','CÓD. BANCO','BANCO','CLABE','CUENTA','NUM.TARJETA',"IMSS","NSS","FECHA_ALTA", "BASE_COTIZA", "NETO", "PRIMA_VAC", "DIAS_AGUINALDO", "PERIODO_PAGO", "SALARIO_NETO", "SALARIO_BRUTO"]
        def descriptions = ['Reemplazar esta fila', '', '', '', '', 'No. de Empleado', '18 dígitos', '16 dígitos', "S ó N","", "dd-MM-yyyy", "Salario Base de Cotización mensual", "Salario Neto mensual", "En porcentaje", "", "Semanal, Catorcenal, Quincenal, Mensual"]
@@ -27,12 +22,10 @@ class SimulatorPaysheetService {
         println data.class
         data.each{ row ->
             println row.SALARY
-       }
-       Map dataHeaders = xlsImportService.parseXlsPaysheetSimulatorHeaders(file)
-       println dataHeaders.dump()
+        }
+        Map dataHeaders = xlsImportService.parseXlsPaysheetSimulatorHeaders(file)
+        println dataHeaders.dump()
         data
-
-
     }
 
     def salaryProcess(row){
