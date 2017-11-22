@@ -56,24 +56,24 @@
                 <div class="table-responsive">
                   <table class="table table-striped table-condensed">
                     <tr>
-                      <th>Cliente</th>
-                      <th>Solicitudes</th>
-                      <th>Pagos</th>
-                      <th>Saldo</th>
+                      <th class="text-center">Cliente</th>
+                      <th class="text-center">Solicitudes</th>
+                      <th class="text-center">Pagos</th>
+                      <th class="text-center">Saldo</th>
                     </tr>
                     <g:each in="${detailGeneralBalance}" var="generalBalance">
                       <tr>
                         <td>${generalBalance.quotationContract?.client}</td>
-                        <td>${modulusuno.formatPrice(number:generalBalance.request)}</td>
-                        <td>${modulusuno.formatPrice(number:generalBalance.payment)}</td>
-                        <td>${modulusuno.formatPrice(number:generalBalance.balance)}</td>
+                        <td class="text-right">${modulusuno.formatPrice(number:generalBalance.request)}</td>
+                        <td class="text-right">${modulusuno.formatPrice(number:generalBalance.payment)}</td>
+                        <td class="text-right">${modulusuno.formatPrice(number:generalBalance.balance)}</td>
                       </tr>
                     </g:each> 
                     <tr>
                       <th>Total</th>
-                      <th>${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.request })}</th>
-                      <th>${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.payment })}</th>
-                      <th>${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.balance })}</th>
+                      <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.request })}</th>
+                      <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.payment })}</th>
+                      <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.balance })}</th>
                     </tr>
                   </table>
                   

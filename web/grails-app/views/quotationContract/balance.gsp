@@ -94,19 +94,19 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                       <tr>
-                        <th>Concepto</th>
-                        <th>Fecha</th>
-                        <th>Abono</th>
-                        <th>Cargo</th>
-                        <th>Saldo</th>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Fecha</th>
+                        <th class="text-center">Abono</th>
+                        <th class="text-center">Cargo</th>
+                        <th class="text-center">Saldo</th>
                       </tr>
                       <g:each in="${balance.conceptList}" var="paymentRequest">
                         <tr>
                           <td>${paymentRequest.concept}</td>
-                          <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
-                          <td>${modulusuno.formatPrice(number:paymentRequest.deposit)}</td>
-                          <td>${modulusuno.formatPrice(number:paymentRequest.charge)}</td>
-                          <td>${modulusuno.formatPrice(number:paymentRequest.balance)}</td>
+                          <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
+                          <td class="text-right">${modulusuno.formatPrice(number:paymentRequest.deposit)}</td>
+                          <td class="text-right">${modulusuno.formatPrice(number:paymentRequest.charge)}</td>
+                          <td class="text-right">${modulusuno.formatPrice(number:paymentRequest.balance)}</td>
                         </tr>
                       </g:each>
                     </table>
