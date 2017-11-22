@@ -2,10 +2,12 @@
 package com.modulus.uno.paysheet
 import pl.touk.excel.export.WebXlsxExporter
 import com.modulus.uno.XlsImportService
+import java.math.RoundingMode
 
 class SimulatorPaysheetService {
 
   XlsImportService xlsImportService
+  def grailsApplication
 
     def generateLayoutForSimulator() {
        def headers = ['CONSECUTIVO','SA_MENSUAL','SA_NETO','IAS_NETO','SA_BRUTO','IAS_BRUTO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
@@ -33,6 +35,8 @@ class SimulatorPaysheetService {
 
     def processForSalaryNetoAndIASNeto(row){
       println "SA y IA Netos"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee() 
+      println paysheetEmployee.dump()
     }
 
     def processForIASNetoAndSalaryBruto(row){
@@ -63,5 +67,18 @@ class SimulatorPaysheetService {
     }
     results
   }
+
+  PaysheetEmployee createPaysheetEmployee(){
+     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
+       breakdownPayment: new BreakdownPaymentEmployee(),
+       ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
+       paymentWay: PaymentWay.BANKING
+     )
+  }
+
+  BreakdownPaymentEmployee breakdownPaymentEmployee(PaysheetEmployee paysheetEmployee){
+    
+  }
+
 
 }
