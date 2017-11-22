@@ -8,6 +8,7 @@ class SimulatorPaysheetService {
 
   XlsImportService xlsImportService
   def grailsApplication
+  BreakdownPaymentEmployeeService breakdownPaymentEmployeeService
 
     def generateLayoutForSimulator() {
        def headers = ['CONSECUTIVO','SA_MENSUAL','SA_NETO','IAS_NETO','SA_BRUTO','IAS_BRUTO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
@@ -36,6 +37,8 @@ class SimulatorPaysheetService {
     def processForSalaryNetoAndIASNeto(def row){
       println "SA y IA Netos"
       PaysheetEmployee paysheetEmployee = createPaysheetEmployee() 
+      println "********"
+      println row.SA_MENSUAL.class
       println paysheetEmployee.dump()
     }
 
@@ -77,11 +80,53 @@ class SimulatorPaysheetService {
   }
 
   BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
-    BigDecimal integratedDailySalary = getIntegratedDailySalaryForEmployee(employee, paysheetEmployee.paysheet)
+    BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_MENSUAL, row.FACT_INTEGRA)
+    println integratedDailySalary 
     BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
     BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
-
+    BreakdownPaymentEmployee breakdownPaymentEmployee = new BreakdownPaymentEmployee(
+      integratedDailySalary: integratedDailySalary,
+      baseQuotation: baseQuotation,
+      fixedFee: breakdownPaymentEmployeeService.getFixedFee(),
+      diseaseAndMaternityBase: diseaseAndMaternityBase,
+      diseaseAndMaternityEmployer: breakdownPaymentEmployeeService.getDiseaseAndMaternityEmployer(diseaseAndMaternityBase),
+      diseaseAndMaternity: breakdownPaymentEmployeeService.getDiseaseAndMaternityEmployee(diseaseAndMaternityBase),
+      pension: breakdownPaymentEmployeeService.getPensionEmployee(baseQuotation),
+      pensionEmployer: breakdownPaymentEmployeeService.getPensionEmployer(baseQuotation),
+      loan: breakdownPaymentEmployeeService.getLoanEmployee(baseQuotation),
+      loanEmployer: breakdownPaymentEmployeeService.getLoanEmployer(baseQuotation),
+      disabilityAndLife: breakdownPaymentEmployeeService.getDisabilityAndLifeEmployee(integratedDailySalary),
+      disabilityAndLifeEmployer: breakdownPaymentEmployeeService.getDisabilityAndLifeEmployer(integratedDailySalary),
+      kindergarten: breakdownPaymentEmployeeService.getKindergarten(baseQuotation),
+      occupationalRisk: getOccupationalRisk(baseQuotation, row.RIESGO_TRAB),
+      retirementSaving: breakdownPaymentEmployeeService.getRetirementSaving(baseQuotation),
+      unemploymentAndEld: breakdownPaymentEmployeeService.getUnemploymentAndEldEmployee(baseQuotation),
+      unemploymentAndEldEmployer: breakdownPaymentEmployeeService.getUnemploymentAndEldEmployer(baseQuotation),
+      infonavit: breakdownPaymentEmployeeService.getInfonavit(baseQuotation)
+    )
   }
+
+  BigDecimal getIntegratedDailySalary(BigDecimal SA_MENSUAL, BigDecimal FACT_INTEGRA){
+    ((new BigDecimal(SA_MENSUAL)) / 30 * (new BigDecimal(FACT_INTEGRA))).setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getBaseQuotation(BigDecimal integratedDailySalary){
+    integratedDailySalary * new BigDecimal(grailsApplication.config.paysheet.quotationDays)
+  } 
+  
+  BigDecimal getDiseaseAndMaternityBase(BigDecimal integratedDailySalary) {
+    BigDecimal limit = 3 * new BigDecimal(grailsApplication.config.paysheet.uma)
+    BigDecimal diseaseAndMaternityBase = new BigDecimal(0)
+    if (integratedDailySalary > limit) {
+      diseaseAndMaternityBase = (integratedDailySalary - limit) * new BigDecimal(grailsApplication.config.paysheet.quotationDays)
+    }
+    diseaseAndMaternityBase.setScale(2, RoundingMode.HALF_UP)
+  }
+
+  BigDecimal getOccupationalRisk(BigDecimal baseQuotation, BigDecimal riskJob) {
+    (baseQuotation * (riskJob/100)).setScale(2, RoundingMode.HALF_UP)
+  }
+
 
 
 }
