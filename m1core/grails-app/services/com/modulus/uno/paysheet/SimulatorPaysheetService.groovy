@@ -8,8 +8,8 @@ class SimulatorPaysheetService {
   XlsImportService xlsImportService
 
     def generateLayoutForSimulator() {
-       def headers = ['RFC','CURP','NOMBRE','NUM_EMPL','CÓD. BANCO','BANCO','CLABE','CUENTA','NUM.TARJETA',"IMSS","NSS","FECHA_ALTA", "BASE_COTIZA", "NETO", "PRIMA_VAC", "DIAS_AGUINALDO", "PERIODO_PAGO", "SALARIO_NETO", "SALARIO_BRUTO"]
-       def descriptions = ['Reemplazar esta fila', '', '', '', '', 'No. de Empleado', '18 dígitos', '16 dígitos', "S ó N","", "dd-MM-yyyy", "Salario Base de Cotización mensual", "Salario Neto mensual", "En porcentaje", "", "Semanal, Catorcenal, Quincenal, Mensual"]
+       def headers = ['CONSECUTIVO','SA_MENSUAL','SA_NETO','IAS_NETO','SA_BRUTO','IAS_BRUTO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
+       def descriptions = ['NUMERO','','','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
        new WebXlsxExporter().with {
           fillRow(headers, 2)
           fillRow(descriptions, 3)
@@ -21,10 +21,8 @@ class SimulatorPaysheetService {
         List data = xlsImportService.parseXlsPaysheetSimulator(file)
         println data.class
         data.each{ row ->
-            println row.SALARY
+            println row
         }
-        Map dataHeaders = xlsImportService.parseXlsPaysheetSimulatorHeaders(file)
-        println dataHeaders.dump()
         data
     }
 
