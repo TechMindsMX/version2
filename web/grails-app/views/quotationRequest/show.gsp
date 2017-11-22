@@ -95,6 +95,10 @@
                   <dd>${quotationRequest.quotationContract.client}</dd>
                   <dt>Fecha de apertura de la cotización</dt>
                   <dd><g:formatDate format="dd-MM-yyyy" date="${quotationRequest.quotationContract.initDate}" class="form-control"/></dd>
+                  <dt>Facturadora</dt>
+                  <dd>${quotationRequest.biller}</dd>
+                  <dt>Comisión</dt>
+                  <dd>${quotationRequest.quotationContract.commission}</dd>
                 </dl>
               </div>
               <div class="col-md-6">
@@ -103,6 +107,8 @@
                   <dd>${quotationRequest.description}</dd>
                   <dt>Monto para la cotización</dt>
                   <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                  <dt>Concepto</dt>
+                  <dd>${quotationRequest.satConcept}</dd>
                 </dl>
               </div>
             </div>
