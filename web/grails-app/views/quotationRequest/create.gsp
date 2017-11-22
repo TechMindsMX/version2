@@ -19,8 +19,6 @@
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
           <div class="portlet-title">
-           <div class="portlet-title">
-            </div>
             <div class="clearfix"></div>
           </div>
         
@@ -46,7 +44,7 @@
         <g:form action="save">
 
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-md-12">
             <div class="form-group">
               <label><g:message code="Cotizaciones"/></label>
               <g:select name="quotation" class="form-control"
@@ -56,9 +54,9 @@
             </div>
           </div>
         </div>
-        <br>
+        
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-md-12">
             <label><g:message code="Descripción" /></label>
             <input class="form-control" type="text" id="description" name="description" required="required">
           </div>

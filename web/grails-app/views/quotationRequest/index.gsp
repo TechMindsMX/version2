@@ -17,7 +17,7 @@
 
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
-        <div class="portlet-body">
+        <div class="portlet-footer">
           <g:if test="${quotationContract.client}">
             <div class="row">
               <div class="col-md-12">
