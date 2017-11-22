@@ -21,18 +21,22 @@ class QuotationContractController {
 
     def feeIncome(){
       Company company = Company.get(session.company)
+      def period = quotationContractService.getPeriodForPdf(params)
       List<Map> feeIncomes = quotationContractService.getQuotationWithCommisionPeriod(params)
       model:[company:company,
-            feeIncomes:feeIncomes
+            feeIncomes:feeIncomes,
+            period:period
             ]
     }
 
     def generalBalance(){
       paramsDate = params
       Company company = Company.get(session.company)
+      def period = quotationContractService.getPeriodForPdf(params)
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
       model:[company:company,
-            detailGeneralBalance:detailGeneralBalance
+            detailGeneralBalance:detailGeneralBalance,
+            period:period
             ]
     }
 
@@ -102,8 +106,9 @@ class QuotationContractController {
     }
 
     def balance(QuotationContract quotationContract){
+      def period = quotationContractService.getPeriodForPdf(params)
       Map balance = quotationContractService.getBalance(quotationContract, params)
-      render view: 'balance', model:[balance:balance]
+      render view: 'balance', model:[balance:balance, period:period]
 
     }
 
