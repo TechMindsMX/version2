@@ -64,16 +64,16 @@
                     <g:each in="${detailGeneralBalance}" var="generalBalance">
                       <tr>
                         <td>${generalBalance.quotationContract?.client}</td>
-                        <td><g:formatNumber number="${generalBalance.request}" type="currency" currencyCode="MXN" /></td>
-                        <td><g:formatNumber number="${generalBalance.payment}" type="currency" currencyCode="MXN" /></td>
-                        <td><g:formatNumber number="${generalBalance.balance}" type="currency" currencyCode="MXN" /></td>
+                        <td>${modulusuno.formatPrice(number:generalBalance.request)}</td>
+                        <td>${modulusuno.formatPrice(number:generalBalance.payment)}</td>
+                        <td>${modulusuno.formatPrice(number:generalBalance.balance)}</td>
                       </tr>
                     </g:each> 
                     <tr>
                       <th>Total</th>
-                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.request }}" type="currency" currencyCode="MXN" /></th>
-                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.payment }}" type="currency" currencyCode="MXN" /></th>
-                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.balance }}" type="currency" currencyCode="MXN" /></th>
+                      <th>${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.request })}</th>
+                      <th>${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.payment })}</th>
+                      <th>${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.balance })}</th>
                     </tr>
                   </table>
                   
