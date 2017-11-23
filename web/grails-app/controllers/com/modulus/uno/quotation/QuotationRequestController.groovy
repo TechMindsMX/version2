@@ -30,8 +30,7 @@ class QuotationRequestController {
     }
 
     def show(QuotationRequest quotationRequest){
-
-      [quotationRequest: quotationRequest]
+      respond quotationRequest, model:[billers:quotationRequestService.getBillerCompanies(session.company.toLong())]
     }
 
     def edit(QuotationRequest quotationRequest){
@@ -54,5 +53,31 @@ class QuotationRequestController {
       redirect(action: 'index')
     }
 
+    def processed(){
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByStatus(QuotationRequestStatus.PROCESSED)
+
+      [quotationRequestList:quotationRequestList]
+    }
+
+    def requestProcessed(QuotationRequestCommand quotationRequestCommand){
+      QuotationRequest quotationRequestUpdate = quotationRequestCommand.getQuotationRequest()
+      QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
+      quotationRequest.satConcept = SatConcept.values().find(){it.toString() == params.satConcept }
+      quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
+      quotationRequest.biller = Company.get(quotationRequestCommand.biller.toLong())
+      quotationRequestService.requestProcessed(quotationRequest)
+      redirect(action: 'index')
+    }
+
+    def send(){
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByStatus(QuotationRequestStatus.SEND)
+
+      [quotationRequestList:quotationRequestList]
+    }
+
+    def sendQuotation(QuotationRequest quotationRequest){
+      quotationRequestService.sendQuotation(quotationRequest)
+      redirect(action: 'index')
+    }
 
 }
