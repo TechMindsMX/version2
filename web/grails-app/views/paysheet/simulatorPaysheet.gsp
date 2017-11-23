@@ -38,6 +38,11 @@
           </div>
 
         </div>
+        <g:if test="${paysheetEmployeeList}">
+          Esto
+
+          <g:link action="exportPaysheetEmployee" class="btn btn-primary">Exportar XLS</g:link> 
+        </g:if>
       </div>
     </div>
 
