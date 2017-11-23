@@ -9,8 +9,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-hospital-o fa-3x"></i>
-        Proyecto de Nómina
-        <small>${company}</small>
+        Editar Proyecto de Nómina
+        <small>${paysheetProject.paysheetContract.client}</small>
       </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
@@ -70,7 +70,7 @@
                 </sec:ifAnyGranted>
                   </div>
                   <div class="col-md-6 text-right">
-                    <g:link class="btn btn-primary" controller="company" action="show" id="${company.id}">Cancelar</g:link>
+                    <g:link class="btn btn-primary" controller="paysheetProject" action="show" id="${paysheetProject.id}">Cancelar</g:link>
                   </div>
                 </div>
               </g:form>

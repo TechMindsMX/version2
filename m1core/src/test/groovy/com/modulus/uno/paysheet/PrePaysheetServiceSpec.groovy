@@ -15,7 +15,7 @@ import com.modulus.uno.EmployeeService
 import com.modulus.uno.PaymentPeriod
 
 @TestFor(PrePaysheetService)
-@Mock([PrePaysheet, PrePaysheetEmployee, BusinessEntity, Company, EmployeeLink, DataImssEmployee, BankAccount, Bank])
+@Mock([PaysheetContract, PrePaysheet, PrePaysheetEmployee, BusinessEntity, Company, EmployeeLink, DataImssEmployee, BankAccount, Bank])
 class PrePaysheetServiceSpec extends Specification {
 
   BusinessEntityService businessEntityService = Mock(BusinessEntityService)
@@ -28,13 +28,14 @@ class PrePaysheetServiceSpec extends Specification {
 
   void "Should get employees available to add a prepaysheet"() {
     given: "PrePaysheet employees"
-      PrePaysheet prePaysheet = new PrePaysheet(company:new Company().save(validate:false)).save(validate:false)
+      List allEmployees = [new BusinessEntity(rfc:"A").save(validate:false), new BusinessEntity(rfc:"B").save(validate:false), new BusinessEntity(rfc:"C").save(validate:false)]
+      PaysheetContract paysheetContract = new PaysheetContract(employees:[]).save(validate:false)
+      paysheetContract.employees = allEmployees
+      paysheetContract.save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
       PrePaysheetEmployee employeePrePaysheet = new PrePaysheetEmployee(rfc:"B").save(validate:false)
       prePaysheet.addToEmployees(employeePrePaysheet)
       prePaysheet.save(validate:false)
-    and:
-      List allEmployees = [new BusinessEntity(rfc:"A").save(validate:false), new BusinessEntity(rfc:"B").save(validate:false), new BusinessEntity(rfc:"C").save(validate:false)]
-      businessEntityService.getAllActiveEmployeesForCompany(_) >> allEmployees
     when:
       def result = service.getEmployeesAvailableToAdd(prePaysheet)
     then:
@@ -107,18 +108,18 @@ class PrePaysheetServiceSpec extends Specification {
   void "Should add a employee to prePaysheet from xls file to import"() {
     given:"A prePaysheet"
       Company company = new Company().save(validate:false)
-      PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
-    and:"A data map employee to import"
-			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO:1000.0]
-	  and:
       BusinessEntity beEmployee = new BusinessEntity(rfc:"RFC").save(validate:false)
-			company.addToBusinessEntities(beEmployee)
-			company.save(validate:false)
-      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
-    and:"The bank account"
       BankAccount bankAccount = new BankAccount(accountNumber:"cuenta", clabe:"CLABE", cardNumber:"tarjeta", banco:new Bank().save(validate:false)).save(validate:false)
 			beEmployee.addToBanksAccounts(bankAccount)
 			beEmployee.save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      paysheetContract.addToEmployees(beEmployee)
+      paysheetContract.save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
+    and:"A data map employee to import"
+			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO:1000.0]
+	  and:
+      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
 		and:
 			employeeService.employeeAlreadyExistsInCompany(_, _) >> empLink
     when:
@@ -130,7 +131,8 @@ class PrePaysheetServiceSpec extends Specification {
   void "Should return employee don't exists error when add a employee to prePaysheet from xls file to import"() {
     given:"A prePaysheet"
       Company company = new Company().save(validate:false)
-      PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
     and:"A data map employee to import"
 			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO:1000.0]
 		and:
@@ -144,7 +146,8 @@ class PrePaysheetServiceSpec extends Specification {
   void "Should return clabe account error when add a employee to prePaysheet from xls file to import"() {
     given:"A prePaysheet"
       Company company = new Company().save(validate:false)
-      PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
     and:"A data map employee to import"
 			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO:1000.0]
 	  and:
@@ -152,6 +155,8 @@ class PrePaysheetServiceSpec extends Specification {
 			company.addToBusinessEntities(beEmployee)
 			company.save(validate:false)
       EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
+      paysheetContract.addToEmployees(beEmployee)
+      paysheetContract.save(validate:false)
     and:"The bank account"
       BankAccount bankAccount = new BankAccount(accountNumber:"cuenta", clabe:"ANOTHER_CLABE", cardNumber:"tarjeta", banco:new Bank().save(validate:false)).save(validate:false)
 			beEmployee.addToBanksAccounts(bankAccount)
@@ -167,7 +172,8 @@ class PrePaysheetServiceSpec extends Specification {
   void "Should return payment amount error when add a employee to prePaysheet from xls file to import"() {
     given:"A prePaysheet"
       Company company = new Company().save(validate:false)
-      PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
     and:"A data map employee to import"
 			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO:"Mil"]
 	  and:
@@ -175,6 +181,8 @@ class PrePaysheetServiceSpec extends Specification {
 			company.addToBusinessEntities(beEmployee)
 			company.save(validate:false)
       EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
+      paysheetContract.addToEmployees(beEmployee)
+      paysheetContract.save(validate:false)
     and:"The bank account"
       BankAccount bankAccount = new BankAccount(accountNumber:"cuenta", clabe:"CLABE", cardNumber:"tarjeta", banco:new Bank().save(validate:false)).save(validate:false)
 			beEmployee.addToBanksAccounts(bankAccount)
@@ -190,7 +198,8 @@ class PrePaysheetServiceSpec extends Specification {
   void "Should return already exists employee in prepaysheet error when add a employee to prePaysheet from xls file to import"() {
     given:"A prePaysheet"
       Company company = new Company().save(validate:false)
-      PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
 			PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(rfc:"RFC").save(validate:false)
 			prePaysheet.addToEmployees(prePaysheetEmployee)
 			prePaysheet.save(validate:false)
@@ -211,6 +220,31 @@ class PrePaysheetServiceSpec extends Specification {
       String result = service.createPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
     then:
 			result == "Error: el empleado ya está agregado a la prenómina"
+  }
+
+  void "Should return employee isn't in the paysheet contract error when add a employee to prePaysheet from xls file to import"() {
+    given:"A prePaysheet"
+      Company company = new Company().save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
+			prePaysheet.save(validate:false)
+    and:"A data map employee to import"
+			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO:"Mil"]
+	  and:
+      BusinessEntity beEmployee = new BusinessEntity(rfc:"RFC").save(validate:false)
+			company.addToBusinessEntities(beEmployee)
+			company.save(validate:false)
+      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
+    and:"The bank account"
+      BankAccount bankAccount = new BankAccount(accountNumber:"cuenta", clabe:"CLABE", cardNumber:"tarjeta", banco:new Bank().save(validate:false)).save(validate:false)
+			beEmployee.addToBanksAccounts(bankAccount)
+			beEmployee.save(validate:false)
+		and:
+			employeeService.employeeAlreadyExistsInCompany(_, _) >> empLink
+    when:
+      String result = service.createPrePaysheetEmployeeFromData(dataEmployee, prePaysheet)
+    then:
+			result == "Error: el empleado no está asociado al contrato de nómina"
   }
 
 }

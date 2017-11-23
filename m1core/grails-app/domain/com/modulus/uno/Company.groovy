@@ -28,8 +28,7 @@ class Company implements Linker {
                     feesReceipts:FeesReceipt,
                     loanOrders: LoanOrder,
                     commissions:Commission,
-                    telephones:Telephone,
-                    paysheetProjects:PaysheetProject]
+                    telephones:Telephone]
 
   static constraints = {
     bussinessName blank:false,size:1..100

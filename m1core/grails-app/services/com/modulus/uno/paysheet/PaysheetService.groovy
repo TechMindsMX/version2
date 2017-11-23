@@ -23,7 +23,7 @@ class PaysheetService {
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = new Paysheet(
       prePaysheet:prePaysheet,
-      company:prePaysheet.company
+      paysheetContract:prePaysheet.paysheetContract
     )
     paysheet.save()
     loadEmployeesToPaysheetFromPrePaysheet(paysheet, prePaysheet)
@@ -126,7 +126,7 @@ class PaysheetService {
 		paysheet.employees.each { emp ->
 			distinctBanksEmployees.add(emp.prePaysheetEmployee.bank)
 		}
-    def bankAccounts = paysheet.company.banksAccounts.collect { ba ->
+    def bankAccounts = paysheet.paysheetContract.company.banksAccounts.collect { ba ->
 			if (distinctBanksEmployees.contains(ba.banco)) { return ba }
 		}.grep() 
 		bankAccounts
