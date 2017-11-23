@@ -34,13 +34,13 @@
                   <label>
                     <g:message code="Del:"/>
                   </label>
-                  <input class="form-control" type="text" id="datepicker" name="initDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required">
                 </div>
                 <div class="col-md-4">
                   <label>
                     <g:message code="Al:"/>
                   </label>
-                  <input class="form-control" type="text" id="datepicker1" name="lastDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.end)}" id="datepicker1" name="lastDate" required="required">
                 </div>
                 <div class="col-md-4 text-center">
                   <g:submitButton name="consultar" class="btn btn-primary" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"/>
@@ -56,25 +56,25 @@
                 <div class="table-responsive">
                   <table class="table table-striped table-condensed">
                     <tr>
-                      <th>Cliente</th>
-                      <th>Solicitudes</th>
-                      <th>Pagos</th>
-                      <th>Saldo</th>
+                      <th class="text-center">Cliente</th>
+                      <th class="text-center">Solicitudes</th>
+                      <th class="text-center">Pagos</th>
+                      <th class="text-center">Saldo</th>
                     </tr>
                     <g:each in="${detailGeneralBalance}" var="generalBalance">
                       <tr>
-                        <td>${generalBalance.quotationContract?.client}</td>
-                        <td><g:formatNumber number="${generalBalance.request}" type="currency" currencyCode="MXN" /></td>
-                        <td><g:formatNumber number="${generalBalance.payment}" type="currency" currencyCode="MXN" /></td>
-                        <td><g:formatNumber number="${generalBalance.balance}" type="currency" currencyCode="MXN" /></td>
+                        <td><g:link action="show" id="${generalBalance.quotationContract.id}">${generalBalance.quotationContract?.client}</g:link></td>
+                        <td class="text-right">${modulusuno.formatPrice(number:generalBalance.request)}</td>
+                        <td class="text-right">${modulusuno.formatPrice(number:generalBalance.payment)}</td>
+                        <td class="text-right">${modulusuno.formatPrice(number:generalBalance.balance)}</td>
                       </tr>
                     </g:each> 
-                    <tr>
+                    <tfoot>
                       <th>Total</th>
-                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.request }}" type="currency" currencyCode="MXN" /></th>
-                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.payment }}" type="currency" currencyCode="MXN" /></th>
-                      <th><g:formatNumber number="${detailGeneralBalance.sum { it.balance }}" type="currency" currencyCode="MXN" /></th>
-                    </tr>
+                      <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.request })}</th>
+                      <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.payment })}</th>
+                      <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.balance })}</th>
+                    </tfoot>
                   </table>
                   
                 </div>

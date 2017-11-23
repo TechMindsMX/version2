@@ -32,7 +32,7 @@
                     <tr>
                       <th>Cliente</th>
                       <th>Fecha de Inicio</th>
-                      <th>Comisiòn</th>
+                      <th>Comisión</th>
                     </tr>
                     <g:each in="${quotationContractList.sort{it.client.toString()}.each(){it}}" var="be">
                       <tr>
