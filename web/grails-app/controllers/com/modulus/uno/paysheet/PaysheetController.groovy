@@ -110,7 +110,8 @@ class PaysheetController {
     def file = request.getFile('layoutSimulator')
     paysheetEmployeeList = simulatorPaysheetService.processXlsSimulator(file)
     //exportPaysheetEmployee(paysheetEmployeeList)
-    render view:'simulatorPaysheet', model:[paysheetEmployeeList:paysheetEmployeeList]
+    List<Map> mapaySheetEmployeelist =  simulatorPaysheetService.employeeToExport(paysheetEmployeeList) 
+    render view:'simulatorPaysheet', model:[paysheetEmployeeList:mapaySheetEmployeelist]
   }
 
   def exportPaysheetEmployee(){
