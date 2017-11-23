@@ -38,7 +38,6 @@
           </div>
         </div>
         <g:if test="${paysheetEmployeeList}">
-<<<<<<< HEAD
           <div class="row">
               <g:render template="simulatorPaysheetData"></g:render>
           </div>
@@ -46,10 +45,6 @@
             <div align="right">
               <g:link action="exportPaysheetEmployee" class="btn btn-primary text-right">Exportar XLS</g:link> 
             </div>
-=======
-          <div class="portlet-footer">
-            <g:link action="exportPaysheetEmployee" class="btn btn-primary">Exportar XLS</g:link> 
->>>>>>> 05976f4767a7df438f5c405ff30f7d60df2fb29e
           </div>          
         </g:if>
       </div>
