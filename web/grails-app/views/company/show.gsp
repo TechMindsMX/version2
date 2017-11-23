@@ -98,9 +98,6 @@
 </sec:ifAnyGranted>
 </div>
 </div>
-  <div class="">
-    <g:render template="paysheetProject"/>
-  </div>
 </div>
 <!-- Cuentas -->
 <div class="col-md-6">

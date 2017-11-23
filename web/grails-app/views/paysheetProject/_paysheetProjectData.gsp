@@ -28,8 +28,8 @@
           <label><g:formatNumber format="#,##0.000000" number="${paysheetProject.occupationalRiskRate}" locale="es_MX"/></label>
         </div>
         <div class="col-md-4">
-          <label><strong><g:message code="paysheetProject.label.occupationalRiskRate"/></strong></label><br/>
-          <label><g:formatNumber format="#,##0.000000" number="${paysheetProject.occupationalRiskRate}" locale="es_MX"/></label>
+          <label><strong><g:message code="paysheetProject.label.commission"/></strong></label><br/>
+          <label><g:formatNumber format="#,##0.000000" number="${paysheetProject.commission}" locale="es_MX"/></label>
         </div>
       </div>
 
