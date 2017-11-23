@@ -14,6 +14,19 @@ class QuotationContractController {
       respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
     }
 
+    def generalBalance(){
+      Company company = Company.get(session.company)
+      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
+      model:[company:company,
+            detailGeneralBalance:detailGeneralBalance
+            ]
+    }
+
+    def getBalanceGeneral(){
+      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
+      render view:'generalBalance', model:[detailGeneralBalance:detailGeneralBalance]
+    }
+
     def create(){
     	Company company = Company.get(session.company)
 
