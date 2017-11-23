@@ -46,6 +46,12 @@ class QuotationContractService {
       List<QuotationBalanceGeneralConcept> quotationBalanceGeneralConceptList = quotationBalanceGeneralConcept(quotationContractList)
     }
 
+    List<Map> getQuotationWithCommisionPeriod(Map params){
+      Period period = getPeriodForBalance(params)
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByStatusAndDateCreatedBetween(QuotationContractStatus.ACTIVE, period.init, period.end)
+      List<Map> quotationWithCommissionList = getQuotationWithCommision(quotationContractList)
+    }
+
     private Period getPeriodForBalance(Map params) {
       Period period
       if (params.initDate && params.lastDate) {
@@ -137,5 +143,20 @@ class QuotationContractService {
       }
 
       quotationConceptList.sort {it.date}
+    }
+
+    List<Map> getQuotationWithCommision(List<QuotationContract> quotationContractList){
+      List<Map> quotationWithCommissionList = []
+      quotationContractList.each(){ quotation ->
+        Map summary = calculateSummaryForBalance(quotation)
+        Map quotationWithCommission = [
+          client: quotation.client,
+          amount: summary.income,
+          commission: quotation.commission,
+          commissionAmount: summary.income * (quotation.commission/100)
+        ]
+        quotationWithCommissionList << quotationWithCommission
+      }
+      quotationWithCommissionList
     }
 }

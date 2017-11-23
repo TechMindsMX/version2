@@ -104,6 +104,15 @@ class QuotationContractServiceSpec extends Specification {
         listBalanceGeneral.first().request == 6000
     }
 
+    void "Create list of maps of quotation with commissions"(){
+      given:"one list of quotation "
+        def quotationContractList = getQuotationContractList()
+      when:"was created map of quotation for commission"
+        def map = service.getQuotationWithCommision(quotationContractList)
+      then:
+        map.first().commission == 10
+    }
+
     QuotationContract getQuotationContract(){
         BusinessEntity client = new BusinessEntity(
                                                   rfc:"BDJBDYHSGGDVVD",
@@ -119,8 +128,8 @@ class QuotationContractServiceSpec extends Specification {
 
     List<QuotationContract> getQuotationContractList(){
       List<QuotationContract> quotationContractList = []
-      QuotationContract quotationContract = new QuotationContract().save(validate:false)
-      QuotationContract quotationContract2 = new QuotationContract().save(validate:false)
+      QuotationContract quotationContract = new QuotationContract(commission:10).save(validate:false)
+      QuotationContract quotationContract2 = new QuotationContract(commission:12).save(validate:false)
       QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:4000).save(validate:false)
       QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
       QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)

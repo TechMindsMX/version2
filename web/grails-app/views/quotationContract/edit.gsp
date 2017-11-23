@@ -48,7 +48,7 @@
         <div class="row">
           <div class="col-md-3">
             <label><g:message code="Fecha Apertura" /></label>
-            <input class="form-control" id="datepicker" name="initDate" required="required" value="">
+            <input class="form-control" id="datepickerQuotation" name="initDate" required="required" value="">
           </div>
           <div class="col-md-4">
             <label><g:message code="Comisión"/></label>
