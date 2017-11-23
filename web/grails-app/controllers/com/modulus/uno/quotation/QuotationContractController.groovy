@@ -1,5 +1,8 @@
 package com.modulus.uno.quotation
 import  com.modulus.uno.BusinessEntityService
+import com.modulus.uno.Period
+import com.modulus.uno.CollaboratorService
+import java.text.SimpleDateFormat
 
 import com.modulus.uno.Company
 
@@ -7,6 +10,8 @@ class QuotationContractController {
 
     BusinessEntityService businessEntityService
     QuotationContractService quotationContractService
+    Map paramsDate
+    CollaboratorService collaboratorService
 
     def index(){
     	Company company = Company.get(session.company)
@@ -23,6 +28,7 @@ class QuotationContractController {
     }
 
     def generalBalance(){
+      paramsDate = params
       Company company = Company.get(session.company)
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
       model:[company:company,
@@ -30,7 +36,15 @@ class QuotationContractController {
             ]
     }
 
+    def pdfGeneralBalance(){
+      Company company = Company.get(session.company)
+      def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(paramsDate)
+      def period = quotationContractService.getPeriodForPdf(paramsDate)
+      renderPdf(template: "/documentTemplates/quotation/quotationBalanceGeneral", model:[company:company, detailGeneralBalance:detailGeneralBalance, period:period])
+    }
+
     def getBalanceGeneral(){
+      paramsDate = params
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
       render view:'generalBalance', model:[detailGeneralBalance:detailGeneralBalance]
     }
