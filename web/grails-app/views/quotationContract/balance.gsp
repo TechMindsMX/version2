@@ -52,14 +52,14 @@
                   <label>
                     <g:message code="Del" />
                   </label>
-                  <input class="form-control" type="text" id="datepicker" name="initDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required">
                   <input type="hidden" value="${balance.quotationContract.id}" name="id" />
                   </div>
                   <div class="col-md-6">
                   <label>
                     <g:message code="Al" />
                   </label>
-                  <input class="form-control" type="text" id="datepicker1" name="lastDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.end)}" id="datepicker" name="lastDate" required="required">
                   </div>
                 </div>
                 <div class="row">
@@ -74,17 +74,17 @@
               <div class="col-md-4 vertical-bar">
                 <div class="row">
                   <h2>
-                    Disponible:  <g:formatNumber number="${balance.summary.available}" type="currency" currencyCode="MXN" />
+                    Disponible: ${modulusuno.formatPrice(number:balance.summary.available)}
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    En transito: <g:formatNumber number="${balance.summary.transit}" type="currency" currencyCode="MXN" />
+                    En transito: ${modulusuno.formatPrice(number:balance.summary.transit)}
                   </h2>
                 </div>
                 <div class="row">
                   <h2>
-                    Total: <g:formatNumber number="${balance.summary.total}" type="currency" currencyCode="MXN" />
+                    Total: ${modulusuno.formatPrice(number:balance.summary.total)}
                   </h2>
                 </div>
               </div>
@@ -94,19 +94,19 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                       <tr>
-                        <th>Concepto</th>
-                        <th>Fecha</th>
-                        <th>Abono</th>
-                        <th>Cargo</th>
-                        <th>Saldo</th>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Fecha</th>
+                        <th class="text-center">Abono</th>
+                        <th class="text-center">Cargo</th>
+                        <th class="text-center">Saldo</th>
                       </tr>
                       <g:each in="${balance.conceptList}" var="paymentRequest">
                         <tr>
                           <td>${paymentRequest.concept}</td>
-                          <td><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
-                          <td> <g:formatNumber number="${paymentRequest.deposit}" type="currency" currencyCode="MXN" /></td>
-                          <td> <g:formatNumber number="${paymentRequest.charge}" type="currency" currencyCode="MXN" /></td>
-                          <td> <g:formatNumber number="${paymentRequest.balance}" type="currency" currencyCode="MXN" /></td>
+                          <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.date}"/></td>
+                          <td class="text-right">${modulusuno.formatPrice(number:paymentRequest.deposit)}</td>
+                          <td class="text-right">${modulusuno.formatPrice(number:paymentRequest.charge)}</td>
+                          <td class="text-right">${modulusuno.formatPrice(number:paymentRequest.balance)}</td>
                         </tr>
                       </g:each>
                     </table>

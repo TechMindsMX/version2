@@ -59,8 +59,6 @@ var QuotationController = (function(){
     $(selectors.datepicker1).datepicker({
       dateFormat: 'dd-mm-yy'
     });
-    $(selectors.datepicker).datepicker('setDate', new Date());
-
   };
 
   var start = function(){
