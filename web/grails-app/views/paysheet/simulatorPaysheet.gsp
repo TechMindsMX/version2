@@ -16,7 +16,7 @@
         <div id="horizontalFormExample" class="panel-collapse collapse in">
           <div class="portlet-heading">
             <div class="row">
-                <g:link action="downloadLayout" class="btn btn-primary" id="1">Layout</g:link> 
+              <g:link action="downloadLayout" class="btn btn-primary" id="1">Layout</g:link> 
             </div>
           </div>
           <div class="portlet-body">
@@ -36,18 +36,15 @@
               </div>
             </div>
           </div>
-
         </div>
         <g:if test="${paysheetEmployeeList}">
-          Esto
-
-          <g:link action="exportPaysheetEmployee" class="btn btn-primary">Exportar XLS</g:link> 
+          <div class="portlet-footer">
+            <g:link action="exportPaysheetEmployee" class="btn btn-primary">Exportar XLS</g:link> 
+          </div>          
         </g:if>
       </div>
     </div>
-
     <asset:javascript src="businessEntity/entityType.js"/>
-
   </body>
 </html>
 

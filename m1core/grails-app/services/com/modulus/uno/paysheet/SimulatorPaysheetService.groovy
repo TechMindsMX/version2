@@ -144,6 +144,7 @@ class SimulatorPaysheetService {
   }
 
   BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
+    println row.dump()
     BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_MENSUAL, row.FACT_INTEGRA)
     BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
     BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
