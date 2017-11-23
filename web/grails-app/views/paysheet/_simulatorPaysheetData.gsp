@@ -33,7 +33,7 @@
                     <td>${modulusuno.formatPrice(number:paysheet.nominalCost)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.commission)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.totalNominal)}</td>
-                    <td>% ${paysheet.iva}</td>
+                    <td>${modulusuno.formatPrice(number:paysheet.iva)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.totalBill)}</td>
                 </tr>
             </g:each>
