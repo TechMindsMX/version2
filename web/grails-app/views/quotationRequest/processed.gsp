@@ -36,16 +36,16 @@
                   <th>Empresa</th>
                   <th>Cliente</th>
                   <th>Descripción</th>
-                  <th>Comisión</th>
-                  <th>Monto</th>
+                  <th class="text-center">Comisión</th>
+                  <th class="text-center">Monto</th>
                 </tr>
                 <g:each in="${quotationRequestList.sort{it.biller.toString()}.each(){it}}" var="be">
                   <tr>
                     <td><g:link action="show" id="${be.id}">${be.biller}</g:link></td>
-                    <td>${be.quotationContract.client}</td>
+                    <td >${be.quotationContract.client}</td>
                     <td>${be.description}</td>
-                    <td>${be.commission}</td>
-                    <td><g:formatNumber number="${be.amount}" type="currency" currencyCode="MXN" /><td>
+                    <td class="text-right">${be.commission}</td>
+                    <td class="text-right">${modulusuno.formatPrice(number:be.amount)}<td>
                   </tr>
                 </g:each>
               </table>

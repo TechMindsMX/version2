@@ -19,7 +19,7 @@
 </head>
 <body>
   <h1></h1>
-  <h1>Balance general ${company}</h1>
+  <h1>Balance general de cotización de ${company}</h1>
   <h3>Desde el: <g:formatDate format="yyyy-MM-dd" date="${period.init}"/></h3>
   <h3>Hasta el: <g:formatDate format="yyyy-MM-dd" date="${period.end}"/></h3>
   <div>
