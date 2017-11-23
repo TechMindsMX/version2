@@ -208,7 +208,7 @@ class SimulatorPaysheetService {
         nominalCost:employee.paysheetCost,
         commission: employee.commission,
         totalNominal:employee.paysheetTotal,
-        iva:employee.ivaRate,
+        iva:employee.paysheetIva,
         totalBill:employee.totalToInvoice
       ]
       employeeToExportLit << employeeToExport
