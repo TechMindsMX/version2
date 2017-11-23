@@ -45,8 +45,9 @@
                 <fieldset class="form">
                 	<g:render template="form"/>
                 </fieldset>
-                <fieldset class="buttons">
-                    <input class="btn btn-primary" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+                <fieldset class="buttons text-right">
+                  <g:link class="btn btn-primary" action="show" id="${movimientosBancarios.cuenta.id}">Cancelar</g:link>
+                  <input class="btn btn-primary" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
                 </fieldset>
             </g:form>
         </div>
