@@ -9,7 +9,7 @@ class QuotationPaymentRequestController {
     def index() {
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
+      [quotationContractList: quotationContractList, company:company]
     }
 
     def consult() {
@@ -26,13 +26,7 @@ class QuotationPaymentRequestController {
     def selectPaymentRequest(String quotation){
       QuotationContract quotationContract = QuotationContract.get(quotation.toLong())
       def quotationPaymentRequestList = QuotationPaymentRequest.findAllByQuotationContract(quotationContract)
-        if(!quotationPaymentRequestList){
-           Company company = Company.get(session.company)
-           List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-           render view: 'index', model:[quotationContractList: quotationContractList]
-           return
-        }
-      render view: 'index', model:[quotationPaymentRequestList: quotationPaymentRequestList]
+      render view: 'index', model:[quotationContract:quotationContract, quotationPaymentRequestList: quotationPaymentRequestList]
     }
 
     def create(){

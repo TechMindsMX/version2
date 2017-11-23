@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -20,9 +19,12 @@
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
           <div class="portlet-title">
-            <div class="portlet-title"></div>
+           <div class="portlet-title">
+            </div>
             <div class="clearfix"></div>
           </div>
+        
+        
 
           <div id="horizontalFormExample" class="panel-collapse collapse in">
             <div class="portlet-body">
@@ -56,20 +58,18 @@
         </div>
         <br>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-11">
             <label><g:message code="Descripción" /></label>
             <input class="form-control" type="text" id="description" name="description" required="required">
           </div>
-          <div class="col-md-4">
-            <input class="form-control" min="0.00" max="16.00" step="0.01" name="commission" value="1.00" type="hidden" required=""/>
-          </div>
         </div>
-         <div class="row">
+        <br>
+        <div class="row">
           <div class="col-md-3">
             <label><g:message code="Presupuesto Maximo" /></label>
-            <input class="form-control" type="text" id="amount" name="amount" required="required">
+            <input class="form-control" type="number" id="amount" name="amount" required="required">
           </div>
-         </div>
+        </div>
         <br>
         <br>
         <div class="portlet-footer">

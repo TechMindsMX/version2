@@ -60,7 +60,7 @@
                 <div class="col-md-3">
                   <br>
                   <dt><g:message code="Comisión"/></dt>
-                  <input class="form-control" type="text" id="commission" name="commission" value="${quotationRequest.commission}" required="required">
+                  <input class="form-control" type="number" id="commission" name="commission" value="${quotationRequest.commission}" required="required">
                 </div>
               </div>
             </div>
