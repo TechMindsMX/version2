@@ -18,12 +18,7 @@
       </div>
       <br/><br/>
       <div class="row">
-        <div class="col-md-8">
-          <g:if test="${!availableEmployees}">
-            <g:link class="btn btn-primary" action="addEmployees" id="${paysheetContract.id}">Agregar Empleados</g:link>
-          </g:if>
-        </div>
-        <div class="col-md-4 text-right">
+        <div class="col-md-12 text-right">
           <g:link class="btn btn-primary" action="list">Lista</g:link>
         </div>
       </div>
