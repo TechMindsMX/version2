@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.stp
 
 class StpDeposit {
   Date dateCreated = new Date()
