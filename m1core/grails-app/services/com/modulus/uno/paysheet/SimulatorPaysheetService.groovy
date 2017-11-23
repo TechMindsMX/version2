@@ -20,27 +20,35 @@ class SimulatorPaysheetService {
         }
     }
 
+    def generateXLSForSimulator(){
+       def headers = ['CONSECUTIVO','SALARIO IMSS','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR','TOTAL IMSS','ASIMILABLE','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
+       def descriptions = ['NUMERO','','','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
+       new WebXlsxExporter().with {
+          fillRow(headers, 2
+          fillRow(descriptions, 3)
+        }
+
+    }
+
     def processXlsSimulator(file) {
         log.info "Processing massive registration for Employee"
         List data = xlsImportService.parseXlsPaysheetSimulator(file)
-        println data.class
+        List<PaysheetEmployee> paysheetEmployeeList = []
         data.each{ row ->
             println row
-            if(row.SA_NETO && row.IAS_NETO){ processForSalaryNetoAndIASNeto(row)}
+            if(row.SA_NETO && row.IAS_NETO){PaysheetEmployee paysheetEmployee =  processForSalaryNetoAndIASNeto(row); paysheetEmployeeList << paysheetEmployee}
             if(row.IAS_NETO && row.SA_BRUTO){ processForIASNetoAndSalaryBruto(row) }
             if(row.SA_BRUTO && row.IAS_BRUTO){ processForSalaryBrutoAndIASBruto(row) }
             if(row.SA_NETO && row.IAS_BRUTO){ processForSalaryNetoAndIASBruto(row)}
             if(row.IAS_NETO && row.IAS_BRUTO){processIASNetoAndIASBruto(row) }
         }
-        data
+        println paysheetEmployeeList.dump()
+        paysheetEmployeeList
     }
 
     def processForSalaryNetoAndIASNeto(def row){
       println "SA y IA Netos"
       PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
-      println "********"
-      println row.SA_MENSUAL.class
-      println paysheetEmployee.dump()
     }
 
     def processForIASNetoAndSalaryBruto(def row){
