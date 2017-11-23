@@ -15,13 +15,25 @@ class BankAccount {
   static belongsTo = [banco:Bank]
 
   static constraints = {
-    accountNumber minSize:11,maxSize:11,blank:false
-    branchNumber blank:false
-    clabe blank:false,minSize:18,maxSize:18,validator:{ val ->
-      if(!(val[val.size()-1].toInteger() == getControlDigit(val[0..(val.size()-2)])))
-        return ['wrongClabe']
+    accountNumber maxSize:11, nullable:true, blank:true, validator: { val, obj ->
+      if(!val && !obj.clabe && !obj.cardNumber) {
+        return ['missing Account Number']
+      }
     }
-    cardNumber nullable:true, blank:true
+    branchNumber blank:false
+    clabe minSize:18, maxSize:18, nullable:true, blank:true, validator:{ val, obj ->
+      if(val && !(val[val.size()-1].toInteger() == getControlDigit(val[0..(val.size()-2)]))){
+        return ['wrongClabe']
+      }
+      if(!val && !obj.accountNumber && !obj.cardNumber) {
+        return ['missing Clabe']
+      }
+    }
+    cardNumber nullable:true, blank:true, validator: { val, obj ->
+      if(!val && !obj.accountNumber && !obj.clabe) {
+        return ['missing card number']
+      }
+    }
 		clientNumber nullable:true
   }
 
@@ -40,7 +52,8 @@ class BankAccount {
   }
 
   String toString() {
-    "${banco} - ${clabe}"
+    String number = (clabe ? clabe : (accountNumber ? "${branchNumber}/${accountNumber}" : cardNumber))
+    "${banco} - ${number}"
   }
 
   static marshaller = {

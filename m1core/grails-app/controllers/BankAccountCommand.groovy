@@ -12,13 +12,15 @@ class BankAccountCommand implements Validateable {
 	String clientNumber
 
   BankAccount createBankAccount(){
+    String accountNumberFull = this.accountNumber ? this.accountNumber.padLeft(11,"0") : ""
     new BankAccount(
-      accountNumber:this.accountNumber,
+      accountNumber:accountNumberFull,
       branchNumber:this.branchNumber,
-      clabe:this.clabe,
+      clabe:this.clabe ?: "",
       concentradora: this.concentradora,
-      cardNumber: this.cardNumber,
-      clientNumber: this.clientNumber
+      cardNumber: this.cardNumber ?: "",
+      clientNumber: this.clientNumber,
+      banco:Bank.findByBankingCode(this.bank)
     )
   }
 }

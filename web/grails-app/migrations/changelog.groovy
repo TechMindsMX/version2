@@ -90,4 +90,5 @@ databaseChangeLog = {
   include file: 'create-domain-final-transaction-result.groovy'
   include file: 'adding-column-date-quotation-request.groovy'
   include file: 'create-domain-quotation-payment-request.groovy'
+  include file: 'drop-not-null-constraint-to-clabe-and-account-number-in-bankaccount.groovy'
 }

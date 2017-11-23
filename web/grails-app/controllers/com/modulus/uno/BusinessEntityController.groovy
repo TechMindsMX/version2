@@ -23,9 +23,10 @@ class BusinessEntityController {
     def offset = params.offset? params.offset.toInteger() : 0
     def total = company.businessEntities.size()
     def allBusinessEntitiesCompany = company.businessEntities.toList().sort{it.id}
+    boolean businessEntityToAuthorize = allBusinessEntitiesCompany.find {it.status == BusinessEntityStatus.TO_AUTHORIZE} ? true : false
     def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
 
-    respond businessEntityList, model:[businessEntityList:businessEntityList, businessEntityCount: total]
+    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize]
   }
 
   def show(BusinessEntity businessEntity) {
@@ -140,13 +141,19 @@ class BusinessEntityController {
   }
 
   def search(){
-    def company = Company.get(params.long("company"))
+    if (!params.rfc) {
+      redirect action:"index"
+      return
+    }
+
+    def company = Company.get(session.company)
     def businessEntityList = businessEntityService.findBusinessEntityByKeyword(params.rfc, null, company)
+    boolean businessEntityToAuthorize = businessEntityList.find { it.status == BusinessEntityStatus.TO_AUTHORIZE } ? true : false
     if(businessEntityList.isEmpty()){
       flash.message = "No se encontr\u00F3 cliente o proveedor."
     }
 
-    render view:'index',model:[companyId:company.id, businessEntityList:businessEntityList]
+    render view:'index',model:[businessEntityList:businessEntityList, businessEntityToAuthorize:businessEntityToAuthorize]
   }
 
   @Transactional
