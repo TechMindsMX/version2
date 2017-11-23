@@ -59,7 +59,31 @@
                 <g:link class="btn btn-default" controller="quotationPaymentRequest" action="send" id="${quotationPaymentRequest.id}">Enviar</g:link>
               </div>
             <div class="col-md-2 text-right">
-              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="delete" id="${quotationPaymentRequest.id}">Borrar</g:link>
+
+              <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm">
+                <i class="fa fa-trash"></i> Borrar
+              </button>
+              <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title" id="myModalLabel">Confirme la acción</h4>
+                    </div>
+                    <div class="modal-body">
+                      ¿Está seguro de eliminar la solicitud de pago?
+                    </div>
+                    <div class="modal-footer">
+                      <g:link action="delete" id="${quotationPaymentRequest.id}" class="btn btn-primary">
+                        Sí
+                      </g:link>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
             </div>
             </g:elseif>
           </div>

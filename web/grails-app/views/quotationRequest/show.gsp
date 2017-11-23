@@ -12,7 +12,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Solicitar Cotización
+        Solitudes de Cotización
       </h1>
     </div>
 
@@ -161,7 +161,29 @@
                   <g:link class="btn btn-primary" controller="quotationRequest" action="edit" id="${quotationRequest.id}">Editar</g:link>
                 </div>
                 <div class="col-md-2">
-                  <g:link class="btn btn-primary" controller="quotationRequest" action="delete" id="${quotationRequest.id}">Borrar</g:link>
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm">
+                    <i class="fa fa-trash"></i> Borrar
+                  </button>
+                  <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title" id="myModalLabel">Confirme la acción</h4>
+                        </div>
+                        <div class="modal-body">
+                          ¿Está seguro de eliminar la solicitud de cotización?
+                        </div>
+                        <div class="modal-footer">
+                          <g:link action="delete" id="${quotationRequest.id}" class="btn btn-primary">
+                            Sí
+                          </g:link>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

@@ -10,8 +10,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Editar la solicitud
-        <small>${company}</small>
+        Editar solicitud de Cotización
+        <small>${quotationRequest.quotationContract.client}</small>
       </h1>
     </div>
 

@@ -10,7 +10,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
+        Solicitudes de Cotización
         <small>${quotationContract?.client}</small>
       </h1>
     </div>
