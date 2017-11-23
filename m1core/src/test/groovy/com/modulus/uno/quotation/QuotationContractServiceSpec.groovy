@@ -95,6 +95,15 @@ class QuotationContractServiceSpec extends Specification {
         beforeBalance == 6000
     }
 
+    void "Create list of quotation balance general"(){
+      given:"List of quotation contract with request and payments"
+        def quotationContractList = getQuotationContractList()
+      when:"was created quotation balance general concep"
+        def listBalanceGeneral = service.quotationBalanceGeneralConcept(quotationContractList) 
+      then:
+        listBalanceGeneral.first().request == 6000
+    }
+
     QuotationContract getQuotationContract(){
         BusinessEntity client = new BusinessEntity(
                                                   rfc:"BDJBDYHSGGDVVD",
@@ -106,6 +115,23 @@ class QuotationContractServiceSpec extends Specification {
                                                   commision: 10,
                                                   initDate: new Date()
                                                   )
+    }
+
+    List<QuotationContract> getQuotationContractList(){
+      List<QuotationContract> quotationContractList = []
+      QuotationContract quotationContract = new QuotationContract().save(validate:false)
+      QuotationContract quotationContract2 = new QuotationContract().save(validate:false)
+      QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:4000).save(validate:false)
+      QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
+      QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
+      QuotationRequest request4 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:3000).save(validate:false)
+      QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(quotationContract:quotationContract ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
+      QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(quotationContract:quotationContract, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
+      QuotationPaymentRequest quotationPaymentRequest3 = new QuotationPaymentRequest(quotationContract:quotationContract2 ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:700).save(validate:false)
+      QuotationPaymentRequest quotationPaymentRequest4 = new QuotationPaymentRequest(quotationContract:quotationContract2, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:600).save(validate:false)
+      quotationContractList << quotationContract
+      quotationContractList << quotationContract2
+      quotationContractList
     }
 
 
