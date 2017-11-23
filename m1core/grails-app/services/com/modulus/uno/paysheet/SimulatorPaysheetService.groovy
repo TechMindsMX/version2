@@ -21,11 +21,9 @@ class SimulatorPaysheetService {
     }
 
     def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
-       def data = paysheetEmployeeList 
-       def properties = ['','salaryImss','socialQuota']
-       println paysheetEmployeeList.dump()
+       def data = employeeToExport(paysheetEmployeeList) 
+       def properties = ['consecutivo','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilable','subtotal','socialQuotaEmployerTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
        def headers = ['CONSECUTIVO','SALARIO IMSS','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR','TOTAL IMSS','ASIMILABLE','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
-       def descriptions = ['NUMERO','','','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
        new WebXlsxExporter().with {
           fillRow(headers, 2)
           add(data,properties,3)
@@ -195,6 +193,30 @@ class SimulatorPaysheetService {
     (baseQuotation * (riskJob/100)).setScale(2, RoundingMode.HALF_UP)
   }
 
+  List<Map> employeeToExport(List<PaysheetEmployee> paysheetEmployeeList){
+    List<Map> employeeToExportLit = []
+    paysheetEmployeeList.eachWithIndex{ employee, index ->
+      Map employeeToExport = [
+        consecutivo: index + 1,
+        salaryImss: employee.salaryImss,
+        socialQuota: employee.socialQuota,
+        subsidySalary: employee.subsidySalary,
+        incomeTax: employee.incomeTax,
+        totalImss:0,
+        salaryAssimilable: employee.salaryAssimilable,
+        subtotal:0,
+        socialQuotaEmployeeTotal: employee.breakdownPayment.socialQuotaEmployeeTotal,
+        isn:0,
+        nominalCost:0,
+        commission: employee.commission,
+        totalNominal:0,
+        iva:employee.ivaRate,
+        totalBill:0
+      ]
+      employeeToExportLit << employeeToExport
+    }
+    employeeToExportLit
+  }
 
 
 }
