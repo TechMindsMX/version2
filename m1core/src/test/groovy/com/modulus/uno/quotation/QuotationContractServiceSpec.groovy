@@ -15,10 +15,6 @@ class QuotationContractServiceSpec extends Specification {
 
 
 
-    void "test something"() {
-        expect:"fix me"
-            true == true
-    }
 
     void "Save quotation"(){
       given:"A quotation and BusinessEntity"
