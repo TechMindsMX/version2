@@ -14,6 +14,14 @@ class QuotationContractController {
       respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
     }
 
+    def feeIncome(){
+      Company company = Company.get(session.company)
+      List<Map> feeIncomes = quotationContractService.getQuotationWithCommisionPeriod(params)
+      model:[company:company,
+            feeIncomes:feeIncomes
+            ]
+    }
+
     def generalBalance(){
       Company company = Company.get(session.company)
       def detailGeneralBalance = quotationContractService.getQuotationBalanceGeneralConceptForPeriod(params)
