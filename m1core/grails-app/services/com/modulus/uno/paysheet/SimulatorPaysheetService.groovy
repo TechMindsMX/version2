@@ -42,7 +42,7 @@ class SimulatorPaysheetService {
             if(row.SA_NETO && row.IAS_BRUTO){ processForSalaryNetoAndIASBruto(row)}
             if(row.IAS_NETO && row.IAS_BRUTO){processIASNetoAndIASBruto(row) }
         }
-        employeeToExport(paysheetEmployeeList)
+        paysheetEmployeeList
     }
 
     def processForSalaryNetoAndIASNeto(def row){
