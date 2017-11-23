@@ -91,4 +91,6 @@ databaseChangeLog = {
   include file: 'adding-column-date-quotation-request.groovy'
   include file: 'create-domain-quotation-payment-request.groovy'
   include file: 'drop-not-null-constraint-to-clabe-and-account-number-in-bankaccount.groovy'
+  include file: 'drop-unique-constraint-to-column-email-in-profile.groovy'
+  include file: 'adding-column-username-to-registration-code.groovy'
 }

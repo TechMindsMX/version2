@@ -32,7 +32,7 @@ class UserCommand implements Validateable {
     lastName blank:false,size:1..100
     motherLastName blank:false,size:1..100
     username blank:false,size:6..50
-    email blank:false,email:true,unique:true,size:6..200
+    email blank:false,email:true,size:6..200
     trademark nullable:true,blank:false,size:1..100
     telephone nullable:true
     legal nullable:true
@@ -89,9 +89,6 @@ class UserCommand implements Validateable {
     })
     email(blank:false,email:true,size:6..200,validator:{val, obj ->
       if(!val.equalsIgnoreCase(obj.emailCheck)) {
-        return false
-      }
-      if(Profile.findByEmail(val)){
         return false
       }
     })
