@@ -22,7 +22,7 @@ class SimulatorPaysheetService {
 
     def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
        def data = employeeToExport(paysheetEmployeeList) 
-       def properties = ['consecutivo','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilable','subtotal','socialQuotaEmployerTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
+       def properties = ['consecutivo','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilable','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
        def headers = ['CONSECUTIVO','SALARIO IMSS','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR','TOTAL IMSS','ASIMILABLE','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
        new WebXlsxExporter().with {
           fillRow(headers, 2)
@@ -48,6 +48,11 @@ class SimulatorPaysheetService {
     def processForSalaryNetoAndIASNeto(def row){
       println "SA y IA Netos"
       PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
+      paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_NETO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
+      paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_NETO, row.PERIODO) // Salario neto
+      paysheetEmployee.salaryAssimilable = row.IAS_NETO // IAS NETO
+      paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_NETO, row.PERIODO) // Salario Neto
+      paysheetEmployee
     }
 
     def processForIASNetoAndSalaryBruto(def row){
@@ -93,11 +98,7 @@ class SimulatorPaysheetService {
     paysheetEmployee.breakdownPayment = breakdownPaymentEmployee(row) 
     paysheetEmployee.salaryImss = calculateAmountForPeriod(row.SA_MENSUAL,row.PERIODO)
     paysheetEmployee.socialQuota = calculateAmountForPeriod(paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal,row.PERIODO) 
-    paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_NETO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
-    paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_NETO, row.PERIODO) // Salario neto
-    paysheetEmployee.salaryAssimilable = row.IAS_NETO // IAS NETO
     paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee, row.PERIODO)
-    paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_NETO, row.PERIODO) // Salario Neto
     paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
     paysheetEmployee
   }
@@ -199,16 +200,16 @@ class SimulatorPaysheetService {
         socialQuota: employee.socialQuota,
         subsidySalary: employee.subsidySalary,
         incomeTax: employee.incomeTax,
-        totalImss:0,
+        totalImss:employee.imssSalaryNet,
         salaryAssimilable: employee.salaryAssimilable,
-        subtotal:0,
+        subtotal:employee.totalSalaryEmployee,
         socialQuotaEmployeeTotal: employee.breakdownPayment.socialQuotaEmployeeTotal,
-        isn:0,
-        nominalCost:0,
+        isn:employee.paysheetTax,
+        nominalCost:employee.paysheetCost,
         commission: employee.commission,
-        totalNominal:0,
+        totalNominal:employee.paysheetTotal,
         iva:employee.ivaRate,
-        totalBill:0
+        totalBill:employee.totalToInvoice
       ]
       employeeToExportLit << employeeToExport
     }
