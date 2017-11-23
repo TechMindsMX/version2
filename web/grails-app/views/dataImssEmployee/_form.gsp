@@ -16,16 +16,22 @@
 </div>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.baseImssMonthlySalary"/></label>
-      <input class="form-control" type="number" min="0.00" step="0.01" name="baseImssMonthlySalary" value="${dataImssEmployee?.baseImssMonthlySalary}" required=""/>
+      <input class="form-control" id="saSalary" type="number" min="0.00" step="0.01" name="baseImssMonthlySalary" value="${dataImssEmployee?.baseImssMonthlySalary}" required=""/>
     </div>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-4">
+    <div class="form-group">
+      <label><g:message code="dataImssEmployee.label.assimilableMonthlySalary"/></label>
+      <input class="form-control" id="iasSalary" type="number" min="0.00" step="0.01" name="assimilableMonthlySalary" value="${dataImssEmployee.id ? dataImssEmployee.netMonthlySalary-dataImssEmployee.baseImssMonthlySalary : ''}" required=""/>
+    </div>
+  </div>
+  <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.netMonthlySalary"/></label>
-      <input class="form-control" type="number" min="0.00" step="0.01" name="netMonthlySalary" value="${dataImssEmployee?.netMonthlySalary}" required=""/>
+      <input class="form-control" id="netSalary" type="number" min="0.00" step="0.01" name="netMonthlySalary" value="${dataImssEmployee?.netMonthlySalary}" required=""/>
     </div>
   </div>
 </div>
