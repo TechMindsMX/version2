@@ -36,14 +36,12 @@ class SimulatorPaysheetService {
         List data = xlsImportService.parseXlsPaysheetSimulator(file)
         List<PaysheetEmployee> paysheetEmployeeList = []
         data.each{ row ->
-            println row
             if(row.SA_NETO && row.IAS_NETO){PaysheetEmployee paysheetEmployee =  processForSalaryNetoAndIASNeto(row); paysheetEmployeeList << paysheetEmployee}
             if(row.IAS_NETO && row.SA_BRUTO){ processForIASNetoAndSalaryBruto(row) }
             if(row.SA_BRUTO && row.IAS_BRUTO){ processForSalaryBrutoAndIASBruto(row) }
             if(row.SA_NETO && row.IAS_BRUTO){ processForSalaryNetoAndIASBruto(row)}
             if(row.IAS_NETO && row.IAS_BRUTO){processIASNetoAndIASBruto(row) }
         }
-        println paysheetEmployeeList.dump()
         paysheetEmployeeList
     }
 
@@ -111,7 +109,6 @@ class SimulatorPaysheetService {
 
   BigDecimal calculateSubsidySalary(BigDecimal salaryNeto, String period){
     BigDecimal baseImssMonthlySalary = salaryNeto
-    println baseImssMonthlySalary 
     EmploymentSubsidy employmentSubsidy = EmploymentSubsidy.values().find { sb ->
       baseImssMonthlySalary >= sb.lowerLimit && baseImssMonthlySalary <= sb.upperLimit
     }

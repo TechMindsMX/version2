@@ -7,6 +7,7 @@ class PaysheetController {
   PaysheetService paysheetService
   PaysheetEmployeeService paysheetEmployeeService
   SimulatorPaysheetService simulatorPaysheetService
+  List<PaysheetEmployee> paysheetEmployeeList = []
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
@@ -107,12 +108,12 @@ class PaysheetController {
 
   def uploadLayoutForSimulator(){
     def file = request.getFile('layoutSimulator')
-    def paysheetEmployeeList = simulatorPaysheetService.processXlsSimulator(file)
-    exportPaysheetEmployee(paysheetEmployeeList)
+    paysheetEmployeeList = simulatorPaysheetService.processXlsSimulator(file)
+    //exportPaysheetEmployee(paysheetEmployeeList)
     render view:'simulatorPaysheet', model:[paysheetEmployeeList:paysheetEmployeeList]
   }
 
-  void exportPaysheetEmployee(List<PaysheetEmployee> paysheetEmployeeList){
+  def exportPaysheetEmployee(){
     def xlsForSimulator = simulatorPaysheetService.generateXLSForSimulator(paysheetEmployeeList)
     xlsForSimulator.with {
       setResponseHeaders(response, "XLSWithSimulator.xlsx")
