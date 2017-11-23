@@ -5,7 +5,7 @@
     <g:set var="entityName" value="${message(code: 'quotationContract.label', default: 'QuotationContract')}" />
     <title><g:message code="default.create.label" args="[entityName]" /></title>
   </head>
-    
+
   <body>
     <div class="page-title">
       <h1>
@@ -26,6 +26,28 @@
             <g:if test="${flash.message}">
               <div class="message" role="status">${flash.message}</div>
             </g:if>
+            <g:if test="${!quotationRequestList}">
+            <g:form action="chooseClient">
+            <div class="row">
+              <div class="col-md-11">
+                <div class="form-group">
+                  <label><g:message code="Clientes"/></label>
+                  <g:select name="id" class="form-control"
+                  from="${quotationContractList}"
+                  optionValue="client"
+                  optionKey="id">
+                  </g:select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 text-right">
+                  <g:submitButton name="seleccionar" class="btn btn-primary" value="${message(code: 'default.button.seleccionar.label', default: 'Seleccionar')}" />
+                </div>
+              </div>
+            </div>
+            </g:form>
+            </g:if>
+            <g:else>
             <div class="row">
               <div class="col-md-12">
                 <div class="table-responsive">
@@ -50,12 +72,13 @@
                  </div>
               </div>
             </div>
-          </div> 
+          </div>
+          </g:else>
           <nav>
             <div class="pagination">
               <g:paginate class="pagination" controller="quotationRequest" action="index" total="${quotationRequestCount ?: 0}" />
             </div>
-          </nav>      
+          </nav>
         </div>
       </div>
     </div>

@@ -37,13 +37,13 @@
                         <th>Metodo de pago</th>
                         <th>Estado</th>
                       </tr>
-                      <g:each in="${quotationPaymentRequestList}" var="paymentReques">
+                      <g:each in="${quotationPaymentRequestList}" var="paymentRequest">
                         <tr>
-                          <td><g:link action="show" id="${paymentReques.id}">${paymentReques.id}</g:link></td>
-                          <td>${paymentReques.amount}</td>
-                          <td>${paymentReques.note}</td>
-                          <td>${paymentReques.paymentWay}</td>
-                          <td><g:message code="quotationPaymentRequest.status.${paymentReques.status}"/></td>
+                          <td><g:link action="show" id="${paymentRequest.id}">${paymentRequest.id}</g:link></td>
+                          <td>${paymentRequest.amount}</td>
+                          <td>${paymentRequest.note}</td>
+                          <td><g:message code="quotationPaymentRequest.paymentWay.${paymentRequest.paymentWay}"/></td>
+                          <td><g:message code="quotationPaymentRequest.status.${paymentRequest.status}"/></td>
                         </tr>
                       </g:each>
                     </table>
