@@ -49,7 +49,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
 
     void "create BreakdownPaymentEmployee from map"(){
         given:"One list of maps"
-            def paysheet = [CONSECUTIVO:1.0, SA_MENSUAL:300.0, SA_NETO:100.0, IAS_NETO:150.0, SA_BRUTO:null, IAS_BRUTO:null, PERIODO:'Mensua', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
+            def paysheet = [CONSECUTIVO:1.0, SA_MENSUAL:300.0, SA_NETO:100.0, IAS_NETO:150.0, SA_BRUTO:null, IAS_BRUTO:null, PERIODO:'Mensual', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
         when:"create break"
             def breakdownPaymentEmployee = service.breakdownPaymentEmployee(paysheet)
         then:
@@ -59,7 +59,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
     void "create paymentSheetEmployee"(){
         given:"give one paysheet map"
             def paysheet = [CONSECUTIVO:1.0, SA_MENSUAL:300.0, SA_NETO:100.0, IAS_NETO:150.0, SA_BRUTO:null, IAS_BRUTO:null, PERIODO:'Semanal', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
-        when:
+        when:"Was create one paysheetEmployee"
             PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
 
         then:
