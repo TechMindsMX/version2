@@ -20,12 +20,15 @@ class SimulatorPaysheetService {
         }
     }
 
-    def generateXLSForSimulator(){
+    def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
+       def data = paysheetEmployeeList 
+       def properties = ['','salaryImss','socialQuota']
+       println paysheetEmployeeList.dump()
        def headers = ['CONSECUTIVO','SALARIO IMSS','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR','TOTAL IMSS','ASIMILABLE','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
        def descriptions = ['NUMERO','','','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
        new WebXlsxExporter().with {
-          fillRow(headers, 2
-          fillRow(descriptions, 3)
+          fillRow(headers, 2)
+          add(data,properties,3)
         }
 
     }
