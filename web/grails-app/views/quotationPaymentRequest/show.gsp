@@ -29,7 +29,7 @@
         			  <dt>Monto</dt>
                 <dd>${modulusuno.formatPrice(number:quotationPaymentRequest.amount)}</dd>
                 <dt>Metodo de pago</dt>
-        			  <dd><g:message code="quotationPaymentRequest.paymentWay.${quotationPaymentRequest.paymentWay}"/></dd>
+        			  <dd><g:message code="${quotationPaymentRequest.paymentMethod}"/></dd>
                 <dt>Nota</dt>
         			  <dd>${quotationPaymentRequest.note}</dd>
                 <dt>Estado</dt>

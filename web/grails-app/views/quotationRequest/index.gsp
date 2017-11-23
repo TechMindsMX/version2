@@ -11,13 +11,21 @@
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
         Cotización
-        <small>${company}</small>
+        <small>${quotationContract?.client}</small>
       </h1>
     </div>
 
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
-        <div class="portlet-heading">
+        <div class="portlet-body">
+          <g:if test="${quotationContract.client}">
+            <div class="row">
+              <div class="col-md-12">
+                <h4>${quotationContract?.client}</h4>
+                <g:link class="btn btn-primary" action="index">Regresar</g:link>
+                </div>
+              </div>
+            </g:if>
           <div class="portlet-title"></div>
           <div class="clearfix"></div>
         </div>
@@ -26,7 +34,7 @@
             <g:if test="${flash.message}">
               <div class="message" role="status">${flash.message}</div>
             </g:if>
-            <g:if test="${!quotationRequestList}">
+            <g:if test="${!quotationContract.client}">
             <g:form action="chooseClient">
             <div class="row">
               <div class="col-md-12">
@@ -55,16 +63,16 @@
                 <div class="table-responsive">
                   <table class="table table-striped table-condensed">
                     <tr>
-                      <th class="text-center">Cliente</th>
+                      <th class="text-center">Fecha</th>
                       <th class="text-center">Descripción</th>
                       <th class="text-center">Comisión</th>
                       <th class="text-center">Monto</th>
                       <th class="text-center">Estatus</th>
                     </tr>
-                    <g:each in="${quotationRequestList.sort{it.biller.toString()}.each(){it}}" var="request">
+                    <g:each in="${quotationRequestList}" var="request">
                       <tr>
                         <td 
-                        ><g:link action="show" id="${request.id}">${request.quotationContract.client}</g:link></td>
+                        ><g:link action="show" id="${request.id}"><g:formatDate format="dd-MM-yyyy" date="${request.dateCreated}" class="form-control"/></g:link></td>
                         <td class="text-center">${request.description}</td>
                         <td class="text-right">${request.commission}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:request.amount)}</td>

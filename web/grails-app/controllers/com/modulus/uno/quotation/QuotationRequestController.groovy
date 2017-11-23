@@ -16,13 +16,7 @@ class QuotationRequestController {
 
     def chooseClient(QuotationContract quotationContract){
       def quotationRequestList = QuotationRequest.findAllByQuotationContract(quotationContract)
-      if(!quotationContract){
-           Company company = Company.get(session.company)
-           List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-           render view: 'index', model:[quotationContractList: quotationContractList]
-           return
-        }
-      render view:'index', model:[quotationRequestList:quotationRequestList]
+      render view:'index', model:[quotationRequestList:quotationRequestList, quotationContract:quotationContract]
     }
 
 

@@ -16,12 +16,13 @@
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
-        <div class="portlet-heading">
+        <div class="portlet-body">
           <div class="portlet-title">
             <g:if test="${quotationContract}">
             <div class="row">
               <div class="col-md-12">
-              <g:link class="btn btn-primary" action="index">Regresar</g:link>
+                <h4>${quotationContract?.client}</h4>
+                <g:link class="btn btn-primary" action="index">Regresar</g:link>
               </div>
             </div>
             </g:if>
@@ -50,7 +51,7 @@
                           <td class="text-center"><g:link action="show" id="${paymentRequest.id}"><g:formatDate format="dd-MM-yyyy" date="${paymentRequest.dateCreated}" class="form-control"/></g:link></td>
                           <td class="text-right">${modulusuno.formatPrice(number:paymentRequest.amount)}</td>
                           <td class="text-center">${paymentRequest.note}</td>
-                          <td class="text-center"><g:message code="quotationPaymentRequest.paymentWay.${paymentRequest.paymentWay}"/></td>
+                          <td class="text-center"><g:message code="${paymentRequest.paymentMethod}"/></td>
                           <td class="text-center"><g:message code="quotationPaymentRequest.status.${paymentRequest.status}"/></td>
                         </tr>
                       </g:each>

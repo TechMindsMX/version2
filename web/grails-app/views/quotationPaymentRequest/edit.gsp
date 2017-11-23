@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.paysheet.PaymentWay%>
+<%! import com.modulus.uno.PaymentMethod%>
 <!DOCTYPE html>
 
 <html>
@@ -58,7 +58,7 @@
         <div class="row">
           <div class="col-md-3">
             <label><g:message code="Monto" /></label>
-            <input class="form-control" type="text" id="amonut" value="${quotationPaymentRequest.amount}" name="amount" required="required">
+            <input class="form-control" type="text" id="amonut" value="${quotationPaymentRequest.amount}" name="amount" required="required" pattern="([0-9]*[.])?[0-9]+">
           </div>
           <div class="col-md-4">
             <label><g:message code="Nota" /></label>
@@ -68,7 +68,7 @@
          <div class="row">
           <div class="col-md-3">
             <label><g:message code="Modo de Pago" /></label>
-            <g:select class="form-control" name="paymentWay" from="${PaymentWay.values()}"/>
+            <g:select class="form-control" name="paymentMethod" from="${PaymentMethod.values()}"/>
           </div>
          </div>
         <br>
