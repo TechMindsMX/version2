@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -24,33 +23,35 @@
         <div id="horizontalFormExample" class="panel-collapse collapse in">
           <div class="portlet-body">
             <g:if test="${flash.message}">
-            <div class="message" role="status">${flash.message}</div>
+              <div class="message" role="status">${flash.message}</div>
             </g:if>
             <div class="row">
               <div class="col-md-12">
-                <g:if test="${quotationPaymentRequestList}"
-                <div class="table-responsive">
-                  <table class="table table-striped table-condensed">
-                    <tr>
-                      <th>id</th>
-                      <th>Monto</th>
-                      <th>Nota</th>
-                      <th>Metodo de pago</th>
-                      <th>Estado</th>
-                    </tr>
-                    <g:each in="${quotationPaymentRequestList}" var="be">
-                    <tr>
-                      <td><g:link action="show" id="${be.id}">${be.id}</g:link></td>
-                      <td>${be.amount}</td>
-                      <td>${be.note}</td>
-                      <td>${be.paymentWay}</td>
-                      <td>${be.status}</td>
-                    </tr>
-                        </g:each>
-                  </table>
-                    </g:if>
-                    <g:else>
-        <g:form action="selectPaymentRequest">
+                <g:if test="${quotationPaymentRequestList}">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-condensed">
+                      <tr>
+                        <th>id</th>
+                        <th>Monto</th>
+                        <th>Nota</th>
+                        <th>Metodo de pago</th>
+                        <th>Estado</th>
+                      </tr>
+                      <g:each in="${quotationPaymentRequestList}" var="paymentReques">
+                        <tr>
+                          <td><g:link action="show" id="${paymentReques.id}">${paymentReques.id}</g:link></td>
+                          <td>${paymentReques.amount}</td>
+                          <td>${paymentReques.note}</td>
+                          <td>${paymentReques.paymentWay}</td>
+                          <td><g:message code="quotationPaymentRequest.status.${paymentReques.status}"/></td>
+                        </tr>
+                      </g:each>
+                    </table>
+                  </div>
+                </g:if>
+                    
+                <g:else>
+                  <g:form action="selectPaymentRequest">
                     <div class="row">
                       <div class="col-md-11">
                         <div class="form-group">
@@ -63,20 +64,19 @@
                         </div>
                       </div>
                       <div class="row">
-
-          <div class="col-md-6 text-right">
-            <g:submitButton name="seleccionar" class="btn btn-primary" value="${message(code: 'default.button.seleccionar.label', default: 'Seleccionar')}" />
-          </div>
+                        <div class="col-md-6 text-right">
+                          <g:submitButton name="seleccionar" class="btn btn-primary" value="${message(code: 'default.button.seleccionar.label', default: 'Seleccionar')}" />
+                        </div>
+                      </div>
                     </div>
-                    </div>
-                            </g:form>
-                            </g:else>
-                            <nav>
-                              <div class="pagination">
-                                <g:paginate class="pagination" controller="businessEntity" action="index" total="${businessEntityCount ?: 0}" />
-                              </div>
-                            </nav>
-                </div>
+                  </g:form>
+                </g:else>
+                            
+                <nav>
+                  <div class="pagination">
+                    <g:paginate class="pagination" controller="businessEntity" action="index" total="${businessEntityCount ?: 0}" />
+                  </div>
+                </nav>
               </div>
             </div>
           </div>
