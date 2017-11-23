@@ -50,8 +50,6 @@ class QuotationContractController {
     }
 
     def update(QuotationContractCommand quotationContractCommand) {
-     println  quotationContractCommand.dump()
-     println params.dump()
      Integer id = params.id.toInteger()
       quotationContractService.update(quotationContractCommand, id)
        redirect(action: 'edit', id: params.id)
@@ -62,23 +60,16 @@ class QuotationContractController {
       [quotationContract:quotationContract, company:company]
     }
 
-    def balance(QuotationContract quotationContract){
-      Map balance = quotationContractService.getBalance(quotationContract)
-      List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, new Date(), new Date())
-
-      [balance:balance,
-      quotationPaymentRequestList: quotationPaymentRequestList]
+    def chooseClientForBalance(){
+      Company company = Company.get(session.company)
+      List<QuotationContract> quotationContractList =  QuotationContract.findAllByCompany(company)
+      render view:"balance", model:[quotationContractList:quotationContractList]
     }
 
-    def getQuotationPaymentRequest(){
-      println params.dump()
-      QuotationContract quotationContract = QuotationContract.get(1)
-      Map balance = quotationContractService.getBalance(quotationContract)
-      Date firstDate = Date.parse( 'dd/MM/yyyy', params.initDate)
-      Date lastDate = Date.parse('dd/MM/yyyy', params.lastDate)
-      List<QuotationPaymentRequest> quotationPaymentRequestList = quotationContractService.getQuotationPaymentRequestList(quotationContract, firstDate, lastDate)
+    def balance(QuotationContract quotationContract){
+      Map balance = quotationContractService.getBalance(quotationContract, params)
+      render view: 'balance', model:[balance:balance]
 
-      render view: 'balance', model:[balance:balance, quotationPaymentRequestList:quotationPaymentRequestList]
     }
 
 

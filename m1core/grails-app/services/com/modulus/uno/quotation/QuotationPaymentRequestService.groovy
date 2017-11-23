@@ -16,12 +16,12 @@ class QuotationPaymentRequestService {
     quotationPaymentRequest.save()
   }
 
-  Map process(QuotationPaymentRequest quotationPaymentRequest){
+  QuotationPaymentRequest process(QuotationPaymentRequest quotationPaymentRequest){
     //QuotationContract quotationContract= quotationPaymentRequest.quotationContract
 
     quotationPaymentRequest.status = QuotationPaymentRequestStatus.PAYED
     quotationPaymentRequest.save()
- 
+
   }
 
   QuotationPaymentRequest send(QuotationPaymentRequest quotationPaymentRequest){
@@ -34,7 +34,7 @@ class QuotationPaymentRequestService {
   }
 
   def getAmountFromQuotationRequest(){
-    def amount = quotationRequest.amount 
+    def amount = quotationRequest.amount
   }
 
 }
