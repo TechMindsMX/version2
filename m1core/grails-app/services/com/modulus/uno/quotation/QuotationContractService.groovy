@@ -30,4 +30,29 @@ class QuotationContractService {
 
       typeProcess['SEND']
     }
+
+    @Transactional
+    Map getBalance(QuotationContract quotationContract){
+       List<QuotationRequest> quotationRequest = QuotationRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationRequestStatus.PROCESSED)
+       List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.PAYED)
+       List<QuotationPaymentRequest> quotationPaymentRequestlistSend = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.SEND)
+       BigDecimal income = quotationRequest.collect{ it.amount }.sum() ?: 0
+       BigDecimal transit = quotationPaymentRequestlistSend.collect{ it.amount }.sum() ?: 0
+       BigDecimal expenses = quotationPaymentRequestlistPayed.collect{ it.amount }.sum() ?: 0
+       BigDecimal available = income - transit - expenses
+       BigDecimal total = available + transit
+       quotationRequest
+
+      [quotationContract:quotationContract,
+      income:income,
+      transit:transit,
+      expenses:expenses,
+      available:available,
+      total:total
+      ]
+    }
+
+    List<QuotationPaymentRequest> getQuotationPaymentRequestList(QuotationContract quotationContract, Date initDate, Date lastDate){
+      QuotationPaymentRequest.findAllByQuotationContractAndDateCreatedBetween(quotationContract, initDate, lastDate)
+    }
 }

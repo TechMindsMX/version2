@@ -12,6 +12,12 @@ class QuotationPaymentRequestController {
       respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
     }
 
+    def consult() {
+      Company company = Company.get(session.company)
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
+    }
+
     def show(QuotationPaymentRequest quotationPaymentRequest) {
 
       respond quotationPaymentRequest
@@ -20,7 +26,7 @@ class QuotationPaymentRequestController {
     def selectPaymentRequest(String quotation){
       QuotationContract quotationContract = QuotationContract.get(quotation.toLong())
       def quotationPaymentRequestList = QuotationPaymentRequest.findAllByQuotationContract(quotationContract)
-      render view: 'index', model:[quotationPaymentRequestList: quotationPaymentRequestList]
+      render view: 'consult', model:[quotationPaymentRequestList: quotationPaymentRequestList]
     }
 
     def create(){
@@ -63,7 +69,7 @@ class QuotationPaymentRequestController {
     }
 
     def process(QuotationPaymentRequest quotationPaymentRequest){
-      quotationPaymentRequestService.process(quotationPaymentRequest)
+      Map process = quotationPaymentRequestService.process(quotationPaymentRequest)
       redirect(action:'index')
     }
 
