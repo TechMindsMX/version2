@@ -11,8 +11,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Lista de Solicitudes de Cotizaciones
-        <small>${company}</small>
+        Consulta de saldos
+        <small>${balance.quotationContract.client}</small>
       </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">

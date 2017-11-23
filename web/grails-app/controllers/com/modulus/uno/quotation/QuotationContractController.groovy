@@ -92,7 +92,7 @@ class QuotationContractController {
     def update(QuotationContractCommand quotationContractCommand) {
      Integer id = params.id.toInteger()
       quotationContractService.update(quotationContractCommand, id)
-       redirect(action: 'edit', id: params.id)
+       redirect(action: 'index', id: params.id)
     }
 
     def show(QuotationContract quotationContract) {

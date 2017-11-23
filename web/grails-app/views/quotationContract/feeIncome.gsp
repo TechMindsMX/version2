@@ -12,7 +12,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Ingesos por commsiones
+        Ingresos por comisiones
         <small>${company}</small>
       </h1>
     </div>

@@ -11,7 +11,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Solicitud de pago de cotización
+        Crear solicitud de pago de cotización
         <small>${company}</small>
       </h1>
     </div>

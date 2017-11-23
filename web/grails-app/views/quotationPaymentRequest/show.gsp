@@ -12,6 +12,7 @@
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
         Solicitud Pago
+        <small>${quotationPaymentRequest.quotationContract.client}</small>
       </h1>
     </div>
 

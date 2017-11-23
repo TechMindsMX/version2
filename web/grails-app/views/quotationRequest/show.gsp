@@ -12,7 +12,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
+        Solicitar Cotización
       </h1>
     </div>
 
