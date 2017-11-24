@@ -65,15 +65,17 @@
         <div class="row">
           <div class="col-md-3">
             <label><g:message code="Subtotal" /></label>
-            <input class="form-control" type="number" step="0.01" id="subtotal" name="subtotal" required="required" pattern="([0-9]*[.])?[0-9]+">
+            <input class="form-control" type="number" step="0.01" id="subtotal" name="subtotal" required="required" pattern="([0-9]*[.])?[0-9]+" required>
+            <label><g:message code="Ingrese el monto sin iva" /></label>
           </div>
           <div class="col-md-3">
             <label><g:message code="Total" /></label>
-            <input class="form-control" type="number" step="0.01" id="total" name="total" required="required" pattern="([0-9]*[.])?[0-9]+">
+            <input class="form-control" type="number" step="0.01" id="total" name="total" required="required" pattern="([0-9]*[.])?[0-9]+" required>
+            <label><g:message code="Ingrese el monto con iva" /></label>
           </div>
           <div class="col-md-3">
             <label><g:message code="Iva" /></label>
-            <input class="form-control" type="number" step="0.01" id="iva" name="iva" required="required" pattern="([0-9]*[.])?[0-9]+" readonly>
+            <input class="form-control" type="number" step="0.01" id="iva" name="iva" required="required" pattern="([0-9]*[.])?[0-9]+" required>
           </div>
         </div>
         <br>
