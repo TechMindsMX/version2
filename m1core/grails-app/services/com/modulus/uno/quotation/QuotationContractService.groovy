@@ -171,15 +171,36 @@ class QuotationContractService {
     List<Map> getQuotationWithCommision(List<QuotationContract> quotationContractList){
       List<Map> quotationWithCommissionList = []
       quotationContractList.each(){ quotation ->
-        Map summary = calculateSummaryForBalance(quotation)
+
+        Map summary = calculateFeeIncome(quotation)
         Map quotationWithCommission = [
           client: quotation.client,
-          amount: summary.income,
-          commission: quotation.commission,
-          commissionAmount: summary.income * (quotation.commission/100)
+          amount: summary.subtotal,
+          commission: summary.commission,
+          commissionAmount:summary.commission 
         ]
         quotationWithCommissionList << quotationWithCommission
       }
       quotationWithCommissionList
+    }
+
+    Map calculateFeeIncome(QuotationContract quotationContract){
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationRequestStatus.PROCESSED)
+      BigDecimal commission = calculateCommission(quotationRequestList) 
+      [
+        subtotal:quotationRequestList*.subtotal.sum() ?: 0,
+        commission: commission 
+
+      ]
+
+    }
+
+    BigDecimal calculateCommission(List<QuotationRequest> quotationRequestList){
+      BigDecimal commission = 0
+      quotationRequestList.each{ request -> 
+        QuotationCommission quotationCommission = QuotationCommission.findByQuotationRequest(request)
+        commission = commission + ((quotationCommission.amount * quotationCommission.commissionApply)/100)
+      }
+      commission
     }
 }

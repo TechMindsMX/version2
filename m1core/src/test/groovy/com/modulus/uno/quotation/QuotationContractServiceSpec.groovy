@@ -120,7 +120,7 @@ class QuotationContractServiceSpec extends Specification {
       when:"was created map of quotation for commission"
         def map = service.getQuotationWithCommision(quotationContractList)
       then:
-        map.first().commission == 10
+        map.first().commission == 60
     }
 
     QuotationContract getQuotationContract(){
@@ -140,10 +140,10 @@ class QuotationContractServiceSpec extends Specification {
       List<QuotationContract> quotationContractList = []
       QuotationContract quotationContract = new QuotationContract(commission:10).save(validate:false)
       QuotationContract quotationContract2 = new QuotationContract(commission:12).save(validate:false)
-      QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:4000).save(validate:false)
-      QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
-      QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
-      QuotationRequest request4 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:3000).save(validate:false)
+      QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:4000, subtotal:5000).save(validate:false)
+      QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000, subtotal:3000).save(validate:false)
+      QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000, subtotal:2000).save(validate:false)
+      QuotationRequest request4 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:3000, subtotal:1000).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(quotationContract:quotationContract ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(quotationContract:quotationContract, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest3 = new QuotationPaymentRequest(quotationContract:quotationContract2 ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:700).save(validate:false)
