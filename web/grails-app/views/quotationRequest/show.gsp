@@ -67,6 +67,8 @@
             <input id="id" name="id" type="hidden" value="${quotationRequest.id}"/>
             <input id="quotation" name="quotation" value="${quotationRequest.quotationContract.id}" type="hidden"/>
             <input id="total" name="total" value="${quotationRequest.total}" type="hidden"/>
+            <input id="subtotal" name="subtotal" value="${quotationRequest.subtotal}" type="hidden"/>
+            <input id="iva" name="iva" value="${quotationRequest.iva}" type="hidden"/>
             <input id="description" name="description" value="${quotationRequest?.description}" type="hidden"/>
             <div class=" portlet-footer">
               <div class="row">
