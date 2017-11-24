@@ -87,8 +87,8 @@ class QuotationContractService {
       List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.PAYED)
       List<QuotationPaymentRequest> quotationPaymentRequestlistSend = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.SEND)
       BigDecimal income = quotationRequest*.total.sum() ?: 0
-      BigDecimal transit = quotationPaymentRequestlistSend*.total.sum() ?: 0
-      BigDecimal expenses = quotationPaymentRequestlistPayed*.total.sum() ?: 0
+      BigDecimal transit = quotationPaymentRequestlistSend*.amount.sum() ?: 0
+      BigDecimal expenses = quotationPaymentRequestlistPayed*.amount.sum() ?: 0
       BigDecimal available = income - transit - expenses
       BigDecimal total = available + transit
       [
