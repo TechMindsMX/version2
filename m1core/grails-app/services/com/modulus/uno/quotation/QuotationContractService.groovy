@@ -148,7 +148,7 @@ class QuotationContractService {
         QuotationConcept quotationConcept = new QuotationConcept()
         quotationConcept.concept = "Pago"
         quotationConcept.date = paymentRequest.dateCreated
-        quotationConcept.charge = paymentRequest.total
+        quotationConcept.charge = paymentRequest.amount
         quotationConceptList << quotationConcept
         
       }
