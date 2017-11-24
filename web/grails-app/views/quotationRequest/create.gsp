@@ -67,6 +67,18 @@
             <label><g:message code="Presupuesto Maximo" /></label>
             <input class="form-control" type="number" step="0.01" id="amount" name="amount" required="required" pattern="([0-9]*[.])?[0-9]+">
           </div>
+          <div class="col-md-3">
+            <label><g:message code="Subtotal" /></label>
+            <input class="form-control" type="number" step="0.01" id="subtotal" name="subtotal" required="required" pattern="([0-9]*[.])?[0-9]+">
+          </div>
+          <div class="col-md-3">
+            <label><g:message code="Total" /></label>
+            <input class="form-control" type="number" step="0.01" id="total" name="total" required="required" pattern="([0-9]*[.])?[0-9]+">
+          </div>
+          <div class="col-md-3">
+            <label><g:message code="Iva" /></label>
+            <input class="form-control" type="number" step="0.01" id="iva" name="iva" required="required" pattern="([0-9]*[.])?[0-9]+">
+          </div>
         </div>
         <br>
         <br>
@@ -87,5 +99,6 @@
     </div>
 
     <asset:javascript src="quotationContract/create.js"/>
+    <asset:javascript src="quotationRequest/QuotationRequestController.js"/>
     </body>
 </html>
