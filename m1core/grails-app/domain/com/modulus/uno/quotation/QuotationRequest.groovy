@@ -12,6 +12,9 @@ class QuotationRequest {
   Company biller
   SaleOrder saleOrder
   SatConcept satConcept
+  BigDecimal subtotal
+  BigDecimal total
+  BigDecimal iva
 
   Date dateCreated
   Date lastUpdated
