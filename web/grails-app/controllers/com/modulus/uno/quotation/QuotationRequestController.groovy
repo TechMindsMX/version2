@@ -41,8 +41,9 @@ class QuotationRequestController {
     }
 
     def edit(QuotationRequest quotationRequest){
-
-      [quotationRequest:quotationRequest]
+      BigDecimal ivaRate = quotationRequestService.getIvaCurrent()
+      [quotationRequest:quotationRequest,
+      ivaRate:ivaRate]
     }
 
     def update(QuotationRequestCommand quotationRequestCommand){
@@ -51,6 +52,8 @@ class QuotationRequestController {
         quotationRequest.description = quotationRequestUpdate.description
         quotationRequest.commission = quotationRequestCommand.getCommission(quotationRequestCommand.commission)
         quotationRequest.total = quotationRequestUpdate.total
+        quotationRequest.subtotal = quotationRequestUpdate.subtotal
+        quotationRequest.iva = quotationRequestUpdate.iva
         quotationRequestService.update(quotationRequest)
       redirect(action: 'show', id: quotationRequest.id)
     }

@@ -75,7 +75,7 @@
                         ><g:link action="show" id="${request.id}"><g:formatDate format="dd-MM-yyyy" date="${request.dateCreated}" class="form-control"/></g:link></td>
                         <td class="text-center">${request.description}</td>
                         <td class="text-right">${request.commission}</td>
-                        <td class="text-right">${modulusuno.formatPrice(number:request.amount)}</td>
+                        <td class="text-right">${modulusuno.formatPrice(number:request.total)}</td>
                         <td class="text-center"><g:message code="quotationRequest.status.${request.status}"/></td>
                       </tr>
                     </g:each>
