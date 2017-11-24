@@ -86,9 +86,9 @@ class QuotationContractService {
       List<QuotationRequest> quotationRequest = QuotationRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationRequestStatus.PROCESSED)
       List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.PAYED)
       List<QuotationPaymentRequest> quotationPaymentRequestlistSend = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.SEND)
-      BigDecimal income = quotationRequest*.amount.sum() ?: 0
-      BigDecimal transit = quotationPaymentRequestlistSend*.amount.sum() ?: 0
-      BigDecimal expenses = quotationPaymentRequestlistPayed*.amount.sum() ?: 0
+      BigDecimal income = quotationRequest*.total.sum() ?: 0
+      BigDecimal transit = quotationPaymentRequestlistSend*.total.sum() ?: 0
+      BigDecimal expenses = quotationPaymentRequestlistPayed*.total.sum() ?: 0
       BigDecimal available = income - transit - expenses
       BigDecimal total = available + transit
       [
@@ -124,8 +124,8 @@ class QuotationContractService {
     }
 
     BigDecimal getPreviousBalance(QuotationContract quotationContract, Date initDate){
-      (QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.PROCESSED, initDate)*.amount.sum() ?: 0) -
-      (QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], initDate)*.amount.sum() ?: 0)
+      (QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.PROCESSED, initDate)*.total.sum() ?: 0) -
+      (QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], initDate)*.total.sum() ?: 0)
     }
 
     List<QuotationConcept> mergeList(List<QuotationRequest> quotationRequestList, List<QuotationPaymentRequest> quotationPaymentRequestlistPayed){
@@ -134,7 +134,7 @@ class QuotationContractService {
         QuotationConcept quotationConcept = new QuotationConcept()
         quotationConcept.concept = "Deposito"
         quotationConcept.date = request.dateCreated
-        quotationConcept.deposit = request.amount
+        quotationConcept.deposit = request.total
         quotationConceptList << quotationConcept
       }
 
@@ -142,7 +142,7 @@ class QuotationContractService {
         QuotationConcept quotationConcept = new QuotationConcept()
         quotationConcept.concept = "Pago"
         quotationConcept.date = paymentRequest.dateCreated
-        quotationConcept.charge = paymentRequest.amount
+        quotationConcept.charge = paymentRequest.total
         quotationConceptList << quotationConcept
       }
 

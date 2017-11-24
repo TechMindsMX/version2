@@ -69,7 +69,7 @@ class QuotationRequestService {
         saleOrderItem.save()
         if(saleOrderItem){
          quotationRequest.saleOrder = saleOrder
-         quotationCommissionService.create(quotationRequest, quotationRequest.quotationContract.commission)
+         quotationCommissionService.create(quotationRequest, quotationRequest.commission)
          quotationRequest.status = QuotationRequestStatus.PROCESSED
         }
       }
