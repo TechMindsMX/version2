@@ -67,6 +67,10 @@
                   <g:submitButton name="consultar" class="btn btn-primary marginP" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"
                   />
                   </div>
+                  <div class="col-md-6">
+                  <button type="button" name="Solicitar pago" class="btn btn-primary marginP" value="${message(code: 'default.button.paymentRequest.label', default: 'Solicitar pago')}" data-toggle="collapse" data-target="#demo"
+                  >Solicitar pago </button>
+                  </div>
                 </div>
                 </g:form>
 
@@ -88,6 +92,11 @@
                   </h2>
                 </div>
               </div>
+            </div>
+            <div class="row">
+                <div id="demo" class="collapse">
+                  <g:render template="requestPayment/requestPayment"/>
+                </div>
             </div>
             <div class="row">
               <div class="col-md-12">
