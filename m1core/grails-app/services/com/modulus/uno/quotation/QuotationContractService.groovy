@@ -130,7 +130,7 @@ class QuotationContractService {
 
     BigDecimal getPreviousBalance(QuotationContract quotationContract, Date initDate){
       List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.PROCESSED, initDate) 
-      BigDecimal previosWithoutCommission = quotationRequestList*.total.sum() ?: 0) -
+      BigDecimal previosWithoutCommission = (quotationRequestList*.total.sum() ?: 0) -
       (QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], initDate)*.amount.sum() ?: 0)
       BigDecimal commission = 0
       quotationRequestList.each{ request -> 
