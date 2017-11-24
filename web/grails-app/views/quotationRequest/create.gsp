@@ -98,6 +98,7 @@
       </div>
     </div>
 
+    <input id="ivaRate" type="hidden" value="${ivaRate}" />
     <asset:javascript src="quotationContract/create.js"/>
     <asset:javascript src="quotationRequest/QuotationRequestController.js"/>
     </body>

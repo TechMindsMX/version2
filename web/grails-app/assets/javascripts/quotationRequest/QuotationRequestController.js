@@ -12,20 +12,23 @@ var QuotationRequestController = (function(){
   calculate = function calculate(){
       var iva;
       var total; 
+      var ivaRate = parseFloat($("#ivaRate").val())
       console.log("Calculate");
       $(selectors.subtotal).on('keyup', function(){
           var subtotal = parseFloat($(selectors.subtotal).val())
-          iva = $(selectors.subtotal).val() * 0.16
+          iva = $(selectors.subtotal).val() * (ivaRate/100)
           $(selectors.iva).val(iva);
           iva = parseFloat(iva)
-          total = subtotal * 1.16
+          total = subtotal * (1.0 + (ivaRate/100))
+          total = Math.round(total * 100) / 100
           $(selectors.iva).val(iva);
           $(selectors.total).val(total);
       });
       $(selectors.total).on('keyup', function(){
         var total = parseFloat($(selectors.total).val())
         $(selectors.iva).val(iva);
-        subtotal = total / 1.16
+        subtotal = total / (1.0 + (ivaRate/100))
+        subtotal = Math.round(subtotal * 100) / 100
         iva = total - subtotal
         $(selectors.iva).val(iva);
         $(selectors.subtotal).val(subtotal);

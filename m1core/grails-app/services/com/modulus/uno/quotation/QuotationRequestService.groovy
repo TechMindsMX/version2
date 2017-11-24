@@ -102,4 +102,8 @@ class QuotationRequestService {
       List<Corporate> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED, corporate.id)
       companies
     }
+    
+    BigDecimal getIvaCurrent(){
+      new BigDecimal(grailsApplication.config.iva)
+    }
 }

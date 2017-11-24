@@ -23,9 +23,11 @@ class QuotationRequestController {
     def create(){
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      BigDecimal ivaRate = quotationRequestService.getIvaCurrent()
 
       [company:company,
-      quotationContractList:quotationContractList]
+      quotationContractList:quotationContractList,
+      ivaRate:ivaRate]
     }
 
     def save(QuotationRequestCommand quotationRequestCommand ){
