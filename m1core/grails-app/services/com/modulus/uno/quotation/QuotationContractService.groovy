@@ -86,10 +86,15 @@ class QuotationContractService {
       List<QuotationRequest> quotationRequest = QuotationRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationRequestStatus.PROCESSED)
       List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.PAYED)
       List<QuotationPaymentRequest> quotationPaymentRequestlistSend = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.SEND)
+      BigDecimal commission = 0
+      quotationRequest.each{ request -> 
+        QuotationCommission quotationCommission = QuotationCommission.findByQuotationRequest(request)
+        commission = commission + ((quotationCommission.amount * quotationCommission.commissionApply)/100)
+      }
       BigDecimal income = quotationRequest*.total.sum() ?: 0
       BigDecimal transit = quotationPaymentRequestlistSend*.amount.sum() ?: 0
       BigDecimal expenses = quotationPaymentRequestlistPayed*.amount.sum() ?: 0
-      BigDecimal available = income - transit - expenses
+      BigDecimal available = income - transit - expenses - commission
       BigDecimal total = available + transit
       [
         income:income,
@@ -124,8 +129,15 @@ class QuotationContractService {
     }
 
     BigDecimal getPreviousBalance(QuotationContract quotationContract, Date initDate){
-      (QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.PROCESSED, initDate)*.total.sum() ?: 0) -
-      (QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], initDate)*.total.sum() ?: 0)
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.PROCESSED, initDate) 
+      BigDecimal previosWithoutCommission = quotationRequestList*.total.sum() ?: 0) -
+      (QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], initDate)*.amount.sum() ?: 0)
+      BigDecimal commission = 0
+      quotationRequestList.each{ request -> 
+        QuotationCommission quotationCommission = QuotationCommission.findByQuotationRequest(request)
+        commission = commission + ((quotationCommission.amount * quotationCommission.commissionApply)/100)
+      }
+      previosWithoutCommission - commission
     }
 
     List<QuotationConcept> mergeList(List<QuotationRequest> quotationRequestList, List<QuotationPaymentRequest> quotationPaymentRequestlistPayed){
