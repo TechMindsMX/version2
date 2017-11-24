@@ -34,7 +34,7 @@ class QuotationPaymentRequestService {
   }
 
   def getAmountFromQuotationRequest(){
-    def amount = quotationRequest.amount
+    def amount = quotationRequest.total
   }
 
 }
