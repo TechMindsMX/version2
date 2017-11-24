@@ -77,7 +77,7 @@
           </div>
           <div class="col-md-3">
             <label><g:message code="Iva" /></label>
-            <input class="form-control" type="number" step="0.01" id="iva" name="iva" required="required" pattern="([0-9]*[.])?[0-9]+">
+            <input class="form-control" type="number" step="0.01" id="iva" name="iva" required="required" pattern="([0-9]*[.])?[0-9]+" readonly>
           </div>
         </div>
         <br>

@@ -13,15 +13,23 @@ var QuotationRequestController = (function(){
       var iva;
       var total; 
       console.log("Calculate");
-      $(selectors.iva).val(iva);
       $(selectors.subtotal).on('keyup', function(){
-          var subtotal = parseInt($(selectors.subtotal).val())
+          var subtotal = parseFloat($(selectors.subtotal).val())
           iva = $(selectors.subtotal).val() * 0.16
           $(selectors.iva).val(iva);
-          iva = parseInt(iva)
-          total = iva + subtotal
+          iva = parseFloat(iva)
+          total = subtotal * 1.16
+          $(selectors.iva).val(iva);
           $(selectors.total).val(total);
-      })
+      });
+      $(selectors.total).on('keyup', function(){
+        var total = parseFloat($(selectors.total).val())
+        $(selectors.iva).val(iva);
+        subtotal = total / 1.16
+        iva = total - subtotal
+        $(selectors.iva).val(iva);
+        $(selectors.subtotal).val(subtotal);
+    });
   },
 
   bindEvents = function bindEvents(){

@@ -13,6 +13,9 @@ class QuotationRequestCommand implements Validateable {
   String quotation
   String amount
   String biller
+  String iva
+  String total
+  String subtotal
 
   QuotationRequest getQuotationRequest(){
     new QuotationRequest(
@@ -20,7 +23,10 @@ class QuotationRequestCommand implements Validateable {
         description: description,
         amount: getValueInBigDecimal(amount),
         biller:QuotationContract.get(quotation.toInteger()).company,
-        quotationContract:  QuotationContract.get(quotation.toInteger())
+        quotationContract:  QuotationContract.get(quotation.toInteger()),
+        iva:getValueInBigDecimal(iva),
+        subtotal: getValueInBigDecimal(subtotal),
+        total: getValueInBigDecimal(total)
     )
   }
 
