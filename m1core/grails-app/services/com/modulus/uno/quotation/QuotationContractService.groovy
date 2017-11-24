@@ -136,6 +136,12 @@ class QuotationContractService {
         quotationConcept.date = request.dateCreated
         quotationConcept.deposit = request.total
         quotationConceptList << quotationConcept
+        QuotationConcept quotationConceptCommission = new QuotationConcept() 
+        QuotationCommission quotationCommission = QuotationCommission.findByQuotationRequest(request)
+        quotationConceptCommission.concept = "Comisión"
+        quotationConceptCommission.date = quotationCommission.dateCreated
+        quotationConceptCommission.charge = (quotationCommission.amount * quotationCommission.commissionApply) / 100
+        quotationConceptList << quotationConceptCommission
       }
 
       quotationPaymentRequestlistPayed.each{ paymentRequest ->
@@ -144,6 +150,7 @@ class QuotationContractService {
         quotationConcept.date = paymentRequest.dateCreated
         quotationConcept.charge = paymentRequest.total
         quotationConceptList << quotationConcept
+        
       }
 
       quotationConceptList.sort {it.date}
