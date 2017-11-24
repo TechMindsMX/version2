@@ -46,6 +46,10 @@
                     <dd>${quotationRequest.description}</dd>
                     <dt>Monto para la cotización</dt>
                     <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
+                    <dt>Subtotal de la cotización</dt>
+                    <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
+                    <dt>Iva de la cotización</dt>
+                    <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
                   </dl>
                 </div>
                 <div class="col-md-12">
@@ -109,6 +113,10 @@
                   <dd>${quotationRequest.description}</dd>
                   <dt>Monto para la cotización</dt>
                   <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
+                  <dt>Subtotal de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
+                  <dt>Iva de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
                   <dt>Concepto</dt>
                   <dd>${quotationRequest.satConcept}</dd>
                 </dl>
@@ -145,6 +153,10 @@
                   <dd>${quotationRequest.description}</dd>
                   <dt>Monto para la cotización</dt>
                   <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
+                  <dt>Subtotal de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
+                  <dt>Iva de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
                 </dl>
               </div>
             </div>
