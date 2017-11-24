@@ -51,6 +51,9 @@ class QuotationContractServiceSpec extends Specification {
         QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, total:1000).save(validate:false)
         QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
         QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.SEND, total:2000).save(validate:false)
+      and:"Commission for request"
+        QuotationCommission commission = new QuotationCommission (quotationRequest:request1, dateCreated: new Date(), amount:1000, commissionApply:2).save(validate:false)
+        QuotationCommission commission2 = new QuotationCommission (quotationRequest:request2, dateCreated: new Date(), amount:2000, commissionApply:2).save(validate:false)
       when:""
         Map summary = service.calculateSummaryForBalance(quotationContract)
       then:""
@@ -92,10 +95,14 @@ class QuotationContractServiceSpec extends Specification {
       and:"give payment rquest quotation"
         QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(quotationContract:quotationContract ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
         QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(quotationContract:quotationContract, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
+      and:"give list of commission from request"
+        QuotationCommission commission = new QuotationCommission (quotationRequest:request1, dateCreated: new Date(), amount:1000, commissionApply:2).save(validate:false)
+        QuotationCommission commission2 = new QuotationCommission (quotationRequest:request2, dateCreated: new Date(), amount:2000, commissionApply:2).save(validate:false)
+
       when:
         BigDecimal beforeBalance= service.getPreviousBalance(quotationContract, new Date()+90)
       then:
-        beforeBalance == 6000
+        beforeBalance == 5940
     }
 
     void "Create list of quotation balance general"(){
@@ -141,6 +148,10 @@ class QuotationContractServiceSpec extends Specification {
       QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(quotationContract:quotationContract, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest3 = new QuotationPaymentRequest(quotationContract:quotationContract2 ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:700).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest4 = new QuotationPaymentRequest(quotationContract:quotationContract2, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:600).save(validate:false)
+      QuotationCommission commission = new QuotationCommission (quotationRequest:request1, dateCreated: new Date(), amount:1000, commissionApply:2).save(validate:false)
+      QuotationCommission commission2 = new QuotationCommission (quotationRequest:request2, dateCreated: new Date(), amount:2000, commissionApply:2).save(validate:false)
+      QuotationCommission commission3 = new QuotationCommission (quotationRequest:request3, dateCreated: new Date(), amount:1000, commissionApply:2).save(validate:false)
+      QuotationCommission commission4 = new QuotationCommission (quotationRequest:request4, dateCreated: new Date(), amount:2000, commissionApply:2).save(validate:false)
       quotationContractList << quotationContract
       quotationContractList << quotationContract2
       quotationContractList
