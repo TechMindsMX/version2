@@ -9,7 +9,7 @@ import com.modulus.uno.BusinessEntity
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationContractService)
-@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest])
+@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission])
 class QuotationContractServiceSpec extends Specification {
 
 
@@ -48,9 +48,9 @@ class QuotationContractServiceSpec extends Specification {
       given:"Give QuotationContract"
         QuotationContract quotationContract = new QuotationContract().save(validate:false)
       and:"The requests"
-        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, amount:1000).save(validate:false)
-        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
-        QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.SEND, amount:2000).save(validate:false)
+        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, total:1000).save(validate:false)
+        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
+        QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.SEND, total:2000).save(validate:false)
       when:""
         Map summary = service.calculateSummaryForBalance(quotationContract)
       then:""
@@ -62,17 +62,20 @@ class QuotationContractServiceSpec extends Specification {
     void "Merge list quotationPaymentRquest and Quotation rquest"(){
       given:"Give list quotation payment request "
         List<QuotationRequest> quotationRequestList = []
-        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, amount:1000).save(validate:false)
-        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
+        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, total:1000).save(validate:false)
+        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
         quotationRequestList << request1
         quotationRequestList << request2
 
-      and:"give list og quotation request in status payed"
+      and:"give list of quotation request in status payed"
         List<QuotationPaymentRequest> quotationPaymentRequestList = []
         QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(dateCreated: new Date(), status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
         QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(dateCreated: new Date(), status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
         quotationPaymentRequestList << quotationPaymentRequest1
         quotationPaymentRequestList << quotationPaymentRequest2
+      and:"give list of commission from request"
+        QuotationCommission commission = new QuotationCommission (quotationRequest:request1, dateCreated: new Date(), amount:1000, commissionApply:2).save(validate:false)
+        QuotationCommission commission2 = new QuotationCommission (quotationRequest:request2, dateCreated: new Date(), amount:2000, commissionApply:2).save(validate:false)
 
       when:"Merge two list"
         def merge = service.mergeList(quotationRequestList, quotationPaymentRequestList)
@@ -84,8 +87,8 @@ class QuotationContractServiceSpec extends Specification {
       given:"Give quotation contract"
         QuotationContract quotationContract = new QuotationContract().save(validate:false)
       and:"Two request quotation"
-        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:4000).save(validate:false)
-        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
+        QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:4000).save(validate:false)
+        QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
       and:"give payment rquest quotation"
         QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(quotationContract:quotationContract ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
         QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(quotationContract:quotationContract, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
@@ -130,10 +133,10 @@ class QuotationContractServiceSpec extends Specification {
       List<QuotationContract> quotationContractList = []
       QuotationContract quotationContract = new QuotationContract(commission:10).save(validate:false)
       QuotationContract quotationContract2 = new QuotationContract(commission:12).save(validate:false)
-      QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:4000).save(validate:false)
-      QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
-      QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:2000).save(validate:false)
-      QuotationRequest request4 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, amount:3000).save(validate:false)
+      QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:4000).save(validate:false)
+      QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
+      QuotationRequest request3 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000).save(validate:false)
+      QuotationRequest request4 = new QuotationRequest(quotationContract:quotationContract2, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:3000).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest1 = new QuotationPaymentRequest(quotationContract:quotationContract ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:100).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest2 = new QuotationPaymentRequest(quotationContract:quotationContract, dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:300).save(validate:false)
       QuotationPaymentRequest quotationPaymentRequest3 = new QuotationPaymentRequest(quotationContract:quotationContract2 ,dateCreated: new Date()-5, status: QuotationPaymentRequestStatus.PAYED, amount:700).save(validate:false)
