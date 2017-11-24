@@ -31,22 +31,22 @@ class QuotationPaymentRequestController {
 
     def create(){
       Company company = Company.get(session.company)
-      def quotationRequest = QuotationRequest.findAll()
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-
       [company:company,
       quotationContractList:quotationContractList,
-      quotationRequest:quotationRequest]
 
     }
 
-    def save(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
+    def save(QuotationPaymentRequestCommand quotationPaymentRequestCommand, session.company){
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      Company company = Company.get(session.company)
       def quotationRequest = QuotationRequest.get(params.quotation.toInteger())
       QuotationPaymentRequest quotationPaymentRequest = quotationPaymentRequestCommand.getQuotationPaymentRequest()
       if(quotationPaymentRequest.amount > quotationRequest.total){
         //throw new QuotationException("El saldo disponible es menor al monto en la solicitud de pagos")
-        redirect(action:'create')
-        return "Fin"
+        render view:'create', model:[company:company,
+                                     quotationContractList:quotationContractList]
+        return "El monto fue mayor al saldo disponible"
       }
       quotationRequest.total = quotationRequest.total - quotationPaymentRequest.amount
       quotationPaymentRequestService.create(quotationPaymentRequest)
