@@ -62,7 +62,7 @@
               <div class="row">
                 <div class="col-md-3">
                   <label><g:message code="Presupuesto Maximo" /></label>
-                  <input class="form-control" type="number" id="amount" name="amount" step="0.01" value="${quotationRequest.amount}" required="required" pattern="([0-9]*[.])?[0-9]+">
+                  <input class="form-control" type="number" id="amount" name="amount" step="0.01" value="${quotationRequest.total}" required="required" pattern="([0-9]*[.])?[0-9]+">
                 </div>
               </div>
               <br>

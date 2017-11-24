@@ -50,7 +50,7 @@ class QuotationRequestController {
         QuotationRequest quotationRequest = QuotationRequest.get(params.id.toInteger())
         quotationRequest.description = quotationRequestUpdate.description
         quotationRequest.commission = quotationRequestCommand.getCommission(quotationRequestCommand.commission)
-        quotationRequest.amount = quotationRequestUpdate.amount
+        quotationRequest.total = quotationRequestUpdate.total
         quotationRequestService.update(quotationRequest)
       redirect(action: 'show', id: quotationRequest.id)
     }

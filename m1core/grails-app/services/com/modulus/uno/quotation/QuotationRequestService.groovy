@@ -57,7 +57,7 @@ class QuotationRequestService {
                                                                             sku:"FACTURA-10",
                                                                             name:quotationRequest.satConcept.getConcept(),
                                                                             quantity:"1",
-                                                                            price:quotationRequest.amount.toString(),
+                                                                            price:quotationRequest.total.toString(),
                                                                             discount:"0",
                                                                             ivaRetention:"0",
                                                                             iva:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),

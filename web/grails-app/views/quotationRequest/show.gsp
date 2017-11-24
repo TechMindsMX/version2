@@ -45,7 +45,7 @@
                     <dt>Descripción</dt>
                     <dd>${quotationRequest.description}</dd>
                     <dt>Monto para la cotización</dt>
-                    <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                    <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
                   </dl>
                 </div>
                 <div class="col-md-12">
@@ -66,7 +66,7 @@
             </div>
             <input id="id" name="id" type="hidden" value="${quotationRequest.id}"/>
             <input id="quotation" name="quotation" value="${quotationRequest.quotationContract.id}" type="hidden"/>
-            <input id="amount" name="amount" value="${quotationRequest.amount}" type="hidden"/>
+            <input id="total" name="total" value="${quotationRequest.total}" type="hidden"/>
             <input id="description" name="description" value="${quotationRequest?.description}" type="hidden"/>
             <div class=" portlet-footer">
               <div class="row">
@@ -106,7 +106,7 @@
                   <dt>Descripción</dt>
                   <dd>${quotationRequest.description}</dd>
                   <dt>Monto para la cotización</dt>
-                  <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
                   <dt>Concepto</dt>
                   <dd>${quotationRequest.satConcept}</dd>
                 </dl>
@@ -142,7 +142,7 @@
                   <dt>Descripción</dt>
                   <dd>${quotationRequest.description}</dd>
                   <dt>Monto para la cotización</dt>
-                  <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
                 </dl>
               </div>
             </div>
