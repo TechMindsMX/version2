@@ -21,6 +21,7 @@ class QuotationRequestService {
     SaleOrderService saleOrderService
     CorporateService corporateService
     CompanyService companyService
+    QuotationCommissionService quotationCommissionService
 
     def serviceMethod() {
 
@@ -68,6 +69,7 @@ class QuotationRequestService {
         saleOrderItem.save()
         if(saleOrderItem){
          quotationRequest.saleOrder = saleOrder
+         quotationCommissionService.create(quotationRequest, quotationRequest.quotationContract.commission)
          quotationRequest.status = QuotationRequestStatus.PROCESSED
         }
       }
