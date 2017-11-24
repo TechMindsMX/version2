@@ -52,6 +52,9 @@
                 <div class="col-md-3">
                   <label><g:message code="Monto" /></label>
                   <input class="form-control" type="number" step="0.01" id="amonut" name="amount" required="required" pattern="([0-9]*[.])?[0-9]+">
+                  <g:if test="${message}">
+                    <label><g:message code="Error: El monto en solicitud de pagos es mayor al saldo disponible" /></label>
+                  </g:if>
                 </div>
                 <div class="col-md-9">
                   <label><g:message code="Nota" /></label>
