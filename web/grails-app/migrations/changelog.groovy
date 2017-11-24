@@ -85,4 +85,5 @@ databaseChangeLog = {
     include file: 'create-domain-quotation-payment-request.groovy'
     include file: 'updating-column-paymentMethod-quotationPaymnetRequest.groovy'
     include file: 'adding-columns-quotation-request.groovy'
+    include file: 'delete-column-quotation-request.groovy'
 }
