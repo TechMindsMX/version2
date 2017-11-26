@@ -121,4 +121,10 @@ class QuotationContractController {
       redirect action: 'show', id:params.quotationId
     }
 
+    def deleteUserFromQuotationContract(User user){
+      QuotationContract quotationContract = QuotationContract.get(params.quotationId.toInteger())
+      quotationContractService.removeOneUserOfQuotationContract(quotationContract, user)
+      redirect action: 'show', id:params.quotationId
+    }
+
 }
