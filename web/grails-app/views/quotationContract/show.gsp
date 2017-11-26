@@ -16,7 +16,7 @@
     </div>
 
     <div id="edit-address" class="content scaffold-edit" role="main">
-      <div class="portlet portlet-blue">
+      <div class="portlet portlet-blue">  
         <div class="portlet-body">
           <g:if test="${flash.message}">
             <div class="message" role="status">${flash.message}</div>
@@ -44,13 +44,15 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <g:form name="addingUsers" >
-            <g:render template="users" />
-          </g:form>
-        </div>
+
       </div>
     </div>
+        <div class="row">
+          <g:form name="addingUsers" action="addUsers">
+            <g:render template="users" />
+            <input value="${quotationContract.id}" name="quotationId" type="hidden"/>
+          </g:form>
+        </div>
     <asset:javascript src="businessEntity/selectEntities.js"/>
   </body>
 </html>
