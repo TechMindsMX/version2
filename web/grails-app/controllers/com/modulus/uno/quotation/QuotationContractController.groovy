@@ -2,6 +2,7 @@ package com.modulus.uno.quotation
 import  com.modulus.uno.BusinessEntityService
 import com.modulus.uno.Period
 import com.modulus.uno.CollaboratorService
+import com.modulus.uno.User
 import java.text.SimpleDateFormat
 
 import com.modulus.uno.Company
@@ -97,7 +98,9 @@ class QuotationContractController {
 
     def show(QuotationContract quotationContract) {
       Company company = Company.get(session.company)
-      [quotationContract:quotationContract, company:company]
+      List<User> users = User.getAll()
+      println users.dump()
+      [quotationContract:quotationContract, company:company, users:users]
     }
 
     def chooseClientForBalance(){
