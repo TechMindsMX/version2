@@ -6,6 +6,8 @@
     </div>
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
+        <g:form controller="QuotationPaymentRequest" action="saveFromQuotationContract">
+
         <div class="row">
           <div class="col-md-3">
             <label>
@@ -37,6 +39,8 @@
               <g:submitButton name="create" class="btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
           </div>
         </div>
+        <input name="quotation" type="hidden" value="${balance.quotationContract.id}"/>
+        </g:form>
       </div>
     </div>
   </div>
