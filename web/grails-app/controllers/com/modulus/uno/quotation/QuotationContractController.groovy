@@ -3,6 +3,7 @@ import  com.modulus.uno.BusinessEntityService
 import com.modulus.uno.Period
 import com.modulus.uno.CollaboratorService
 import com.modulus.uno.User
+import com.modulus.uno.Corporate
 import java.text.SimpleDateFormat
 
 import com.modulus.uno.Company
@@ -58,6 +59,7 @@ class QuotationContractController {
     def create(){
     	Company company = Company.get(session.company)
 
+
       def clients = businessEntityService.findBusinessEntityByKeyword("","CLIENT" , company)
     	respond new QuotationContract(), model:[company:company,
                                               clients:clients
@@ -98,6 +100,7 @@ class QuotationContractController {
 
     def show(QuotationContract quotationContract) {
       Company company = Company.get(session.company)
+//      println corporate
       List<User> users = User.getAll()
       [quotationContract:quotationContract, company:company, users:users]
     }

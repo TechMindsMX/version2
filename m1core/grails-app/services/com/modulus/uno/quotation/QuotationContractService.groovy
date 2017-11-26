@@ -4,11 +4,13 @@ import grails.transaction.Transactional
 import com.modulus.uno.Company
 import com.modulus.uno.Period
 import com.modulus.uno.User
+import com.modulus.uno.CorporateService
 import com.modulus.uno.CollaboratorService
 
 class QuotationContractService {
 
   CollaboratorService collaboratorService
+  CorporateService corporateService
 
     @Transactional
     def create(QuotationContract quotationContract){
