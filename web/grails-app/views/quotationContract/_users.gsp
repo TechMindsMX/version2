@@ -23,6 +23,7 @@
       </div>
     
       <div class="portlet-body">
+    <g:hiddenField id="entities" name="entities" value=""/>
         <div class="table-responsive">
                 <div class="container-fluid">
           <table class="table table-striped table-condensed">
@@ -43,7 +44,7 @@
       </div>
     
       <div class="portlet-footer">
-        <button class="btn btn-primary text-right" id="add" type="button">Agregar</button>
+        <button class="btn btn-primary text-right" id="add" type="submit">Agregar</button>
       </div>
     </div>
     
