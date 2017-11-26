@@ -34,7 +34,6 @@
             </div>
           </div>
         </div>
-          
         <div class="portlet-footer">
           <div class="row">
             <div class="col-md-6">
@@ -45,7 +44,13 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <g:form name="addingUsers" >
+            <g:render template="users" />
+          </g:form>
+        </div>
       </div>
     </div>
+    <asset:javascript src="businessEntity/selectEntities.js"/>
   </body>
 </html>
