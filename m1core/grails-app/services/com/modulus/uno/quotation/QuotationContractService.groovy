@@ -211,4 +211,10 @@ class QuotationContractService {
       quotationContract.users.addAll(users)
       quotationContract.save()
     }
+
+    @Transactional
+    def removeOneUserOfQuotationContract(QuotationContract quotationContract, User user){
+      quotationContract.users.remove(user)
+      quotationContract.save()
+    }
 }
