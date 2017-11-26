@@ -115,7 +115,10 @@ class QuotationContractController {
       render view: 'balance', model:[balance:balance, period:period]
 
     }
-
-
+    
+    def addUsers(){
+      println params.dump()
+      redirect action: 'show', id:params.quotationId
+    }
 
 }
