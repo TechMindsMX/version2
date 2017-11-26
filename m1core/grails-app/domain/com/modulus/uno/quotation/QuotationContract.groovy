@@ -2,6 +2,7 @@ package com.modulus.uno.quotation
 
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.Company
+import com.modulus.uno.User
 
 class QuotationContract {
 
@@ -14,8 +15,10 @@ class QuotationContract {
   Date lastUpdated
 
   static belongsTo = [company:Company]
+  static hasMany = [users:User]
 
   static constraints = {
     commission min:0.0, max:16.0
+    users nullable:true
   }
 }
