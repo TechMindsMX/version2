@@ -99,7 +99,6 @@ class QuotationContractController {
     def show(QuotationContract quotationContract) {
       Company company = Company.get(session.company)
       List<User> users = User.getAll()
-      println users.dump()
       [quotationContract:quotationContract, company:company, users:users]
     }
 
@@ -116,8 +115,9 @@ class QuotationContractController {
 
     }
     
-    def addUsers(){
-      println params.dump()
+    def addUsers(UserListCommand userListCommand){
+      QuotationContract quotationContract = QuotationContract.get(params.quotationId.toInteger())
+      quotationContractService.addUsersToQuotationContract(userListCommand.checkBe, quotationContract)
       redirect action: 'show', id:params.quotationId
     }
 

@@ -3,6 +3,7 @@ package com.modulus.uno.quotation
 import grails.transaction.Transactional
 import com.modulus.uno.Company
 import com.modulus.uno.Period
+import com.modulus.uno.User
 import com.modulus.uno.CollaboratorService
 
 class QuotationContractService {
@@ -202,5 +203,12 @@ class QuotationContractService {
         commission = commission + ((quotationCommission.amount * quotationCommission.commissionApply)/100)
       }
       commission
+    }
+
+    @Transactional
+    def addUsersToQuotationContract(List<Integer> ids, QuotationContract quotationContract){
+      List<User> users = User.getAll(ids)
+      quotationContract.users.addAll(users)
+      quotationContract.save()
     }
 }
