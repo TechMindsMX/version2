@@ -79,6 +79,7 @@
                 <div class="row">
                   <h2>
                     Disponible: ${modulusuno.formatPrice(number:balance.summary.available)}
+                    <input type="hidden" value="${balance.summary.available}" id="available" >
                   </h2>
                 </div>
                 <div class="row">
