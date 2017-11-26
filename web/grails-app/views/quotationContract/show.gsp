@@ -53,6 +53,14 @@
             <input value="${quotationContract.id}" name="quotationId" type="hidden"/>
           </g:form>
         </div>
+
+        <div class="row">
+          <g:if test="${quotationContract.users}">
+            <g:each in="${quotationContract.users}" var="user">
+              <g:render template="userDelete" />
+            </g:each>
+          </g:if>
+        </div>
     <asset:javascript src="businessEntity/selectEntities.js"/>
   </body>
 </html>
