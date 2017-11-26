@@ -56,7 +56,18 @@
 
         <div class="row">
           <g:if test="${quotationContract.users}">
+            <div class="portlet portlet-default">
+              <div class="portlet-heading">
+                <div class="portlet-title">
+                  <h4>Usuarios en el contrato</h4>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              
+              <div class="portlet-body">
               <g:render template="userDelete" />
+              </div>
+            </div>
           </g:if>
         </div>
     <asset:javascript src="businessEntity/selectEntities.js"/>
