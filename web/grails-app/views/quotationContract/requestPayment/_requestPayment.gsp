@@ -6,7 +6,7 @@
     </div>
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
-        <g:form controller="QuotationPaymentRequest" action="saveFromQuotationContract">
+        <g:form id="requestPayment" name="requestPayment" controller="QuotationPaymentRequest" action="saveFromQuotationContract">
 
         <div class="row">
           <div class="col-md-3">
