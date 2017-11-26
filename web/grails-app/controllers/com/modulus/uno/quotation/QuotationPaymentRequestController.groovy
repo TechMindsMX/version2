@@ -82,4 +82,10 @@ class QuotationPaymentRequestController {
       redirect(action:'index')
     }
 
+    def saveFromQuotationContract(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
+      QuotationPaymentRequest quotationPaymentRequest = quotationPaymentRequestCommand.getQuotationPaymentRequest()
+      quotationPaymentRequestService.create(quotationPaymentRequest)
+      redirect(controller: "QuotationContract", action: "balance", id:quotationPaymentRequestCommand.quotation.toInteger())
+    }
+
 }
