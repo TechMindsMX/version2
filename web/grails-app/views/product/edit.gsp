@@ -8,10 +8,6 @@
     <body>
       <div class="page-title">
         <h1><g:message code="product.view.edit.label" args="[entityName]" /></h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-          <li class="active">Información del producto/servicio</b></li>
-        </ol>
       </div>
       <div id="edit-address" class="content scaffold-edit" role="main">
         <div class="portlet portlet-blue">
