@@ -100,9 +100,7 @@ class QuotationContractController {
 
     def show(QuotationContract quotationContract) {
       Company company = Company.get(session.company)
-//      println corporate
-      quotationContractService.getListUsersForCorpotate(quotationContract)
-      List<User> users = User.getAll()
+      List<User> users = quotationContractService.getListUsersForCorpotate(quotationContract, company)
       [quotationContract:quotationContract, company:company, users:users]
     }
 
