@@ -123,6 +123,15 @@ class QuotationContractServiceSpec extends Specification {
         map.first().commission == 60
     }
 
+    void "Calculate commision of one quotation contract"(){
+      given:"One list of quotatation reuqest"
+        def list = getQuotationRequestList()
+      when:"get commission"
+        def commision = service.calculateCommission(list)
+      then:
+        commision==60
+    }
+
     QuotationContract getQuotationContract(){
         BusinessEntity client = new BusinessEntity(
                                                   rfc:"BDJBDYHSGGDVVD",
@@ -155,6 +164,15 @@ class QuotationContractServiceSpec extends Specification {
       quotationContractList << quotationContract
       quotationContractList << quotationContract2
       quotationContractList
+    }
+
+    List<QuotationRequest> getQuotationRequestList(){
+      QuotationContract quotationContract = new QuotationContract(commission:10).save(validate:false)
+      QuotationRequest request1 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:4000, subtotal:5000).save(validate:false)
+      QuotationRequest request2 = new QuotationRequest(quotationContract:quotationContract, dateCreated:new Date()-10, status:QuotationRequestStatus.PROCESSED, total:2000, subtotal:3000).save(validate:false)
+      QuotationCommission commission = new QuotationCommission (quotationRequest:request1, dateCreated: new Date(), amount:1000, commissionApply:2).save(validate:false)
+      QuotationCommission commission2 = new QuotationCommission (quotationRequest:request2, dateCreated: new Date(), amount:2000, commissionApply:2).save(validate:false)
+      QuotationRequest.findAllByQuotationContract(quotationContract)
     }
 
 
