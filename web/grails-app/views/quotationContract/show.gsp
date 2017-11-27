@@ -47,14 +47,14 @@
 
       </div>
     </div>
-        <div class="row">
+        <div class="row" style="padding: 15px;">
           <g:form name="addingUsers" action="addUsers">
             <g:render template="users" />
             <input value="${quotationContract.id}" name="quotationId" type="hidden"/>
           </g:form>
         </div>
 
-        <div class="row">
+        <div class="row" style="padding: 15px;">
           <g:if test="${quotationContract.users}">
             <div class="portlet portlet-default">
               <div class="portlet-heading">
