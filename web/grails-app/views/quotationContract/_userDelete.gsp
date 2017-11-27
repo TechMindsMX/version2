@@ -1,5 +1,5 @@
 <g:each in="${quotationContract.users}" var="user">
-<div class="row">
+<div class="row" style="margin-bottom: 5px;">
 <g:form action="deleteUserFromQuotationContract">
     <div class="col-md-6">
     <label><g:message code="${user.username}" /></label>
