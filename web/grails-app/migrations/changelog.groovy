@@ -95,4 +95,5 @@ databaseChangeLog = {
   include file: 'adding-column-username-to-registration-code.groovy'
   include file: 'updating-column-paymentMethod-quotationPaymnetRequest.groovy'
     include file: 'adding-column-satkey-to-product.groovy'
+    include file: 'create-domain-unit-type.groovy'
 }
