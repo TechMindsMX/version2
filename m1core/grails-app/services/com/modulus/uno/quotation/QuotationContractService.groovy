@@ -212,8 +212,8 @@ class QuotationContractService {
       quotationContract.save()
     }
 
-    def getListUsersForCorpotate(QuotationContract quotationContract){
-      println "En el servicios "
-
+    def getListUsersForCorpotate(QuotationContract quotationContract, Company company){
+      def corporate = corporateService.getCorporateFromCompany(company.id)
+      List<User> users = corporateService.findCorporateUsers(corporate.id)
     }
 }
