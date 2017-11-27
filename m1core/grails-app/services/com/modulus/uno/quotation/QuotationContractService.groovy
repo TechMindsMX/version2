@@ -89,11 +89,7 @@ class QuotationContractService {
       List<QuotationRequest> quotationRequest = QuotationRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationRequestStatus.PROCESSED)
       List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.PAYED)
       List<QuotationPaymentRequest> quotationPaymentRequestlistSend = QuotationPaymentRequest.findAllByQuotationContractAndStatus(quotationContract, QuotationPaymentRequestStatus.SEND)
-      BigDecimal commission = 0
-      quotationRequest.each{ request -> 
-        QuotationCommission quotationCommission = QuotationCommission.findByQuotationRequest(request)
-        commission = commission + ((quotationCommission.amount * quotationCommission.commissionApply)/100)
-      }
+      BigDecimal commission = calculateCommission(quotationRequest)
       BigDecimal income = quotationRequest*.total.sum() ?: 0
       BigDecimal transit = quotationPaymentRequestlistSend*.amount.sum() ?: 0
       BigDecimal expenses = quotationPaymentRequestlistPayed*.amount.sum() ?: 0
@@ -135,11 +131,7 @@ class QuotationContractService {
       List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, QuotationRequestStatus.PROCESSED, initDate) 
       BigDecimal previosWithoutCommission = (quotationRequestList*.total.sum() ?: 0) -
       (QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedLessThan(quotationContract, [QuotationPaymentRequestStatus.SEND, QuotationPaymentRequestStatus.PAYED], initDate)*.amount.sum() ?: 0)
-      BigDecimal commission = 0
-      quotationRequestList.each{ request -> 
-        QuotationCommission quotationCommission = QuotationCommission.findByQuotationRequest(request)
-        commission = commission + ((quotationCommission.amount * quotationCommission.commissionApply)/100)
-      }
+      BigDecimal commission = calculateCommission(quotationRequestList)
       previosWithoutCommission - commission
     }
 
@@ -218,5 +210,10 @@ class QuotationContractService {
     def removeOneUserOfQuotationContract(QuotationContract quotationContract, User user){
       quotationContract.users.remove(user)
       quotationContract.save()
+    }
+
+    def getListUsersForCorpotate(QuotationContract quotationContract){
+      println "En el servicios "
+
     }
 }
