@@ -1,6 +1,6 @@
 databaseChangeLog = {
 
-    changeSet(author: "temoc (generated)", id: "1511825075759-1") {
+    changeSet(author: "temoc (generated)", id: "1511889915302-1") {
         createTable(tableName: "unit_type") {
             column(autoIncrement: "true", name: "id", type: "BIGINT") {
                 constraints(primaryKey: "true", primaryKeyName: "unit_typePK")
@@ -20,6 +20,10 @@ databaseChangeLog = {
                 constraints(nullable: "false")
             }
         }
+    }
+
+    changeSet(author: "temoc (generated)", id: "1511889915302-2") {
+        addUniqueConstraint(columnNames: "unit_key", constraintName: "UC_UNIT_TYPEUNIT_KEY_COL", tableName: "unit_type")
     }
 
 }
