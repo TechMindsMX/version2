@@ -20,6 +20,7 @@ class PrePaysheetService {
   BusinessEntityService businessEntityService
 	XlsImportService xlsImportService
 	EmployeeService employeeService
+  PaysheetProjectService paysheetProjectService
 
   @Transactional
   PrePaysheet savePrePaysheet(PrePaysheet prePaysheet) {
@@ -58,7 +59,11 @@ class PrePaysheetService {
 
   List<BusinessEntity> getEmployeesAvailableToAdd(PrePaysheet prePaysheet) {
     List<BusinessEntity> currentEmployees = obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet)
-    (prePaysheet.paysheetContract.employees.toList() - currentEmployees).sort {it.toString()}
+    PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(prePaysheet.paysheetContract, prePaysheet.paysheetProject)
+    println "Project employees: ${paysheetProject.employees}"
+    println "Contract employees: ${prePaysheet.paysheetContract.employees}"
+    def allEmployeesAvailable = paysheetProject.employees ?: prePaysheet.paysheetContract.employees
+    (allEmployeesAvailable.toList() - currentEmployees).sort {it.toString()}
   }
 
   List<BusinessEntity> obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet) {
