@@ -60,8 +60,6 @@ class PrePaysheetService {
   List<BusinessEntity> getEmployeesAvailableToAdd(PrePaysheet prePaysheet) {
     List<BusinessEntity> currentEmployees = obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet)
     PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(prePaysheet.paysheetContract, prePaysheet.paysheetProject)
-    println "Project employees: ${paysheetProject.employees}"
-    println "Contract employees: ${prePaysheet.paysheetContract.employees}"
     def allEmployeesAvailable = paysheetProject.employees ?: prePaysheet.paysheetContract.employees
     (allEmployeesAvailable.toList() - currentEmployees).sort {it.toString()}
   }
