@@ -6,4 +6,7 @@ class UnitType {
   String name
   String symbol
 
+  static constraints = {
+    symbol nullable:true
+  }
 }
