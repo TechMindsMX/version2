@@ -12,7 +12,7 @@
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
         Consulta de saldos
-        <small>${balance.quotationContract.client}</small>
+        <small>${balance?.quotationContract?.client}</small>
       </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
