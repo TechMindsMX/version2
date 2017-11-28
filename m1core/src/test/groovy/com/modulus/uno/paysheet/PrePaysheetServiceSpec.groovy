@@ -15,24 +15,32 @@ import com.modulus.uno.EmployeeService
 import com.modulus.uno.PaymentPeriod
 
 @TestFor(PrePaysheetService)
-@Mock([PaysheetContract, PrePaysheet, PrePaysheetEmployee, BusinessEntity, Company, EmployeeLink, DataImssEmployee, BankAccount, Bank])
+@Mock([PaysheetContract, PrePaysheet, PrePaysheetEmployee, BusinessEntity, Company, EmployeeLink, DataImssEmployee, BankAccount, Bank, PaysheetProject])
 class PrePaysheetServiceSpec extends Specification {
 
   BusinessEntityService businessEntityService = Mock(BusinessEntityService)
   EmployeeService employeeService = Mock(EmployeeService)
+  PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
 
   def setup() {
     service.businessEntityService = businessEntityService
     service.employeeService = employeeService
+    service.paysheetProjectService = paysheetProjectService
   }
 
-  void "Should get employees available to add a prepaysheet"() {
-    given: "PrePaysheet employees"
-      List allEmployees = [new BusinessEntity(rfc:"A").save(validate:false), new BusinessEntity(rfc:"B").save(validate:false), new BusinessEntity(rfc:"C").save(validate:false)]
+  void "Should get employees available to add a prepaysheet when paysheet project has employees"() {
+    given: "The Paysheet Contract"
+      List allEmployees = [new BusinessEntity(rfc:"A").save(validate:false), new BusinessEntity(rfc:"B").save(validate:false), new BusinessEntity(rfc:"C").save(validate:false), new BusinessEntity(rfc:"D").save(validate:false), new BusinessEntity(rfc:"E").save(validate:false)]
       PaysheetContract paysheetContract = new PaysheetContract(employees:[]).save(validate:false)
       paysheetContract.employees = allEmployees
       paysheetContract.save(validate:false)
-      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
+    and:"The Paysheet Project"
+      PaysheetProject paysheetProject = new PaysheetProject(paysheetContract:paysheetContract, name:"theProject", employees:[]).save(validate:false)
+      paysheetProject.employees = allEmployees.subList(0,3)
+      paysheetProject.save(validate:false)
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
+    and:"The PrePaysheet"
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract, paysheetProject:"theProject").save(validate:false)
       PrePaysheetEmployee employeePrePaysheet = new PrePaysheetEmployee(rfc:"B").save(validate:false)
       prePaysheet.addToEmployees(employeePrePaysheet)
       prePaysheet.save(validate:false)
