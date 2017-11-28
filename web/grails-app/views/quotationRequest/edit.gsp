@@ -61,14 +61,14 @@
               </div>
               <div class="row">
                 <div class="col-md-3">
-                  <label><g:message code="Total" /></label>
-                  <input class="form-control" type="number" id="total" name="total" step="0.01" value="${quotationRequest.total}" required="required" >
-                  <label><g:message code="Ingrese el monto con iva" /></label>
-                </div>
-                <div class="col-md-3">
                   <label><g:message code="Subtotal" /></label>
                   <input class="form-control" type="number" id="subtotal" name="subtotal" step="0.01" value="${quotationRequest.subtotal}" required="required" >
                   <label><g:message code="Ingrese el monto sin iva" /></label>
+                </div>
+                <div class="col-md-3">
+                  <label><g:message code="Total" /></label>
+                  <input class="form-control" type="number" id="total" name="total" step="0.01" value="${quotationRequest.total}" required="required" >
+                  <label><g:message code="Ingrese el monto con iva" /></label>
                 </div>
                 <div class="col-md-3">
                   <label><g:message code="Iva" /></label>

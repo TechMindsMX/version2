@@ -21,7 +21,6 @@
           <g:if test="${quotationContract.client}">
             <div class="row">
               <div class="col-md-12">
-                <h4>${quotationContract?.client}</h4>
                 <g:link class="btn btn-primary" action="index">Regresar</g:link>
                 </div>
               </div>

@@ -35,7 +35,12 @@
             <g:each in="${users}" var="user" status="index">
             <tr>
               <td><g:checkBox class="entity" id="checkBe" name="checkBe" value="${user.id}" checked="false"/></td>
-              <td>${user.username}</td>
+              <g:if test="${user.username}">
+                <td>${user.username}</td>
+              </g:if>
+              <g:else>
+                <td>${user.username}</td>
+              </g:else>
             </tr>
             </g:each>
           </table>
