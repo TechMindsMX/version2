@@ -94,6 +94,6 @@ databaseChangeLog = {
   include file: 'drop-unique-constraint-to-column-email-in-profile.groovy'
   include file: 'adding-column-username-to-registration-code.groovy'
   include file: 'updating-column-paymentMethod-quotationPaymnetRequest.groovy'
-    include file: 'adding-column-satkey-to-product.groovy'
-    include file: 'create-domain-unit-type.groovy'
+  include file: 'adding-column-satkey-to-product.groovy'
+  include file: 'create-domain-unit-type.groovy'
 }
