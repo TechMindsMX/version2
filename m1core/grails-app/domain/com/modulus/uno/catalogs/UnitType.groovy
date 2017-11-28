@@ -7,6 +7,7 @@ class UnitType {
   String symbol
 
   static constraints = {
+    unitKey unique:true
     symbol nullable:true
   }
 }
