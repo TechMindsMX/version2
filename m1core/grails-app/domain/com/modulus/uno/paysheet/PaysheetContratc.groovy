@@ -14,7 +14,7 @@ class PaysheetContract {
   User executive
 
   static belongsTo = [company:Company]
-  static hasMany = [employees:BusinessEntity, projects:PaysheetProject]
+  static hasMany = [employees:BusinessEntity, projects:PaysheetProject, users:User]
 
   static constraint = {
     client nullable:false
