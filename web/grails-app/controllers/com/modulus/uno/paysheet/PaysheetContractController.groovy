@@ -102,10 +102,10 @@ class PaysheetContractController {
 
   @Transactional
   def addUsers(ListEntitiesCommand listUsers) {
-    log.info "Users to save: ${listUsers}"
+    log.info "Users to save: ${listUsers.checkBe}"
     PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
 
-    if (!listUsers) {
+    if (!listUsers.checkBe) {
       flash.message = "No seleccionó Usuarios"
       redirect action:"chooseUsers", id:paysheetContract.id
       return
@@ -113,6 +113,13 @@ class PaysheetContractController {
 
     paysheetContractService.addUsersToPaysheetContract(paysheetContract, listUsers)
 
+    redirect action:"show", id:paysheetContract.id 
+  }
+
+  @Transactional
+  def deleteUser(PaysheetContract paysheetContract) {
+    log.info "Delete employee ${params.userId} from paysheet contract ${paysheetContract.id}"
+    paysheetContractService.deleteUserFromPaysheetContract(paysheetContract, params.userId.toLong()) 
     redirect action:"show", id:paysheetContract.id 
   }
 
