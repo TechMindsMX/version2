@@ -1,5 +1,6 @@
 package com.modulus.uno.catalogs
 
+import com.modulus.uno.Company
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
@@ -10,7 +11,8 @@ class UnitTypeController {
   def index() {
     params.max = 25
     params.sort = "name"
-    [unitTypeList:UnitType.list(params), unitTypeCount:UnitType.count()]
+    Company company = Company.get(session.company)
+    [unitTypeList:UnitType.findAllByCompany(company, params), unitTypeCount:UnitType.countByCompany(company)]
   }
 
   def create() {
