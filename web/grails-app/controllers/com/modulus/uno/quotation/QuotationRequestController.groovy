@@ -5,10 +5,15 @@ import com.modulus.uno.Company
 class QuotationRequestController {
 
     QuotationRequestService quotationRequestService
+    def springSecurityService
 
     def index() {
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      def user = springSecurityService.currentUser.id
+      println quotationContractList.users.username
+      println "**"*25
+      println user
       respond new QuotationContract(), model:[quotationContractList:quotationContractList,
        company:company
       ]
