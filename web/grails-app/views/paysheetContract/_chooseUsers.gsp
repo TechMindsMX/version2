@@ -9,6 +9,15 @@
   <div class="portlet-body">
     <g:hiddenField id="entities" name="entities" value=""/>
     <g:hiddenField name="paysheetContract.id" value="${paysheetContract.id}"/>
+    <g:if test="${flash.message}">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-danger">
+            ${flash.message}
+          </div>
+        </div>
+      </div>
+    </g:if>
     <div class="table-responsive">
       <div class="container-fluid">
       <table class="table table-striped table-condensed">
@@ -29,7 +38,7 @@
   </div>
 
   <div class="portlet-footer">
-    <button class="btn btn-primary text-right" id="add" type="submit">Agregar</button>
+    <button class="btn btn-primary text-right" id="addUs" type="button">Agregar</button>
   </div>
 
 </div>
