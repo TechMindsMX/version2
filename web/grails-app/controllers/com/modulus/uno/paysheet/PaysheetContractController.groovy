@@ -7,6 +7,7 @@ import com.modulus.uno.CompanyService
 import com.modulus.uno.Company
 import com.modulus.uno.User
 import com.modulus.uno.BusinessEntity
+import com.modulus.uno.ListEntitiesCommand
 
 @Transactional(readOnly = true)
 class PaysheetContractController {
@@ -93,4 +94,26 @@ class PaysheetContractController {
     paysheetContractService.deleteEmployeeFromPaysheetContract(paysheetContract, params.employeeId.toLong()) 
     redirect action:"show", id:paysheetContract.id 
   }
+
+  def chooseUsers(PaysheetContract paysheetContract){
+    List<User> availableUsers = paysheetContractService.getUsersAvailableToAdd(paysheetContract)
+    render view:"show", model:[paysheetContract:paysheetContract, availableUsers:availableUsers]
+  }
+
+  @Transactional
+  def addUsers(ListEntitiesCommand listUsers) {
+    log.info "Users to save: ${listUsers}"
+    PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
+
+    if (!listUsers) {
+      flash.message = "No seleccionó Usuarios"
+      redirect action:"chooseUsers", id:paysheetContract.id
+      return
+    }
+
+    paysheetContractService.addUsersToPaysheetContract(paysheetContract, listUsers)
+
+    redirect action:"show", id:paysheetContract.id 
+  }
+
 }
