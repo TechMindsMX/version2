@@ -111,4 +111,20 @@ class PaysheetContractServiceSpec extends Specification {
       result.users.size() == 3
   }
 
+  void "Should remove user from paysheet contract"() {
+    given:
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      User user1 = new User(username:"A").save(validate:false)
+      User user2 = new User(username:"B").save(validate:false)
+      paysheetContract.addToUsers(user1)
+      paysheetContract.addToUsers(user2)
+      paysheetContract.save(validate:false)
+    and:
+      Long idUser = 1
+    when:
+      def result = service.deleteUserFromPaysheetContract(paysheetContract, idUser)
+    then:
+      result.users.size() == 1
+  }
+
 }
