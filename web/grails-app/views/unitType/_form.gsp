@@ -1,5 +1,6 @@
 <g:hiddenField name="id" value="${unitType?.id}"/>
 <g:hiddenField name="version" value="${unitType?.version}"/>
+<g:hiddenField name="company.id" value="${session.company}"/>
 <div class="row">
   <div class="col-md-3">
     <div class="form-group">
