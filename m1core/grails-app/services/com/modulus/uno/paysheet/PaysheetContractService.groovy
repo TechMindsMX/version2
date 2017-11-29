@@ -63,4 +63,11 @@ class PaysheetContractService {
     paysheetContract
   }
 
+  def deleteUserFromPaysheetContract(PaysheetContract paysheetContract, Long idUser){
+    User user = User.get(idUser)
+    paysheetContract.removeFromUsers(user)
+    paysheetContract.save()
+    paysheetContract
+  }
+
 }
