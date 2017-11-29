@@ -101,7 +101,8 @@ class QuotationContractController {
     def show(QuotationContract quotationContract) {
       Company company = Company.get(session.company)
       List<User> users = quotationContractService.getListUsersForCorpotate(quotationContract, company)
-      [quotationContract:quotationContract, company:company, users:users]
+      def availableUsers = users - quotationContract.users
+      [quotationContract:quotationContract, company:company, users:users, availableUsers:availableUsers]
     }
 
     def chooseClientForBalance(){
