@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.*
 import grails.converters.JSON
 import wslite.rest.*
 import grails.transaction.Transactional
+import com.modulus.uno.catalogs.UnitType
 
 @Transactional
 class SaleOrderController {
@@ -197,7 +198,8 @@ class SaleOrderController {
   }
 
   def show(SaleOrder saleOrder) {
-    respond saleOrder, model:[saleOrderItem: new SaleOrderItem(), user:springSecurityService.currentUser, isEnabledToStamp:companyService.isCompanyEnabledToStamp(saleOrder.company)]
+    Company company = Company.get(session.company)
+    respond saleOrder, model:[saleOrderItem: new SaleOrderItem(), user:springSecurityService.currentUser, isEnabledToStamp:companyService.isCompanyEnabledToStamp(saleOrder.company), unitTypes:UnitType.findAllByCompany(company, [sort:"name"])]
   }
 
   def showFactura(SaleOrder saleOrder){
