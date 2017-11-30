@@ -58,8 +58,12 @@
                 </div>
                 <div class="col-md-12">
                   <br>
-                  <dt>Concepto </dt>
-                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}"/>
+                  <dt>Producto </dt>
+                  <g:select name="productId" class="form-control"
+                  from="${products}"
+                  optionValue="name"
+                  optionKey="id">
+                  </g:select>
                 </div>
                 <div class="col-md-3">
                   <br>
