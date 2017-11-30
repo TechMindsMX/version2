@@ -112,12 +112,15 @@
                 </dl>
               </div>
             </div>
-          </div>
-
-          <div class=" portlet-footer">
-            <div class="row">
-              <div class="col-md-6">
-                <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
+            <input id="id" name="id" type="hidden" value="${quotationRequest.id}"/>
+            <input id="quotation" name="quotation" value="${quotationRequest.quotationContract.id}" type="hidden"/>
+            <input id="amount" name="amount" value="${quotationRequest.amount}" type="hidden"/>
+            <input id="description" name="description" value="${quotationRequest?.description}" type="hidden"/>
+            <div class=" portlet-footer">
+              <div class="row">
+                <div class="col-md-6">
+                  <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
+                </div>
               </div>
             </div>
           </div>

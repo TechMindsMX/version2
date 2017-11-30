@@ -87,4 +87,29 @@ class PaysheetProjectController {
     paysheetProjectService.deletePayer(payer)
     redirect action:"show", id:paysheetProject.id
   }
+
+  def chooseEmployees(PaysheetProject paysheetProject) {
+    List employeesList = paysheetProjectService.getAvailableEmployeesToAdd(paysheetProject)
+    render view:"show", model:[paysheetProject:paysheetProject, employeesList:employeesList]
+  }
+
+  def addEmployees(PaysheetProject paysheetProject) {
+    log.info "Add employees: ${params.entities} to paysheet project ${paysheetProject.id}"
+    if (!params.entities) {
+      flash.message = "No seleccionó empleados"
+      redirect action:"chooseEmployees", id:paysheetProject.id
+      return
+    }
+
+    paysheetProjectService.addEmployeesToPaysheetProject(paysheetProject, params)
+
+    redirect action:"show", id:paysheetProject.id 
+  }
+
+  def deleteEmployee(PaysheetProject paysheetProject) {
+    log.info "Delete employee ${params.employeeId} from paysheet project ${paysheetProject.id}"
+    paysheetProjectService.deleteEmployeeFromPaysheetProject(paysheetProject, params.employeeId.toLong()) 
+    redirect action:"show", id:paysheetProject.id 
+  }
+
 }
