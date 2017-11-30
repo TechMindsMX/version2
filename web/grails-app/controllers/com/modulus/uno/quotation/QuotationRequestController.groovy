@@ -11,19 +11,9 @@ class QuotationRequestController {
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
       def currentUser = springSecurityService.currentUser
-      def lista = quotationContractList.collect{
-        if(it.users.contains(currentUser)){
-          return it
-        }
-      }.grep()
-      println quotationContractList.users.dump()
-      println "**"*25
-      println currentUser
-      println "**"*25
-      println lista.dump()
-      
+      List<QuotationContract> listOfCurrentUsers = quotationRequestService.getListOfClientsFromTheCurrentUser(quotationContractList, currentUser)
       respond new QuotationContract(), model:[quotationContractList:quotationContractList,
-       company:company, lista:lista
+       company:company, listOfCurrentUsers:listOfCurrentUsers
       ]
     }
 

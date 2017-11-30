@@ -12,6 +12,7 @@ import com.modulus.uno.CorporateService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CompanyStatus
 import com.modulus.uno.SaleOrderStatus
+import com.modulus.uno.User
 import java.math.RoundingMode
 
 @Transactional
@@ -108,4 +109,29 @@ class QuotationRequestService {
     BigDecimal getIvaCurrent(){
       new BigDecimal(grailsApplication.config.iva)
     }
+
+    List<QuotationContract> getListOfClientsFromTheCurrentUser(List<QuotationContract> quotationContract, User currentUser){
+      def listOfCurrentUsers = quotationContract.collect{
+        if(it.users.contains(currentUser)){
+          return it
+        }
+      }.grep()
+      listOfCurrentUsers
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

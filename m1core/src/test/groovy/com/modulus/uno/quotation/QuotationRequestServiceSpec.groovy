@@ -11,11 +11,12 @@ import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntityType
 import com.modulus.uno.Address
 import com.modulus.uno.Address
+import com.modulus.uno.User
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationRequestService)
-@Mock([Company, SaleOrder, BusinessEntity, QuotationContract, QuotationRequest, Address])
+@Mock([Company, SaleOrder, BusinessEntity, QuotationContract, QuotationRequest, Address, User])
 class QuotationRequestServiceSpec extends Specification {
 
     def items = []
@@ -28,38 +29,45 @@ class QuotationRequestServiceSpec extends Specification {
     def cleanup() {
     }
 
+    void "Get list of clients from the current user"(){
+      given:"List of quotation contract list"
+        def quotationContractList = generateSomeQuotationContractList()
 
+      and:"user"
+        User user1 = generateSomeUser()
 
-//    void "Should get Sale order when send one quotationRequest"(){
-//      given:"get quotationRequest"
-//          def company = new Company(rfc:"JIGE930831NZ1",
-//                                bussinessName:"Apple Computers",
-//                                webSite:"http://www.apple.com",
-//                                employeeNumbers:40,
-//                                grossAnnualBilling:4000).save(validate:false)
-//        def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
-//        def quotationContract = new QuotationContract(
-//                                                      client:businessEntity,
-//                                                      commission:10,
-//                                                      initDate: new Date(),
-//                                                      company:company
-//                                                      ).save(validate:false)
-//      and: "get quotationContract"
-//        def quotationRequest = new QuotationRequest(
-//                                                    commission:12,
-//                                                    description:"Alguna,",
-//                                                    amount:2000,
-//                                                    status: QuotationRequestStatus.SEND,
-//                                                    satConcept: "",
-//                                                    quotationContract: quotationContract
-//
-//                                                    ).save(validate:false)
-//      and:"get params"
-//        Map params = service.getParams(quotationRequest)
-//      when:
-//        def quotation = service.requestProcessed(quotationRequest)
-//      then:
-//        1 * saleOrderService.createSaleOrderWithAddress(_)
-//        quotation
-//    }
+      when:"Pass the current user from the session to new list"
+        List<QuotationContract> listOfCurrentUsers = service.getListOfClientsFromTheCurrentUser(quotationContractList, user1)
+
+      then:
+        listOfCurrentUsers.size() == 1
+        listOfCurrentUsers*.client.size() == 1
+        listOfCurrentUsers[0].comission == 2.00
+
+    }
+
+    private List<QuotationContract> generateSomeQuotationContractList(){
+          List<QuotationContract> quotationContractList = []
+          QuotationContract quotationContract = new QuotationContract(commission)
+          quotationContract.user.add(user1).save(validate:false)
+          QuotationContract quotationContract2 = new QuotationContract()
+          quotationContract2.user.add(user2).save(validate:false)
+        quotationContractList << quotationContract
+        quotationContractList << quotationContract2
+        quotationContractList
+    }
+
+    private User generateSomeUser(){
+      User user = new User().save(validate:false)
+      user
+    }
 }
+
+
+
+
+
+
+
+
+

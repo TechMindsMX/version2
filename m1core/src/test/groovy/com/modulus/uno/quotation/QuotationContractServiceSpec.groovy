@@ -9,7 +9,7 @@ import com.modulus.uno.BusinessEntity
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationContractService)
-@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission, SpringSecurityService.currentUser])
+@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission])
 class QuotationContractServiceSpec extends Specification {
 
 
@@ -121,19 +121,6 @@ class QuotationContractServiceSpec extends Specification {
         def map = service.getQuotationWithCommision(quotationContractList)
       then:
         map.first().commission == 60
-    }
-
-    void "Get list of clients from the User"(){
-      given:"List of quotation contract"
-        def quotationContractList = getQuotationContractList()
-        def currentUser = service
-        println quotationContractList
-        println currentUser
-
-      when:"Passing the current user from the session to new list"
-        def listOfCurrentUsers = quotationContractList
-      then:
-      1 == 2
     }
 
     void "Calculate commision of one quotation contract"(){
