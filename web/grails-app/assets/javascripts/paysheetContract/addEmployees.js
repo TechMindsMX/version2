@@ -7,3 +7,12 @@ $("#add").click ( function() {
   $("#addEmployees").submit();
 });
 
+$("#addUs").click ( function() {
+  if ($("#entities").val() == "") {
+    alert("No ha seleccionado usuarios");
+    return
+  }
+
+  $("#addUsers").submit();
+});
+

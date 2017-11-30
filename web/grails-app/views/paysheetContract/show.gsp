@@ -25,6 +25,14 @@
         </g:form>
       </g:if>
 
+      <g:render template="paysheetContractUsers"/>
+
+      <g:if test="${availableUsers}">
+        <g:form name="addUsers" action="addUsers" params="[paysheetContractId:paysheetContract.id]">
+          <g:render template="chooseUsers"/>
+        </g:form>
+      </g:if>
+
     </div>
 
     <asset:javascript src="businessEntity/selectEntities.js"/>

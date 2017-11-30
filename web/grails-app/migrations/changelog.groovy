@@ -95,4 +95,5 @@ databaseChangeLog = {
   include file: 'adding-column-username-to-registration-code.groovy'
   include file: 'updating-column-paymentMethod-quotationPaymnetRequest.groovy'
   include file: 'adding-employees-to-paysheet-project.groovy'
+  include file: 'adding-users-to-paysheet-contract.groovy'
 }
