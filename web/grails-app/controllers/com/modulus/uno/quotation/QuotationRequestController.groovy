@@ -87,7 +87,7 @@ class QuotationRequestController {
     def requestProcessed(QuotationRequestCommand quotationRequestCommand){
       QuotationRequest quotationRequestUpdate = quotationRequestCommand.getQuotationRequest()
       QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
-      quotationRequest.satConcept = SatConcept.values().find(){it.toString() == params.satConcept }
+      quotationRequest.product = Product.get(params.productId.toLong())
       quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
       quotationRequest.biller = Company.get(quotationRequestCommand.biller.toLong())
       quotationRequestService.requestProcessed(quotationRequest)
