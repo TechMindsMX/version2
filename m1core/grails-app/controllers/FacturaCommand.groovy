@@ -8,8 +8,7 @@ class FacturaCommand implements MessageCommand {
   String pdfTemplate
 
   List<Concepto> conceptos
-  List<Impuesto> impuestos
-  List<Impuesto> retenciones
+  TotalesImpuestos totalesImpuestos
   Boolean betweenIntegrated = false
   String observaciones
 }
