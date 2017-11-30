@@ -1,12 +1,18 @@
 package com.modulus.uno.paysheet
 
 import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.CorporateService
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.Company
+import com.modulus.uno.Corporate
+import com.modulus.uno.User
+import com.modulus.uno.ListEntitiesCommand
 
 class PaysheetContractService {
   
   BusinessEntityService businessEntityService
+  CorporateService corporateService
+  def springSecurityService
 
   def savePaysheetContract(PaysheetContract paysheetContract){
     paysheetContract.save()
@@ -37,12 +43,33 @@ class PaysheetContractService {
   }
 
   List<PaysheetContract> getPaysheetContractsWithProjectsOfCompany(Company company){
+    User currentUser = springSecurityService.currentUser
     List<PaysheetContract> all = PaysheetContract.findAllByCompany(company)
     List<PaysheetContract> result = all.collect {
-      if (it.projects) {
+      if (it.projects && it.users.contains(currentUser)) {
         return it
       }
     }.grep()
     result
   }
+
+  def getUsersAvailableToAdd(PaysheetContract paysheetContract){
+    Corporate corporate = corporateService.getCorporateFromCompany(paysheetContract.company.id)
+    corporate.users.findAll { it.enabled }.toList() - paysheetContract.users.toList()
+  }
+
+  def addUsersToPaysheetContract(PaysheetContract paysheetContract, ListEntitiesCommand listUsers) {
+    List<User> users = User.findAllByIdInList(listUsers.checkBe)
+    paysheetContract.users.addAll(users)
+    paysheetContract.save()
+    paysheetContract
+  }
+
+  def deleteUserFromPaysheetContract(PaysheetContract paysheetContract, Long idUser){
+    User user = User.get(idUser)
+    paysheetContract.removeFromUsers(user)
+    paysheetContract.save()
+    paysheetContract
+  }
+
 }
