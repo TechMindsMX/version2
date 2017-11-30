@@ -10,15 +10,20 @@ class QuotationRequestController {
     def index() {
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      def user = springSecurityService.currentUser
-      def lista = quotationContractList.contains(user)
-      println lista.users.dump()
-      println "**"*25
+      def currentUser = springSecurityService.currentUser
+      def lista = quotationContractList.collect{
+        if(it.users.contains(currentUser)){
+          return it
+        }
+      }.grep()
       println quotationContractList.users.dump()
       println "**"*25
-      println user.username
+      println currentUser
+      println "**"*25
+      println lista.dump()
+      
       respond new QuotationContract(), model:[quotationContractList:quotationContractList,
-       company:company
+       company:company, lista:lista
       ]
     }
 
