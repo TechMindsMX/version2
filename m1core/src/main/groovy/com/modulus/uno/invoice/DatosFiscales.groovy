@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.invoice
 
 class DatosFiscales {
   String razonSocial
@@ -12,4 +12,5 @@ class DatosFiscales {
   String colonia
   String delegacion
   String codigoPostal
+  String usoCFDI
 }
