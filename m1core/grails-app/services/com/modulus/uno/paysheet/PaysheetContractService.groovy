@@ -12,6 +12,7 @@ class PaysheetContractService {
   
   BusinessEntityService businessEntityService
   CorporateService corporateService
+  def springSecurityService
 
   def savePaysheetContract(PaysheetContract paysheetContract){
     paysheetContract.save()
@@ -42,9 +43,10 @@ class PaysheetContractService {
   }
 
   List<PaysheetContract> getPaysheetContractsWithProjectsOfCompany(Company company){
+    User currentUser = springSecurityService.currentUser
     List<PaysheetContract> all = PaysheetContract.findAllByCompany(company)
     List<PaysheetContract> result = all.collect {
-      if (it.projects) {
+      if (it.projects && it.users.contains(currentUser)) {
         return it
       }
     }.grep()
