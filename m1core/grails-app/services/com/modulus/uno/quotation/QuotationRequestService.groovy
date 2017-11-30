@@ -55,7 +55,7 @@ class QuotationRequestService {
       saleOrder.status = SaleOrderStatus.AUTORIZADA
       if(saleOrder.save()){
         SaleOrderItemCommand saleOrderItemCommand = new SaleOrderItemCommand(
-                                                                            sku:"FACTURA-10",
+                                                                            sku:quotationRequest.product.sku,
                                                                             name:quotationRequest.product.name,
                                                                             quantity:"1",
                                                                             price:quotationRequest.subtotal.toString(),
