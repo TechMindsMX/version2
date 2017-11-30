@@ -40,7 +40,7 @@
                 <div class="form-group">
                   <label><g:message code="Clientes"/></label>
                   <g:select name="id" class="form-control"
-                  from="${quotationContractList}"
+                  from="${lista}"
                   optionValue="client"
                   optionKey="id">
                   </g:select>
