@@ -15,7 +15,7 @@ class InvoiceService {
   }
 
   private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
-    new FacturaCommand(
+    FacturaCommand facturaCommand = new FacturaCommand(
       datosDeFacturacion: getDatosDeFacturacion(saleOrder), 
       emisor: buildEmitterFromSaleOrder(saleOrder), 
       receptor:buildReceiverFromSaleOrder(saleOrder),
@@ -23,8 +23,10 @@ class InvoiceService {
       pdfTemplate: saleOrder.pdfTemplate,
       observaciones: saleOrder.note,
       betweenIntegrated: false,
-      conceptos: buildConceptsFromSaleOrder(saleOrder)
+      conceptos: buildConceptsFromSaleOrder(saleOrder),
     )
+    facturaCommand.totalesImpuestos = buildSummaryTaxes(facturaCommand)
+    facturaCommand
   }
 
   private DatosDeFacturaction getDatosDeFacturacion(SaleOrder saleOrder) {
@@ -87,26 +89,66 @@ class InvoiceService {
   private List<Concepto> buildConceptsFromSaleOrder(SaleOrder saleOrder) {
     def conceptos = []
     saleOrder.items.each { item ->
-    //TODO: INCLUIR LOS IMPUESTOS DE CADA CONCEPTO
-      conceptos.add(new Concepto(cantidad:item.quantity, valorUnitario:item.price, descuento:item.discount, descripcion:item.name, unidad:item.unitType))
+      Concepto concepto = new Concepto(
+        cantidad:item.quantity, 
+        valorUnitario:item.price, 
+        descuento:item.discount, 
+        descripcion:item.name, 
+        unidad:item.unitType,
+        claveUnidad:getUnitKeyFromItem(item),
+        impuestos:buildTaxesFromItem(item),
+        retenciones:buildTaxWithholdingsFromItem(item)
+      )
+      conceptos.add(concepto)
     }
   }
 
+  private String getUnitKeyFromItem(SaleOrderItem item) {
+    UnitType unitType = UnitType.findByCompanyAndName(item.saleOrder.company, item.unitType)
+    unitType ? unitType.unitKey : "XNA"
+  }
 
-
-
-    def impuestos = []
-    saleOrder.items.each { item ->
-      impuestos.add(new Impuesto(importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva, impuesto:'IVA'))
+  private List<Impuesto> buildTaxesFromItem(SaleOrderItem item) {
+    List<Impuesto> taxes = []
+    
+    if (item.iva){
+      taxes.add(new Impuesto(base:item.price, importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva/100, impuesto:'002', tipoFactor:"Tasa"))
     }
-    command.impuestos = impuestos
 
-    def retenciones = []
-    saleOrder.items.each { item ->
-      retenciones.add(new Impuesto(importe:item.quantity * item.ivaRetention, tasa:0, impuesto:'IVA'))
+    taxes
+  }
+
+  private List<Impuesto> buildTaxWithholdingsFromItem(SaleOrderItem item) {
+    List<Impuesto> holdings = []
+    
+    if (item.ivaRetention){
+      holdings.add(new Impuesto(base:item.price, importe:item.ivaRetention, tasa:item.ivaRetention/item.price, impuesto:'002', tipoFactor:"Tasa"))
     }
-    command.retenciones = retenciones
-    command
+
+    holdings
+  }
+
+  private TotalesImpuestos buildSummaryTaxes(FacturaCommand facturaCommand) {
+    new TotalesImpuestos(
+      totalImpuestosTrasladados: calculateTaxesTotal(facturaCommand),
+      totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand)
+    ) 
+  }
+
+  private BigDecimal calculateTaxesTotal(FacturaCommand facturaCommand) {
+    BigDecimal total = 0
+    facturaCommand.conceptos.each { concepto -> 
+      total += concepto.impuestos*.importe.sum() ?: 0
+    }
+    total
+  }
+
+  private BigDecimal calculateHoldingsTotal(FacturaCommand facturaCommand) {
+    BigDecimal total = 0
+    facturaCommand.conceptos.each { concepto -> 
+      total += concepto.retenciones*.importe.sum() ?: 0
+    }
+    total
   }
 
   def generatePreviewFactura(SaleOrder saleOrder){
