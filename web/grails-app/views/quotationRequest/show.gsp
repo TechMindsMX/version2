@@ -121,8 +121,8 @@
                   <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
                   <dt>Iva de la cotización</dt>
                   <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
-                  <dt>Concepto</dt>
-                  <dd>${quotationRequest.satConcept}</dd>
+                  <dt>Producto</dt>
+                  <dd>${quotationRequest.product.name}</dd>
                 </dl>
               </div>
             </div>
