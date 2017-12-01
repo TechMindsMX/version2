@@ -6,24 +6,14 @@ class QuotationPaymentRequestController {
 
   QuotationPaymentRequestService quotationPaymentRequestService
   QuotationContractService quotationContractService
-  def springSecurityService
 
     def index() {
     	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      def currentUser = springSecurityService.currentUser
-      List<QuotationContract> listOfCurrentUsers = quotationContractService.getListOfClientsFromTheCurrentUser(quotationContractList, currentUser)
-      [quotationContractList: quotationContractList, company:company, listOfCurrentUsers:listOfCurrentUsers]
-    }
-
-    def consult() {
-      Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
+      [quotationContractList: quotationContractList, company:company]
     }
 
     def show(QuotationPaymentRequest quotationPaymentRequest) {
-
       respond quotationPaymentRequest
     }
 
@@ -35,9 +25,8 @@ class QuotationPaymentRequestController {
 
     def create(){
       Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      [company:company,
-      quotationContractList:quotationContractList]
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
+      [company:company, quotationContractList:quotationContractList]
     }
 
     def save(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
