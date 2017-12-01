@@ -5,11 +5,15 @@ class QuotationPaymentRequestController {
 
 
   QuotationPaymentRequestService quotationPaymentRequestService
+  QuotationContractService quotationContractService
+  def springSecurityService
 
     def index() {
     	Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      [quotationContractList: quotationContractList, company:company]
+      def currentUser = springSecurityService.currentUser
+      List<QuotationContract> listOfCurrentUsers = quotationContractService.getListOfClientsFromTheCurrentUser(quotationContractList, currentUser)
+      [quotationContractList: quotationContractList, company:company, listOfCurrentUsers:listOfCurrentUsers]
     }
 
     def consult() {
