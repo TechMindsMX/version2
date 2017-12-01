@@ -4,12 +4,13 @@ import grails.test.mixin.TestFor
 import spock.lang.Specification
 import grails.test.mixin.Mock
 import com.modulus.uno.BusinessEntity
+import com.modulus.uno.User
 
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationContractService)
-@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission])
+@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission, User])
 class QuotationContractServiceSpec extends Specification {
 
 
@@ -130,6 +131,33 @@ class QuotationContractServiceSpec extends Specification {
         def commision = service.calculateCommission(list)
       then:
         commision==60
+    }
+
+    void "Get list of clients from the current user"(){
+      given:"List of quotation contract list"
+        def quotationContractList = generateSomeQuotationContractList()
+
+      and:"user"
+        User user1 = generateSomeUser()
+
+      when:"Pass the current user from the session to new list"
+        List<QuotationContract> listOfTheCurrentUser = service.getListOfClientsFromTheCurrentUser(quotationContractList, user1)
+
+      then:"Get the list of clients from the current user"
+        listOfTheCurrentUser
+    }
+
+    private List<QuotationContract> generateSomeQuotationContractList(){
+          List<QuotationContract> quotationContractList = []
+          QuotationContract quotationContract = new QuotationContract(users:new User()).save(validate:false)
+          //quotationContract.users.add(user).save(validate:false)
+        quotationContractList << quotationContract
+        quotationContractList
+    }
+
+    private User generateSomeUser(){
+      User user1 = new User().save(validate:false)
+      user1
     }
 
     QuotationContract getQuotationContract(){
