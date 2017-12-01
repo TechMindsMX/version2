@@ -131,7 +131,8 @@ class InvoiceService {
   private TotalesImpuestos buildSummaryTaxes(FacturaCommand facturaCommand) {
     new TotalesImpuestos(
       totalImpuestosTrasladados: calculateTaxesTotal(facturaCommand),
-      totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand)
+      totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand),
+      impuestos: buildSummaryForTaxes(facturaCommand)
     ) 
   }
 
@@ -149,6 +150,16 @@ class InvoiceService {
       total += concepto.retenciones*.importe.sum() ?: 0
     }
     total
+  }
+
+  private List<Impuesto> buildSummaryForTaxes(FacturaCommand facturaCommand) {
+    List<Impuesto> summary = []
+    def allTaxes = factura.conceptos.impuestos.flatten()
+    def typeTaxes = allTaxes.impuesto.unique().sort()
+    typeTaxes.each { type ->
+      def totalType = allTaxes.findAll { it.impuesto == type }.importe.sum()
+        summary.add(new Impuesto(impuesto:type, importe:totalType, tipoFactor:"Tasa", tasa:))
+    }
   }
 
   def generatePreviewFactura(SaleOrder saleOrder){
