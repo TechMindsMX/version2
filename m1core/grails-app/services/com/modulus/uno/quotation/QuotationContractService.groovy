@@ -11,6 +11,7 @@ class QuotationContractService {
 
   CollaboratorService collaboratorService
   CorporateService corporateService
+  def springSecurityService
 
     @Transactional
     def create(QuotationContract quotationContract){
@@ -217,12 +218,8 @@ class QuotationContractService {
       List<User> users = corporateService.findCorporateUsers(corporate.id)
     }
 
-    List<QuotationContract> getListOfClientsFromTheCurrentUser(List<QuotationContract> quotationContract, User currentUser){
-      def listOfCurrentUsers = quotationContract.collect{
-        if(it.users.contains(currentUser)){
-          return it
-        }
-      }.grep()
-      listOfCurrentUsers
+    List<QuotationContract> getListOfClientsFromTheCurrentUser(Company company){
+      def allQuotationContractForCompany = QuotationContract.findAllByCompany(company)
+      allQuotationContractForCompany.findAll{ it.users.contains(springSecurityService.currentUser) }.sort { it.client.toString() }
     }
 }
