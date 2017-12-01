@@ -216,4 +216,13 @@ class QuotationContractService {
       def corporate = corporateService.getCorporateFromCompany(company.id)
       List<User> users = corporateService.findCorporateUsers(corporate.id)
     }
+
+    List<QuotationContract> getListOfClientsFromTheCurrentUser(List<QuotationContract> quotationContract, User currentUser){
+      def listOfCurrentUsers = quotationContract.collect{
+        if(it.users.contains(currentUser)){
+          return it
+        }
+      }.grep()
+      listOfCurrentUsers
+    }
 }

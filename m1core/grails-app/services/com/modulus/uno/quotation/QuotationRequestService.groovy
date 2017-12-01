@@ -110,14 +110,6 @@ class QuotationRequestService {
       new BigDecimal(grailsApplication.config.iva)
     }
 
-    List<QuotationContract> getListOfClientsFromTheCurrentUser(List<QuotationContract> quotationContract, User currentUser){
-      def listOfCurrentUsers = quotationContract.collect{
-        if(it.users.contains(currentUser)){
-          return it
-        }
-      }.grep()
-      listOfCurrentUsers
-    }
 }
 
 
