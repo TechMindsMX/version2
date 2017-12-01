@@ -132,7 +132,8 @@ class InvoiceService {
     new TotalesImpuestos(
       totalImpuestosTrasladados: calculateTaxesTotal(facturaCommand),
       totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand),
-      impuestos: buildSummaryForTaxes(facturaCommand)
+      impuestos: buildSummaryForTaxes(facturaCommand),
+      retenciones: buildSummaryForHoldings(facturaCommand)
     ) 
   }
 
@@ -154,12 +155,26 @@ class InvoiceService {
 
   private List<Impuesto> buildSummaryForTaxes(FacturaCommand facturaCommand) {
     List<Impuesto> summary = []
-    def allTaxes = factura.conceptos.impuestos.flatten()
-    def typeTaxes = allTaxes.impuesto.unique().sort()
-    typeTaxes.each { type ->
-      def totalType = allTaxes.findAll { it.impuesto == type }.importe.sum()
-        summary.add(new Impuesto(impuesto:type, importe:totalType, tipoFactor:"Tasa", tasa:))
+    def allTaxes = facturaCommand.conceptos.impuestos.flatten()
+    def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tasa:it.tasa, tipoFactor:it.tipoFactor] }.collect { k, v ->
+      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
     }
+    summaryTaxes.each {
+      summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
+    }
+    summary
+  }
+
+  private List<Impuesto> buildSummaryForHoldings(FacturaCommand facturaCommand) {
+    List<Impuesto> summary = []
+    def allTaxes = facturaCommand.conceptos.retenciones.flatten()
+    def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tasa:it.tasa, tipoFactor:it.tipoFactor] }.collect { k, v ->
+      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
+    }
+    summaryTaxes.each {
+      summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
+    }
+    summary
   }
 
   def generatePreviewFactura(SaleOrder saleOrder){
