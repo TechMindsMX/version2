@@ -11,12 +11,11 @@ import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntityType
 import com.modulus.uno.Address
 import com.modulus.uno.Address
-import com.modulus.uno.User
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationRequestService)
-@Mock([Company, SaleOrder, BusinessEntity, QuotationContract, QuotationRequest, Address, User])
+@Mock([Company, SaleOrder, BusinessEntity, QuotationContract, QuotationRequest, Address])
 class QuotationRequestServiceSpec extends Specification {
 
     def items = []
@@ -29,38 +28,9 @@ class QuotationRequestServiceSpec extends Specification {
     def cleanup() {
     }
 
-    void "Get list of clients from the current user"(){
-      given:"List of quotation contract list"
-        def quotationContractList = generateSomeQuotationContractList()
+    
 
-      and:"user"
-        User user1 = generateSomeUser()
-
-      when:"Pass the current user from the session to new list"
-        List<QuotationContract> listOfCurrentUsers = service.getListOfClientsFromTheCurrentUser(quotationContractList, user1)
-
-      then:
-        listOfCurrentUsers.size() == 1
-        listOfCurrentUsers*.client.size() == 1
-        listOfCurrentUsers[0].comission == 2.00
-
-    }
-
-    private List<QuotationContract> generateSomeQuotationContractList(){
-          List<QuotationContract> quotationContractList = []
-          QuotationContract quotationContract = new QuotationContract(commission)
-          quotationContract.user.add(user1).save(validate:false)
-          QuotationContract quotationContract2 = new QuotationContract()
-          quotationContract2.user.add(user2).save(validate:false)
-        quotationContractList << quotationContract
-        quotationContractList << quotationContract2
-        quotationContractList
-    }
-
-    private User generateSomeUser(){
-      User user = new User().save(validate:false)
-      user
-    }
+    
 }
 
 
