@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import com.modulus.uno.invoice.*
+
 class FacturaCommand implements MessageCommand {
   DatosDeFacturacion datosDeFacturacion
   Contribuyente emisor
