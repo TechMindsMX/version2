@@ -2,6 +2,7 @@ package com.modulus.uno
 
 import grails.util.Environment
 import com.modulus.uno.invoice.*
+import com.modulus.uno.catalogs.UnitType
 
 class InvoiceService {
 
@@ -19,17 +20,17 @@ class InvoiceService {
       datosDeFacturacion: getDatosDeFacturacion(saleOrder), 
       emisor: buildEmitterFromSaleOrder(saleOrder), 
       receptor:buildReceiverFromSaleOrder(saleOrder),
-      emitter: this.emisor.rfc,
       pdfTemplate: saleOrder.pdfTemplate,
       observaciones: saleOrder.note,
       betweenIntegrated: false,
-      conceptos: buildConceptsFromSaleOrder(saleOrder),
+      conceptos: buildConceptsFromSaleOrder(saleOrder)
     )
+    facturaCommand.emitter = facturaCommand.emisor.datosFiscales.rfc
     facturaCommand.totalesImpuestos = buildSummaryTaxes(facturaCommand)
     facturaCommand
   }
 
-  private DatosDeFacturaction getDatosDeFacturacion(SaleOrder saleOrder) {
+  private DatosDeFacturacion getDatosDeFacturacion(SaleOrder saleOrder) {
     Company company = saleOrder.company
     ClientLink client = ClientLink.findByClientRefAndCompany(saleOrder.rfc, company)
     String accountNumber = ""
@@ -88,7 +89,7 @@ class InvoiceService {
 
   private List<Concepto> buildConceptsFromSaleOrder(SaleOrder saleOrder) {
     def conceptos = []
-    saleOrder.items.each { item ->
+    saleOrder.items.toList().each { item ->
       Concepto concepto = new Concepto(
         cantidad:item.quantity, 
         valorUnitario:item.price, 
@@ -101,6 +102,7 @@ class InvoiceService {
       )
       conceptos.add(concepto)
     }
+    conceptos
   }
 
   private String getUnitKeyFromItem(SaleOrderItem item) {
