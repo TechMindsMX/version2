@@ -5,15 +5,19 @@ import spock.lang.Specification
 import grails.test.mixin.Mock
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.User
-
+import com.modulus.uno.Company
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationContractService)
-@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission, User])
+@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission, Company])
 class QuotationContractServiceSpec extends Specification {
 
+  User user1 = Mock(User)
 
+  def setup() {
+    service.springSecurityService = [currentUser:user1]
+  }
 
     void "Save quotation"(){
       given:"A quotation and BusinessEntity"
@@ -134,30 +138,16 @@ class QuotationContractServiceSpec extends Specification {
     }
 
     void "Get list of clients from the current user"(){
-      given:"List of quotation contract list"
-        def quotationContractList = generateSomeQuotationContractList()
-
-      and:"user"
-        User user1 = generateSomeUser()
-
+      given:"The company"
+        Company company = new Company().save(validate:false)
+      and:"The contracts"
+        QuotationContract qc1 = new QuotationContract(users:[user1], company:company).save(validate:false)
+        QuotationContract qc2 = new QuotationContract(users:[Mock(User).username="B"], company:company).save(validate:false)
       when:"Pass the current user from the session to new list"
-        List<QuotationContract> listOfTheCurrentUser = service.getListOfClientsFromTheCurrentUser(quotationContractList, user1)
+        List<QuotationContract> listOfTheCurrentUser = service.getListOfClientsFromTheCurrentUser(company)
 
       then:"Get the list of clients from the current user"
-        listOfTheCurrentUser
-    }
-
-    private List<QuotationContract> generateSomeQuotationContractList(){
-          List<QuotationContract> quotationContractList = []
-          QuotationContract quotationContract = new QuotationContract(users:new User()).save(validate:false)
-          //quotationContract.users.add(user).save(validate:false)
-        quotationContractList << quotationContract
-        quotationContractList
-    }
-
-    private User generateSomeUser(){
-      User user1 = new User().save(validate:false)
-      user1
+        listOfTheCurrentUser.size() == 1
     }
 
     QuotationContract getQuotationContract(){
