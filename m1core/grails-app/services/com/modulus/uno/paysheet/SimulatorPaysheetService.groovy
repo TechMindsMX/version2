@@ -37,7 +37,7 @@ class SimulatorPaysheetService {
         List<PaysheetEmployee> paysheetEmployeeList = []
         data.each{ row ->
             if(row.SA_NETO && row.IAS_NETO){PaysheetEmployee paysheetEmployee =  processForSalaryNetoAndIASNeto(row); paysheetEmployeeList << paysheetEmployee}
-            if(row.IAS_NETO && row.SA_BRUTO){ processForIASNetoAndSalaryBruto(row) }
+            if(row.IAS_NETO && row.SA_BRUTO){ paysheetEmployeeList << processForIASNetoAndSalaryBruto(row) }
             if(row.SA_BRUTO && row.IAS_BRUTO){ processForSalaryBrutoAndIASBruto(row) }
             if(row.SA_NETO && row.IAS_BRUTO){ processForSalaryNetoAndIASBruto(row)}
             if(row.IAS_NETO && row.IAS_BRUTO){processIASNetoAndIASBruto(row) }
@@ -51,17 +51,20 @@ class SimulatorPaysheetService {
     }
 
     def processForIASNetoAndSalaryBruto(def row){
-      println "IAS_NETO y SA_BRUTO" 
-      PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
-      
+      println "IAS_NETO y SA_BRUTO......" 
+      row.SA_NETO = calculateSalaryNeto(row.SA_BRUTO)
+      println row.SA_NETO
+      getPaysheetEmployeeWithCalcules(row)
     }
 
     def processForSalaryBrutoAndIASBruto(def row){
       println "SA_BRUTO y IAS_BRUTO" 
+      getPaysheetEmployeeWithCalcules(row)
     }
 
     def processForSalaryNetoAndIASBruto(def row){
       println "SA_NETO y IAS_BRUTO"
+      getPaysheetEmployeeWithCalcules(row)
     }
 
     def processIASNetoAndIASBruto(def row){
@@ -224,11 +227,74 @@ class SimulatorPaysheetService {
   }
 
 
-  BigDecimal calculateSalaryNeto(BigDecimal salaryNeto){
-
+  BigDecimal calculateSalaryNeto(BigDecimal salaryBruto){
+    BigDecimal salaryNeto = 0
+    BigDecimal isr = 1
+    BigDecimal limitInferior = 0
+    BigDecimal paymentFija = 0
+    if(salaryBruto < 496.07){
+      limitInferior = 0.01
+      isr = 0.0192
+      paymentFija = 0
+    }
+    else if(496.08 < salaryBruto && salaryBruto < 4210.41 ){
+      limitInferior = 496.08
+      isr = 0.0640
+      paymentFija = 9.52
+    } 
+    else if(4210.42 < salaryBruto && salaryBruto < 7399.42 ){
+      limitInferior = 4210.42
+      isr = 0.1088
+      paymentFija = 247.04
+    }
+    else if(7399.43 < salaryBruto && salaryBruto < 8601.50 ){
+      limitInferior = 7399.43
+      isr = 0.16
+      paymentFija = 594.21
+    }
+    else if(8601.51  < salaryBruto && salaryBruto < 10298.35 ){
+      limitInferior =8601.51 
+      isr = 0.1792
+      paymentFija = 786.54
+    }
+    else if(10298.36 < salaryBruto && salaryBruto < 20770.29 ){
+      limitInferior = 10298.36
+      isr = 0.2136
+      paymentFija = 1090.51
+    }
+    else if(20770.30< salaryBruto && salaryBruto < 32736.83 ){
+      limitInferior = 20770.30
+      isr = 0.2352
+      paymentFija = 3327.42
+    }
+    else if(32736.84 < salaryBruto && salaryBruto < 62500.00 ){
+      limitInferior = 32736.84
+      isr = 0.30
+      paymentFija = 6141.95
+    }
+    else if(62500.01 < salaryBruto && salaryBruto < 83333.33 ){
+      limitInferior = 62500.01
+      isr = 0.32
+      paymentFija = 15070.90
+    }
+    else if(83333.34 < salaryBruto && salaryBruto < 250000.00 ){
+      limitInferior =83333.34
+      isr = 0.34
+      paymentFija = 21737.57
+    }
+    else{
+      limitInferior = 250000.01
+      isr = 0.35
+      paymentFija = 78404.23
+    }
+    BigDecimal excessive = salaryBruto - limitInferior
+    println excessive
+    salaryNeto = (excessive * isr) + paymentFija
   }
 
-  BigDecimal calculateIASNeto(BigDecimal iasBruto)
+  BigDecimal calculateIASNeto(BigDecimal iasBruto){
+    iasBruto
+  }
 
 
 }
