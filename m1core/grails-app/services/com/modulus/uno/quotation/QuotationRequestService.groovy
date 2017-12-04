@@ -12,6 +12,7 @@ import com.modulus.uno.CorporateService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CompanyStatus
 import com.modulus.uno.SaleOrderStatus
+import com.modulus.uno.User
 import java.math.RoundingMode
 
 @Transactional
@@ -108,4 +109,21 @@ class QuotationRequestService {
     BigDecimal getIvaCurrent(){
       new BigDecimal(grailsApplication.config.iva)
     }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

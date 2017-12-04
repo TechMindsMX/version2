@@ -4,15 +4,20 @@ import grails.test.mixin.TestFor
 import spock.lang.Specification
 import grails.test.mixin.Mock
 import com.modulus.uno.BusinessEntity
-
+import com.modulus.uno.User
+import com.modulus.uno.Company
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(QuotationContractService)
-@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission, SpringSecurityService.currentUser])
+@Mock([BusinessEntity, QuotationPaymentRequest, QuotationContract, QuotationRequest, QuotationCommission, Company])
 class QuotationContractServiceSpec extends Specification {
 
+  User user1 = Mock(User)
 
+  def setup() {
+    service.springSecurityService = [currentUser:user1]
+  }
 
     void "Save quotation"(){
       given:"A quotation and BusinessEntity"
@@ -123,19 +128,6 @@ class QuotationContractServiceSpec extends Specification {
         map.first().commission == 60
     }
 
-    void "Get list of clients from the User"(){
-      given:"List of quotation contract"
-        def quotationContractList = getQuotationContractList()
-        def currentUser = service
-        println quotationContractList
-        println currentUser
-
-      when:"Passing the current user from the session to new list"
-        def listOfCurrentUsers = quotationContractList
-      then:
-      1 == 2
-    }
-
     void "Calculate commision of one quotation contract"(){
       given:"One list of quotatation reuqest"
         def list = getQuotationRequestList()
@@ -143,6 +135,19 @@ class QuotationContractServiceSpec extends Specification {
         def commision = service.calculateCommission(list)
       then:
         commision==60
+    }
+
+    void "Get list of clients from the current user"(){
+      given:"The company"
+        Company company = new Company().save(validate:false)
+      and:"The contracts"
+        QuotationContract qc1 = new QuotationContract(users:[user1], company:company).save(validate:false)
+        QuotationContract qc2 = new QuotationContract(users:[Mock(User).username="B"], company:company).save(validate:false)
+      when:"Pass the current user from the session to new list"
+        List<QuotationContract> listOfTheCurrentUser = service.getListOfClientsFromTheCurrentUser(company)
+
+      then:"Get the list of clients from the current user"
+        listOfTheCurrentUser.size() == 1
     }
 
     QuotationContract getQuotationContract(){

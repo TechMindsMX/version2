@@ -107,7 +107,7 @@ class QuotationContractController {
 
     def chooseClientForBalance(){
       Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList =  QuotationContract.findAllByCompany(company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
       render view:"balance", model:[quotationContractList:quotationContractList]
     }
 

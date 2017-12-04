@@ -6,25 +6,13 @@ import com.modulus.uno.Product
 class QuotationRequestController {
 
     QuotationRequestService quotationRequestService
-    def springSecurityService
+    QuotationContractService quotationContractService
 
     def index() {
     	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      def currentUser = springSecurityService.currentUser
-      def lista = quotationContractList.collect{
-        if(it.users.contains(currentUser)){
-          return it
-        }
-      }.grep()
-      println quotationContractList.users.dump()
-      println "**"*25
-      println currentUser
-      println "**"*25
-      println lista.dump()
-      
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
       respond new QuotationContract(), model:[quotationContractList:quotationContractList,
-       company:company, lista:lista
+       company:company
       ]
     }
 
@@ -36,7 +24,7 @@ class QuotationRequestController {
 
     def create(){
     	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
       BigDecimal ivaRate = quotationRequestService.getIvaCurrent()
 
       [company:company,
