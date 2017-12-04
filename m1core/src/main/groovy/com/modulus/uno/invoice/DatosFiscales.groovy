@@ -2,7 +2,7 @@ package com.modulus.uno.invoice
 
 class DatosFiscales {
   String razonSocial
-  String regimen
+  RegimenFiscal regimen
   String rfc
   String pais
   String calle
