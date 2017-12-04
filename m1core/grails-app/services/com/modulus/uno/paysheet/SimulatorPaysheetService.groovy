@@ -245,7 +245,7 @@ class SimulatorPaysheetService {
     else if(4210.42 < salaryBruto && salaryBruto < 7399.42 ){
       limitInferior = 4210.42
       isr = 0.1088
-      paymentFija = 247.04
+      paymentFija = 247.24
     }
     else if(7399.43 < salaryBruto && salaryBruto < 8601.50 ){
       limitInferior = 7399.43
@@ -288,8 +288,13 @@ class SimulatorPaysheetService {
       paymentFija = 78404.23
     }
     BigDecimal excessive = salaryBruto - limitInferior
-    println excessive
-    salaryNeto = (excessive * isr) + paymentFija
+    println "Excedido: ${excessive}"
+    println "isr: ${isr}"
+    println "fija : ${paymentFija}"
+    println "limite Inferior : ${limitInferior}"
+    salaryNeto = salaryBruto - ((excessive * isr) + paymentFija)
+    println "Salario Neto : ${salaryNeto}"
+    salaryNeto
   }
 
   BigDecimal calculateIASNeto(BigDecimal iasBruto){
