@@ -47,16 +47,13 @@ class SimulatorPaysheetService {
 
     def processForSalaryNetoAndIASNeto(def row){
       println "SA y IA Netos"
-      PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
-      paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_NETO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
-      paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_NETO, row.PERIODO) // Salario neto
-      paysheetEmployee.salaryAssimilable = row.IAS_NETO // IAS NETO
-      paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_NETO, row.PERIODO) // Salario Neto
-      paysheetEmployee
+      getPaysheetEmployeeWithCalcules(row)
     }
 
     def processForIASNetoAndSalaryBruto(def row){
       println "IAS_NETO y SA_BRUTO" 
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
+      
     }
 
     def processForSalaryBrutoAndIASBruto(def row){
@@ -70,6 +67,16 @@ class SimulatorPaysheetService {
     def processIASNetoAndIASBruto(def row){
       println "IAS_NETO y IAS_BRUTO"
     }
+
+    PaysheetEmployee getPaysheetEmployeeWithCalcules(def row){
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
+      paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_NETO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
+      paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_NETO, row.PERIODO) // Salario neto
+      paysheetEmployee.salaryAssimilable = row.IAS_NETO // IAS NETO
+      paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_NETO, row.PERIODO) // Salario Neto
+      paysheetEmployee
+    }
+     
 
     
   List processDataFromXls(List data) {
@@ -215,6 +222,13 @@ class SimulatorPaysheetService {
     }
     employeeToExportLit
   }
+
+
+  BigDecimal calculateSalaryNeto(BigDecimal salaryNeto){
+
+  }
+
+  BigDecimal calculateIASNeto(BigDecimal iasBruto)
 
 
 }
