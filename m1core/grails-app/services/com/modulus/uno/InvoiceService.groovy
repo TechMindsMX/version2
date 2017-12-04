@@ -42,9 +42,10 @@ class InvoiceService {
     }
 
     new DatosDeFacturacion(
-      metodoDePago: new MetodoDePago(clave:saleOrder.paymentMethod.getKey(), descripcion:saleOrder.paymentMethod.getDescription()),
+      metodoDePago: new MetodoDePago(clave:"PUE", descripcion:"Pago en una sóla exhibición"),
+      formaDePago: new FormaDePago(clave:saleOrder.paymentMethod.getKey(), descripcion:saleOrder.paymentMethod.getDescription()),
       moneda: saleOrder.currency,
-      tipoDeCambio: saleOrder.changeType?:new BigDecimal(0),
+      tipoDeCambio: saleOrder.changeType?:new BigDecimal(1),
       numeroDeCuentaDePago: accountNumber,
       addendaLabel: "Factura a nombre y cuenta de ${company.bussinessName} con RFC ${company.rfc}"
     )
@@ -65,15 +66,16 @@ class InvoiceService {
         calle: address.street,
         noExterior: address.streetNumber,
         noInterior: address.suite ?: "SN",
-        regimen: company.taxRegime.code
+        regimen: new RegimenFiscal(clave:company.taxRegime.key, descripcion:company.taxRegime.description)
       )
     )
   }
 
   private Contribuyente buildReceiverFromSaleOrder(SaleOrder saleOrder) {
+    //TODO: Implementar catálogo usos cfdi para selección al ejecutar la orden de venta
     new Contribuyente(
       datosFiscales: new DatosFiscales(
-        rfc: saleOrder.rfc,
+        rfc: (Environment.current == Environment.PRODUCTION) ? saleOrder.rfc : "LAN7008173R5",
         razonSocial: saleOrder.clientName,
         pais: saleOrder.addresses[0].country,
         ciudad: saleOrder.addresses[0].city,
@@ -82,14 +84,15 @@ class InvoiceService {
         codigoPostal: saleOrder.addresses[0].zipCode,
         noExterior: saleOrder.addresses[0].streetNumber ?: "SN",
         noInterior: saleOrder.addresses[0].suite ?: "SN",
-        colonia: saleOrder.addresses[0].neighboorhood ?: saleOrder.addresses[0].colony
+        colonia: saleOrder.addresses[0].neighboorhood ?: saleOrder.addresses[0].colony,
+        usoCFDI: "P01" 
       )
     )
   }
 
   private List<Concepto> buildConceptsFromSaleOrder(SaleOrder saleOrder) {
     def conceptos = []
-    saleOrder.items.toList().each { item ->
+    saleOrder.items.toList().sort{it.name}.each { item ->
       Concepto concepto = new Concepto(
         cantidad:item.quantity, 
         valorUnitario:item.price, 
@@ -181,6 +184,7 @@ class InvoiceService {
 
   def generatePreviewFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
+    log.info "Factura to preview: ${factura.dump()}"
     String file = "previo.pdf"
     String rfc = "${saleOrder.company.rfc}"
     def url = grailsApplication.config.modulus.showFactura
