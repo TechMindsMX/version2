@@ -164,14 +164,19 @@ class BusinessEntityServiceSpec extends Specification {
 
   void "Should create append data to business entity from map "(){
     given:"The row"
-      Map rowClient = [RAZON_SOCIAL:"RazonSocial"]    
+      Map rowClient = [RAZON_SOCIAL:"RazonSocial"]
+      Map rowProvider = [RAZON_SOCIAL: "RazonSocial"]    
     and:"A business Entity"
       BusinessEntity businessEntity = new BusinessEntity().save(validate:false)
+      BusinessEntity businessEntityProvider = new BusinessEntity().save(validate:false)
     when:
       def client = service.appendDataToBusinessEntityFromMap(businessEntity, rowClient)
+      def provider = service.appendDataToBusinessEntityFromMap(businessEntityProvider, rowProvider)
     then:
       client.names[0].value == "RazonSocial"
       client.names[0].type == NameType.RAZON_SOCIAL
+      provider.names[0].value == "RazonSocial"
+      provider.names[0].type == NameType.RAZON_SOCIAL
   }
 
   void "Should create a business entity for row employee from file massive"() {
