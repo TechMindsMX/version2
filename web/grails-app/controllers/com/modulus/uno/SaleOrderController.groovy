@@ -96,6 +96,7 @@ class SaleOrderController {
     model.iva = product.iva
     model.unit = product.unitType.name()
     model.currency = product.currencyType.name()
+    model.satKey = product.satKey
     render model as JSON
   }
 
@@ -110,6 +111,7 @@ class SaleOrderController {
     model.iva = product.iva
     model.unit = product.unitType.name()
     model.currency = product.currencyType.name()
+    model.satKey = product.satKey
     render model as JSON
   }
 
