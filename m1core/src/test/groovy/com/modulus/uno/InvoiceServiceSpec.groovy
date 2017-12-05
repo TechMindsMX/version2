@@ -75,7 +75,7 @@ class InvoiceServiceSpec extends Specification {
       result.conceptos[0].impuestos[0].importe == 32
       result.conceptos[0].impuestos[0].tasa == 0.160000
       result.conceptos[0].impuestos[0].impuesto == '002'
-      result.conceptos[0].impuestos[0].base == 100
+      result.conceptos[0].impuestos[0].base == 200
   }
 
   void "create an invoice from sale order for client with stpClabe"(){
@@ -138,7 +138,7 @@ class InvoiceServiceSpec extends Specification {
       result.conceptos[0].impuestos[0].importe == 32
       result.conceptos[0].impuestos[0].tasa == 0.160000
       result.conceptos[0].impuestos[0].impuesto == '002'
-      result.conceptos[0].impuestos[0].base == 100
+      result.conceptos[0].impuestos[0].base == 200
   }
 
   def "Should throw a exception when cancel a sale order invoiced and service return a fail"() {
