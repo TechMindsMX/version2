@@ -97,6 +97,7 @@ class InvoiceService {
         cantidad:item.quantity, 
         valorUnitario:item.price, 
         descuento:item.discount, 
+        claveProd:item.satKey ?: "01010101",
         descripcion:item.name, 
         unidad:item.unitType,
         claveUnidad:getUnitKeyFromItem(item),
@@ -117,7 +118,7 @@ class InvoiceService {
     List<Impuesto> taxes = []
     
     if (item.iva){
-      taxes.add(new Impuesto(base:item.price, importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva/100, impuesto:'002', tipoFactor:"Tasa"))
+      taxes.add(new Impuesto(base:item.quantity * item.priceWithDiscount, importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva/100, impuesto:'002', tipoFactor:"Tasa"))
     }
 
     taxes
