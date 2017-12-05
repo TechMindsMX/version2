@@ -10,8 +10,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Editar la solicitud
-        <small>${company}</small>
+        Editar solicitud de Cotización
+        <small>${quotationRequest.quotationContract.client}</small>
       </h1>
     </div>
 
@@ -61,8 +61,18 @@
               </div>
               <div class="row">
                 <div class="col-md-3">
-                  <label><g:message code="Presupuesto Maximo" /></label>
-                  <input class="form-control" type="number" id="amount" name="amount" step="0.01" value="${quotationRequest.amount}" required="required" pattern="([0-9]*[.])?[0-9]+">
+                  <label><g:message code="Subtotal" /></label>
+                  <input class="form-control" type="number" id="subtotal" name="subtotal" step="0.01" value="${quotationRequest.subtotal}" required="required" >
+                  <label><g:message code="Ingrese el monto sin iva" /></label>
+                </div>
+                <div class="col-md-3">
+                  <label><g:message code="Total" /></label>
+                  <input class="form-control" type="number" id="total" name="total" step="0.01" value="${quotationRequest.total}" required="required" >
+                  <label><g:message code="Ingrese el monto con iva" /></label>
+                </div>
+                <div class="col-md-3">
+                  <label><g:message code="Iva" /></label>
+                  <input class="form-control" type="number" id="iva" name="iva" step="0.01" value="${quotationRequest.iva}" required="required">
                 </div>
               </div>
               <br>
@@ -83,7 +93,9 @@
         </g:form>
       </div>
     </div>
+  <input id="ivaRate" type="hidden" value="${ivaRate}" />
   <asset:javascript src="quotationContract/create.js"/>
+  <asset:javascript src="quotationRequest/QuotationRequestController.js"/>
   </body>
 </html>
 

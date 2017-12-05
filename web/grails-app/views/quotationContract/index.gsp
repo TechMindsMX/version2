@@ -10,7 +10,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
+        Contratos de Cotización
         <small>${company}</small>
       </h1>
     </div>

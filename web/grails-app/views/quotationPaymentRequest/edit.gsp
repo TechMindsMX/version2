@@ -12,8 +12,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Solicitud de pago de cotización
-        <small>${company}</small>
+        Editar solicitud de pago de cotización
+        <small>${quotationPaymentRequest.quotationContract.client}</small>
       </h1>
     </div>
 
@@ -42,7 +42,7 @@
                 <div class="col-md-12">
                   <div class="form-group">
                     <label><g:message code="Cliente"/></label>
-                    <input name="quotationClient" class="form-control" value="${quotationPaymentRequest.quotationContract.client}">
+                    <input name="quotationClient" class="form-control" value="${quotationPaymentRequest.quotationContract.client}" disabled>
                     <input name="quotation" class="form-control" value="${quotationPaymentRequest.quotationContract.id}"type="hidden">
                     <input name="id" class="form-control" value="${quotationPaymentRequest.id}"type="hidden">
                   </div>
@@ -62,7 +62,7 @@
               <div class="row">
                 <div class="col-md-3">
                   <label><g:message code="Modo de Pago" /></label>
-                  <g:select class="form-control" name="paymentMethod" from="${PaymentMethod.values()}"/>
+                  <g:select class="form-control" name="paymentMethod" value="${quotationPaymentRequest.paymentMethod}" from="${PaymentMethod.values()}"/>
                 </div>
               </div>
               <br>

@@ -5,10 +5,11 @@ import com.modulus.uno.Company
 class QuotationRequestController {
 
     QuotationRequestService quotationRequestService
+    QuotationContractService quotationContractService
 
     def index() {
     	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
       respond new QuotationContract(), model:[quotationContractList:quotationContractList,
        company:company
       ]
@@ -22,10 +23,12 @@ class QuotationRequestController {
 
     def create(){
     	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
+      BigDecimal ivaRate = quotationRequestService.getIvaCurrent()
 
       [company:company,
-      quotationContractList:quotationContractList]
+      quotationContractList:quotationContractList,
+      ivaRate:ivaRate]
     }
 
     def save(QuotationRequestCommand quotationRequestCommand ){
@@ -39,8 +42,9 @@ class QuotationRequestController {
     }
 
     def edit(QuotationRequest quotationRequest){
-
-      [quotationRequest:quotationRequest]
+      BigDecimal ivaRate = quotationRequestService.getIvaCurrent()
+      [quotationRequest:quotationRequest,
+      ivaRate:ivaRate]
     }
 
     def update(QuotationRequestCommand quotationRequestCommand){
@@ -48,7 +52,9 @@ class QuotationRequestController {
         QuotationRequest quotationRequest = QuotationRequest.get(params.id.toInteger())
         quotationRequest.description = quotationRequestUpdate.description
         quotationRequest.commission = quotationRequestCommand.getCommission(quotationRequestCommand.commission)
-        quotationRequest.amount = quotationRequestUpdate.amount
+        quotationRequest.total = quotationRequestUpdate.total
+        quotationRequest.subtotal = quotationRequestUpdate.subtotal
+        quotationRequest.iva = quotationRequestUpdate.iva
         quotationRequestService.update(quotationRequest)
       redirect(action: 'show', id: quotationRequest.id)
     }

@@ -96,4 +96,8 @@ databaseChangeLog = {
   include file: 'updating-column-paymentMethod-quotationPaymnetRequest.groovy'
   include file: 'adding-employees-to-paysheet-project.groovy'
   include file: 'adding-users-to-paysheet-contract.groovy'
+  include file: 'adding-columns-quotation-request.groovy'
+  include file: 'delete-column-quotation-request.groovy'
+  include file: 'create-domain-quotation-commission.groovy'
+  include file: 'adding-column-users-quotation-contract.groovy'
 }
