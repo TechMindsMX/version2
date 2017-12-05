@@ -186,16 +186,24 @@ class BusinessEntityServiceSpec extends Specification {
 
   void "Should create a business entity for row business entity from file massive"() {
     given:"The row employee"
-      Map rowClient = [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
-      Map rowProvider = [RFC:"PAGC770214431", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
+      Map rowClientFisica = [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
+      Map rowProviderFisica = [RFC:"PAGC770214431", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
+      Map rowClientMoral = [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL"]
+      Map rowProviderMoral = [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL"]
     when:
-      def client = service.createBusinessEntityForRowBusinessEntity(rowClient)
-      def provider = service.createBusinessEntityForRowBusinessEntity(rowProvider)
+      def client = service.createBusinessEntityForRowBusinessEntity(rowClientFisica)
+      def client2 = service.createBusinessEntityForRowBusinessEntity(rowClientMoral)
+      def provider = service.createBusinessEntityForRowBusinessEntity(rowProviderFisica)
+      def provider2 = service.createBusinessEntityForRowBusinessEntity(rowProviderMoral)
     then:
       client.id
       client.rfc == "PAGC770214422"
       provider.id
       provider.rfc == "PAGC770214431"
+      client2.id
+      client2.rfc == "PAG770214ELP"
+      provider2.id
+      provider2.rfc == "PAG770214ELP"
   }
 
   void "Should not create a business entity object for row employee when RFC is wrong"() {
@@ -205,6 +213,24 @@ class BusinessEntityServiceSpec extends Specification {
       def be = service.createBusinessEntityForRowEmployee(rowEmployee)
     then:
       be.hasErrors()
+  }
+
+  void "Should not create a business entity object for row businessEntity when RFC is wrong"() {
+    given:"The row employee"
+      Map rowClientFisica = [RFC:"XYZ123456ABC", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
+      Map rowProviderFisica = [RFC:"XYZ123456ABC", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
+      Map rowClientMoral = [RFC:"XYZ123456ABC", RAZON_SOCIAL:"RazonSocial", PERSONA:"MORAL"]
+      Map rowProviderMoral = [RFC:"XYZ123456ABC", RAZON_SOCIAL:"RazonSocial", PERSONA:"MORAL"]
+    when:
+      def client = service.createBusinessEntityForRowBusinessEntity(rowClientFisica)
+      def client2 = service.createBusinessEntityForRowBusinessEntity(rowClientMoral)
+      def provider = service.createBusinessEntityForRowBusinessEntity(rowProviderFisica)
+      def provider2 = service.createBusinessEntityForRowBusinessEntity(rowProviderMoral)
+    then:
+      client.hasErrors()
+      provider.hasErrors()
+      client2.hasErrors()
+      provider2.hasErrors()
   }
 
   @Unroll
