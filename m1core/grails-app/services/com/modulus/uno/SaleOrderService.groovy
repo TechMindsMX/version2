@@ -294,11 +294,12 @@ class SaleOrderService {
       if (balance.balance) {
       SaleOrderItem item = new SaleOrderItem(
         sku:"COMISION-${balance.typeCommission}",
-        name:balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}",
+        name:"Servicio financiero de alquiler de operaciones (" + balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}" + ")",
         quantity:balance.quantity,
         price:balance.balance/balance.quantity,
         iva:new BigDecimal(grailsApplication.config.iva),
-        unitType:"SERVICIO",
+        unitType:"UNIDAD DE SERVICIO",
+        satKey:"84121607",
         saleOrder:saleOrder
       ).save()
       saleOrder.addToItems(item)

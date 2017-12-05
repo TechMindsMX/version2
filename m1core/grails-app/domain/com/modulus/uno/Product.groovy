@@ -10,6 +10,7 @@ class Product {
 
   UnitType unitType
   CurrencyType currencyType
+  String satKey
 
   static belongsTo = [company:Company]
 
@@ -19,6 +20,7 @@ class Product {
     price min:0.0,max:250000000.00
     ieps min:0.0,max:100.00
     iva min:0.0,max:100.00
+    satKey blank:false, size:8..8
   }
 
   BigDecimal getAppliedIEPS(){

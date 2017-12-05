@@ -3,9 +3,10 @@ package com.modulus.uno
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
+import com.modulus.uno.catalogs.UnitType
 
 @TestFor(InvoiceService)
-@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionTransaction, BankAccount, Bank])
+@Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionTransaction, BankAccount, Bank, UnitType])
 class InvoiceServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
@@ -38,9 +39,10 @@ class InvoiceServiceSpec extends Specification {
         timoneUuid:'timoneUuid'
       ).save(validate:false)
     and:"A company"
-      Company company = new Company(rfc:'AAD990814BP7', bussinessName:'Integradora de Emprendimientos Culturales S.A. de C.V.', employeeNumbers:10, grossAnnualBilling:100000, addresses:[address],accounts:[account]).save(validate:false)
+      Company company = new Company(rfc:'AAA010101AAA', bussinessName:'Integradora de Emprendimientos Culturales S.A. de C.V.', employeeNumbers:10, grossAnnualBilling:100000, addresses:[address],accounts:[account]).save(validate:false)
     and:"Sale Order item"
-      SaleOrderItem saleOrderItem = new SaleOrderItem(sku:'sku1',name:'name', price:100, ieps:0, iva:16, quantity:2, unitType:UnitType.UNIDADES)
+      UnitType unitType = new UnitType(company:company, name:"UNIDADES", unitKey:"01").save(validate:false)
+      SaleOrderItem saleOrderItem = new SaleOrderItem(sku:'sku1',name:'name', price:100, discount:0, ivaRetention:0, iva:16, quantity:2, unitType:"UNIDADES")
     and:"An sale order"
       def saleOrder = new SaleOrder(rfc:'XXXX010101XXX',clientName:'clientName',addresses:[address], items:[saleOrderItem], company:company, paymentMethod: PaymentMethod.TRANSFERENCIA_ELECTRONICA, currency:"MXN", changeType:new BigDecimal(1)).save(validate:false)
     and:"A client"
@@ -49,14 +51,6 @@ class InvoiceServiceSpec extends Specification {
     when:"We create an invoice from sale order"
       def result = service.createInvoiceFromSaleOrder(saleOrder)
     then:"We expect factura data"
-      result.datosDeFacturacion.folio
-      result.datosDeFacturacion.formaDePago == 'PAGO EN UNA SOLA EXHIBICION'
-      result.datosDeFacturacion.tipoDeComprobante == 'ingreso'
-      result.datosDeFacturacion.lugarDeExpedicion == 'CIUDAD DE MEXICO'
-      result.datosDeFacturacion.metodoDePago == '03 - TRANSFERENCIA ELECTRONICA'
-      result.datosDeFacturacion.numeroDeCuentaDePago == '1234567890'
-      result.datosDeFacturacion.moneda == 'MXN'
-
       result.emisor.datosFiscales.razonSocial == 'Integradora de Emprendimientos Culturales S.A. de C.V.'
       result.emisor.datosFiscales.rfc == 'AAA010101AAA'
       result.emisor.datosFiscales.codigoPostal == '11850'
@@ -71,16 +65,17 @@ class InvoiceServiceSpec extends Specification {
       result.receptor.datosFiscales.colonia == 'Reforma'
 
       result.conceptos.size() == 1
-      result.impuestos.size() == 1
 
       result.conceptos[0].cantidad == 2
       result.conceptos[0].valorUnitario == 100
       result.conceptos[0].descripcion == 'name'
       result.conceptos[0].unidad == 'UNIDADES'
+      result.conceptos[0].claveUnidad == '01'
 
-      result.impuestos[0].importe == 32
-      result.impuestos[0].tasa == 16
-      result.impuestos[0].impuesto == 'IVA'
+      result.conceptos[0].impuestos[0].importe == 32
+      result.conceptos[0].impuestos[0].tasa == 0.160000
+      result.conceptos[0].impuestos[0].impuesto == '002'
+      result.conceptos[0].impuestos[0].base == 100
   }
 
   void "create an invoice from sale order for client with stpClabe"(){
@@ -107,9 +102,10 @@ class InvoiceServiceSpec extends Specification {
       Bank bank = new Bank(name:"BANCO").save(validate:false)
       BankAccount bankAccount = new BankAccount(accountNumber:"2233445566", branchNumber:"999", banco:bank, concentradora:true).save(validate:false)
     and:"A company"
-      Company company = new Company(rfc:'AAD990814BP7', bussinessName:'Integradora de Emprendimientos Culturales S.A. de C.V.', employeeNumbers:10, grossAnnualBilling:100000, addresses:[address],accounts:[account], banksAccounts:[bankAccount]).save(validate:false)
+      Company company = new Company(rfc:'AAA010101AAA', bussinessName:'Integradora de Emprendimientos Culturales S.A. de C.V.', employeeNumbers:10, grossAnnualBilling:100000, addresses:[address],accounts:[account], banksAccounts:[bankAccount]).save(validate:false)
     and:"Sale Order item"
-      SaleOrderItem saleOrderItem = new SaleOrderItem(sku:'sku1',name:'name', price:100, ieps:0, iva:16, quantity:2, unitType:UnitType.UNIDADES)
+      UnitType unitType = new UnitType(company:company, name:"UNIDADES", unitKey:"01").save(validate:false)
+      SaleOrderItem saleOrderItem = new SaleOrderItem(sku:'sku1',name:'name', price:100, discount:0, ivaRetention:0, iva:16, quantity:2, unitType:"UNIDADES")
     and:"An sale order"
       def saleOrder = new SaleOrder(rfc:'XXXX010101XXX',clientName:'clientName',addresses:[address], items:[saleOrderItem], company:company, paymentMethod: PaymentMethod.EFECTIVO, currency:"MXN", changeType:new BigDecimal(0)).save(validate:false)
     and:"A client"
@@ -118,14 +114,6 @@ class InvoiceServiceSpec extends Specification {
     when:"We create an invoice from sale order"
       def result = service.createInvoiceFromSaleOrder(saleOrder)
     then:"We expect factura data"
-      result.datosDeFacturacion.folio
-      result.datosDeFacturacion.formaDePago == 'PAGO EN UNA SOLA EXHIBICION'
-      result.datosDeFacturacion.tipoDeComprobante == 'ingreso'
-      result.datosDeFacturacion.lugarDeExpedicion == 'CIUDAD DE MEXICO'
-      result.datosDeFacturacion.metodoDePago == '01 - EFECTIVO'
-      result.datosDeFacturacion.numeroDeCuentaDePago == '999 - 2233445566 - BANCO'
-      result.datosDeFacturacion.moneda == 'MXN'
-
       result.emisor.datosFiscales.razonSocial == 'Integradora de Emprendimientos Culturales S.A. de C.V.'
       result.emisor.datosFiscales.rfc == 'AAA010101AAA'
       result.emisor.datosFiscales.codigoPostal == '11850'
@@ -140,16 +128,17 @@ class InvoiceServiceSpec extends Specification {
       result.receptor.datosFiscales.colonia == 'Reforma'
 
       result.conceptos.size() == 1
-      result.impuestos.size() == 1
 
       result.conceptos[0].cantidad == 2
       result.conceptos[0].valorUnitario == 100
       result.conceptos[0].descripcion == 'name'
       result.conceptos[0].unidad == 'UNIDADES'
+      result.conceptos[0].claveUnidad == '01'
 
-      result.impuestos[0].importe == 32
-      result.impuestos[0].tasa == 16
-      result.impuestos[0].impuesto == 'IVA'
+      result.conceptos[0].impuestos[0].importe == 32
+      result.conceptos[0].impuestos[0].tasa == 0.160000
+      result.conceptos[0].impuestos[0].impuesto == '002'
+      result.conceptos[0].impuestos[0].base == 100
   }
 
   def "Should throw a exception when cancel a sale order invoiced and service return a fail"() {

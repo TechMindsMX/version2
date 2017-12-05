@@ -8,7 +8,8 @@
       <td>${item.quantity}</td>
       <td>
         ${item.name}<br/>
-        <small><i>${item.sku}</i></small>
+        <small><i>${item.sku}</i></small><br/>
+        <small><i>${item.satKey}</i></small>
       </td>
       <td>
         <dl class="dl-horizontal">
