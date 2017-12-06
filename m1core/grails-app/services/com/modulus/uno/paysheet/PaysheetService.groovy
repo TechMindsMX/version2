@@ -257,7 +257,6 @@ class PaysheetService {
 
     dispersionDataForBank.employees.each { employee ->
       String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-
       String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
 			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
     }
@@ -408,20 +407,19 @@ class PaysheetService {
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
 		String sourceAccount = "M1Account".padLeft(18,'0')
-		String currency = "MXN"
-		String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
-		String reference = new Date().format("ddMMyy").padLeft(7,'0')
-		String typeAccount = "40"
-		String disp = "H"      
+    String rfc = "".padLeft(16," ")
+    String type = "99"
+    String bank = "001"
+    String branch = "001"
 
-    dispersionData.employees.each { employee ->
+    dispersionData.employees.eachWithIndex { employee, index ->
       log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
-      String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
-      String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
-      String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
-      String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
-			String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-     	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+      String counter = "${index+1}".padLeft(9,"0")
+      String destinyAccount = employee.prePaysheetEmployee.account.padRight(20,' ')
+      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(15,'0')
+      String adjustName = employee.prePaysheetEmployee.nameEmployee.length() > 40 ? employee.prePaysheetEmployee.nameEmployee.substring(0,40) : employee.prePaysheetEmployee.nameEmployee
+      String name = clearSpecialCharsFromString(adjustName).padRight(40," ")
+			file.append("${counter}${rfc}${type}${destinyAccount}${amount}${name}${bank}${branch}\n")
     }
     log.info "File created: ${file.text}"
     file
