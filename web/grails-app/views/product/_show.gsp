@@ -1,4 +1,8 @@
 <div class="form-group">
+  <label for=""><g:message code="product.satKey.label"/>:</label>
+  ${product.satKey}
+</div>
+<div class="form-group">
   <label for=""><g:message code="product.sku"/>:</label>
   ${product.sku}
 </div>
@@ -24,6 +28,6 @@
 </div>
 <div class="form-group">
   <label for=""><g:message code="product.unitType"/>:</label>
-  ${product.unitType}
+  ${product.unitType?.name}
 </div>
 
