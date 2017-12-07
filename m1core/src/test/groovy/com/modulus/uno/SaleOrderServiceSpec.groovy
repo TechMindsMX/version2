@@ -48,7 +48,7 @@ class SaleOrderServiceSpec extends Specification {
 
   void "should add an item to a sale order"() {
     given:"A sale order item"
-      def item = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS)
+      def item = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:"UNIDAD", currencyType:CurrencyType.PESOS)
     and:"A sale order"
       def saleOrder = new SaleOrder()
       saleOrder.save(validate:false)
@@ -61,8 +61,8 @@ class SaleOrderServiceSpec extends Specification {
 
   void "should add two items to a sale order"() {
     given:"A sale order item"
-      def item1 = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(15000.00), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS,quantity:0.23)
-      def item2 = new SaleOrderItem(sku:'A002',name:'Lemur 14',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS,quantity:1.23)
+      def item1 = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(15000.00), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:"UNIDAD", currencyType:CurrencyType.PESOS,quantity:0.23)
+      def item2 = new SaleOrderItem(sku:'A002',name:'Lemur 14',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:"UNIDAD", currencyType:CurrencyType.PESOS,quantity:1.23)
     and:"A sale order"
       def saleOrder = new SaleOrder()
       saleOrder.save(validate:false)
