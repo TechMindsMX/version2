@@ -1,6 +1,7 @@
 package com.modulus.uno
 import java.text.*
 import grails.validation.Validateable
+import com.modulus.uno.catalogs.UnitType
 
 class ProductCommand implements Validateable{
 
@@ -11,7 +12,7 @@ class ProductCommand implements Validateable{
   String price
   String ieps
   String iva
-  UnitType unitType
+  String unitType
   CurrencyType currencyType
 
 
@@ -23,7 +24,7 @@ class ProductCommand implements Validateable{
       price:getValueInBigDecimal(this.price),
       ieps:getValueInBigDecimal(this.ieps),
       iva:getValueInBigDecimal(this.iva),
-      unitType:this.unitType,
+      unitType:UnitType.findByName(this.unitType),
       currencyType:this.currencyType
       )
   }
