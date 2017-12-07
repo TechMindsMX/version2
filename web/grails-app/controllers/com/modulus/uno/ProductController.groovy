@@ -63,7 +63,8 @@ class ProductController {
   }
 
   def edit(Product product) {
-    respond product
+    Company company = Company.get(session.company)
+    respond product, model:[unitTypes:UnitType.findAllByCompany(company)]
   }
 
   @Transactional
