@@ -54,7 +54,7 @@
                  <td>${modulusuno.formatPrice(number:product.price)}</td>
                  <td>${product.ieps}</td>
                  <td>${product.iva}</td>
-                 <td>${product.unitType}</td>
+                 <td>${product.unitType?.name}</td>
                  <td>${product.currencyType}</td>
                </tr>
                </g:each>
