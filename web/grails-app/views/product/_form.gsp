@@ -29,6 +29,6 @@
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.unitType.label")}</label>
-    <g:select name="unitType" from="${com.modulus.uno.UnitType.values()}" class="form-control"  />
+    <g:select name="unitType" from="${unitTypes}" class="form-control" optionKey="id" optionValue="name" value="${product?.unitType?.id}"  required=""/>
   </div>
 </f:with>
