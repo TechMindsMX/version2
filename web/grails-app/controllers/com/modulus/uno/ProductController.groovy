@@ -2,6 +2,7 @@ package com.modulus.uno
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import com.modulus.uno.catalogs.UnitType
 
 @Transactional(readOnly = true)
 class ProductController {
@@ -24,7 +25,8 @@ class ProductController {
   }
 
   def create() {
-    respond new Product(params)
+    Company company = Company.get(session.company)
+    respond new Product(params), model:[unitTypes:UnitType.findAllByCompany(company)]
   }
 
   @Transactional
