@@ -12,10 +12,6 @@
            Registros / Mis productos &amp; servicios
            <small><g:message code="product.view.list.label" /></small>
          </h1>
-          <ol class="breadcrumb">
-            <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-            <li class="active">Productos/Servicios</li>
-          </ol>
       </div>
       <div class="portlet portlet-blue">
         <div class="portlet-heading">

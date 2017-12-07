@@ -7,7 +7,10 @@
     </head>
     <body>
       <div class="page-title">
-        <h1><g:message code="product.view.edit.label" args="[entityName]" /></h1>
+        <h1>
+          <i class="fa fa-shopping-basket fa-3x"></i>
+          <g:message code="product.view.edit.label" args="[entityName]" />
+        </h1>
       </div>
       <div id="edit-address" class="content scaffold-edit" role="main">
         <div class="portlet portlet-blue">
