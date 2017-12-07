@@ -15,6 +15,9 @@ class ProductCommand implements Validateable{
   String unitType
   CurrencyType currencyType
 
+  static constraints = {
+    unitType nullable:false
+  }
 
   Product createProduct(){
     new Product(
@@ -24,7 +27,7 @@ class ProductCommand implements Validateable{
       price:getValueInBigDecimal(this.price),
       ieps:getValueInBigDecimal(this.ieps),
       iva:getValueInBigDecimal(this.iva),
-      unitType:UnitType.findByName(this.unitType),
+      unitType:UnitType.get(this.unitType),
       currencyType:this.currencyType
       )
   }
