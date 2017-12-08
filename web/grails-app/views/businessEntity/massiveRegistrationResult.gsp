@@ -21,7 +21,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="table-responsive">
-                  <table class="table">
+                  <table class="table table-striped table-condensed">
                     <tr>
                     <g:each in="${resultImport.headers}" var="header">
                       <th>${header}</th>             
@@ -104,7 +104,15 @@
               </div>
             </div>
           </div>
+          <div class="portlet-footer">
 
+            <div class="row">
+              <div class="col-md-6">
+                <g:link class="btn btn-default" controller="businessEntity" action="massiveRegistration">Regresar</g:link>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
