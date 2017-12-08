@@ -344,20 +344,17 @@ class BusinessEntityServiceSpec extends Specification {
 
   void "Check if type of person in business entity is correct"(){
     given:"A string from rows"
-      String persona1 = "FISICA"
-      String persona2 = "fízica"
-      String persona3 = "mOraL"
-      String persona4 = "moal"
+      String data = person
     when:
-      def be1 = service.checkIfTypeOfBusinessEntityIsCorrect(persona1)
-      def be2 = service.checkIfTypeOfBusinessEntityIsCorrect(persona2)
-      def be3 = service.checkIfTypeOfBusinessEntityIsCorrect(persona3)
-      def be4 = service.checkIfTypeOfBusinessEntityIsCorrect(persona4)
+      def be = service.checkIfTypeOfBusinessEntityIsCorrect(data)
     then:
-      be1 != true
-      be2 == true
-      be3 != true
-      be4 == true
+      be == expected
+    where:
+      person    ||  expected
+      "FISICA"  ||  false
+      "Fizica"  ||  true
+      "MorAL"   ||  false
+      "Molar"   ||  true
   }
 
 }
