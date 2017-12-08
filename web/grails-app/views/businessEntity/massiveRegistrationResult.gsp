@@ -110,6 +110,9 @@
               <div class="col-md-6">
                 <g:link class="btn btn-default" controller="businessEntity" action="massiveRegistration">Regresar</g:link>
               </div>
+              <div class="col-md-6 text-right">
+                <g:link class="btn btn-default" controller="businessEntity" action="index">Relaciones Comerciales</g:link>
+              </div>
             </div>
 
           </div>
