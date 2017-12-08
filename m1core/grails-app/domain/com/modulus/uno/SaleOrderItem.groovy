@@ -14,6 +14,7 @@ class SaleOrderItem {
 
   String unitType
   CurrencyType currencyType = CurrencyType.PESOS
+  String satKey
 
   static belongsTo = [saleOrder:SaleOrder]
 

@@ -100,4 +100,7 @@ databaseChangeLog = {
   include file: 'delete-column-quotation-request.groovy'
   include file: 'create-domain-quotation-commission.groovy'
   include file: 'adding-column-users-quotation-contract.groovy'
+  include file: 'adding-column-satkey-to-product.groovy'
+  include file: 'create-domain-unit-type.groovy'
+  include file: 'adding-column-satkey-to-sale-order.groovy'
 }

@@ -5,6 +5,7 @@ import grails.validation.Validateable
 class ProductCommand implements Validateable{
 
   String id
+  String satKey
   String sku
   String name
   String price
@@ -16,6 +17,7 @@ class ProductCommand implements Validateable{
 
   Product createProduct(){
     new Product(
+      satKey:this.satKey,
       sku:this.sku,
       name:this.name,
       price:getValueInBigDecimal(this.price),

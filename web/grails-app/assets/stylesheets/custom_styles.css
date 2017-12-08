@@ -99,7 +99,7 @@ h2{
 }
 .navbar-collapse.sidebar-collapse.collapse
 a,
-a:hover,
+/*a:hover,*/
 a:active,
 a:focus {
 	color: #ffffff !important;
@@ -341,7 +341,8 @@ a:focus {
 	background: none;
 }
 .table > tbody > tr.warning >td:last-child{
-	display: inline-block;
+  float:right;
+	display: inline;
 	background: rgba(243, 156, 18, 1);
 	border-radius: 8px;
 	color: white;
@@ -349,7 +350,8 @@ a:focus {
 	margin: 0.5em 0 0 0 ;
 }
 .table > tbody > tr.success >td:last-child{
-	display: inline-block;
+  float:right;
+	display: inline;
 	background: rgba(22, 160, 133, 1);
 	border-radius: 8px;
 	color: white;
@@ -357,7 +359,8 @@ a:focus {
 	margin: 0.5em 0 0 0 ;
 }
 .table > tbody > tr.danger >td:last-child{
-	display: inline-block;
+  float:right;
+	display: inline;
 	background: rgba(231, 76, 60,1);
 	border-radius: 8px;
 	color: white;
@@ -365,7 +368,8 @@ a:focus {
 	margin: 0.5em 0 0 0 ;
 }
 .table > tbody > tr.info >td:last-child{
-	display: inline-block;
+  float:right;
+	display: inline;
 	background: rgba(41, 128, 185,1);
 	border-radius: 8px;
 	color: white;
