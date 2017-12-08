@@ -6,6 +6,7 @@ import grails.converters.JSON
 import wslite.rest.*
 
 import com.modulus.uno.purchaseOrder.PurchaseOrderItemService
+import com.modulus.uno.catalogs.UnitType
 
 
 class PurchaseOrderController {
@@ -265,7 +266,7 @@ class PurchaseOrderController {
 
   def show(PurchaseOrder purchaseOrder) {
     Boolean enableAddDocuments = purchaseOrderService.enableAddDocuments(purchaseOrder)
-    respond purchaseOrder, model:[enableAddDocuments:enableAddDocuments, user:springSecurityService.currentUser, baseUrlDocuments:grailsApplication.config.grails.url.base.images, enabledToPay:companyService.companyIsEnabledToPay(purchaseOrder.company)]
+    respond purchaseOrder, model:[enableAddDocuments:enableAddDocuments, user:springSecurityService.currentUser, baseUrlDocuments:grailsApplication.config.grails.url.base.images, enabledToPay:companyService.companyIsEnabledToPay(purchaseOrder.company), unitTypes:UnitType.findAllByCompany(purchaseOrder.company)]
   }
 
   @Transactional

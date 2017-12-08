@@ -24,7 +24,7 @@ class SaleOrderItemCommand implements Validateable{
       ivaRetention:getValueInBigDecimal(this.ivaRetention?:"0"),
       iva:getValueInBigDecimal(this.iva?:"0"),
       satKey:this.satKey ?: "01010101",
-      unitType:UnitType.values().find {  it.toString() == this.unitType } ?: unitType
+      unitType:this.unitType
     )
   }
 

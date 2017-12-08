@@ -18,7 +18,7 @@ class PurchaseOrderItemCommand implements Validateable{
           price:getValueInBigDecimal(this.price),
           ieps:getValueInBigDecimal(this.ieps?:"16"),
           iva:getValueInBigDecimal(this.iva?:"16"),
-          unitType:UnitType.values().find {  it.toString() == this.unitType } ?: unitType
+          unitType:this.unitType
         )
     }
 
