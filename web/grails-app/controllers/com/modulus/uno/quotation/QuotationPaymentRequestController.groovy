@@ -5,21 +5,15 @@ class QuotationPaymentRequestController {
 
 
   QuotationPaymentRequestService quotationPaymentRequestService
+  QuotationContractService quotationContractService
 
     def index() {
     	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
       [quotationContractList: quotationContractList, company:company]
     }
 
-    def consult() {
-      Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-      respond new QuotationContract(), model:[quotationContractList: quotationContractList, company:company]
-    }
-
     def show(QuotationPaymentRequest quotationPaymentRequest) {
-
       respond quotationPaymentRequest
     }
 
@@ -30,16 +24,24 @@ class QuotationPaymentRequestController {
     }
 
     def create(){
-    	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
-
-      [company:company,
-      quotationContractList:quotationContractList]
-
+      Company company = Company.get(session.company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
+      [company:company, quotationContractList:quotationContractList]
     }
 
     def save(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
+      Company company = Company.get(session.company)
+      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
       QuotationPaymentRequest quotationPaymentRequest = quotationPaymentRequestCommand.getQuotationPaymentRequest()
+      Map summary = quotationPaymentRequestService.calaculateSummary(params.quotation)
+ 
+      if(quotationPaymentRequest.amount > summary.available){
+        def messageForErrorInBalances = "Error"
+        render view:'create', model:[company:company,
+                                     quotationContractList: quotationContractList,
+                                     messageForErrorInBalances:messageForErrorInBalances]
+        return
+      }
       quotationPaymentRequestService.create(quotationPaymentRequest)
       redirect(action: 'show', id: quotationPaymentRequest.id)
     }
@@ -71,6 +73,12 @@ class QuotationPaymentRequestController {
     def process(QuotationPaymentRequest quotationPaymentRequest){
       quotationPaymentRequestService.process(quotationPaymentRequest)
       redirect(action:'index')
+    }
+
+    def saveFromQuotationContract(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
+      QuotationPaymentRequest quotationPaymentRequest = quotationPaymentRequestCommand.getQuotationPaymentRequest()
+      quotationPaymentRequestService.create(quotationPaymentRequest)
+      redirect(controller: "QuotationContract", action: "balance", id:quotationPaymentRequestCommand.quotation.toInteger())
     }
 
 }

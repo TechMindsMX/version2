@@ -10,7 +10,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
+        Balance general de Cotizaciones
         <small>${company}</small>
       </h1>
     </div>
@@ -63,7 +63,7 @@
                     </tr>
                     <g:each in="${detailGeneralBalance}" var="generalBalance">
                       <tr>
-                        <td><g:link action="show" id="${generalBalance.quotationContract.id}">${generalBalance.quotationContract?.client}</g:link></td>
+                        <td><g:link action="balance" id="${generalBalance.quotationContract.id}">${generalBalance.quotationContract?.client}</g:link></td>
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.request)}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.payment)}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.balance)}</td>

@@ -11,8 +11,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Lista de Solicitudes de Cotizaciones
-        <small>${company}</small>
+        Consulta de saldos
+        <small>${balance?.quotationContract?.client}</small>
       </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
@@ -67,6 +67,10 @@
                   <g:submitButton name="consultar" class="btn btn-primary marginP" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"
                   />
                   </div>
+                  <div class="col-md-6">
+                  <button type="button" name="Solicitar pago" class="btn btn-primary marginP" value="${message(code: 'default.button.paymentRequest.label', default: 'Solicitar pago')}" data-toggle="collapse" data-target="#demo"
+                  >Solicitar pago </button>
+                  </div>
                 </div>
                 </g:form>
 
@@ -75,6 +79,7 @@
                 <div class="row">
                   <h2>
                     Disponible: ${modulusuno.formatPrice(number:balance.summary.available)}
+                    <input type="hidden" value="${balance.summary.available}" id="available" >
                   </h2>
                 </div>
                 <div class="row">
@@ -88,6 +93,11 @@
                   </h2>
                 </div>
               </div>
+            </div>
+            <div class="row">
+                <div id="demo" class="collapse">
+                  <g:render template="requestPayment/requestPayment"/>
+                </div>
             </div>
             <div class="row">
               <div class="col-md-12">

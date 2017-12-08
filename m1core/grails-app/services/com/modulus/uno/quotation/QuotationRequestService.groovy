@@ -12,6 +12,7 @@ import com.modulus.uno.CorporateService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CompanyStatus
 import com.modulus.uno.SaleOrderStatus
+import com.modulus.uno.User
 import java.math.RoundingMode
 
 @Transactional
@@ -21,6 +22,7 @@ class QuotationRequestService {
     SaleOrderService saleOrderService
     CorporateService corporateService
     CompanyService companyService
+    QuotationCommissionService quotationCommissionService
 
     def serviceMethod() {
 
@@ -57,7 +59,7 @@ class QuotationRequestService {
                                                                             sku:"FACTURA-10",
                                                                             name:quotationRequest.satConcept.getConcept(),
                                                                             quantity:"1",
-                                                                            price:quotationRequest.amount.toString(),
+                                                                            price:quotationRequest.subtotal.toString(),
                                                                             discount:"0",
                                                                             ivaRetention:"0",
                                                                             iva:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
@@ -68,6 +70,7 @@ class QuotationRequestService {
         saleOrderItem.save()
         if(saleOrderItem){
          quotationRequest.saleOrder = saleOrder
+         quotationCommissionService.create(quotationRequest, quotationRequest.commission)
          quotationRequest.status = QuotationRequestStatus.PROCESSED
         }
       }
@@ -102,4 +105,25 @@ class QuotationRequestService {
       List<Corporate> companies = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED, corporate.id)
       companies
     }
+    
+    BigDecimal getIvaCurrent(){
+      new BigDecimal(grailsApplication.config.iva)
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

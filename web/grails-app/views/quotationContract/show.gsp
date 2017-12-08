@@ -16,7 +16,7 @@
     </div>
 
     <div id="edit-address" class="content scaffold-edit" role="main">
-      <div class="portlet portlet-blue">
+      <div class="portlet portlet-blue">  
         <div class="portlet-body">
           <g:if test="${flash.message}">
             <div class="message" role="status">${flash.message}</div>
@@ -34,7 +34,6 @@
             </div>
           </div>
         </div>
-          
         <div class="portlet-footer">
           <div class="row">
             <div class="col-md-6">
@@ -45,7 +44,32 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
+        <div class="row" style="padding: 15px;">
+          <g:form name="addingUsers" action="addUsers">
+            <g:render template="users" />
+            <input value="${quotationContract.id}" name="quotationId" type="hidden"/>
+          </g:form>
+        </div>
+
+        <div class="row" style="padding: 15px;">
+          <g:if test="${quotationContract.users}">
+            <div class="portlet portlet-default">
+              <div class="portlet-heading">
+                <div class="portlet-title">
+                  <h4>Usuarios en el contrato</h4>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              
+              <div class="portlet-body">
+              <g:render template="userDelete" />
+              </div>
+            </div>
+          </g:if>
+        </div>
+    <asset:javascript src="businessEntity/selectEntities.js"/>
   </body>
 </html>
