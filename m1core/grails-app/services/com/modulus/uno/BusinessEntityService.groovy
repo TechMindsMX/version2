@@ -243,12 +243,10 @@ class BusinessEntityService {
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
     def headers = getKeyForData(data)
-    def information = getValuesForData(data)
     List results = processDataFromXlsEMPLEADO(data, company)
     log.info "Headers: ${headers}"
     log.info "Results: ${results}"
-    log.info "Datos: ${information}"
-    [results:results, headers:headers, information:information]
+    [results:results, headers:headers, data:data]
   }
 
   def processXlsMassiveForCLIENTE(def file, Company company) {
@@ -256,12 +254,10 @@ class BusinessEntityService {
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveClient(xlsFile)
     def headers = getKeyForData(data)
-    def information = getValuesForData(data)
     List results = processDataFromXlsCLIENTE(data, company)
     log.info "Headers: ${headers}"
     log.info "Results: ${results}"
-    log.info "Datos: ${information}"
-    [results:results, headers:headers, information:information]
+    [results:results, headers:headers, data:data]
   }
 
   def processXlsMassiveForPROVEEDOR(def file, Company company) {
@@ -269,12 +265,10 @@ class BusinessEntityService {
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveProvider(xlsFile)
     def headers = getKeyForData(data)
-    def information = getValuesForData(data)
     List results = processDataFromXlsPROVEEDOR(data, company)
     log.info "Headers: ${headers}"
     log.info "Results: ${results}"
-    log.info "Datos: ${information}"
-    [results:results, headers:headers, information:information]
+    [results:results, headers:headers, data:data]
   }
 
   def processXlsMassiveForCLIENTE_PROVEEDOR(def file, Company company) {
@@ -282,22 +276,15 @@ class BusinessEntityService {
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveClient_Provider(xlsFile)
     def headers = getKeyForData(data)
-    def information = getValuesForData(data)
     List results = processDataFromXlsPROVEEDOR(data, company)
     log.info "Headers: ${headers}"
     log.info "Results: ${results}"
-    log.info "Datos: ${information}"
-    [results:results, headers:headers, information:information]
+    [results:results, headers:headers, data:data]
   }
 
   def getKeyForData(List data) {
     def headers = data.first().keySet()
     headers
-  }
-
-  def getValuesForData(List data) {
-    def information = data.first().values()
-    information
   }
 
   File getFileToProcess(def file) {
