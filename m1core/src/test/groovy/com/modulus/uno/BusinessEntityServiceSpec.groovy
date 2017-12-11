@@ -190,7 +190,7 @@ class BusinessEntityServiceSpec extends Specification {
   }
 
   void "Should create a business entity for row business entity from file massive"() {
-    given:"The row employee"
+    given:"The row of a business entity"
       Map rowClientFisica = [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
       Map rowProviderFisica = [RFC:"PAGC770214431", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
       Map rowClientMoral = [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL"]
@@ -221,7 +221,7 @@ class BusinessEntityServiceSpec extends Specification {
   }
 
   void "Should not create a business entity object for row businessEntity when RFC is wrong"() {
-    given:"The row employee"
+    given:"The row of a business entity"
       Map rowClientFisica = [RFC:"XYZ123456ABC", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
       Map rowProviderFisica = [RFC:"XYZ123456ABC", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA"]
       Map rowClientMoral = [RFC:"XYZ123456ABC", RAZON_SOCIAL:"RazonSocial", PERSONA:"MORAL"]
