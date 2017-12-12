@@ -277,7 +277,7 @@ class PurchaseOrderService {
     def criteriaPO = PurchaseOrder.createCriteria()
     def results = criteriaPO.list {
       eq('company', company)
-      ilike('providerName', "${params.providerName}%")
+      ilike('providerName', "%${params.providerName}%")
       order('dateCreated', 'desc')
     }
     results
