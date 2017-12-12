@@ -31,6 +31,9 @@
     </div>
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
+        
+        <modulusuno:showFilters controller="purchaseOrder" action="search" filters="['providerName']" labels="['PROVEEDOR']" filterValues="${filterValues}" viewAll="list"/>
+
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
         </g:if>
@@ -44,7 +47,6 @@
           <th>${messageBusinessEntityOrder}</th>
           <th>Estatus</th>
           <th>Fecha de Creación</th>
-          <th>Compañía</th>
           <th>Total</th>
           <th>Por pagar</th>
           <g:if test="${!isMoneyBackOrder}">
@@ -63,7 +65,6 @@
             <td>${purch.providerName}</td>
             <td><g:message code="purchaseOrder.status.${purch.status}" default="${purch.status}"/></td>
             <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${purch.dateCreated}"/></td>
-            <td>${purch.company}</td>
             <td class="text-right">${modulusuno.formatPrice(number: purch.total)}</td>
             <td class="text-right">${modulusuno.formatPrice(number: purch.total - purch.totalPayments)}</td>
             <g:if test="${!purch.isMoneyBackOrder}">
