@@ -325,7 +325,7 @@ class SaleOrderService {
       eq('company', company)
       and {
         ilike('rfc', "${params.rfc}%")
-        ilike('clientName', "${params.clientName}%")
+        ilike('clientName', "%${params.clientName}%")
       }
       order('dateCreated', 'desc')
     }
