@@ -407,9 +407,9 @@ class BusinessEntityService {
     }
 
     Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
-    if (address?.hasErrors()) {
+    if (!address || address?.hasErrors()) {
         transactionStatus.setRollbackOnly()
-        return "Error: Datos de la dirección"
+        return "Error: Datos en la dirección"
     }
 
     "Registrado"
@@ -440,8 +440,8 @@ class BusinessEntityService {
       return "Error: datos bancarios"
     }
 
-    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
-    if (address?.hasErrors()) {
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowProvider)
+    if (!address || address?.hasErrors()) {
         transactionStatus.setRollbackOnly()
         return "Error: Datos de la dirección"
     }
@@ -474,8 +474,8 @@ class BusinessEntityService {
       return "Error: datos bancarios"
     }
 
-    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
-    if (address?.hasErrors()) {
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClientProvider)
+    if (!address || address?.hasErrors()) {
         transactionStatus.setRollbackOnly()
         return "Error: Datos de la dirección"
     }
