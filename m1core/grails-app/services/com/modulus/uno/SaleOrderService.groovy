@@ -323,7 +323,7 @@ class SaleOrderService {
     def criteriaSO = SaleOrder.createCriteria()
     def results = criteriaSO.list(max:params.max, offset:params.offset) {
       eq('company', company)
-      or {
+      and {
         ilike('rfc', "${params.rfc}%")
         ilike('clientName', "${params.clientName}%")
       }
