@@ -330,9 +330,9 @@ class SaleOrderServiceSpec extends Specification {
       result.items == totalItems
     where:
       theParams       ||   sizeList       |   totalItems
-      [rfc:"C", clientName:null, max:5]    |   5     |   8
-      [rfc:"C1", clientName:null, max:5]    |   1     |   1
-      [rfc:null, clientName:"Cliente", max:5]    |   5     |   8
-      [rfc:null, clientName:"Cliente 2", max:5]    |   3     |   3
+      [rfc:"C", clientName:"", max:5]    |   5     |   8
+      [rfc:"C1", clientName:"", max:5]    |   1     |   1
+      [rfc:"", clientName:"Cliente", max:5]    |   5     |   8
+      [rfc:"", clientName:"Cliente 2", max:5]    |   3     |   3
   }
 }
