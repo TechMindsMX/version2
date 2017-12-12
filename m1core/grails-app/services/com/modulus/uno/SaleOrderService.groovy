@@ -318,4 +318,18 @@ class SaleOrderService {
     saleOrder
   }
 
+  Map searchSaleOrders(Long idCompany, Map params) {
+    Company company = Company.get(idCompany)
+    def criteriaSO = SaleOrder.createCriteria()
+    def results = criteriaSO.list(max:params.max, offset:params.offset) {
+      eq('company', company)
+      or {
+        ilike('rfc', "${params.rfc}%")
+        ilike('clientName', "${params.clientName}%")
+      }
+      order('dateCreated', 'desc')
+    }
+    [list:results, items:results.totalCount]
+  }
+
 }
