@@ -115,7 +115,7 @@ class AddressService {
       country:rowBusinessEntity.PAIS,
       city:rowBusinessEntity.CIUDAD,
       town:rowBusinessEntity."DELEGACION/MUNICIPIO",
-      federalEntity:rowBusinessEntity.ENTIDAD_FEDERATIVA?:"_",
+      federalEntity:rowBusinessEntity.ENTIDAD_FEDERATIVA?:rowBusinessEntity.CIUDAD,
       addressType:rowBusinessEntity.TIPO_DE_DIRECCION
     )
 
