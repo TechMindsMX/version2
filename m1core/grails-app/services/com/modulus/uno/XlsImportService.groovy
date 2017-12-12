@@ -19,7 +19,7 @@ class XlsImportService {
 
   Map COLUMN_MAP_SIMULATOR = [
     startRow:3,
-    columnMap:['A':'CONSECUTIVO', 'B':'SA_MENSUAL','C':'SA_NETO','D':'IAS_NETO','E':'SA_BRUTO','F':'IAS_BRUTO','G':'PERIODO','H':'RIESGO_TRAB','I':'FACT_INTEGRA','J':'COMISION']
+    columnMap:['A':'CONSECUTIVO', 'B':'SA_MENSUAL','C':'IAS_NETO','D':'SA_BRUTO','E':'IAS_BRUTO','F':'PERIODO','G':'RIESGO_TRAB','H':'FACT_INTEGRA','I':'COMISION']
   ]
 
   Map CELL_MAP_SIMULATOR = [
