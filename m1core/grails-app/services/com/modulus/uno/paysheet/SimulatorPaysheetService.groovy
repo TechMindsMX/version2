@@ -36,7 +36,8 @@ class SimulatorPaysheetService {
         List data = xlsImportService.parseXlsPaysheetSimulator(file)
         List<PaysheetEmployee> paysheetEmployeeList = []
         data.each{ row ->
-            if(row.SA_BRUTO && row.IAS_BRUTO){ paysheetEmployeeList << processForSalaryBrutoAndIASBruto(row) }
+            if(row.SA_BRUTO && row.IAS_BRUTO && !row.IAS_NETO){ paysheetEmployeeList << processForSalaryBrutoAndIASBruto(row) }
+            if(row.SA_BRUTO && !row.IAS_BRUTO && row.IAS_NETO){ println "!***" }
         }
         paysheetEmployeeList
     }
