@@ -302,6 +302,6 @@ class SaleOrderController {
 
     def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
 
-    render view:"list", model:[saleOrders: saleOrders.list, filterValues:[rfc:params.rfc, clientName:params.clientName]] 
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName]] 
   }
 }
