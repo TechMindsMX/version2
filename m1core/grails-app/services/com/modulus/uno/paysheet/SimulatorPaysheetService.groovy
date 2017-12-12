@@ -127,7 +127,12 @@ class SimulatorPaysheetService {
   }
 
   BigDecimal calculatePaysheetTax(BigDecimal salaryNeto, String period) {
-    BigDecimal baseImssMonthlySalary = salaryNeto
+    BigDecimal baseImssMonthlySalary = salaryNeto?:0
+    println "*"*100
+    println baseImssMonthlySalary
+    println grailsApplication.config.paysheet.paysheetTax
+    println period 
+    println "*"*100
     calculateAmountForPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), period)    
   }
 
