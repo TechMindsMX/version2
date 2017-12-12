@@ -10,6 +10,7 @@ class BusinessEntityService {
   def providerService
   def employeeService
   def bankAccountService
+  def addressService
   def emailSenderService
   SaleOrderService saleOrderService
   PaymentService paymentService
@@ -276,7 +277,7 @@ class BusinessEntityService {
     File xlsFile = getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveClient_Provider(xlsFile)
     def headers = getKeyForData(data)
-    List results = processDataFromXlsPROVEEDOR(data, company)
+    List results = processDataFromXlsCLIENTE_PROVEEDOR(data, company)
     log.info "Headers: ${headers}"
     log.info "Results: ${results}"
     [results:results, headers:headers, data:data]
@@ -326,6 +327,18 @@ class BusinessEntityService {
       results.add(result)
       if (result == "Registrado") {
         addBusinessEntityToCompany(provider.RFC, company)
+      }
+    }
+    results
+  }
+
+  List processDataFromXlsCLIENTE_PROVEEDOR(List data, Company company) {
+    List results = []
+    data.each { clientProvider ->
+      String result = saveClientProviderImportData(clientProvider, company)
+      results.add(result)
+      if (result == "Registrado") {
+        addBusinessEntityToCompany(clientProvider.RFC, company)
       }
     }
     results
@@ -388,10 +401,17 @@ class BusinessEntityService {
     
     ClientLink clientLink = clientService.createClientForRowClient(rowClient, company)
     BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowClient)
-     if(businessEntity.hasErrors()){
+    if(businessEntity.hasErrors()){
         transactionStatus.setRollbackOnly()
         return "Error: RFC"
-      }
+    }
+
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
+    if (address?.hasErrors()) {
+        transactionStatus.setRollbackOnly()
+        return "Error: Datos de la dirección"
+    }
+
     "Registrado"
   }
 
@@ -418,6 +438,46 @@ class BusinessEntityService {
     if (!bankAccount || bankAccount?.hasErrors()) {
       transactionStatus.setRollbackOnly()
       return "Error: datos bancarios"
+    }
+
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
+    if (address?.hasErrors()) {
+        transactionStatus.setRollbackOnly()
+        return "Error: Datos de la dirección"
+    }
+    "Registrado"
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  def saveClientProviderImportData(Map rowClientProvider, Company company){
+    if(checkIfTypeOfBusinessEntityIsCorrect(rowClientProvider.PERSONA)) {
+      transactionStatus.setRollbackOnly()
+      return "Error: tipo de cliente/proveedor"
+    }
+
+    if (providerService.providerAlreadyExistsInCompany(rowClientProvider.RFC, company) || clientService.clientAlreadyExistsInCompany(rowClientProvider.RFC, company)){
+      transactionStatus.setRollbackOnly()
+      return "Error: el RFC del cliente/proveedor ya existe"
+    }
+
+    ProviderLink providerLink = providerService.createProviderForRowProvider(rowClientProvider, company)
+    ClientLink clientLink = clientService.createClientForRowClient(rowClientProvider, company)
+    BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowClientProvider)
+      if(businessEntity.hasErrors()){
+        transactionStatus.setRollbackOnly()
+        return "Error: RFC"
+      }
+
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowProvider)
+    if (!bankAccount || bankAccount?.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      return "Error: datos bancarios"
+    }
+
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
+    if (address?.hasErrors()) {
+        transactionStatus.setRollbackOnly()
+        return "Error: Datos de la dirección"
     }
     "Registrado"
   }
