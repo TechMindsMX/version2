@@ -12,8 +12,8 @@ class SimulatorPaysheetService {
   BreakdownPaymentEmployeeService breakdownPaymentEmployeeService
 
     def generateLayoutForSimulator() {
-       def headers = ['CONSECUTIVO','SA_MENSUAL','SA_NETO','IAS_NETO','SA_BRUTO','IAS_BRUTO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
-       def descriptions = ['NUMERO','','','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
+       def headers = ['CONSECUTIVO','SA_MENSUAL','IAS_NETO','SA_BRUTO','IAS_BRUTO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
+       def descriptions = ['NUMERO','','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
        new WebXlsxExporter().with {
           fillRow(headers, 2)
           fillRow(descriptions, 3)
@@ -36,11 +36,7 @@ class SimulatorPaysheetService {
         List data = xlsImportService.parseXlsPaysheetSimulator(file)
         List<PaysheetEmployee> paysheetEmployeeList = []
         data.each{ row ->
-            if(row.SA_NETO && row.IAS_NETO){PaysheetEmployee paysheetEmployee =  processForSalaryNetoAndIASNeto(row); paysheetEmployeeList << paysheetEmployee}
-            if(row.IAS_NETO && row.SA_BRUTO){ paysheetEmployeeList << processForIASNetoAndSalaryBruto(row) }
-            if(row.SA_BRUTO && row.IAS_BRUTO){ processForSalaryBrutoAndIASBruto(row) }
-            if(row.SA_NETO && row.IAS_BRUTO){ processForSalaryNetoAndIASBruto(row)}
-            if(row.IAS_NETO && row.IAS_BRUTO){processIASNetoAndIASBruto(row) }
+            if(row.SA_BRUTO && row.IAS_BRUTO){ paysheetEmployeeList << processForSalaryBrutoAndIASBruto(row) }
         }
         paysheetEmployeeList
     }
@@ -73,10 +69,10 @@ class SimulatorPaysheetService {
 
     PaysheetEmployee getPaysheetEmployeeWithCalcules(def row){
       PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
-      paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_NETO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
-      paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_NETO, row.PERIODO) // Salario neto
-      paysheetEmployee.salaryAssimilable = row.IAS_NETO // IAS NETO
-      paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_NETO, row.PERIODO) // Salario Neto
+      paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_BRUTO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
+      paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_BRUTO, row.PERIODO) // Salario neto
+      paysheetEmployee.salaryAssimilable = row.IAS_BRUTO // IAS NETO
+      paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_BRUTO, row.PERIODO) // Salario Neto
       paysheetEmployee
     }
      
@@ -128,11 +124,6 @@ class SimulatorPaysheetService {
 
   BigDecimal calculatePaysheetTax(BigDecimal salaryNeto, String period) {
     BigDecimal baseImssMonthlySalary = salaryNeto?:0
-    println "*"*100
-    println baseImssMonthlySalary
-    println grailsApplication.config.paysheet.paysheetTax
-    println period 
-    println "*"*100
     calculateAmountForPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), period)    
   }
 
