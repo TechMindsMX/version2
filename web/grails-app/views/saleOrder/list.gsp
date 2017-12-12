@@ -16,7 +16,9 @@
   <div class="portlet portlet-blue">
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
+        
         <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName']" labels="['RFC', 'CLIENTE']" filterValues="${filterValues}" viewAll="list"/>
+        
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
         </g:if>
