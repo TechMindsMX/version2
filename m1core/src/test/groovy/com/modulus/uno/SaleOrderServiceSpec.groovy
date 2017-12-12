@@ -326,13 +326,15 @@ class SaleOrderServiceSpec extends Specification {
     when:
       def result = service.searchSaleOrders("1".toLong(), params)
     then:
-      result.list.size() == sizeList
-      result.items == totalItems
+      result.size() == sizeList
     where:
-      theParams       ||   sizeList       |   totalItems
-      [rfc:"C", clientName:"", max:5]    |   5     |   8
-      [rfc:"C1", clientName:"", max:5]    |   1     |   1
-      [rfc:"", clientName:"Cliente", max:5]    |   5     |   8
-      [rfc:"", clientName:"Cliente 2", max:5]    |   3     |   3
+      theParams       ||   sizeList
+      [rfc:"C", clientName:""]    | 8
+      [rfc:"C1", clientName:""]    |   1
+      [rfc:"", clientName:"Cliente"]    |   8
+      [rfc:"", clientName:"Cliente 2"]    |   3
+      [rfc:"C5", clientName:""]    |   0
+      [rfc:"", clientName:"Cliente 5"]    |   0
+      [rfc:"C6", clientName:"Cliente 2"]    |   0
   }
 }
