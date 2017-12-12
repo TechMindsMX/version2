@@ -305,4 +305,16 @@ class PurchaseOrderController {
       message(code:"businessEntity.provider.not.bank.account.or.not.address")
   }
 
+  def search() {
+    log.info "Search purchase orders with params: ${params}"
+    if (!params.providerName) {
+      redirect action:"list"
+      return
+    }
+
+    def purchaseOrders = purchaseOrderService.searchPurchaseOrders(session.company.toLong(), params)
+
+    render view:"list", model:[purchaseOrder: purchaseOrders, filterValues:[providerName:params.providerName]] 
+  }
+
 }
