@@ -22,13 +22,6 @@
   </div>
 <div id="edit-address" class="content scaffold-edit" role="main">
   <div class="portlet portlet-blue">
-    <div class="portlet-heading">
-      <div class="portlet-title">
-        <br />
-        <br />
-      </div>
-      <div class="clearfix"></div>
-    </div>
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
         
@@ -46,7 +39,7 @@
           <th>No. de Orden</th>
           <th>${messageBusinessEntityOrder}</th>
           <th>Estatus</th>
-          <th>Fecha de Creación</th>
+          <th>Fecha de Pago</th>
           <th>Total</th>
           <th>Por pagar</th>
           <g:if test="${!isMoneyBackOrder}">
@@ -64,7 +57,7 @@
             <td class="text-center"><g:link action="show" id="${purch.id}">${purch.id}</g:link></td>
             <td>${purch.providerName}</td>
             <td><g:message code="purchaseOrder.status.${purch.status}" default="${purch.status}"/></td>
-            <td><g:formatDate format="dd-MM-yyyy hh:mm:ss" date="${purch.dateCreated}"/></td>
+            <td><modulusuno:dateFormat date="${purch.fechaPago}"/></td>
             <td class="text-right">${modulusuno.formatPrice(number: purch.total)}</td>
             <td class="text-right">${modulusuno.formatPrice(number: purch.total - purch.totalPayments)}</td>
             <g:if test="${!purch.isMoneyBackOrder}">
@@ -92,11 +85,13 @@
           </tr>
          </g:each>
        </table>
+       <g:if test="${!filterValues}">
        <nav>
           <ul class="pagination">
             <g:paginate class="pagination" controller="purchaseOrder" action="list" total="${purchaseOrderCount}" />
           </ul>
         </nav>
+        </g:if>
       </div>
     </div>
   </div>
