@@ -14,15 +14,11 @@
   </div>
 <div id="edit-address" class="content scaffold-edit" role="main">
   <div class="portlet portlet-blue">
-    <div class="portlet-heading">
-      <div class="portlet-title">
-        <br />
-        <br />
-      </div>
-      <div class="clearfix"></div>
-    </div>
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
+        
+        <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName']" labels="['RFC', 'CLIENTE']" filterValues="${filterValues}" viewAll="list"/>
+        
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
         </g:if>
@@ -57,11 +53,13 @@
           </tr>
          </g:each>
        </table>
+       <g:if test="${!filterValues}">
        <nav>
           <div class="pagination">
             <g:paginate class="pagination" controller="saleOrder" action="list" total="${saleOrderCount}" />
           </div>
         </nav>
+        </g:if>
       </div>
     </div>
   </div>

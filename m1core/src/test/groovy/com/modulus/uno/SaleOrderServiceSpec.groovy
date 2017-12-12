@@ -307,4 +307,34 @@ class SaleOrderServiceSpec extends Specification {
       1 * commissionTransactionService.unlinkTransactionsForSaleOrder(_)
   }
 
+  @Unroll
+  void "Should get the filter list of sale orders with filter params=#theParams"() {
+    given:"The company"
+      Company company = new Company(rfc:"A").save(validate:false)
+    and:"The current sale orders"
+      SaleOrder so1 = new SaleOrder(rfc:"C1", clientName:"Cliente 1", company:company).save(validate:false)
+      SaleOrder so2 = new SaleOrder(rfc:"C1", clientName:"Cliente 1", company:new Company(rfc:"B").save(validate:false)).save(validate:false)
+      SaleOrder so3 = new SaleOrder(rfc:"C2", clientName:"Cliente 2", company:company).save(validate:false)
+      SaleOrder so4 = new SaleOrder(rfc:"C2", clientName:"Cliente 2", company:company).save(validate:false)
+      SaleOrder so5 = new SaleOrder(rfc:"C22", clientName:"Cliente 22", company:company).save(validate:false)
+      SaleOrder so6 = new SaleOrder(rfc:"C3", clientName:"Cliente 3", company:company).save(validate:false)
+      SaleOrder so7 = new SaleOrder(rfc:"C33", clientName:"Cliente 33", company:company).save(validate:false)
+      SaleOrder so8 = new SaleOrder(rfc:"C4", clientName:"Cliente 4", company:company).save(validate:false)
+      SaleOrder so9 = new SaleOrder(rfc:"C44", clientName:"Cliente 44", company:company).save(validate:false)
+    and:"The filter params"
+      Map params = theParams
+    when:
+      def result = service.searchSaleOrders("1".toLong(), params)
+    then:
+      result.size() == sizeList
+    where:
+      theParams       ||   sizeList
+      [rfc:"C", clientName:""]    | 8
+      [rfc:"C1", clientName:""]    |   1
+      [rfc:"", clientName:"Cliente"]    |   8
+      [rfc:"", clientName:"Cliente 2"]    |   3
+      [rfc:"C5", clientName:""]    |   0
+      [rfc:"", clientName:"Cliente 5"]    |   0
+      [rfc:"C6", clientName:"Cliente 2"]    |   0
+  }
 }
