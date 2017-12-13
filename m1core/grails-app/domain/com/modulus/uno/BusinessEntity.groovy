@@ -9,7 +9,7 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
 
   BusinessEntityType type
-  BusinessEntityStatus status = BusinessEntityStatus.ACTIVE
+  BusinessEntityStatus status = BusinessEntityStatus.TO_AUTHORIZE
 
   String artemisaId
 
