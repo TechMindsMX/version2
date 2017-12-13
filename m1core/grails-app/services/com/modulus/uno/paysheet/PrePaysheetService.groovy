@@ -247,4 +247,11 @@ class PrePaysheetService {
     }
     PrePaysheet.executeUpdate("delete PrePaysheet prePaysheet where prePaysheet.id = :id", [id: prePaysheet.id])
   }
+
+  @Transactional
+  def reject(PrePaysheet prePaysheet) {
+    prePaysheet.status = PrePaysheetStatus.REJECTED
+    prePaysheet.save()
+  }
+
 }
