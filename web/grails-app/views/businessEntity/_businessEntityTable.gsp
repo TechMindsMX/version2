@@ -1,12 +1,16 @@
 <table class="table table-striped table-condensed">
+    <thead>
     <tr>
         <g:each in="${resultImport.headers}" var="header">
             <th>${header}</th>             
         </g:each>
         <th>RESULTADO</th>
     </tr>
+    </thead>
+    <tbody>
     <g:if test="${resultImport.headers.size() == 19}">
         <g:each in="${resultImport.data}" var="values" status="i">
+            <tr>
             <td>${values.PERSONA}</td>
             <td>${values.RFC}</td>
             <td>${values.SITIO_WEB}</td>
@@ -27,11 +31,12 @@
             <td>${values.ENTIDAD_FEDERATIVA}</td>
             <td>${values.TIPO_DE_DIRECCION}</td>
             <td>${resultImport.results[i]}</td>  
-            <tr> </tr>
+            </tr>
         </g:each>
     </g:if>
     <g:elseif test="${resultImport.headers.size() == 18}">
         <g:each in="${resultImport.data}" var="values" status="i">
+            <tr>
             <td>${values.PERSONA}</td>
             <td>${values.RFC}</td>
             <td>${values.SITIO_WEB}</td>
@@ -51,11 +56,12 @@
             <td>${values.ENTIDAD_FEDERATIVA}</td>
             <td>${values.TIPO_DE_DIRECCION}</td>
             <td>${resultImport.results[i]}</td>  
-            <tr> </tr>
+            </tr>
         </g:each>
     </g:elseif>
     <g:else>
         <g:each in="${resultImport.data}" var="values" status="i">
+            <tr>
             <td>${values.RFC}</td>
             <td>${values.CURP}</td>
             <td>${values.PATERNO}</td>
@@ -73,7 +79,8 @@
             <td>${values.DIAS_AGUINALDO}</td>
             <td>${values.PERIODO_PAGO}</td>
             <td>${resultImport.results[i]}</td>  
-            <tr> </tr> 
+             </tr>
         </g:each>
-    </g:else>           
+    </g:else>
+    </tbody>        
 </table>
