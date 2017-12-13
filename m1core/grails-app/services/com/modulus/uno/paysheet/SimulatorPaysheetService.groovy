@@ -37,7 +37,7 @@ class SimulatorPaysheetService {
         List<PaysheetEmployee> paysheetEmployeeList = []
         data.each{ row ->
             if(row.SA_BRUTO && row.IAS_BRUTO && !row.IAS_NETO){ paysheetEmployeeList << processForSalaryBrutoAndIASBruto(row) }
-            if(row.SA_BRUTO && !row.IAS_BRUTO && row.IAS_NETO){ println "!***" }
+            if(row.SA_BRUTO && !row.IAS_BRUTO && row.IAS_NETO){ paysheetEmployeeList << processForIASNetoAndSalaryBruto(row) }
         }
         paysheetEmployeeList
     }
@@ -49,8 +49,7 @@ class SimulatorPaysheetService {
 
     def processForIASNetoAndSalaryBruto(def row){
       println "IAS_NETO y SA_BRUTO......" 
-      row.SA_NETO = calculateSalaryNeto(row.SA_BRUTO)
-      println row.SA_NETO
+      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO)
       getPaysheetEmployeeWithCalcules(row)
     }
 
@@ -61,6 +60,7 @@ class SimulatorPaysheetService {
 
     def processForSalaryNetoAndIASBruto(def row){
       println "SA_NETO y IAS_BRUTO"
+      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO)
       getPaysheetEmployeeWithCalcules(row)
     }
 
@@ -302,5 +302,9 @@ class SimulatorPaysheetService {
   BigDecimal calculateSalaryAssimilable(BigDecimal netPayment, BigDecimal imssSalaryNet) {
     (netPayment - imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
   }
+
+  BigDecimal calculateIASBruto(BigDecimal iasNeto){
+    iasNeto
+  } 
 
 }
