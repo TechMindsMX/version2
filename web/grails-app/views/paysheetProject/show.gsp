@@ -24,6 +24,7 @@
         </g:if>
 
         <g:render template="listPayers"/>
+        <g:render template="listBillers"/>
 
         <g:if test="${payersList}">
           <g:form action="addPayerCompany">
@@ -31,9 +32,9 @@
           </g:form>
         </g:if>
 
-        <g:if test="${invoicedCompaniesList}">
-          <g:form action="addInvoicedCompany" id="${paysheetProject.id}">
-            <g:render template="chooseInvoicedCompany"/>
+        <g:if test="${billersList}">
+          <g:form action="addBillerCompany">
+            <g:render template="chooseBillerCompany"/>
           </g:form>
         </g:if>
 
