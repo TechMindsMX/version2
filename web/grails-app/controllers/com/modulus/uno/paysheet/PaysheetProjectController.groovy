@@ -99,7 +99,7 @@ class PaysheetProjectController {
     log.info "Biller Paysheet project to save: ${billerPaysheetProject.dump()}"
     paysheetProjectService.saveBillerPaysheetProject(billerPaysheetProject)
    
-    redirect action:"show", id:payerPaysheetProject.paysheetProject.id
+    redirect action:"show", id:billerPaysheetProject.paysheetProject.id
   }
 
   def deleteBiller(BillerPaysheetProject biller) {
