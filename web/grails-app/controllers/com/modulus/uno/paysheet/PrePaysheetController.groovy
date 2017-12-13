@@ -163,4 +163,10 @@ class PrePaysheetController {
     }
   }
 
+  def delete(PrePaysheet prePaysheet) {
+    log.info "Deleting prePaysheet: ${prePaysheet.id}"
+    prePaysheetService.deletePrePaysheet(prePaysheet)
+    redirect action:"list"
+  }
+
 }
