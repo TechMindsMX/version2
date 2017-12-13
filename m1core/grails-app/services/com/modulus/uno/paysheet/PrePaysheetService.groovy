@@ -237,4 +237,14 @@ class PrePaysheetService {
 		log.info "prePaysheet employees: ${prePaysheet.employees}"
 	}
 
+  @Transactional
+  def deletePrePaysheet(PrePaysheet prePaysheet) {
+    prePaysheet.employees.each { employee ->
+      employee.incidences.each { incidence ->
+        deleteIncidenceFromPrePaysheetEmployee(incidence)
+      }
+      deleteEmployeeFromPrePaysheet(employee)
+    }
+    PrePaysheet.executeUpdate("delete PrePaysheet prePaysheet where prePaysheet.id = :id", [id: prePaysheet.id])
+  }
 }
