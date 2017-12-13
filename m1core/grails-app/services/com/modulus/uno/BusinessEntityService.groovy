@@ -406,6 +406,12 @@ class BusinessEntityService {
         return "Error: RFC"
     }
 
+    BankAccount bankAccount = bankAccountService.createBankAccountForClientFromRowClient(businessEntity, rowClient)
+    if(!bankAccount || bankAccount?.hasErrors()){
+      transactionStatus.setRollbackOnly()
+      return "Error: datos bancarios"
+    }
+
     Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
     if (!address || address?.hasErrors()) {
         transactionStatus.setRollbackOnly()
