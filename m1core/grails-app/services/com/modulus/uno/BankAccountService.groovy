@@ -119,4 +119,28 @@ class BankAccountService {
     }
     data
   }
+
+  BankAccount createBankAccountForClientFromRowClient(BusinessEntity businessEntity, Map rowClient){
+    Map dataBank = getDataBankFromCodeBank(rowClient.CLAVE_BANCO, rowClient.ULTIMOS_4_DIGITOS_TARJETA)
+    BankAccount bankAccount = new BankAccount(
+      accountNumber: dataBank.accountNumber,
+      branchNumber:"*".padLeft(5,"0"),
+      clabe:"002115016003269411",
+      banco:dataBank.bank  
+    )
+
+    bankAccount.save()
+    if(bankAccount.id){
+      businessEntity.addToBanksAccounts(bankAccount)
+      businessEntity.save()
+    }
+    bankAccount
+  }
+
+  Map getDataBankFromCodeBank(String codeBank, String lastDigits){
+    Map data = [:]
+    data.accountNumber = "*******" + lastDigits
+    data.bank = Bank.findByBankingCodeLike("%${codeBank}")
+    data
+  }
 }
