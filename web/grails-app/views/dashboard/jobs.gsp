@@ -328,6 +328,49 @@
 </div><!---Close .circle-tile-content-->
 </div><!---Close .circle-tile-->
 </div><!---Close .col-md-6-->
+
+<div class="col-md-6">
+  <div class="circle-tile">
+
+    <div class="circle-tile-heading blue">
+      <i class="fa icon-reembolso fa-3x"></i>
+    </div>
+
+    <div class="circle-tile-content blue">
+      <div class="circle-tile-description">
+        Relaciones Comerciales
+        <span>
+          <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR, ROLE_FICO_VISOR">por ejecutar</sec:ifAnyGranted>
+          <sec:ifAnyGranted roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">por autorizar</sec:ifAnyGranted>
+        </span>
+      </div>
+      <div class="circle-tile-number">
+      </div>
+      <div class="text-right">
+        <div class="btn-group">
+          <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Opciones <i class="fa fa-caret-down"></i></button>
+          <ul class="dropdown-menu">
+            <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_LEGAL_REPRESENTATIVE_VISOR">
+            <li>
+              <g:link controller="businessEntity" action="index">
+              Ver todas
+            </g:link>
+          </li>
+          <li>
+            <g:link controller="businessEntity" action="showToAuthorizeEntities">
+            Ver por autorizar
+          </g:link>
+        </li>
+      </sec:ifAnyGranted>
+      <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR, ROLE_FICO_VISOR">
+  </sec:ifAnyGranted>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
 </div>
 
 
