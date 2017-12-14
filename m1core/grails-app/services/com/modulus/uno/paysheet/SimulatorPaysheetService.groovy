@@ -303,7 +303,9 @@ class SimulatorPaysheetService {
     (netPayment - imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
   }
 
-  BigDecimal calculateIASBruto(BigDecimal iasNeto){
+  BigDecimal calculateIASBruto(BigDecimal iasNeto, BigDecimal SA_BRUTO, BigDecimal SA_MENSUAL){
+    BigDecimal sANeto = calculateSalaryNeto(SA_BRUTO)
+    iasNeto = sANeto -SA_MENSUAL
     iasNeto
   } 
 
