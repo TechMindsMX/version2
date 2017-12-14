@@ -49,7 +49,7 @@ class SimulatorPaysheetService {
 
     def processForIASNetoAndSalaryBruto(def row){
       println "IAS_NETO y SA_BRUTO......" 
-      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO)
+      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO, row.SA_MENSUAL, row.SA_BRUTO)
       getPaysheetEmployeeWithCalcules(row)
     }
 
