@@ -39,6 +39,9 @@
                     <div class="col-sm-2">
                       <button class="btn btn-default">Buscar</button>
                     </div>
+                    <div class="col-md-2 text-right">
+                      <g:link class="btn btn-primary">Exportar a XLS</g:link>
+                    </div>
                   </div>
                 </g:form>
               </div>
