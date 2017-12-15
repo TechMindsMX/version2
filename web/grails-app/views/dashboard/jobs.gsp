@@ -333,16 +333,12 @@
   <div class="circle-tile">
 
     <div class="circle-tile-heading blue">
-      <i class="fa icon-reembolso fa-3x"></i>
+      <i class="fa fa-building-o fa-2x"></i>
     </div>
 
     <div class="circle-tile-content blue">
       <div class="circle-tile-description">
         Relaciones Comerciales
-        <span>
-          <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR, ROLE_FICO_VISOR">por ejecutar</sec:ifAnyGranted>
-          <sec:ifAnyGranted roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">por autorizar</sec:ifAnyGranted>
-        </span>
       </div>
       <div class="circle-tile-number">
       </div>
@@ -362,8 +358,6 @@
           </g:link>
         </li>
       </sec:ifAnyGranted>
-      <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR, ROLE_FICO_VISOR">
-  </sec:ifAnyGranted>
 </ul>
 </div>
 </div>
