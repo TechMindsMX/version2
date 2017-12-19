@@ -75,7 +75,8 @@ class SimulatorPaysheetService {
       paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_BRUTO, row.PERIODO) // Salario neto
       paysheetEmployee.salaryAssimilable = calculateSalaryAssimilable(row.SA_BRUTO, paysheetEmployee.salaryImss) // IAS NETO
       paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_BRUTO, row.PERIODO) // Salario Neto
-      paysheetEmployee.metaClass.iasBruto = new BigDecimal(row.SA_BRUTO)
+      paysheetEmployee.metaClass.iasBruto = new BigDecimal(row.IAS_BRUTO)
+      paysheetEmployee.metaClass.salaryBruto = new BigDecimal(row.SA_BRUTO)
       paysheetEmployee
     }
      
@@ -210,6 +211,7 @@ class SimulatorPaysheetService {
         subsidySalary: employee.subsidySalary,
         incomeTax: employee.incomeTax,
         totalImss:employee.imssSalaryNet,
+        salaryBruto: employee.salaryBruto,
         salaryAssimilable: employee.salaryAssimilable,
         salaryAssimilableBruto: employee.iasBruto,
         subtotal:employee.totalSalaryEmployee,
