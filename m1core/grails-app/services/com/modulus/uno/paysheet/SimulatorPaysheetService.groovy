@@ -226,77 +226,6 @@ class SimulatorPaysheetService {
     employeeToExportLit
   }
 
-
-  BigDecimal calculateSalaryNeto(BigDecimal salaryBruto){
-    BigDecimal salaryNeto = 0
-    BigDecimal isr = 1
-    BigDecimal limitInferior = 0
-    BigDecimal paymentFija = 0
-    if(salaryBruto < 496.07){
-      limitInferior = 0.01
-      isr = 0.0192
-      paymentFija = 0
-    }
-    else if(496.08 < salaryBruto && salaryBruto < 4210.41 ){
-      limitInferior = 496.08
-      isr = 0.0640
-      paymentFija = 9.52
-    } 
-    else if(4210.42 < salaryBruto && salaryBruto < 7399.42 ){
-      limitInferior = 4210.42
-      isr = 0.1088
-      paymentFija = 247.24
-    }
-    else if(7399.43 < salaryBruto && salaryBruto < 8601.50 ){
-      limitInferior = 7399.43
-      isr = 0.16
-      paymentFija = 594.21
-    }
-    else if(8601.51  < salaryBruto && salaryBruto < 10298.35 ){
-      limitInferior =8601.51 
-      isr = 0.1792
-      paymentFija = 786.54
-    }
-    else if(10298.36 < salaryBruto && salaryBruto < 20770.29 ){
-      limitInferior = 10298.36
-      isr = 0.2136
-      paymentFija = 1090.51
-    }
-    else if(20770.30< salaryBruto && salaryBruto < 32736.83 ){
-      limitInferior = 20770.30
-      isr = 0.2352
-      paymentFija = 3327.42
-    }
-    else if(32736.84 < salaryBruto && salaryBruto < 62500.00 ){
-      limitInferior = 32736.84
-      isr = 0.30
-      paymentFija = 6141.95
-    }
-    else if(62500.01 < salaryBruto && salaryBruto < 83333.33 ){
-      limitInferior = 62500.01
-      isr = 0.32
-      paymentFija = 15070.90
-    }
-    else if(83333.34 < salaryBruto && salaryBruto < 250000.00 ){
-      limitInferior =83333.34
-      isr = 0.34
-      paymentFija = 21737.57
-    }
-    else{
-      limitInferior = 250000.01
-      isr = 0.35
-      paymentFija = 78404.23
-    }
-    BigDecimal excessive = salaryBruto - limitInferior
-    println "Excedido: ${excessive}"
-    println "isr: ${isr}"
-    println "fija : ${paymentFija}"
-    println "limite Inferior : ${limitInferior}"
-    salaryNeto = salaryBruto - ((excessive * isr) + paymentFija)
-    println "Salario Neto : ${salaryNeto}"
-    salaryNeto
-  }
-
   BigDecimal calculateIASNeto(BigDecimal iasBruto){
     iasBruto
   }
@@ -307,7 +236,7 @@ class SimulatorPaysheetService {
   }
 
   BigDecimal calculateIASBruto(BigDecimal iasNeto, BigDecimal SA_BRUTO){
-    BigDecimal sANeto = calculateSalaryNeto(SA_BRUTO)
+    BigDecimal sANeto = SA_BRUTO
     iasNeto = sANeto -SA_BRUTO
     iasNeto
   } 
