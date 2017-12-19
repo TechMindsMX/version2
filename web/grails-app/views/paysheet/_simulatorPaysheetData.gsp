@@ -8,7 +8,8 @@
                 <th>Subsidio</th>
                 <th>ISR IMSS</th>
                 <th>ISR Asimilable</th>
-                <th>Total Imss</th>
+                <th>Salario Base Imss</th>
+                <th>Salario Neto</th>
                 <th>Asimilable Neto</th>
                 <th>Asimilable Bruto</th>
                 <th>Subtotal</th>
@@ -28,6 +29,7 @@
                     <td>${modulusuno.formatPrice(number:paysheet.subsidySalary)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.incomeTax)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.incomeTax)}</td>
+                    <td>${modulusuno.formatPrice(number:paysheet.salaryBruto)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.totalImss)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.salaryAssimilable)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.salaryAssimilableBruto)}</td>
