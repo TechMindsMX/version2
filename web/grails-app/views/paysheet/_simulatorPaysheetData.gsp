@@ -3,13 +3,13 @@
         <table class="table table-striped table-condensed">
             <tr>
                 <th>Consecutivo</th>
-                <th>Salario Total</th>
+                <th>Salario IMSS Bruto</th>
                 <th>Carga social del trabajador</th>
                 <th>Subsidio</th>
                 <th>ISR IMSS</th>
                 <th>ISR Asimilable</th>
                 <th>Salario Base Imss</th>
-                <th>Salario Neto</th>
+                <th>Salario IMSS Neto</th>
                 <th>Asimilable Neto</th>
                 <th>Asimilable Bruto</th>
                 <th>Subtotal</th>
@@ -28,7 +28,7 @@
                     <td>${modulusuno.formatPrice(number:paysheet.socialQuota)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.subsidySalary)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.incomeTax)}</td>
-                    <td>${modulusuno.formatPrice(number:paysheet.incomeTax)}</td>
+                    <td>${modulusuno.formatPrice(number:paysheet.incomeTaxIAS)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.salaryBruto)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.totalImss)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.salaryAssimilable)}</td>
