@@ -10,10 +10,11 @@ class SimulatorPaysheetService {
   XlsImportService xlsImportService
   def grailsApplication
   BreakdownPaymentEmployeeService breakdownPaymentEmployeeService
+  PaysheetEmployeeService paysheetEmployeeService
 
     def generateLayoutForSimulator() {
-       def headers = ['CONSECUTIVO','SA_MENSUAL','IAS_NETO','SA_BRUTO','IAS_BRUTO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
-       def descriptions = ['NUMERO','','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
+       def headers = ['CONSECUTIVO','SA_BRUTO','IAS_BRUTO','IAS_NETO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
+       def descriptions = ['NUMERO','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
        new WebXlsxExporter().with {
           fillRow(headers, 2)
           fillRow(descriptions, 3)
@@ -49,7 +50,7 @@ class SimulatorPaysheetService {
 
     def processForIASNetoAndSalaryBruto(def row){
       println "IAS_NETO y SA_BRUTO......" 
-      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO, row.SA_MENSUAL, row.SA_BRUTO)
+      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO, 0, row.SA_BRUTO)
       getPaysheetEmployeeWithCalcules(row)
     }
 
@@ -72,7 +73,7 @@ class SimulatorPaysheetService {
       PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row) 
       paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_BRUTO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario 
       paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_BRUTO, row.PERIODO) // Salario neto
-      paysheetEmployee.salaryAssimilable = calculateSalaryAssimilable(row.SA_MENSUAL, paysheetEmployee.salaryImss) // IAS NETO
+      paysheetEmployee.salaryAssimilable = calculateSalaryAssimilable(row.SA_BRUTO, paysheetEmployee.salaryImss) // IAS NETO
       paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_BRUTO, row.PERIODO) // Salario Neto
       paysheetEmployee
     }
@@ -103,7 +104,7 @@ class SimulatorPaysheetService {
 
   PaysheetEmployee setAttributesPaysheetEmployee(PaysheetEmployee paysheetEmployee, def row){
     paysheetEmployee.breakdownPayment = breakdownPaymentEmployee(row) 
-    paysheetEmployee.salaryImss = calculateAmountForPeriod(row.SA_MENSUAL,row.PERIODO)
+    paysheetEmployee.salaryImss = calculateAmountForPeriod(row.SA_BRUTO,row.PERIODO)
     paysheetEmployee.socialQuota = calculateAmountForPeriod(paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal,row.PERIODO) 
     paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee, row.PERIODO)
     paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
@@ -152,7 +153,7 @@ class SimulatorPaysheetService {
   }
 
   BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
-    BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_MENSUAL, row.FACT_INTEGRA)
+    BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_BRUTO, row.FACT_INTEGRA)
     BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
     BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
     BreakdownPaymentEmployee breakdownPaymentEmployee = new BreakdownPaymentEmployee(
@@ -177,8 +178,8 @@ class SimulatorPaysheetService {
     )
   }
 
-  BigDecimal getIntegratedDailySalary(BigDecimal SA_MENSUAL, BigDecimal FACT_INTEGRA){
-    ((new BigDecimal(SA_MENSUAL)) / 30 * (new BigDecimal(FACT_INTEGRA))).setScale(2, RoundingMode.HALF_UP)
+  BigDecimal getIntegratedDailySalary(BigDecimal SA_BRUTO, BigDecimal FACT_INTEGRA){
+    ((new BigDecimal(SA_BRUTO)) / 30 * (new BigDecimal(FACT_INTEGRA))).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal getBaseQuotation(BigDecimal integratedDailySalary){
@@ -303,9 +304,9 @@ class SimulatorPaysheetService {
     (netPayment - imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
   }
 
-  BigDecimal calculateIASBruto(BigDecimal iasNeto, BigDecimal SA_BRUTO, BigDecimal SA_MENSUAL){
+  BigDecimal calculateIASBruto(BigDecimal iasNeto, BigDecimal SA_BRUTO){
     BigDecimal sANeto = calculateSalaryNeto(SA_BRUTO)
-    iasNeto = sANeto -SA_MENSUAL
+    iasNeto = sANeto -SA_BRUTO
     iasNeto
   } 
 
