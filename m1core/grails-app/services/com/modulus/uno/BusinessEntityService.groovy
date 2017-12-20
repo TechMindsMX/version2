@@ -236,10 +236,14 @@ class BusinessEntityService {
   }
 
   def exportXlsForBusinessRelationships(String entityType) {
+    //obtener la lista de business entities del tipo
+    //generar el xls enviando la lista
     xlsLayoutsBusinessEntityService."exportListFor${entityType.toUpperCase()}"()
   }
 
   def exportXlsForAllBusinessRelationships(){
+    //obtener todos los business entities
+    //
     xlsLayoutsBusinessEntityService.exportListForAllBusinessEntities()
   }
 
