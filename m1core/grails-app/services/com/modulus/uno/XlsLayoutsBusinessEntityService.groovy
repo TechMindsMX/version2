@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import pl.touk.excel.export.WebXlsxExporter
+import com.modulus.uno.BusinessEntity
 
 class XlsLayoutsBusinessEntityService {
 
@@ -31,43 +32,12 @@ class XlsLayoutsBusinessEntityService {
     }
   }
 
-  def exportListForEMPLEADO(){
+  def exportListOfBusinessEntities(List<BusinessEntity> businessEntityList){
     def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
-    def data = ['']
-    new WebXlsxExporter().with {
-      fillRow(headers, 0)
-    }
-  }
-
-  def exportListForCLIENTE(){
-    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
-    def data = ['']
-    new WebXlsxExporter().with {
-      fillRow(headers, 0)
-    }
-  }
-
-  def exportListForCLIENTE_PROVEEDOR(){
-    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
-    def data = ['']
-    new WebXlsxExporter().with {
-      fillRow(headers, 0)
-    }
-  }
-
-  def exportListForPROVEEDOR(){
-    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
-    def data = ['']
-    new WebXlsxExporter().with {
-      fillRow(headers, 0)
-    }
-  }
-
-  def exportListForAllBusinessEntities(){
-    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
-    def data = ['']
+    def data = ['${businessEntity.rfc}', 'businessEntity.name']
     new WebXlsxExporter().with{
       fillRow(headers, 0)
+      fillRow(data, 1)
     }
   }
 
