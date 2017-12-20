@@ -26,7 +26,7 @@ class BusinessEntityController {
     boolean businessEntityToAuthorize = allBusinessEntitiesCompany.find {it.status == BusinessEntityStatus.TO_AUTHORIZE} ? true : false
     def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
 
-    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize]
+    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize, clientProviderType:LeadType.CLIENTE]
   }
 
   def show(BusinessEntity businessEntity) {
@@ -182,6 +182,22 @@ class BusinessEntityController {
     def layout = businessEntityService.createLayoutForBusinessEntityType(params.clientProviderType)
     layout.with {
       setResponseHeaders(response, "layout${params.clientProviderType}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
+  def downloadListForBusinessEntities(){
+    def xlsList = businessEntityService.exportXlsForBusinessRelationships(params.clientProviderType)
+    xlsList.with {
+      setResponseHeaders(response, "${params.clientProviderType}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
+  def downloadListForAllBusinessEntities(){
+    def xlsList = businessEntityService.exportXlsForAllBusinessRelationships()
+    xlsList.with{
+      setResponseHeaders(response, "Relaciones_Comerciales.xlsx")
       save(response.outputStream)
     }
   }
