@@ -13,9 +13,11 @@ class SimulatorPaysheetService {
   PaysheetEmployeeService paysheetEmployeeService
 
     def generateLayoutForSimulator() {
+       def message = ["Todos las cantidades deben ser mensuales"]
        def headers = ['CONSECUTIVO','SA_BRUTO','IAS_BRUTO','IAS_NETO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
        def descriptions = ['NUMERO','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
        new WebXlsxExporter().with {
+          fillRow(message,1)
           fillRow(headers, 2)
           fillRow(descriptions, 3)
         }
