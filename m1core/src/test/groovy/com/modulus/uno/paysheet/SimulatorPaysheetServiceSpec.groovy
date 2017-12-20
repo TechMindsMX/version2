@@ -49,7 +49,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
 
     void "create BreakdownPaymentEmployee from map"(){
         given:"One list of maps"
-            def paysheet = [CONSECUTIVO:1.0, SA_MENSUAL:300.0, SA_NETO:100.0, IAS_NETO:150.0, SA_BRUTO:null, IAS_BRUTO:null, PERIODO:'Mensual', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
+            def paysheet = [CONSECUTIVO:1.0, IAS_NETO:150.0, SA_BRUTO:400, IAS_BRUTO:null, PERIODO:'Mensual', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
         when:"create break"
             def breakdownPaymentEmployee = service.breakdownPaymentEmployee(paysheet)
         then:
@@ -58,20 +58,20 @@ class SimulatorPaysheetServiceSpec extends Specification {
 
     void "create paymentSheetEmployee"(){
         given:"give one paysheet map"
-            def paysheet = [CONSECUTIVO:1.0, SA_MENSUAL:300.0, SA_NETO:100.0, IAS_NETO:150.0, SA_BRUTO:null, IAS_BRUTO:null, PERIODO:'Semanal', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
+            def paysheet = [CONSECUTIVO:1.0, IAS_NETO:null, SA_BRUTO:400, IAS_BRUTO:500, PERIODO:'Semanal', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
         when:"Was create one paysheetEmployee"
             PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
 
         then:
              paymentSheetEmployee.breakdownPayment
-             paymentSheetEmployee.breakdownPayment.baseQuotation == 334.400
+             paymentSheetEmployee.breakdownPayment.baseQuotation == 445.968
              paymentSheetEmployee.socialQuota == 0
-             paymentSheetEmployee.subsidySalary == 94.97
-             paymentSheetEmployee.incomeTax == 0.45
-             paymentSheetEmployee.salaryAssimilable == 150
-             paymentSheetEmployee.socialQuotaEmployer == 1.09
-             paymentSheetEmployee.paysheetTax == 0.70
-             paymentSheetEmployee.commission == 9.49
+             paymentSheetEmployee.subsidySalary == 0
+             paymentSheetEmployee.incomeTax == 0
+             paymentSheetEmployee.salaryAssimilable == 0
+             paymentSheetEmployee.socialQuotaEmployer == 1.46
+             paymentSheetEmployee.paysheetTax == 0
+             paymentSheetEmployee.commission == 2.84
 
     }
 
