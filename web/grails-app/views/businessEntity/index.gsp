@@ -17,10 +17,7 @@
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
-          <div class="portlet-title">
-            <br />
-            <br />
-          </div>
+          <div class="portlet-title"></div>
           <div class="clearfix"></div>
         </div>
         <div id="horizontalFormExample" class="panel-collapse collapse in">
@@ -28,6 +25,12 @@
               <g:if test="${flash.message}">
               <div class="message" role="status">${flash.message}</div>
               </g:if>
+
+            <div class="row">
+              <div class="col-md-11 text-right">
+                <g:render template="businessEntityTypes"/>
+              </div>
+            </div>
 
             <div class="row">
               <div class="col-md-10">
