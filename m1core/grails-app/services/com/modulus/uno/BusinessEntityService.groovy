@@ -235,6 +235,14 @@ class BusinessEntityService {
     xlsLayoutsBusinessEntityService."generateLayoutFor${entityType.toUpperCase()}"()
   }
 
+  def exportXlsForBusinessRelationships(String entityType) {
+    xlsLayoutsBusinessEntityService."exportListFor${entityType.toUpperCase()}"()
+  }
+
+  def exportXlsForAllBusinessRelationships(){
+    xlsLayoutsBusinessEntityService.exportListForAllBusinessEntities()
+  }
+
   def processXlsMassiveForEMPLEADO(def file, Company company) {
     log.info "Processing massive registration for Employee"
     List data = xlsImportService.parseXlsMassiveEmployee(file)
