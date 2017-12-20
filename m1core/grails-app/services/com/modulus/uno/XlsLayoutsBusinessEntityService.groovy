@@ -31,4 +31,45 @@ class XlsLayoutsBusinessEntityService {
     }
   }
 
+  def exportListForEMPLEADO(){
+    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
+    def data = ['']
+    new WebXlsxExporter().with {
+      fillRow(headers, 0)
+    }
+  }
+
+  def exportListForCLIENTE(){
+    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
+    def data = ['']
+    new WebXlsxExporter().with {
+      fillRow(headers, 0)
+    }
+  }
+
+  def exportListForCLIENTE_PROVEEDOR(){
+    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
+    def data = ['']
+    new WebXlsxExporter().with {
+      fillRow(headers, 0)
+    }
+  }
+
+  def exportListForPROVEEDOR(){
+    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
+    def data = ['']
+    new WebXlsxExporter().with {
+      fillRow(headers, 0)
+    }
+  }
+
+  def exportListForAllBusinessEntities(){
+    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
+    def data = ['']
+    new WebXlsxExporter().with{
+      fillRow(headers, 0)
+    }
+  }
+
+
 }
