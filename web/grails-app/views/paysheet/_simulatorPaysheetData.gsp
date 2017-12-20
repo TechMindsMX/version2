@@ -3,6 +3,7 @@
         <table class="table table-striped table-condensed">
             <tr>
                 <th>Consecutivo</th>
+                <th>Periodo</th>
                 <th>Salario IMSS Bruto</th>
                 <th>Carga social del trabajador</th>
                 <th>Subsidio</th>
@@ -24,6 +25,7 @@
             <g:each in="${paysheetEmployeeList}" var="paysheet">
                 <tr>
                     <td>${paysheet.consecutivo}</td>
+                    <td>${paysheet.period}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.salaryImss)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.socialQuota)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.subsidySalary)}</td>
