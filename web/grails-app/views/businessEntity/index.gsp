@@ -27,13 +27,7 @@
               </g:if>
 
             <div class="row">
-              <div class="col-md-11 text-right">
-                <g:render template="businessEntityTypes"/>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-7">
                 <g:form controller="businessEntity" action="search" class="form-horizontal">
                   <div class="form-group">
                     <div class="col-sm-6">
@@ -42,16 +36,47 @@
                     <div class="col-sm-2">
                       <button class="btn btn-default">Buscar</button>
                     </div>
-                    <div class="col-md-2 text-right">
-                      <g:link class="btn btn-primary" action="exportXLS">Exportar a XLS</g:link>
-                    </div>
                   </div>
                 </g:form>
               </div>
+
+              <div class="col-md-2">
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#export" aria-expanded="false" aria-controls="collapseExample">
+                  Exportar
+                </button>
+              </div>
+
+              
               <div class="col-md-2 text-right">
                 <g:if test="${businessEntityToAuthorize}">
                 <g:link class="btn btn-primary" action="showToAuthorizeEntities">Autorizar Registros</g:link>
                 </g:if>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="collapse" id="export">
+                  <div class="well">
+                    <div class="container">
+                      <g:form controller="businessEntity" action="downloadListForBusinessEntities" class="form-horizontal">
+                        <div class="col-md-8">
+                          <div class="form-group">
+                            <g:render template="businessEntityTypes"/>
+                          </div>
+                        </div>
+                        <div class="col-md-1">
+                          <button class="btn btn-default">XLS</button>
+                        </div>
+                      </g:form>
+                      <g:form controller="businessEntity" action="downloadListForAllBusinessEntities" class="form-horizontal">
+                        <div class="col-md-3">
+                          <button class="btn btn-default">Todos</button>
+                        </div>
+                      </g:form>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
