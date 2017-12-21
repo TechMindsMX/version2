@@ -17,7 +17,7 @@
         Servicios de Cotizaciones
      </label>
     <div class="input-group">
-        <input type="checkbox" name="quotationCheck"><br>
+        <input type="checkbox" name="hasQuotationContract" name="hasQuotationContract" value="true" />
     </div>
 
 </div>
