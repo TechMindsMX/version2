@@ -25,8 +25,8 @@ class SimulatorPaysheetService {
 
     def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
        def data = employeeToExport(paysheetEmployeeList)
-       def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','incomeTaxIAS','salaryBruto','totalImss','salaryAssimilable','salaryAssimilableBruto','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
-       def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','ISR Assimilable','SALARIO BASE IMSS','SALARIO NETO','ASIMILABLE NETO','ASIMILABLE BRUTO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
+       def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','incomeTaxIAS','salaryAssimilable','salaryAssimilableBruto','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
+       def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ISR Assimilable','ASIMILABLE NETO','ASIMILABLE BRUTO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
        new WebXlsxExporter().with {
           fillRow(headers, 2)
           add(data,properties,3)
@@ -160,8 +160,8 @@ class SimulatorPaysheetService {
 
   BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
     BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_BRUTO, row.FACT_INTEGRA)
-    BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
-    BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
+    BigDecimal baseQuotation = breakdownPaymentEmployeeService.getBaseQuotation(integratedDailySalary)
+    BigDecimal diseaseAndMaternityBase = breakdownPaymentEmployeeService.getDiseaseAndMaternityBase(integratedDailySalary)
     BreakdownPaymentEmployee breakdownPaymentEmployee = new BreakdownPaymentEmployee(
       integratedDailySalary: integratedDailySalary,
       baseQuotation: baseQuotation,
@@ -188,20 +188,6 @@ class SimulatorPaysheetService {
     ((new BigDecimal(SA_BRUTO)) / 30 * (new BigDecimal(FACT_INTEGRA))).setScale(2, RoundingMode.HALF_UP)
   }
 
-  //TODO: Usar el método del servicio breakdownpaymentemployee
-  BigDecimal getBaseQuotation(BigDecimal integratedDailySalary){
-    integratedDailySalary * new BigDecimal(grailsApplication.config.paysheet.quotationDays)
-  }
-
-  //TODO: usar de breakdownpaymentemployee service
-  BigDecimal getDiseaseAndMaternityBase(BigDecimal integratedDailySalary) {
-    BigDecimal limit = 3 * new BigDecimal(grailsApplication.config.paysheet.uma)
-    BigDecimal diseaseAndMaternityBase = new BigDecimal(0)
-    if (integratedDailySalary > limit) {
-      diseaseAndMaternityBase = (integratedDailySalary - limit) * new BigDecimal(grailsApplication.config.paysheet.quotationDays)
-    }
-    diseaseAndMaternityBase.setScale(2, RoundingMode.HALF_UP)
-  }
 
   BigDecimal getOccupationalRisk(BigDecimal baseQuotation, BigDecimal riskJob) {
     (baseQuotation * (riskJob/100)).setScale(2, RoundingMode.HALF_UP)
@@ -223,7 +209,7 @@ class SimulatorPaysheetService {
         salaryAssimilable: employee.salaryAssimilable,
         salaryAssimilableBruto: employee.iasBruto,
         subtotal:employee.totalSalaryEmployee,
-        socialQuotaEmployeeTotal: employee.breakdownPayment.socialQuotaEmployer,
+        socialQuotaEmployeeTotal: employee  .socialQuotaEmployer,
         isn:employee.paysheetTax,
         nominalCost:employee.paysheetCost,
         commission: employee.commission,
