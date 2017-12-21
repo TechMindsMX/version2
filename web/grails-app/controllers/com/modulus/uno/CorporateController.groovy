@@ -18,13 +18,13 @@ class CorporateController {
     respond new Corporate()
   }
 
-  def save(Corporate corporate){
-    if(!corporate){
+  def save(CorporateCommand corporateCommand){
+    if(!corporateCommand){
       transactionStatus.setRollbackOnly()
       respond corporate.errors, view:'create'
       return
     }
-
+    Corporate corporate = corporateCommand.getCorporate()
     if (corporateService.createRoute53(corporate)) {
       flash.error = "La ruta que se desea dar de alta ya existe"
       respond corporate.errors, view:'create'
