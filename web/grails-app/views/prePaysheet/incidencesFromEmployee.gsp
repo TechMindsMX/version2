@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <g:if test="${prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.CREATED}">
+      <g:if test="${prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.CREATED || prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.REJECTED}">
       <div class="row">
         <div class="col-md-12">
           <div class="portlet">
