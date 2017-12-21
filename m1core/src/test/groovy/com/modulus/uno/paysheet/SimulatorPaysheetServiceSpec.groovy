@@ -58,7 +58,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
 
     void "create paymentSheetEmployee"(){
         given:"give one paysheet map"
-            def paysheet = [CONSECUTIVO:1.0, IAS_NETO:null, SA_BRUTO:400, IAS_BRUTO:500, PERIODO:'Semanal', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
+            def paysheet = [CONSECUTIVO:1.0, IAS_NETO:null, SA_BRUTO:6000, IAS_BRUTO:18000, PERIODO:'Quincenal', RIESGO_TRAB:1.3, FACT_INTEGRA:1.5, COMISION:10.0]
         when:"Was create one paysheetEmployee"
             PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
 
@@ -70,8 +70,19 @@ class SimulatorPaysheetServiceSpec extends Specification {
              paymentSheetEmployee.incomeTax == 0
              paymentSheetEmployee.salaryAssimilable == 0
              paymentSheetEmployee.socialQuotaEmployer == 1.46
-             paymentSheetEmployee.paysheetTax == 0
+             paymentSheetEmployee.paysheetTax == 4
              paymentSheetEmployee.commission == 2.84
+
+    }
+
+    void "calculate amount for period"(){
+        give:"A bigdecimal"
+            BigDecimal amount = 5000
+            String period = "Quincenal"
+        when:
+            amount = 1000
+        then:
+            1==2
 
     }
 
