@@ -12,12 +12,9 @@
     <div class="input-group-addon">.modulusuno.com</div>
   </div>
 </div>
-<div class="form-group col-sm-4">
+<div class="form-group col-sm-4" style="margin-top:30px;">
     <label for="quotationService">
         Servicios de Cotizaciones
      </label>
-    <div class="input-group">
-        <input type="checkbox" name="hasQuotationContract" name="hasQuotationContract" value="true" />
-    </div>
-
+     <input type="checkbox" name="hasQuotationContract" name="hasQuotationContract" value="true" />
 </div>
