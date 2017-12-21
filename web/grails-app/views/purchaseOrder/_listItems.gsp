@@ -1,5 +1,4 @@
 <%! import com.modulus.uno.PurchaseOrderStatus %>
-<%! import com.modulus.uno.UnitType %>
 <g:each in="${purchaseOrder.items.sort{it.id}}" var="item">
 <tr>
   <td>${item.quantity}</td>

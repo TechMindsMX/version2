@@ -11,15 +11,20 @@ class QuotationRequestCommand implements Validateable {
   String description
   String commission
   String quotation
-  String amount
+  String biller
+  String iva
+  String total
+  String subtotal
 
   QuotationRequest getQuotationRequest(){
     new QuotationRequest(
         commission: QuotationContract.get(quotation?.toInteger()).commission,
         description: description,
-        amount: getValueInBigDecimal(amount),
         biller:QuotationContract.get(quotation.toInteger()).company,
-        quotationContract:  QuotationContract.get(quotation.toInteger())
+        quotationContract:  QuotationContract.get(quotation.toInteger()),
+        iva:getValueInBigDecimal(iva),
+        subtotal: getValueInBigDecimal(subtotal),
+        total: getValueInBigDecimal(total)
     )
   }
 
@@ -34,6 +39,5 @@ class QuotationRequestCommand implements Validateable {
   BigDecimal getCommission(String commission){
     getValueInBigDecimal(commission)
   }
-
 
 }

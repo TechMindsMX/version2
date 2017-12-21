@@ -18,5 +18,8 @@ class FormatsTagLib {
     out << g.formatDate(date:attrs.date, format:"dd/MM/yyyy", locale:"es_MX")
   }
 
+  def quantityWithoutComma = { attrs, body ->
+    out << g.formatNumber(number:attrs.number, format:"#0.00", maxFractionDigits:attrs.decimals?:"2", locale:"es_MX")
+  }
 
 }

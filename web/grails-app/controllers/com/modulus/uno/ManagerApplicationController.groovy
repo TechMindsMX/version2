@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import java.text.SimpleDateFormat
+import com.modulus.uno.stp.FinalTransactionResultService
 
 class ManagerApplicationController {
 
@@ -10,6 +11,7 @@ class ManagerApplicationController {
   def depositOrderService
   def springSecurityService
   CorporateService corporateService
+  FinalTransactionResultService finalTransactionResultService
 
   static String ISR = "ISR"
   static String IVA = "IVA"
@@ -103,6 +105,23 @@ class ManagerApplicationController {
 
   def privacyNotice() {
     [privacyNotice:managerApplicationService.getPrivacyNotice()]
+  }
+
+  def executeFinalTransaction() {
+  }
+
+  def applyFinalTransactionForAllCompanies() {
+    Date date = Date.parse("dd-MM-yyyy", params.date)
+    managerApplicationService.applyFinalTransactionForAllCompaniesInDate(date)
+    redirect action:"executeFinalTransaction"
+  }
+
+  def queryFinalTransactionResult() {
+  }
+
+  def listFinalTransactionResult() {
+    Date date = Date.parse("dd-MM-yyyy", params.date)
+    render view:"queryFinalTransactionResult", model:[results:finalTransactionResultService.getFinalTransactionResultsAtDate(date)]
   }
 
 }

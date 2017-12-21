@@ -25,7 +25,10 @@ class SaleOrderService {
     def fechaCobro = params.fechaCobro
     String externalId = params.externalId ?: ""
     def note = params.note
-    PaymentMethod paymentMethod = PaymentMethod.values().find { it.toString() == params.paymentMethod }
+    PaymentMethod paymentMethod = PaymentMethod.values().find {
+      println it.toString()
+      it.toString() == params.paymentMethod }
+
 
     if(!companyId && !clientId && !addressId){
       throw new BusinessException("No se puede crear la orden de venta...")
@@ -291,11 +294,12 @@ class SaleOrderService {
       if (balance.balance) {
       SaleOrderItem item = new SaleOrderItem(
         sku:"COMISION-${balance.typeCommission}",
-        name:balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}",
+        name:"Servicio financiero de alquiler de operaciones (" + balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}" + ")",
         quantity:balance.quantity,
         price:balance.balance/balance.quantity,
         iva:new BigDecimal(grailsApplication.config.iva),
-        unitType:"SERVICIO",
+        unitType:"UNIDAD DE SERVICIO",
+        satKey:"84121607",
         saleOrder:saleOrder
       ).save()
       saleOrder.addToItems(item)
@@ -313,6 +317,20 @@ class SaleOrderService {
     }
     emailSenderService.notifySaleOrderChangeStatus(saleOrder)
     saleOrder
+  }
+
+  List<SaleOrder> searchSaleOrders(Long idCompany, Map params) {
+    Company company = Company.get(idCompany)
+    def criteriaSO = SaleOrder.createCriteria()
+    def results = criteriaSO.list {
+      eq('company', company)
+      and {
+        ilike('rfc', "${params.rfc}%")
+        ilike('clientName', "%${params.clientName}%")
+      }
+      order('dateCreated', 'desc')
+    }
+    results
   }
 
 }

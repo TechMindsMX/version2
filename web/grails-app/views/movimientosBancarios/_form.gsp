@@ -17,7 +17,7 @@
   <div class="col-md-4">
     <div class="form-group">
       <label>Monto:</label>
-      <input type="text" name="amount" class="form-control" required="required" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o con 2 decimales exactamente)" placeholder="Cantidad con 1 ó 2 decimales o sin decimales" value="${modulusuno.formatQuantity(number:movimientosBancarios?.amount)}"/>
+      <input type="text" name="amount" class="form-control" required="required" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o con 2 decimales exactamente)" placeholder="Cantidad con 1 ó 2 decimales o sin decimales" value="${modulusuno.quantityWithoutComma(number:movimientosBancarios?.amount)}"/>
     </div>
   </div>
   <div class="col-md-4">

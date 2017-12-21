@@ -20,6 +20,7 @@ class PrePaysheetService {
   BusinessEntityService businessEntityService
 	XlsImportService xlsImportService
 	EmployeeService employeeService
+  PaysheetProjectService paysheetProjectService
 
   @Transactional
   PrePaysheet savePrePaysheet(PrePaysheet prePaysheet) {
@@ -58,7 +59,9 @@ class PrePaysheetService {
 
   List<BusinessEntity> getEmployeesAvailableToAdd(PrePaysheet prePaysheet) {
     List<BusinessEntity> currentEmployees = obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet)
-    prePaysheet.paysheetContract.employees.toList() - currentEmployees
+    PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(prePaysheet.paysheetContract, prePaysheet.paysheetProject)
+    def allEmployeesAvailable = paysheetProject.employees ?: prePaysheet.paysheetContract.employees
+    (allEmployeesAvailable.toList() - currentEmployees).sort {it.toString()}
   }
 
   List<BusinessEntity> obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet) {
@@ -236,5 +239,22 @@ class PrePaysheetService {
 		prePaysheet.save()
 		log.info "prePaysheet employees: ${prePaysheet.employees}"
 	}
+
+  @Transactional
+  def deletePrePaysheet(PrePaysheet prePaysheet) {
+    prePaysheet.employees.each { employee ->
+      employee.incidences.each { incidence ->
+        deleteIncidenceFromPrePaysheetEmployee(incidence)
+      }
+      deleteEmployeeFromPrePaysheet(employee)
+    }
+    PrePaysheet.executeUpdate("delete PrePaysheet prePaysheet where prePaysheet.id = :id", [id: prePaysheet.id])
+  }
+
+  @Transactional
+  def reject(PrePaysheet prePaysheet) {
+    prePaysheet.status = PrePaysheetStatus.REJECTED
+    prePaysheet.save()
+  }
 
 }

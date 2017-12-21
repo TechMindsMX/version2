@@ -174,4 +174,13 @@ class ManagerApplicationService {
     textPrivacy
   }
 
+  String applyFinalTransactionForAllCompaniesInDate(Date date) {
+    String result = "OK"
+    List<Company> companies = companyService.getAllCompaniesAcceptedAndWithAliasStp()
+    companies.each { company ->
+      companyService.executeOperationsCloseForCompanyInDate(company, date)
+    }
+    result
+  }
+
 }

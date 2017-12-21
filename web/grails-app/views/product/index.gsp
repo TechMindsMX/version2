@@ -12,10 +12,6 @@
            Registros / Mis productos &amp; servicios
            <small><g:message code="product.view.list.label" /></small>
          </h1>
-          <ol class="breadcrumb">
-            <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-            <li class="active">Productos/Servicios</li>
-          </ol>
       </div>
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
@@ -33,6 +29,7 @@
             <div class="table-responsive">
              <table class="table">
                <tr>
+                 <th><g:message code="product.satKey.label" /></th>
                  <th><g:message code="product.sku.label" /></th>
                  <th><g:message code="product.name.label" /></th>
                  <th><g:message code="product.price.label" /></th>
@@ -45,14 +42,15 @@
                <tr>
                  <td>
                   <g:link action="show" id="${product.id}">
-                     ${product.sku}
+                     ${product.satKey}
                   </g:link>
                  </td>
+                 <td>${product.sku}</td>
                  <td>${product.name}</td>
                  <td>${modulusuno.formatPrice(number:product.price)}</td>
                  <td>${product.ieps}</td>
                  <td>${product.iva}</td>
-                 <td>${product.unitType}</td>
+                 <td>${product.unitType?.name}</td>
                  <td>${product.currencyType}</td>
                </tr>
                </g:each>
@@ -64,10 +62,7 @@
           </div>
         </div>
         </div>
-        <g:link controller="company" action="show" id="${session.company}" class="home btn btn-primary">
-          <g:message code="company.show"/>
-        </g:link>
-        <g:link class="create btn btn-primary" action="create" params='[company:"${session.company}"]'><g:message code="product.view.create.label" args="[entityName]" /></g:link>
+        <g:link class="create btn btn-primary" action="create"><g:message code="product.view.create.label" args="[entityName]" /></g:link>
       </div>
     </body>
 </html>

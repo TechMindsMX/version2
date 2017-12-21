@@ -11,7 +11,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<ul>
-				<g:each in="${paysheet.dispersionFiles}" var="dispersionFile">
+				<g:each in="${paysheet.dispersionFiles.sort{it.id}}" var="dispersionFile">
 					<li>
 						<a href="${baseUrlDocuments}/${dispersionFile.title}.${dispersionFile.mimeType}"><i class="glyphicon glyphicon-download-alt"></i> ${dispersionFile.type}</a>
 					</li>

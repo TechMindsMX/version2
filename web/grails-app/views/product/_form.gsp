@@ -1,7 +1,11 @@
 <f:with bean="product">
   <div class="form-group">
+    <label for="">${message(code:"product.satKey.label")}</label>
+    <g:textField name="satKey" class="form-control" required="" pattern=".{8, 8}" title="8 caracteres exactamente" autofocus="" value="${product?.satKey}"/>
+  </div>
+  <div class="form-group">
     <label for="">${message(code:"product.sku.label")}</label>
-    <g:textField name="sku" class="form-control" required="" pattern=".{4,50}" title="4 caracteres mínimo" autofocus="" value="${product?.sku}"/>
+    <g:textField name="sku" class="form-control" required="" pattern=".{4,50}" title="4 caracteres mínimo" value="${product?.sku}"/>
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.name.label")}</label>
@@ -25,6 +29,6 @@
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.unitType.label")}</label>
-    <g:select name="unitType" from="${com.modulus.uno.UnitType.values()}" class="form-control"  />
+    <g:select name="unitType" from="${unitTypes.sort{it.name}}" class="form-control" optionKey="id" optionValue="name" value="${product?.unitType?.id}"  required=""/>
   </div>
 </f:with>

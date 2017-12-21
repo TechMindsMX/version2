@@ -12,10 +12,6 @@
         Registros / Agregar producto o servicio
         <small><g:message code="product.view.create.label" args="[entityName]" /></small>
         </h1>
-        <ol class="breadcrumb">
-          <li><i class="fa fa-caret-square-o-up"></i> Compañía</li>
-          <li class="active">Creación de producto / servicio</li>
-        </ol>
       </div>
       <br />
       <div id="create-address" class="content scaffold-create" role="main">
@@ -55,9 +51,6 @@
           </div>
         </div>
       </div>
-      <g:link controller="company" action="show" id="${session.company}" class="home btn btn-primary">
-        <g:message code="company.show"/>
-      </g:link>
       <g:link class="list btn btn-primary" action="index">
         <g:message code="product.view.list.label" args="[entityName]" />
       </g:link>

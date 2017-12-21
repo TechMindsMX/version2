@@ -5,22 +5,30 @@ import com.modulus.uno.Company
 class QuotationRequestController {
 
     QuotationRequestService quotationRequestService
+    QuotationContractService quotationContractService
 
     def index() {
     	Company company = Company.get(session.company)
-      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByBiller(company)
-      [quotationRequestList:quotationRequestList,
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
+      respond new QuotationContract(), model:[quotationContractList:quotationContractList,
        company:company
       ]
+    }
+
+    def chooseClient(QuotationContract quotationContract){
+      def quotationRequestList = QuotationRequest.findAllByQuotationContract(quotationContract)
+      render view:'index', model:[quotationRequestList:quotationRequestList, quotationContract:quotationContract]
     }
 
 
     def create(){
     	Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
+      BigDecimal ivaRate = quotationRequestService.getIvaCurrent()
 
       [company:company,
-      quotationContractList:quotationContractList]
+      quotationContractList:quotationContractList,
+      ivaRate:ivaRate]
     }
 
     def save(QuotationRequestCommand quotationRequestCommand ){
@@ -30,13 +38,13 @@ class QuotationRequestController {
     }
 
     def show(QuotationRequest quotationRequest){
-
-      [quotationRequest: quotationRequest]
+      respond quotationRequest, model:[billers:quotationRequestService.getBillerCompanies(session.company.toLong())]
     }
 
     def edit(QuotationRequest quotationRequest){
-
-      [quotationRequest:quotationRequest]
+      BigDecimal ivaRate = quotationRequestService.getIvaCurrent()
+      [quotationRequest:quotationRequest,
+      ivaRate:ivaRate]
     }
 
     def update(QuotationRequestCommand quotationRequestCommand){
@@ -44,7 +52,9 @@ class QuotationRequestController {
         QuotationRequest quotationRequest = QuotationRequest.get(params.id.toInteger())
         quotationRequest.description = quotationRequestUpdate.description
         quotationRequest.commission = quotationRequestCommand.getCommission(quotationRequestCommand.commission)
-        quotationRequest.amount = quotationRequestUpdate.amount
+        quotationRequest.total = quotationRequestUpdate.total
+        quotationRequest.subtotal = quotationRequestUpdate.subtotal
+        quotationRequest.iva = quotationRequestUpdate.iva
         quotationRequestService.update(quotationRequest)
       redirect(action: 'show', id: quotationRequest.id)
     }
@@ -54,5 +64,31 @@ class QuotationRequestController {
       redirect(action: 'index')
     }
 
+    def processed(){
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByStatus(QuotationRequestStatus.PROCESSED)
+
+      [quotationRequestList:quotationRequestList]
+    }
+
+    def requestProcessed(QuotationRequestCommand quotationRequestCommand){
+      QuotationRequest quotationRequestUpdate = quotationRequestCommand.getQuotationRequest()
+      QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
+      quotationRequest.satConcept = SatConcept.values().find(){it.toString() == params.satConcept }
+      quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
+      quotationRequest.biller = Company.get(quotationRequestCommand.biller.toLong())
+      quotationRequestService.requestProcessed(quotationRequest)
+      redirect(action: 'index')
+    }
+
+    def send(){
+      List<QuotationRequest> quotationRequestList = QuotationRequest.findAllByStatus(QuotationRequestStatus.SEND)
+
+      [quotationRequestList:quotationRequestList]
+    }
+
+    def sendQuotation(QuotationRequest quotationRequest){
+      quotationRequestService.sendQuotation(quotationRequest)
+      redirect(action: 'index')
+    }
 
 }

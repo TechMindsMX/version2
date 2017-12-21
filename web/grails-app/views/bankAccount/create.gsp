@@ -34,6 +34,12 @@
             </ul>
             </g:hasErrors>
 
+            <g:if test="${error}">
+              <div class="alert alert-danger">
+                ${error}
+              </div>
+            </g:if>
+
             <g:form action="save" class="form-horizontal" role="form">
               <input type="hidden" name="businessEntityInfo" value="${params.businessEntityInfo}"/>
               <g:if test="${relation == 'CLIENTE'}">

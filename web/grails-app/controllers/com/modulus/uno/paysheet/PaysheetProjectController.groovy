@@ -87,4 +87,50 @@ class PaysheetProjectController {
     paysheetProjectService.deletePayer(payer)
     redirect action:"show", id:paysheetProject.id
   }
+
+  def chooseEmployees(PaysheetProject paysheetProject) {
+    List employeesList = paysheetProjectService.getAvailableEmployeesToAdd(paysheetProject)
+    render view:"show", model:[paysheetProject:paysheetProject, employeesList:employeesList]
+  }
+
+  def addEmployees(PaysheetProject paysheetProject) {
+    log.info "Add employees: ${params.entities} to paysheet project ${paysheetProject.id}"
+    if (!params.entities) {
+      flash.message = "No seleccionó empleados"
+      redirect action:"chooseEmployees", id:paysheetProject.id
+      return
+    }
+
+    paysheetProjectService.addEmployeesToPaysheetProject(paysheetProject, params)
+
+    redirect action:"show", id:paysheetProject.id 
+  }
+
+  def deleteEmployee(PaysheetProject paysheetProject) {
+    log.info "Delete employee ${params.employeeId} from paysheet project ${paysheetProject.id}"
+    paysheetProjectService.deleteEmployeeFromPaysheetProject(paysheetProject, params.employeeId.toLong()) 
+    redirect action:"show", id:paysheetProject.id 
+  }
+
+  def chooseBillers(PaysheetProject paysheetProject) {
+    List<Company> corporateCompanies = paysheetProjectService.getCompaniesInCorporate(session.company.toLong())
+    render view:"show", model:[paysheetProject:paysheetProject, billersList:corporateCompanies]
+  }
+
+  def addBillerCompany(BillerPaysheetProjectCommand command) {
+    log.info "Biller Paysheet project command: ${command.dump()}"
+    BillerPaysheetProject billerPaysheetProject = command.createBillerPaysheetProject()
+    log.info "Biller Paysheet project to save: ${billerPaysheetProject.dump()}"
+    paysheetProjectService.saveBillerPaysheetProject(billerPaysheetProject)
+   
+    redirect action:"show", id:billerPaysheetProject.paysheetProject.id
+  }
+
+  def deleteBiller(BillerPaysheetProject biller) {
+    log.info "Deleting biller paysheet project: ${biller.dump()}"
+    PaysheetProject paysheetProject = biller.paysheetProject
+    paysheetProjectService.deleteBiller(biller)
+    redirect action:"show", id:paysheetProject.id
+  }
+
 }

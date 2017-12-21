@@ -7,6 +7,9 @@ import spock.lang.Unroll
 import java.math.RoundingMode
 import java.lang.Void as Should
 
+import com.modulus.uno.stp.StpClabeService
+import com.modulus.uno.stp.StpService
+
 @TestFor(ModulusUnoService)
 //TODO esto es demasiado para un servicio posible refactor
 @Mock([User,Role,UserRoleCompany,Profile,Company,ModulusUnoAccount,Commission,SaleOrder,SaleOrderItem, CashOutOrder, Transaction])

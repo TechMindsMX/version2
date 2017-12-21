@@ -1,0 +1,20 @@
+package com.modulus.uno.quotation
+
+import com.modulus.uno.PaymentMethod
+
+class QuotationPaymentRequest {
+
+  BigDecimal amount
+  String note
+  PaymentMethod paymentMethod
+  QuotationPaymentRequestStatus status = QuotationPaymentRequestStatus.CREATED
+
+  Date dateCreated
+  Date lastUpdated
+
+    static belongsTo = [quotationContract: QuotationContract]
+
+    static constraints = {
+      note nullable:true
+    }
+}

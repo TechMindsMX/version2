@@ -1,6 +1,8 @@
 package com.modulus.uno
 
 import grails.util.Environment
+import com.modulus.uno.invoice.*
+import com.modulus.uno.catalogs.UnitType
 
 class InvoiceService {
 
@@ -14,74 +16,176 @@ class InvoiceService {
   }
 
   private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
-    def datosDeFacturacion = new DatosDeFacturacion(folio: "${saleOrder.id}", metodoDePago: "${saleOrder.paymentMethod}", moneda:saleOrder.currency, tipoDeCambio:saleOrder.changeType?:new BigDecimal(0))
-    def emisor = new Contribuyente(datosFiscales:new DatosFiscales())
-    def receptor = new Contribuyente(datosFiscales:new DatosFiscales())
-    def command = new FacturaCommand(datosDeFacturacion:datosDeFacturacion, emisor:emisor, receptor:receptor)
+    FacturaCommand facturaCommand = new FacturaCommand(
+      datosDeFacturacion: getDatosDeFacturacion(saleOrder), 
+      emisor: buildEmitterFromSaleOrder(saleOrder), 
+      receptor:buildReceiverFromSaleOrder(saleOrder),
+      pdfTemplate: saleOrder.pdfTemplate,
+      observaciones: saleOrder.note,
+      betweenIntegrated: false,
+      conceptos: buildConceptsFromSaleOrder(saleOrder)
+    )
+    facturaCommand.emitter = facturaCommand.emisor.datosFiscales.rfc
+    facturaCommand.totalesImpuestos = buildSummaryTaxes(facturaCommand)
+    facturaCommand
+  }
+
+  private DatosDeFacturacion getDatosDeFacturacion(SaleOrder saleOrder) {
     Company company = saleOrder.company
-    Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
-    command.emisor.datosFiscales.razonSocial = company.bussinessName
-    command.emisor.datosFiscales.rfc = (Environment.current == Environment.PRODUCTION) ? company.rfc : "AAA010101AAA"
-    command.emisor.datosFiscales.codigoPostal = address.zipCode
-    command.emisor.datosFiscales.pais = address.country
-    command.emisor.datosFiscales.ciudad = address.city
-    command.emisor.datosFiscales.delegacion = address.federalEntity
-    command.emisor.datosFiscales.colonia = address.neighboorhood ?: address.colony
-    command.emisor.datosFiscales.calle = address.street
-    command.emisor.datosFiscales.noExterior = address.streetNumber
-    command.emisor.datosFiscales.noInterior = address.suite ?: "SN"
-    command.emisor.datosFiscales.regimen = company.taxRegime.code
-
-    command.emitter = company.rfc
-    command.pdfTemplate = saleOrder.pdfTemplate
-    command.observaciones = saleOrder.note
-
-    command.receptor.datosFiscales.rfc = saleOrder.rfc
-    command.receptor.datosFiscales.razonSocial = saleOrder.clientName
-    command.receptor.datosFiscales.pais = saleOrder.addresses[0].country
-    command.receptor.datosFiscales.ciudad = saleOrder.addresses[0].city
-    command.receptor.datosFiscales.calle = saleOrder.addresses[0].street
-    command.receptor.datosFiscales.delegacion = saleOrder.addresses[0].federalEntity
-    command.receptor.datosFiscales.codigoPostal = saleOrder.addresses[0].zipCode
-    command.receptor.datosFiscales.noExterior = saleOrder.addresses[0].streetNumber ?: "SN"
-    command.receptor.datosFiscales.noInterior = saleOrder.addresses[0].suite ?: "SN"
-    command.receptor.datosFiscales.colonia = saleOrder.addresses[0].neighboorhood ?: saleOrder.addresses[0].colony
-
     ClientLink client = ClientLink.findByClientRefAndCompany(saleOrder.rfc, company)
-
+    String accountNumber = ""
     if (saleOrder.paymentMethod == PaymentMethod.EFECTIVO || saleOrder.paymentMethod == PaymentMethod.CHEQUE_NOMINATIVO) {
       BankAccount bankAccount = company.banksAccounts.find {it.concentradora}
-      datosDeFacturacion.numeroDeCuentaDePago = bankAccount ? "${bankAccount.branchNumber} - ${bankAccount.accountNumber} - ${bankAccount.banco}" : company.accounts[0].stpClabe
+      accountNumber = bankAccount ? "${bankAccount.branchNumber} - ${bankAccount.accountNumber} - ${bankAccount.banco}" : company.accounts[0].stpClabe
     } else {
-      datosDeFacturacion.numeroDeCuentaDePago = client?.stpClabe ?: company.accounts[0].stpClabe
+      accountNumber = client?.stpClabe ?: company.accounts[0].stpClabe
     }
 
-    command.betweenIntegrated = false
-    command.datosDeFacturacion.addendaLabel = "Factura a nombre y cuenta de ${company.bussinessName} con RFC ${company.rfc}"
+    new DatosDeFacturacion(
+      metodoDePago: new MetodoDePago(clave:"PUE", descripcion:"Pago en una sóla exhibición"),
+      formaDePago: new FormaDePago(clave:saleOrder.paymentMethod.getKey(), descripcion:saleOrder.paymentMethod.getDescription()),
+      moneda: saleOrder.currency,
+      tipoDeCambio: saleOrder.changeType?:new BigDecimal(1),
+      numeroDeCuentaDePago: accountNumber,
+      addendaLabel: "Factura a nombre y cuenta de ${company.bussinessName} con RFC ${company.rfc}"
+    )
+  }
 
+  private Contribuyente buildEmitterFromSaleOrder(SaleOrder saleOrder) {
+    Company company = saleOrder.company
+    Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
+    new Contribuyente(
+      datosFiscales: new DatosFiscales(
+        razonSocial: company.bussinessName,
+        rfc: (Environment.current == Environment.PRODUCTION) ? company.rfc : "AAA010101AAA",
+        codigoPostal: address.zipCode,
+        pais: address.country,
+        ciudad: address.city,
+        delegacion: address.federalEntity,
+        colonia: address.neighboorhood ?: address.colony,
+        calle: address.street,
+        noExterior: address.streetNumber,
+        noInterior: address.suite ?: "SN",
+        regimen: new RegimenFiscal(clave:company.taxRegime.key, descripcion:company.taxRegime.description)
+      )
+    )
+  }
+
+  private Contribuyente buildReceiverFromSaleOrder(SaleOrder saleOrder) {
+    //TODO: Implementar catálogo usos cfdi para selección al ejecutar la orden de venta
+    new Contribuyente(
+      datosFiscales: new DatosFiscales(
+        rfc: (Environment.current == Environment.PRODUCTION) ? saleOrder.rfc : "LAN7008173R5",
+        razonSocial: saleOrder.clientName,
+        pais: saleOrder.addresses[0].country,
+        ciudad: saleOrder.addresses[0].city,
+        calle: saleOrder.addresses[0].street,
+        delegacion: saleOrder.addresses[0].federalEntity,
+        codigoPostal: saleOrder.addresses[0].zipCode,
+        noExterior: saleOrder.addresses[0].streetNumber ?: "SN",
+        noInterior: saleOrder.addresses[0].suite ?: "SN",
+        colonia: saleOrder.addresses[0].neighboorhood ?: saleOrder.addresses[0].colony,
+        usoCFDI: "P01" 
+      )
+    )
+  }
+
+  private List<Concepto> buildConceptsFromSaleOrder(SaleOrder saleOrder) {
     def conceptos = []
-    saleOrder.items.each { item ->
-      conceptos.add(new Concepto(cantidad:item.quantity, valorUnitario:item.price, descuento:item.discount, descripcion:item.name, unidad:item.unitType))
+    saleOrder.items.toList().sort{it.name}.each { item ->
+      Concepto concepto = new Concepto(
+        cantidad:item.quantity, 
+        valorUnitario:item.price, 
+        descuento:item.discount, 
+        claveProd:item.satKey ?: "01010101",
+        descripcion:item.name, 
+        unidad:item.unitType,
+        claveUnidad:getUnitKeyFromItem(item),
+        impuestos:buildTaxesFromItem(item),
+        retenciones:buildTaxWithholdingsFromItem(item)
+      )
+      conceptos.add(concepto)
+    }
+    conceptos
+  }
+
+  private String getUnitKeyFromItem(SaleOrderItem item) {
+    UnitType unitType = UnitType.findByCompanyAndName(item.saleOrder.company, item.unitType)
+    unitType ? unitType.unitKey : "XNA"
+  }
+
+  private List<Impuesto> buildTaxesFromItem(SaleOrderItem item) {
+    List<Impuesto> taxes = []
+    
+    if (item.iva){
+      taxes.add(new Impuesto(base:item.quantity * item.priceWithDiscount, importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva/100, impuesto:'002', tipoFactor:"Tasa"))
     }
 
-    command.conceptos = conceptos
+    taxes
+  }
 
-    def impuestos = []
-    saleOrder.items.each { item ->
-      impuestos.add(new Impuesto(importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva, impuesto:'IVA'))
+  private List<Impuesto> buildTaxWithholdingsFromItem(SaleOrderItem item) {
+    List<Impuesto> holdings = []
+    
+    if (item.ivaRetention){
+      holdings.add(new Impuesto(base:item.price, importe:item.ivaRetention, tasa:item.ivaRetention/item.price, impuesto:'002', tipoFactor:"Tasa"))
     }
-    command.impuestos = impuestos
 
-    def retenciones = []
-    saleOrder.items.each { item ->
-      retenciones.add(new Impuesto(importe:item.quantity * item.ivaRetention, tasa:0, impuesto:'IVA'))
+    holdings
+  }
+
+  private TotalesImpuestos buildSummaryTaxes(FacturaCommand facturaCommand) {
+    new TotalesImpuestos(
+      totalImpuestosTrasladados: calculateTaxesTotal(facturaCommand),
+      totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand),
+      impuestos: buildSummaryForTaxes(facturaCommand),
+      retenciones: buildSummaryForHoldings(facturaCommand)
+    ) 
+  }
+
+  private BigDecimal calculateTaxesTotal(FacturaCommand facturaCommand) {
+    BigDecimal total = 0
+    facturaCommand.conceptos.each { concepto -> 
+      total += concepto.impuestos*.importe.sum() ?: 0
     }
-    command.retenciones = retenciones
-    command
+    total
+  }
+
+  private BigDecimal calculateHoldingsTotal(FacturaCommand facturaCommand) {
+    BigDecimal total = 0
+    facturaCommand.conceptos.each { concepto -> 
+      total += concepto.retenciones*.importe.sum() ?: 0
+    }
+    total
+  }
+
+  private List<Impuesto> buildSummaryForTaxes(FacturaCommand facturaCommand) {
+    List<Impuesto> summary = []
+    def allTaxes = facturaCommand.conceptos.impuestos.flatten()
+    def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tasa:it.tasa, tipoFactor:it.tipoFactor] }.collect { k, v ->
+      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
+    }
+    summaryTaxes.each {
+      summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
+    }
+    summary
+  }
+
+  private List<Impuesto> buildSummaryForHoldings(FacturaCommand facturaCommand) {
+    List<Impuesto> summary = []
+    def allTaxes = facturaCommand.conceptos.retenciones.flatten()
+    def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tasa:it.tasa, tipoFactor:it.tipoFactor] }.collect { k, v ->
+      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
+    }
+    summaryTaxes.each {
+      summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
+    }
+    summary
   }
 
   def generatePreviewFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
+    log.info "Factura to preview: ${factura.dump()}"
     String file = "previo.pdf"
     String rfc = "${saleOrder.company.rfc}"
     def url = grailsApplication.config.modulus.showFactura
