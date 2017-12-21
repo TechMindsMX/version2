@@ -63,27 +63,59 @@ class SimulatorPaysheetServiceSpec extends Specification {
             PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
 
         then:
+             paymentSheetEmployee.salaryImss == 3000.00
+             paymentSheetEmployee.ivaRate== 16.00
              paymentSheetEmployee.breakdownPayment
-             paymentSheetEmployee.breakdownPayment.baseQuotation == 445.968
+             paymentSheetEmployee.breakdownPayment.baseQuotation == 0
+             paymentSheetEmployee.breakdownPayment.integratedDailySalary == 300
              paymentSheetEmployee.socialQuota == 0
              paymentSheetEmployee.subsidySalary == 0
              paymentSheetEmployee.incomeTax == 0
              paymentSheetEmployee.salaryAssimilable == 0
-             paymentSheetEmployee.socialQuotaEmployer == 1.46
-             paymentSheetEmployee.paysheetTax == 4
-             paymentSheetEmployee.commission == 2.84
+             paymentSheetEmployee.socialQuotaEmployer == 0
+             paymentSheetEmployee.paysheetTax == 0
+             paymentSheetEmployee.commission == 300
+
+    }
+    @Unroll
+    void "calculate amount for period"(){
+        given:"A bigdecimal amount"
+            BigDecimal amount = 5000
+            String period = _period
+        when: "it's calculate period"
+            amount = service.calculateAmountForPeriod(amount, period)
+        then:
+            amount == _amount
+        where:
+            _amount | _period
+             2500   | "Quincenal"
+             1166.67| "Semanal"
+             5000   | "Mensual"
 
     }
 
-    void "calculate amount for period"(){
-        give:"A bigdecimal"
-            BigDecimal amount = 5000
+    @Unroll
+    void "Calculate income tax for period"() {
+        given:"A big decimal"
+            BigDecimal amount = 400
+        and:"Period"
             String period = "Quincenal"
         when:
-            amount = 1000
+            BigDecimal income = service.calculateIncomeTax(amount, period)
         then:
-            1==2
-
+            income == 3.84
     }
+
+    void "Calculate salary asimilable"() {
+        given:"A big decimal"
+            BigDecimal amount = 1400
+        and:"Salary imns"
+            BigDecimal imsSalary = 300 
+        when:
+            BigDecimal income = service.calculateSalaryAssimilable(amount, imsSalary)
+        then:
+            income == 1100
+    }
+        
 
 }
