@@ -8,9 +8,8 @@
                 <th>Carga social del trabajador</th>
                 <th>Subsidio</th>
                 <th>ISR IMSS</th>
-                <th>ISR Asimilable</th>
-                <th>Salario Base Imss</th>
                 <th>Salario IMSS Neto</th>
+                <th>ISR Asimilable</th>
                 <th>Asimilable Neto</th>
                 <th>Asimilable Bruto</th>
                 <th>Subtotal</th>
@@ -30,9 +29,8 @@
                     <td>${modulusuno.formatPrice(number:paysheet.socialQuota)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.subsidySalary)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.incomeTax)}</td>
-                    <td>${modulusuno.formatPrice(number:paysheet.incomeTaxIAS)}</td>
-                    <td>${modulusuno.formatPrice(number:paysheet.salaryBruto)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.totalImss)}</td>
+                    <td>${modulusuno.formatPrice(number:paysheet.incomeTaxIAS)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.salaryAssimilable)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.salaryAssimilableBruto)}</td>
                     <td>${modulusuno.formatPrice(number:paysheet.subtotal)}</td>
