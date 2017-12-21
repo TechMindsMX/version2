@@ -160,8 +160,8 @@ class SimulatorPaysheetService {
 
   BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
     BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_BRUTO, row.FACT_INTEGRA)
-    BigDecimal baseQuotation = breakdownPaymentEmployeeService.getBaseQuotation(integratedDailySalary)
-    BigDecimal diseaseAndMaternityBase = breakdownPaymentEmployeeService.getDiseaseAndMaternityBase(integratedDailySalary)
+    BigDecimal baseQuotation = breakdownPaymentEmployeeService.getBaseQuotation(integratedDailySalary) ?: 0
+    BigDecimal diseaseAndMaternityBase = breakdownPaymentEmployeeService.getDiseaseAndMaternityBase(integratedDailySalary) ?:0
     BreakdownPaymentEmployee breakdownPaymentEmployee = new BreakdownPaymentEmployee(
       integratedDailySalary: integratedDailySalary,
       baseQuotation: baseQuotation,
@@ -228,7 +228,6 @@ class SimulatorPaysheetService {
 
 
   BigDecimal calculateSalaryAssimilable(BigDecimal netPayment, BigDecimal imssSalaryNet) {
-    println netPayment
     (netPayment - imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
   }
 
