@@ -5,6 +5,8 @@ import com.modulus.uno.BusinessEntity
 
 class XlsLayoutsBusinessEntityService {
 
+  def businessEntityService
+
   def generateLayoutForCLIENTE() {
     new WebXlsxExporter().with {
       fillRow(["Layout para alta masiva de tipo CLIENTE"], 0)
@@ -33,13 +35,19 @@ class XlsLayoutsBusinessEntityService {
   }
 
   def exportListOfBusinessEntities(List<BusinessEntity> businessEntityList){
-    def headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
-    def data = ['${businessEntity.rfc}', 'businessEntity.name']
+    def businessEntities = getBusinessToExport(businessEntityList)
     new WebXlsxExporter().with{
-      fillRow(headers, 0)
-      fillRow(data, 1)
+      fillHeader(businessEntities.headers)
+      add(businessEntities.data, businessEntities.properties) 
     }
   }
 
+  Map getBusinessToExport(List<BusinessEntity> businessEntityList) {
+    Map businessEntities = [:]
+    businessEntities.headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
+    businessEntities.properties = ['rfc', ' ', 'website', 'type', 'type', 'status']
+    businessEntities.data = businessEntityList
+    businessEntities
+  }
 
 }
