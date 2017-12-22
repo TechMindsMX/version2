@@ -68,11 +68,13 @@ class CorporateController {
                           ]}
     if(corporate.hasQuotationContract){
       log.info "Si hay quoattion"
-      roles = roles + roles.findAll{ it.authority.toString() in [
+      println roles.dump()
+      def roles2 = roles.findAll{ it.authority.toString() in [
                             "ROLE_OPERATOR_QUOTATION",
                             "ROLE_EXECUTOR_QUOTATION",
                             "ROLE_EMPLOYEE"
                             ]}
+                            println roles2.dump()
     }
     List<UserRoleCompany> rolesOfUser = organizationService.findRolesForUserInCompanies(user.username,corporate)
     [companies:corporate.companies,roles:roles,user:user,rolesOfUser:rolesOfUser]
