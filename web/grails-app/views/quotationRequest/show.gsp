@@ -58,8 +58,12 @@
                 </div>
                 <div class="col-md-12">
                   <br>
-                  <dt>Concepto </dt>
-                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}"/>
+                  <dt>Producto </dt>
+                  <g:select name="productId" class="form-control"
+                  from="${products}"
+                  optionValue="name"
+                  optionKey="id">
+                  </g:select>
                 </div>
                 <div class="col-md-3">
                   <br>
@@ -117,8 +121,8 @@
                   <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
                   <dt>Iva de la cotización</dt>
                   <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
-                  <dt>Concepto</dt>
-                  <dd>${quotationRequest.satConcept}</dd>
+                  <dt>Producto</dt>
+                  <dd>${quotationRequest.product.name}</dd>
                 </dl>
               </div>
             </div>

@@ -105,4 +105,5 @@ databaseChangeLog = {
   include file: 'adding-column-satkey-to-sale-order.groovy'
   include file: 'modify-column-unit-type-from-product.groovy'
   include file: 'create-domain-biller-paysheet-project.groovy'
+  include file: 'changed-column-quotation-request.groovy'
 }
