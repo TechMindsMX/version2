@@ -90,4 +90,5 @@ databaseChangeLog = {
     include file: 'adding-column-users-quotation-contract.groovy'
     include file: 'changed-column-quotation-request.groovy'
     include file: 'changed-column-corporate-has-quotation.groovy'
+    include file: 'add-roles-quotation.groovy'
 }
