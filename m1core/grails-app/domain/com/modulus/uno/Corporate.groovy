@@ -4,7 +4,7 @@ class Corporate {
 
   String nameCorporate
   String corporateUrl
-  Boolean hasQuotationContract
+  boolean hasQuotationContract
 
   static  hasMany =[companies:Company,users: User]
 
