@@ -187,17 +187,10 @@ class BusinessEntityController {
   }
 
   def downloadListForBusinessEntities(){
-    def xlsList = businessEntityService.exportXlsForBusinessRelationships(params.clientProviderType)
+    def company = Company.findById(session.company.toLong())
+    def xlsList = businessEntityService.exportXlsForBusinessRelationships(params.clientProviderType?:"All Entities", company)
     xlsList.with {
-      setResponseHeaders(response, "${params.clientProviderType}.xlsx")
-      save(response.outputStream)
-    }
-  }
-
-  def downloadListForAllBusinessEntities(){
-    def xlsList = businessEntityService.exportXlsForAllBusinessRelationships()
-    xlsList.with{
-      setResponseHeaders(response, "Relaciones_Comerciales.xlsx")
+      setResponseHeaders(response, "${params.clientProviderType?:'Relaciones comerciales'}.xlsx")
       save(response.outputStream)
     }
   }
