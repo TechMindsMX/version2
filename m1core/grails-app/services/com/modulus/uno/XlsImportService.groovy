@@ -17,6 +17,15 @@ class XlsImportService {
 		columnMap: ['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'NOMBRE','E':'CLABE','F':'TARJETA','G':'NETO','H':'OBSERVACIONES']
 	]
 
+  Map COLUMN_MAP_SIMULATOR = [
+    startRow:3,
+    columnMap:['A':'CONSECUTIVO','B':'SA_BRUTO','C':'IAS_BRUTO','D':'IAS_NETO','E':'PERIODO','F':'RIESGO_TRAB','G':'FACT_INTEGRA','H':'COMISION']
+  ]
+
+  Map CELL_MAP_SIMULATOR = [
+    cellMap:['B1':'PERIODO']
+  ]
+
   File getFileToProcess(def file) {
     File xlsFile = File.createTempFile("tmpXlsImport${new Date().getTime()}",".xlsx")
     FileOutputStream fos = new FileOutputStream(xlsFile)
@@ -55,11 +64,34 @@ class XlsImportService {
 		File xlsFile = getFileToProcess(file)
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_PREPAYSHEET.sheet = workbook.getSheetName(0)
-    log.info "Column Map: ${COLUMN_MAP_PREPAYSHEET}"
+    log.info "Column Map: ${COLUMN_MAP_SIMULATOR}"
     ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_PREPAYSHEET)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
+    data
+  }
+
+  def parseXlsPaysheetSimulator(def file) {
+		File xlsFile = getFileToProcess(file)
+    Workbook workbook = getWorkbookFromXlsFile(xlsFile)
+    COLUMN_MAP_SIMULATOR.sheet = workbook.getSheetName(0)
+    log.info "Column Map: ${COLUMN_MAP_SIMULATOR}"
+    ExcelImportService excelImportService = new ExcelImportService()
+    List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_SIMULATOR)
+    log.info "Data: ${data}"
+    validateNotEmptyData(data)
+    data
+  }
+
+  def parseXlsPaysheetSimulatorHeaders(def file) {
+		File xlsFile = getFileToProcess(file)
+    Workbook workbook = getWorkbookFromXlsFile(xlsFile)
+    CELL_MAP_SIMULATOR.sheet = workbook.getSheetName(0)
+    log.info "Column Map: ${CELL_MAP_SIMULATOR}"
+    ExcelImportService excelImportService = new ExcelImportService()
+    Map data = excelImportService.convertFromCellMapToMapWithValues(workbook, CELL_MAP_SIMULATOR)
+    log.info "Data: ${data}"
     data
   }
 
