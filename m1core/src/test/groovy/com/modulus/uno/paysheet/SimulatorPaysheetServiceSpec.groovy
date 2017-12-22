@@ -116,6 +116,23 @@ class SimulatorPaysheetServiceSpec extends Specification {
         then:
             income == 1100
     }
+
+    void "Calculate commission"() {
+        given:"A paysheet"
+            PaysheetEmployee paysheetEmploye = new PaysheetEmployee(prePaysheetEmployee: new PrePaysheetEmployee(),
+                                                                    salaryImss:300,
+                                                                    socialQuota:400,
+                                                                    subsidySalary:400,
+                                                                    incomeTax:203,
+                                                                    salaryAssimilable:500,
+                                                                    paysheetTax:100)
+        and: "A commission"
+            BigDecimal commission = 10
+        when:""
+            BigDecimal commissionIncome = service.calculateCommission(paysheetEmploye, commission)
+        then:
+            commissionIncome == 69.70
+    }
         
 
 }
