@@ -238,7 +238,7 @@ class BusinessEntityService {
 
   def processXlsMassiveForEMPLEADO(def file, Company company) {
     log.info "Processing massive registration for Employee"
-    File xlsFile = getFileToProcess(file)
+    File xlsFile = xlsImportService.getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
     def headers = getKeyForData(data)
     List results = processDataFromXlsEMPLEADO(data, company)
@@ -249,7 +249,7 @@ class BusinessEntityService {
 
   def processXlsMassiveForCLIENTE(def file, Company company) {
     log.info "Processing massive registration for Client"
-    File xlsFile = getFileToProcess(file)
+    File xlsFile = xlsImportService.getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveClient(xlsFile)
     def headers = getKeyForData(data)
     List results = processDataFromXlsCLIENTE(data, company)
@@ -260,7 +260,7 @@ class BusinessEntityService {
 
   def processXlsMassiveForPROVEEDOR(def file, Company company) {
     log.info "Processing massive registration for Provider"
-    File xlsFile = getFileToProcess(file)
+    File xlsFile = xlsImportService.getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveProvider(xlsFile)
     def headers = getKeyForData(data)
     List results = processDataFromXlsPROVEEDOR(data, company)
@@ -271,7 +271,7 @@ class BusinessEntityService {
 
   def processXlsMassiveForCLIENTE_PROVEEDOR(def file, Company company) {
     log.info "Processing massive registration for Client_Provider"
-    File xlsFile = getFileToProcess(file)
+    File xlsFile = xlsImportService.getFileToProcess(file)
     List data = xlsImportService.parseXlsMassiveClient_Provider(xlsFile)
     def headers = getKeyForData(data)
     List results = processDataFromXlsCLIENTE_PROVEEDOR(data, company)
