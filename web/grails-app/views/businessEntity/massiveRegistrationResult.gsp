@@ -21,33 +21,23 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="table-responsive">
-                  <table class="table">
-                    <tr>
-                      <th>RFC</th>
-                      <th>CURP</th>
-                      <th>Paterno</th>
-                      <th>Materno</th>
-                      <th>Nombre</th>
-                      <th>No. Empl.</th>
-                      <th>Resultado</th>
-                    </tr>
-                    <g:each in="${resultImport.data}" var="employee" status="index">
-                      <tr>
-                        <td>${employee.RFC}</td>
-                        <td>${employee.CURP}</td>
-                        <td>${employee.PATERNO}</td>
-                        <td>${employee.MATERNO}</td>
-                        <td>${employee.NOMBRE}</td>
-                        <td>${employee.NO_EMPL}</td>
-                        <td>${resultImport.results[index]}</td>
-                      </tr>
-                    </g:each>
-                  </table>
+                  <g:render template="businessEntityTable"/>
                 </div>
               </div>
             </div>
           </div>
+          <div class="portlet-footer">
 
+            <div class="row">
+              <div class="col-md-6">
+                <g:link class="btn btn-default" controller="businessEntity" action="massiveRegistration">Regresar</g:link>
+              </div>
+              <div class="col-md-6 text-right">
+                <g:link class="btn btn-default" controller="businessEntity" action="index">Relaciones Comerciales</g:link>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>

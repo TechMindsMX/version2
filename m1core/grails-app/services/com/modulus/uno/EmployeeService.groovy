@@ -10,13 +10,9 @@ class EmployeeService {
 
   @Transactional
   def addEmployeeToCompany(EmployeeBusinessEntity employee, Company company, Map params){
-    if (isEmployeeOfThisCompany(employee, company)) {
-      throw new BusinessException(messageSource.getMessage('exception.employee.already.exist', null, LCH.getLocale()))
-    }
-
+    if (isEmployeeOfThisCompany(employee, company))throw new BusinessException(messageSource.getMessage('exception.employee.already.exist', null, LCH.getLocale()))
     def employeeLink = new EmployeeLink(type:employee.class.simpleName, employeeRef: employee.rfc, company: company, curp:params.curp.toUpperCase(), number:params.number.toUpperCase())
     employeeLink.save()
-
     if (employeeLink.hasErrors()) {
       log.error "Error al guardar el empleado: ${employeeLink.dump()}"
       throw new BusinessException("Los datos del empleado son erróneos")

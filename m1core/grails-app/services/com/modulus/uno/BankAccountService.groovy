@@ -129,24 +129,21 @@ class BankAccountService {
     bankAccount
   }
 
-  BankAccount createBankAccountForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map rowEmployee) {
-    Map dataBank = getDataBankFromRowEmployee(rowEmployee)
+  BankAccount createBankAccountForBusinessEntityFromRowBusinessEntity(BusinessEntity businessEntity, Map rowBusinessEntity) {
+    Map dataBank = getDataBankFromClabe(rowBusinessEntity.CLABE)
     BankAccount bankAccount = new BankAccount(
       accountNumber:dataBank.accountNumber,
       branchNumber:dataBank.branchNumber,
-      cardNumber:dataBank.cardNumber,
-      clabe:dataBank.clabe,
+      clabe:rowBusinessEntity.CLABE,
+      cardNumber:rowBusinessEntity.NUMTARJETA,
       banco:dataBank.bank
     )
 
     bankAccount.save()
-    log.info "Bank account employee saved: ${bankAccount.dump()}"
-
     if (bankAccount.id) {
       businessEntity.addToBanksAccounts(bankAccount)
       businessEntity.save()
     }
-
     bankAccount
   }
 
@@ -177,6 +174,30 @@ class BankAccountService {
       data.accountNumber = clabe.substring(6,17)
       data.bank = Bank.findByBankingCodeLike("%${codeBank}")
     }
+    data
+  }
+
+  BankAccount createBankAccountForClientFromRowClient(BusinessEntity businessEntity, Map rowClient){
+    Map dataBank = getDataBankFromCodeBank(rowClient.CLAVE_BANCO, rowClient.ULTIMOS_4_DIGITOS_TARJETA)
+    BankAccount bankAccount = new BankAccount(
+      accountNumber: dataBank.accountNumber,
+      branchNumber:"*".padLeft(5,"0"),
+      clabe:"002115016003269411",
+      banco:dataBank.bank  
+    )
+
+    bankAccount.save()
+    if(bankAccount.id){
+      businessEntity.addToBanksAccounts(bankAccount)
+      businessEntity.save()
+    }
+    bankAccount
+  }
+
+  Map getDataBankFromCodeBank(String codeBank, String lastDigits){
+    Map data = [:]
+    data.accountNumber = "*******" + lastDigits
+    data.bank = Bank.findByBankingCodeLike("%${codeBank}")
     data
   }
 }
