@@ -74,7 +74,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
              paymentSheetEmployee.salaryAssimilable == 0
              paymentSheetEmployee.socialQuotaEmployer == 0
              paymentSheetEmployee.paysheetTax == 0
-             paymentSheetEmployee.commission == 300
+             paymentSheetEmployee.commission == 0
 
     }
     @Unroll
