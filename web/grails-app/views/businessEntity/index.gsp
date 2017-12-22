@@ -69,7 +69,7 @@
                           <button class="btn btn-default">XLS</button>
                         </div>
                       </g:form>
-                      <g:form controller="businessEntity" action="downloadListForAllBusinessEntities" class="form-horizontal">
+                      <g:form controller="businessEntity" action="downloadListForBusinessEntities" class="form-horizontal">
                         <div class="col-md-3">
                           <button class="btn btn-default">Todos</button>
                         </div>
