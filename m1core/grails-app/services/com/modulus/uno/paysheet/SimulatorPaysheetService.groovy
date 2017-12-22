@@ -25,8 +25,8 @@ class SimulatorPaysheetService {
 
     def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
        def data = employeeToExport(paysheetEmployeeList)
-       def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','incomeTaxIAS','salaryAssimilable','salaryAssimilableBruto','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
-       def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ISR Assimilable','ASIMILABLE NETO','ASIMILABLE BRUTO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
+       def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilableBruto','incomeTaxIAS','salaryAssimilable','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
+       def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR Assimilable','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
        new WebXlsxExporter().with {
           fillRow(headers, 2)
           add(data,properties,3)
@@ -81,6 +81,7 @@ class SimulatorPaysheetService {
       paysheetEmployee.metaClass.period = row.PERIODO
       paysheetEmployee.salaryAssimilable = calculateSalaryAssimilable(paysheetEmployee.iasBruto, paysheetEmployee.incomeTaxIAS) // IAS NETO
       paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_BRUTO, row.PERIODO) // Salario Neto
+      paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
       paysheetEmployee
     }
 
@@ -113,7 +114,6 @@ class SimulatorPaysheetService {
     paysheetEmployee.salaryImss = calculateAmountForPeriod(row.SA_BRUTO,row.PERIODO)
     paysheetEmployee.socialQuota = calculateAmountForPeriod(paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal,row.PERIODO)
     paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee, row.PERIODO)
-    paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
     paysheetEmployee
   }
 
