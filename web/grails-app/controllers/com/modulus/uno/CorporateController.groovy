@@ -54,28 +54,7 @@ class CorporateController {
 
   def assignRolesInCompaniesForUser(User user){
     Corporate corporate = corporateService.findCorporateOfUser(user)
-    List<Role> roles = Role.list()
-    roles = roles.findAll{ it.authority.toString() in ["ROLE_LEGAL_REPRESENTATIVE_VISOR",
-                          "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR",
-                          "ROLE_FICO_VISOR",
-                          "ROLE_FICO_EJECUTOR",
-                          "ROLE_AUTHORIZER_VISOR",
-                          "ROLE_AUTHORIZER_EJECUTOR",
-                          "ROLE_OPERATOR_VISOR",
-                          "ROLE_OPERATOR_EJECUTOR",
-                          "ROLE_AUTHORIZER_PAYSHEET",
-                          "ROLE_OPERATOR_PAYSHEET"
-                          ]}
-    if(corporate.hasQuotationContract){
-      log.info "Si hay quoattion"
-      println roles.dump()
-      def roles2 = roles.findAll{ it.authority.toString() in [
-                            "ROLE_OPERATOR_QUOTATION",
-                            "ROLE_EXECUTOR_QUOTATION",
-                            "ROLE_EMPLOYEE"
-                            ]}
-                            println roles2.dump()
-    }
+    def roles = corporateService.getRolesForCorporate(corporate)
     List<UserRoleCompany> rolesOfUser = organizationService.findRolesForUserInCompanies(user.username,corporate)
     [companies:corporate.companies,roles:roles,user:user,rolesOfUser:rolesOfUser]
   }
