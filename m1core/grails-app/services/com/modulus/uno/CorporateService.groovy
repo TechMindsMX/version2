@@ -155,4 +155,38 @@ class CorporateService {
     corporate
   }
 
+  ArrayList getRolesForCorporate(Corporate corporate){
+    List<Role> roles = Role.list()
+    if(!corporate.hasQuotationContract){
+      roles = roles.findAll{ it.authority.toString() in ["ROLE_LEGAL_REPRESENTATIVE_VISOR",
+                            "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR",
+                            "ROLE_FICO_VISOR",
+                            "ROLE_FICO_EJECUTOR",
+                            "ROLE_AUTHORIZER_VISOR",
+                            "ROLE_AUTHORIZER_EJECUTOR",
+                            "ROLE_OPERATOR_VISOR",
+                            "ROLE_OPERATOR_EJECUTOR",
+                            "ROLE_AUTHORIZER_PAYSHEET",
+                            "ROLE_OPERATOR_PAYSHEET"
+                            ]}
+    }
+    else {
+      roles = roles.findAll{ it.authority.toString() in ["ROLE_LEGAL_REPRESENTATIVE_VISOR",
+                            "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR",
+                            "ROLE_FICO_VISOR",
+                            "ROLE_FICO_EJECUTOR",
+                            "ROLE_AUTHORIZER_VISOR",
+                            "ROLE_AUTHORIZER_EJECUTOR",
+                            "ROLE_OPERATOR_VISOR",
+                            "ROLE_OPERATOR_EJECUTOR",
+                            "ROLE_AUTHORIZER_PAYSHEET",
+                            "ROLE_OPERATOR_PAYSHEET",
+                            "ROLE_OPERATOR_QUOTATION",
+                            "ROLE_EXECUTOR_QUOTATION",
+                            "ROLE_EMPLOYEE"
+                            ]}
+    }
+   roles 
+  }
+
 }
