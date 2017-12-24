@@ -20,7 +20,7 @@ class QuotationPaymentRequestController {
     def selectPaymentRequest(String quotation){
       QuotationContract quotationContract = QuotationContract.get(quotation.toLong())
       def quotationPaymentRequestList = QuotationPaymentRequest.findAllByQuotationContract(quotationContract)
-      render view: 'index', model:[quotationContract:quotationContract, quotationPaymentRequestList: quotationPaymentRequestList]
+      render view: 'index', model:[quotationContract:quotationContract, quotationPaymentRequestList: quotationPaymentRequestList, fromContract:params.fromContract]
     }
 
     def create(){
