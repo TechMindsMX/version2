@@ -20,9 +20,11 @@
           <div class="portlet-title">
             <g:if test="${quotationContract}">
             <div class="row">
+              <g:if test="${!fromContract}">
               <div class="col-md-12">
                 <g:link class="btn btn-primary" action="index">Regresar</g:link>
               </div>
+              </g:if>
             </div>
             </g:if>
           </div>
