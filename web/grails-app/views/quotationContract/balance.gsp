@@ -67,9 +67,13 @@
                   <g:submitButton name="consultar" class="btn btn-primary marginP" value="${message(code: 'default.button.consultar.label', default: 'Consultar')}"
                   />
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-3">
                   <button type="button" name="Solicitar pago" class="btn btn-primary marginP" value="${message(code: 'default.button.paymentRequest.label', default: 'Solicitar pago')}" data-toggle="collapse" data-target="#demo"
                   >Solicitar pago </button>
+                  </div>
+                  <div class="col-md-3">
+                  <g:link type="button" action="selectPaymentRequest" controller="QuotationPaymentRequest"  params="[quotation: balance.quotationContract.id, fromContract: 'contract']" class="btn btn-primary marginP"
+                  >Consultar pagos </g:link>
                   </div>
                 </div>
                 </g:form>
