@@ -236,16 +236,23 @@ class BusinessEntityService {
   }
 
   def exportXlsForBusinessRelationships(String entityType, Company company) {
-    //obtener la lista de business entities del tipo
-    //generar el xls enviando la lista
     def businessEntityList = company.businessEntities.toList().sort{it.id}
-    xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(businessEntityList)
+    //businessEntityList.each{it.metaClass.businessEntityType = getClientProviderType(it.rfc)}
+    //businessEntityList.collect{getClientProviderType(it.rfc)}
+    if(entityType != "All Entities"){
+      return xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(giveListOfTheEntityType(entityType, businessEntityList))
+    }
+    else {
+      return xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(businessEntityList)
+    } 
   }
 
-  def exportXlsForAllBusinessRelationships(){
-    //obtener todos los business entities
-    //
-    xlsLayoutsBusinessEntityService.exportListForAllBusinessEntities()
+  def giveListOfTheEntityType(String entityType, List<BusinessEntity> businessEntityList){
+    def businessEntityListForType = []
+    businessEntityList.each{ data ->
+      data.getBusinessEntityType(data.rfc).toString() == entityType?businessEntityListForType << data: " "
+    }
+    businessEntityListForType
   }
 
   def processXlsMassiveForEMPLEADO(def file, Company company) {
