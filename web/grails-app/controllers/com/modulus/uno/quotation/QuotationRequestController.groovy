@@ -1,6 +1,7 @@
 package com.modulus.uno.quotation
 
 import com.modulus.uno.Company
+import com.modulus.uno.Product
 
 class QuotationRequestController {
 
@@ -38,7 +39,8 @@ class QuotationRequestController {
     }
 
     def show(QuotationRequest quotationRequest){
-      respond quotationRequest, model:[billers:quotationRequestService.getBillerCompanies(session.company.toLong())]
+      List<Product> products = Product.getAll()
+      respond quotationRequest, model:[billers:quotationRequestService.getBillerCompanies(session.company.toLong()), products:products]
     }
 
     def edit(QuotationRequest quotationRequest){
@@ -73,7 +75,7 @@ class QuotationRequestController {
     def requestProcessed(QuotationRequestCommand quotationRequestCommand){
       QuotationRequest quotationRequestUpdate = quotationRequestCommand.getQuotationRequest()
       QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
-      quotationRequest.satConcept = SatConcept.values().find(){it.toString() == params.satConcept }
+      quotationRequest.product = Product.get(params.productId.toLong())
       quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
       quotationRequest.biller = Company.get(quotationRequestCommand.biller.toLong())
       quotationRequestService.requestProcessed(quotationRequest)

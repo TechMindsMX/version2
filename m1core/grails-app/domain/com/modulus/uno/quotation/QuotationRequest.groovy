@@ -2,6 +2,7 @@ package com.modulus.uno.quotation
 
 import com.modulus.uno.SaleOrder
 import com.modulus.uno.Company
+import com.modulus.uno.Product
 
 class QuotationRequest {
 
@@ -10,7 +11,7 @@ class QuotationRequest {
   QuotationRequestStatus status = QuotationRequestStatus.CREATED
   Company biller
   SaleOrder saleOrder
-  SatConcept satConcept
+  Product product
   BigDecimal subtotal
   BigDecimal total
   BigDecimal iva
@@ -23,7 +24,7 @@ class QuotationRequest {
     static constraints = {
       biller nullable:true
       saleOrder nullable:true
-      satConcept nullable:true
+      product nullable:true
       subtotal min:0.0
       total min:0.0
       iva min:0.0
