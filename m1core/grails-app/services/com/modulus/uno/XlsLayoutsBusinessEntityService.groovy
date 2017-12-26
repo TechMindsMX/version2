@@ -38,14 +38,16 @@ class XlsLayoutsBusinessEntityService {
     def businessEntities = getBusinessToExport(businessEntityList)
     new WebXlsxExporter().with{
       fillHeader(businessEntities.headers)
-      add(businessEntities.data, businessEntities.properties) 
+      add(businessEntities.data, businessEntities.properties)
     }
   }
 
   Map getBusinessToExport(List<BusinessEntity> businessEntityList) {
     Map businessEntities = [:]
+    businessEntityList.each{it.metaClass.businessEntityType = it.getBusinessEntityType(it.rfc)}
+    businessEntityList.each{it.metaClass.name = it}
     businessEntities.headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
-    businessEntities.properties = ['rfc', ' ', 'website', 'type', 'type', 'status']
+    businessEntities.properties = ['rfc', 'name', 'website', 'type', 'businessEntityType', 'status']
     businessEntities.data = businessEntityList
     businessEntities
   }
