@@ -7,6 +7,8 @@ class PaysheetController {
   PaysheetService paysheetService
   PaysheetEmployeeService paysheetEmployeeService
   PaysheetContractService paysheetContractService
+  SimulatorPaysheetService simulatorPaysheetService
+  List<PaysheetEmployee> paysheetEmployeeList = []
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
@@ -98,4 +100,32 @@ class PaysheetController {
 		paysheetEmployeeService.changePaymentWayFromEmployee(employee)
 		redirect action:"show", id:employee.paysheet.id
 	}
+
+  def simulatorPaysheet(){
+    render view: 'simulatorPaysheet'
+  }
+
+  def downloadLayout(){
+    def layout = simulatorPaysheetService.generateLayoutForSimulator()
+    layout.with {
+      setResponseHeaders(response, "layoutForSimulator.xlsx")
+      save(response.outputStream)
+    }
+  }
+
+  def uploadLayoutForSimulator(){
+    def file = request.getFile('layoutSimulator')
+    paysheetEmployeeList = simulatorPaysheetService.processXlsSimulator(file)
+    //exportPaysheetEmployee(paysheetEmployeeList)
+    List<Map> mapaySheetEmployeelist =  simulatorPaysheetService.employeeToExport(paysheetEmployeeList) 
+    render view:'simulatorPaysheet', model:[paysheetEmployeeList:mapaySheetEmployeelist]
+  }
+
+  def exportPaysheetEmployee(){
+    def xlsForSimulator = simulatorPaysheetService.generateXLSForSimulator(paysheetEmployeeList)
+    xlsForSimulator.with {
+      setResponseHeaders(response, "XLSWithSimulator.xlsx")
+      save(response.outputStream)
+    }
+  }
 }
