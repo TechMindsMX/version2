@@ -69,4 +69,16 @@ class PaysheetProjectService {
     paysheetProject
   }
 
+  @Transactional
+  BillerPaysheetProject saveBillerPaysheetProject(BillerPaysheetProject billerPaysheetProject) {
+    billerPaysheetProject.save()
+    log.info "Biller Paysheet project saved: ${billerPaysheetProject.dump()}"
+    billerPaysheetProject  
+  }
+
+  @Transactional
+  def deleteBiller(BillerPaysheetProject billerPaysheetProject) {
+    billerPaysheetProject.delete()
+  }
+
 }

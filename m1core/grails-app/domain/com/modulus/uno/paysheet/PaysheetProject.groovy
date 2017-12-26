@@ -11,7 +11,7 @@ class PaysheetProject {
   BigDecimal commission
 
   static belongsTo = [paysheetContract:PaysheetContract]
-  static hasMany = [payers:PayerPaysheetProject, employees:BusinessEntity]
+  static hasMany = [payers:PayerPaysheetProject, employees:BusinessEntity, billers:BillerPaysheetProject]
 
   static constrains = {
     name nullable:false, blank:false
