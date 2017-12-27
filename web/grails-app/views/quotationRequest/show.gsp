@@ -84,9 +84,11 @@
                   <g:link class="btn btn-default" controller="quotationRequest" action="index">Regresar</g:link>
                 </div>
                 <div class="col-md-6 text-right">
+	              <sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
                   <div class="col-md-6">
                     <button class="btn btn-primary" type="submit"  id="${quotationRequest.id}">Procesar</button>
                   </div>
+                  </sec:ifAnyGranted>
                 </div>
               </div>
             </div>

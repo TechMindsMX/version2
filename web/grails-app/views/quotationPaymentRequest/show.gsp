@@ -46,9 +46,11 @@
               <g:link class="btn btn-default" controller="quotationPaymentRequest" action="index">Regresar</g:link>
             </div>
             <g:if test="${quotationPaymentRequest.status == QuotationPaymentRequestStatus.SEND}">
+	          <sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
             <div class="col-md-2 text-right">
               <g:link class="btn btn-default" controller="quotationPaymentRequest" action="process" id="${quotationPaymentRequest.id}">Procesar</g:link>
             </div>
+            </sec:ifAnyGranted>
             </g:if>
 
             <g:elseif test="${quotationPaymentRequest.status == QuotationPaymentRequestStatus.CREATED}">
