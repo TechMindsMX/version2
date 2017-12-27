@@ -91,6 +91,7 @@ class RestService {
         multipart "logo", bodyMap.cer.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
         multipart "password", bodyMap.password.bytes
         multipart "rfc", bodyMap.rfc.bytes
+        multipart "id", bodyMap.id.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
         multipart "serie", bodyMap.serie.bytes
       }
