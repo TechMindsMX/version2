@@ -20,7 +20,7 @@ class SaleOrderTagLib {
     int lengthFolio = attrs.saleOrder.folio.length()
     String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio}" : "${attrs.saleOrder.folio}_${attrs.saleOrder.id}"
     def file = "${nameFile}.${attrs.format}"
-    def rfc = "${attrs.saleOrder.company.rfc}"
+    def rfc = "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}"
     def url = grailsApplication.config.modulus.showFactura
     url.replace('#rfc',rfc).replace('#file',file)
   }
@@ -29,7 +29,7 @@ class SaleOrderTagLib {
     int lengthFolio = attrs.saleOrder.folio.length()
     String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio.substring(0,36)}" : "${attrs.saleOrder.folio}"
     def file = "${nameFile}.${attrs.format}"
-    def rfc = "${attrs.saleOrder.company.rfc}"
+    def rfc = "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}"
     def url = grailsApplication.config.modulus.showAccuse
     url.replace('#rfc',rfc).replace('#file',file)
   }
