@@ -360,7 +360,7 @@ class CompanyService {
   }
 
   void changeSerieForInvoicesOfCompany(Company company, String serie, String folio) {
-    Map newSerie = [rfc:company.rfc, serie:serie, folio:folio]
+    Map newSerie = [rfc:company.rfc, id:company.id.toString(), serie:serie, folio:folio]
     invoiceService.changeSerieAndInitialFolioToStampInvoiceForEmitter(newSerie)
   }
 
