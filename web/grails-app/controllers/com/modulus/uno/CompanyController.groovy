@@ -35,7 +35,7 @@ class CompanyController {
       def balance, usd, documents
       params.sepomexUrl = grails.util.Holders.grailsApplication.config.sepomex.url
       if (company.status == CompanyStatus.ACCEPTED) {
-        documents = companyService.isAvailableForGenerateInvoices(company.rfc)
+        documents = companyService.isAvailableForGenerateInvoices(company)
         if (company.accounts){
           balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
         }
