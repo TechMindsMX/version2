@@ -99,9 +99,9 @@ class RestService {
     response
   }
 
-  def existEmisorForGenerateInvoice(String rfc) {
+  def existEmisorForGenerateInvoice(String rfc, String id) {
     log.info "CALLING Service: Verify if exist emisor"
-    String endpoint = "${grailsApplication.config.modulus.invoice}/${rfc}"
+    String endpoint = "${grailsApplication.config.modulus.invoice}/${rfc}/${id}"
     def response = wsliteRequestService.doRequest(facturacionUrl){
       endpointUrl endpoint
     }.doit()
