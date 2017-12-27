@@ -37,19 +37,33 @@ class XlsLayoutsBusinessEntityService {
   def exportListOfBusinessEntities(List<BusinessEntity> businessEntityList){
     def businessEntities = getBusinessToExport(businessEntityList)
     new WebXlsxExporter().with{
-      fillHeader(businessEntities.headers)
-      add(businessEntities.data, businessEntities.properties)
+      fillRow(businessEntities.headers,0)
+      add(businessEntities.data, businessEntities.properties,1)
     }
   }
 
   Map getBusinessToExport(List<BusinessEntity> businessEntityList) {
     Map businessEntities = [:]
-    businessEntityList.each{it.metaClass.businessEntityType = it.getBusinessEntityType(it.rfc)}
-    businessEntityList.each{it.metaClass.name = it}
     businessEntities.headers = ['RFC', 'NOMBRE/RAZON_SOCIAL', 'SITIO_WEB', 'PERSONA', 'TIPO_DE_RELACIÓN', 'ESTATUS']
     businessEntities.properties = ['rfc', 'name', 'website', 'type', 'businessEntityType', 'status']
-    businessEntities.data = businessEntityList
+    businessEntities.data = getMapBusinessEntity(businessEntityList)
     businessEntities
+  }
+
+  List<Map> getMapBusinessEntity(List<BusinessEntity> businessEntityList){
+    List<Map> businessEntitiesList = []
+    businessEntityList.each{ business ->
+          Map businessEntities = [
+                          rfc: business.rfc,
+                          name: business.toString() ?: "Sin Nombre",
+                          website: business?.website,
+                          type: business.type,
+                          businessEntityType: business.getBusinessEntityType(),
+                          status: business.status
+      ]
+      businessEntitiesList << businessEntities
+    }
+    businessEntitiesList
   }
 
 }
