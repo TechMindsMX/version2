@@ -439,7 +439,7 @@ and:
                                 company:company)
 
     company.addToAddresses(address)
-    company.save()
+    company.save(validate:false)
     company
   }
 
@@ -447,7 +447,7 @@ and:
     given: "A company"
       Company company = createCompany()
     and: "documents to stamp"
-      restService.existEmisorForGenerateInvoice(_) >> [validCer:true, validKey:false]
+      restService.existEmisorForGenerateInvoice(_, _) >> [validCer:true, validKey:false]
     when: "we verify status"
       Boolean result = service.isCompanyEnabledToStamp(company)
     then:
@@ -458,7 +458,7 @@ and:
     given: "A company"
       Company company = new Company(rfc:"XYZ010203ABC").save(validate:false)
     and: "documents to stamp"
-      restService.existEmisorForGenerateInvoice(_) >> [status:true]
+      restService.existEmisorForGenerateInvoice(_, _) >> [status:true]
     when: "we verify status"
       Boolean result = service.isCompanyEnabledToStamp(company)
     then:
