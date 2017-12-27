@@ -283,8 +283,8 @@ class CompanyService {
     result
   }
 
-  def updateDocumentsToStamp(def params, def rfc) {
-    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert, serie:params.serie]
+  def updateDocumentsToStamp(def params, Company company) {
+    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serie:params.serie]
     log.info "Updating documents to stamp: ${documents}"
     def result = restService.updateFilesForInvoice(documents)
     result
