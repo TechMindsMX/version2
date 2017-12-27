@@ -147,8 +147,8 @@ class RestService {
 
   def updateFilesForInvoice(def bodyMap) {
     log.info "Calling Service : Update files to stamp"
-    log.info "Path: ${facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
-    def endpoint = "${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
+    log.info "Path: ${facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}/${bodyMap.id}"
+    def endpoint = "${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}/${bodyMap.id}"
     def response = wsliteRequestService.doRequest(facturacionUrl){
       endpointUrl endpoint
       method HTTPMethod.POST
