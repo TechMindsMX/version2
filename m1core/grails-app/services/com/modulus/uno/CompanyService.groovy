@@ -341,7 +341,7 @@ class CompanyService {
 
   Boolean isCompanyEnabledToStamp(Company company) {
     Address fiscalAddress = company.addresses.find {it.addressType == AddressType.FISCAL}
-    def documents = isAvailableForGenerateInvoices(company.rfc)
+    def documents = isAvailableForGenerateInvoices(company)
     documents.status && fiscalAddress
   }
 
