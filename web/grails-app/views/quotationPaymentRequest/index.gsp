@@ -14,6 +14,7 @@
         <small>${quotationContract?.client}</small>
       </h1>
     </div>
+	<sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-body">
@@ -94,5 +95,6 @@
         </div>
       </div>
     </div>
+	</sec:ifAnyGranted>
   </body>
 </html>
