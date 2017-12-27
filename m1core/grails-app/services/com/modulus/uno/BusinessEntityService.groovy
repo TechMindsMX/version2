@@ -237,8 +237,6 @@ class BusinessEntityService {
 
   def exportXlsForBusinessRelationships(String entityType, Company company) {
     def businessEntityList = company.businessEntities.toList().sort{it.id}
-    //businessEntityList.each{it.metaClass.businessEntityType = getClientProviderType(it.rfc)}
-    //businessEntityList.collect{getClientProviderType(it.rfc)}
     if(entityType != "All Entities"){
       return xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(giveListOfTheEntityType(entityType, businessEntityList))
     }
