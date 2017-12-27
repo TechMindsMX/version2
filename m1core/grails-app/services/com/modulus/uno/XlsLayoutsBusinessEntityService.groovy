@@ -34,7 +34,7 @@ class XlsLayoutsBusinessEntityService {
     }
   }
 
-  def exportListOfBusinessEntities(List<BusinessEntity> businessEntityList){
+  WebXlsxExporter exportListOfBusinessEntities(List<BusinessEntity> businessEntityList){
     def businessEntities = getBusinessToExport(businessEntityList)
     new WebXlsxExporter().with{
       fillRow(businessEntities.headers,0)
