@@ -194,7 +194,7 @@ class CompanyController {
 
   def sendFilesToCreateInvoice() {
     Company company = Company.get(session.company)
-    def responseStatus = companyService.sendDocumentsPerInvoice(params, company.rfc)
+    def responseStatus = companyService.sendDocumentsPerInvoice(params, company)
     flash.responseStatus = responseStatus
     redirect(action:"show",id:"${session.company.toLong()}")
   }
