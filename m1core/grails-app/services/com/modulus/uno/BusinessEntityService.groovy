@@ -245,10 +245,10 @@ class BusinessEntityService {
     } 
   }
 
-  def giveListOfTheEntityType(String entityType, List<BusinessEntity> businessEntityList){
+  List<BusinessEntity> giveListOfTheEntityType(String entityType, List<BusinessEntity> businessEntityList){
     def businessEntityListForType = []
     businessEntityList.each{ data ->
-      data.getBusinessEntityType(data.rfc).toString() == entityType?businessEntityListForType << data: " "
+      data.getBusinessEntityType().toString() == entityType?businessEntityListForType << data: " "
     }
     businessEntityListForType
   }
