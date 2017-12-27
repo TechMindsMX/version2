@@ -167,7 +167,7 @@ class RestService {
   def updateSerieForEmitter(Map params) {
     log.info "Calling Service : Update serie for emitter"
     def url = grailsApplication.config.modulus.updateSerieForEmitter
-    url = url.replace('#rfc', params.rfc)
+    url = url.replace('#rfc', "${params.rfc}/${params.id}")
 
     log.info "Path: ${facturacionUrl}${url}"
     def endpoint = "${url}"
