@@ -279,7 +279,7 @@ class CompanyController {
 
   def updateDocumentsToStamp() {
     def company = Company.get(session.company)
-    def responseStatus = companyService.updateDocumentsToStamp(params, company.rfc)
+    def responseStatus = companyService.updateDocumentsToStamp(params, company)
     flash.responseStatus = "Archivos de Facturación Actualizados"//responseStatus
     redirect action:"show", id:company.id
 
