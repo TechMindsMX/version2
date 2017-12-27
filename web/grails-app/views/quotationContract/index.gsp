@@ -7,6 +7,8 @@
   </head>
   
   <body>
+
+	<sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
@@ -54,5 +56,6 @@
         </div>
       </div>
     </div>
+	</sec:ifAnyGranted>
   </body>
 </html>

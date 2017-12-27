@@ -14,6 +14,7 @@
       </h1>
     </div>
 
+	<sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
@@ -71,7 +72,7 @@
 
         </div>
       </div>
-
+	</sec:ifAnyGranted>
     <asset:javascript src="quotationContract/create.js"/>
     </body>
 </html>
