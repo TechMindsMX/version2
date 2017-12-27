@@ -92,8 +92,8 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
     employee?.number
   }
 
-  def getBusinessEntityType(String rfcBe){
-    businessEntityService.getClientProviderType(rfcBe)
+  def getBusinessEntityType(){
+    businessEntityService.getClientProviderType(this.rfc)
   }
 
 }
