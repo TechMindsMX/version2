@@ -278,7 +278,7 @@ class CompanyService {
   }
 
   def sendDocumentsPerInvoice(def params, Company company) {
-    def documents = [rfc:company.rfc, id:company.id, key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serie:params.serie]
+    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serie:params.serie]
     def result = restService.sendFilesForInvoiceM1(documents)
     result
   }
@@ -290,8 +290,8 @@ class CompanyService {
     result
   }
 
-  def isAvailableForGenerateInvoices(String rfc) {
-    def response = restService.existEmisorForGenerateInvoice(rfc)
+  def isAvailableForGenerateInvoices(Company company) {
+    def response = restService.existEmisorForGenerateInvoice(company.rfc, company.id.toString())
   }
 
   PendingAccounts obtainPendingAccountsOfPeriod(Date startDate, Date endDate, Company company) {
