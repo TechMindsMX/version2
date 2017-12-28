@@ -88,7 +88,7 @@ class RestService {
       callback {
         multipart "cer", bodyMap.cer.bytes, bodyMap.cer.contentType, bodyMap.cer.originalFilename
         multipart "key", bodyMap.key.bytes, bodyMap.key.contentType, bodyMap.key.originalFilename
-        multipart "logo", bodyMap.cer.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
+        multipart "logo", bodyMap.logo.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
         multipart "password", bodyMap.password.bytes
         multipart "rfc", bodyMap.rfc.bytes
         multipart "id", bodyMap.id.bytes
