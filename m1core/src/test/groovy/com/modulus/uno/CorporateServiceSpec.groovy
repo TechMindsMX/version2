@@ -199,4 +199,16 @@ class CorporateServiceSpec extends Specification {
       url == "web-qa.modulusuno.com"
   }
 
+  void "Should get corporate to enable or disable"(){
+    given:"The corporate"
+      Corporate corporate1 = new Corporate(nameCorporate:"MakingDevs", status:"ENABLED").save(validate:false) 
+      Corporate corporate2 = new Corporate(nameCorporate:"MakingDevs", status:"DISABLED").save(validate:false)
+    when:
+      def result1 = service.getCorporateToEnableOrDisable(corporate1)
+      def result2 = service.getCorporateToEnableOrDisable(corporate2)
+    then:
+      result1 == (corporate1.status = CorporateStatus.DISABLED)
+      result2 == (corporate2.status = CorporateStatus.ENABLED)
+    }
+
 }
