@@ -106,7 +106,7 @@
       <div class="container-fluid">
         <g:form name="executeSale">
           <input type="hidden" id="saleOrderId" name="id" value="${saleOrder.id}"/>
-          <companyInfo:listTemplatesPdfForCompany rfc="${saleOrder.company.rfc}"/>
+          <companyInfo:listTemplatesPdfForCompany rfc="${saleOrder.company.rfc}" id="${saleOrder.company.id.toString()}"/>
           <g:if test="${!isEnabledToStamp}">
             <div class="alert alert-warning">
               No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
