@@ -38,6 +38,7 @@
                     <th>No. de Empresas</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                   </tr>
                   <g:each in="${corporates}" var="corp">
                   <tr>
@@ -53,6 +54,18 @@
                       <g:link class="btn btn-primary" controller="corporate" action="defineCostCenters" id="${corp.id}">
                         Centros de Costos
                       </g:link>
+                    </td>
+                    <td>
+                      <g:if test="${corp.status.toString() == 'ENABLED'}"> 
+                        <g:link class="btn btn-danger" controller="corporate" action="defineCostCenters" id="${corp.id}">
+                          Deshabilitar
+                        </g:link>
+                      </g:if>
+                      <g:else>
+                        <g:link class="btn btn-danger" controller="corporate" action="defineCostCenters" id="${corp.id}">
+                          Habilitar
+                        </g:link>
+                      </g:else>
                     </td>
                   </tr>
                   </g:each>
