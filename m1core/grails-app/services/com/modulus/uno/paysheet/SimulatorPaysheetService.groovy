@@ -209,7 +209,7 @@ class SimulatorPaysheetService {
         salaryAssimilable: employee.salaryAssimilable,
         salaryAssimilableBruto: employee.iasBruto,
         subtotal:employee.totalSalaryEmployee,
-        socialQuotaEmployeeTotal: employee  .socialQuotaEmployer,
+        socialQuotaEmployeeTotal: employee.socialQuotaEmployer,
         isn:employee.paysheetTax,
         nominalCost:employee.paysheetCost,
         commission: employee.commission,
