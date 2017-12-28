@@ -278,7 +278,7 @@ class CompanyService {
   }
 
   def sendDocumentsPerInvoice(def params, Company company) {
-    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serie:params.serie]
+    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key, cer:params.cer, logo:params.logo, password:params.password, certNumber:params.numCert, serie:params.serie]
     def result = restService.sendFilesForInvoiceM1(documents)
     result
   }
