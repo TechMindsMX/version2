@@ -27,6 +27,7 @@ class InvoiceService {
     )
     facturaCommand.emitter = facturaCommand.emisor.datosFiscales.rfc
     facturaCommand.totalesImpuestos = buildSummaryTaxes(facturaCommand)
+    facturaCommand.id = (Environment.current == Environment.PRODUCTION) ? saleOrder.company.id.toString() : "1"
     facturaCommand
   }
 
@@ -187,7 +188,7 @@ class InvoiceService {
     def factura = createInvoiceFromSaleOrder(saleOrder)
     log.info "Factura to preview: ${factura.dump()}"
     String file = "previo.pdf"
-    String rfc = "${saleOrder.company.rfc}"
+    String rfc = "${saleOrder.company.rfc}/${saleOrder.company.id}"
     def url = grailsApplication.config.modulus.showFactura
     url = url.replace('#rfc',rfc).replace('#file',file)
     def result = restService.sendFacturaCommandWithAuth(factura, url)
