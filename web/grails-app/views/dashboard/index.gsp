@@ -57,12 +57,12 @@
                     </td>
                     <td>
                       <g:if test="${corp.status.toString() == 'ENABLED'}"> 
-                        <g:link class="btn btn-danger" controller="corporate" action="defineCostCenters" id="${corp.id}">
+                        <g:link class="btn btn-danger" controller="corporate" action="enableOrDisableCorporate" id="${corp.id}">
                           Deshabilitar
                         </g:link>
                       </g:if>
                       <g:else>
-                        <g:link class="btn btn-danger" controller="corporate" action="defineCostCenters" id="${corp.id}">
+                        <g:link class="btn btn-danger" controller="corporate" action="enableOrDisableCorporate" id="${corp.id}">
                           Habilitar
                         </g:link>
                       </g:else>
