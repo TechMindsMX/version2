@@ -96,5 +96,6 @@ databaseChangeLog = {
   include file: 'updating-column-paymentMethod-quotationPaymnetRequest.groovy'
   include file: 'adding-column-satkey-to-product.groovy'
   include file: 'create-domain-unit-type.groovy'
-    include file: 'adding-column-satkey-to-sale-order.groovy'
+  include file: 'adding-column-satkey-to-sale-order.groovy'
+  include file: 'modify-column-unit-type-from-product.groovy'
 }
