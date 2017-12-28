@@ -191,6 +191,11 @@ class CorporateController {
     redirect action:'defineCostCenters', id:corporate.id
   }
 
+  def enableOrDisableCorporate(Corporate corporate){
+    def corporateToEnableOrDisable = corporateService.getCorporateToEnableOrDisable(corporate)
+    redirect action:'index'
+  }
+
   def editUser(User user) {
     render view:"editUser", model:[user:user, corporateId:params.corporateId]
   }
