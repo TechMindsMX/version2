@@ -1,14 +1,20 @@
 package com.modulus.uno
 
 enum PaymentMethod {
-  NA("N/A"), EFECTIVO("EFECTIVO"), CHEQUE_NOMINATIVO("CHEQUE NOMINATIVO"), TRANSFERENCIA_ELECTRONICA("TRANSFERENCIA ELECTRONICA")
+  EFECTIVO("EFECTIVO","01"), 
+  CHEQUE_NOMINATIVO("CHEQUE NOMINATIVO", "02"), 
+  TRANSFERENCIA_ELECTRONICA("TRANSFERENCIA ELECTRONICA", "03"), 
+  TARJETA_CREDITO("TARJETA DE CRÉDITO", "04"),
+  TARJETA_DEBITO("TARJETA DE DÉBITO", "28"),
+  POR_DEFINIR("POR DEFINIR", "99")
 
-  PaymentMethod(String description) {
+  PaymentMethod(String description, String key) {
     this.description = description
+    this.key = key
   }
 
   private final String description
-  private final String key = ordinal().toString().padLeft(2,'0')
+  private final String key
 
   String getDescription() {
     this.description

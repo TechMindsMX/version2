@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import grails.util.Environment
+
 class SaleOrderTagLib {
 
   def restService
@@ -20,7 +22,7 @@ class SaleOrderTagLib {
     int lengthFolio = attrs.saleOrder.folio.length()
     String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio}" : "${attrs.saleOrder.folio}_${attrs.saleOrder.id}"
     def file = "${nameFile}.${attrs.format}"
-    def rfc = "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}"
+    def rfc = (Environment.current == Environment.PRODUCTION) ? "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}" : "AAA010101AAA/1"
     def url = grailsApplication.config.modulus.showFactura
     url.replace('#rfc',rfc).replace('#file',file)
   }
@@ -29,7 +31,7 @@ class SaleOrderTagLib {
     int lengthFolio = attrs.saleOrder.folio.length()
     String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio.substring(0,36)}" : "${attrs.saleOrder.folio}"
     def file = "${nameFile}.${attrs.format}"
-    def rfc = "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}"
+    def rfc = (Environment.current == Environment.PRODUCTION) ? "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}" : "AAA010101AAA/1"
     def url = grailsApplication.config.modulus.showAccuse
     url.replace('#rfc',rfc).replace('#file',file)
   }
