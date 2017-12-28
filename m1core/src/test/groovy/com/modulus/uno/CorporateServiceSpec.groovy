@@ -200,9 +200,12 @@ class CorporateServiceSpec extends Specification {
   }
 
   void "Should get corporate to enable or disable"(){
-    given:"The corporate"
-      Corporate corporate1 = new Corporate(nameCorporate:"MakingDevs", status:"ENABLED").save(validate:false) 
-      Corporate corporate2 = new Corporate(nameCorporate:"MakingDevs", status:"DISABLED").save(validate:false)
+    given:"The users"
+      User user1 = new User(username:"Temoc", enabled:true).save(validate:false)
+      User user2 = new User(username:"Temoc", enabled:false).save(validate:false)
+    and:"The corporate"
+      Corporate corporate1 = new Corporate(nameCorporate:"MakingDevs", status:"ENABLED", users:[user1, user2]).save(validate:false) 
+      Corporate corporate2 = new Corporate(nameCorporate:"MakingDevs", status:"DISABLED", users:[user1, user2]).save(validate:false)
     when:
       def result1 = service.getCorporateToEnableOrDisable(corporate1)
       def result2 = service.getCorporateToEnableOrDisable(corporate2)
