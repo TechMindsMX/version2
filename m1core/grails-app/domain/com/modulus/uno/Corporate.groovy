@@ -4,6 +4,7 @@ class Corporate {
 
   String nameCorporate
   String corporateUrl
+  CorporateStatus status = CorporateStatus.ENABLED
 
   static  hasMany =[companies:Company,users: User]
 
