@@ -98,4 +98,5 @@ databaseChangeLog = {
   include file: 'create-domain-unit-type.groovy'
   include file: 'adding-column-satkey-to-sale-order.groovy'
   include file: 'modify-column-unit-type-from-product.groovy'
+    include file: 'drop-constraint-unique-rfc-from-company.groovy'
 }
