@@ -52,7 +52,7 @@ class SimulatorPaysheetService {
 
     def processForIASNetoAndSalaryBruto(def row){
       println "IAS_NETO y SA_BRUTO......"
-      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO, 0, row.SA_BRUTO)
+      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO)
       getPaysheetEmployeeWithCalcules(row)
     }
 
@@ -231,10 +231,19 @@ class SimulatorPaysheetService {
     (netPayment - imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
   }
 
-  BigDecimal calculateIASBruto(BigDecimal iasNeto, BigDecimal SA_BRUTO){
-    BigDecimal sANeto = SA_BRUTO
-    iasNeto = sANeto -SA_BRUTO
-    iasNeto
+  BigDecimal calculateIASBruto(BigDecimal iasNeto){
+    RateTax rateTax = calculateRateTaxIasNeto(iasNeto)
+    iasNeto = iasNeto - rateTax.fixedQuota
+    BigDecimal iasBruto = iasNeto + (iasNeto * (rateTax.rate/100))
+    BigDecimal fixedQuota = rateTax.fixedQuota - (rateTax.fixedQuota * (rateTax.rate/100))
+    println rateTax.dump()
+    iasBruto + fixedQuota
+  }
+
+  RateTax calculateRateTaxIasNeto(BigDecimal iasNeto){
+    RateTax rateTax = RateTax.values().find { rt ->
+      iasNeto >= rt.lowerLimit && iasNeto <= rt.upperLimit
+    }
   }
 
 }
