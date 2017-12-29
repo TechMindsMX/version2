@@ -193,7 +193,7 @@ class CorporateController {
 
   def enableOrDisableCorporate(Corporate corporate){
     def corporateToEnableOrDisable = corporateService.getCorporateToEnableOrDisable(corporate)
-    redirect action:'index'
+    redirect(controller:"Dashboard", action:"index")
   }
 
   def editUser(User user) {
