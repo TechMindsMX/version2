@@ -31,7 +31,7 @@
   <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.crudeMonthlySalary"/></label>
-      <input class="form-control" id="netSalary" type="number" min="0.00" step="0.01" name="crudeMonthlySalary" value="${dataImssEmployee?.crudeMonthlySalary}" required=""/>
+      <input class="form-control" id="crudeSalary" type="number" min="0.00" step="0.01" name="crudeMonthlySalary" value="${dataImssEmployee?.crudeMonthlySalary}" required=""/>
     </div>
   </div>
 </div>
