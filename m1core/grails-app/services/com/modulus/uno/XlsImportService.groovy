@@ -8,7 +8,7 @@ class XlsImportService {
 
   Map COLUMN_MAP_EMPLOYEE = [
     startRow: 1,
-    columnMap:  ['A':'RFC', 'B':'CURP', 'C':'PATERNO', 'D':'MATERNO', 'E':'NOMBRE', 'F':'NO_EMPL','G':'BANCO', 'H':'CLABE','I':'CUENTA','J':'SUCURSAL', 'K':'NUMTARJETA', 'L':'IMSS', 'M':'NSS', 'N':'FECHA_ALTA', 'O':'BASE_COTIZA', 'P':'NETO', 'Q':'PRIMA_VAC', 'R':'DIAS_AGUINALDO', 'S':'PERIODO_PAGO']
+    columnMap:  ['A':'RFC', 'B':'CURP', 'C':'PATERNO', 'D':'MATERNO', 'E':'NOMBRE', 'F':'NO_EMPL','G':'BANCO', 'H':'CLABE','I':'CUENTA','J':'SUCURSAL', 'K':'NUMTARJETA', 'L':'IMSS', 'M':'NSS', 'N':'FECHA_ALTA', 'O':'SA_BRUTO', 'P':'IAS_BRUTO', 'Q':'PRIMA_VAC', 'R':'DIAS_AGUINALDO', 'S':'PERIODO_PAGO']
   ]
 		
 
