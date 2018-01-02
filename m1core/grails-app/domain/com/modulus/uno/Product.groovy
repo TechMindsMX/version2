@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import com.modulus.uno.catalogs.UnitType
+
 class Product {
 
   String sku
@@ -21,6 +23,7 @@ class Product {
     ieps min:0.0,max:100.00
     iva min:0.0,max:100.00
     satKey blank:false, size:8..8
+    unitType nullable:true
   }
 
   BigDecimal getAppliedIEPS(){
