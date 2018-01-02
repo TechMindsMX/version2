@@ -271,4 +271,16 @@ class PurchaseOrderService {
 		payment.status = PaymentToPurchaseStatus.CONCILIATED
 		payment.save()
 	} 
+
+  List<PurchaseOrder> searchPurchaseOrders(Long idCompany, Map params) {
+    Company company = Company.get(idCompany)
+    def criteriaPO = PurchaseOrder.createCriteria()
+    def results = criteriaPO.list {
+      eq('company', company)
+      ilike('providerName', "%${params.providerName}%")
+      order('dateCreated', 'desc')
+    }
+    results
+  }
+
 }

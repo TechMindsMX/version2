@@ -200,6 +200,35 @@ class PurchaseOrderServiceSpec extends Specification {
 			result.id == po2.id
 	}
 
+  @Unroll
+  void "Should get the filter list of purchase orders with filter params=#theParams"() {
+    given:"The company"
+      Company company = new Company(rfc:"A").save(validate:false)
+    and:"The current sale orders"
+      PurchaseOrder so1 = new PurchaseOrder(providerName:"Proveedor 1", company:company).save(validate:false)
+      PurchaseOrder so2 = new PurchaseOrder(providerName:"Proveedor 1", company:new Company(rfc:"B").save(validate:false)).save(validate:false)
+      PurchaseOrder so3 = new PurchaseOrder(providerName:"Proveedor 2", company:company).save(validate:false)
+      PurchaseOrder so4 = new PurchaseOrder(providerName:"Proveedor 2", company:company).save(validate:false)
+      PurchaseOrder so5 = new PurchaseOrder(providerName:"Proveedor 22", company:company).save(validate:false)
+      PurchaseOrder so6 = new PurchaseOrder(providerName:"Proveedor 3", company:company).save(validate:false)
+      PurchaseOrder so7 = new PurchaseOrder(providerName:"Proveedor 33", company:company).save(validate:false)
+      PurchaseOrder so8 = new PurchaseOrder(providerName:"Proveedor 4", company:company).save(validate:false)
+      PurchaseOrder so9 = new PurchaseOrder(providerName:"Proveedor 44", company:company).save(validate:false)
+    and:"The filter params"
+      Map params = theParams
+    when:
+      def result = service.searchPurchaseOrders("1".toLong(), params)
+    then:
+      result.size() == sizeList
+    where:
+      theParams       ||   sizeList
+      [providerName:"Proveedor"]    |   8
+      [providerName:"Proveedor 2"]    |   3
+      [providerName:"Proveedor 22"]    |   1
+      [providerName:"Proveedor 5"]    |   0
+  }
+
+
   private PaymentToPurchase createPayment(String amount) {
     new PaymentToPurchase(amount: new BigDecimal(amount)).save()
   }

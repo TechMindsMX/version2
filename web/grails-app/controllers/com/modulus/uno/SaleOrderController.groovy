@@ -297,4 +297,15 @@ class SaleOrderController {
 		redirect action:"list"
 	}
 
+  def search() {
+    log.info "Search sale orders with params: ${params}"
+    if (!params.rfc && !params.clientName) {
+      redirect action:"list"
+      return
+    }
+
+    def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
+
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName]] 
+  }
 }
