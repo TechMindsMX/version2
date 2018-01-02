@@ -32,6 +32,22 @@ appender('ROLLING',RollingFileAppender) {
 
 }
 
+appender('DEBUGPROD',RollingFileAppender) {
+  encoder(PatternLayoutEncoder){
+    charset = Charset.forName('UTF-8')
+    pattern =
+      '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} ' + // Date
+      '%clr(%5p) ' + // Log level
+      '%clr(%property{PID}){magenta} ' + // PID
+      '%clr(---){faint} %clr([%15.15t]){faint} ' + // Thread
+      '%clr(%-40.40logger{39}){cyan} %clr(:){faint} ' + // Logger
+      '%m%n%wex' // Message
+  }
+  rollingPolicy(TimeBasedRollingPolicy){
+    FileNamePattern = "${basePath}/logs/modulusuno-%d{yyyy-MM}-debug.log"
+  }
+
+}
 def artefacts = ['controllers','services','domains','conf','init','taglib']
 
 switch(Environment.current){
@@ -49,6 +65,7 @@ switch(Environment.current){
   case Environment.PRODUCTION:
     artefacts.each { artefact ->
       logger "grails.app.${artefact}", ERROR, ['ROLLING'], false
+      logger "grails.app.${artefact}", DEBUG, ['DEBUGPROD'], false
     }
     break
 }
