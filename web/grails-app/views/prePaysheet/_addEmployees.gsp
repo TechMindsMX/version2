@@ -36,7 +36,7 @@
           <th>CURP</th>
           <th>NSS</th>
 					<th>Cuenta</th>
-					<th>Total a Pagar</th>
+					<th>Total Bruto a Pagar</th>
 					<th>Observaciones</th>
         </tr>
 
@@ -53,7 +53,7 @@
 						<g:select class="form-control fixwidth" id="bankAccount${employee.id}" name="bankAccount${employee.id}" from="${employee.banksAccounts}" noSelection="['':'EFECTIVO/CHEQUE']" optionKey="id" value="${bankAccount}"/>
           </td>
           <td>
-						<input type="text" id="netPayment${employee.id}" name="netPayment${employee.id}" class="form-control text-right" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta 2 decimales)" value="${netPaymentEmployees[index]}" placeholder="Total a Pagar" style="width:100px"/>
+						<input type="text" id="crudePayment${employee.id}" name="crudePayment${employee.id}" class="form-control text-right" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta 2 decimales)" value="${crudePaymentEmployees[index]}" placeholder="Total Bruto a Pagar" style="width:100px"/>
           </td>
           <td>
 						<g:textField class="form-control fixwidth" id="note${employee.id}" name="note${employee.id}" value="" placeholder="Observaciones"/>
