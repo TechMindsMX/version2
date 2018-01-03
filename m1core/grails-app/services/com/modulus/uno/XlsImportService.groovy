@@ -14,7 +14,7 @@ class XlsImportService {
 
 	Map COLUMN_MAP_PREPAYSHEET = [
 		startRow:1,
-		columnMap: ['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'NOMBRE','E':'CLABE','F':'TARJETA','G':'NETO','H':'OBSERVACIONES']
+		columnMap: ['A':'RFC', 'B':'CURP','C':'NO_EMPL','D':'NOMBRE','E':'CLABE','F':'TARJETA','G':'BRUTO_A_PAGAR','H':'OBSERVACIONES']
 	]
 
   File getFileToProcess(def file) {
