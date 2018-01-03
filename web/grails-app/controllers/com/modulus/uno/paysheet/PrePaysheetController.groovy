@@ -53,8 +53,8 @@ class PrePaysheetController {
   def addEmployees(PrePaysheet prePaysheet) {
     List employeesAvailableToAdd = prePaysheetService.getEmployeesAvailableToAdd(prePaysheet)
     List dataImssEmployees = prePaysheetService.getDataImssForEmployees(employeesAvailableToAdd)
-    List netPaymentEmployees = prePaysheetService.getNetPaymentForEmployees(employeesAvailableToAdd, prePaysheet)
-    respond prePaysheet, model:[employeesAvailableToAdd:employeesAvailableToAdd, dataImssEmployees:dataImssEmployees, netPaymentEmployees:netPaymentEmployees]
+    List crudePaymentEmployees = prePaysheetService.getCrudePaymentForEmployees(employeesAvailableToAdd, prePaysheet)
+    respond prePaysheet, model:[employeesAvailableToAdd:employeesAvailableToAdd, dataImssEmployees:dataImssEmployees, crudePaymentEmployees:crudePaymentEmployees]
   }
 
   def show(PrePaysheet prePaysheet) {
