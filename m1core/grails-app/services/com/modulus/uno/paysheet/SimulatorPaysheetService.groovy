@@ -219,8 +219,8 @@ class SimulatorPaysheetService {
   }
 
 
-  BigDecimal calculateSalaryAssimilable(BigDecimal netPayment, BigDecimal imssSalaryNet) {
-    (netPayment - imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
+  BigDecimal calculateSalaryAssimilable(BigDecimal crudeIAS, BigDecimal incomeTaxIAS) {
+    (crudeIAS - incomeTaxIAS).setScale(2, RoundingMode.HALF_UP)
   }
 
   BigDecimal calculateIASBruto(BigDecimal iasNeto, BigDecimal SA_BRUTO){
