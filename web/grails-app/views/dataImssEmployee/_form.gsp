@@ -25,13 +25,13 @@
   <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.assimilableMonthlySalary"/></label>
-      <input class="form-control" id="iasSalary" type="number" min="0.00" step="0.01" name="assimilableMonthlySalary" value="${dataImssEmployee.id ? dataImssEmployee.netMonthlySalary-dataImssEmployee.baseImssMonthlySalary : ''}" required=""/>
+      <input class="form-control" id="iasSalary" type="number" min="0.00" step="0.01" name="assimilableMonthlySalary" value="${dataImssEmployee.id ? dataImssEmployee.crudeMonthlySalary-dataImssEmployee.baseImssMonthlySalary : ''}" required=""/>
     </div>
   </div>
   <div class="col-md-4">
     <div class="form-group">
-      <label><g:message code="dataImssEmployee.label.netMonthlySalary"/></label>
-      <input class="form-control" id="netSalary" type="number" min="0.00" step="0.01" name="netMonthlySalary" value="${dataImssEmployee?.netMonthlySalary}" required=""/>
+      <label><g:message code="dataImssEmployee.label.crudeMonthlySalary"/></label>
+      <input class="form-control" id="crudeSalary" type="number" min="0.00" step="0.01" name="crudeMonthlySalary" value="${dataImssEmployee?.crudeMonthlySalary}" required=""/>
     </div>
   </div>
 </div>
