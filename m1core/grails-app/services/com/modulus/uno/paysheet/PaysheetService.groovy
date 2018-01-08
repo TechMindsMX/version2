@@ -62,8 +62,8 @@ class PaysheetService {
 
   Map getEmployeesToExport(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
-    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'salaryAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
   }
@@ -116,8 +116,8 @@ class PaysheetService {
 
   Map getEmployeesToExportAssimilable(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'ASIMILABLE']
-    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryAssimilable']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
   }
@@ -249,7 +249,7 @@ class PaysheetService {
     log.info "Payment dispersion same bank ${schema} Default for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_Default",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
 		String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(18,'0')
 		String currency = "MXN"
@@ -270,7 +270,7 @@ class PaysheetService {
     log.info "Payment dispersion same bank ${schema} BBVA for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_BBVA",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
 		String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(18,'0')
 		String currency = "MXN"
@@ -290,7 +290,7 @@ class PaysheetService {
     log.info "Payment dispersion same bank ${schema} SANTANDER for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_SANTANDER",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
     String sourceAccount = dispersionDataForBank."${account}".accountNumber.padRight(11,'  ')
 		//HEADER
@@ -335,7 +335,7 @@ class PaysheetService {
 		} else {
 
 		log.info "Dispersion data for bank: ${dispersionDataForBank}"
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String namePayer = schema == "SA" ? dispersionDataForBank.saPayer : dispersionDataForBank.iasPayer
     String nameCompany = namePayer.length() > 36 ? namePayer.substring(0,36) : namePayer
     String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(7,"0")
@@ -402,7 +402,7 @@ class PaysheetService {
     log.info "Payment dispersion ${schema} interbank for employees: ${dispersionData.employees}"
     File file = File.createTempFile("dispersion_${schema}_InterBank",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String sourceAccount = "M1Account".padLeft(18,'0')
 		String currency = "MXN"
 		String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
@@ -436,8 +436,8 @@ class PaysheetService {
 
   Map getEmployeesOnCashToExport(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
-    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'salaryAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
     employees.data = paysheet.employees.findAll { emp -> !emp.prePaysheetEmployee.bank }.sort { it.prePaysheetEmployee.nameEmployee }
     employees
   }
@@ -453,7 +453,7 @@ class PaysheetService {
 			summaryBank.iasPayers = getPayersForBankAndSchema(payers, bank, PaymentSchema.ASSIMILABLE)
 			summaryBank.allPayers = payers
 			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
-			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.salaryAssimilable.sum()
+			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.netAssimilable.sum()
 			summaryBank.type = "SameBank"
       if (summaryBank.totalSA > 0 || summaryBank.totalIAS >0)
 			  summary.add(summaryBank)
@@ -499,7 +499,7 @@ class PaysheetService {
     summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
     summaryInterBank.allPayers = payers
 		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
-		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.salaryAssimilable.sum()
+		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.netAssimilable.sum()
 		summaryInterBank.type = "InterBank"
     if (summaryInterBank.totalSA > 0 || summaryInterBank.totalIAS >0)
       summary.add(summaryInterBank)
