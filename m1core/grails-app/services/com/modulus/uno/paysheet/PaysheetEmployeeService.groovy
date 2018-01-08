@@ -78,7 +78,7 @@ class PaysheetEmployeeService {
   def calculateSalaryAssimilable(PaysheetEmployee paysheetEmployee) {
     BigDecimal crudeMonthlyAssimilable = getCrudeAssimilableForEmployee(paysheetEmployee)
     paysheetEmployee.crudeAssimilable = calculateProportionalAmountFromPaymentPeriod(crudeMonthlyAssimilable, paysheetEmployee.paysheet.prePaysheet.paymentPeriod)
-    paysheetEmployee.incomeTaxAssimilable = calculateIncomeTax(paysheetEmployee.crudeMonthlyAssimilable, paysheetEmployee.prePaysheetEmployee.prePaysheet.paymentPeriod)
+    paysheetEmployee.incomeTaxAssimilable = calculateIncomeTax(crudeMonthlyAssimilable, paysheetEmployee.prePaysheetEmployee.prePaysheet.paymentPeriod)
     paysheetEmployee.netAssimilable = paysheetEmployee.crudeAssimilable-paysheetEmployee.incomeTaxAssimilable
   }
 
