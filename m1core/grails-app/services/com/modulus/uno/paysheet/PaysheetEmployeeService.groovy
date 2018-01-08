@@ -24,13 +24,14 @@ class PaysheetEmployeeService {
 			paymentWay: prePaysheetEmployee.bank ? PaymentWay.BANKING : PaymentWay.CASH
     )
 
-    if (prePaysheetEmployee.netPayment > 0) {
+    if (prePaysheetEmployee.crudePayment > 0) {
+      BigDecimal baseImssMonthlySalary = getBaseMonthlyImssSalary(paysheetEmployee)
       paysheetEmployee.breakdownPayment = breakdownPaymentEmployeeService.generateBreakdownPaymentEmployee(paysheetEmployee)
       paysheetEmployee.salaryImss = calculateImssSalary(paysheetEmployee)
       paysheetEmployee.socialQuota = calculateSocialQuota(paysheetEmployee)
       paysheetEmployee.subsidySalary = calculateSubsidySalary(paysheetEmployee)
-      paysheetEmployee.incomeTax = calculateIncomeTax(paysheetEmployee)
-      paysheetEmployee.salaryAssimilable = calculateSalaryAssimilable(paysheetEmployee)
+      paysheetEmployee.incomeTax = calculateIncomeTax(baseImssMonthlySalary, paysheetEmployee.prePaysheetEmployee.prePaysheet.paymentPeriod)
+      calculateSalaryAssimilable(paysheetEmployee)
       paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee)
       paysheetEmployee.paysheetTax = calculatePaysheetTax(paysheetEmployee)
       paysheetEmployee.commission = calculateCommission(paysheetEmployee)
@@ -61,22 +62,30 @@ class PaysheetEmployeeService {
     employmentSubsidy ? calculateProportionalAmountFromPaymentPeriod(employmentSubsidy.getSubsidy(), paysheetEmployee.paysheet.prePaysheet.paymentPeriod) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
   }
 
-  BigDecimal calculateIncomeTax(PaysheetEmployee paysheetEmployee) {
-    BigDecimal baseImssMonthlySalary = getBaseMonthlyImssSalary(paysheetEmployee)
+  BigDecimal calculateIncomeTax(BigDecimal monthlySalary, PaymentPeriod paymentPeriod) {
     RateTax rateTax = RateTax.values().find { rt ->
-      baseImssMonthlySalary >= rt.lowerLimit && baseImssMonthlySalary <= rt.upperLimit
+      monthlySalary >= rt.lowerLimit && monthlySalary <= rt.upperLimit
     }
     if (!rateTax) {
       return new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
     }
 
-    BigDecimal excess = baseImssMonthlySalary - rateTax.lowerLimit
+    BigDecimal excess = monthlySalary - rateTax.lowerLimit
     BigDecimal marginalTax = excess * (rateTax.rate/100)
-    calculateProportionalAmountFromPaymentPeriod(marginalTax + rateTax.fixedQuota, paysheetEmployee.paysheet.prePaysheet.paymentPeriod)
+    calculateProportionalAmountFromPaymentPeriod(marginalTax + rateTax.fixedQuota, paymentPeriod)
   }
 
-  BigDecimal calculateSalaryAssimilable(PaysheetEmployee paysheetEmployee) {
-    (paysheetEmployee.prePaysheetEmployee.netPayment - paysheetEmployee.imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
+  def calculateSalaryAssimilable(PaysheetEmployee paysheetEmployee) {
+    BigDecimal crudeMonthlyAssimilable = getCrudeAssimilableForEmployee(paysheetEmployee)
+    paysheetEmployee.crudeAssimilable = calculateProportionalAmountFromPaymentPeriod(crudeMonthlyAssimilable, paysheetEmployee.paysheet.prePaysheet.paymentPeriod)
+    paysheetEmployee.incomeTaxAssimilable = calculateIncomeTax(paysheetEmployee.crudeMonthlyAssimilable, paysheetEmployee.prePaysheetEmployee.prePaysheet.paymentPeriod)
+    paysheetEmployee.netAssimilable = paysheetEmployee.crudeAssimilable-paysheetEmployee.incomeTaxAssimilable
+  }
+
+  BigDecimal getCrudeAssimilableForEmployee(PaysheetEmployee paysheetEmployee) {
+    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRef(paysheetEmployee.prePaysheetEmployee.rfc)
+    DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employeeLink)
+    dataImssEmployee.crudeMonthlyAssimilableSalary
   }
 
   BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee) {
