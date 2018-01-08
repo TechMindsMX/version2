@@ -25,7 +25,7 @@ class PaysheetEmployee {
   }
 
   BigDecimal getTotalSalaryEmployee() {
-    getImssSalaryNet() + this.salaryAssimilable
+    getImssSalaryNet() + this.netAssimilable
   }
 
   BigDecimal getPaysheetCost() {
