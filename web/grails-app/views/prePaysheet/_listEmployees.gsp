@@ -62,7 +62,7 @@
         	<td>${employee.clabe}</td>
         	<td>${employee.account}</td>
         	<td>${employee.cardNumber}</td>
-          <td class="text-right">${modulusuno.formatPrice(number:employee.netPayment)}</td>
+          <td class="text-right">${modulusuno.formatPrice(number:employee.crudePayment)}</td>
           <td>${employee.note}</td>
           <td>
             <g:if test="${prePaysheet.status == PrePaysheetStatus.CREATED}">
