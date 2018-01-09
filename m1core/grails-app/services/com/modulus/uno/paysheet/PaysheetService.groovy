@@ -256,10 +256,12 @@ class PaysheetService {
 		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
     dispersionDataForBank.employees.each { employee ->
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
+      if (employee."${salary}" > 0) {
+        String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
 
-      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+        file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+      }
     }
 
     log.info "File created: ${file.text}"
@@ -277,9 +279,11 @@ class PaysheetService {
 		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
     dispersionDataForBank.employees.each { employee ->
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+      if (employee."${salary}" > 0) {
+        String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+        file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+      }
     }
 
     log.info "File created: ${file.text}"
@@ -299,25 +303,29 @@ class PaysheetService {
 
 		//DETAIL
 		BigDecimal total = new BigDecimal(0)
+    Integer countEmployees = 0
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
-			String counter = "2${(index+2).toString().padLeft(5,'0')}"
-			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
-			String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
-			
-			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
+      if (employee."${salary}" > 0) {
+        String counter = "2${(index+2).toString().padLeft(5,'0')}"
+        String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+        String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
+        
+        BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
 
-			String lastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ")).padRight(30," ")
-			String motherLastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ")).padRight(20," ")
-			String name = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ")).padRight(30," ")
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
-      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(18,'0')
-      String concept = "01"
-			file.append("${counter}${employeeNumber}${lastName}${motherLastName}${name}${destinyAccount}${amount}${concept}\n".toUpperCase())
-			total += employee."${salary}"
+        String lastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ")).padRight(30," ")
+        String motherLastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ")).padRight(20," ")
+        String name = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ")).padRight(30," ")
+        String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(18,'0')
+        String concept = "01"
+        file.append("${counter}${employeeNumber}${lastName}${motherLastName}${name}${destinyAccount}${amount}${concept}\n".toUpperCase())
+        total += employee."${salary}"
+        countEmployees++
+      }
     }
 
 		//FOOTER
-		String footer = "3${(dispersionDataForBank.employees.size()+1).toString().padLeft(5,'0')}${dispersionDataForBank.employees.size().toString().padLeft(5,'0')}${(new DecimalFormat('##0.00').format(total)).replace(".","").padLeft(18,'0')}"
+		String footer = "3${(countEmployees+1).toString().padLeft(5,'0')}${countEmployees.toString().padLeft(5,'0')}${(new DecimalFormat('##0.00').format(total)).replace(".","").padLeft(18,'0')}"
 		file.append("${footer}\n")
     log.info "File created: ${file.text}"
     file
@@ -333,33 +341,38 @@ class PaysheetService {
 			log.info "La cuenta no tiene registrado el número de cliente"
 			file.append("La cuenta Banamex ${chargeBankAccount.accountNumber} no tiene número de cliente registrado")
 		} else {
-
-		log.info "Dispersion data for bank: ${dispersionDataForBank}"
-		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
-		String namePayer = schema == "SA" ? dispersionDataForBank.saPayer : dispersionDataForBank.iasPayer
-    String nameCompany = namePayer.length() > 36 ? namePayer.substring(0,36) : namePayer
-    String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(7,"0")
-		String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
-		String lineControl = "1${chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(nameCompany).padRight(36,'  ')}${message}15D01"
-		file.append("${lineControl}\n")
-		BigDecimal totalDispersion = dispersionDataForBank.employees*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
-		String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${chargeBankAccount.branchNumber.padLeft(13,'0')}${chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
-		file.append("${lineGlobal}\n")
-		dispersionDataForBank.employees.eachWithIndex { employee, index ->
-			String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
-      String destinyBranchAccount = employee.prePaysheetEmployee.clabe.substring(3,6).padLeft(13,"0")
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(7," ")
-			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
-			String reference = "${dispersionDataForBank.idPaysheet}${employeeNumberCleaned ?: index}".padRight(16," ")
-			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
-			String fullName = clearSpecialCharsFromString(businessEntityEmployee.toString().length()>55 ? businessEntityEmployee.toString().substring(0,55) : businessEntityEmployee.toString()).padRight(55, " ")
-			String ending = "${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
-			String lineEmployee = "3000101001${amount}01${destinyBranchAccount}${destinyAccount}${reference}${fullName}${ending}"
-			file.append("${lineEmployee}\n")
-		}
-		String lineTotals = "4001${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}${(totalDispersion*100).intValue().toString().padLeft(18,'0')}000001${(totalDispersion*100).intValue().toString().padLeft(18,'0')}"
-		file.append("${lineTotals}\n")
-
+      log.info "Dispersion data for bank: ${dispersionDataForBank}"
+      String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
+      
+      def employeesNoZeroSalary = dispersionDataForBank.employees.findAll { employee -> employee."${salary}">0 }
+      if (!employeesNoZeroSalary) {
+        log.info "El salario de los empleados para el esquema ${schema} está en ceros"
+        file.append("El salario de los empleados para el esquema ${schema} está en ceros")
+      } else {
+        String namePayer = schema == "SA" ? dispersionDataForBank.saPayer : dispersionDataForBank.iasPayer
+        String nameCompany = namePayer.length() > 36 ? namePayer.substring(0,36) : namePayer
+        String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(7,"0")
+        String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
+        String lineControl = "1${chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(nameCompany).padRight(36,'  ')}${message}15D01"
+        file.append("${lineControl}\n")
+        BigDecimal totalDispersion = employeesNoZeroSalary*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
+        String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${chargeBankAccount.branchNumber.padLeft(13,'0')}${chargeBankAccount.accountNumber.padLeft(7,'0')}${employeesNoZeroSalary.size().toString().padLeft(6,'0')}"
+        file.append("${lineGlobal}\n")
+        employeesNoZeroSalary.eachWithIndex { employee, index ->
+          String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
+          String destinyBranchAccount = employee.prePaysheetEmployee.clabe.substring(3,6).padLeft(13,"0")
+          String destinyAccount = employee.prePaysheetEmployee.account.padLeft(7," ")
+          String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+          String reference = "${dispersionDataForBank.idPaysheet}${employeeNumberCleaned ?: index}".padRight(16," ")
+          BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
+          String fullName = clearSpecialCharsFromString(businessEntityEmployee.toString().length()>55 ? businessEntityEmployee.toString().substring(0,55) : businessEntityEmployee.toString()).padRight(55, " ")
+          String ending = "${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+          String lineEmployee = "3000101001${amount}01${destinyBranchAccount}${destinyAccount}${reference}${fullName}${ending}"
+          file.append("${lineEmployee}\n")
+        }
+        String lineTotals = "4001${employeesNoZeroSalary.size().toString().padLeft(6,'0')}${(totalDispersion*100).intValue().toString().padLeft(18,'0')}000001${(totalDispersion*100).intValue().toString().padLeft(18,'0')}"
+        file.append("${lineTotals}\n")
+      }
 		}
 
     log.info "File created: ${file.text}"
@@ -411,13 +424,15 @@ class PaysheetService {
 		String disp = "H"      
 
     dispersionData.employees.each { employee ->
-      log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
-      String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
-      String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
-      String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
-      String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
-			String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-     	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+      if (employee."${salary}" > 0) {
+        log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
+        String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
+        String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
+        String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
+        String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+        file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+      }
     }
     log.info "File created: ${file.text}"
     file
