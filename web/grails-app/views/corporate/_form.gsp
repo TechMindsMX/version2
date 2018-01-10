@@ -2,7 +2,7 @@
 <f:field bean="corporate" property="nameCorporate" label="${message(code:'corporate.nameCorporate')}*" class="input-group" value="${corporate.nameCorporate}" wrapper="create" />
 </div>
 
-<div class="form-group col-sm-4">
+<div class="form-group col-sm-8">
   <label for="corporateUrl">
     ${message(code:'corporate.corporateUrl')}*
   </label>
@@ -13,8 +13,6 @@
   </div>
 </div>
 <div class="form-group col-sm-4" style="margin-top:30px;">
-    <label for="quotationService">
-        Servicios de Cotizaciones
-     </label>
-     <input type="checkbox" name="hasQuotationContract" name="hasQuotationContract" value="true" />
+  <input type="checkbox" name="hasQuotationContract" name="hasQuotationContract" value="true" />
+  <label for="quotationService">Servicios de Cotizaciones</label>
 </div>
