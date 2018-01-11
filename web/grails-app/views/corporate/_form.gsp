@@ -13,6 +13,6 @@
   </div>
 </div>
 <div class="form-group col-sm-4" style="margin-top:30px;">
-  <input type="checkbox" name="hasQuotationContract" name="hasQuotationContract" value="true" />
+  <input type="checkbox" name="hasQuotationContract"/>
   <label for="quotationService">Servicios de Cotizaciones</label>
 </div>
