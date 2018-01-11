@@ -9,6 +9,7 @@ class CorporateService {
   def grailsApplication
   def springSecurityService
   def awsRoute53Service
+  def userRoleService
 
   private final String VALUE_HOST_IP = H.grailsApplication.config.grails.plugin.awssdk.value.host.ip
   private final String DOMAIN_BASE_URL = H.grailsApplication.config.grails.plugin.awssdk.domain.base.url
@@ -179,4 +180,14 @@ class CorporateService {
     roles 
   }
 
+  def unassignRolesForQuotationServiceToUsersInCorporate(Corporate corporate) {
+    if (!corporate.hasQuotationContract) {
+      def usersQuotationService = corporate.users.findAll{ user -> ["ROLE_OPERATOR_QUOTATION","ROLE_EXECUTOR_QUOTATION"].every{ it in user.getAuthorities()*.authority } }
+      usersQuotationService.each { user ->
+        userRoleService.deleteRoleForUser(user, Role.findByAuthority("ROLE_OPERATOR_QUOTATION"))      
+        userRoleService.deleteRoleForUser(user, Role.findByAuthority("ROLE_EXECUTOR_QUOTATION")) 
+      }
+    }
+    corporate
+  }
 }
