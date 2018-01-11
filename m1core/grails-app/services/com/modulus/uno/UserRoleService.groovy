@@ -23,4 +23,13 @@ class UserRoleService {
     user
   }
 
+  @Transactional
+  User deleteRoleForUser(User user, Role role) {
+    UserRole userRole = UserRole.findByUserAndRole(user, role)
+    if (userRole) {
+      userRole.delete()
+    }
+    user
+  }
+
 }
