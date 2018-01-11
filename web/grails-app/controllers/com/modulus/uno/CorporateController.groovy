@@ -211,6 +211,13 @@ class CorporateController {
     }
   }
 
+  @Transactional
+  def updateFlagQuotation(Corporate corporate) {
+    corporate.hasQuotationContract = !corporate.hasQuotationContract
+    corporate.save()
+    corporateService.unassignRolesForQuotationServiceToUsersInCorporate(corporate)
+    redirect action:"show", id:corporate.id
+  }
 }
 
 @groovy.transform.TypeChecked
