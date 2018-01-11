@@ -35,4 +35,20 @@ class UserRoleServiceSpec extends Specification {
       UserRole.findAllByUser(user).size() == 2
   }
 
+  Should "Delete a role for the user"() {
+    given:"The user"
+      User user = new User(username:"theUser").save(validate:false)
+    and:"The roles"
+      Role roleToDelete = new Role(authority:"role1").save(validate:false)
+      def roles = [roleToDelete, new Role(authority:"role2").save(validate:false)]
+    and:"The user-roles"
+      roles.each { role ->
+        UserRole userRole = new UserRole(user:user, role:role).save(validate:false)
+      }
+    when:
+      def userWithoutRole = service.deleteRoleForUser(user, roleToDelete)
+    then:
+      user.getAuthorities().size() == 1
+  }
+
 }
