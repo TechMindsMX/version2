@@ -11,6 +11,19 @@ class InvoiceService {
 
   String generateFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
+    log.info "Factura command to send: ${factura.dump()}"
+    log.info "Datos de Facturación to send: ${factura.datosDeFacturacion.dump()}"
+    log.info "Emisor to send: ${factura.emisor.dump()}"
+    log.info "Receptor to send: ${factura.receptor.dump()}"
+    log.info "Conceptos to send:"
+    factura.conceptos.each { concepto->
+      log.info "${concepto.dump()}"
+    }
+    log.info "Totales impuestos:"
+    factura.totalesImpuestos.each { ti ->
+      log.info "${ti.dump()}" 
+    }
+
     def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
     result.text
   }

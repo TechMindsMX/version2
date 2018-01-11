@@ -30,6 +30,6 @@
   },
   "resolutions": {
     "lodash": "^3.10.0",
-    "graphlib": "^1.0.5"
+    "graphlib": "^2.1.1"
   }
 }
