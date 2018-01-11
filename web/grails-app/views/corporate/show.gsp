@@ -44,6 +44,19 @@
                 </div>
                 <f:display bean="corporate" property="corporateUrl" wrapper="describe" />
               </form>
+              <g:form action="updateFlagQuotation" id="${corporate.id}">
+                <div class="form-group">
+                  <g:if test="${corporate.hasQuotationContract}">
+                    <input type="checkbox" name="flagQuotationService" checked="true"/>
+                  </g:if><g:else>
+                    <input type="checkbox" name="flagQuotationService"/>
+                  </g:else>
+                  <label class="control-label">Servicio de Cotizaciones</label>
+                </div>
+                <div class="form-groupi text-right">
+                  <button class="btn btn-primary" type="submit">Actualizar</button>
+                </div>
+              </g:form>
             </div>
             <!-- END OF PORTLET-BODY -->
           </div>
