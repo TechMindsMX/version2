@@ -181,9 +181,10 @@ class CorporateService {
   }
 
   def unassignRolesForQuotationServiceToUsersInCorporate(Corporate corporate) {
+    log.info "HasQuotationContract flag: ${corporate.hasQuotationContract}"
     if (!corporate.hasQuotationContract) {
-      def usersQuotationService = corporate.users.findAll{ user -> ["ROLE_OPERATOR_QUOTATION","ROLE_EXECUTOR_QUOTATION"].every{ it in user.getAuthorities()*.authority } }
-      usersQuotationService.each { user ->
+      corporate.users.each { user ->
+        log.info "Delete roles quotation service for user: ${user}"
         userRoleService.deleteRoleForUser(user, Role.findByAuthority("ROLE_OPERATOR_QUOTATION"))      
         userRoleService.deleteRoleForUser(user, Role.findByAuthority("ROLE_EXECUTOR_QUOTATION")) 
       }
