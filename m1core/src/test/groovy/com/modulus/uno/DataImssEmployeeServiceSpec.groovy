@@ -35,7 +35,7 @@ class DataImssEmployeeServiceSpec extends Specification {
 
   void "Should create a data imss employee from row employee massive"() {
     given:"The row employee"
-      Map rowEmployee = [NSS:"NssEmployee", FECHA_ALTA:"10-02-2010", SA_BRUTO:"1000", IAS_BRUTO:"5000", PRIMA_VAC:"25", DIAS_AGUINALDO:"15", PERIODO_PAGO:"Quincenal"]
+      Map rowEmployee = [NSS:"NssEmployee", FECHA_ALTA:"10-02-2010", SA_BRUTO:"1000", IAS:"5000", PRIMA_VAC:"25", DIAS_AGUINALDO:"15", PERIODO_PAGO:"Quincenal"]
     and:"The employee link"
       EmployeeLink employeeLink = new EmployeeLink().save(validate:false)
     when:
