@@ -74,8 +74,7 @@
                   >Solicitar pago </button>
                   </div>
                   <div class="col-md-3">
-                  <g:link type="button" action="selectPaymentRequest" controller="QuotationPaymentRequest"  params="[quotation: balance.quotationContract.id, fromContract: 'contract']" class="btn btn-primary marginP"
-                  >Consultar pagos </g:link>
+                  <g:link type="button" action="selectPaymentRequest" controller="QuotationPaymentRequest"  params="[quotation: balance.quotationContract.id]" class="btn btn-primary marginP">Consultar pagos </g:link>
                   </div>
                 </div>
                 </g:form>
@@ -90,7 +89,7 @@
                 </div>
                 <div class="row">
                   <h2>
-                    En transito: ${modulusuno.formatPrice(number:balance.summary.transit)}
+                    En tránsito: ${modulusuno.formatPrice(number:balance.summary.transit)}
                   </h2>
                 </div>
                 <div class="row">
