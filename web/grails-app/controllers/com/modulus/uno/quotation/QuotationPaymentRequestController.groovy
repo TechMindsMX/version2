@@ -62,7 +62,7 @@ class QuotationPaymentRequestController {
 
     def send(QuotationPaymentRequest quotationPaymentRequest){
       quotationPaymentRequestService.send(quotationPaymentRequest)
-      redirect(action:'index')
+      redirect action:'selectPaymentRequest', params:[quotation:quotationPaymentRequest.quotationContract.id.toString()]
     }
 
     def delete(QuotationPaymentRequest quotationPaymentRequest){
