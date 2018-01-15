@@ -15,7 +15,7 @@
       </h1>
     </div>
 
-	<sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
+	<sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">  
         <div class="portlet-body">
