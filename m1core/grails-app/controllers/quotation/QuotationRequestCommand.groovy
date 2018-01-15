@@ -20,7 +20,6 @@ class QuotationRequestCommand implements Validateable {
     new QuotationRequest(
         commission: QuotationContract.get(quotation?.toInteger()).commission,
         description: description,
-        biller:QuotationContract.get(quotation.toInteger()).company,
         quotationContract:  QuotationContract.get(quotation.toInteger()),
         iva:getValueInBigDecimal(iva),
         subtotal: getValueInBigDecimal(subtotal),

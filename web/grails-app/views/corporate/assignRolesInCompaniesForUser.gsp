@@ -31,8 +31,8 @@
               <th></th>
               <g:each status="i" in="${roles}" var="role">
                 <th>
-                  <a role="button" data-toggle="popover" data-trigger="hover" data-placement="top" title="${message(code:role.authority.toLowerCase())}" data-content="${message(code:role.authority.toLowerCase())}" class="information">
-                    <g:message code="${role.authority.toLowerCase()}" />
+                  <a role="button" data-toggle="popover" data-trigger="hover" data-placement="top" title="${message(code:'role.authority.'+role.authority.toLowerCase())}" data-content="${message(code:'role.authority.'+role.authority.toLowerCase())}" class="information">
+                    <g:message code="role.authority.${role.authority.toLowerCase()}" />
                   </a>
                 </th>
               </g:each>

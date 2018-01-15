@@ -72,13 +72,10 @@ class QuotationRequestController {
       [quotationRequestList:quotationRequestList]
     }
 
-    def requestProcessed(QuotationRequestCommand quotationRequestCommand){
-      QuotationRequest quotationRequestUpdate = quotationRequestCommand.getQuotationRequest()
-      QuotationRequest quotationRequest= QuotationRequest.get(params.id.toInteger())
-      quotationRequest.product = Product.get(params.productId.toLong())
-      quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
-      quotationRequest.biller = Company.get(quotationRequestCommand.biller.toLong())
-      quotationRequestService.requestProcessed(quotationRequest)
+    def processRequest(QuotationRequest quotationRequest){
+      quotationRequest.commission = new QuotationRequestCommand().getCommission(params.commission)
+      log.info "Quotation Request to updating: ${quotationRequest.dump()}"
+      quotationRequestService.processRequest(quotationRequest)
       redirect(action: 'index')
     }
 

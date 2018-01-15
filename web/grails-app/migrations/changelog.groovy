@@ -109,4 +109,6 @@ databaseChangeLog = {
   include file: 'modify-column-netpayment-to-crudepayment-into-dataimssemployee.groovy'
   include file: 'rename-column-netpayment-to-crudepayment-into-prepaysheetemployee.groovy'
   include file: 'adding-columns-incometaxassimilable-and-crudeassimilable-to-paysheetemployee.groovy'
+  include file: 'changed-column-corporate-has-quotation.groovy'
+  include file: 'add-roles-quotation.groovy'
 }
