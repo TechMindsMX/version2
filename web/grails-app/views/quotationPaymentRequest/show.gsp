@@ -43,7 +43,12 @@
         <div class="portlet-footer">
           <div class="row">
             <div class="col-md-6">
-              <g:link class="btn btn-default" controller="quotationPaymentRequest" action="index">Regresar</g:link>
+              <sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
+                <g:link class="btn btn-default" controller="quotationPaymentRequest" action="selectPaymentRequest" params="[quotation:quotationPaymentRequest.quotationContract.id]">Regresar</g:link>
+              </sec:ifAnyGranted>
+              <sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
+                <g:link class="btn btn-default" controller="quotationPaymentRequest" action="index">Regresar</g:link>
+              </sec:ifAnyGranted>
             </div>
             <g:if test="${quotationPaymentRequest.status == QuotationPaymentRequestStatus.SEND}">
 	          <sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
@@ -53,7 +58,8 @@
             </sec:ifAnyGranted>
             </g:if>
 
-            <g:elseif test="${quotationPaymentRequest.status == QuotationPaymentRequestStatus.CREATED}">
+            <sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
+            <g:if test="${quotationPaymentRequest.status == QuotationPaymentRequestStatus.CREATED}">
               <div class="col-md-2 text-right">
               <g:link class="btn btn-default" controller="quotationPaymentRequest" action="edit" id="${quotationPaymentRequest.id}">Editar</g:link>
             </div>
@@ -87,7 +93,8 @@
 
 
             </div>
-            </g:elseif>
+            </g:if>
+            </sec:ifAnyGranted>
           </div>
         </div>
       </div>
