@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.PaymentMethod%>
+<%! import com.modulus.uno.PaymentWay%>
 <!DOCTYPE html>
 
 <html>
@@ -62,7 +62,7 @@
               <div class="row">
                 <div class="col-md-3">
                   <label><g:message code="Modo de Pago" /></label>
-                  <g:select class="form-control" name="paymentMethod" from="${PaymentMethod.values()}"/>
+                  <g:select class="form-control" name="paymentMethod" from="${PaymentWay.values()}"/>
                 </div>
               </div>
               <br>

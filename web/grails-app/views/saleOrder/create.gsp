@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.PaymentMethod %>
+<%! import com.modulus.uno.PaymentWay %>
 <%! import com.modulus.uno.AddressType %>
 <!DOCTYPE html>
 <html>
@@ -124,8 +124,8 @@
               </div>
               <br/>
               <div class="form-group">
-                <label>Método de Pago:</label>
-                <g:select name="paymentMethod" from="${PaymentMethod.values()}"/>
+                <label>Forma de Pago:</label>
+                <g:select name="paymentWay" from="${PaymentWay.values()}"/>
               </div>
               <p>
              <p>

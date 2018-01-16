@@ -44,7 +44,7 @@ class InvoiceServiceSpec extends Specification {
       UnitType unitType = new UnitType(company:company, name:"UNIDADES", unitKey:"01").save(validate:false)
       SaleOrderItem saleOrderItem = new SaleOrderItem(sku:'sku1',name:'name', price:100, discount:0, ivaRetention:0, iva:16, quantity:2, unitType:"UNIDADES")
     and:"An sale order"
-      def saleOrder = new SaleOrder(rfc:'XXXX010101XXX',clientName:'clientName',addresses:[address], items:[saleOrderItem], company:company, paymentMethod: PaymentMethod.TRANSFERENCIA_ELECTRONICA, currency:"MXN", changeType:new BigDecimal(1)).save(validate:false)
+      def saleOrder = new SaleOrder(rfc:'XXXX010101XXX',clientName:'clientName',addresses:[address], items:[saleOrderItem], company:company, paymentWay: PaymentWay.TRANSFERENCIA_ELECTRONICA, currency:"MXN", changeType:new BigDecimal(1)).save(validate:false)
     and:"A client"
       ClientLink client = new ClientLink(clientRef:'XXXX010101XXX', company:company).save(validate:false)
       ClientLink.metaClass.static.findByClientRefAndCompany = { client }
@@ -107,7 +107,7 @@ class InvoiceServiceSpec extends Specification {
       UnitType unitType = new UnitType(company:company, name:"UNIDADES", unitKey:"01").save(validate:false)
       SaleOrderItem saleOrderItem = new SaleOrderItem(sku:'sku1',name:'name', price:100, discount:0, ivaRetention:0, iva:16, quantity:2, unitType:"UNIDADES")
     and:"An sale order"
-      def saleOrder = new SaleOrder(rfc:'XXXX010101XXX',clientName:'clientName',addresses:[address], items:[saleOrderItem], company:company, paymentMethod: PaymentMethod.EFECTIVO, currency:"MXN", changeType:new BigDecimal(0)).save(validate:false)
+      def saleOrder = new SaleOrder(rfc:'XXXX010101XXX',clientName:'clientName',addresses:[address], items:[saleOrderItem], company:company, paymentWay: PaymentWay.EFECTIVO, currency:"MXN", changeType:new BigDecimal(0)).save(validate:false)
     and:"A client"
       ClientLink client = new ClientLink(clientRef:'XXXX010101XXX', stpClabe:"999988887777666655", company:company).save(validate:false)
       ClientLink.metaClass.static.findByClientRefAndCompany = { client }

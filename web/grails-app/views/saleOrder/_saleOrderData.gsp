@@ -33,7 +33,7 @@
         <dt>Por pagar</dt>
         <dd>${modulusuno.formatPrice(number:saleOrder.amountToPay > 0 ? saleOrder.amountToPay : 0)}</dd>
 	      <dt>Método de Pago:</dt>
-        <dd>${saleOrder.paymentMethod}</dd>			
+        <dd>${saleOrder.paymentWay}</dd>			
         <dt>Estado</dt>
         <dd><g:message code="saleOrder.status.${saleOrder.status}" default="${saleOrder.status}"/></dd>
         <dt>Notas</dt>
