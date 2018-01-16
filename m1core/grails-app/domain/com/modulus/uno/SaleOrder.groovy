@@ -25,6 +25,8 @@ class SaleOrder {
   String note
   String currency
   BigDecimal changeType = new BigDecimal(0)
+  PaymentMethod paymentMethod = PaymentMethod.PUE
+  InvoicePurpose invoicePurpose = InvoicePurpose.G01
 
   static belongsTo = [company:Company]
 
