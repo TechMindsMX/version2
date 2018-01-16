@@ -12,7 +12,7 @@ class SaleOrderCommand implements Validateable {
   String changeType
   String fechaCobro
   String note
-  String paymentMethod
+  String paymentWay
   String externalId
 
   static constraints = {
@@ -31,18 +31,18 @@ class SaleOrderCommand implements Validateable {
       saleOrder = SaleOrder.findByCompanyAndExternalIdAndStatusInList(company, this.externalId, [SaleOrderStatus.CREADA, SaleOrderStatus.POR_AUTORIZAR])
     }
 
-    PaymentMethod paymentMethod
-    if (this.paymentMethod == "0" || this.paymentMethod == "1" || this.paymentMethod == "2" || this.paymentMethod == "3") {
-      paymentMethod = PaymentMethod.find { it.ordinal().toString() == this.paymentMethod }
+    PaymentWay paymentWay
+    if (this.paymentWay == "0" || this.paymentWay == "1" || this.paymentWay == "2" || this.paymentWay == "3") {
+      paymentWay = PaymentWay.find { it.ordinal().toString() == this.paymentWay }
     } else {
-      paymentMethod = PaymentMethod.find { it.toString() == this.paymentMethod }
+      paymentWay = PaymentWay.find { it.toString() == this.paymentWay }
     }
 
     if (saleOrder) {
        saleOrder.rfc = businessEntity.rfc
        saleOrder.clientName =  businessEntity.toString()
        saleOrder.note = this.note
-       saleOrder.paymentMethod = paymentMethod
+       saleOrder.paymentWay = paymentWay
        saleOrder.fechaCobro = Date.parse("dd/MM/yyyy", this.fechaCobro)
        saleOrder.currency = this.currencyUsd
        saleOrder.changeType = getValueInBigDecimal(this.changeType ?: "0")
@@ -53,7 +53,7 @@ class SaleOrderCommand implements Validateable {
         company:company,
         externalId:this.externalId,
         note:this.note,
-        paymentMethod:paymentMethod,
+        paymentWay:paymentWay,
         status:SaleOrderStatus.CREADA,
         fechaCobro:Date.parse("dd/MM/yyyy", this.fechaCobro),
         currency:this.currencyUsd,
