@@ -100,4 +100,5 @@ databaseChangeLog = {
   include file: 'modify-column-unit-type-from-product.groovy'
     include file: 'rename-payment-method-to-payment-way-into-sale-order.groovy'
     include file: 'updating-payment-way-na-to-be-defined-in-sale-order.groovy'
+    include file: 'adding-columns-payment-method-and-invoice-purpose-to-sale-order.groovy'
 }
