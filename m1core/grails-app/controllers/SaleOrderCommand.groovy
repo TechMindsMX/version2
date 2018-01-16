@@ -14,6 +14,8 @@ class SaleOrderCommand implements Validateable {
   String note
   String paymentWay
   String externalId
+  String paymentMethod
+  String invoicePurpose
 
   static constraints = {
     currencyUsd blank:false, size:3..3, validator: { val -> val in ["MXN","USD"] }
@@ -32,10 +34,24 @@ class SaleOrderCommand implements Validateable {
     }
 
     PaymentWay paymentWay
-    if (this.paymentWay == "0" || this.paymentWay == "1" || this.paymentWay == "2" || this.paymentWay == "3") {
+    if (this.paymentWay.isNumber()) {
       paymentWay = PaymentWay.find { it.ordinal().toString() == this.paymentWay }
     } else {
       paymentWay = PaymentWay.find { it.toString() == this.paymentWay }
+    }
+
+    PaymentMethod paymentMethod
+    if (this.paymentMethod.isNumber()) {
+      paymentMethod = PaymentMethod.find { it.ordinal().toString() == this.paymentMethod }
+    } else {
+      paymentMethod = PaymentMethod.find { it.toString() == this.paymentMethod }
+    }
+
+    InvoicePurpose invoicePurpose
+    if (this.invoicePurpose.isNumber()) {
+      invoicePurpose = InvoicePurpose.find { it.ordinal().toString() == this.invoicePurpose }
+    } else {
+      invoicePurpose = InvoicePurpose.find { it.toString() == this.invoicePurpose }
     }
 
     if (saleOrder) {
@@ -45,7 +61,9 @@ class SaleOrderCommand implements Validateable {
        saleOrder.paymentWay = paymentWay
        saleOrder.fechaCobro = Date.parse("dd/MM/yyyy", this.fechaCobro)
        saleOrder.currency = this.currencyUsd
-       saleOrder.changeType = getValueInBigDecimal(this.changeType ?: "0")
+       saleOrder.changeType = getValueInBigDecimal(this.changeType ?: "1")
+       saleOrder.paymentMethod = paymentMethod
+       saleOrder.invoicePurpose = invoicePurpose
     } else {
       saleOrder = new SaleOrder(
         rfc:businessEntity.rfc,
@@ -57,7 +75,9 @@ class SaleOrderCommand implements Validateable {
         status:SaleOrderStatus.CREADA,
         fechaCobro:Date.parse("dd/MM/yyyy", this.fechaCobro),
         currency:this.currencyUsd,
-        changeType:getValueInBigDecimal(this.changeType ?: "0")
+        changeType:getValueInBigDecimal(this.changeType ?: "1"),
+        paymentMethod:paymentMethod,
+        invoicePurpose:invoicePurpose
       )
       saleOrder.addToAddresses(address)
     }
