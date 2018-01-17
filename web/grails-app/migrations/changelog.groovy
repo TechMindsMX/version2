@@ -97,4 +97,5 @@ databaseChangeLog = {
     include file: 'modify-column-netpayment-to-crudepayment-into-dataimssemployee.groovy'
     include file: 'rename-column-netpayment-to-crudepayment-into-prepaysheetemployee.groovy'
     include file: 'adding-columns-incometaxassimilable-and-crudeassimilable-to-paysheetemployee.groovy'
+    include file: 'rename-crude-salary-to-total-salary-into-data-imss-employee.groovy'
 }
