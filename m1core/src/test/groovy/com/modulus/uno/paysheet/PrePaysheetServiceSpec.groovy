@@ -92,12 +92,12 @@ class PrePaysheetServiceSpec extends Specification {
       EmployeeLink elB = new EmployeeLink(employeeRef:"B").save(validate:false)
       EmployeeLink elC = new EmployeeLink(employeeRef:"C").save(validate:false)
     and:"The data imss"
-      DataImssEmployee dieA = new DataImssEmployee(employee:elA, crudeMonthlySalary:new BigDecimal(10000)).save(validate:false)
-      DataImssEmployee dieC = new DataImssEmployee(employee:elC, crudeMonthlySalary:new BigDecimal(20000)).save(validate:false)
+      DataImssEmployee dieA = new DataImssEmployee(employee:elA, totalMonthlySalary:new BigDecimal(10000)).save(validate:false)
+      DataImssEmployee dieC = new DataImssEmployee(employee:elC, totalMonthlySalary:new BigDecimal(20000)).save(validate:false)
     and:"The pre-paysheet"
       PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.BIWEEKLY).save(validate:false)
     when:
-      def result = service.getCrudePaymentForEmployees(beEmployees, prePaysheet)
+      def result = service.getNetPaymentForEmployees(beEmployees, prePaysheet)
     then:
       result.size() == 3
       result[1] == 0
