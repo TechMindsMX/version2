@@ -111,4 +111,7 @@ databaseChangeLog = {
   include file: 'adding-columns-incometaxassimilable-and-crudeassimilable-to-paysheetemployee.groovy'
   include file: 'changed-column-corporate-has-quotation.groovy'
   include file: 'add-roles-quotation.groovy'
+  include file: 'rename-payment-method-to-payment-way-into-sale-order.groovy'
+  include file: 'updating-payment-way-na-to-be-defined-in-sale-order.groovy'
+  include file: 'adding-columns-payment-method-and-invoice-purpose-to-sale-order.groovy'
 }

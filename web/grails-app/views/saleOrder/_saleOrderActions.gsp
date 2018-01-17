@@ -39,7 +39,7 @@
   <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
     <g:if test="${saleOrder.status == SaleOrderStatus.CREADA}">
       <g:form controller="saleOrder" action="sendOrderToConfirmation" id="${saleOrder.id}">
-        <button type="submit" class="btn btn-success btn-block">
+        <button type="submit" class="btn btn-success">
           Confirmar orden de venta
         </button>
       </g:form>

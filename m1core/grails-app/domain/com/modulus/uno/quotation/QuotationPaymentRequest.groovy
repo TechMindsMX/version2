@@ -1,12 +1,12 @@
 package com.modulus.uno.quotation
 
-import com.modulus.uno.PaymentMethod
+import com.modulus.uno.PaymentWay
 
 class QuotationPaymentRequest {
 
   BigDecimal amount
   String note
-  PaymentMethod paymentMethod
+  PaymentWay paymentMethod
   QuotationPaymentRequestStatus status = QuotationPaymentRequestStatus.CREATED
 
   Date dateCreated

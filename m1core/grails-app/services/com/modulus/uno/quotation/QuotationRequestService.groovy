@@ -2,7 +2,7 @@ package com.modulus.uno.quotation
 
 import grails.transaction.Transactional
 import com.modulus.uno.SaleOrderService
-import com.modulus.uno.PaymentMethod
+import com.modulus.uno.PaymentWay
 import com.modulus.uno.SaleOrder
 import com.modulus.uno.SaleOrderItem
 import com.modulus.uno.SaleOrderItemCommand
@@ -56,7 +56,7 @@ class QuotationRequestService {
           clientId:params.clientId,
           note:params.note,
           fechaCobro:params.fechaCobro,
-          paymentMethod: params.paymentMethod
+          paymentWay: params.paymentWay
       )
       def saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
       saleOrder.status = SaleOrderStatus.AUTORIZADA
@@ -66,6 +66,7 @@ class QuotationRequestService {
       }
 
       SaleOrderItemCommand saleOrderItemCommand = new SaleOrderItemCommand(
+          satKey:quotationRequest.product.satKey ?: "01010101",
           sku:quotationRequest.product.sku,
           name:quotationRequest.product.name,
           quantity:"1",
@@ -73,13 +74,13 @@ class QuotationRequestService {
           discount:"0",
           ivaRetention:"0",
           iva:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
-          unitType:"UNIDAD"
+          unitType:quotationRequest.product.unitType.name
       )
       def saleOrderItem  = saleOrderItemCommand.createSaleOrderItem()
       saleOrderItem.saleOrder = saleOrder
 
       if (!saleOrderItem.save()) {
-        throw new QuotationException("No se pudo crear el detalla de la orden de venta")
+        throw new QuotationException("No se pudo crear el detalle de la orden de venta")
       }
 
       saleOrder
@@ -97,7 +98,7 @@ class QuotationRequestService {
         fechaCobro: new Date().format( 'dd/MM/yyyy' ),
         externalId:"",
         note:"",
-        paymentMethod:"03 - TRANSFERENCIA ELECTRONICA"
+        paymentWay:"03 - TRANSFERENCIA ELECTRONICA"
       ]
     }
 

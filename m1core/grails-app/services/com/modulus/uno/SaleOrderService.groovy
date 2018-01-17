@@ -25,9 +25,9 @@ class SaleOrderService {
     def fechaCobro = params.fechaCobro
     String externalId = params.externalId ?: ""
     def note = params.note
-    PaymentMethod paymentMethod = PaymentMethod.values().find {
+    PaymentWay paymentWay = PaymentWay.values().find {
       println it.toString()
-      it.toString() == params.paymentMethod }
+      it.toString() == params.paymentWay }
 
 
     if(!companyId && !clientId && !addressId){
@@ -35,14 +35,14 @@ class SaleOrderService {
     }
     Company company = Company.get(companyId)
     BusinessEntity businessEntity = BusinessEntity.get(clientId)
-    SaleOrder saleOrder = createSaleOrder(businessEntity, company, fechaCobro, externalId, note, paymentMethod)
+    SaleOrder saleOrder = createSaleOrder(businessEntity, company, fechaCobro, externalId, note, paymentWay)
     Address address = Address.get(addressId)
     addTheAddressToSaleOrder(saleOrder, address)
     saleOrder
   }
 
-  def createSaleOrder(BusinessEntity businessEntity, Company company, def fechaCobro, String externalId, String note, PaymentMethod paymentMethod) {
-    def saleOrder = new SaleOrder(rfc:businessEntity.rfc, clientName: businessEntity.toString(), company:company, externalId:externalId, note:note, paymentMethod:paymentMethod)
+  def createSaleOrder(BusinessEntity businessEntity, Company company, def fechaCobro, String externalId, String note, PaymentWay paymentWay) {
+    def saleOrder = new SaleOrder(rfc:businessEntity.rfc, clientName: businessEntity.toString(), company:company, externalId:externalId, note:note, paymentWay:paymentWay)
     saleOrder.status = SaleOrderStatus.CREADA
     saleOrder.fechaCobro = Date.parse("dd/MM/yyyy", fechaCobro)
     saleOrder.save()
