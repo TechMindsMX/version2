@@ -6,7 +6,7 @@ class DataImssEmployee {
   String nss
   Date registrationDate
   BigDecimal baseImssMonthlySalary
-  BigDecimal crudeMonthlySalary
+  BigDecimal totalMonthlySalary
   BigDecimal holidayBonusRate
   Integer annualBonusDays
   PaymentPeriod paymentPeriod = PaymentPeriod.WEEKLY
@@ -16,14 +16,14 @@ class DataImssEmployee {
     nss nullable:false, unique: true
     registrationDate nullable:false
     baseImssMonthlySalary nullable:false, min:0.0
-    crudeMonthlySalary nullable:false, min:0.0
+    totalMonthlySalary nullable:false, min:0.0
     holidayBonusRate nullable:false, min:0.0, max:100.0
     annualBonusDays nullable:false, min:15
     paymentPeriod nullable:false
   }
 
-  BigDecimal getCrudeMonthlyAssimilableSalary() {
-    this.crudeMonthlySalary - this.baseImssMonthlySalary
+  BigDecimal getMonthlyAssimilableSalary() {
+    this.totalMonthlySalary - this.baseImssMonthlySalary
   }
 
   /*
