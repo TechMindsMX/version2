@@ -38,9 +38,9 @@ class SaleOrderServiceSpec extends Specification {
     and:"A business entity"
       def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
     and:"A payment method"
-      PaymentMethod paymentMethod = PaymentMethod.EFECTIVO
+      PaymentWay paymentWay = PaymentWay.EFECTIVO
     when:"We create a sale order"
-      def result = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", paymentMethod)
+      def result = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", paymentWay)
     then:"We expect a new sale order"
       result instanceof SaleOrder
       result.status == SaleOrderStatus.CREADA
@@ -81,7 +81,7 @@ class SaleOrderServiceSpec extends Specification {
                                 employeeNumbers:40,
                                 grossAnnualBilling:4000).save(validate:false)
     def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
-    def saleOrder = service.createSaleOrder(businessEntity, company,new Date().format("dd/MM/yyyy").toString(), "", "", PaymentMethod.EFECTIVO)
+    def saleOrder = service.createSaleOrder(businessEntity, company,new Date().format("dd/MM/yyyy").toString(), "", "", PaymentWay.EFECTIVO)
   when:"We authoriza a sale order"
     companyService.getAuthorizersByCompany(company) >> approvers
     def result = service.sendOrderToConfirmation(saleOrder)
@@ -101,7 +101,7 @@ class SaleOrderServiceSpec extends Specification {
                                 grossAnnualBilling:4000,
                                 legalRepresentatives:legalRepresentatives).save(validate:false)
     def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
-    def saleOrder = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", PaymentMethod.EFECTIVO)
+    def saleOrder = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", PaymentWay.EFECTIVO)
   when:"We authoriza a sale order"
     def result = service.authorizeSaleOrder(saleOrder)
   then:"We expect new status"

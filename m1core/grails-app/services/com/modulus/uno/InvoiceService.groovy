@@ -47,7 +47,7 @@ class InvoiceService {
     Company company = saleOrder.company
     ClientLink client = ClientLink.findByClientRefAndCompany(saleOrder.rfc, company)
     String accountNumber = ""
-    if (saleOrder.paymentMethod == PaymentMethod.EFECTIVO || saleOrder.paymentMethod == PaymentMethod.CHEQUE_NOMINATIVO) {
+    if (saleOrder.paymentWay == PaymentWay.EFECTIVO || saleOrder.paymentWay == PaymentWay.CHEQUE_NOMINATIVO) {
       BankAccount bankAccount = company.banksAccounts.find {it.concentradora}
       accountNumber = bankAccount ? "${bankAccount.branchNumber} - ${bankAccount.accountNumber} - ${bankAccount.banco}" : company.accounts[0].stpClabe
     } else {
@@ -55,8 +55,8 @@ class InvoiceService {
     }
 
     new DatosDeFacturacion(
-      metodoDePago: new MetodoDePago(clave:"PUE", descripcion:"Pago en una sóla exhibición"),
-      formaDePago: new FormaDePago(clave:saleOrder.paymentMethod.getKey(), descripcion:saleOrder.paymentMethod.getDescription()),
+      metodoDePago: new MetodoDePago(clave:saleOrder.paymentMethod.name(), descripcion:saleOrder.paymentMethod.description),
+      formaDePago: new FormaDePago(clave:saleOrder.paymentWay.key, descripcion:saleOrder.paymentWay.description),
       moneda: saleOrder.currency,
       tipoDeCambio: saleOrder.changeType?:new BigDecimal(1),
       numeroDeCuentaDePago: accountNumber,
@@ -98,7 +98,7 @@ class InvoiceService {
         noExterior: saleOrder.addresses[0].streetNumber ?: "SN",
         noInterior: saleOrder.addresses[0].suite ?: "SN",
         colonia: saleOrder.addresses[0].neighboorhood ?: saleOrder.addresses[0].colony,
-        usoCFDI: "P01" 
+        usoCFDI: saleOrder.invoicePurpose.name()
       )
     )
   }

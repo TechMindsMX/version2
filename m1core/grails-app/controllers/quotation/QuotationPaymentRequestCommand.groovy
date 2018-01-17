@@ -2,7 +2,7 @@ package com.modulus.uno.quotation
 
 import grails.validation.Validateable
 import java.text.*
-import com.modulus.uno.PaymentMethod
+import com.modulus.uno.PaymentWay
 
 class QuotationPaymentRequestCommand implements Validateable  {
 
@@ -30,9 +30,8 @@ class QuotationPaymentRequestCommand implements Validateable  {
     bd
   }
 
-  PaymentMethod getPaymentWay(String paymentMethod){
-    PaymentMethod.values().find(){it.toString() == paymentMethod }
-    //PaymentMethod.EFECTIVO
+  PaymentWay getPaymentWay(String paymentMethod){
+    PaymentWay.values().find(){it.toString() == paymentMethod }
  }
 
 }

@@ -36,7 +36,7 @@ class SaleOrderController {
       @ApiImplicitParam(name = 'fechaCobro', value = 'dd/MM/yyyy', required = true, dataType = 'date',paramType = 'form'),
       @ApiImplicitParam(name = 'note', value = '', required = false, dataType = 'string',paramType = 'form'),
       @ApiImplicitParam(name = 'externalId', value = '', required = true, dataType = 'string',paramType = 'form'),
-      @ApiImplicitParam(name = 'paymentMethod', value = '0, 1, 2 o 3; (0=NA, 1=EFECTIVO,2=CHEQUE,3=TRANSFERENCIA)', required = true, dataType = 'string',paramType = 'form'),
+      @ApiImplicitParam(name = 'paymentWay', value = '0, 1, 2 o 3; (0=NA, 1=EFECTIVO,2=CHEQUE,3=TRANSFERENCIA)', required = true, dataType = 'string',paramType = 'form'),
       @ApiImplicitParam(name = 'currencyUsd', value = 'MXN o USD', required = true, dataType = 'string',paramType = 'form')
       ])
   def save(SaleOrderCommand saleOrderCommand) {

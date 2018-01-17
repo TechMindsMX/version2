@@ -2,7 +2,7 @@ package com.modulus.uno.quotation
 
 import grails.transaction.Transactional
 import com.modulus.uno.SaleOrderService
-import com.modulus.uno.PaymentMethod
+import com.modulus.uno.PaymentWay
 import com.modulus.uno.SaleOrder
 import com.modulus.uno.SaleOrderItem
 import com.modulus.uno.SaleOrderItemCommand
@@ -50,7 +50,7 @@ class QuotationRequestService {
                                                               clientId:params.clientId,
                                                               note:params.note,
                                                               fechaCobro:params.fechaCobro,
-                                                              paymentMethod: params.paymentMethod
+                                                              paymentWay: params.paymentWay
                                                               )
       def saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
       saleOrder.status = SaleOrderStatus.AUTORIZADA
@@ -96,7 +96,7 @@ class QuotationRequestService {
                   fechaCobro: new Date().format( 'dd/MM/yyyy' ),
                   externalId:"",
                   note:"",
-                  paymentMethod:"03 - TRANSFERENCIA ELECTRONICA"
+                  paymentWay:"03 - TRANSFERENCIA ELECTRONICA"
                   ]
     }
 
