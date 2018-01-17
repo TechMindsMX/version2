@@ -13,7 +13,7 @@ class DataImssEmployeeServiceSpec extends Specification {
     given:"A employee"
       EmployeeLink employee = new EmployeeLink().save(validate:false)
     and:"The data imss"
-      DataImssEmployee dataImss = new DataImssEmployee(employee:employee, nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), crudeMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(25), annualBonusDays:15, paymentPeriod:PaymentPeriod.BIWEEKLY)
+      DataImssEmployee dataImss = new DataImssEmployee(employee:employee, nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), totalMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(25), annualBonusDays:15, paymentPeriod:PaymentPeriod.BIWEEKLY)
     when:
       def result = service.saveDataImss(dataImss)
     then:
@@ -28,8 +28,8 @@ class DataImssEmployeeServiceSpec extends Specification {
       result.hasErrors()
     where:
     dataImss  ||  errors
-    new DataImssEmployee(employee:new EmployeeLink().save(validate:false), nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), crudeMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(25), annualBonusDays:10, paymentPeriod:PaymentPeriod.BIWEEKLY) ||  true
-    new DataImssEmployee(employee:new EmployeeLink().save(validate:false), nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), crudeMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(120), annualBonusDays:10, paymentPeriod:PaymentPeriod.BIWEEKLY) ||  true
+    new DataImssEmployee(employee:new EmployeeLink().save(validate:false), nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), totalMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(25), annualBonusDays:10, paymentPeriod:PaymentPeriod.BIWEEKLY) ||  true
+    new DataImssEmployee(employee:new EmployeeLink().save(validate:false), nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), totalMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(120), annualBonusDays:10, paymentPeriod:PaymentPeriod.BIWEEKLY) ||  true
 
   }
 
