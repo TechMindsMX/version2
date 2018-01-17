@@ -35,15 +35,15 @@ class PrePaysheetService {
     prePaysheets
   }
 
-  List<BigDecimal> getCrudePaymentForEmployees(List<BusinessEntity> beEmployees, PrePaysheet prePaysheet) {
-    List<BigDecimal> crudePayments = []
+  List<BigDecimal> getNetPaymentForEmployees(List<BusinessEntity> beEmployees, PrePaysheet prePaysheet) {
+    List<BigDecimal> netPayments = []
     int daysPeriod = prePaysheet.paymentPeriod.getDays()
     List dataImss = getDataImssForEmployees(beEmployees)
     dataImss.each { di ->
-      BigDecimal crudePayment = di ? (di.crudeMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
-      crudePayments.add(crudePayment)
+      BigDecimal netPayment = di ? (di.totalMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
+      netPayments.add(netPayment)
     }
-    crudePayments
+    netPayments
   }
 
   List<DataImssEmployee> getDataImssForEmployees(List<BusinessEntity> beEmployees) {
