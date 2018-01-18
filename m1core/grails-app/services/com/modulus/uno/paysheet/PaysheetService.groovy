@@ -28,7 +28,7 @@ class PaysheetService {
     )
     paysheet.save()
     loadEmployeesToPaysheetFromPrePaysheet(paysheet, prePaysheet)
-    prePaysheetService.changeStatusToProcessed(prePaysheet)
+		validatePaymentsOfPaysheet(paysheet)
     paysheet
   }
 
@@ -40,6 +40,35 @@ class PaysheetService {
     paysheet.save()
     paysheet
   }
+
+	def validatePaymentsOfPaysheet(Paysheet paysheet) {
+		List<PaysheetEmployee> wrongEmployees = getEmployeesWithWrongPayment(paysheet)
+		if (wrongEmployees) {
+			rejectPaysheetAndPrePaysheetForWrongPayments(paysheet, wrongEmployees)
+		} else {
+    	prePaysheetService.changeStatusToProcessed(paysheet.prePaysheet)
+		}
+	
+	}
+
+	List<PaysheetEmployee> getEmployeesWithWrongPayment(Paysheet paysheet) {
+		List<PaysheetEmployee> wrongEmployees = []
+		paysheet.employees.each { employee ->
+			BigDecimal difference = employee.totalSalaryEmployee - employee.prePaysheetEmployee.netPayment
+			if (difference.abs() > 1) {
+				wrongEmployees.add(employee)
+			}
+		}
+		wrongEmployees
+	}
+
+	Paysheet rejectPaysheetAndPrePaysheetForWrongPayments(Paysheet paysheet, List<PaysheetEmployee> wrongEmployees) {
+		paysheet.status = PaysheetStatus.REJECTED
+		String wrongRfcs = (wrongEmployees*.prePaysheetEmployee.rfc).join(",")
+		paysheet.rejectReason = "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: ${wrongRfcs}"
+		paysheet.save()
+		paysheet
+	}
 
   @Transactional
   Paysheet sendToAuthorize(Paysheet paysheet) {
