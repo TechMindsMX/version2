@@ -135,8 +135,25 @@ class PrePaysheetService {
 
   @Transactional
   def deleteEmployeeFromPrePaysheet(PrePaysheetEmployee prePaysheetEmployee) {
+		deleteRelationsForPrePaysheetEmployee(prePaysheetEmployee)
     PrePaysheetEmployee.executeUpdate("delete PrePaysheetEmployee employee where employee.id = :id", [id: prePaysheetEmployee.id])
   }
+
+	def deleteRelationsForPrePaysheetEmployee(PrePaysheetEmployee prePaysheetEmployee){
+		log.info "Deleting incidences"
+		prePaysheetEmployee.incidences.each { incidence ->
+			prePaysheetEmployee.removeFromIncidences(incidence)
+    	PrePaysheetEmployeeIncidence.executeUpdate("delete PrePaysheetEmployeeIncidence incidence where incidence.id = :id", [id: incidence.id])
+		}
+		prePaysheetEmployee.save()
+		log.info "PrePaysheet employee incidences: ${prePaysheetEmployee.incidences}"
+
+		log.info "Deleting paysheet employee from prepaysheet employee"
+		List<PaysheetEmployee> paysheetEmployees = PaysheetEmployee.findAllByPrePaysheetEmployee(prePaysheetEmployee)
+		paysheetEmployees.each { paysheetEmployee ->
+    	PaysheetEmployee.executeUpdate("delete PaysheetEmployee employee where employee.id = :id", [id: paysheetEmployee.id])
+		}
+	}
 
   @Transactional
   PrePaysheetEmployeeIncidence saveIncidence(PrePaysheetEmployeeIncidence incidence) {
@@ -236,5 +253,22 @@ class PrePaysheetService {
 		prePaysheet.save()
 		log.info "prePaysheet employees: ${prePaysheet.employees}"
 	}
+
+  @Transactional
+  def deletePrePaysheet(PrePaysheet prePaysheet) {
+    prePaysheet.employees.each { employee ->
+      employee.incidences.each { incidence ->
+        deleteIncidenceFromPrePaysheetEmployee(incidence)
+      }
+      deleteEmployeeFromPrePaysheet(employee)
+    }
+    PrePaysheet.executeUpdate("delete PrePaysheet prePaysheet where prePaysheet.id = :id", [id: prePaysheet.id])
+  }
+
+  @Transactional
+  def reject(PrePaysheet prePaysheet) {
+    prePaysheet.status = PrePaysheetStatus.REJECTED
+    prePaysheet.save()
+  }
 
 }

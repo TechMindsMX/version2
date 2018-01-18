@@ -109,6 +109,7 @@ class PaysheetService {
   Paysheet reject(Paysheet paysheet) {
     paysheet.status = PaysheetStatus.REJECTED
     paysheet.save()
+    prePaysheetService.reject(paysheet.prePaysheet)
     //TODO: enviar notificación
     paysheet
   }
