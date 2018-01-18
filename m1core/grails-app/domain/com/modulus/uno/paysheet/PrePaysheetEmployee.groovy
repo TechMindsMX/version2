@@ -11,7 +11,7 @@ class PrePaysheetEmployee {
   String clabe
   String account
   String cardNumber
-  BigDecimal crudePayment
+  BigDecimal netPayment
   String note
 
   static belongsTo = [prePaysheet:PrePaysheet]
