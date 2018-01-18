@@ -118,12 +118,12 @@ class PaysheetEmployeeServiceSpec extends Specification {
       PaysheetContract paysheetContract = new PaysheetContract(company:new Company().save(validate:false)).save(validate:false)
       Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet, paysheetContract:paysheetContract).save(validate:false)
     and:"the prePaysheet Employee"
-      PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(prePaysheet:prePaysheet, rfc:"RFC", crudePayment:new BigDecimal(1099.96), bank:new Bank().save(validate:false)).save(validate:false)
+      PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(prePaysheet:prePaysheet, rfc:"RFC", netPayment:new BigDecimal(1099.96), bank:new Bank().save(validate:false)).save(validate:false)
       PaysheetEmployee paysheetEmployee = new PaysheetEmployee(paysheet:paysheet, prePaysheetEmployee:prePaysheetEmployee).save(validate:false)
     and:
       BreakdownPaymentEmployee breakdownPaymentEmployee = new BreakdownPaymentEmployee(diseaseAndMaternity:new BigDecimal(0), pension:new BigDecimal(18.72), loan:new BigDecimal(12.48), disabilityAndLife: new BigDecimal(31.21), unemploymentAndEld:new BigDecimal(56.17), fixedFee:new BigDecimal(468.16), diseaseAndMaternityEmployer:new BigDecimal(0), pensionEmployer:new BigDecimal(52.43), loanEmployer:new BigDecimal(34.95), disabilityAndLifeEmployer:new BigDecimal(87.38), kindergarten:new BigDecimal(49.93), occupationalRisk:new BigDecimal(27.14), retirementSaving:new BigDecimal(99.86), unemploymentAndEldEmployer:new BigDecimal(157.28), infonavit:new BigDecimal(249.65), paysheetEmployee:paysheetEmployee).save(validate:false)
       PaysheetProject paysheetProject = new PaysheetProject(commission:new BigDecimal(5)).save(validate:false)
-      DataImssEmployee dataImssEmployee = new DataImssEmployee(baseImssMonthlySalary:new BigDecimal(4714.12), crudeMonthlySalary:new BigDecimal(4714.12))
+      DataImssEmployee dataImssEmployee = new DataImssEmployee(baseImssMonthlySalary:new BigDecimal(4714.12), totalMonthlySalary:new BigDecimal(4714.12))
     and:
       breakdownPaymentEmployeeService.generateBreakdownPaymentEmployee(_) >> breakdownPaymentEmployee
       dataImssEmployeeService.getDataImssForEmployee(_) >> dataImssEmployee
