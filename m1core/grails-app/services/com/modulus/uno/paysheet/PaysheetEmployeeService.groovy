@@ -76,8 +76,12 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateNetAssimilableSalary(PaysheetEmployee paysheetEmployee) {
+    if (getMonthlyAssimilableForEmployee(paysheetEmployee) > 0) {
     BigDecimal netAssimilable = (paysheetEmployee.prePaysheetEmployee.netPayment - paysheetEmployee.imssSalaryNet).setScale(2, RoundingMode.HALF_UP)
     netAssimilable > 0 ? netAssimilable : new BigDecimal(0)
+    } else {
+      new BigDecimal(0)
+    }
   }
 
   BigDecimal getMonthlyAssimilableForEmployee(PaysheetEmployee paysheetEmployee) {
