@@ -51,13 +51,13 @@ class PrePaysheetServiceSpec extends Specification {
       BusinessEntity employee = new BusinessEntity(rfc:"RFC").save(validate:false)
       EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC").save(validate:false)
     and:"The params"
-      Map params = [bankAccount1:null, crudePayment1:"5000", note1:"TRAMITAR CUENTA"]
+      Map params = [bankAccount1:null, netPayment1:"5000", note1:"TRAMITAR CUENTA"]
     when:
       service.createAndSavePrePaysheetEmployee(employee, prePaysheet, params)
     then:
       prePaysheet.employees.size() == 1
       prePaysheet.employees.first().rfc == "RFC"
-      prePaysheet.employees.first().crudePayment == 5000
+      prePaysheet.employees.first().netPayment == 5000
   }
 
   void "Should create and save a employee to prePaysheet with bank account"() {
@@ -68,7 +68,7 @@ class PrePaysheetServiceSpec extends Specification {
       BusinessEntity employee = new BusinessEntity(rfc:"RFC").save(validate:false)
       EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC").save(validate:false)
     and:"The params"
-      Map params = [bankAccount1:"1", crudePayment1:"5000", note1:"TRAMITAR CUENTA"]
+      Map params = [bankAccount1:"1", netPayment1:"5000", note1:"TRAMITAR CUENTA"]
     and:"The bank account"
       BankAccount bankAccount = new BankAccount(accountNumber:"cuenta", clabe:"clabe", cardNumber:"tarjeta", banco:new Bank().save(validate:false)).save(validate:false)
     when:
@@ -76,7 +76,7 @@ class PrePaysheetServiceSpec extends Specification {
     then:
       prePaysheet.employees.size() == 1
       prePaysheet.employees.first().rfc == "RFC"
-      prePaysheet.employees.first().crudePayment == 5000
+      prePaysheet.employees.first().netPayment == 5000
       prePaysheet.employees.first().bank.id == 1
       prePaysheet.employees.first().clabe == "clabe"
   }
@@ -117,7 +117,7 @@ class PrePaysheetServiceSpec extends Specification {
       paysheetContract.save(validate:false)
       PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
     and:"A data map employee to import"
-			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", BRUTO_A_PAGAR:1000.0]
+			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO_A_PAGAR:1000.0]
 	  and:
       EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
 		and:
@@ -175,7 +175,7 @@ class PrePaysheetServiceSpec extends Specification {
       PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
       PrePaysheet prePaysheet = new PrePaysheet(paysheetContract:paysheetContract).save(validate:false)
     and:"A data map employee to import"
-			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", BRUTO_A_PAGAR:"Mil"]
+			Map dataEmployee = [RFC:"RFC", CLABE:"CLABE", NETO_A_PAGAR:"Mil"]
 	  and:
       BusinessEntity beEmployee = new BusinessEntity(rfc:"RFC").save(validate:false)
 			company.addToBusinessEntities(beEmployee)
