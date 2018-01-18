@@ -67,6 +67,7 @@ class PaysheetService {
 		String wrongRfcs = (wrongEmployees*.prePaysheetEmployee.rfc).join(",")
 		paysheet.rejectReason = "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: ${wrongRfcs}"
 		paysheet.save()
+    prePaysheetService.reject(paysheet.prePaysheet)
 		paysheet
 	}
 
