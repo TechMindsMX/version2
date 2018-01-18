@@ -465,6 +465,7 @@ class PaysheetServiceSpec extends Specification {
 	  where:
 			listWrongEmployees 	|| 	expectRejectReason
 			[new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"UNO"))] 	|| "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: UNO"
+			[new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"UNO")), new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"DOS"))] 	|| "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: UNO,DOS"
 	}
 
   private PaysheetEmployee createPaysheetEmployee() {
