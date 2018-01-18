@@ -27,9 +27,9 @@
       <dt>SA Bruto Mensual</dt>
       <dd>${modulusuno.formatPrice(number:dataImssEmployee.baseImssMonthlySalary)}</dd>
       <dt>IAS</dt>
-      <dd>${modulusuno.formatPrice(number:(dataImssEmployee.crudeMonthlySalary - dataImssEmployee.baseImssMonthlySalary))}</dd>
+      <dd>${modulusuno.formatPrice(number:(dataImssEmployee.totalMonthlySalary - dataImssEmployee.baseImssMonthlySalary))}</dd>
       <dt>Total Mensual</dt>
-      <dd>${modulusuno.formatPrice(number:dataImssEmployee.crudeMonthlySalary)}</dd>
+      <dd>${modulusuno.formatPrice(number:dataImssEmployee.totalMonthlySalary)}</dd>
       <dt>Prima vacacional (%)</dt>
       <dd><g:formatNumber number="${dataImssEmployee.holidayBonusRate}" type="number" maxFractionDigits="2"/></dd>
       <dt>Días de Aguinaldo</dt>
