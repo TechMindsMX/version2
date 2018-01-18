@@ -37,13 +37,28 @@ class PaysheetServiceSpec extends Specification {
     given:"The prepaysheet"
       PrePaysheet prePaysheet = createPrePaysheet()
     and:
-      paysheetEmployeeService.createPaysheetEmployeeFromPrePaysheetEmployee(_, _) >> new PaysheetEmployee().save(validate:false)
+      paysheetEmployeeService.createPaysheetEmployeeFromPrePaysheetEmployee(_, _) >> new PaysheetEmployee(salaryImss:100, socialQuota:10, subsidySalary:20, incomeTax:15, netAssimilable:100, prePaysheetEmployee:new PrePaysheetEmployee(netPayment:195).save(validate:false)).save(validate:false)
     when:
       Paysheet paysheet = service.createPaysheetFromPrePaysheet(prePaysheet)
     then:
       paysheet.id
       paysheet.employees.size() == 1
+			paysheet.status == PaysheetStatus.CREATED
   }
+
+  void "Should create and reject the paysheet from a prepaysheet because exists difference in payments amount"() {
+    given:"The prepaysheet"
+      PrePaysheet prePaysheet = createPrePaysheet()
+    and:
+      paysheetEmployeeService.createPaysheetEmployeeFromPrePaysheetEmployee(_, _) >> new PaysheetEmployee(salaryImss:100, socialQuota:10, subsidySalary:20, incomeTax:15, netAssimilable:100, prePaysheetEmployee:new PrePaysheetEmployee(netPayment:200).save(validate:false)).save(validate:false)
+    when:
+      Paysheet paysheet = service.createPaysheetFromPrePaysheet(prePaysheet)
+    then:
+      paysheet.id
+      paysheet.employees.size() == 1
+			paysheet.status == PaysheetStatus.REJECTED
+  }
+
 
   private PrePaysheet createPrePaysheet() {
     PaysheetContract paysheetContract = new PaysheetContract(company: new Company().save(validate:false)).save(validate:false)
@@ -434,6 +449,22 @@ class PaysheetServiceSpec extends Specification {
       result[0].name == "ANOTHER"
       result[1].name == "BANK01"
       result[2].name == "BANK02"
+	}
+
+	@Unroll
+	void "Should reject the paysheet when exists wrong payments for employees: #listWrongEmployees"() {
+		given:"The paysheet"
+			Paysheet paysheet = new Paysheet().save(validate:false)
+	  and:"The wrong employees"
+			List<PaysheetEmployee> wrongEmployees = listWrongEmployees
+	  when:
+			def result = service.rejectPaysheetAndPrePaysheetForWrongPayments(paysheet, wrongEmployees)
+	  then:
+			result.status == PaysheetStatus.REJECTED
+			result.rejectReason == expectRejectReason
+	  where:
+			listWrongEmployees 	|| 	expectRejectReason
+			[new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"UNO"))] 	|| "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: UNO"
 	}
 
   private PaysheetEmployee createPaysheetEmployee() {
