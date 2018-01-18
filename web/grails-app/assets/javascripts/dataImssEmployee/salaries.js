@@ -25,7 +25,7 @@ function calculateIasSalary() {
   $('#iasSalary').val('');
   var sa = $("#saSalary").val();
   var total = $("#totalSalary").val();
-  if (sa==="" || total==="" || isNaN(sa) || isNaN(crude)){
+  if (sa==="" || total==="" || isNaN(sa) || isNaN(total)){
       return
   }
 
