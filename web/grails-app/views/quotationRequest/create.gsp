@@ -10,11 +10,12 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Solicitar
+        Solicitar cotización
         <small>${company}</small>
       </h1>
     </div>
 
+	<sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
@@ -64,8 +65,18 @@
         <br>
         <div class="row">
           <div class="col-md-3">
-            <label><g:message code="Presupuesto Maximo" /></label>
-            <input class="form-control" type="number" step="0.01" id="amount" name="amount" required="required" pattern="([0-9]*[.])?[0-9]+">
+            <label><g:message code="Subtotal" /></label>
+            <input class="form-control" type="number" step="0.01" id="subtotal" name="subtotal" required="required" pattern="([0-9]*[.])?[0-9]+" required>
+            <label><g:message code="Ingrese el monto sin iva" /></label>
+          </div>
+          <div class="col-md-3">
+            <label><g:message code="Total" /></label>
+            <input class="form-control" type="number" step="0.01" id="total" name="total" required="required" pattern="([0-9]*[.])?[0-9]+" required>
+            <label><g:message code="Ingrese el monto con iva" /></label>
+          </div>
+          <div class="col-md-3">
+            <label><g:message code="Iva" /></label>
+            <input class="form-control" type="number" step="0.01" id="iva" name="iva" required="required" pattern="([0-9]*[.])?[0-9]+" required>
           </div>
         </div>
         <br>
@@ -86,6 +97,9 @@
       </div>
     </div>
 
+    <input id="ivaRate" type="hidden" value="${ivaRate}" />
+  </sec:ifAnyGranted>
     <asset:javascript src="quotationContract/create.js"/>
+    <asset:javascript src="quotationRequest/QuotationRequestController.js"/>
     </body>
 </html>

@@ -7,6 +7,7 @@ import com.modulus.uno.quotation.QuotationRequest
 class QuotationPaymentRequestService {
 
   QuotationRequestService quotationRequestService
+  QuotationContractService quotationContractService
 
   QuotationPaymentRequest create(QuotationPaymentRequest quotationPaymentRequest){
     quotationPaymentRequest.save()
@@ -34,7 +35,12 @@ class QuotationPaymentRequestService {
   }
 
   def getAmountFromQuotationRequest(){
-    def amount = quotationRequest.amount
+    def amount = quotationRequest.total
+  }
+
+  Map calaculateSummary(String quotation){
+    QuotationContract quotationContract = QuotationContract.get(quotation.toInteger())
+    quotationContractService.calculateSummaryForBalance(quotationContract)
   }
 
 }

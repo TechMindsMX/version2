@@ -5,7 +5,9 @@
 var QuotationController = (function(){
   var selectors = {
     datepicker:'#datepicker',
-    datepicker1:'#datepicker1'
+    datepicker1:'#datepicker1',
+    reuqestPaymentForm:'#requestPayment',
+    availableRequest:'#available'
   },
 
   validateFormGeneralBalance = function validateFormGeneralBalance(){
@@ -46,6 +48,31 @@ var QuotationController = (function(){
       );
   },
 
+  validateFormRequestPayment = function validateFormRequestPayment(){
+    var avilitable = parseFloat($(selectors.availableRequest).val())
+    $(selectors.reuqestPaymentForm).validate({
+      rules:{
+        amount:{
+          required:true,
+          max: avilitable
+        },
+        note:{
+          required: true
+        }
+      },
+      messages:{
+        amount:{
+          required:"Porfavor llene este campo",
+          max:"El monto excede el disponible"
+        }
+      },
+      submitHandler: function(form) {
+        $(form).submit();
+      }
+     });
+
+  },
+
   bindEvents = function bindEvents(){
     console.log("Satrt bindEvents");
     $(selectors.datepicker).datepicker({
@@ -65,7 +92,7 @@ var QuotationController = (function(){
     console.log("Start controller js");
     bindEvents();
     validateFormGeneralBalance();
-
+    validateFormRequestPayment();
   };
 
   return{

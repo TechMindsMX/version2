@@ -9,6 +9,7 @@ class CorporateService {
   def grailsApplication
   def springSecurityService
   def awsRoute53Service
+  def userRoleService
 
   private final String VALUE_HOST_IP = H.grailsApplication.config.grails.plugin.awssdk.value.host.ip
   private final String DOMAIN_BASE_URL = H.grailsApplication.config.grails.plugin.awssdk.domain.base.url
@@ -155,4 +156,39 @@ class CorporateService {
     corporate
   }
 
+  ArrayList getRolesForCorporate(Corporate corporate){
+    List<Role> roles = []
+    roles = Role.list().findAll{ it.authority.toString() in ["ROLE_LEGAL_REPRESENTATIVE_VISOR",
+                        "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR",
+                        "ROLE_FICO_VISOR",
+                        "ROLE_FICO_EJECUTOR",
+                        "ROLE_AUTHORIZER_VISOR",
+                        "ROLE_AUTHORIZER_EJECUTOR",
+                        "ROLE_OPERATOR_VISOR",
+                        "ROLE_OPERATOR_EJECUTOR",
+                        "ROLE_AUTHORIZER_PAYSHEET",
+                        "ROLE_OPERATOR_PAYSHEET",
+                        "ROLE_EMPLOYEE"
+                        ]}
+    log.info "Has Quotation Contract: ${corporate.hasQuotationContract}"
+    if(corporate.hasQuotationContract){
+      roles.addAll(Role.list().findAll{ it.authority.toString() in [
+                            "ROLE_OPERATOR_QUOTATION",
+                            "ROLE_EXECUTOR_QUOTATION"
+                            ]})
+    }
+    roles 
+  }
+
+  def unassignRolesForQuotationServiceToUsersInCorporate(Corporate corporate) {
+    log.info "HasQuotationContract flag: ${corporate.hasQuotationContract}"
+    if (!corporate.hasQuotationContract) {
+      corporate.users.each { user ->
+        log.info "Delete roles quotation service for user: ${user}"
+        userRoleService.deleteRoleForUser(user, Role.findByAuthority("ROLE_OPERATOR_QUOTATION"))      
+        userRoleService.deleteRoleForUser(user, Role.findByAuthority("ROLE_EXECUTOR_QUOTATION")) 
+      }
+    }
+    corporate
+  }
 }

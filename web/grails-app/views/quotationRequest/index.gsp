@@ -10,18 +10,18 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
+        Solicitudes de Cotización
         <small>${quotationContract?.client}</small>
       </h1>
     </div>
 
+	<sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION, ROLE_OPERATOR_QUOTATION">
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-footer">
           <g:if test="${quotationContract.client}">
             <div class="row">
               <div class="col-md-12">
-                <h4>${quotationContract?.client}</h4>
                 <g:link class="btn btn-primary" action="index">Regresar</g:link>
                 </div>
               </div>
@@ -75,7 +75,7 @@
                         ><g:link action="show" id="${request.id}"><g:formatDate format="dd-MM-yyyy" date="${request.dateCreated}" class="form-control"/></g:link></td>
                         <td class="text-center">${request.description}</td>
                         <td class="text-right">${request.commission}</td>
-                        <td class="text-right">${modulusuno.formatPrice(number:request.amount)}</td>
+                        <td class="text-right">${modulusuno.formatPrice(number:request.total)}</td>
                         <td class="text-center"><g:message code="quotationRequest.status.${request.status}"/></td>
                       </tr>
                     </g:each>
@@ -93,5 +93,6 @@
         </div>
       </div>
     </div>
+  </sec:ifAnyGranted>
   </body>
 </html>
