@@ -63,7 +63,7 @@
 									</g:else>
 								</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
-                <td class="text-right">${modulusuno.formatPrice(number:employee.salaryAssimilable)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.netAssimilable)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.totalSalaryEmployee)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.paysheetCost)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.commission)}</td>

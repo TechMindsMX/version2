@@ -71,7 +71,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
              paymentSheetEmployee.socialQuota == 0
              paymentSheetEmployee.subsidySalary == 0
              paymentSheetEmployee.incomeTax == 0
-             paymentSheetEmployee.salaryAssimilable == 0
+             paymentSheetEmployee.netAssimilable == 0
              paymentSheetEmployee.socialQuotaEmployer == 0
              paymentSheetEmployee.paysheetTax == 0
              paymentSheetEmployee.commission == 0
@@ -124,7 +124,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
                                                                     socialQuota:400,
                                                                     subsidySalary:400,
                                                                     incomeTax:203,
-                                                                    salaryAssimilable:500,
+                                                                    netAssimilable:500,
                                                                     paysheetTax:100)
         and: "A commission"
             BigDecimal commission = 10
