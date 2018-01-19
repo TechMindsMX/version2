@@ -25,7 +25,7 @@
   <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.assimilableMonthlySalary"/></label>
-      <input class="form-control" id="iasSalary" type="number" min="0.00" step="0.01" name="assimilableMonthlySalary" value="${dataImssEmployee.id ? dataImssEmployee.crudeMonthlySalary-dataImssEmployee.baseImssMonthlySalary : ''}" required=""/>
+      <input class="form-control" id="iasSalary" type="number" min="0.00" step="0.01" name="assimilableMonthlySalary" value="${dataImssEmployee.id ? dataImssEmployee.totalMonthlySalary-dataImssEmployee.baseImssMonthlySalary : ''}" required=""/>
     </div>
   </div>
   <div class="col-md-4">
