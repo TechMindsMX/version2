@@ -36,15 +36,15 @@ class PrePaysheetService {
     prePaysheets
   }
 
-  List<BigDecimal> getCrudePaymentForEmployees(List<BusinessEntity> beEmployees, PrePaysheet prePaysheet) {
-    List<BigDecimal> crudePayments = []
+  List<BigDecimal> getNetPaymentForEmployees(List<BusinessEntity> beEmployees, PrePaysheet prePaysheet) {
+    List<BigDecimal> netPayments = []
     int daysPeriod = prePaysheet.paymentPeriod.getDays()
     List dataImss = getDataImssForEmployees(beEmployees)
     dataImss.each { di ->
-      BigDecimal crudePayment = di ? (di.crudeMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
-      crudePayments.add(crudePayment)
+      BigDecimal netPayment = di ? (di.totalMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
+      netPayments.add(netPayment)
     }
-    crudePayments
+    netPayments
   }
 
   List<DataImssEmployee> getDataImssForEmployees(List<BusinessEntity> beEmployees) {
@@ -88,7 +88,7 @@ class PrePaysheetService {
       curp:employee.curp,
       numberEmployee:employee.number?:"SN",
       nameEmployee:employee.toString(),
-      crudePayment:new BigDecimal(params."crudePayment${employee.id}"),
+      netPayment:new BigDecimal(params."netPayment${employee.id}"),
       prePaysheet:prePaysheet,
       note:params."note${employee.id}",
       bank:bankAccount?.banco,
@@ -123,8 +123,8 @@ class PrePaysheetService {
 
   Map getEmployeesToExport(PrePaysheet prePaysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA','BRUTO A PAGAR','OBSERVACIONES']
-    employees.properties = ['rfc', 'curp', 'nameEmployee', 'numberEmployee', 'bank.bankingCode', 'bank.name', 'clabe', 'account', 'cardNumber', 'crudePayment', 'note']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA','NETO A PAGAR','OBSERVACIONES']
+    employees.properties = ['rfc', 'curp', 'nameEmployee', 'numberEmployee', 'bank.bankingCode', 'bank.name', 'clabe', 'account', 'cardNumber', 'netPayment', 'note']
     employees.data = prePaysheet.employees.sort {it.nameEmployee}
     employees
   }
@@ -171,7 +171,7 @@ class PrePaysheetService {
   }
 
 	def createLayoutForPrePaysheet() {
-		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'NOMBRE', 'CLABE', 'TARJETA', 'BRUTO_A_PAGAR', 'OBSERVACIONES']
+		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'NOMBRE', 'CLABE', 'TARJETA', 'NETO_A_PAGAR', 'OBSERVACIONES']
     new WebXlsxExporter().with {
       fillRow(headersEmployees, 0)
     }
@@ -224,7 +224,7 @@ class PrePaysheetService {
 			return "Error: la cuenta CLABE no pertenece al empleado"
 		}
 
-		if (dataEmployee.BRUTO_A_PAGAR instanceof String && !dataEmployee.BRUTO_A_PAGAR.isNumber()) {
+		if (dataEmployee.NETO_A_PAGAR instanceof String && !dataEmployee.NETO_A_PAGAR.isNumber()) {
 			transactionStatus.setRollbackOnly()
 			return "Error: el bruto a pagar no es válido"
 		}
@@ -239,7 +239,7 @@ class PrePaysheetService {
 			clabe:bankAccount.clabe,
 			account:bankAccount.accountNumber,
 			cardNumber:bankAccount.cardNumber,
-			crudePayment:new BigDecimal(dataEmployee.BRUTO_A_PAGAR),
+			netPayment:new BigDecimal(dataEmployee.NETO_A_PAGAR),
 			note:dataEmployee.OBSERVACIONES,
 			prePaysheet:prePaysheet
 		)

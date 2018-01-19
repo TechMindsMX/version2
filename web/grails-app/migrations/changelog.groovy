@@ -114,4 +114,6 @@ databaseChangeLog = {
   include file: 'rename-payment-method-to-payment-way-into-sale-order.groovy'
   include file: 'updating-payment-way-na-to-be-defined-in-sale-order.groovy'
   include file: 'adding-columns-payment-method-and-invoice-purpose-to-sale-order.groovy'
+	include file: 'rename-crude-salary-to-total-salary-into-data-imss-employee.groovy'
+	include file: 'rename-column-crude-payment-to-net-payment-into-prepaysheet-employee.groovy'
 }
