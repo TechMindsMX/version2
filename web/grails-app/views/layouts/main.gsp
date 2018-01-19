@@ -40,7 +40,7 @@
         </ul>
         <ul class="nav navbar-center">
           <li class="tooltip-sidebar-toggle" >
-            <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR,ROLE_AUTHORIZER_VISOR,ROLE_AUTHORIZER_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR">
+            <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_VISOR,ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_FICO_VISOR,ROLE_FICO_EJECUTOR,ROLE_AUTHORIZER_VISOR,ROLE_AUTHORIZER_EJECUTOR,ROLE_OPERATOR_VISOR,ROLE_OPERATOR_EJECUTOR, ROLE_AUTHORIZER_PAYSHEET, ROLE_OPERATOR_PAYSHEET, ROLE_OPERATOR_QUOTATION, ROLE_EXECUTOR_QUOTATION, ROLE_EMPLOYEE">
               <g:if test="${session.company}">
                 <g:form class="form-group" id="company-selection" url="[action:'setCompanyInSession',controller:'company']" >
                   <span>Selecciona tu Compañía ${companyInfo.selectedCompany()}
