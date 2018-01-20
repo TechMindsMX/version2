@@ -3,6 +3,9 @@ package com.modulus.uno.quotation
 import com.modulus.uno.SaleOrder
 import com.modulus.uno.Company
 import com.modulus.uno.Product
+import com.modulus.uno.InvoicePurpose
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.PaymentMethod
 
 class QuotationRequest {
 
@@ -15,6 +18,9 @@ class QuotationRequest {
   BigDecimal subtotal
   BigDecimal total
   BigDecimal iva
+  PaymentWay paymentWay
+  PaymentMethod paymentMethod
+  InvoicePurpose invoicePurpose
 
   Date dateCreated
   Date lastUpdated
