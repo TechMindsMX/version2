@@ -97,7 +97,7 @@ class QuotationRequestService {
         fechaCobro: new Date().format( 'dd/MM/yyyy' ),
         externalId:"",
         note:"",
-        paymentMethod:"03 - TRANSFERENCIA ELECTRONICA"
+        paymentWay:"03 - TRANSFERENCIA ELECTRONICA"
       ]
     }
 
