@@ -15,6 +15,7 @@ import com.modulus.uno.SaleOrderStatus
 import com.modulus.uno.User
 import com.modulus.uno.AddressType
 import java.math.RoundingMode
+import org.springframework.transaction.annotation.Propagation
 
 class QuotationRequestService {
 
@@ -46,61 +47,67 @@ class QuotationRequestService {
       quotationCommissionService.create(quotationRequest, quotationRequest.commission)
       quotationRequest.status = QuotationRequestStatus.PROCESSED
       quotationRequest.save()
+      log.info "Quotation Request was processed: ${quotationRequest.dump()}"
+      quotationRequest
     }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
     SaleOrder createSaleOrderFromQuotationRequest(QuotationRequest quotationRequest) {
-      Map params = getParamsToGenerateSaleOrder(quotationRequest)
-      SaleOrderCommand saleOrderCommand = new SaleOrderCommand(
-          addressId:params.addressId,
-          companyId:params.companyId,
-          clientId:params.clientId,
-          note:params.note,
-          fechaCobro:params.fechaCobro,
-          paymentWay: params.paymentWay
-      )
+      if(!quotationRequest.quotationContract.client.addresses.find { it.addressType == AddressType.FISCAL }){
+        transactionStatus.setRollbackOnly()
+        throw new QuotationException("El cliente no tiene dirección fiscal")
+      }
+
+      SaleOrderCommand saleOrderCommand = createSaleOrderCommandFromQuotationRequest(quotationRequest)
       def saleOrder = saleOrderCommand.createOrUpdateSaleOrder()
       saleOrder.status = SaleOrderStatus.AUTORIZADA
 
       if(!saleOrder.save()){
+        transactionStatus.setRollbackOnly()
         throw new QuotationException("No se pudo crear la orden de venta")
       }
-
-      SaleOrderItemCommand saleOrderItemCommand = new SaleOrderItemCommand(
-          sku:quotationRequest.product.sku,
-          name:quotationRequest.product.name,
-          quantity:"1",
-          price:quotationRequest.subtotal.toString(),
-          discount:"0",
-          ivaRetention:"0",
-          iva:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
-          unitType:"UNIDAD"
-      )
+      
+      log.info "The sale order was created: ${saleOrder.dump()}"
+      SaleOrderItemCommand saleOrderItemCommand = createSaleOrderItemCommandFromQuotationRequest(quotationRequest)
+      
       def saleOrderItem  = saleOrderItemCommand.createSaleOrderItem()
       saleOrderItem.saleOrder = saleOrder
 
       if (!saleOrderItem.save()) {
-        throw new QuotationException("No se pudo crear el detalla de la orden de venta")
+        transactionStatus.setRollbackOnly()
+        throw new QuotationException("No se pudo crear el detalle de la orden de venta")
       }
+
+      log.info "The sale order item was created: ${saleOrderItem.dump()}"
 
       saleOrder
     }
 
-    Map getParamsToGenerateSaleOrder(QuotationRequest quotationRequest){
-      if(!quotationRequest.quotationContract.client.addresses.find { it.addressType == AddressType.FISCAL }){
-        throw new QuotationException("El cliente no tiene dirección fiscal")
-      }
-
-      [
+    SaleOrderCommand createSaleOrderCommandFromQuotationRequest(QuotationRequest quotationRequest) {
+      new SaleOrderCommand(
+        addressId:(quotationRequest.quotationContract.client.addresses.find { it.addressType == AddressType.FISCAL }).id,
         companyId:quotationRequest.biller.id,
         clientId:quotationRequest.quotationContract.client.id,
-        addressId:(quotationRequest.quotationContract.client.addresses.find { it.addressType == AddressType.FISCAL }).id,
-        fechaCobro: new Date().format( 'dd/MM/yyyy' ),
-        externalId:"",
         note:"",
-        paymentWay:"03 - TRANSFERENCIA ELECTRONICA"
-      ]
+        fechaCobro:new Date().format('dd/MM/yyyy'),
+        paymentWay: quotationRequest.paymentWay.toString(),
+        paymentMethod: quotationRequest.paymentMethod.toString(),
+        invoicePurpose: quotationRequest.invoicePurpose.toString()
+      )
     }
 
+    SaleOrderItemCommand createSaleOrderItemCommandFromQuotationRequest(QuotationRequest quotationRequest) {
+      new SaleOrderItemCommand(
+        sku:quotationRequest.product.sku,
+        name:quotationRequest.product.name,
+        quantity:"1",
+        price:quotationRequest.subtotal.toString(),
+        discount:"0",
+        ivaRetention:"0",
+        iva:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
+        unitType:"UNIDAD"
+      )
+    }
 
     @Transactional
     QuotationRequest sendQuotation(QuotationRequest quotationRequest){
