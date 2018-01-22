@@ -25,14 +25,17 @@ class QuotationRequest {
   Date dateCreated
   Date lastUpdated
 
-    static belongsTo = [quotationContract: QuotationContract]
+  static belongsTo = [quotationContract: QuotationContract]
 
-    static constraints = {
-      biller nullable:true
-      saleOrder nullable:true
-      product nullable:true
-      subtotal min:0.0
-      total min:0.0
-      iva min:0.0
-    }
+  static constraints = {
+    biller nullable:true
+    saleOrder nullable:true
+    product nullable:true
+    subtotal min:0.0
+    total min:0.0
+    iva min:0.0
+    paymentWay nullable:true
+    paymentMethod nullable:true
+    invoicePurpose nullable:true
+  }
 }
