@@ -1,10 +1,12 @@
-
 package com.modulus.uno.quotation
 
-import com.modulus.uno.BusinessEntity
-import com.modulus.uno.Company
 import grails.validation.Validateable
 import java.text.*
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.PaymentMethod
+import com.modulus.uno.InvoicePurpose
 
 class QuotationRequestCommand implements Validateable {
 
@@ -15,6 +17,16 @@ class QuotationRequestCommand implements Validateable {
   String iva
   String total
   String subtotal
+  String paymentWay
+  String paymentMethod
+  String invoicePurpose
+
+  static constraints = {
+    paymentWay nullable:true
+    paymentMethod nullable:true
+    invoicePurpose nullable:true
+    biller nullable:true
+  } 
 
   QuotationRequest getQuotationRequest(){
     new QuotationRequest(
@@ -37,6 +49,18 @@ class QuotationRequestCommand implements Validateable {
 
   BigDecimal getCommission(String commission){
     getValueInBigDecimal(commission)
+  }
+
+  PaymentWay getPaymentWay(String paymentWay) {
+    PaymentWay.values().find { it.toString() == paymentWay }
+  }
+
+  PaymentMethod getPaymentMethod(String paymentMethod) {
+    PaymentMethod.values().find { it.toString() == paymentMethod }
+  }
+
+  InvoicePurpose getInvoicePurpose(String invoicePurpose) {
+    InvoicePurpose.values().find { it.toString() == invoicePurpose }
   }
 
 }
