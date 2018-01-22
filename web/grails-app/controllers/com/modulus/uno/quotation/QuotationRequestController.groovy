@@ -73,7 +73,11 @@ class QuotationRequestController {
     }
 
     def processRequest(QuotationRequest quotationRequest){
-      quotationRequest.commission = new QuotationRequestCommand().getCommission(params.commission)
+      QuotationRequestCommand quotationRequestCommand = new QuotationRequestCommand()
+      quotationRequest.commission = quotationRequestCommand.getCommission(params.commission)
+      quotationRequest.paymentWay = quotationRequestCommand.getPaymentWay(params.paymentWay)
+      quotationRequest.paymentMethod = quotationRequestCommand.getPaymentMethod(params.paymentMethod)
+      quotationRequest.invoicePurpose = quotationRequestCommand.getInvoicePurpose(params.invoicePurpose)
       log.info "Quotation Request to updating: ${quotationRequest.dump()}"
       quotationRequestService.processRequest(quotationRequest)
       redirect(action: 'index')
