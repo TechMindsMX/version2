@@ -2,6 +2,7 @@
 <%! import com.modulus.uno.PaymentMethod %>
 <%! import com.modulus.uno.InvoicePurpose %>
 
+<g:hiddenField name="id" value="${quotationRequest.id}"/>
 <div class="row">
   <div class="col-md-12">
     <div class="form-group">
