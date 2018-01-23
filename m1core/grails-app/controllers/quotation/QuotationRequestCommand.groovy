@@ -4,9 +4,6 @@ import grails.validation.Validateable
 import java.text.*
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.Company
-import com.modulus.uno.PaymentWay
-import com.modulus.uno.PaymentMethod
-import com.modulus.uno.InvoicePurpose
 
 class QuotationRequestCommand implements Validateable {
 
@@ -49,18 +46,6 @@ class QuotationRequestCommand implements Validateable {
 
   BigDecimal getCommission(String commission){
     getValueInBigDecimal(commission)
-  }
-
-  PaymentWay getPaymentWay(String paymentWay) {
-    PaymentWay.values().find { it.toString() == paymentWay }
-  }
-
-  PaymentMethod getPaymentMethod(String paymentMethod) {
-    PaymentMethod.values().find { it.toString() == paymentMethod }
-  }
-
-  InvoicePurpose getInvoicePurpose(String invoicePurpose) {
-    InvoicePurpose.values().find { it.toString() == invoicePurpose }
   }
 
 }
