@@ -71,7 +71,7 @@
           
 	          <sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
               <g:if test="${quotationRequest.status == QuotationRequestStatus.SEND}">
-                <g:form action="processRequest" id="${quotationRequest.id}">
+                <g:form action="processRequest">
                   <g:render template="setBillerForm"/>
                 </g:form>
               </g:if>
