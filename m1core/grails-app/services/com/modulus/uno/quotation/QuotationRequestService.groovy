@@ -2,7 +2,7 @@ package com.modulus.uno.quotation
 
 import grails.transaction.Transactional
 import com.modulus.uno.SaleOrderService
-import com.modulus.uno.PaymentWay
+import com.modulus.uno.Product
 import com.modulus.uno.SaleOrder
 import com.modulus.uno.SaleOrderItem
 import com.modulus.uno.SaleOrderItemCommand
@@ -14,8 +14,13 @@ import com.modulus.uno.CompanyStatus
 import com.modulus.uno.SaleOrderStatus
 import com.modulus.uno.User
 import com.modulus.uno.AddressType
+import com.modulus.uno.Company
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.PaymentMethod
+import com.modulus.uno.InvoicePurpose
 import java.math.RoundingMode
 import org.springframework.transaction.annotation.Propagation
+import java.text.*
 
 class QuotationRequestService {
 
@@ -41,17 +46,46 @@ class QuotationRequestService {
     }
 
     @Transactional
-    QuotationRequest processRequest(QuotationRequest quotationRequest){
+    QuotationRequest processRequest(def params){
+      QuotationRequest quotationRequest = updateQuotationRequest(params)
       SaleOrder saleOrder = createSaleOrderFromQuotationRequest(quotationRequest)
       quotationRequest.saleOrder = saleOrder
       quotationCommissionService.create(quotationRequest, quotationRequest.commission)
       quotationRequest.status = QuotationRequestStatus.PROCESSED
-      quotationRequest.save()
+      if (!quotationRequest.save()) {
+        transactionStatus.setRollbackOnly()
+        throw new QuotationException("No se pudo actualizar la solicitud de cotización")
+      }
+
       log.info "Quotation Request was processed: ${quotationRequest.dump()}"
       quotationRequest
     }
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+    QuotationRequest updateQuotationRequest(def params) {
+      Company biller = Company.get(params.biller) 
+      Product product = Product.get(params.product)
+      BigDecimal commission = getValueInBigDecimal(params.commission)
+      PaymentWay paymentWay = PaymentWay.values().find { it.toString() == params.paymentWay }
+      PaymentMethod paymentMethod = PaymentMethod.values().find { it.toString() == params.paymentMethod }
+      InvoicePurpose invoicePurpose = InvoicePurpose.values().find { it.toString() == params.invoicePurpose }
+      QuotationRequest quotationRequest = QuotationRequest.get(params.id)
+      quotationRequest.biller = biller
+      quotationRequest.product = product
+      quotationRequest.commission = commission
+      quotationRequest.paymentWay = paymentWay
+      quotationRequest.paymentMethod = paymentMethod
+      quotationRequest.invoicePurpose = invoicePurpose
+      quotationRequest
+    }
+
+  private def getValueInBigDecimal(String value) {
+    Locale.setDefault(new Locale("es","MX"));
+    DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
+    df.setParseBigDecimal(true);
+    BigDecimal bd = (BigDecimal) df.parse(value);
+    bd
+  }
+
     SaleOrder createSaleOrderFromQuotationRequest(QuotationRequest quotationRequest) {
       if(!quotationRequest.quotationContract.client.addresses.find { it.addressType == AddressType.FISCAL }){
         transactionStatus.setRollbackOnly()
@@ -66,10 +100,9 @@ class QuotationRequestService {
         transactionStatus.setRollbackOnly()
         throw new QuotationException("No se pudo crear la orden de venta")
       }
-      
       log.info "The sale order was created: ${saleOrder.dump()}"
+
       SaleOrderItemCommand saleOrderItemCommand = createSaleOrderItemCommandFromQuotationRequest(quotationRequest)
-      
       def saleOrderItem  = saleOrderItemCommand.createSaleOrderItem()
       saleOrderItem.saleOrder = saleOrder
 
