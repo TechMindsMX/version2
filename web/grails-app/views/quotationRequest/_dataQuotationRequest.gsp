@@ -13,6 +13,12 @@
         <dd>${quotationRequest.product?.name}</dd>
         <dt>Comisión</dt>
         <dd>${quotationRequest.commission}</dd>
+        <dt>Forma de Pago</dt>
+        <dd>${quotationRequest.paymentWay}</dd>
+        <dt>Método de Pago</dt>
+        <dd>${quotationRequest.paymentMethod}</dd>
+        <dt>Uso de CFDI</dt>
+        <dd>${quotationRequest.invoicePurpose}</dd>
       </g:if>
     </dl>
   </div>
