@@ -138,4 +138,25 @@ class PaysheetEmployeeServiceSpec extends Specification {
 			result.paymentWay == PaymentWay.BANKING
   }
 
+  @Unroll
+  void "Should get the rate tax = #expectedRateTax for a monthly salary=#theSalary"() {
+    given:"The monthly salary"
+      BigDecimal monthlySalary = theSalary
+    when:
+      RateTax rateTax = service.getRateTaxForMonthlySalary(monthlySalary)
+    then:
+      rateTax == expectedRateTax
+    where:
+      theSalary                                                       ||    expectedRateTax
+      new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)             ||      null
+      new BigDecimal(0.01).setScale(2, RoundingMode.HALF_UP)          ||      RateTax.R1
+      new BigDecimal(249.57).setScale(2, RoundingMode.HALF_UP)        ||      RateTax.R1
+      new BigDecimal(496.07).setScale(2, RoundingMode.HALF_UP)        ||      RateTax.R1
+      new BigDecimal(10298.36).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R6
+      new BigDecimal(15670.89).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R6
+      new BigDecimal(20770.29).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R6
+      new BigDecimal(22100.00).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R7
+      new BigDecimal(75000.00).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R9
+      new BigDecimal(72570890.10).setScale(2, RoundingMode.HALF_UP)   ||      RateTax.R11
+  }
 }
