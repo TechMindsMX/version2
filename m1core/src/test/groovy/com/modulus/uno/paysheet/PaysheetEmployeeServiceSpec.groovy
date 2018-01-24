@@ -167,7 +167,7 @@ class PaysheetEmployeeServiceSpec extends Specification {
     when:
       BigDecimal crudeIAS = service.calculateCrudeIASFromNetIAS(netIAS)
     then:
-      (crudeIAS - expectedCrudeIAS).abs() < 1
+      (crudeIAS - expectedCrudeIAS).abs() < 0.5
     where:
       theNetIAS                                                       ||    expectedCrudeIAS
       new BigDecimal(486.74).setScale(2, RoundingMode.HALF_UP)        ||      new BigDecimal(496.27).setScale(2, RoundingMode.HALF_UP)
@@ -184,5 +184,25 @@ class PaysheetEmployeeServiceSpec extends Specification {
       new BigDecimal(72950.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(100536.72).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(85103.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(118950.36).setScale(2, RoundingMode.HALF_UP)
   }
+
+  @Unroll
+  void "Should calculate crude assimilable salary=#expectedCrudeAssimilable for a employee from net assimilable salary=#theNetAssimilable and the paysheet payment period=#thePaymentPeriod"() {
+    given:"The paysheet employee"
+      PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:thePaymentPeriod).save(validate:false)
+      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet).save(validate:false)
+      PaysheetEmployee paysheetEmployee = new PaysheetEmployee(paysheet:paysheet, netAssimilable:theNetAssimilable).save(validate:false)
+    when:
+      BigDecimal crudeAssimilable = service.calculateCrudeAssimilableSalary(paysheetEmployee)
+    then:
+      (crudeAssimilable - expectedCrudeAssimilable).abs() < 0.5
+    where:
+      theNetAssimilable                                       |     thePaymentPeriod       ||    expectedCrudeAssimilable
+      new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)     |   PaymentPeriod.BIWEEKLY   || new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(10000).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(12056.91).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(8750.80).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(10423.54).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(52500).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(74548.66).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(100250.75).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(147235.17).setScale(2, RoundingMode.HALF_UP)
+
+   }
 
 }
