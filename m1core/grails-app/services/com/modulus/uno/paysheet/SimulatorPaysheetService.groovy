@@ -1,5 +1,5 @@
-
 package com.modulus.uno.paysheet
+
 import pl.touk.excel.export.WebXlsxExporter
 import com.modulus.uno.XlsImportService
 import java.math.RoundingMode
@@ -12,70 +12,69 @@ class SimulatorPaysheetService {
   BreakdownPaymentEmployeeService breakdownPaymentEmployeeService
   PaysheetEmployeeService paysheetEmployeeService
 
-    def generateLayoutForSimulator() {
-       def message = ["Todos las cantidades deben ser mensuales"]
-       def headers = ['CONSECUTIVO','SA_BRUTO','IAS_BRUTO','IAS_NETO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
-       def descriptions = ['NUMERO','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
-       new WebXlsxExporter().with {
-          fillRow(message,1)
-          fillRow(headers, 2)
-          fillRow(descriptions, 3)
-        }
+  def generateLayoutForSimulator() {
+    def message = ["Todos las cantidades deben ser mensuales"]
+    def headers = ['CONSECUTIVO','SA_BRUTO','IAS_BRUTO','IAS_NETO','PERIODO','RIESGO_TRAB',"FACT_INTEGRA","COMISION"]
+    def descriptions = ['NUMERO','','','',"Semanal, Catorcenal, Quincenal, Mensual"]
+    new WebXlsxExporter().with {
+      fillRow(message,1)
+      fillRow(headers, 2)
+      fillRow(descriptions, 3)
     }
+  }
 
-    def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
-       def data = employeeToExport(paysheetEmployeeList)
-       def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilableBruto','incomeTaxIAS','netAssimilable','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
-       def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR Assimilable','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
-       new WebXlsxExporter().with {
-          fillRow(headers, 2)
-          add(data,properties,3)
-        }
-
+  def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
+    def data = employeeToExport(paysheetEmployeeList)
+    def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilableBruto','incomeTaxIAS','netAssimilable','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
+    def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR Assimilable','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
+    new WebXlsxExporter().with {
+      fillRow(headers, 2)
+        add(data,properties,3)
     }
+  }
 
-    def processXlsSimulator(file) {
-        log.info "Processing massive registration for Employee"
-        List data = xlsImportService.parseXlsPaysheetSimulator(file)
-        List<PaysheetEmployee> paysheetEmployeeList = []
-        data.each{ row ->
-            if(row.SA_BRUTO && row.IAS_BRUTO && !row.IAS_NETO){ paysheetEmployeeList << processForSalaryBrutoAndIASBruto(row) }
-            if(row.SA_BRUTO && !row.IAS_BRUTO && row.IAS_NETO){ paysheetEmployeeList << processForIASNetoAndSalaryBruto(row) }
-        }
-        paysheetEmployeeList
+  def processXlsSimulator(file) {
+    log.info "Processing massive registration for Employee"
+    List data = xlsImportService.parseXlsPaysheetSimulator(file)
+    List<PaysheetEmployee> paysheetEmployeeList = []
+    data.each{ row ->
+      if(row.SA_BRUTO && row.IAS_BRUTO && !row.IAS_NETO){ paysheetEmployeeList << processForSalaryBrutoAndIASBruto(row) }
+      if(row.SA_BRUTO && !row.IAS_BRUTO && row.IAS_NETO){ paysheetEmployeeList << processForIASNetoAndSalaryBruto(row) }
     }
+    paysheetEmployeeList
+  }
 
-    def processForSalaryNetoAndIASNeto(def row){
-      getPaysheetEmployeeWithCalcules(row)
-    }
+  def processForSalaryNetoAndIASNeto(def row){
+    getPaysheetEmployeeWithCalcules(row)
+  }
 
-    def processForIASNetoAndSalaryBruto(def row){
-      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO, 0, row.SA_BRUTO)
-      getPaysheetEmployeeWithCalcules(row)
-    }
+  def processForIASNetoAndSalaryBruto(def row){
+    row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO, 0, row.SA_BRUTO)
+    getPaysheetEmployeeWithCalcules(row)
+  }
 
-    def processForSalaryBrutoAndIASBruto(def row){
-      getPaysheetEmployeeWithCalcules(row)
-    }
+  def processForSalaryBrutoAndIASBruto(def row){
+    getPaysheetEmployeeWithCalcules(row)
+  }
 
-    def processForSalaryNetoAndIASBruto(def row){
-      row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO)
-      getPaysheetEmployeeWithCalcules(row)
-    }
+  def processForSalaryNetoAndIASBruto(def row){
+    row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO)
+    getPaysheetEmployeeWithCalcules(row)
+  }
 
-    PaysheetEmployee getPaysheetEmployeeWithCalcules(def row){
-      PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row)
-      paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_BRUTO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario
-      paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_BRUTO, row.PERIODO) // Salario neto
-      paysheetEmployee.metaClass.incomeTaxIAS = calculateIncomeTax(row.IAS_BRUTO, row.PERIODO)
-      paysheetEmployee.metaClass.salaryBruto = calculateAmountForPeriod(row.SA_BRUTO, row.PERIODO)
-      paysheetEmployee.metaClass.iasBruto = calculateAmountForPeriod(row.IAS_BRUTO, row.PERIODO)
-      paysheetEmployee.metaClass.period = row.PERIODO
-      paysheetEmployee.netAssimilable = calculateSalaryAssimilable(paysheetEmployee.iasBruto, paysheetEmployee.incomeTaxIAS) // IAS NETO
-      paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_BRUTO, row.PERIODO) // Salario Neto
-      paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
-      paysheetEmployee
-    }
+  PaysheetEmployee getPaysheetEmployeeWithCalcules(def row){
+    PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row)
+    paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_BRUTO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario
+    paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_BRUTO, row.PERIODO) // Salario neto
+    paysheetEmployee.metaClass.incomeTaxIAS = calculateIncomeTax(row.IAS_BRUTO, row.PERIODO)
+    paysheetEmployee.metaClass.salaryBruto = calculateAmountForPeriod(row.SA_BRUTO, row.PERIODO)
+    paysheetEmployee.metaClass.iasBruto = calculateAmountForPeriod(row.IAS_BRUTO, row.PERIODO)
+    paysheetEmployee.metaClass.period = row.PERIODO
+    paysheetEmployee.netAssimilable = calculateSalaryAssimilable(paysheetEmployee.iasBruto, paysheetEmployee.incomeTaxIAS) // IAS NETO
+    paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_BRUTO, row.PERIODO) // Salario Neto
+    paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
+    paysheetEmployee
+  }
 
 
 
@@ -92,12 +91,12 @@ class SimulatorPaysheetService {
   }
 
   PaysheetEmployee createPaysheetEmployee(def row){
-     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-       prePaysheetEmployee:new PrePaysheetEmployee(),
-       breakdownPayment: new BreakdownPaymentEmployee(),
-       ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
-       paymentWay: PaymentWay.BANKING
-     )
+    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
+      prePaysheetEmployee:new PrePaysheetEmployee(),
+      breakdownPayment: new BreakdownPaymentEmployee(),
+      ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
+      paymentWay: PaymentWay.BANKING
+    )
     paysheetEmployee = setAttributesPaysheetEmployee(paysheetEmployee, row)
   }
 
@@ -217,7 +216,6 @@ class SimulatorPaysheetService {
   BigDecimal calculateIASNeto(BigDecimal iasBruto){
     iasBruto
   }
-
 
   BigDecimal calculateSalaryAssimilable(BigDecimal crudeIAS, BigDecimal incomeTaxIAS) {
     (crudeIAS - incomeTaxIAS).setScale(2, RoundingMode.HALF_UP)
