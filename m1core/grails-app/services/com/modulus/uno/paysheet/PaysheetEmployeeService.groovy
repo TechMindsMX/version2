@@ -33,6 +33,7 @@ class PaysheetEmployeeService {
       paysheetEmployee.incomeTax = calculateIncomeTax(baseImssMonthlySalary, paysheetEmployee.prePaysheetEmployee.prePaysheet.paymentPeriod)
       paysheetEmployee.netAssimilable = calculateNetAssimilableSalary(paysheetEmployee)
       paysheetEmployee.crudeAssimilable = calculateCrudeAssimilableSalary(paysheetEmployee)
+      paysheetEmployee.incomeTaxAssimilable = paysheetEmployee.crudeAssimilable - paysheetEmployee.netAssimilable
       paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee)
       paysheetEmployee.paysheetTax = calculatePaysheetTax(paysheetEmployee)
       paysheetEmployee.commission = calculateCommission(paysheetEmployee)
