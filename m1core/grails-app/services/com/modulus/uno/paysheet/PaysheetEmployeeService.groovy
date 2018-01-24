@@ -118,4 +118,11 @@ class PaysheetEmployeeService {
     }
   } 
 
+  BigDecimal calculateCrudeIASFromNetIAS(BigDecimal netIAS) {
+    RateTax temporalRateTax = getRateTaxForMonthlySalary(netIAS)
+    BigDecimal approximateSalary = (netIAS * (1 + (temporalRateTax.rate / 100))).setScale(2, RoundingMode.HALF_UP)
+    RateTax realRateTax = getRateTaxForMonthlySalary(approximateSalary)
+    BigDecimal crudeIAS = (netIAS + realRateTax.fixedQuota -(realRateTax.lowerLimit * (realRateTax.rate/100))) / (1 - (realRateTax.rate/100))
+    crudeIAS.setScale(2, RoundingMode.HALF_UP)
+  }
 }
