@@ -63,9 +63,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateIncomeTax(BigDecimal monthlySalary, PaymentPeriod paymentPeriod) {
-    RateTax rateTax = RateTax.values().find { rt ->
-      monthlySalary >= rt.lowerLimit && monthlySalary <= rt.upperLimit
-    }
+    RateTax rateTax = getRateTaxForMonthlySalary(monthlySalary)
     if (!rateTax) {
       return new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
     }
@@ -113,4 +111,11 @@ class PaysheetEmployeeService {
 		employee.paymentWay = employee.paymentWay == PaymentWay.BANKING ? PaymentWay.CASH : PaymentWay.BANKING
 		employee.save()
 	}
+
+  RateTax getRateTaxForMonthlySalary(BigDecimal monthlySalary) {
+     RateTax.values().find { rt ->
+      monthlySalary >= rt.lowerLimit && monthlySalary <= rt.upperLimit
+    }
+  } 
+
 }
