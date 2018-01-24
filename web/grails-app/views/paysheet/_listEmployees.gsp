@@ -75,7 +75,7 @@
                 <td class="text-right">${modulusuno.formatPrice(number:employee.subsidySalary)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.incomeTax)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.totalIncidencesImssPerceptions)}</td>
-                <td class="text-right">${modulusuno.formatPrice(number:employee.employee.totalIncidencesImssDeductions)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.totalIncidencesImssDeductions)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.crudeAssimilable)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.incomeTaxAssimilable)}</td>
