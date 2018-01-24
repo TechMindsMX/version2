@@ -72,10 +72,8 @@ class QuotationRequestController {
       [quotationRequestList:quotationRequestList]
     }
 
-    def processRequest(QuotationRequest quotationRequest){
-      quotationRequest.commission = new QuotationRequestCommand().getCommission(params.commission)
-      log.info "Quotation Request to updating: ${quotationRequest.dump()}"
-      quotationRequestService.processRequest(quotationRequest)
+    def processRequest(){
+      quotationRequestService.processRequest(params)
       redirect(action: 'index')
     }
 
