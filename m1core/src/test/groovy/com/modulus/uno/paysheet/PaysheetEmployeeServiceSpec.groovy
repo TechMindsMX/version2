@@ -159,4 +159,30 @@ class PaysheetEmployeeServiceSpec extends Specification {
       new BigDecimal(75000.00).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R9
       new BigDecimal(72570890.10).setScale(2, RoundingMode.HALF_UP)   ||      RateTax.R11
   }
+
+  @Unroll
+  void "Should calculate crude IAS=#expectedCrudeIAS from net IAS=#theNetIAS"() {
+    given:"The net IAS"
+      BigDecimal netIAS = theNetIAS
+    when:
+      BigDecimal crudeIAS = service.calculateCrudeIASFromNetIAS(netIAS)
+    then:
+      (crudeIAS - expectedCrudeIAS).abs() < 1
+    where:
+      theNetIAS                                                       ||    expectedCrudeIAS
+      new BigDecimal(486.74).setScale(2, RoundingMode.HALF_UP)        ||      new BigDecimal(496.27).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(250.00).setScale(2, RoundingMode.HALF_UP)        ||      new BigDecimal(254.89).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(6050.79).setScale(2, RoundingMode.HALF_UP)       ||      new BigDecimal(6552.89).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(10000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(11305.80).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(15850.80).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(18745.78).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(20000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(24113.81).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(27000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(33315.57).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(31000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(39029.85).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(43000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(56172.71).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(59000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(79516.02).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(64710.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(88051.87).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(72950.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(100536.72).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(85103.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(118950.36).setScale(2, RoundingMode.HALF_UP)
+  }
+
 }
