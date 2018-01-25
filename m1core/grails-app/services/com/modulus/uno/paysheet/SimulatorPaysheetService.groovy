@@ -57,7 +57,7 @@ class SimulatorPaysheetService {
     }
 
     if (!row.CONSECUTIVO.toString().isNumber() || !row.SA_BRUTO.toString().isNumber() || !row.IAS_BRUTO.toString().isNumber() || !row.IAS_NETO.toString().isNumber() || !row.RIESGO_TRAB.toString().isNumber() || !row.FACT_INTEGRA.toString().isNumber() || !row.COMISION.toString().isNumber()) {
-      return "AL MENOS UNA DE LAS COLUMNAS QUE DEBEN TENER UN NÚMERO VÁLIDO NO LO TIENE"
+      return "AL MENOS UNA DE LAS COLUMNAS NO TIENE UN VALOR VÁLIDO"
     }
 
     if (row.IAS_BRUTO.toString().isNumber() && row.IAS_NETO.toString().isNumber()
