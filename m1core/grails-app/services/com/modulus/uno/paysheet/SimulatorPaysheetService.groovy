@@ -26,7 +26,7 @@ class SimulatorPaysheetService {
   def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
     def data = employeeToExport(paysheetEmployeeList)
     def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilableBruto','incomeTaxIAS','netAssimilable','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
-    def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR Assimilable','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
+    def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR ASIMILABLE','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
     new WebXlsxExporter().with {
       fillRow(headers, 2)
         add(data,properties,3)
@@ -36,121 +36,102 @@ class SimulatorPaysheetService {
   def processXlsSimulator(file) {
     log.info "Processing massive registration for Employee"
     List data = xlsImportService.parseXlsPaysheetSimulator(file)
-    List<PaysheetEmployee> paysheetEmployeeList = []
-    data.each{ row ->
-      if(row.SA_BRUTO && row.IAS_BRUTO && !row.IAS_NETO){ paysheetEmployeeList << processForSalaryBrutoAndIASBruto(row) }
-      if(row.SA_BRUTO && !row.IAS_BRUTO && row.IAS_NETO){ paysheetEmployeeList << processForIASNetoAndSalaryBruto(row) }
-    }
-    paysheetEmployeeList
-  }
-
-  def processForSalaryNetoAndIASNeto(def row){
-    getPaysheetEmployeeWithCalcules(row)
-  }
-
-  def processForIASNetoAndSalaryBruto(def row){
-    row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO, 0, row.SA_BRUTO)
-    getPaysheetEmployeeWithCalcules(row)
-  }
-
-  def processForSalaryBrutoAndIASBruto(def row){
-    getPaysheetEmployeeWithCalcules(row)
-  }
-
-  def processForSalaryNetoAndIASBruto(def row){
-    row.IAS_BRUTO = calculateIASBruto(row.IAS_NETO)
-    getPaysheetEmployeeWithCalcules(row)
-  }
-
-  PaysheetEmployee getPaysheetEmployeeWithCalcules(def row){
-    PaysheetEmployee paysheetEmployee = createPaysheetEmployee(row)
-    paysheetEmployee.subsidySalary = calculateSubsidySalary(row.SA_BRUTO, row.PERIODO) //Aquí podría cambiar dependiendo del tipo de salario
-    paysheetEmployee.incomeTax = calculateIncomeTax(row.SA_BRUTO, row.PERIODO) // Salario neto
-    paysheetEmployee.metaClass.incomeTaxIAS = calculateIncomeTax(row.IAS_BRUTO, row.PERIODO)
-    paysheetEmployee.metaClass.salaryBruto = calculateAmountForPeriod(row.SA_BRUTO, row.PERIODO)
-    paysheetEmployee.metaClass.iasBruto = calculateAmountForPeriod(row.IAS_BRUTO, row.PERIODO)
-    paysheetEmployee.metaClass.period = row.PERIODO
-    paysheetEmployee.netAssimilable = calculateSalaryAssimilable(paysheetEmployee.iasBruto, paysheetEmployee.incomeTaxIAS) // IAS NETO
-    paysheetEmployee.paysheetTax = calculatePaysheetTax(row.SA_BRUTO, row.PERIODO) // Salario Neto
-    paysheetEmployee.commission = calculateCommission(paysheetEmployee, row.COMISION)
-    paysheetEmployee
-  }
-
-
-
-  List processDataFromXls(List data) {
     List results = []
-    data.each { employee ->
-      String result = saveEmployeeImportData(employee, company)
-      results.add(result)
-      if (result == "Registrado") {
-        addEmployeeToCompany(employee.RFC, company)
+    data.each{ row ->
+      Map resultImportRow = [:]
+      resultImportRow.row = row
+      resultImportRow.result = validateRowToImport(row)
+      resultImportRow.simulatedPaysheetEmployee = resultImportRow.result == "OK" ? createPaysheetEmployee(row) : new PaysheetEmployee()
+      if (resultImportRow.result == "OK") {
+        resultImportRow.simulatedPaysheetEmployee = createPaysheetEmployee(row)
       }
+      results.add(resultImportRow)
     }
+
     results
   }
 
-  PaysheetEmployee createPaysheetEmployee(def row){
-    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
-      prePaysheetEmployee:new PrePaysheetEmployee(),
-      breakdownPayment: new BreakdownPaymentEmployee(),
-      ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
-      paymentWay: PaymentWay.BANKING
-    )
-    paysheetEmployee = setAttributesPaysheetEmployee(paysheetEmployee, row)
+  String validateRowToImport(def row) {
+    if (row.CONSECUTIVO==null || row.SA_BRUTO==null || row.IAS_BRUTO==null || row.IAS_NETO==null || row.PERIODO==null || row.RIESGO_TRAB==null || row.FACT_INTEGRA==null || row.COMISION==null) {
+      return "TODAS LAS COLUMNAS SON REQUERIDAS, FALTAN DATOS"
+    }
+
+    if (!row.CONSECUTIVO.toString().isNumber() || !row.SA_BRUTO.toString().isNumber() || !row.IAS_BRUTO.toString().isNumber() || !row.IAS_NETO.toString().isNumber() || !row.RIESGO_TRAB.toString().isNumber() || !row.FACT_INTEGRA.toString().isNumber() || !row.COMISION.toString().isNumber()) {
+      return "AL MENOS UNA DE LAS COLUMNAS QUE DEBEN TENER UN NÚMERO VÁLIDO NO LO TIENE"
+    }
+
+    if (row.IAS_BRUTO.toString().isNumber() && row.IAS_NETO.toString().isNumber()
+      && new BigDecimal(row.IAS_BRUTO.toString())>0 && new BigDecimal(row.IAS_NETO.toString())>0) {
+      return "LOS DOS CAMPOS DE IAS TIENEN UN NÚMERO MAYOR A CERO, SÓLO UNO DE ELLOS DEBE TENERLO"
+    }
+    
+    if (row.SA_BRUTO.toString().isNumber() && row.IAS_BRUTO.toString().isNumber() && row.IAS_NETO.toString().isNumber()
+      && new BigDecimal(row.SA_BRUTO.toString())<=0 && new BigDecimal(row.IAS_BRUTO.toString())<=0 && new BigDecimal(row.IAS_NETO.toString())<=0) {
+      return "AL MENOS UNO DE LOS SALARIOS NO DEBE SER CERO"
+    }
+
+    PaymentPeriod paymentPeriod = PaymentPeriod.values().find(){it.toString() == row.PERIODO.toUpperCase()}
+    if (!paymentPeriod) {
+      return "EL PERIODO INDICADO NO EXISTE EN EL CATÁLOGO"
+    }
+
+    "OK"
   }
 
-  PaysheetEmployee setAttributesPaysheetEmployee(PaysheetEmployee paysheetEmployee, def row){
-    paysheetEmployee.breakdownPayment = breakdownPaymentEmployee(row)
-    paysheetEmployee.salaryImss = calculateAmountForPeriod(row.SA_BRUTO,row.PERIODO)
-    paysheetEmployee.socialQuota = calculateAmountForPeriod(paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal,row.PERIODO)
-    paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee, row.PERIODO)
+  PaysheetEmployee createPaysheetEmployee(def row){
+    BigDecimal monthlyCrudeSA = new BigDecimal(row.SA_BRUTO.toString())
+    BigDecimal monthlyCrudeIAS = new BigDecimal(row.IAS_BRUTO.toString())
+    BigDecimal monthlyNetIAS = new BigDecimal(row.IAS_NETO.toString())
+    BigDecimal commission = new BigDecimal(row.COMISION.toString())
+    PaymentPeriod paymentPeriod = PaymentPeriod.values().find(){it.toString() == row.PERIODO.toUpperCase()}
+    PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
+      prePaysheetEmployee:new PrePaysheetEmployee(),
+      ivaRate:new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
+      paymentWay: PaymentWay.BANKING,
+      breakdownPayment: calculateBreakdownPaymentEmployee(row),
+      salaryImss: paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(monthlyCrudeSA, paymentPeriod),
+      subsidySalary: calculateSubsidySalary(monthlyCrudeSA, paymentPeriod),
+      incomeTax: paysheetEmployeeService.calculateIncomeTax(crudeMonthlySalary, paymentPeriod),
+      paysheetTax: calculatePaysheetTax(monthlyCrudeSA, paymentPeriod)
+    )
+
+    if (monthlyCrudeIAS > 0) {
+      paysheetEmployee.crudeAssimilable = paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(monthlyCrudeIAS, paymentPeriod)
+      paysheetEmployee.incomeTaxAssimilable = paysheetEmployeeService.calculateIncomeTax(monthlyCrudeIAS, paymentPeriod)
+      paysheetEmployee.netAssimilable = (paysheetEmployee.crudeAssimilable - paysheetEmployee.incomeTaxAssimilable).setScale(2, RoundingMode.HALF_UP)
+    } else if (monthlyNetIAS > 0) {
+      paysheetEmployee.netAssimilable = paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(monthlyNetIAS, paymentPeriod)
+      BigDecimal monthlyCrudeAssimilable = paysheetEmployeeService.calculateCrudeIASFromNetIAS(monthlyNetIAS)
+      paysheetEmployee.crudeAssimilable = paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(monthlyCrudeAssimilable, paymentPeriod)
+      paysheetEmployee.incomeTaxAssimilable = (paysheetEmployee.crudeAssimilable - paysheetEmployee.netAssimilable).setScale(2, RoundingMode.HALF_UP)
+    }
+
+    paysheetEmployee.socialQuota = paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(paysheetEmployee.breakdownPayment.socialQuotaEmployeeTotal, paymentPeriod)
+    paysheetEmployee.socialQuotaEmployer = (paysheetEmployee.breakdownPayment.socialQuotaEmployer / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
+    
+    paysheetEmployee.commission = (paysheetEmployee.paysheetCost * (commission/100)).setScale(2, RoundingMode.HALF_UP)
+
     paysheetEmployee
   }
 
-  BigDecimal calculateAmountForPeriod(BigDecimal amount, String period){
-    PaymentPeriod paymentPeriod = PaymentPeriod.values().find(){it.toString() == period.toUpperCase()}
-    (amount / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
-  }
-
-  BigDecimal calculateSubsidySalary(BigDecimal salaryNeto, String period){
-    BigDecimal baseImssMonthlySalary = salaryNeto
+  BigDecimal calculateSubsidySalary(BigDecimal baseImssMonthlySalary, PaymentPeriod paymentPeriod){
     EmploymentSubsidy employmentSubsidy = EmploymentSubsidy.values().find { sb ->
       baseImssMonthlySalary >= sb.lowerLimit && baseImssMonthlySalary <= sb.upperLimit
     }
-    employmentSubsidy ? calculateAmountForPeriod(employmentSubsidy.getSubsidy(), period) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+    employmentSubsidy ? paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(employmentSubsidy.getSubsidy(), paymentPeriod) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
   }
 
-  BigDecimal calculatePaysheetTax(BigDecimal salaryNeto, String period) {
-    BigDecimal baseImssMonthlySalary = salaryNeto?:0
-    calculateAmountForPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), period)
+  BigDecimal calculatePaysheetTax(BigDecimal baseImssMonthlySalary, PaymentPeriod paymentPeriod) {
+    paysheetEmployeeSerive.calculateProportionalAmountFromPaymentPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), paymentPeriod)
   }
 
-  BigDecimal calculateSocialQuotaEmployer(PaysheetEmployee paysheetEmployee, String period) {
-    PaymentPeriod paymentPeriod = PaymentPeriod.values().find(){it.toString() == period.toUpperCase()}
-    (paysheetEmployee.breakdownPayment.socialQuotaEmployer / 30 * paymentPeriod.getDays()).setScale(2, RoundingMode.HALF_UP)
-  }
-
-  BigDecimal calculateCommission(PaysheetEmployee paysheetEmployee, BigDecimal commission) {
-    (paysheetEmployee.paysheetCost * (commission/100)).setScale(2, RoundingMode.HALF_UP)
-  }
-
-  BigDecimal calculateIncomeTax(BigDecimal salaryNeto, String period){
-    BigDecimal baseImssMonthlySalary = salaryNeto
-    RateTax rateTax = RateTax.values().find { rt ->
-      baseImssMonthlySalary >= rt.lowerLimit && baseImssMonthlySalary <= rt.upperLimit
-    }
-    if (!rateTax) {
-      return new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+  BreakdownPaymentEmployee calculateBreakdownPaymentEmployee(def row) {
+    BigDecimal crudeSA = new BigDecimal(row.SA_BRUTO.toString())
+    if (crudeSA <= 0) {
+      return new BreakdownPaymentEmployee()
     }
 
-    BigDecimal excess = baseImssMonthlySalary - rateTax.lowerLimit
-    BigDecimal marginalTax = excess * (rateTax.rate/100)
-    calculateAmountForPeriod(marginalTax + rateTax.fixedQuota, period)
-  }
-
-  BreakdownPaymentEmployee breakdownPaymentEmployee(def row){
-    BigDecimal integratedDailySalary =  getIntegratedDailySalary(row.SA_BRUTO, row.FACT_INTEGRA)
+    BigDecimal integratedDailySalary = getIntegratedDailySalary(row.SA_BRUTO, row.FACT_INTEGRA)
     BigDecimal baseQuotation = breakdownPaymentEmployeeService.getBaseQuotation(integratedDailySalary) ?: 0
     BigDecimal diseaseAndMaternityBase = breakdownPaymentEmployeeService.getDiseaseAndMaternityBase(integratedDailySalary) ?:0
     BreakdownPaymentEmployee breakdownPaymentEmployee = new BreakdownPaymentEmployee(
@@ -211,20 +192,6 @@ class SimulatorPaysheetService {
       employeeToExportLit << employeeToExport
     }
     employeeToExportLit
-  }
-
-  BigDecimal calculateIASNeto(BigDecimal iasBruto){
-    iasBruto
-  }
-
-  BigDecimal calculateSalaryAssimilable(BigDecimal crudeIAS, BigDecimal incomeTaxIAS) {
-    (crudeIAS - incomeTaxIAS).setScale(2, RoundingMode.HALF_UP)
-  }
-
-  BigDecimal calculateIASBruto(BigDecimal iasNeto, BigDecimal SA_BRUTO){
-    BigDecimal sANeto = SA_BRUTO
-    iasNeto = sANeto -SA_BRUTO
-    iasNeto
   }
 
 }
