@@ -6,6 +6,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import spock.lang.Ignore
 import java.text.*
+import java.math.RoundingMode
 
 @TestFor(SimulatorPaysheetService)
 @Mock([PaysheetEmployee, PrePaysheetEmployee])
@@ -39,37 +40,6 @@ class SimulatorPaysheetServiceSpec extends Specification {
     grailsApplication.config.paysheet.paymentBankingCode = "012"
   }
 
-  @Ignore
-  void "create BreakdownPaymentEmployee from map"(){
-    given:"One list of maps"
-      def paysheet = [CONSECUTIVO:1.0, IAS_NETO:150.0, SA_BRUTO:400, IAS_BRUTO:null, PERIODO:'Mensual', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
-    when:"create break"
-      def breakdownPaymentEmployee = service.breakdownPaymentEmployee(paysheet)
-    then:
-      breakdownPaymentEmployee
-  }
-
-  @Ignore
-  void "create paymentSheetEmployee"(){
-    given:"give one paysheet map"
-      def paysheet = [CONSECUTIVO:1.0, IAS_NETO:null, SA_BRUTO:6000, IAS_BRUTO:18000, PERIODO:'Quincenal', RIESGO_TRAB:1.3, FACT_INTEGRA:1.5, COMISION:10.0]
-    when:"Was create one paysheetEmployee"
-      PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
-    then:
-       paymentSheetEmployee.salaryImss == 3000.00
-       paymentSheetEmployee.ivaRate== 16.00
-       paymentSheetEmployee.breakdownPayment
-       paymentSheetEmployee.breakdownPayment.baseQuotation == 0
-       paymentSheetEmployee.breakdownPayment.integratedDailySalary == 300
-       paymentSheetEmployee.socialQuota == 0
-       paymentSheetEmployee.subsidySalary == 0
-       paymentSheetEmployee.incomeTax == 0
-       paymentSheetEmployee.netAssimilable == 0
-       paymentSheetEmployee.socialQuotaEmployer == 0
-       paymentSheetEmployee.paysheetTax == 0
-       paymentSheetEmployee.commission == 0
-  }
-
   @Unroll
   void "Should get the result validation=#expectedResult when row to import is #theRow"() {
     given:"The row to import"
@@ -92,4 +62,21 @@ class SimulatorPaysheetServiceSpec extends Specification {
       [CONSECUTIVO:1, SA_BRUTO:0, IAS_BRUTO:0, IAS_NETO:0, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "AL MENOS UNO DE LOS SALARIOS NO DEBE SER CERO"
       [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:0, IAS_NETO:0, PERIODO:"DIARIO", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "EL PERIODO INDICADO NO EXISTE EN EL CATÁLOGO"
   }
+
+  @Unroll
+  void "Should calculate de integrated daily salary=#expectedIDS for crude monthly salary=#theCrudeSA and integration factor=#theIF"() {
+    given:"The crude SA"
+      BigDecimal crudeSA = theCrudeSA
+    and:"The integration factor"
+      BigDecimal integrationFactor = theIF
+    when:
+      BigDecimal ids = service.getIntegratedDailySalary(crudeSA, integrationFactor)
+    then:
+      ids == expectedIDS
+    where:
+      theCrudeSA                    |       theIF             ||          expectedIDS
+      new BigDecimal(1000)          | new BigDecimal(1.0501)  ||  new BigDecimal(35.00).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(2500)          | new BigDecimal(1.0501)  ||  new BigDecimal(87.51).setScale(2, RoundingMode.HALF_UP)
+  }
+
 }
