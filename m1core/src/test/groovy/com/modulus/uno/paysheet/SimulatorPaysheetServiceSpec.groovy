@@ -64,7 +64,7 @@ class SimulatorPaysheetServiceSpec extends Specification {
   }
 
   @Unroll
-  void "Should calculate de integrated daily salary=#expectedIDS for crude monthly salary=#theCrudeSA and integration factor=#theIF"() {
+  void "Should calculate integrated daily salary=#expectedIDS for crude monthly salary=#theCrudeSA and integration factor=#theIF"() {
     given:"The crude SA"
       BigDecimal crudeSA = theCrudeSA
     and:"The integration factor"
@@ -78,5 +78,22 @@ class SimulatorPaysheetServiceSpec extends Specification {
       new BigDecimal(1000)          | new BigDecimal(1.0501)  ||  new BigDecimal(35.00).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(2500)          | new BigDecimal(1.0501)  ||  new BigDecimal(87.51).setScale(2, RoundingMode.HALF_UP)
   }
+
+  @Unroll
+  void "Should calculate occupational risk=#expectedOccupRisk for base quotation=#theBaseQuotation and job risk rate=#theRiskJob"() {
+    given:"The base quotation"
+      BigDecimal baseQuotation = theBaseQuotation
+    and:"The risk job rate"
+      BigDecimal riskJob = theRiskJob
+    when:
+      BigDecimal occupationalRisk = service.getOccupationalRisk(baseQuotation, riskJob)
+    then:
+      occupationalRisk == expectedOccupRisk
+    where:
+      theBaseQuotation              |       theRiskJob        ||          expectedOccupRisk
+      new BigDecimal(1000)          | new BigDecimal(0.879)   ||  new BigDecimal(8.79).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(2500)          | new BigDecimal(0.879)   ||  new BigDecimal(21.98).setScale(2, RoundingMode.HALF_UP)
+  }
+
 
 }
