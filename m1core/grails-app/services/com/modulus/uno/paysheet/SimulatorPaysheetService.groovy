@@ -91,7 +91,7 @@ class SimulatorPaysheetService {
       breakdownPayment: calculateBreakdownPaymentEmployee(row),
       salaryImss: paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(monthlyCrudeSA, paymentPeriod),
       subsidySalary: calculateSubsidySalary(monthlyCrudeSA, paymentPeriod),
-      incomeTax: paysheetEmployeeService.calculateIncomeTax(crudeMonthlySalary, paymentPeriod),
+      incomeTax: paysheetEmployeeService.calculateIncomeTax(monthlyCrudeSA, paymentPeriod),
       paysheetTax: calculatePaysheetTax(monthlyCrudeSA, paymentPeriod)
     )
 
@@ -122,7 +122,7 @@ class SimulatorPaysheetService {
   }
 
   BigDecimal calculatePaysheetTax(BigDecimal baseImssMonthlySalary, PaymentPeriod paymentPeriod) {
-    paysheetEmployeeSerive.calculateProportionalAmountFromPaymentPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), paymentPeriod)
+    paysheetEmployeeService.calculateProportionalAmountFromPaymentPeriod(baseImssMonthlySalary * (new BigDecimal(grailsApplication.config.paysheet.paysheetTax)/100), paymentPeriod)
   }
 
   BreakdownPaymentEmployee calculateBreakdownPaymentEmployee(def row) {
