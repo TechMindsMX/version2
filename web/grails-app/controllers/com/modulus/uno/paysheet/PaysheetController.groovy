@@ -108,17 +108,15 @@ class PaysheetController {
   def downloadLayout(){
     def layout = simulatorPaysheetService.generateLayoutForSimulator()
     layout.with {
-      setResponseHeaders(response, "layoutForSimulator.xlsx")
+      setResponseHeaders(response, "layoutSimuladorDeNomina.xlsx")
       save(response.outputStream)
     }
   }
 
   def uploadLayoutForSimulator(){
     def file = request.getFile('layoutSimulator')
-    paysheetEmployeeList = simulatorPaysheetService.processXlsSimulator(file)
-    //exportPaysheetEmployee(paysheetEmployeeList)
-    List<Map> mapaySheetEmployeelist =  simulatorPaysheetService.employeeToExport(paysheetEmployeeList) 
-    render view:'simulatorPaysheet', model:[paysheetEmployeeList:mapaySheetEmployeelist]
+    List resultList = simulatorPaysheetService.processXlsSimulator(file)
+    render view:'simulatorPaysheet', model:[resultList:resultList]
   }
 
   def exportPaysheetEmployee(){
