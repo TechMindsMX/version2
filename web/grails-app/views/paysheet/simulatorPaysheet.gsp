@@ -43,7 +43,7 @@
           </div>
           <div class="portlet-footer">
             <div align="right">
-              <g:link action="exportPaysheetEmployee" class="btn btn-primary text-right">Exportar XLS</g:link> 
+              <g:link action="exportSimulatedPaysheet" class="btn btn-primary text-right">Exportar XLS</g:link> 
             </div>
           </div>          
         </g:if>
