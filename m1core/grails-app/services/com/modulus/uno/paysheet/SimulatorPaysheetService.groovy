@@ -23,13 +23,13 @@ class SimulatorPaysheetService {
     }
   }
 
-  def generateXLSForSimulator(List<PaysheetEmployee> paysheetEmployeeList){
-    def data = employeeToExport(paysheetEmployeeList)
-    def properties = ['consecutivo','period','salaryImss','socialQuota','subsidySalary','incomeTax','totalImss','salaryAssimilableBruto','incomeTaxIAS','netAssimilable','subtotal','socialQuotaEmployeeTotal','isn','nominalCost','commission','totalNominal','iva','totalBill' ]
-    def headers = ['CONSECUTIVO','PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR ASIMILABLE','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
+  def generateXLSForSimulator(List importResultList){
+    def data = importResultList
+    def properties = ['consecutive', 'result', 'row.PERIODO','simulatedPaysheetEmployee.salaryImss','simulatedPaysheetEmployee.socialQuota','simulatedPaysheetEmployee.subsidySalary','simulatedPaysheetEmployee.incomeTax','simulatedPaysheetEmployee.imssSalaryNet','simulatedPaysheetEmployee.crudeAssimilable','simulatedPaysheetEmployee.incomeTaxAssimilable','simulatedPaysheetEmployee.netAssimilable','simulatedPaysheetEmployee.totalSalaryEmployee','simulatedPaysheetEmployee.socialQuotaEmployer','simulatedPaysheetEmployee.paysheetTax','simulatedPaysheetEmployee.paysheetCost','simulatedPaysheetEmployee.commission','simulatedPaysheetEmployee.paysheetTotal','simulatedPaysheetEmployee.paysheetIva','simulatedPaysheetEmployee.totalToInvoice' ]
+    def headers = ['CONSECUTIVO','RESULTADO', 'PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR ASIMILABLE','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
     new WebXlsxExporter().with {
-      fillRow(headers, 2)
-        add(data,properties,3)
+      fillRow(headers, 0)
+      add(data,properties,1)
     }
   }
 
@@ -37,12 +37,13 @@ class SimulatorPaysheetService {
     log.info "Processing simulator file xls"
     List data = xlsImportService.parseXlsPaysheetSimulator(file)
     List results = []
-    data.each{ row ->
+    data.eachWithIndex { row, index ->
       log.info "Importing data: ${row}"
       Map resultImportRow = [:]
+      resultImportRow.consecutive = index+1
       resultImportRow.row = row
       resultImportRow.result = validateRowToImport(row)
-      resultImportRow.simulatedPaysheetEmployee = resultImportRow.result == "OK" ? createPaysheetEmployee(row) : new PaysheetEmployee()
+      resultImportRow.simulatedPaysheetEmployee = resultImportRow.result == "OK" ? createPaysheetEmployee(row) : new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee())
       results.add(resultImportRow)
     }
 
