@@ -34,17 +34,15 @@ class SimulatorPaysheetService {
   }
 
   def processXlsSimulator(file) {
-    log.info "Processing massive registration for Employee"
+    log.info "Processing simulator file xls"
     List data = xlsImportService.parseXlsPaysheetSimulator(file)
     List results = []
     data.each{ row ->
+      log.info "Importing data: ${row}"
       Map resultImportRow = [:]
       resultImportRow.row = row
       resultImportRow.result = validateRowToImport(row)
       resultImportRow.simulatedPaysheetEmployee = resultImportRow.result == "OK" ? createPaysheetEmployee(row) : new PaysheetEmployee()
-      if (resultImportRow.result == "OK") {
-        resultImportRow.simulatedPaysheetEmployee = createPaysheetEmployee(row)
-      }
       results.add(resultImportRow)
     }
 
