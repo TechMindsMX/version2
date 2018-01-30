@@ -102,6 +102,7 @@ class BusinessEntityService {
       entity=""
     def criteria = BusinessEntity.createCriteria()
     def list = criteria.listDistinct {
+      eq 'status', BusinessEntityStatus.ACTIVE
       or{
         like 'rfc', "%${keyword}%"
         names{
