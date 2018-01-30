@@ -1,4 +1,5 @@
 <%! import com.modulus.uno.BusinessEntityType %>
+<%! import com.modulus.uno.BusinessEntityStatus %>
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="row">
@@ -6,12 +7,35 @@
         <div class="col-md-6">
           <h4>Datos Generales</h4>
         </div>
-        <div class="col-md-6" align="right">
-          <g:form resource="${this.businessEntity}" method="DELETE">
+        <div class="col-md-6">
           <fieldset class="buttons">
-            <g:link class="edit btn btn-default" action="edit" resource="${this.businessEntity}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
+            <sec:ifAnyGranted roles="ROLE_AUTHORIZER_EJECUTOR">
+              <g:if test="${businessEntity.status == BusinessEntityStatus.ACTIVE}">
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm">Dar de baja</button>
+                <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Confirme la acción</h4>
+                      </div>
+                      <div class="modal-body">
+                        ¿Está seguro en dar de baja la relación comercial?
+                      </div>
+                      <div class="modal-footer">
+                        <g:link class="edit btn btn-danger" action="inactive" resource="${this.businessEntity}">Sí</g:link>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </g:if>
+              <g:if test="${businessEntity.status == BusinessEntityStatus.TO_AUTHORIZE || businessEntity.status == BusinessEntityStatus.INACTIVE}">
+                <g:link class="edit btn btn-primary" action="authorize" resource="${this.businessEntity}">Autorizar</g:link>
+              </g:if>
+            </sec:ifAnyGranted>
           </fieldset>
-            </g:form>
         </div>
       </div>
     </div>
@@ -62,9 +86,13 @@
             ${clientData?.clientLink?.stpClabe}
             </g:if>
             <g:else>
-            <g:link class="btn btn-default" action="generateSubAccountStp" id="${businessEntity.id}" >
-            <g:message code="businessEntity.label.createSubAccount" default="Generar cuenta"/>
-            </g:link>
+              <sec:ifAnyGranted roles="ROLE_AUTHORIZER_EJECUTOR">
+                <g:if test="${businessEntity.status == BusinessEntityStatus.ACTIVE}">
+                  <g:link class="btn btn-default" action="generateSubAccountStp" id="${businessEntity.id}" >
+                    <g:message code="businessEntity.label.createSubAccount" default="Generar cuenta"/>
+                  </g:link>
+                </g:if>
+              </sec:ifAnyGranted>
             </g:else>
           </div>
         </div>

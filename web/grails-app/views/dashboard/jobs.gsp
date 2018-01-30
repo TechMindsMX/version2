@@ -339,14 +339,18 @@
     <div class="circle-tile-content blue">
       <div class="circle-tile-description">
         Relaciones Comerciales
+        <span>
+          <sec:ifAnyGranted roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">por autorizar</sec:ifAnyGranted>
+        </span>
       </div>
       <div class="circle-tile-number">
+        <sec:ifAnyGranted roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">${businessEntitiesToAuthorizeCount}</sec:ifAnyGranted>
       </div>
       <div class="text-right">
         <div class="btn-group">
           <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Opciones <i class="fa fa-caret-down"></i></button>
           <ul class="dropdown-menu">
-            <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_LEGAL_REPRESENTATIVE_VISOR">
+            <sec:ifAnyGranted roles="ROLE_AUTHORIZER_VISOR, ROLE_AUTHORIZER_EJECUTOR">
             <li>
               <g:link controller="businessEntity" action="index">
               Ver todas

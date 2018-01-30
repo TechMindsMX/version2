@@ -27,6 +27,7 @@
               </g:if>
 
             <div class="row">
+              <g:if test="${businessEntityList}">
               <div class="col-md-7">
                 <g:form controller="businessEntity" action="search" class="form-horizontal">
                   <div class="form-group">
@@ -41,17 +42,17 @@
               </div>
 
               <div class="col-md-2">
-                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#export" aria-expanded="false" aria-controls="collapseExample">
-                  Exportar
-                </button>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#export" aria-expanded="false" aria-controls="collapseExample">Exportar</button>
               </div>
-
               
               <div class="col-md-2 text-right">
-                <g:if test="${businessEntityToAuthorize}">
-                <g:link class="btn btn-primary" action="showToAuthorizeEntities">Autorizar Registros</g:link>
-                </g:if>
+                <sec:ifAnyGranted roles="ROLE_AUTHORIZER_EJECUTOR">
+                  <g:if test="${businessEntityToAuthorize}">
+                    <g:link class="btn btn-primary" action="showToAuthorizeEntities">Autorizar Registros</g:link>
+                  </g:if>
+                </sec:ifAnyGranted>
               </div>
+              </g:if>
             </div>
 
             <div class="row">
@@ -92,7 +93,7 @@
                   <th>Tipo de Relación</th>
                   <th>Estatus</th>
                 </tr>
-                <g:each in="${businessEntityList.sort{it.id}}" var="be">
+                <g:each in="${businessEntityList?.sort{it.id}}" var="be">
                   <tr>
                     <td>
                       <g:link controller="businessEntity" action="show" id="${be.id}">${be.rfc}</g:link></td>
