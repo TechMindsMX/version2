@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.BusinessEntityStatus %>
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="row">
@@ -9,8 +10,10 @@
 
           <div class="property-value">
             <fieldset class="buttons">
-              <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-              <g:link class="btn btn-default" action="create" controller="bankAccount" params="[businessEntity:businessEntity.id, businessEntityInfo:businessEntity.toString(), relation:relation, businessEntityBankAccount:true]"><g:message code="businessEntity.label.createBankAccount.${relation}" default="Agregar Cuenta"/></g:link>
+              <sec:ifAnyGranted roles="ROLE_OPERATOR_EJECUTOR">
+                <g:if test="${businessEntity.status == BusinessEntityStatus.ACTIVE || businessEntity.status == BusinessEntityStatus.TO_AUTHORIZE}">
+                  <g:link class="btn btn-default" action="create" controller="bankAccount" params="[businessEntity:businessEntity.id, businessEntityInfo:businessEntity.toString(), relation:relation, businessEntityBankAccount:true]"><g:message code="businessEntity.label.createBankAccount.${relation}" default="Agregar Cuenta"/></g:link>
+                </g:if>
               </sec:ifAnyGranted>
             </fieldset>
           </div>
@@ -27,10 +30,15 @@
           <ul>
             <g:each in="${businessEntity.banksAccounts.sort{it.banco.name}}" var="account">
             <li class="sublist">
-              <g:link controller="bankAccount" action="edit" params="[businessEntity:businessEntity.id, businessEntityInfo:businessEntity.toString(), relation:relation, businessEntityBankAccount:true]" id="${account.id}">
-              <g:if test="${relation != 'CLIENTE'}">${account}</g:if>
-              <g:else>${account.banco} - ${account.accountNumber}</g:else>
-              </g:link>
+              <g:if test="${businessEntity.status == BusinessEntityStatus.ACTIVE || businessEntity.status == BusinessEntityStatus.TO_AUTHORIZE}">
+                <g:link controller="bankAccount" action="edit" params="[businessEntity:businessEntity.id, businessEntityInfo:businessEntity.toString(), relation:relation, businessEntityBankAccount:true]" id="${account.id}">
+                  <g:if test="${relation != 'CLIENTE'}">${account}</g:if>
+                  <g:else>${account.banco} - ${account.accountNumber}</g:else>
+                </g:link>
+              </g:if><g:else>
+                <g:if test="${relation != 'CLIENTE'}">${account}</g:if>
+                <g:else>${account.banco} - ${account.accountNumber}</g:else>
+              </g:else>
             </li>
             </g:each>
           </ul>

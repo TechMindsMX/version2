@@ -103,6 +103,7 @@ class BusinessEntityService {
       entity=""
     def criteria = BusinessEntity.createCriteria()
     def list = criteria.listDistinct {
+      eq 'status', BusinessEntityStatus.ACTIVE
       or{
         like 'rfc', "%${keyword}%"
         names{
@@ -234,6 +235,24 @@ class BusinessEntityService {
 
   def createLayoutForBusinessEntityType(String entityType) {
     xlsLayoutsBusinessEntityService."generateLayoutFor${entityType.toUpperCase()}"()
+  }
+
+  def exportXlsForBusinessRelationships(String entityType, Company company) {
+    def businessEntityList = company.businessEntities.toList().sort{it.id}
+    if(entityType != "All Entities"){
+      return xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(giveListOfTheEntityType(entityType, businessEntityList))
+    }
+    else {
+      return xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(businessEntityList)
+    } 
+  }
+
+  List<BusinessEntity> giveListOfTheEntityType(String entityType, List<BusinessEntity> businessEntityList){
+    def businessEntityListForType = []
+    businessEntityList.each{ data ->
+      data.getBusinessEntityType().toString() == entityType?businessEntityListForType << data: " "
+    }
+    businessEntityListForType
   }
 
   def processXlsMassiveForEMPLEADO(def file, Company company) {
