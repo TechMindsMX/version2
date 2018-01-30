@@ -216,4 +216,19 @@ class BusinessEntityController {
     }
     redirect action:"showToAuthorizeEntities"
   }
+
+  @Transactional
+  def inactive(BusinessEntity businessEntity) {
+    businessEntity.status = BusinessEntityStatus.INACTIVE
+    businessEntity.save()
+    redirect action:"show", id:businessEntity.id 
+  }
+
+  @Transactional
+  def authorize(BusinessEntity businessEntity) {
+    businessEntity.status = BusinessEntityStatus.ACTIVE
+    businessEntity.save()
+    redirect action:"show", id:businessEntity.id
+  }
+
 }
