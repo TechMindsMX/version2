@@ -4,28 +4,21 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
+import spock.lang.Ignore
 import java.text.*
-
-import com.modulus.uno.Company
-import com.modulus.uno.BankAccount
-import com.modulus.uno.Bank
-import com.modulus.uno.S3Asset
-import com.modulus.uno.S3AssetService
-import com.modulus.uno.BusinessEntity
-import com.modulus.uno.BusinessEntityType
-import com.modulus.uno.ComposeName
-import com.modulus.uno.NameType
-import com.modulus.uno.ModulusUnoAccount
+import java.math.RoundingMode
 
 @TestFor(SimulatorPaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, S3Asset, BusinessEntity, ComposeName, ModulusUnoAccount])
+@Mock([PaysheetEmployee, PrePaysheetEmployee])
 class SimulatorPaysheetServiceSpec extends Specification {
 
   def grailsAplication
   BreakdownPaymentEmployeeService breakdownPaymentEmployeeService = Mock(BreakdownPaymentEmployeeService)
+  PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
 
   def setup() {
     service.breakdownPaymentEmployeeService = breakdownPaymentEmployeeService
+    service.paysheetEmployeeService = paysheetEmployeeService
     grailsApplication.config.iva = 16
     grailsApplication.config.paysheet.uma = "75.49"
     grailsApplication.config.paysheet.quotationDays = "30.4"
@@ -47,92 +40,60 @@ class SimulatorPaysheetServiceSpec extends Specification {
     grailsApplication.config.paysheet.paymentBankingCode = "012"
   }
 
-    void "create BreakdownPaymentEmployee from map"(){
-        given:"One list of maps"
-            def paysheet = [CONSECUTIVO:1.0, IAS_NETO:150.0, SA_BRUTO:400, IAS_BRUTO:null, PERIODO:'Mensual', RIESGO_TRAB:1.4, FACT_INTEGRA:1.1, COMISION:3.0]
-        when:"create break"
-            def breakdownPaymentEmployee = service.breakdownPaymentEmployee(paysheet)
-        then:
-          breakdownPaymentEmployee
-    }
+  @Unroll
+  void "Should get the result validation=#expectedResult when row to import is #theRow"() {
+    given:"The row to import"
+      Map row = theRow
+    when:
+      String result = service.validateRowToImport(row)
+    then:
+      result == expectedResult
+    where:
+      theRow                                              ||            expectedResult
+      [:]                                                 ||  "TODAS LAS COLUMNAS SON REQUERIDAS, FALTAN DATOS" 
+      [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:0, IAS_NETO:0] ||  "TODAS LAS COLUMNAS SON REQUERIDAS, FALTAN DATOS" 
+      [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:0, IAS_NETO:0, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "OK" 
+      [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:2000, IAS_NETO:0, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "OK" 
+      [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:0, IAS_NETO:2000, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "OK" 
+      [CONSECUTIVO:1, SA_BRUTO:0, IAS_BRUTO:1000, IAS_NETO:0, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "OK" 
+      [CONSECUTIVO:1, SA_BRUTO:0, IAS_BRUTO:0, IAS_NETO:2000, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "OK" 
+      [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:0, IAS_NETO:0, PERIODO:"QUINCENAL", RIESGO_TRAB:"10%", FACT_INTEGRA:1.0501, COMISION:4] ||  "AL MENOS UNA DE LAS COLUMNAS NO TIENE UN VALOR VÁLIDO" 
+      [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:100, IAS_NETO:200, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "LOS DOS CAMPOS DE IAS TIENEN UN NÚMERO MAYOR A CERO, SÓLO UNO DE ELLOS DEBE TENERLO"
+      [CONSECUTIVO:1, SA_BRUTO:0, IAS_BRUTO:0, IAS_NETO:0, PERIODO:"QUINCENAL", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "AL MENOS UNO DE LOS SALARIOS NO DEBE SER CERO"
+      [CONSECUTIVO:1, SA_BRUTO:1000, IAS_BRUTO:0, IAS_NETO:0, PERIODO:"DIARIO", RIESGO_TRAB:0.879, FACT_INTEGRA:1.0501, COMISION:4] ||  "EL PERIODO INDICADO NO EXISTE EN EL CATÁLOGO"
+  }
 
-    void "create paymentSheetEmployee"(){
-        given:"give one paysheet map"
-            def paysheet = [CONSECUTIVO:1.0, IAS_NETO:null, SA_BRUTO:6000, IAS_BRUTO:18000, PERIODO:'Quincenal', RIESGO_TRAB:1.3, FACT_INTEGRA:1.5, COMISION:10.0]
-        when:"Was create one paysheetEmployee"
-            PaysheetEmployee paymentSheetEmployee = service.createPaysheetEmployee(paysheet)
+  @Unroll
+  void "Should calculate integrated daily salary=#expectedIDS for crude monthly salary=#theCrudeSA and integration factor=#theIF"() {
+    given:"The crude SA"
+      BigDecimal crudeSA = theCrudeSA
+    and:"The integration factor"
+      BigDecimal integrationFactor = theIF
+    when:
+      BigDecimal ids = service.getIntegratedDailySalary(crudeSA, integrationFactor)
+    then:
+      ids == expectedIDS
+    where:
+      theCrudeSA                    |       theIF             ||          expectedIDS
+      new BigDecimal(1000)          | new BigDecimal(1.0501)  ||  new BigDecimal(35.00).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(2500)          | new BigDecimal(1.0501)  ||  new BigDecimal(87.51).setScale(2, RoundingMode.HALF_UP)
+  }
 
-        then:
-             paymentSheetEmployee.salaryImss == 3000.00
-             paymentSheetEmployee.ivaRate== 16.00
-             paymentSheetEmployee.breakdownPayment
-             paymentSheetEmployee.breakdownPayment.baseQuotation == 0
-             paymentSheetEmployee.breakdownPayment.integratedDailySalary == 300
-             paymentSheetEmployee.socialQuota == 0
-             paymentSheetEmployee.subsidySalary == 0
-             paymentSheetEmployee.incomeTax == 0
-             paymentSheetEmployee.netAssimilable == 0
-             paymentSheetEmployee.socialQuotaEmployer == 0
-             paymentSheetEmployee.paysheetTax == 0
-             paymentSheetEmployee.commission == 0
+  @Unroll
+  void "Should calculate occupational risk=#expectedOccupRisk for base quotation=#theBaseQuotation and job risk rate=#theRiskJob"() {
+    given:"The base quotation"
+      BigDecimal baseQuotation = theBaseQuotation
+    and:"The risk job rate"
+      BigDecimal riskJob = theRiskJob
+    when:
+      BigDecimal occupationalRisk = service.getOccupationalRisk(baseQuotation, riskJob)
+    then:
+      occupationalRisk == expectedOccupRisk
+    where:
+      theBaseQuotation              |       theRiskJob        ||          expectedOccupRisk
+      new BigDecimal(1000)          | new BigDecimal(0.879)   ||  new BigDecimal(8.79).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(2500)          | new BigDecimal(0.879)   ||  new BigDecimal(21.98).setScale(2, RoundingMode.HALF_UP)
+  }
 
-    }
-    @Unroll
-    void "calculate amount for period"(){
-        given:"A bigdecimal amount"
-            BigDecimal amount = 5000
-            String period = _period
-        when: "it's calculate period"
-            amount = service.calculateAmountForPeriod(amount, period)
-        then:
-            amount == _amount
-        where:
-            _amount | _period
-             2500   | "Quincenal"
-             1166.67| "Semanal"
-             5000   | "Mensual"
-
-    }
-
-    @Unroll
-    void "Calculate income tax for period"() {
-        given:"A big decimal"
-            BigDecimal amount = 400
-        and:"Period"
-            String period = "Quincenal"
-        when:
-            BigDecimal income = service.calculateIncomeTax(amount, period)
-        then:
-            income == 3.84
-    }
-
-    void "Calculate salary asimilable"() {
-        given:"A big decimal"
-            BigDecimal amount = 1400
-        and:"Salary imns"
-            BigDecimal imsSalary = 300 
-        when:
-            BigDecimal income = service.calculateSalaryAssimilable(amount, imsSalary)
-        then:
-            income == 1100
-    }
-
-    void "Calculate commission"() {
-        given:"A paysheet"
-            PaysheetEmployee paysheetEmploye = new PaysheetEmployee(prePaysheetEmployee: new PrePaysheetEmployee(),
-                                                                    salaryImss:300,
-                                                                    socialQuota:400,
-                                                                    subsidySalary:400,
-                                                                    incomeTax:203,
-                                                                    netAssimilable:500,
-                                                                    paysheetTax:100)
-        and: "A commission"
-            BigDecimal commission = 10
-        when:""
-            BigDecimal commissionIncome = service.calculateCommission(paysheetEmploye, commission)
-        then:
-            commissionIncome == 69.70
-    }
-        
 
 }
