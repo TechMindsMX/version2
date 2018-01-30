@@ -56,10 +56,9 @@
             </div>
 
             <div class="row">
-              <div class="col-md-12">
                 <div class="collapse" id="export">
                   <div class="well">
-                    <div class="container">
+                    <div class="container-fluid">
                       <g:form controller="businessEntity" action="downloadListForBusinessEntities" class="form-horizontal">
                         <div class="col-md-8">
                           <div class="form-group">
@@ -70,15 +69,12 @@
                           <button class="btn btn-default">XLS</button>
                         </div>
                       </g:form>
-                      <g:form controller="businessEntity" action="downloadListForBusinessEntities" class="form-horizontal">
-                        <div class="col-md-3">
-                          <button class="btn btn-default">Todos</button>
-                        </div>
-                      </g:form>
+                      <div class="col-md-3">
+                        <g:link class="btn btn-primary" action="downloadListForBusinessEntities">Todos</g:link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
 
             <div class="row">
