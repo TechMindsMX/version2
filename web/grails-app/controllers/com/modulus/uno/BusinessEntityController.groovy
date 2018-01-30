@@ -26,7 +26,7 @@ class BusinessEntityController {
     boolean businessEntityToAuthorize = allBusinessEntitiesCompany.find {it.status == BusinessEntityStatus.TO_AUTHORIZE} ? true : false
     def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
 
-    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize]
+    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize, clientProviderType:LeadType.CLIENTE]
   }
 
   def show(BusinessEntity businessEntity) {
@@ -186,6 +186,15 @@ class BusinessEntityController {
     }
   }
 
+  def downloadListForBusinessEntities(){
+    def company = Company.findById(session.company.toLong())
+    def xlsList = businessEntityService.exportXlsForBusinessRelationships(params.clientProviderType?:"All Entities", company)
+    xlsList.with {
+      setResponseHeaders(response, "${params.clientProviderType?:'Relaciones comerciales'}.xlsx")
+      save(response.outputStream)
+    }
+  }
+
   def uploadMassiveRecords() {
     String entityType = params.entityType
     def file = request.getFile('massiveRecordsFile')
@@ -207,4 +216,19 @@ class BusinessEntityController {
     }
     redirect action:"showToAuthorizeEntities"
   }
+
+  @Transactional
+  def inactive(BusinessEntity businessEntity) {
+    businessEntity.status = BusinessEntityStatus.INACTIVE
+    businessEntity.save()
+    redirect action:"show", id:businessEntity.id 
+  }
+
+  @Transactional
+  def authorize(BusinessEntity businessEntity) {
+    businessEntity.status = BusinessEntityStatus.ACTIVE
+    businessEntity.save()
+    redirect action:"show", id:businessEntity.id
+  }
+
 }

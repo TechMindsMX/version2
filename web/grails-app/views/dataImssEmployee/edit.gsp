@@ -46,7 +46,7 @@
                 <br />
                 <div class="row">
                   <div class="col-md-6">
-                <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
+                <sec:ifAnyGranted roles="ROLE_OPERATOR_EJECUTOR">
                   <g:submitButton name="update" class="save btn btn-default" value="${message(code: 'default.button.update.label', default: 'Update')}" />
                 </sec:ifAnyGranted>
                   </div>

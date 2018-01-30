@@ -7,7 +7,11 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
+<<<<<<< HEAD
 @Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink, BankAccount, DataImssEmployee, ProviderLink])
+=======
+@Mock([BusinessEntity, ComposeName, ClientLink, ProviderLink, Company, EmployeeLink, BankAccount, DataImssEmployee])
+>>>>>>> origin/feature/400
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
@@ -362,4 +366,25 @@ class BusinessEntityServiceSpec extends Specification {
       "Molar"   ||  true
   }
 
+  void "Give list of the entity type"(){
+    given:"The entity type"
+      String entityType = entityTypes
+    and:"The business entity listf"
+      List<BusinessEntity> businessEntityList = _businessEntityLists
+    and:
+      service.getClientProviderType(_) >> LeadType.CLIENTE
+      service.getClientProviderType(_) >> LeadType.PROVEEDOR
+      service.getClientProviderType(_) >> LeadType.CLIENTE_PROVEEDOR
+      service.getClientProviderType(_) >> LeadType.EMPLEADO
+    when:
+      def result = service.giveListOfTheEntityType(entityType, businessEntityList)
+    then:
+      result == []
+    where:
+      entityTypes         | _businessEntityLists                                                                       ||  expected
+      "CLIENTE"           | [new BusinessEntity(rfc:"PAG770214PR1").save(validate:false), new BusinessEntity(rfc:"PAGC770214400").save(validate:false), new BusinessEntity(rfc:"PAGC770214GU1").save(validate:false), new BusinessEntity(rfc:"PAED890323CPP").save(validate:false) ] ||  1
+      "PROVEEDOR"         | [new BusinessEntity(rfc:"PAG770214PR1").save(validate:false), new BusinessEntity(rfc:"PAGC770214400").save(validate:false), new BusinessEntity(rfc:"PAGC770214GU1").save(validate:false), new BusinessEntity(rfc:"PAED890323CPP").save(validate:false) ] ||  1
+      "CLIENTE_PROVEEDOR" | [new BusinessEntity(rfc:"PAG770214PR1").save(validate:false), new BusinessEntity(rfc:"PAGC770214400").save(validate:false), new BusinessEntity(rfc:"PAGC770214GU1").save(validate:false), new BusinessEntity(rfc:"PAED890323CPP").save(validate:false) ] ||  1
+      "EMPLEADO"          | [new BusinessEntity(rfc:"PAG770214PR1").save(validate:false), new BusinessEntity(rfc:"PAGC770214400").save(validate:false), new BusinessEntity(rfc:"PAGC770214GU1").save(validate:false), new BusinessEntity(rfc:"PAED890323CPP").save(validate:false) ] ||  1
+  }
 }
