@@ -53,13 +53,13 @@ class XlsLayoutsBusinessEntityService {
   List<Map> getMapBusinessEntity(List<BusinessEntity> businessEntityList){
     List<Map> businessEntitiesList = []
     businessEntityList.each{ business ->
-          Map businessEntities = [
-                          rfc: business.rfc,
-                          name: business.toString() ?: "Sin Nombre",
-                          website: business?.website,
-                          type: business.type,
-                          businessEntityType: business.getBusinessEntityType(),
-                          status: business.status
+      Map businessEntities = [
+        rfc: business.rfc,
+        name: business.toString() ?: "Sin Nombre",
+        website: business?.website,
+        type: business.type,
+        businessEntityType: business.getBusinessEntityType(),
+        status: business.status.getDescription()
       ]
       businessEntitiesList << businessEntities
     }
