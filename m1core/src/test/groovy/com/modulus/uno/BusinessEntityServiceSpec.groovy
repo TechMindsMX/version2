@@ -7,11 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(BusinessEntityService)
-<<<<<<< HEAD
-@Mock([BusinessEntity, ComposeName, ClientLink, Company, EmployeeLink, BankAccount, DataImssEmployee, ProviderLink])
-=======
 @Mock([BusinessEntity, ComposeName, ClientLink, ProviderLink, Company, EmployeeLink, BankAccount, DataImssEmployee])
->>>>>>> origin/feature/400
 class BusinessEntityServiceSpec extends Specification {
 
   def names = []
