@@ -32,8 +32,16 @@
               <th>Cuenta</th>
               <th>Tarjeta</th>
 							<th>Forma de Pago</th>
-              <th>IMSS</th>
-              <th>Asimilable</th>
+              <th>SA Bruto</th>
+              <th>Cuota Social</th>
+              <th>Subsidio</th>
+              <th>ISR SA</th>
+              <th>Incidencias Percep</th>
+              <th>Incidencias Deduc</th>
+              <th>SA Neto</th>
+              <th>IAS Bruto</th>
+              <th>ISR IAS</th>
+              <th>IAS Neto</th>
               <th>Subtotal</th>
               <th>Costo Nominal</th>
               <th>Comisión</th>
@@ -62,7 +70,15 @@
 										<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
 									</g:else>
 								</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.salaryImss)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.socialQuota)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.subsidySalary)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.incomeTax)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.totalIncidencesImssPerceptions)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.totalIncidencesImssDeductions)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.imssSalaryNet)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.crudeAssimilable)}</td>
+                <td class="text-right">${modulusuno.formatPrice(number:employee.incomeTaxAssimilable)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.netAssimilable)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.totalSalaryEmployee)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.paysheetCost)}</td>
