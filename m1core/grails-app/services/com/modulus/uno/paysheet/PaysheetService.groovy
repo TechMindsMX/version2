@@ -28,7 +28,7 @@ class PaysheetService {
     )
     paysheet.save()
     loadEmployeesToPaysheetFromPrePaysheet(paysheet, prePaysheet)
-    prePaysheetService.changeStatusToProcessed(prePaysheet)
+		validatePaymentsOfPaysheet(paysheet)
     paysheet
   }
 
@@ -40,6 +40,36 @@ class PaysheetService {
     paysheet.save()
     paysheet
   }
+
+	def validatePaymentsOfPaysheet(Paysheet paysheet) {
+		List<PaysheetEmployee> wrongEmployees = getEmployeesWithWrongPayment(paysheet)
+		if (wrongEmployees) {
+			rejectPaysheetAndPrePaysheetForWrongPayments(paysheet, wrongEmployees)
+		} else {
+    	prePaysheetService.changeStatusToProcessed(paysheet.prePaysheet)
+		}
+	
+	}
+
+	List<PaysheetEmployee> getEmployeesWithWrongPayment(Paysheet paysheet) {
+		List<PaysheetEmployee> wrongEmployees = []
+		paysheet.employees.each { employee ->
+			BigDecimal difference = employee.totalSalaryEmployee - employee.prePaysheetEmployee.netPayment
+			if (difference.abs() > 1) {
+				wrongEmployees.add(employee)
+			}
+		}
+		wrongEmployees
+	}
+
+	Paysheet rejectPaysheetAndPrePaysheetForWrongPayments(Paysheet paysheet, List<PaysheetEmployee> wrongEmployees) {
+		paysheet.status = PaysheetStatus.REJECTED
+		String wrongRfcs = (wrongEmployees*.prePaysheetEmployee.rfc).join(",")
+		paysheet.rejectReason = "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: ${wrongRfcs}"
+		paysheet.save()
+    prePaysheetService.reject(paysheet.prePaysheet)
+		paysheet
+	}
 
   @Transactional
   Paysheet sendToAuthorize(Paysheet paysheet) {
@@ -62,8 +92,8 @@ class PaysheetService {
 
   Map getEmployeesToExport(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
-    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'salaryAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'INCIDENCIAS PERCEP', 'INCIDENCIAS DEDUC', 'TOTAL IMSS', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'totalIncidencesImssPerceptions', 'totalIncidencesImssDeductions', 'imssSalaryNet', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
   }
@@ -80,6 +110,7 @@ class PaysheetService {
   Paysheet reject(Paysheet paysheet) {
     paysheet.status = PaysheetStatus.REJECTED
     paysheet.save()
+    prePaysheetService.reject(paysheet.prePaysheet)
     //TODO: enviar notificación
     paysheet
   }
@@ -97,8 +128,8 @@ class PaysheetService {
 
   Map getEmployeesToExportImss(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS']
-    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'INCIDENCIAS PERCEP', 'INCIDENCIAS DEDUC', 'TOTAL IMSS']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'totalIncidencesImssPerceptions', 'totalIncidencesImssDeductions', 'imssSalaryNet']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
   }
@@ -116,8 +147,8 @@ class PaysheetService {
 
   Map getEmployeesToExportAssimilable(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'ASIMILABLE']
-    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryAssimilable']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
   }
@@ -249,17 +280,19 @@ class PaysheetService {
     log.info "Payment dispersion same bank ${schema} Default for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_Default",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
 		String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(18,'0')
 		String currency = "MXN"
 		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
     dispersionDataForBank.employees.each { employee ->
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
+      if (employee."${salary}" > 0) {
+        String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
 
-      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+        file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+      }
     }
 
     log.info "File created: ${file.text}"
@@ -270,16 +303,18 @@ class PaysheetService {
     log.info "Payment dispersion same bank ${schema} BBVA for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_BBVA",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
 		String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(18,'0')
 		String currency = "MXN"
 		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
     dispersionDataForBank.employees.each { employee ->
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
-      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-			file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+      if (employee."${salary}" > 0) {
+        String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+        file.append("${destinyAccount}${sourceAccount}${currency}${amount}${message}\n")
+      }
     }
 
     log.info "File created: ${file.text}"
@@ -290,7 +325,7 @@ class PaysheetService {
     log.info "Payment dispersion same bank ${schema} SANTANDER for employees: ${dispersionDataForBank.employees}"
     File file = File.createTempFile("dispersion_${schema}_SANTANDER",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
     String sourceAccount = dispersionDataForBank."${account}".accountNumber.padRight(11,'  ')
 		//HEADER
@@ -299,25 +334,29 @@ class PaysheetService {
 
 		//DETAIL
 		BigDecimal total = new BigDecimal(0)
+    Integer countEmployees = 0
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
-			String counter = "2${(index+2).toString().padLeft(5,'0')}"
-			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
-			String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
-			
-			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
+      if (employee."${salary}" > 0) {
+        String counter = "2${(index+2).toString().padLeft(5,'0')}"
+        String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+        String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
+        
+        BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
 
-			String lastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ")).padRight(30," ")
-			String motherLastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ")).padRight(20," ")
-			String name = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ")).padRight(30," ")
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
-      String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(18,'0')
-      String concept = "01"
-			file.append("${counter}${employeeNumber}${lastName}${motherLastName}${name}${destinyAccount}${amount}${concept}\n".toUpperCase())
-			total += employee."${salary}"
+        String lastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_PATERNO }.value : " ")).padRight(30," ")
+        String motherLastName = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.APELLIDO_MATERNO }.value : " ")).padRight(20," ")
+        String name = clearSpecialCharsFromString((businessEntityEmployee ? businessEntityEmployee.names.find { it.type == NameType.NOMBRE }.value : " ")).padRight(30," ")
+        String destinyAccount = employee.prePaysheetEmployee.account.padLeft(16,' ')
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(18,'0')
+        String concept = "01"
+        file.append("${counter}${employeeNumber}${lastName}${motherLastName}${name}${destinyAccount}${amount}${concept}\n".toUpperCase())
+        total += employee."${salary}"
+        countEmployees++
+      }
     }
 
 		//FOOTER
-		String footer = "3${(dispersionDataForBank.employees.size()+1).toString().padLeft(5,'0')}${dispersionDataForBank.employees.size().toString().padLeft(5,'0')}${(new DecimalFormat('##0.00').format(total)).replace(".","").padLeft(18,'0')}"
+		String footer = "3${(countEmployees+1).toString().padLeft(5,'0')}${countEmployees.toString().padLeft(5,'0')}${(new DecimalFormat('##0.00').format(total)).replace(".","").padLeft(18,'0')}"
 		file.append("${footer}\n")
     log.info "File created: ${file.text}"
     file
@@ -333,33 +372,38 @@ class PaysheetService {
 			log.info "La cuenta no tiene registrado el número de cliente"
 			file.append("La cuenta Banamex ${chargeBankAccount.accountNumber} no tiene número de cliente registrado")
 		} else {
-
-		log.info "Dispersion data for bank: ${dispersionDataForBank}"
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
-		String namePayer = schema == "SA" ? dispersionDataForBank.saPayer : dispersionDataForBank.iasPayer
-    String nameCompany = namePayer.length() > 36 ? namePayer.substring(0,36) : namePayer
-    String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(7,"0")
-		String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
-		String lineControl = "1${chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(nameCompany).padRight(36,'  ')}${message}15D01"
-		file.append("${lineControl}\n")
-		BigDecimal totalDispersion = dispersionDataForBank.employees*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
-		String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${chargeBankAccount.branchNumber.padLeft(13,'0')}${chargeBankAccount.accountNumber.padLeft(7,'0')}${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}"
-		file.append("${lineGlobal}\n")
-		dispersionDataForBank.employees.eachWithIndex { employee, index ->
-			String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
-      String destinyBranchAccount = employee.prePaysheetEmployee.clabe.substring(3,6).padLeft(13,"0")
-      String destinyAccount = employee.prePaysheetEmployee.account.padLeft(7," ")
-			String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
-			String reference = "${dispersionDataForBank.idPaysheet}${employeeNumberCleaned ?: index}".padRight(16," ")
-			BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
-			String fullName = clearSpecialCharsFromString(businessEntityEmployee.toString().length()>55 ? businessEntityEmployee.toString().substring(0,55) : businessEntityEmployee.toString()).padRight(55, " ")
-			String ending = "${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
-			String lineEmployee = "3000101001${amount}01${destinyBranchAccount}${destinyAccount}${reference}${fullName}${ending}"
-			file.append("${lineEmployee}\n")
-		}
-		String lineTotals = "4001${dispersionDataForBank.employees.size().toString().padLeft(6,'0')}${(totalDispersion*100).intValue().toString().padLeft(18,'0')}000001${(totalDispersion*100).intValue().toString().padLeft(18,'0')}"
-		file.append("${lineTotals}\n")
-
+      log.info "Dispersion data for bank: ${dispersionDataForBank}"
+      String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
+      
+      def employeesNoZeroSalary = dispersionDataForBank.employees.findAll { employee -> employee."${salary}">0 }
+      if (!employeesNoZeroSalary) {
+        log.info "El salario de los empleados para el esquema ${schema} está en ceros"
+        file.append("El salario de los empleados para el esquema ${schema} está en ceros")
+      } else {
+        String namePayer = schema == "SA" ? dispersionDataForBank.saPayer : dispersionDataForBank.iasPayer
+        String nameCompany = namePayer.length() > 36 ? namePayer.substring(0,36) : namePayer
+        String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(7,"0")
+        String message = clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(20," ")
+        String lineControl = "1${chargeBankAccount.clientNumber.padLeft(12,'0')}${dispersionDataForBank.applyDate.format('yyMMdd')}${dispersionDataForBank.sequence.padLeft(4,'0')}${clearSpecialCharsFromString(nameCompany).padRight(36,'  ')}${message}15D01"
+        file.append("${lineControl}\n")
+        BigDecimal totalDispersion = employeesNoZeroSalary*."${salary}".sum().setScale(2, RoundingMode.HALF_UP)
+        String lineGlobal = "21001${((totalDispersion*100).intValue()).toString().padLeft(18,'0')}03${chargeBankAccount.branchNumber.padLeft(13,'0')}${chargeBankAccount.accountNumber.padLeft(7,'0')}${employeesNoZeroSalary.size().toString().padLeft(6,'0')}"
+        file.append("${lineGlobal}\n")
+        employeesNoZeroSalary.eachWithIndex { employee, index ->
+          String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
+          String destinyBranchAccount = employee.prePaysheetEmployee.clabe.substring(3,6).padLeft(13,"0")
+          String destinyAccount = employee.prePaysheetEmployee.account.padLeft(7," ")
+          String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
+          String reference = "${dispersionDataForBank.idPaysheet}${employeeNumberCleaned ?: index}".padRight(16," ")
+          BusinessEntity businessEntityEmployee = BusinessEntity.findByRfc(employee.prePaysheetEmployee.rfc)
+          String fullName = clearSpecialCharsFromString(businessEntityEmployee.toString().length()>55 ? businessEntityEmployee.toString().substring(0,55) : businessEntityEmployee.toString()).padRight(55, " ")
+          String ending = "${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+          String lineEmployee = "3000101001${amount}01${destinyBranchAccount}${destinyAccount}${reference}${fullName}${ending}"
+          file.append("${lineEmployee}\n")
+        }
+        String lineTotals = "4001${employeesNoZeroSalary.size().toString().padLeft(6,'0')}${(totalDispersion*100).intValue().toString().padLeft(18,'0')}000001${(totalDispersion*100).intValue().toString().padLeft(18,'0')}"
+        file.append("${lineTotals}\n")
+      }
 		}
 
     log.info "File created: ${file.text}"
@@ -402,7 +446,7 @@ class PaysheetService {
     log.info "Payment dispersion ${schema} interbank for employees: ${dispersionData.employees}"
     File file = File.createTempFile("dispersion_${schema}_InterBank",".txt")
 
-		String salary = schema == "SA" ? "imssSalaryNet" : "salaryAssimilable"
+		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String sourceAccount = "M1Account".padLeft(18,'0')
 		String currency = "MXN"
 		String message = clearSpecialCharsFromString(dispersionData.paymentMessage).padRight(30,' ')
@@ -411,13 +455,15 @@ class PaysheetService {
 		String disp = "H"      
 
     dispersionData.employees.each { employee ->
-      log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
-      String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
-      String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
-      String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
-      String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
-			String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
-     	file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+      if (employee."${salary}" > 0) {
+        log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
+        String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
+        String cleanedName = clearSpecialCharsFromString(employee.prePaysheetEmployee.nameEmployee)
+        String nameEmployee = cleanedName.length()>30 ? cleanedName.substring(0,30) : cleanedName.padRight(30,' ')
+        String bankingCode = employee.prePaysheetEmployee.bank.bankingCode
+        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
+        file.append("${destinyAccount}${sourceAccount}${currency}${amount}${nameEmployee}${typeAccount}${bankingCode}${message}${reference}${disp}\n")
+      }
     }
     log.info "File created: ${file.text}"
     file
@@ -436,8 +482,8 @@ class PaysheetService {
 
   Map getEmployeesOnCashToExport(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
-    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'salaryAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
     employees.data = paysheet.employees.findAll { emp -> !emp.prePaysheetEmployee.bank }.sort { it.prePaysheetEmployee.nameEmployee }
     employees
   }
@@ -453,7 +499,7 @@ class PaysheetService {
 			summaryBank.iasPayers = getPayersForBankAndSchema(payers, bank, PaymentSchema.ASSIMILABLE)
 			summaryBank.allPayers = payers
 			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
-			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.salaryAssimilable.sum()
+			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.netAssimilable.sum()
 			summaryBank.type = "SameBank"
       if (summaryBank.totalSA > 0 || summaryBank.totalIAS >0)
 			  summary.add(summaryBank)
@@ -499,7 +545,7 @@ class PaysheetService {
     summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
     summaryInterBank.allPayers = payers
 		summaryInterBank.totalSA = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
-		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.salaryAssimilable.sum()
+		summaryInterBank.totalIAS = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank && e.paymentWay==PaymentWay.BANKING)){ return e} }*.netAssimilable.sum()
 		summaryInterBank.type = "InterBank"
     if (summaryInterBank.totalSA > 0 || summaryInterBank.totalIAS >0)
       summary.add(summaryInterBank)

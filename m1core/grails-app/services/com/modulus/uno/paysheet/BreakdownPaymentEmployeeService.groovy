@@ -19,42 +19,45 @@ class BreakdownPaymentEmployeeService {
     if (!employee) {
       throw new BusinessException("El empleado de la prenómina con RFC ${paysheetEmployee.prePaysheetEmployee.rfc} ya no fue encontrado en los registros de la empresa")
     }
-
-    BigDecimal integratedDailySalary = getIntegratedDailySalaryForEmployee(employee, paysheetEmployee.paysheet)
-    BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
-    BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
-    BreakdownPaymentEmployee breakdownPayment = new BreakdownPaymentEmployee(
-      integratedDailySalary: integratedDailySalary,
-      baseQuotation: baseQuotation,
-      fixedFee: getFixedFee(),
-      diseaseAndMaternityBase: diseaseAndMaternityBase,
-      diseaseAndMaternityEmployer: getDiseaseAndMaternityEmployer(diseaseAndMaternityBase),
-      diseaseAndMaternity: getDiseaseAndMaternityEmployee(diseaseAndMaternityBase),
-      pension: getPensionEmployee(baseQuotation),
-      pensionEmployer: getPensionEmployer(baseQuotation),
-      loan: getLoanEmployee(baseQuotation),
-      loanEmployer: getLoanEmployer(baseQuotation),
-      disabilityAndLife: getDisabilityAndLifeEmployee(integratedDailySalary),
-      disabilityAndLifeEmployer: getDisabilityAndLifeEmployer(integratedDailySalary),
-      kindergarten: getKindergarten(baseQuotation),
-      occupationalRisk: getOccupationalRisk(baseQuotation, paysheetEmployee.paysheet),
-      retirementSaving: getRetirementSaving(baseQuotation),
-      unemploymentAndEld: getUnemploymentAndEldEmployee(baseQuotation),
-      unemploymentAndEldEmployer: getUnemploymentAndEldEmployer(baseQuotation),
-      infonavit: getInfonavit(baseQuotation)
-    )
-    breakdownPayment.save()
-    breakdownPayment
-  }
-
-  BigDecimal getIntegratedDailySalaryForEmployee(EmployeeLink employeeLink, Paysheet paysheet) {
-    PaysheetProject project = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
-    DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employeeLink)
+    DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employee)
     if (!dataImssEmployee) {
       log.error "Data Imss for employee not found: ${employeeLink.dump()}"
       throw new BusinessException("El empleado con RFC ${employeeLink.employeeRef} no tiene los datos del IMSS requeridos")
     }
 
+    BreakdownPaymentEmployee breakdownPayment = new BreakdownPaymentEmployee()
+    if (dataImssEmployee.baseImssMonthlySalary > 0) {
+      BigDecimal integratedDailySalary = getIntegratedDailySalaryForEmployee(dataImssEmployee, paysheetEmployee.paysheet)
+      BigDecimal baseQuotation = getBaseQuotation(integratedDailySalary)
+      BigDecimal diseaseAndMaternityBase = getDiseaseAndMaternityBase(integratedDailySalary)
+      breakdownPayment = new BreakdownPaymentEmployee(
+        integratedDailySalary: integratedDailySalary,
+        baseQuotation: baseQuotation,
+        fixedFee: getFixedFee(),
+        diseaseAndMaternityBase: diseaseAndMaternityBase,
+        diseaseAndMaternityEmployer: getDiseaseAndMaternityEmployer(diseaseAndMaternityBase),
+        diseaseAndMaternity: getDiseaseAndMaternityEmployee(diseaseAndMaternityBase),
+        pension: getPensionEmployee(baseQuotation),
+        pensionEmployer: getPensionEmployer(baseQuotation),
+        loan: getLoanEmployee(baseQuotation),
+        loanEmployer: getLoanEmployer(baseQuotation),
+        disabilityAndLife: getDisabilityAndLifeEmployee(integratedDailySalary),
+        disabilityAndLifeEmployer: getDisabilityAndLifeEmployer(integratedDailySalary),
+        kindergarten: getKindergarten(baseQuotation),
+        occupationalRisk: getOccupationalRisk(baseQuotation, paysheetEmployee.paysheet),
+        retirementSaving: getRetirementSaving(baseQuotation),
+        unemploymentAndEld: getUnemploymentAndEldEmployee(baseQuotation),
+        unemploymentAndEldEmployer: getUnemploymentAndEldEmployer(baseQuotation),
+        infonavit: getInfonavit(baseQuotation)
+      )
+    }
+
+    breakdownPayment.save()
+    breakdownPayment
+  }
+
+  BigDecimal getIntegratedDailySalaryForEmployee(DataImssEmployee dataImssEmployee, Paysheet paysheet) {
+    PaysheetProject project = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
     (dataImssEmployee.baseImssMonthlySalary / 30 * project.integrationFactor).setScale(2, RoundingMode.HALF_UP)
   }
 

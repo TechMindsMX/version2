@@ -40,7 +40,7 @@ class PrePaysheetService {
     int daysPeriod = prePaysheet.paymentPeriod.getDays()
     List dataImss = getDataImssForEmployees(beEmployees)
     dataImss.each { di ->
-      BigDecimal netPayment = di ? (di.netMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
+      BigDecimal netPayment = di ? (di.totalMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
       netPayments.add(netPayment)
     }
     netPayments
@@ -120,7 +120,7 @@ class PrePaysheetService {
 
   Map getEmployeesToExport(PrePaysheet prePaysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA','TOTAL A PAGAR','OBSERVACIONES']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA','NETO A PAGAR','OBSERVACIONES']
     employees.properties = ['rfc', 'curp', 'nameEmployee', 'numberEmployee', 'bank.bankingCode', 'bank.name', 'clabe', 'account', 'cardNumber', 'netPayment', 'note']
     employees.data = prePaysheet.employees.sort {it.nameEmployee}
     employees
@@ -135,8 +135,25 @@ class PrePaysheetService {
 
   @Transactional
   def deleteEmployeeFromPrePaysheet(PrePaysheetEmployee prePaysheetEmployee) {
+		deleteRelationsForPrePaysheetEmployee(prePaysheetEmployee)
     PrePaysheetEmployee.executeUpdate("delete PrePaysheetEmployee employee where employee.id = :id", [id: prePaysheetEmployee.id])
   }
+
+	def deleteRelationsForPrePaysheetEmployee(PrePaysheetEmployee prePaysheetEmployee){
+		log.info "Deleting incidences"
+		prePaysheetEmployee.incidences.each { incidence ->
+			prePaysheetEmployee.removeFromIncidences(incidence)
+    	PrePaysheetEmployeeIncidence.executeUpdate("delete PrePaysheetEmployeeIncidence incidence where incidence.id = :id", [id: incidence.id])
+		}
+		prePaysheetEmployee.save()
+		log.info "PrePaysheet employee incidences: ${prePaysheetEmployee.incidences}"
+
+		log.info "Deleting paysheet employee from prepaysheet employee"
+		List<PaysheetEmployee> paysheetEmployees = PaysheetEmployee.findAllByPrePaysheetEmployee(prePaysheetEmployee)
+		paysheetEmployees.each { paysheetEmployee ->
+    	PaysheetEmployee.executeUpdate("delete PaysheetEmployee employee where employee.id = :id", [id: paysheetEmployee.id])
+		}
+	}
 
   @Transactional
   PrePaysheetEmployeeIncidence saveIncidence(PrePaysheetEmployeeIncidence incidence) {
@@ -151,7 +168,7 @@ class PrePaysheetService {
   }
 
 	def createLayoutForPrePaysheet() {
-		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'NOMBRE', 'CLABE', 'TARJETA', 'NETO', 'OBSERVACIONES']
+		def headersEmployees = ['RFC', 'CURP', 'NO_EMPL', 'NOMBRE', 'CLABE', 'TARJETA', 'NETO_A_PAGAR', 'OBSERVACIONES']
     new WebXlsxExporter().with {
       fillRow(headersEmployees, 0)
     }
@@ -204,9 +221,9 @@ class PrePaysheetService {
 			return "Error: la cuenta CLABE no pertenece al empleado"
 		}
 
-		if (dataEmployee.NETO instanceof String && !dataEmployee.NETO.isNumber()) {
+		if (dataEmployee.NETO_A_PAGAR instanceof String && !dataEmployee.NETO_A_PAGAR.isNumber()) {
 			transactionStatus.setRollbackOnly()
-			return "Error: el neto a pagar no es válido"
+			return "Error: el bruto a pagar no es válido"
 		}
 
 		//crear el empleado de pre-nómina
@@ -219,7 +236,7 @@ class PrePaysheetService {
 			clabe:bankAccount.clabe,
 			account:bankAccount.accountNumber,
 			cardNumber:bankAccount.cardNumber,
-			netPayment:new BigDecimal(dataEmployee.NETO),
+			netPayment:new BigDecimal(dataEmployee.NETO_A_PAGAR),
 			note:dataEmployee.OBSERVACIONES,
 			prePaysheet:prePaysheet
 		)
@@ -236,5 +253,22 @@ class PrePaysheetService {
 		prePaysheet.save()
 		log.info "prePaysheet employees: ${prePaysheet.employees}"
 	}
+
+  @Transactional
+  def deletePrePaysheet(PrePaysheet prePaysheet) {
+    prePaysheet.employees.each { employee ->
+      employee.incidences.each { incidence ->
+        deleteIncidenceFromPrePaysheetEmployee(incidence)
+      }
+      deleteEmployeeFromPrePaysheet(employee)
+    }
+    PrePaysheet.executeUpdate("delete PrePaysheet prePaysheet where prePaysheet.id = :id", [id: prePaysheet.id])
+  }
+
+  @Transactional
+  def reject(PrePaysheet prePaysheet) {
+    prePaysheet.status = PrePaysheetStatus.REJECTED
+    prePaysheet.save()
+  }
 
 }

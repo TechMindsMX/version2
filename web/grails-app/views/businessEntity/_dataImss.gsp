@@ -27,12 +27,12 @@
       <dd>${dataImssEmployee.nss}</dd>
       <dt>Fecha de Alta</dt>
       <dd><g:formatDate date="${dataImssEmployee.registrationDate}" format="dd-MM-yyyy"/></dd>
-      <dt>Salario SA Mensual</dt>
+      <dt>SA Bruto Mensual</dt>
       <dd>${modulusuno.formatPrice(number:dataImssEmployee.baseImssMonthlySalary)}</dd>
-      <dt>Salario IAS Mensual</dt>
-      <dd>${modulusuno.formatPrice(number:(dataImssEmployee.netMonthlySalary - dataImssEmployee.baseImssMonthlySalary))}</dd>
-      <dt>Salario Neto Mensual</dt>
-      <dd>${modulusuno.formatPrice(number:dataImssEmployee.netMonthlySalary)}</dd>
+      <dt>IAS</dt>
+      <dd>${modulusuno.formatPrice(number:(dataImssEmployee.totalMonthlySalary - dataImssEmployee.baseImssMonthlySalary))}</dd>
+      <dt>Total Mensual</dt>
+      <dd>${modulusuno.formatPrice(number:dataImssEmployee.totalMonthlySalary)}</dd>
       <dt>Prima vacacional (%)</dt>
       <dd><g:formatNumber number="${dataImssEmployee.holidayBonusRate}" type="number" maxFractionDigits="2"/></dd>
       <dt>Días de Aguinaldo</dt>

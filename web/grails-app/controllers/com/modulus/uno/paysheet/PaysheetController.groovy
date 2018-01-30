@@ -7,6 +7,8 @@ class PaysheetController {
   PaysheetService paysheetService
   PaysheetEmployeeService paysheetEmployeeService
   PaysheetContractService paysheetContractService
+  SimulatorPaysheetService simulatorPaysheetService
+  List importResultList = []
 
   def createFromPrePaysheet(PrePaysheet prePaysheet) {
     Paysheet paysheet = paysheetService.createPaysheetFromPrePaysheet(prePaysheet)
@@ -98,4 +100,30 @@ class PaysheetController {
 		paysheetEmployeeService.changePaymentWayFromEmployee(employee)
 		redirect action:"show", id:employee.paysheet.id
 	}
+
+  def simulatorPaysheet(){
+    render view: 'simulatorPaysheet'
+  }
+
+  def downloadLayout(){
+    def layout = simulatorPaysheetService.generateLayoutForSimulator()
+    layout.with {
+      setResponseHeaders(response, "layoutSimuladorDeNomina.xlsx")
+      save(response.outputStream)
+    }
+  }
+
+  def uploadLayoutForSimulator(){
+    def file = request.getFile('layoutSimulator')
+   importResultList = simulatorPaysheetService.processXlsSimulator(file)
+    render view:'simulatorPaysheet', model:[resultList:importResultList]
+  }
+
+  def exportSimulatedPaysheet(){
+    def xlsForSimulator = simulatorPaysheetService.generateXLSForSimulator(importResultList)
+    xlsForSimulator.with {
+      setResponseHeaders(response, "NominaSimulada-${new Date().format('ddMMyyyyHHmm')}.xlsx")
+      save(response.outputStream)
+    }
+  }
 }

@@ -9,7 +9,7 @@
       <td class="col-xs-2">${incidence.paymentSchema}</td>
       <td class="col-xs-2">${modulusuno.formatPrice(number:incidence.amount)}</td>
       <td class="col-xs-1 text-center">
-        <g:if test="${prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.CREATED}">
+        <g:if test="${prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.CREATED || prePaysheetEmployee.prePaysheet.status == PrePaysheetStatus.REJECTED}">
           <g:link action="deleteIncidence" id="${incidence.id}" class="btn btn-danger">
             <i class="fa fa-minus"></i> Quitar
           </g:link>

@@ -37,13 +37,28 @@ class PaysheetServiceSpec extends Specification {
     given:"The prepaysheet"
       PrePaysheet prePaysheet = createPrePaysheet()
     and:
-      paysheetEmployeeService.createPaysheetEmployeeFromPrePaysheetEmployee(_, _) >> new PaysheetEmployee().save(validate:false)
+      paysheetEmployeeService.createPaysheetEmployeeFromPrePaysheetEmployee(_, _) >> new PaysheetEmployee(salaryImss:100, socialQuota:10, subsidySalary:20, incomeTax:15, netAssimilable:100, prePaysheetEmployee:new PrePaysheetEmployee(netPayment:195).save(validate:false)).save(validate:false)
     when:
       Paysheet paysheet = service.createPaysheetFromPrePaysheet(prePaysheet)
     then:
       paysheet.id
       paysheet.employees.size() == 1
+			paysheet.status == PaysheetStatus.CREATED
   }
+
+  void "Should create and reject the paysheet from a prepaysheet because exists difference in payments amount"() {
+    given:"The prepaysheet"
+      PrePaysheet prePaysheet = createPrePaysheet()
+    and:
+      paysheetEmployeeService.createPaysheetEmployeeFromPrePaysheetEmployee(_, _) >> new PaysheetEmployee(salaryImss:100, socialQuota:10, subsidySalary:20, incomeTax:15, netAssimilable:100, prePaysheetEmployee:new PrePaysheetEmployee(netPayment:200).save(validate:false)).save(validate:false)
+    when:
+      Paysheet paysheet = service.createPaysheetFromPrePaysheet(prePaysheet)
+    then:
+      paysheet.id
+      paysheet.employees.size() == 1
+			paysheet.status == PaysheetStatus.REJECTED
+  }
+
 
   private PrePaysheet createPrePaysheet() {
     PaysheetContract paysheetContract = new PaysheetContract(company: new Company().save(validate:false)).save(validate:false)
@@ -88,7 +103,12 @@ class PaysheetServiceSpec extends Specification {
 
   void "Should create the payment dispersion SA BBVA file"() {
     given:"employees list"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
+      employeeWithoutSA.salaryImss = getValueInBigDecimal("0")
+      employeeWithoutSA.socialQuota = getValueInBigDecimal("0")
+      employeeWithoutSA.subsidySalary = getValueInBigDecimal("0")
+      employeeWithoutSA.incomeTax = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutSA]
     and:"The dispersion data"
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
@@ -103,7 +123,9 @@ class PaysheetServiceSpec extends Specification {
 
   void "Should create the payment dispersion IAS BBVA file"() {
     given:"employees list"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
+      employeeWithoutIAS.netAssimilable = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutIAS]
     and:"The dispersion data"
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
@@ -118,7 +140,12 @@ class PaysheetServiceSpec extends Specification {
 
   void "Should create the payment dispersion SA Default file"() {
     given:"employees list"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
+      employeeWithoutSA.salaryImss = getValueInBigDecimal("0")
+      employeeWithoutSA.socialQuota = getValueInBigDecimal("0")
+      employeeWithoutSA.subsidySalary = getValueInBigDecimal("0")
+      employeeWithoutSA.incomeTax = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutSA]
     and:"The dispersion data"
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
@@ -133,7 +160,9 @@ class PaysheetServiceSpec extends Specification {
 
   void "Should create the payment dispersion IAS Default file"() {
     given:"employees list"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
+      employeeWithoutIAS.netAssimilable = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutIAS]
     and:"The dispersion data"
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
@@ -170,7 +199,12 @@ class PaysheetServiceSpec extends Specification {
 
   void "Should create the payment dispersion file inter bank SA"() {
     given:"The dispersion data"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
+      employeeWithoutSA.salaryImss = getValueInBigDecimal("0")
+      employeeWithoutSA.socialQuota = getValueInBigDecimal("0")
+      employeeWithoutSA.subsidySalary = getValueInBigDecimal("0")
+      employeeWithoutSA.incomeTax = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutSA]
       Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
     when:
       def result = service.createDispersionFileInterBank(dispersionData, "SA")
@@ -181,7 +215,9 @@ class PaysheetServiceSpec extends Specification {
 
   void "Should create the payment dispersion file inter bank IAS"() {
     given:"The dispersion data"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
+      employeeWithoutIAS.netAssimilable = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutIAS]
       Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
     when:
       def result = service.createDispersionFileInterBank(dispersionData, "IAS")
@@ -226,7 +262,12 @@ class PaysheetServiceSpec extends Specification {
 
 	void "Should create dispersion file SA for SANTANDER bank"() {
 		given:"The dispersion data"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
+      employeeWithoutSA.salaryImss = getValueInBigDecimal("0")
+      employeeWithoutSA.socialQuota = getValueInBigDecimal("0")
+      employeeWithoutSA.subsidySalary = getValueInBigDecimal("0")
+      employeeWithoutSA.incomeTax = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutSA]
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
@@ -251,7 +292,9 @@ class PaysheetServiceSpec extends Specification {
 
 	void "Should create dispersion file IAS for SANTANDER bank"() {
 		given:"The dispersion data"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
+      employeeWithoutIAS.netAssimilable = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutIAS]
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
@@ -276,7 +319,12 @@ class PaysheetServiceSpec extends Specification {
 
 	void "Should create dispersion file SA for BANAMEX bank"() {
 		given:"The dispersion data"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
+      employeeWithoutSA.salaryImss = getValueInBigDecimal("0")
+      employeeWithoutSA.socialQuota = getValueInBigDecimal("0")
+      employeeWithoutSA.subsidySalary = getValueInBigDecimal("0")
+      employeeWithoutSA.incomeTax = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutSA]
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
@@ -302,7 +350,9 @@ class PaysheetServiceSpec extends Specification {
 
 	void "Should create dispersion file IAS for BANAMEX bank"() {
 		given:"The dispersion data"
-      List<PaysheetEmployee> employees = [createPaysheetEmployee()]
+      PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
+      employeeWithoutIAS.netAssimilable = getValueInBigDecimal("0")
+      List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutIAS]
 			BankAccount saBankAccount = new BankAccount(accountNumber:"AccountSA", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			BankAccount iasBankAccount = new BankAccount(accountNumber:"AccountIAS", banco:new Bank(bankingCode:"999").save(validate:false), clientNumber:"12345", branchNumber:"180").save(validate:false)
 			Date applyDate = new Date()
@@ -401,6 +451,23 @@ class PaysheetServiceSpec extends Specification {
       result[2].name == "BANK02"
 	}
 
+	@Unroll
+	void "Should reject the paysheet when exists wrong payments for employees: #listWrongEmployees"() {
+		given:"The paysheet"
+			Paysheet paysheet = new Paysheet().save(validate:false)
+	  and:"The wrong employees"
+			List<PaysheetEmployee> wrongEmployees = listWrongEmployees
+	  when:
+			def result = service.rejectPaysheetAndPrePaysheetForWrongPayments(paysheet, wrongEmployees)
+	  then:
+			result.status == PaysheetStatus.REJECTED
+			result.rejectReason == expectRejectReason
+	  where:
+			listWrongEmployees 	|| 	expectRejectReason
+			[new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"UNO"))] 	|| "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: UNO"
+			[new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"UNO")), new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"DOS"))] 	|| "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: UNO,DOS"
+	}
+
   private PaysheetEmployee createPaysheetEmployee() {
 		Company company = new Company().save(validate:false)
 		ModulusUnoAccount m1Account = new ModulusUnoAccount().save(validate:false)
@@ -419,7 +486,7 @@ class PaysheetServiceSpec extends Specification {
       socialQuota: getValueInBigDecimal("100"),
       subsidySalary: getValueInBigDecimal("500"),
       incomeTax: getValueInBigDecimal("200"),
-      salaryAssimilable: getValueInBigDecimal("3000")
+      netAssimilable: getValueInBigDecimal("3000")
     )
     paysheetEmployee.save(validate:false)
     paysheetEmployee

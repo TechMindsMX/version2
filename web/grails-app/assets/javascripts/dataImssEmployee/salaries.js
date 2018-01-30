@@ -1,33 +1,33 @@
 $("#saSalary").on('blur',function(){
-  calculateNetSalary();
+  calculateTotalSalary();
 });
 
 $("#iasSalary").on('blur',function(){
-  calculateNetSalary();
+  calculateTotalSalary();
 });
 
-$("#netSalary").on('blur',function(){
+$("#totalSalary").on('blur',function(){
   calculateIasSalary();
 });
 
-function calculateNetSalary() {
-  $('#netSalary').val('');
+function calculateTotalSalary() {
+  $('#totalSalary').val('');
   var sa = $("#saSalary").val()*1;
   var ias = $("#iasSalary").val()*1;
-  if (sa=="" || ias=="" || isNaN(sa) || isNaN(ias)) {
+  if (sa==="" || ias==="" || isNaN(sa) || isNaN(ias)) {
       return
   }
-  var net = sa + ias;
-  $('#netSalary').val((sa+ias).toFixed(2));
+  var total = sa + ias;
+  $('#totalSalary').val((total).toFixed(2));
 }
 
 function calculateIasSalary() {
   $('#iasSalary').val('');
   var sa = $("#saSalary").val();
-  var net = $("#netSalary").val();
-  if (sa==="" || net==="" || isNaN(sa) || isNaN(net)){
+  var total = $("#totalSalary").val();
+  if (sa==="" || total==="" || isNaN(sa) || isNaN(total)){
       return
   }
 
-  $('#iasSalary').val((net-sa).toFixed(2));
+  $('#iasSalary').val((total-sa).toFixed(2));
 }

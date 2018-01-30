@@ -18,7 +18,7 @@
 <div class="portlet portlet-default">
   <div class="row">
     <div class="col-md-2 col-md-offset-10 text-right">
-      <g:if test="${prePaysheet.status == com.modulus.uno.paysheet.PrePaysheetStatus.CREATED}">
+      <g:if test="${prePaysheet.status == PrePaysheetStatus.CREATED || prePaysheet.status == PrePaysheetStatus.REJECTED}">
       <g:link class="btn btn-primary" action="addEmployees" id="${prePaysheet.id}">Agregar</g:link>
       </g:if>
     </div>
@@ -65,7 +65,7 @@
           <td class="text-right">${modulusuno.formatPrice(number:employee.netPayment)}</td>
           <td>${employee.note}</td>
           <td>
-            <g:if test="${prePaysheet.status == PrePaysheetStatus.CREATED}">
+            <g:if test="${prePaysheet.status == PrePaysheetStatus.CREATED || prePaysheet.status == PrePaysheetStatus.REJECTED}">
               <g:link action="deleteEmployee" id="${employee.id}" class="btn btn-danger">
                 <i class="fa fa-minus"></i> Quitar
               </g:link>
@@ -81,7 +81,7 @@
   </div>
 
   <div class="row">
-    <g:if test="${prePaysheet.status == PrePaysheetStatus.CREATED && prePaysheet.employees}">
+    <g:if test="${(prePaysheet.status == PrePaysheetStatus.CREATED || prePaysheet.status == PrePaysheetStatus.REJECTED) && prePaysheet.employees}">
     <div class="col-md-12 text-right">
       <g:link class="btn btn-primary" action="sendToProcess" id="${prePaysheet.id}">Enviar a Procesar</g:link>
     </div>

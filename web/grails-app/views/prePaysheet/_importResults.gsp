@@ -34,7 +34,7 @@
 						<td>${employee.NO_EMPL}</td>
 						<td>${employee.NOMBRE}</td>
 						<td>${employee.CLABE}</td>
-						<td>${modulusuno.formatPrice(number:employee.NETO)}</td>
+						<td>${modulusuno.formatPrice(number:employee.NETO_A_PAGAR)}</td>
 						<td>${importResults.results[index]}</td>
 					</tr>
 				</g:each>
