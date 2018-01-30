@@ -16,7 +16,7 @@ class SaleOrder {
   String comments
 
   SaleOrderStatus status = SaleOrderStatus.CREADA
-  PaymentMethod paymentMethod = PaymentMethod.TRANSFERENCIA_ELECTRONICA
+  PaymentWay paymentWay = PaymentWay.TRANSFERENCIA_ELECTRONICA
 
   Date fechaCobro
   String externalId
@@ -25,6 +25,8 @@ class SaleOrder {
   String note
   String currency
   BigDecimal changeType = new BigDecimal(0)
+  PaymentMethod paymentMethod = PaymentMethod.PUE
+  InvoicePurpose invoicePurpose = InvoicePurpose.G01
 
   static belongsTo = [company:Company]
 

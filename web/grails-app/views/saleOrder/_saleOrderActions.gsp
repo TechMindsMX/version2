@@ -39,7 +39,7 @@
   <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
     <g:if test="${saleOrder.status == SaleOrderStatus.CREADA}">
       <g:form controller="saleOrder" action="sendOrderToConfirmation" id="${saleOrder.id}">
-        <button type="submit" class="btn btn-success btn-block">
+        <button type="submit" class="btn btn-success">
           Confirmar orden de venta
         </button>
       </g:form>
@@ -163,13 +163,13 @@
   </sec:ifAnyGranted>
 
   <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA || saleOrder.status == SaleOrderStatus.PAGADA}">
-  <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-success">Descarga factura XML</a>
-  <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default">Descarga factura PDF</a>
+  <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-success" download>Descarga factura XML</a>
+  <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default" download>Descarga factura PDF</a>
   </g:if>
 
   <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_EJECUTADA}">
-    <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-default">Acuse XML</a>
-    <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default">Acuse PDF</a>
+    <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-default" download>Acuse XML</a>
+    <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default" download>Acuse PDF</a>
   </g:if>
 
   <g:if test="${params.backController}">

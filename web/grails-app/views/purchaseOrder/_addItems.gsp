@@ -1,5 +1,4 @@
 <%! import com.modulus.uno.PurchaseOrderStatus %>
-<%! import com.modulus.uno.UnitType %>
 <g:form controller="purchaseOrderItem" action="save">
   <g:if test="${purchaseOrder.status == PurchaseOrderStatus.CREADA}">
     <g:hiddenField name="purchaseOrder.id" value="${purchaseOrder.id}"/>
@@ -36,7 +35,7 @@
       </td>
       <td>
         <div class="input-group">
-          <g:select id="unit"  name="unitType" from="${UnitType.values()}" class="form-control" noSelection="['':'Elija la unidad...']" required="" />
+          <g:select id="unit"  name="unitType" from="${unitTypes.sort{it.name}}" optionKey="name" optionValue="name" class="form-control" noSelection="['':'Elija la unidad...']" required="" />
         </div>
       </td>
       <td>

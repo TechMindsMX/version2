@@ -35,6 +35,7 @@ var options = {
             if(data.price!==undefined){$('#price').val(calculatePriceWithCurrency(data.price, data.currency));}//data.price.toFixed(2)
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
+            if(data.satKey!==undefined){$('#satKey').val(data.satKey);}
             calculateAmountAndNetPrice()
             return true;
           }

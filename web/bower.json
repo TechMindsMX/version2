@@ -29,6 +29,7 @@
     "font-awesome": "fontawesome#^4.7.0"
   },
   "resolutions": {
-    "lodash": "^3.10.0"
+    "lodash": "^3.10.0",
+    "graphlib": "^2.1.1"
   }
 }

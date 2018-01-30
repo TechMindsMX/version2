@@ -12,8 +12,10 @@ class SaleOrderCommand implements Validateable {
   String changeType
   String fechaCobro
   String note
-  String paymentMethod
+  String paymentWay
   String externalId
+  String paymentMethod
+  String invoicePurpose
 
   static constraints = {
     currencyUsd blank:false, size:3..3, validator: { val -> val in ["MXN","USD"] }
@@ -31,21 +33,37 @@ class SaleOrderCommand implements Validateable {
       saleOrder = SaleOrder.findByCompanyAndExternalIdAndStatusInList(company, this.externalId, [SaleOrderStatus.CREADA, SaleOrderStatus.POR_AUTORIZAR])
     }
 
+    PaymentWay paymentWay
+    if (this.paymentWay.isNumber()) {
+      paymentWay = PaymentWay.find { it.ordinal().toString() == this.paymentWay }
+    } else {
+      paymentWay = PaymentWay.find { it.toString() == this.paymentWay }
+    }
+
     PaymentMethod paymentMethod
-    if (this.paymentMethod == "0" || this.paymentMethod == "1" || this.paymentMethod == "2" || this.paymentMethod == "3") {
+    if (this.paymentMethod.isNumber()) {
       paymentMethod = PaymentMethod.find { it.ordinal().toString() == this.paymentMethod }
     } else {
       paymentMethod = PaymentMethod.find { it.toString() == this.paymentMethod }
+    }
+
+    InvoicePurpose invoicePurpose
+    if (this.invoicePurpose.isNumber()) {
+      invoicePurpose = InvoicePurpose.find { it.ordinal().toString() == this.invoicePurpose }
+    } else {
+      invoicePurpose = InvoicePurpose.find { it.toString() == this.invoicePurpose }
     }
 
     if (saleOrder) {
        saleOrder.rfc = businessEntity.rfc
        saleOrder.clientName =  businessEntity.toString()
        saleOrder.note = this.note
-       saleOrder.paymentMethod = paymentMethod
+       saleOrder.paymentWay = paymentWay
        saleOrder.fechaCobro = Date.parse("dd/MM/yyyy", this.fechaCobro)
        saleOrder.currency = this.currencyUsd
-       saleOrder.changeType = getValueInBigDecimal(this.changeType ?: "0")
+       saleOrder.changeType = getValueInBigDecimal(this.changeType ?: "1")
+       saleOrder.paymentMethod = paymentMethod
+       saleOrder.invoicePurpose = invoicePurpose
     } else {
       saleOrder = new SaleOrder(
         rfc:businessEntity.rfc,
@@ -53,11 +71,13 @@ class SaleOrderCommand implements Validateable {
         company:company,
         externalId:this.externalId,
         note:this.note,
-        paymentMethod:paymentMethod,
+        paymentWay:paymentWay,
         status:SaleOrderStatus.CREADA,
         fechaCobro:Date.parse("dd/MM/yyyy", this.fechaCobro),
         currency:this.currencyUsd,
-        changeType:getValueInBigDecimal(this.changeType ?: "0")
+        changeType:getValueInBigDecimal(this.changeType ?: "1"),
+        paymentMethod:paymentMethod,
+        invoicePurpose:invoicePurpose
       )
       saleOrder.addToAddresses(address)
     }

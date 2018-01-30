@@ -25,9 +25,9 @@ class SaleOrderService {
     def fechaCobro = params.fechaCobro
     String externalId = params.externalId ?: ""
     def note = params.note
-    PaymentMethod paymentMethod = PaymentMethod.values().find {
+    PaymentWay paymentWay = PaymentWay.values().find {
       println it.toString()
-      it.toString() == params.paymentMethod }
+      it.toString() == params.paymentWay }
 
 
     if(!companyId && !clientId && !addressId){
@@ -35,14 +35,14 @@ class SaleOrderService {
     }
     Company company = Company.get(companyId)
     BusinessEntity businessEntity = BusinessEntity.get(clientId)
-    SaleOrder saleOrder = createSaleOrder(businessEntity, company, fechaCobro, externalId, note, paymentMethod)
+    SaleOrder saleOrder = createSaleOrder(businessEntity, company, fechaCobro, externalId, note, paymentWay)
     Address address = Address.get(addressId)
     addTheAddressToSaleOrder(saleOrder, address)
     saleOrder
   }
 
-  def createSaleOrder(BusinessEntity businessEntity, Company company, def fechaCobro, String externalId, String note, PaymentMethod paymentMethod) {
-    def saleOrder = new SaleOrder(rfc:businessEntity.rfc, clientName: businessEntity.toString(), company:company, externalId:externalId, note:note, paymentMethod:paymentMethod)
+  def createSaleOrder(BusinessEntity businessEntity, Company company, def fechaCobro, String externalId, String note, PaymentWay paymentWay) {
+    def saleOrder = new SaleOrder(rfc:businessEntity.rfc, clientName: businessEntity.toString(), company:company, externalId:externalId, note:note, paymentWay:paymentWay)
     saleOrder.status = SaleOrderStatus.CREADA
     saleOrder.fechaCobro = Date.parse("dd/MM/yyyy", fechaCobro)
     saleOrder.save()
@@ -294,11 +294,12 @@ class SaleOrderService {
       if (balance.balance) {
       SaleOrderItem item = new SaleOrderItem(
         sku:"COMISION-${balance.typeCommission}",
-        name:balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}",
+        name:"Servicio financiero de alquiler de operaciones (" + balance.typeCommission == CommissionType.FIJA ? "Comisión Fija" : "Comisiones de ${balance.typeCommission}" + ")",
         quantity:balance.quantity,
         price:balance.balance/balance.quantity,
         iva:new BigDecimal(grailsApplication.config.iva),
-        unitType:"SERVICIO",
+        unitType:"UNIDAD DE SERVICIO",
+        satKey:"84121607",
         saleOrder:saleOrder
       ).save()
       saleOrder.addToItems(item)
@@ -316,6 +317,20 @@ class SaleOrderService {
     }
     emailSenderService.notifySaleOrderChangeStatus(saleOrder)
     saleOrder
+  }
+
+  List<SaleOrder> searchSaleOrders(Long idCompany, Map params) {
+    Company company = Company.get(idCompany)
+    def criteriaSO = SaleOrder.createCriteria()
+    def results = criteriaSO.list {
+      eq('company', company)
+      and {
+        ilike('rfc', "${params.rfc}%")
+        ilike('clientName', "%${params.clientName}%")
+      }
+      order('dateCreated', 'desc')
+    }
+    results
   }
 
 }

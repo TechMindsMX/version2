@@ -38,9 +38,9 @@ class SaleOrderServiceSpec extends Specification {
     and:"A business entity"
       def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
     and:"A payment method"
-      PaymentMethod paymentMethod = PaymentMethod.EFECTIVO
+      PaymentWay paymentWay = PaymentWay.EFECTIVO
     when:"We create a sale order"
-      def result = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", paymentMethod)
+      def result = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", paymentWay)
     then:"We expect a new sale order"
       result instanceof SaleOrder
       result.status == SaleOrderStatus.CREADA
@@ -48,7 +48,7 @@ class SaleOrderServiceSpec extends Specification {
 
   void "should add an item to a sale order"() {
     given:"A sale order item"
-      def item = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS)
+      def item = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:"UNIDAD", currencyType:CurrencyType.PESOS)
     and:"A sale order"
       def saleOrder = new SaleOrder()
       saleOrder.save(validate:false)
@@ -61,8 +61,8 @@ class SaleOrderServiceSpec extends Specification {
 
   void "should add two items to a sale order"() {
     given:"A sale order item"
-      def item1 = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(15000.00), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS,quantity:0.23)
-      def item2 = new SaleOrderItem(sku:'A002',name:'Lemur 14',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:UnitType.UNIDADES, currencyType:CurrencyType.PESOS,quantity:1.23)
+      def item1 = new SaleOrderItem(sku:'A001',name:'Gazelle A25',price:new BigDecimal(15000.00), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:"UNIDAD", currencyType:CurrencyType.PESOS,quantity:0.23)
+      def item2 = new SaleOrderItem(sku:'A002',name:'Lemur 14',price:new BigDecimal(0.0), ieps:new BigDecimal(0.0), iva:new BigDecimal(0.0), unitType:"UNIDAD", currencyType:CurrencyType.PESOS,quantity:1.23)
     and:"A sale order"
       def saleOrder = new SaleOrder()
       saleOrder.save(validate:false)
@@ -81,7 +81,7 @@ class SaleOrderServiceSpec extends Specification {
                                 employeeNumbers:40,
                                 grossAnnualBilling:4000).save(validate:false)
     def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
-    def saleOrder = service.createSaleOrder(businessEntity, company,new Date().format("dd/MM/yyyy").toString(), "", "", PaymentMethod.EFECTIVO)
+    def saleOrder = service.createSaleOrder(businessEntity, company,new Date().format("dd/MM/yyyy").toString(), "", "", PaymentWay.EFECTIVO)
   when:"We authoriza a sale order"
     companyService.getAuthorizersByCompany(company) >> approvers
     def result = service.sendOrderToConfirmation(saleOrder)
@@ -101,7 +101,7 @@ class SaleOrderServiceSpec extends Specification {
                                 grossAnnualBilling:4000,
                                 legalRepresentatives:legalRepresentatives).save(validate:false)
     def businessEntity = new BusinessEntity(rfc:'XXX010101XXX', website:'http://www.iecce.mx',type:BusinessEntityType.FISICA).save(validate:false)
-    def saleOrder = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", PaymentMethod.EFECTIVO)
+    def saleOrder = service.createSaleOrder(businessEntity, company, new Date().format("dd/MM/yyyy").toString(), "", "", PaymentWay.EFECTIVO)
   when:"We authoriza a sale order"
     def result = service.authorizeSaleOrder(saleOrder)
   then:"We expect new status"
@@ -307,4 +307,34 @@ class SaleOrderServiceSpec extends Specification {
       1 * commissionTransactionService.unlinkTransactionsForSaleOrder(_)
   }
 
+  @Unroll
+  void "Should get the filter list of sale orders with filter params=#theParams"() {
+    given:"The company"
+      Company company = new Company(rfc:"A").save(validate:false)
+    and:"The current sale orders"
+      SaleOrder so1 = new SaleOrder(rfc:"C1", clientName:"Cliente 1", company:company).save(validate:false)
+      SaleOrder so2 = new SaleOrder(rfc:"C1", clientName:"Cliente 1", company:new Company(rfc:"B").save(validate:false)).save(validate:false)
+      SaleOrder so3 = new SaleOrder(rfc:"C2", clientName:"Cliente 2", company:company).save(validate:false)
+      SaleOrder so4 = new SaleOrder(rfc:"C2", clientName:"Cliente 2", company:company).save(validate:false)
+      SaleOrder so5 = new SaleOrder(rfc:"C22", clientName:"Cliente 22", company:company).save(validate:false)
+      SaleOrder so6 = new SaleOrder(rfc:"C3", clientName:"Cliente 3", company:company).save(validate:false)
+      SaleOrder so7 = new SaleOrder(rfc:"C33", clientName:"Cliente 33", company:company).save(validate:false)
+      SaleOrder so8 = new SaleOrder(rfc:"C4", clientName:"Cliente 4", company:company).save(validate:false)
+      SaleOrder so9 = new SaleOrder(rfc:"C44", clientName:"Cliente 44", company:company).save(validate:false)
+    and:"The filter params"
+      Map params = theParams
+    when:
+      def result = service.searchSaleOrders("1".toLong(), params)
+    then:
+      result.size() == sizeList
+    where:
+      theParams       ||   sizeList
+      [rfc:"C", clientName:""]    | 8
+      [rfc:"C1", clientName:""]    |   1
+      [rfc:"", clientName:"Cliente"]    |   8
+      [rfc:"", clientName:"Cliente 2"]    |   3
+      [rfc:"C5", clientName:""]    |   0
+      [rfc:"", clientName:"Cliente 5"]    |   0
+      [rfc:"C6", clientName:"Cliente 2"]    |   0
+  }
 }

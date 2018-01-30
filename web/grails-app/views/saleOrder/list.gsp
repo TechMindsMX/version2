@@ -14,15 +14,11 @@
   </div>
 <div id="edit-address" class="content scaffold-edit" role="main">
   <div class="portlet portlet-blue">
-    <div class="portlet-heading">
-      <div class="portlet-title">
-        <br />
-        <br />
-      </div>
-      <div class="clearfix"></div>
-    </div>
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
+        
+        <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName']" labels="['RFC', 'CLIENTE']" filterValues="${filterValues}" viewAll="list"/>
+        
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
         </g:if>
@@ -30,9 +26,11 @@
           <div class="well well-sm alert-success">${messageSuccess}</div>
         </g:if>
       <div class="table-responsive">
-        <table class="table">
+        <table class="table table-condensed table-striped">
+        <thead>
          <tr>
            <th>No. de Orden</th>
+           <th>Fecha de Creación</th>
            <th>RFC</th>
            <th>Cliente</th>
            <th>Estatus</th>
@@ -40,14 +38,17 @@
            <th>Moneda</th>
            <th>Total</th>
           </tr>
+          <thead>
           <g:if test="${saleOrders.isEmpty()}">
             <div class="alert alert-danger" role="alert">
               <g:message code="saleOrder.list.empty"/>
             </div>
           </g:if>
+         <tbody>
          <g:each in="${saleOrders}" var="sale">
          <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
             <td class="text-center"><g:link action="show" id="${sale.id}">${sale.id}</g:link></td>
+            <td><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
             <td>${sale.rfc}</td>
             <td>${sale.clientName}</td>
             <td><g:message code="saleOrder.status.${sale.status}" default="${sale.status}"/> </td>
@@ -56,12 +57,15 @@
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
           </tr>
          </g:each>
+         <tbody>
        </table>
+       <g:if test="${!filterValues}">
        <nav>
           <div class="pagination">
             <g:paginate class="pagination" controller="saleOrder" action="list" total="${saleOrderCount}" />
           </div>
         </nav>
+        </g:if>
       </div>
     </div>
   </div>

@@ -1,27 +1,33 @@
 package com.modulus.uno
 import java.text.*
 import grails.validation.Validateable
+import com.modulus.uno.catalogs.UnitType
 
 class ProductCommand implements Validateable{
 
   String id
+  String satKey
   String sku
   String name
   String price
   String ieps
   String iva
-  UnitType unitType
+  String unitType
   CurrencyType currencyType
 
+  static constraints = {
+    unitType nullable:false
+  }
 
   Product createProduct(){
     new Product(
+      satKey:this.satKey,
       sku:this.sku,
       name:this.name,
       price:getValueInBigDecimal(this.price),
       ieps:getValueInBigDecimal(this.ieps),
       iva:getValueInBigDecimal(this.iva),
-      unitType:this.unitType,
+      unitType:UnitType.get(this.unitType),
       currencyType:this.currencyType
       )
   }
