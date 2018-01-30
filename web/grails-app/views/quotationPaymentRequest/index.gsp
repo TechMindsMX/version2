@@ -14,6 +14,7 @@
         <small>${quotationContract?.client}</small>
       </h1>
     </div>
+	<sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION, ROLE_EXECUTOR_QUOTATION">
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-body">
@@ -21,7 +22,12 @@
             <g:if test="${quotationContract}">
             <div class="row">
               <div class="col-md-12">
-                <g:link class="btn btn-primary" action="index">Regresar</g:link>
+                <sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
+                  <g:link class="btn btn-primary" action="index">Regresar</g:link>
+                </sec:ifAnyGranted>
+                <sec:ifAnyGranted roles="ROLE_OPERATOR_QUOTATION">
+                  <g:link class="btn btn-primary" controller="quotationContract" action="balance" id="${quotationContract.id}">Regresar</g:link>
+                </sec:ifAnyGranted>
               </div>
             </div>
             </g:if>
@@ -92,5 +98,6 @@
         </div>
       </div>
     </div>
+	</sec:ifAnyGranted>
   </body>
 </html>

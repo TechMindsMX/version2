@@ -6,7 +6,7 @@ import java.lang.Void as Should
 import grails.test.mixin.Mock
 
 @TestFor(UserRoleService)
-@Mock([User, Role, UserRole])
+@Mock([User, Role, UserRole, UserRoleCompany])
 class UserRoleServiceSpec extends Specification {
 
   Should "Delete the userRoles of user in session"(){
@@ -33,6 +33,24 @@ class UserRoleServiceSpec extends Specification {
       service.createUserRolesForUser(user, [role1, role2])
     then:
       UserRole.findAllByUser(user).size() == 2
+  }
+
+  Should "Delete a role for the user"() {
+    given:"The user"
+      User user = new User(username:"theUser").save(validate:false)
+    and:"The roles"
+      Role roleToDelete = new Role(authority:"role1").save(validate:false)
+      def roles = [roleToDelete, new Role(authority:"role2").save(validate:false)]
+    and:"The user-roles"
+      roles.each { role ->
+        UserRoleCompany urc = new UserRoleCompany(user:user).save(validate:false)
+        urc.addToRoles(role)
+        urc.save(validate:false)
+      }
+    when:
+      def userWithoutRole = service.deleteRoleForUser(user, roleToDelete)
+    then:
+      !UserRoleCompany.findByUser(userWithoutRole).roles.find { it.authority == roleToDelete.authority }
   }
 
 }
