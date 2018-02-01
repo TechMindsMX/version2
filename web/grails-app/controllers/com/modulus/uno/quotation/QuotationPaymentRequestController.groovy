@@ -1,5 +1,7 @@
 package com.modulus.uno.quotation
+
 import com.modulus.uno.Company
+import grails.transaction.Transactional
 
 class QuotationPaymentRequestController {
 
@@ -29,6 +31,7 @@ class QuotationPaymentRequestController {
       [company:company, quotationContractList:quotationContractList]
     }
 
+  @Transactional
     def save(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
       Company company = Company.get(session.company)
       List<QuotationContract> quotationContractList = QuotationContract.findAllByCompany(company)
@@ -46,6 +49,7 @@ class QuotationPaymentRequestController {
       redirect(action: 'show', id: quotationPaymentRequest.id)
     }
 
+  @Transactional
     def update(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
       QuotationPaymentRequest quotationPaymentRequestUpdate = quotationPaymentRequestCommand.getQuotationPaymentRequest()
       QuotationPaymentRequest quotationPaymentRequest = QuotationPaymentRequest.get(params.id.toLong())
@@ -65,16 +69,19 @@ class QuotationPaymentRequestController {
       redirect action:'selectPaymentRequest', params:[quotation:quotationPaymentRequest.quotationContract.id.toString()]
     }
 
+  @Transactional
     def delete(QuotationPaymentRequest quotationPaymentRequest){
       quotationPaymentRequestService.delete(quotationPaymentRequest)
       redirect(action:'index')
     }
 
+  @Transactional
     def process(QuotationPaymentRequest quotationPaymentRequest){
       quotationPaymentRequestService.process(quotationPaymentRequest)
       redirect(action:'index')
     }
 
+  @Transactional
     def saveFromQuotationContract(QuotationPaymentRequestCommand quotationPaymentRequestCommand){
       QuotationPaymentRequest quotationPaymentRequest = quotationPaymentRequestCommand.getQuotationPaymentRequest()
       quotationPaymentRequestService.create(quotationPaymentRequest)
