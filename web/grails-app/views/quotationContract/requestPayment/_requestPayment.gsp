@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.PaymentMethod%>
+<%! import com.modulus.uno.PaymentWay%>
   <div class="portlet portlet-blue">
     <div class="portlet-heading">
       <div class="portlet-title"></div>
@@ -33,7 +33,7 @@
             <label>
               <g:message code="Modo de Pago" />
             </label>
-            <g:select class="form-control" name="paymentMethod" from="${PaymentMethod.values()}" />
+            <g:select class="form-control" name="paymentMethod" from="${PaymentWay.values()}" />
           </div>
           <div class="col-md-3 col-sm-offset-6">
               <g:submitButton name="create" class="btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}"  style="margin-top: 30px;"/>
