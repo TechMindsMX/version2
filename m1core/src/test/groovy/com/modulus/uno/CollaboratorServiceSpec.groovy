@@ -30,7 +30,7 @@ class CollaboratorServiceSpec extends Specification {
 
   void "Should get last day of the current month"(){
     given:
-      String expectDate = new SimpleDateFormat("dd-MM-yyyy").format(endCurrentMonth().time)
+      String expectDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(endCurrentMonth().time)
     when:
       String endDate = service.getEndDateCurrentMonth()
     then:
@@ -58,6 +58,8 @@ class CollaboratorServiceSpec extends Specification {
         fin.set(date:31)
         break
       }
+
+    fin.set([hourOfDay:23, minute:59, second:59])
     fin
   }
 

@@ -5,7 +5,6 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
 import java.text.*
-
 import com.modulus.uno.Company
 import com.modulus.uno.BankAccount
 import com.modulus.uno.Bank

@@ -35,8 +35,9 @@ class CollaboratorService {
         cfin.set(date:31)
         break
     }
+    cfin.set([hourOfDay:23, minute:59, second:59])
 
-    new SimpleDateFormat("dd-MM-yyyy").format(cfin.time)
+    new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(cfin.time)
   }
 
   Boolean periodIsValid(String beginDate, String endDate) {
@@ -77,12 +78,14 @@ class CollaboratorService {
   Period getCurrentMonthPeriod() {
     new Period(
       init:new Date().parse("dd-MM-yyyy", getBeginDateCurrentMonth()),
-      end:new Date().parse("dd-MM-yyyy", getEndDateCurrentMonth())
+      end:new Date().parse("dd-MM-yyyy HH:mm:ss", getEndDateCurrentMonth())
     )
   }
 
   Period createPeriod(String init, String end) {
-    new Period(init:new Date().parse("dd-MM-yyyy", init), end:new Date().parse("dd-MM-yyyy", end))
+    Date endDate = new Date().parse("dd-MM-yyyy", end)
+    endDate.set(hourOfDay:23, minute:59, second:59)
+    new Period(init:new Date().parse("dd-MM-yyyy", init), end:endDate)
   }
 
   Period getPeriodStpConciliationInDate(Date date) {

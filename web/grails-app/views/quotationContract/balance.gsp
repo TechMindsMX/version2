@@ -61,7 +61,7 @@
                   <label>
                     <g:message code="Al" />
                   </label>
-                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.end)}" id="datepicker" name="lastDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.end)}" id="datepicker1" name="lastDate" required="required">
                   </div>
                 </div>
                 <div class="row">

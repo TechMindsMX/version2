@@ -39,8 +39,7 @@ class QuotationContractService {
       typeProcess['SEND']
     }
 
-    Map getBalance(QuotationContract quotationContract, Map params){
-      Period period = getPeriodForBalance(params)
+    Map getBalance(QuotationContract quotationContract, Period period){
       makeBalanceForContractAndPeriod(quotationContract, period)
     }
 
@@ -70,6 +69,8 @@ class QuotationContractService {
     }
 
     private Map makeBalanceForContractAndPeriod(QuotationContract quotationContract, Period period) {
+      log.info "QuotationContract: ${quotationContract.dump()}"
+      log.info "Period: ${period.dump()}"
       List<QuotationConcept> quotationConcepList = getConceptListForBalance(quotationContract, period)
       Map summaryBalance = calculateSummaryForBalance(quotationContract)
       [quotationContract:quotationContract,
@@ -82,6 +83,7 @@ class QuotationContractService {
     List<QuotationConcept> getConceptListForBalance(QuotationContract quotationContract, Period period) {
       List<QuotationRequest> quotationRequest = QuotationRequest.findAllByQuotationContractAndStatusAndDateCreatedBetween(quotationContract, QuotationRequestStatus.PROCESSED, period.init, period.end)
       List<QuotationPaymentRequest> quotationPaymentRequestlistPayed = QuotationPaymentRequest.findAllByQuotationContractAndStatusAndDateCreatedBetween(quotationContract, QuotationPaymentRequestStatus.PAYED, period.init, period.end)
+      log.info "Quotation payment requests: ${quotationPaymentRequestlistPayed}"
       List<QuotationConcept> conceptList = mergeList(quotationRequest,quotationPaymentRequestlistPayed)
       calculateBalancesForConcepts(conceptList, quotationContract, period)
     }
@@ -161,6 +163,7 @@ class QuotationContractService {
         
       }
 
+      log.info "Concepts for quotation balance: ${quotationConceptList}"
       quotationConceptList.sort {it.date}
     }
 

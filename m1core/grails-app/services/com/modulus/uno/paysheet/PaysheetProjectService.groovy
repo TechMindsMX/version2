@@ -67,7 +67,7 @@ class PaysheetProjectService {
     paysheetProject.removeFromEmployees(employee)
     paysheetProject.save()
     paysheetProject
-  }  
+  }
 
   @Transactional
   BillerPaysheetProject saveBillerPaysheetProject(BillerPaysheetProject billerPaysheetProject) {
