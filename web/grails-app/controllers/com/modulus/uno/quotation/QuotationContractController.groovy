@@ -112,8 +112,8 @@ class QuotationContractController {
     }
 
     def balance(QuotationContract quotationContract){
-      def period = quotationContractService.getPeriodForPdf(params)
-      Map balance = quotationContractService.getBalance(quotationContract, params)
+      Period period = quotationContractService.getPeriodForPdf(params)
+      Map balance = quotationContractService.getBalance(quotationContract, period)
       render view: 'balance', model:[balance:balance, period:period]
 
     }
