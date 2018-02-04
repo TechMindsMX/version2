@@ -81,13 +81,18 @@
               </td>
             </tr>
             <tr>
-              <td colspan="6" class="text-right"><strong>IEPS</strong></td>
-              <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.totalIEPS)}</td>
+              <td colspan="6" class="text-right"><strong>Descuentos</strong></td>
+              <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.totalDiscount)}</td>
             </tr>
             <tr>
               <td colspan="6" class="text-right"><strong>IVA</strong></td>
               <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.totalIVA)}</td>
             </tr>
+            <tr>
+              <td colspan="6" class="text-right"><strong>Retención de IVA</strong></td>
+              <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.totalIvaRetention)}</td>
+            </tr>
+
             <tr>
               <td colspan="6" class="text-right"><strong>Total</strong></td>
               <td class="text-right">${modulusuno.formatPrice(number:purchaseOrder.total)}</td>
