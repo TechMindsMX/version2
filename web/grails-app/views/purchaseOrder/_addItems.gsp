@@ -20,13 +20,18 @@
         </div>
         <div class="input-group">
           <div class="input-group-addon">%</div>
-          <input type="text" id="ieps" name="ieps" class="form-control" required="" pattern="[0-9]+(\.[0-9]{2})?" value="0"/>
-          <div class="input-group-addon">IEPS</div>
+          <input type="text" id="discount" name="discount" class="form-control" required="" pattern="[0-9]+(\.[0-9]{2})?" value="0"/>
+          <div class="input-group-addon">Descuento:</div>
         </div>
         <div class="input-group">
           <div class="input-group-addon">%</div>
           <input type="text" id="iva" name="iva" class="form-control" required="" pattern="[0-9]+(\.[0-9]{2})?" value="16"/>
           <div class="input-group-addon">IVA</div>
+        </div>
+        <div class="input-group">
+          <div class="input-group-addon">$</div>
+          <input type="text" id="ivaRetention" name="ivaRetention" class="form-control" value="0" required="" pattern="[0-9]+(\.[0-9]{1,2})?"/>
+          <div class="input-group-addon">Retención IVA</div>
         </div>
         <div class="input-group">
           <div class="input-group-addon">$</div>
