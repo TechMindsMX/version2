@@ -7,10 +7,12 @@
     <dl class="dl-horizontal">
       <dt>Precio:</dt>
       <dd>${modulusuno.formatPrice(number:item.price)}</dd>
-      <dt>IEPS:</dt>
-      <dd>${modulusuno.formatPrice(number:item.amountIEPS)}</dd>
+      <dt>Descuento:</dt>
+      <dd>${modulusuno.formatPrice(number:item.amountDiscount)}</dd>
       <dt>IVA:</dt>
       <dd>${modulusuno.formatPrice(number:item.amountIVA)}</dd>
+      <dt>Retención IVA:</dt>
+      <dd>${modulusuno.formatPrice(number:item.ivaRetention)}</dd>
       <dt>Precio Neto:</dt>
       <dd>${modulusuno.formatPrice(number:item.netPrice)}</dd>
     </dl>

@@ -6,7 +6,8 @@ class PurchaseOrderItem {
   String name
   BigDecimal quantity = new BigDecimal(1)
   BigDecimal price = new BigDecimal(0)
-  BigDecimal ieps = new BigDecimal(0)
+  BigDecimal discount = new BigDecimal(0)
+  BigDecimal ivaRetention = new BigDecimal(0)
   BigDecimal iva = new BigDecimal(16)
 
   String unitType
@@ -17,25 +18,30 @@ class PurchaseOrderItem {
   static constraints = {
     name blank:false,size:1..300
     price min:0.0,max:250000000.00
-    ieps min:0.0,max:100.01
+    discount min:0.0,max:100.00
+    ivaRetention min:0.0
     iva min:0.0,max:100.00
     quantity min:0.0
   }
 
+  BigDecimal getAmountDiscount() {
+    this.price * (this.discount/100)
+  }
+
+  BigDecimal getAppliedDiscount() {
+    this.quantity * this.getAmountDiscount()
+  }
+
+  BigDecimal getPriceWithDiscount() {
+    this.price - this.getAmountDiscount()
+  }
+
   BigDecimal getAmountIVA(){
-    this.price * (this.iva/100)
+    this.getPriceWithDiscount() * (this.iva/100)
   }
 
   BigDecimal getAppliedIVA() {
     this.quantity * this.getAmountIVA()
-  }
-
-  BigDecimal getAmountIEPS(){
-    this.price * (this.ieps/100)
-  }
-
-  BigDecimal getAppliedIEPS() {
-    this.quantity * this.getAmountIEPS()
   }
 
   BigDecimal getAmountWithoutTaxes(){
@@ -43,11 +49,15 @@ class PurchaseOrderItem {
   }
 
   BigDecimal getNetPrice(){
-    this.price + this.getAmountIVA() + this.getAmountIEPS()
+    this.getPriceWithDiscount() + this.getAmountIVA() - this.ivaRetention
   }
 
   BigDecimal getNetAmount(){
     this.quantity * this.getNetPrice()
+  }
+
+  BigDecimal getTotalIvaRetention() {
+    this.quantity * this.ivaRetention
   }
 
   static marshaller = {
@@ -63,6 +73,5 @@ class PurchaseOrderItem {
       ]
     }
   }
-
 
 }

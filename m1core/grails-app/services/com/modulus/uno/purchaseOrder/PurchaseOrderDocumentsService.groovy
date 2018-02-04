@@ -49,9 +49,14 @@ class PurchaseOrderDocumentsService {
       def itemsXml = xmlParsed[cfdiNs.conceptos][cfdiNs.concepto]
       def taxes = xmlParsed[cfdiNs.impuestos][cfdiNs.traslados][cfdiNs.traslado]
       def retentions = xmlParsed[cfdiNs.impuestos][cfdiNs.retenciones][cfdiNs.retencion]
+      if (xmlParsed.'@version'=="3.3") {
+        taxes = xmlParsed[cfdiNs.conceptos][cfdiNs.concepto][cfdiNs.impuestos][cfdiNs.traslados][cfdiNs.traslado]
+        retentions = xmlParsed[cfdiNs.conceptos][cfdiNs.concepto][cfdiNs.impuestos][cfdiNs.retenciones][cfdiNs.retencion]
+      }
       itemsXml.eachWithIndex { xmlItem, index ->
         def taxItem = taxes != [] ? taxes[index] : ""
-				Map xmlDataItem = [xmlItem:xmlItem, taxItem:taxItem, version:xmlParsed.'@version']
+        def retentionItem = retentions != [] ? retentions[index] : ""
+				Map xmlDataItem = [xmlItem:xmlItem, taxItem:taxItem, retentionItem:retentionItem, version:xmlParsed.'@version']
         createOrderItemFromXmlItem(order, xmlDataItem)
       }
     }
@@ -63,11 +68,23 @@ class PurchaseOrderDocumentsService {
       name:xmlDataItem.xmlItem.'@descripcion'.toUpperCase(),
       quantity:new BigDecimal(xmlDataItem.xmlItem.'@cantidad'),
       price:new BigDecimal(xmlDataItem.xmlItem.'@valorunitario'),
+      discount: calculateDiscountForItem(xmlDataItem.xmlItem),
       iva:xmlDataItem.taxItem ? (xmlDataItem.version=="3.3" ? new BigDecimal(xmlDataItem.taxItem.'@tasaocuota')*100 : new BigDecimal(xmlDataItem.taxItem.'@tasa')) : new BigDecimal(0),
+      ivaRetention:xmlDataItem.retentionItem ? new BigDecimal(xmlDataItem.retentionItem.'@importe') : new BigDecimal(0),
       unitType:xmlDataItem.xmlItem.'@unidad'.toUpperCase(),
       purchaseOrder:order
     )
+    log.info "Item to save: ${poItem.dump()}"
     poItem.save()
   }
 
+  BigDecimal calculateDiscountForItem(xmlItem) {
+    if (!xmlItem.'@descuento') {
+      return new BigDecimal(0)
+    }
+    
+    BigDecimal discount = new BigDecimal(xmlItem.'@descuento')
+    BigDecimal subtotal = new BigDecimal(xmlItem.'@importe')
+    discount / subtotal * 100
+  }
 }
