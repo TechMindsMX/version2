@@ -1,8 +1,8 @@
 package com.modulus.uno
 
 enum CorporateStatus {
-	ENABLED("corporate.enabled"), 
-	DISABLED("corporate.disabled")
+	ENABLED("HABILITADO"), 
+	DISABLED("DESHABILITADO")
 
 	private final String code
 
