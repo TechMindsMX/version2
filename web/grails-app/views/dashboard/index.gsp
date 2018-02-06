@@ -30,51 +30,10 @@
           </g:if>
           <g:else>
             <div class="content scaffold-list">
-              <div class="table-responsive">
-                <table class="table">
-                  <tr>
-                    <th>Corporativo</th>
-                    <th>URL</th>
-                    <th>No. de Empresas</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  <g:each in="${corporates}" var="corp">
-                  <tr>
-                    <td><g:link controller="corporate" action="show" id="${corp.id}"><strong>${corp.nameCorporate}</strong></g:link></td>
-                    <td>${corp.corporateUrl}</td>
-                    <td>${corp.companies ? corp.companies.size() : 0}</td>
-                    <td>
-                      <g:link class="btn btn-primary" controller="corporate" action="commissions" id="${corp.id}">
-                        Comisiones
-                      </g:link>
-                    </td>
-                    <td>
-                      <g:link class="btn btn-primary" controller="corporate" action="defineCostCenters" id="${corp.id}">
-                        Centros de Costos
-                      </g:link>
-                    </td>
-                    <td>
-                      <g:if test="${corp.status.toString() == 'ENABLED'}"> 
-                        <g:link class="btn btn-danger" controller="corporate" action="enableOrDisableCorporate" id="${corp.id}">
-                          Deshabilitar
-                        </g:link>
-                      </g:if>
-                      <g:else>
-                        <g:link class="btn btn-danger" controller="corporate" action="enableOrDisableCorporate" id="${corp.id}">
-                          Habilitar
-                        </g:link>
-                      </g:else>
-                    </td>
-                  </tr>
-                  </g:each>
-                </table>
-               <nav>
-                  <div class="pagination">
-                    <g:paginate class="pagination" controller="dashboard" action="index" total="${countCorporates}" />
-                  </div>
-                </nav>
+              <div class="portlet portlet-blue">
+                <div class="portlet-body">
+                  <g:render template="corporatesList"/>
+                </div>
               </div>
             </div>
           </g:else>
