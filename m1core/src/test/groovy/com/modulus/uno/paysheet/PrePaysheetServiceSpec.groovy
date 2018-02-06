@@ -21,11 +21,13 @@ class PrePaysheetServiceSpec extends Specification {
   BusinessEntityService businessEntityService = Mock(BusinessEntityService)
   EmployeeService employeeService = Mock(EmployeeService)
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
+  SimulatorPaysheetService simulatorPaysheetService = Mock(SimulatorPaysheetService)
 
   def setup() {
     service.businessEntityService = businessEntityService
     service.employeeService = employeeService
     service.paysheetProjectService = paysheetProjectService
+    service.simulatorPaysheetService = simulatorPaysheetService
   }
 
   void "Should get employees available to add a prepaysheet when paysheet project has employees"() {
@@ -94,23 +96,32 @@ class PrePaysheetServiceSpec extends Specification {
       List<BusinessEntity> beEmployees = [
         new BusinessEntity(rfc:"A").save(validate:false),
         new BusinessEntity(rfc:"B").save(validate:false),
-        new BusinessEntity(rfc:"C").save(validate:false)
+        new BusinessEntity(rfc:"C").save(validate:false),
+        new BusinessEntity(rfc:"D").save(validate:false)
       ]
       EmployeeLink elA = new EmployeeLink(employeeRef:"A").save(validate:false)
       EmployeeLink elB = new EmployeeLink(employeeRef:"B").save(validate:false)
       EmployeeLink elC = new EmployeeLink(employeeRef:"C").save(validate:false)
+      EmployeeLink elD = new EmployeeLink(employeeRef:"D").save(validate:false)
     and:"The data imss"
-      DataImssEmployee dieA = new DataImssEmployee(employee:elA, totalMonthlySalary:new BigDecimal(10000)).save(validate:false)
-      DataImssEmployee dieC = new DataImssEmployee(employee:elC, totalMonthlySalary:new BigDecimal(20000)).save(validate:false)
+      DataImssEmployee dieA = new DataImssEmployee(employee:elA, baseImssMonthlySalary:new BigDecimal(5000), totalMonthlySalary:new BigDecimal(10000)).save(validate:false)
+      DataImssEmployee dieB = new DataImssEmployee(employee:elB, baseImssMonthlySalary:new BigDecimal(5000), totalMonthlySalary:new BigDecimal(5000)).save(validate:false)
+      DataImssEmployee dieC = new DataImssEmployee(employee:elC, baseImssMonthlySalary:new BigDecimal(0), totalMonthlySalary:new BigDecimal(20000)).save(validate:false)
+    and:"The paysheet project"
+      PaysheetProject paysheetProject = new PaysheetProject(integrationFactor:1.0501, occupationalRiskRate:0.879).save(validate:false)
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
     and:"The pre-paysheet"
       PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.BIWEEKLY).save(validate:false)
+    and:
+      simulatorPaysheetService.createPaysheetEmployee(_) >> new PaysheetEmployee(salaryImss:2500, socialQuota:63.18, subsidySalary:162.44, incomeTax:166.57, prePaysheetEmployee:new PrePaysheetEmployee(incidences:[]))
     when:
       def result = service.getNetPaymentForEmployees(beEmployees, prePaysheet)
     then:
-      result.size() == 3
-      result[1] == 0
+      result.size() == 4
       result[0] == 5000
+      result[1] == 2432.69
       result[2] == 10000
+      result[3] == 0
   }
 
   void "Should add a employee to prePaysheet from xls file to import"() {
