@@ -21,6 +21,7 @@ class PrePaysheetService {
 	XlsImportService xlsImportService
 	EmployeeService employeeService
   PaysheetProjectService paysheetProjectService
+  SimulatorPaysheetService simulatorPaysheetService
 
   @Transactional
   PrePaysheet savePrePaysheet(PrePaysheet prePaysheet) {
@@ -42,6 +43,9 @@ class PrePaysheetService {
     List dataImss = getDataImssForEmployees(beEmployees)
     dataImss.each { di ->
       BigDecimal netPayment = di ? (di.totalMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
+      if (di && di.monthlyAssimilableSalary <= 0) {
+        netPayment = getNetPaymentFromNetImssSalary(di.baseImssMonthlySalary, prePaysheet)
+      }
       netPayments.add(netPayment)
     }
     netPayments
@@ -55,6 +59,13 @@ class PrePaysheetService {
       dataImss.add(dataImssEmployee)
     }
     dataImss
+  }
+
+  BigDecimal getNetPaymentFromNetImssSalary(BigDecimal monthlySASalary, PrePaysheet prePaysheet) {
+    PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(prePaysheet.paysheetContract, prePaysheet.paysheetProject)
+    Map row = [SA_BRUTO:monthlySASalary, IAS_BRUTO:0, IAS_NETO:0, COMISION:0, PERIODO:prePaysheet.paymentPeriod.toString(), FACT_INTEGRA:paysheetProject.integrationFactor, RIESGO_TRAB:paysheetProject.occupationalRiskRate]
+    PaysheetEmployee temporalPaysheetEmployee = simulatorPaysheetService.createPaysheetEmployee(row)
+    temporalPaysheetEmployee.imssSalaryNet.setScale(2, RoundingMode.HALF_UP)
   }
 
   List<BusinessEntity> getEmployeesAvailableToAdd(PrePaysheet prePaysheet) {
