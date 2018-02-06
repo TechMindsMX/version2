@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <asset:stylesheet src="third-party/bootstrap/dist/css/bootstrap.css"/>
     <asset:stylesheet src="third-party/font-awesome/css/font-awesome.css"/>
-    <asset:link rel="icon" href="favicon.ico" type="image/x-ico" />
+    <asset:link rel="icon" href="m1-logo-ico.png" type="image/x-ico" />
 
     <style>
       body {
