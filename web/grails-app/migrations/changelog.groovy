@@ -118,4 +118,5 @@ databaseChangeLog = {
 	include file: 'rename-column-crude-payment-to-net-payment-into-prepaysheet-employee.groovy'
   include file: 'adding-columns-paymentway-paymentmethod-and-invoicepurpose-to-quotation-request.groovy'
   include file: 'adding-columns-discount-and-ivaretention-to-purchase-order-item.groovy'
+  include file: 'adding-column-status-to-corporate.groovy'
 }

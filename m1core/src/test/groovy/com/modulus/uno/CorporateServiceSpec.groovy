@@ -230,4 +230,27 @@ class CorporateServiceSpec extends Specification {
       result.users.findAll{ user -> ["ROLE_OPERATOR_QUOTATION","ROLE_EXECUTOR_QUOTATION"].every{ it in user.getAuthorities()*.authority }  }.size() == 0 
       result.users.size() == 3
   }
+
+  void "Should get corporate to enable or disable"(){
+    given:"The users"
+      User user1 = new User(username:"Temoc", enabled:true).save(validate:false)
+      User user2 = new User(username:"Temoc", enabled:false).save(validate:false)
+      User user3 = new User(username:"Temoc", enabled:false).save(validate:false)
+      User user4 = new User(username:"Temoc", enabled:true).save(validate:false)
+      
+    and:"The corporate"
+      Corporate corporate1 = new Corporate(nameCorporate:"MakingDevs", status:"ENABLED", users:[user1, user2]).save(validate:false) 
+      Corporate corporate2 = new Corporate(nameCorporate:"MakingDevs", status:"DISABLED", users:[user3, user4]).save(validate:false)
+    when:
+      def result1 = service.getCorporateToEnableOrDisable(corporate1)
+      def result2 = service.getCorporateToEnableOrDisable(corporate2)
+    then:
+      result1 == (corporate1.status = CorporateStatus.DISABLED)
+      user1.enabled == false
+      user2.enabled == false
+      result2 == (corporate2.status = CorporateStatus.ENABLED)
+      user3.enabled == true
+      user4.enabled == true
+    }
+
 }
