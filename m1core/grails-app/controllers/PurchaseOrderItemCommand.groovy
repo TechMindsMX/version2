@@ -7,8 +7,9 @@ class PurchaseOrderItemCommand implements Validateable{
     String name
     String quantity
     String price
-    String ieps
+    String discount
     String iva
+    String ivaRetention
     String unitType
 
     PurchaseOrderItem createPurchaseOrderItem() {
@@ -16,8 +17,9 @@ class PurchaseOrderItemCommand implements Validateable{
           name:this.name,
           quantity:getValueInBigDecimal(this.quantity),
           price:getValueInBigDecimal(this.price),
-          ieps:getValueInBigDecimal(this.ieps?:"16"),
+          discount:getValueInBigDecimal(this.discount?:"0"),
           iva:getValueInBigDecimal(this.iva?:"16"),
+          ivaRetention:getValueInBigDecimal(this.ivaRetention?:"0"),
           unitType:this.unitType
         )
     }

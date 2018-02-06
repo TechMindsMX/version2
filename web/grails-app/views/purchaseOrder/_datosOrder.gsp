@@ -27,13 +27,15 @@
           <dd>
           ${modulusuno.formatPrice(number:purchaseOrder.subtotal)}
           </dd>
+          <dt>Descuentos</dt>
+          <dd>${modulusuno.formatPrice(number:purchaseOrder.totalDiscount)}</dd>
           <dt>IVA</dt>
           <dd>${modulusuno.formatPrice(number:purchaseOrder.totalIVA)}</dd>
-          <dt>IEPS</dt>
-          <dd>${modulusuno.formatPrice(number:purchaseOrder.totalIEPS)}</dd>
+          <dt>Retencion IVA</dt>
+          <dd>${modulusuno.formatPrice(number:purchaseOrder.totalIvaRetention)}</dd>
           <dt>Total</dt>
           <dd>${modulusuno.formatPrice(number:purchaseOrder.total)}</dd>
-          <dt>Estado </dt>
+          <dt>Estatus </dt>
           <dd><g:message code="purchaseOrder.status.${purchaseOrder.status}" default="${purchaseOrder.status}"/></dd>
           <g:if test="${purchaseOrder.payments.size()}" >
           <font color="#00BFFF">

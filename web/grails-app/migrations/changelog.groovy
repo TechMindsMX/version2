@@ -117,4 +117,5 @@ databaseChangeLog = {
   include file: 'changed-column-corporate-has-quotation.groovy'
   include file: 'add-roles-quotation.groovy'
   include file: 'adding-columns-paymentway-paymentmethod-and-invoicepurpose-to-quotation-request.groovy'
+  include file: 'adding-columns-discount-and-ivaretention-to-purchase-order-item.groovy'
 }

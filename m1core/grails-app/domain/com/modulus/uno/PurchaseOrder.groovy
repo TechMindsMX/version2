@@ -51,12 +51,16 @@ class PurchaseOrder implements Machinery {
     items*.appliedIVA.sum() ?: 0
   }
 
-  BigDecimal getTotalIEPS() {
-    items*.appliedIEPS.sum() ?: 0
+  BigDecimal getTotalIvaRetention(){
+    items*.totalIvaRetention.sum() ?: 0
+  }
+
+  BigDecimal getTotalDiscount(){
+    items*.appliedDiscount.sum() ?: 0
   }
 
   BigDecimal getTotal(){
-    getSubtotal() + getTotalIVA() + getTotalIEPS()
+    getSubtotal() + getTotalIVA() - getTotalIvaRetention()
   }
 
   BigDecimal getTotalPayments() {
