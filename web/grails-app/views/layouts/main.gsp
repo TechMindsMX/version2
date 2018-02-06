@@ -14,7 +14,7 @@
     <asset:javascript src="application.js"/>
     <asset:javascript src="main-nav.js"/>
     <link href="${assetPath(src: 'third-party/hisrc/50K.jpg')}"/>
-    <asset:link rel="icon" href="favicon.ico" type="image/x-ico" />
+    <asset:link rel="icon" href="m1-logo-ico.png" type="image/x-ico" />
     <g:layoutHead/>
   </head>
   <body>
