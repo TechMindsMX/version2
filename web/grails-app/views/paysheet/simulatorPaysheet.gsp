@@ -36,7 +36,6 @@
               </div>
             </div>
           </div>
-        </div>
         <g:if test="${resultList}">
           <div class="row">
               <g:render template="simulatorPaysheetData"></g:render>
@@ -47,6 +46,7 @@
             </div>
           </div>          
         </g:if>
+        </div>
       </div>
     </div>
     <asset:javascript src="businessEntity/entityType.js"/>
