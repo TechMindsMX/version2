@@ -2,31 +2,31 @@
   <div class="table-responsive">
     <table class="table table-striped table-condensed">
       <tr>
-        <th>Consecutivo</th>
-        <th>Resultado</th>
-        <th>Periodo</th>
-        <th>Salario IMSS Bruto</th>
-        <th>Carga social del trabajador</th>
-        <th>Subsidio</th>
-        <th>ISR IMSS</th>
-        <th>Salario IMSS Neto</th>
-        <th>Asimilable Bruto</th>
-        <th>ISR Asimilable</th>
-        <th>Asimilable Neto</th>
-        <th>Subtotal</th>
-        <th>Carga social de la empresa</th>
-        <th>ISN</th>
-        <th>Costo nominal</th>
-        <th>Comisión</th>
-        <th>Total nómina</th>
-        <th>Iva</th>
-        <th>Total a Facturar</th>
+        <th class="text-center">No.</th>
+        <th class="text-center">Stat</th>
+        <th class="text-center">Frec</th>
+        <th class="text-center">SA Bruto</th>
+        <th class="text-center">Ret IMSS</th>
+        <th class="text-center">Subsidio</th>
+        <th class="text-center">Ret ISR SA</th>
+        <th class="text-center">SA Neto</th>
+        <th class="text-center">IAS Bruto</th>
+        <th class="text-center">Ret ISR IAS</th>
+        <th class="text-center">IAS Neto</th>
+        <th class="text-center">Total Neto</th>
+        <th class="text-center">Carga Social Empresa</th>
+        <th class="text-center">ISN</th>
+        <th class="text-center">Costo Nómina</th>
+        <th class="text-center">Comisión</th>
+        <th class="text-center">Total Nómina</th>
+        <th class="text-center">IVA</th>
+        <th class="text-center">Gran Total</th>
       </tr>
       <g:each in="${resultList}" var="result" status="index">
         <tr>
           <td class="text-center">${index+1}</td>
           <td class="text-center">${result.result}</td>
-          <td class="text-center">${result.row.PERIODO}</td>
+          <td class="text-center">${result.period.shortName}</td>
           <td class="text-right">${result.result == "OK" ?  modulusuno.formatPrice(number:result.simulatedPaysheetEmployee.salaryImss) : "-"}</td>
           <td class="text-right">${result.result == "OK" ? modulusuno.formatPrice(number:result.simulatedPaysheetEmployee.socialQuota) : "-"}</td>
           <td class="text-right">${result.result == "OK" ? modulusuno.formatPrice(number:result.simulatedPaysheetEmployee.subsidySalary) : "-"}</td>
