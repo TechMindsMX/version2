@@ -27,31 +27,31 @@
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
             <div class="table-responsive">
-             <table class="table">
+             <table class="table table-condensed table-striped">
                <tr>
-                 <th><g:message code="product.satKey.label" /></th>
-                 <th><g:message code="product.sku.label" /></th>
-                 <th><g:message code="product.name.label" /></th>
-                 <th><g:message code="product.price.label" /></th>
-                 <th><g:message code="product.ieps.label" /></th>
-                 <th><g:message code="product.iva.label" /></th>
-                 <th><g:message code="product.unitType.label" /></th>
-                 <th><g:message code="product.currencyType.label" /></th>
+                 <th class="col-xs-1 text-center">Clv SAT</th>
+                 <th class="col-xs-2 text-center"><g:message code="product.sku.label" /></th>
+                 <th class="col-xs-3 text-center"><g:message code="product.name.label" /></th>
+                 <th class="col-xs-1 text-center"><g:message code="product.price.label" /></th>
+                 <th class="col-xs-1 text-center"><g:message code="product.ieps.label" /></th>
+                 <th class="col-xs-1 text-center"><g:message code="product.iva.label" /></th>
+                 <th class="col-xs-2 text-center"><g:message code="product.unitType.label" /></th>
+                 <th class="col-xs-1 text-center"><g:message code="product.currencyType.label" /></th>
                </tr>
                <g:each in="${productList.sort{it.name}}" var="product">
                <tr>
-                 <td>
+                 <td class="text-center">
                   <g:link action="show" id="${product.id}">
                      ${product.satKey}
                   </g:link>
                  </td>
-                 <td>${product.sku}</td>
+                 <td class="text-center">${product.sku}</td>
                  <td>${product.name}</td>
-                 <td>${modulusuno.formatPrice(number:product.price)}</td>
-                 <td>${product.ieps}</td>
-                 <td>${product.iva}</td>
-                 <td>${product.unitType?.name}</td>
-                 <td>${product.currencyType}</td>
+                 <td class="text-right">${modulusuno.formatPrice(number:product.price)}</td>
+                 <td class="text-right">${product.ieps}</td>
+                 <td class="text-right">${product.iva}</td>
+                 <td class="text-center">${product.unitType?.name}</td>
+                 <td class="text-center">${product.currencyType}</td>
                </tr>
                </g:each>
              </table>
