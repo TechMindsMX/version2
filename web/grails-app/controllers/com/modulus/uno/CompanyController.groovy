@@ -270,7 +270,7 @@ class CompanyController {
     Integer days = params.days.toInteger()
     Company company = Company.get(session.company)
     List<SaleOrder> detailPastDuePortfolio = companyService.getDetailPastDuePortfolio(session.company.toLong(), days)
-    renderPdf(template: "/documentTemplates/pastDuePortfolioForCompany", model: [company:company, detail:detailPastDuePortfolio, days:days])
+    renderPdf(template: "/documentTemplates/pastDuePortfolioForCompany", model: [company:company, detail:detailPastDuePortfolio, days:days], filename:"CarteraVencida-${days}Dias.pdf")
   }
 
   def changeStampDocuments(Company company) {
