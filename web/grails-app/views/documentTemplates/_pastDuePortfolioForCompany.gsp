@@ -12,9 +12,19 @@
         color: #333333;
         background-color: #ffffff;
       }
-      td { border-bottom:1px solid black; }
-      table { width:100%; }
-      th { text-align: center; }
+      tbody td { border-bottom:1px solid black; }
+      tbody tr:nth-child(even) {background-color: #f2f2f2;}
+      tfoot td { border-top:2px solid black; solid black; }
+      tfoot tr { background:#AED6F1 }
+      table { width:100%; cellspacing:0; border-collapse: collapse; border:1px solid black; }
+      thead th {
+        border-bottom:1px solid black;
+        text-align: center; 
+      }
+      thead tr {
+        background: #1B4F72;
+        color:white;
+      }
   </style>
 </head>
 <body>
@@ -22,6 +32,7 @@
   <h3>Cartera Vencida de ${days} días ${days==120 ? "y más" : ""}</h3>
   <div>
     <table>
+      <thead>
       <tr>
         <th style="width:10%">No. de Orden</th>
         <th style="width:30%">Cliente</th>
@@ -30,6 +41,8 @@
         <th style="width:10%">Estatus</th>
         <th style="width:10%">Total</th>
       </tr>
+      </thead>
+      <tbody>
       <g:each in="${detail.sort {it.fechaCobro}}" var="sale">
       <tr>
         <td style="text-align:center">${sale.id}</td>
@@ -40,6 +53,17 @@
         <td style="text-align:center">${modulusuno.formatPrice(number: sale.total)}</td>
       </tr>
      </g:each>
+     </tbody>
+     <tfoot>
+     <tr>
+       <td></td>
+       <td></td>
+       <td></td>
+       <td></td>
+       <td><strong>TOTAL</strong></td>
+       <td class="text-right"><strong>${modulusuno.formatPrice(number: detail*.total.sum())}</strong></td>
+     </tr>    
+     </tfoot>
    </table>
   </div>
 </body>
