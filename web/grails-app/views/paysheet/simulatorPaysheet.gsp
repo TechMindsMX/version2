@@ -8,7 +8,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa fa-book fa-3x"></i>
-        Simulador de nomina
+        Simulador de Nómina
       </h1>
     </div>
     <div id="edit-address" class="content scaffold-edit" role="main">
@@ -41,8 +41,9 @@
               <g:render template="simulatorPaysheetData"></g:render>
           </div>
           <div class="portlet-footer">
-            <div align="right">
-              <g:link action="exportSimulatedPaysheet" class="btn btn-primary text-right">Exportar XLS</g:link> 
+            <div class="text-right">
+              <g:link action="exportSimulatedPaysheetToPdf" class="btn btn-primary text-right">PDF</g:link> 
+              <g:link action="exportSimulatedPaysheet" class="btn btn-primary">XLS</g:link> 
             </div>
           </div>          
         </g:if>
