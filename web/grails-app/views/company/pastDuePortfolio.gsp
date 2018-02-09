@@ -54,15 +54,15 @@
                 <g:link class="btn btn-default" action="pdfForPastDuePortfolio" params="[days:days]">PDF</g:link>
               </div>
               <div class="table-responsive">
-                <table class="table">
+                <table class="table table-condensed table-striped">
                   <thead>
                     <tr>
-                      <th>No. de Orden</th>
-                      <th>Cliente</th>
-                      <th>Fecha de Cobro</th>
-                      <th>Fecha de Vencimiento</th>
-                      <th>Estatus</th>
-                      <th>Total</th>
+                      <th class="text-center">No. de Orden</th>
+                      <th class="text-center">Cliente</th>
+                      <th class="text-center">Fecha de Cobro</th>
+                      <th class="text-center">Fecha de Vencimiento</th>
+                      <th class="text-center">Estatus</th>
+                      <th class="text-center">Total</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -76,6 +76,17 @@
                         <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
                       </tr>
                     </g:each>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td><strong>TOTAL</strong></td>
+                      <td class="text-right"><strong>${modulusuno.formatPrice(number: detail*.total.sum())}</strong></td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </g:if>
