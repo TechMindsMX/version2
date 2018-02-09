@@ -26,10 +26,28 @@ class SimulatorPaysheetService {
   def generateXLSForSimulator(List importResultList){
     def data = importResultList
     def properties = ['consecutive', 'result', 'row.PERIODO','simulatedPaysheetEmployee.salaryImss','simulatedPaysheetEmployee.socialQuota','simulatedPaysheetEmployee.subsidySalary','simulatedPaysheetEmployee.incomeTax','simulatedPaysheetEmployee.imssSalaryNet','simulatedPaysheetEmployee.crudeAssimilable','simulatedPaysheetEmployee.incomeTaxAssimilable','simulatedPaysheetEmployee.netAssimilable','simulatedPaysheetEmployee.totalSalaryEmployee','simulatedPaysheetEmployee.socialQuotaEmployer','simulatedPaysheetEmployee.paysheetTax','simulatedPaysheetEmployee.paysheetCost','simulatedPaysheetEmployee.commission','simulatedPaysheetEmployee.paysheetTotal','simulatedPaysheetEmployee.paysheetIva','simulatedPaysheetEmployee.totalToInvoice' ]
-    def headers = ['CONSECUTIVO','RESULTADO', 'PERIODO','SALARIO IMSS BRUTO','CARGA SOCIAL TRABAJADOR','SUBSIDIO','ISR IMSS','SALARIO NETO','ASIMILABLE BRUTO','ISR ASIMILABLE','ASIMILABLE NETO','SUBTOTAL',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINAL","COMISION","TOTAL NÓMINA","IVA", "TOTAL A FACTURAR"]
+    def headers = ['NO.','STAT', 'FREC','SA BRUTO','RET IMSS','SUBSIDIO','RET ISR SA','SA NETO','IAS BRUTO','RET ISR IAS','IAS NETO','TOTAL NETO',"CARGA SOCIAL EMPRESA","ISN","COSTO NOMINA","COMISION","TOTAL NÓMINA","IVA", "GRAN TOTAL"]
+    def summary = ['TOTALES','', '',
+      importResultList*.simulatedPaysheetEmployee.salaryImss.sum(),
+      importResultList*.simulatedPaysheetEmployee.socialQuota.sum(),
+      importResultList*.simulatedPaysheetEmployee.subsidySalary.sum(),
+      importResultList*.simulatedPaysheetEmployee.incomeTax.sum(),
+      importResultList*.simulatedPaysheetEmployee.imssSalaryNet.sum(),
+      importResultList*.simulatedPaysheetEmployee.crudeAssimilable.sum(),
+      importResultList*.simulatedPaysheetEmployee.incomeTaxAssimilable.sum(),
+      importResultList*.simulatedPaysheetEmployee.netAssimilable.sum(),
+      importResultList*.simulatedPaysheetEmployee.totalSalaryEmployee.sum(),
+      importResultList*.simulatedPaysheetEmployee.socialQuotaEmployer.sum(),
+      importResultList*.simulatedPaysheetEmployee.paysheetTax.sum(),
+      importResultList*.simulatedPaysheetEmployee.paysheetCost.sum(),
+      importResultList*.simulatedPaysheetEmployee.commission.sum(),
+      importResultList*.simulatedPaysheetEmployee.paysheetTotal.sum(),
+      importResultList*.simulatedPaysheetEmployee.paysheetIva.sum(),
+      importResultList*.simulatedPaysheetEmployee.totalToInvoice.sum()]
     new WebXlsxExporter().with {
       fillRow(headers, 0)
       add(data,properties,1)
+      fillRow(summary, importResultList.size()+2)
     }
   }
 
@@ -42,6 +60,7 @@ class SimulatorPaysheetService {
       Map resultImportRow = [:]
       resultImportRow.consecutive = index+1
       resultImportRow.row = row
+      resultImportRow.period = PaymentPeriod.values().find(){it.toString() == row.PERIODO.toUpperCase()}
       resultImportRow.result = validateRowToImport(row)
       resultImportRow.simulatedPaysheetEmployee = resultImportRow.result == "OK" ? createPaysheetEmployee(row) : new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee())
       results.add(resultImportRow)

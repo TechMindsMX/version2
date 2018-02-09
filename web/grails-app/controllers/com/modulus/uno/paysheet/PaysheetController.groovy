@@ -115,7 +115,7 @@ class PaysheetController {
 
   def uploadLayoutForSimulator(){
     def file = request.getFile('layoutSimulator')
-   importResultList = simulatorPaysheetService.processXlsSimulator(file)
+    importResultList = simulatorPaysheetService.processXlsSimulator(file)
     render view:'simulatorPaysheet', model:[resultList:importResultList]
   }
 
@@ -126,4 +126,10 @@ class PaysheetController {
       save(response.outputStream)
     }
   }
+
+  def exportSimulatedPaysheetToPdf() {
+    String date = new Date().format("dd-MM-yyyy hh:mm:ss")
+    renderPdf(template: "/documentTemplates/simulatedPaysheet", model: [importResultList:importResultList, date:date], filename: "NominaSimulada_${date}.pdf")
+  }
+
 }
