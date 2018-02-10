@@ -71,7 +71,7 @@ class PurchaseOrderDocumentsService {
       discount: calculateDiscountForItem(xmlDataItem.xmlItem),
       iva:xmlDataItem.taxItem ? (xmlDataItem.version=="3.3" ? new BigDecimal(xmlDataItem.taxItem.'@tasaocuota')*100 : new BigDecimal(xmlDataItem.taxItem.'@tasa')) : new BigDecimal(0),
       ivaRetention:xmlDataItem.retentionItem ? new BigDecimal(xmlDataItem.retentionItem.'@importe') : new BigDecimal(0),
-      unitType:xmlDataItem.xmlItem.'@unidad'.toUpperCase(),
+      unitType:xmlDataItem.xmlItem.'@unidad' ? xmlDataItem.xmlItem.'@unidad'.toUpperCase() : xmlDataItem.xmlItem.'@claveunidad'.toUpperCase(),
       purchaseOrder:order
     )
     log.info "Item to save: ${poItem.dump()}"

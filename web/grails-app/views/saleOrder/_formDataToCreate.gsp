@@ -48,7 +48,7 @@
       </div>
       <div class="form-group">
         <label>Uso del CFDI:</label>
-        <g:select class="form-control" name="invoicePurpose" from="${InvoicePurpose.values()}"/>
+        <g:select class="form-control" name="invoicePurpose" from="${InvoicePurpose.values()}" value="${InvoicePurpose.G03}"/>
       </div>
 
       <p>
