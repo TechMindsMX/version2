@@ -419,7 +419,7 @@ class PaysheetServiceSpec extends Specification {
       socialQuota: getValueInBigDecimal("100"),
       subsidySalary: getValueInBigDecimal("500"),
       incomeTax: getValueInBigDecimal("200"),
-      salaryAssimilable: getValueInBigDecimal("3000")
+      netAssimilable: getValueInBigDecimal("3000")
     )
     paysheetEmployee.save(validate:false)
     paysheetEmployee

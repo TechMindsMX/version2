@@ -9,7 +9,7 @@ class DataImssEmployeeCommand implements Validateable {
   String nss
   Date registrationDate
   String baseImssMonthlySalary
-  String netMonthlySalary
+  String crudeMonthlySalary
   String holidayBonusRate
   String annualBonusDays
   String paymentPeriod
@@ -19,7 +19,7 @@ class DataImssEmployeeCommand implements Validateable {
     nss nullable:false
     registrationDate nullable:false
     baseImssMonthlySalary nullable:false
-    netMonthlySalary nullable:false
+    crudeMonthlySalary nullable:false
     holidayBonusRate nullable:false
     annualBonusDays nullable:false
     paymentPeriod nullable:false
@@ -32,7 +32,7 @@ class DataImssEmployeeCommand implements Validateable {
       registrationDate:this.registrationDate,
       nss:this.nss,
       baseImssMonthlySalary:getValueInBigDecimal(this.baseImssMonthlySalary),
-      netMonthlySalary:getValueInBigDecimal(this.netMonthlySalary),
+      crudeMonthlySalary:getValueInBigDecimal(this.crudeMonthlySalary),
       holidayBonusRate:getValueInBigDecimal(this.holidayBonusRate),
       annualBonusDays:this.annualBonusDays.toInteger(),
       paymentPeriod:PaymentPeriod.find { it.toString() == this.paymentPeriod }

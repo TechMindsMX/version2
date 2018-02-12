@@ -103,4 +103,7 @@ databaseChangeLog = {
   include file: 'adding-columns-payment-method-and-invoice-purpose-to-sale-order.groovy'
   include file: 'adding-columns-discount-and-ivaretention-to-purchase-order-item.groovy'
   include file: 'create-domain-biller-paysheet-project.groovy'
+  include file: 'modify-column-netpayment-to-crudepayment-into-dataimssemployee.groovy'
+  include file: 'rename-column-netpayment-to-crudepayment-into-prepaysheetemployee.groovy'
+  include file: 'adding-columns-incometaxassimilable-and-crudeassimilable-to-paysheetemployee.groovy'
 }

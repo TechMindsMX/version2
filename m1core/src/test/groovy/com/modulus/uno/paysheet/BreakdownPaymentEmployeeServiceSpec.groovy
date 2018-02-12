@@ -41,9 +41,7 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
   }
 
   void "Should calculate the integrated daily salary for employee"() {
-    given:"The employee"
-      EmployeeLink employee = new EmployeeLink(employeeRef:"RFC").save(validate:false)
-    and:
+    given:
       PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"proyecto").save(validate:false)
       PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
       Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
@@ -53,7 +51,7 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
       DataImssEmployee dataImssEmployee = new DataImssEmployee(baseImssMonthlySalary:new BigDecimal(5000)).save(validate:false)
       dataImssEmployeeService.getDataImssForEmployee(_) >> dataImssEmployee
     when:
-      BigDecimal integratedDailySalary = service.getIntegratedDailySalaryForEmployee(employee, paysheet)
+      BigDecimal integratedDailySalary = service.getIntegratedDailySalaryForEmployee(dataImssEmployee, paysheet)
     then:
       integratedDailySalary == 174.20
   }
@@ -313,6 +311,7 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
     where:
     bimss                                   ||      sqee    ||    sqer
     new BigDecimal(4714.12).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(118.58).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(1226.77).setScale(2, RoundingMode.HALF_UP)
+    new BigDecimal(0).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(0).setScale(2, RoundingMode.HALF_UP) || new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
   }
 
 }
