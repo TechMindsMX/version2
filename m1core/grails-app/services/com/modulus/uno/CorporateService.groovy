@@ -191,4 +191,18 @@ class CorporateService {
     }
     corporate
   }
+
+  def getCorporateToEnableOrDisable(Corporate corporate) {
+    if(corporate.status == CorporateStatus.ENABLED){
+      corporate.users.each{ status ->
+        status.enabled = false }
+      return corporate.status = CorporateStatus.DISABLED
+    }
+    else {
+      corporate.users.each{ status ->
+        status.enabled = true }
+      return corporate.status = CorporateStatus.ENABLED 
+    }
+  }
+
 }
