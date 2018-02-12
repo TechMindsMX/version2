@@ -18,13 +18,13 @@ class CorporateController {
     respond new Corporate()
   }
 
-  def save(Corporate corporate){
-    if(!corporate){
+  def save(CorporateCommand corporateCommand){
+    if(!corporateCommand){
       transactionStatus.setRollbackOnly()
       respond corporate.errors, view:'create'
       return
     }
-
+    Corporate corporate = corporateCommand.getCorporate()
     if (corporateService.createRoute53(corporate)) {
       flash.error = "La ruta que se desea dar de alta ya existe"
       respond corporate.errors, view:'create'
@@ -54,18 +54,7 @@ class CorporateController {
 
   def assignRolesInCompaniesForUser(User user){
     Corporate corporate = corporateService.findCorporateOfUser(user)
-    List<Role> roles = Role.list()
-    roles = roles.findAll{ it.authority.toString() in ["ROLE_LEGAL_REPRESENTATIVE_VISOR",
-                          "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR",
-                          "ROLE_FICO_VISOR",
-                          "ROLE_FICO_EJECUTOR",
-                          "ROLE_AUTHORIZER_VISOR",
-                          "ROLE_AUTHORIZER_EJECUTOR",
-                          "ROLE_OPERATOR_VISOR",
-                          "ROLE_OPERATOR_EJECUTOR",
-                          "ROLE_AUTHORIZER_PAYSHEET",
-                          "ROLE_OPERATOR_PAYSHEET"
-                          ]}
+    def roles = corporateService.getRolesForCorporate(corporate)
     List<UserRoleCompany> rolesOfUser = organizationService.findRolesForUserInCompanies(user.username,corporate)
     [companies:corporate.companies,roles:roles,user:user,rolesOfUser:rolesOfUser]
   }
@@ -222,6 +211,13 @@ class CorporateController {
     }
   }
 
+  @Transactional
+  def updateFlagQuotation(Corporate corporate) {
+    corporate.hasQuotationContract = !corporate.hasQuotationContract
+    corporate.save()
+    corporateService.unassignRolesForQuotationServiceToUsersInCorporate(corporate)
+    redirect action:"show", id:corporate.id
+  }
 }
 
 @groovy.transform.TypeChecked

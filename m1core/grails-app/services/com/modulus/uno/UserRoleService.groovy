@@ -23,4 +23,17 @@ class UserRoleService {
     user
   }
 
+  @Transactional
+  User deleteRoleForUser(User user, Role role) {
+    UserRoleCompany urc = UserRoleCompany.findByUser(user)
+    log.info "User role company: ${urc?.dump()}"
+    if (urc?.roles.find { it.authority == role.authority }) {
+      log.info "Delete role: ${role.authority} for user: ${user.username}"
+      urc.removeFromRoles(role)
+      urc.save()
+      log.info "Current roles for user: ${urc.roles*.dump()}"
+    }
+    user
+  }
+
 }

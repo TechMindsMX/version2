@@ -15,6 +15,7 @@
       </h1>
     </div>
 
+	<sec:ifAnyGranted roles="ROLE_EXECUTOR_QUOTATION">
     <div id="edit-address" class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">  
         <div class="portlet-body">
@@ -70,6 +71,7 @@
             </div>
           </g:if>
         </div>
+	</sec:ifAnyGranted>
     <asset:javascript src="businessEntity/selectEntities.js"/>
   </body>
 </html>

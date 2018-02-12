@@ -10,8 +10,11 @@ import spock.lang.Unroll
 @Mock([Corporate,Company,User, Role,UserRole,Profile])
 class CorporateServiceSpec extends Specification {
 
+  UserRoleService userRoleService = Mock(UserRoleService)
+
   def setup() {
       grailsApplication.config.grails.plugin.awssdk.domain.base.url = "-qa.modulusuno.com"
+      service.userRoleService = userRoleService
   }
 
   Should "create a corporate"() {
@@ -199,4 +202,32 @@ class CorporateServiceSpec extends Specification {
       url == "web-qa.modulusuno.com"
   }
 
+  void "Should unassign roles for quotation service to users in corporate when disabled quotation service"() {
+    given:"The corporate"
+      Corporate corporate = new Corporate(hasQuotationContract:false).save(validate:false)
+    and:"The corporate users"
+      User user1 = new User(username:"user1").save(validate:false)
+      User user2 = new User(username:"user2").save(validate:false)
+      User user3 = new User(username:"user3").save(validate:false)
+    and:"The roles for users"
+      Role replegal = new Role(authority:"ROLE_LEGAL_REPRESENTATIVE_EJECUTOR").save(validate:false) 
+      Role opQuotation = new Role(authority:"ROLE_OPERATOR_QUOTATION").save(validate:false) 
+      Role execQuotation = new Role(authority:"ROLE_EXECUTOR_QUOTATION").save(validate:false) 
+      UserRole ur1 = new UserRole(user:user1, role:replegal).save(validate:false)
+      UserRole ur2 = new UserRole(user:user2, role:opQuotation).save(validate:false)
+      UserRole ur3 = new UserRole(user:user3, role:execQuotation).save(validate:false)
+    and:
+      corporate.addToUsers(user1)
+      corporate.addToUsers(user2)
+      corporate.addToUsers(user3)
+      corporate.save(validate:false)
+    and:
+      userRoleService.deleteRoleForUser(user2, _) >> { ur2.delete() }
+      userRoleService.deleteRoleForUser(user3, _) >> { ur3.delete() }
+    when:
+      def result = service.unassignRolesForQuotationServiceToUsersInCorporate(corporate)
+    then:
+      result.users.findAll{ user -> ["ROLE_OPERATOR_QUOTATION","ROLE_EXECUTOR_QUOTATION"].every{ it in user.getAuthorities()*.authority }  }.size() == 0 
+      result.users.size() == 3
+  }
 }

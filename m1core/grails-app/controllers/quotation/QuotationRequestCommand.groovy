@@ -1,10 +1,9 @@
-
 package com.modulus.uno.quotation
 
-import com.modulus.uno.BusinessEntity
-import com.modulus.uno.Company
 import grails.validation.Validateable
 import java.text.*
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
 
 class QuotationRequestCommand implements Validateable {
 
@@ -15,12 +14,21 @@ class QuotationRequestCommand implements Validateable {
   String iva
   String total
   String subtotal
+  String paymentWay
+  String paymentMethod
+  String invoicePurpose
+
+  static constraints = {
+    paymentWay nullable:true
+    paymentMethod nullable:true
+    invoicePurpose nullable:true
+    biller nullable:true
+  } 
 
   QuotationRequest getQuotationRequest(){
     new QuotationRequest(
         commission: QuotationContract.get(quotation?.toInteger()).commission,
         description: description,
-        biller:QuotationContract.get(quotation.toInteger()).company,
         quotationContract:  QuotationContract.get(quotation.toInteger()),
         iva:getValueInBigDecimal(iva),
         subtotal: getValueInBigDecimal(subtotal),
