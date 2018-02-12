@@ -375,17 +375,17 @@ class CompanyService {
   private String applyOperationsCloseTransaction(Company company, Map transactions) {
     log.info "Applying Operations Close for ${company} with transactions ${transactions}"
     String status = "OK"
-    String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(transactions.period.init)
+    String dateTransaction = transactions.period.init.format("yyMMdd")
     String tracingFinal = "${dateTransaction}${company.accounts.first().aliasStp}"
     Map movFinal = transactions.transactions.find { it.tracing.contains(tracingFinal) }
     if (movFinal) {
       log.info "Recording final transfer for ${company} of the ${dateTransaction}"
       transactionService.createFinalTransferTransaction(movFinal)
-      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:Date.parse("yyyyMMdd",dateTransaction), status:FinalTransactionResultStatus.SUCCESSFUL, comment:"Final Transfer Transaction executed"])
+      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:Date.parse("yyMMdd",dateTransaction), status:FinalTransactionResultStatus.SUCCESSFUL, comment:"Final Transfer Transaction executed"])
     } else {
       status = "NOT FOUND"
       log.error "No se encontró registro del traspaso final para la empresa ${company} del día ${dateTransaction}"
-      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:Date.parse("yyyyMMdd",dateTransaction), status:FinalTransactionResultStatus.FAILED, comment:"Final Transfer NOT FOUND"])
+      finalTransactionResultService.createFinalTransactionResult([company:company, dateTransaction:Date.parse("yyMMdd",dateTransaction), status:FinalTransactionResultStatus.FAILED, comment:"Final Transfer NOT FOUND"])
     }
     status
   }

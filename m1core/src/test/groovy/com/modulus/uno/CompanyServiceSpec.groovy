@@ -520,7 +520,7 @@ and:
         )
       collaboratorService.getPeriodForConciliationStp() >> period
     and:"The transactions from stp"
-      String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(new Date().parse("dd-MM-yyyy", "13-05-2017"))
+      String dateTransaction = new Date().parse("dd-MM-yyyy", "13-05-2017").format("yyMMdd")
       List listMovs = [
       [id:"idmov1", credit:new BigDecimal(100), debit:new BigDecimal(0), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingCredit", reference:"referenceCredit"],
       [id:"idmov2", credit:new BigDecimal(0), debit:new BigDecimal(200), clabe:"646180191900100010", bankCode:"072", settlementDate:new Date(), bankName:"BANORTE", tracing:"tracingDebit", reference:"referenceDebit"],
@@ -549,7 +549,7 @@ and:
         )
       collaboratorService.getPeriodForConciliationStp() >> period
     and:"The transactions from stp"
-      String dateTransaction = new SimpleDateFormat("yyyyMMdd").format(new Date().parse("dd-MM-yyyy", "13-05-2017"))
+      String dateTransaction = new Date().parse("dd-MM-yyyy", "13-05-2017").format("yyMMdd")
       List listMovs = listTransactions
       Map transactions = [balance:[:], transactions:listMovs, period:period]
       stpService.getTransactionsForCompanyInPeriod(_, _) >> transactions
