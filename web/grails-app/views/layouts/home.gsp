@@ -14,10 +14,6 @@
         padding-top: 50px;
         padding-bottom: 20px;
       }
-      div.bg {
-        background-image: url("${assetPath(src: 'bg.jpg')}");
-        background-size: 100% auto;
-      }
       .shadow {
         text-shadow: 2px 2px 5px white;
       }

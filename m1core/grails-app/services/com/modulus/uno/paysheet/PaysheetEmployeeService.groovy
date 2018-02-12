@@ -32,6 +32,8 @@ class PaysheetEmployeeService {
       paysheetEmployee.subsidySalary = calculateSubsidySalary(paysheetEmployee)
       paysheetEmployee.incomeTax = calculateIncomeTax(baseImssMonthlySalary, paysheetEmployee.prePaysheetEmployee.prePaysheet.paymentPeriod)
       paysheetEmployee.netAssimilable = calculateNetAssimilableSalary(paysheetEmployee)
+      paysheetEmployee.crudeAssimilable = calculateCrudeAssimilableSalary(paysheetEmployee)
+      paysheetEmployee.incomeTaxAssimilable = paysheetEmployee.crudeAssimilable - paysheetEmployee.netAssimilable
       paysheetEmployee.socialQuotaEmployer = calculateSocialQuotaEmployer(paysheetEmployee)
       paysheetEmployee.paysheetTax = calculatePaysheetTax(paysheetEmployee)
       paysheetEmployee.commission = calculateCommission(paysheetEmployee)
@@ -63,9 +65,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal calculateIncomeTax(BigDecimal monthlySalary, PaymentPeriod paymentPeriod) {
-    RateTax rateTax = RateTax.values().find { rt ->
-      monthlySalary >= rt.lowerLimit && monthlySalary <= rt.upperLimit
-    }
+    RateTax rateTax = getRateTaxForMonthlySalary(monthlySalary)
     if (!rateTax) {
       return new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
     }
@@ -113,4 +113,30 @@ class PaysheetEmployeeService {
 		employee.paymentWay = employee.paymentWay == PaymentWay.BANKING ? PaymentWay.CASH : PaymentWay.BANKING
 		employee.save()
 	}
+
+  BigDecimal calculateCrudeAssimilableSalary(PaysheetEmployee paysheetEmployee) {
+    if (paysheetEmployee.netAssimilable > 0) {
+      BigDecimal monthlyNetAssimilable = ((paysheetEmployee.netAssimilable / paysheetEmployee.paysheet.prePaysheet.paymentPeriod.days) * 30).setScale(2, RoundingMode.HALF_UP)
+      BigDecimal monthlyCrudeAssimilable = calculateCrudeIASFromNetIAS(monthlyNetAssimilable)
+      calculateProportionalAmountFromPaymentPeriod(monthlyCrudeAssimilable, paysheetEmployee.paysheet.prePaysheet.paymentPeriod)
+    } else {
+      new BigDecimal(0)
+    }
+  }
+
+  BigDecimal calculateCrudeIASFromNetIAS(BigDecimal netIAS) {
+    RateTax temporalRateTax = getRateTaxForMonthlySalary(netIAS)
+    BigDecimal approximateSalary = (netIAS * (1 + (temporalRateTax.rate / 100))).setScale(2, RoundingMode.HALF_UP)
+    RateTax realRateTax = getRateTaxForMonthlySalary(approximateSalary)
+    BigDecimal crudeIAS = (netIAS + realRateTax.fixedQuota -(realRateTax.lowerLimit * (realRateTax.rate/100))) / (1 - (realRateTax.rate/100))
+    crudeIAS.setScale(2, RoundingMode.HALF_UP)
+  }
+
+  RateTax getRateTaxForMonthlySalary(BigDecimal monthlySalary) {
+     RateTax.values().find { rt ->
+      monthlySalary >= rt.lowerLimit && monthlySalary <= rt.upperLimit
+    }
+  } 
+
+
 }
