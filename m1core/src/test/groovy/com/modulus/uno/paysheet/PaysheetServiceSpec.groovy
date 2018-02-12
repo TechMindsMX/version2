@@ -98,7 +98,7 @@ class PaysheetServiceSpec extends Specification {
       def result = service.createTxtDispersionFileForBBVABANCOMER(dispersionDataForBank, "SA")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "000EmployeeAccount000000000AccountSAMXN0000000001200.00SSA-BBVALAYOUT                "
+			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'120000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
   void "Should create the payment dispersion IAS BBVA file"() {
@@ -113,7 +113,7 @@ class PaysheetServiceSpec extends Specification {
       def result = service.createTxtDispersionFileForBBVABANCOMER(dispersionDataForBank, "IAS")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "000EmployeeAccount00000000AccountIASMXN0000000003000.00IAS-BBVALAYOUT                "
+			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'300000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
   void "Should create the payment dispersion SA Default file"() {
@@ -176,7 +176,7 @@ class PaysheetServiceSpec extends Specification {
       def result = service.createDispersionFileInterBank(dispersionData, "SA")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "Clabe interbanking000000000M1AccountMXN0000000001200.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
+			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'120000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
   void "Should create the payment dispersion file inter bank IAS"() {
@@ -187,7 +187,7 @@ class PaysheetServiceSpec extends Specification {
       def result = service.createDispersionFileInterBank(dispersionData, "IAS")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "Clabe interbanking000000000M1AccountMXN0000000003000.00NAME EMPLOYEE CLEANED         40999TRN SS 1                      ${new Date().format('ddMMyy').padLeft(7,'0')}H"
+			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'300000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
 	void "Should complement the dispersion data"() {
