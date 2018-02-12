@@ -201,4 +201,13 @@ body .table > tbody > tr.success > td:last-child {
 /*body .table > tbody > tr.info > td:last-child {
   background: none; }*/
 
+.table > tbody > tr.success > td:last-child {
+  color: #16a085;
+  background: none; }
+
+.table > tbody > tr.danger > td:last-child {
+  color: #e74c3c; }
+
+.table > tbody > tr.info > td:last-child {
+  background: #2980b9; }
 /*# sourceMappingURL=modulus_uno.css.map */

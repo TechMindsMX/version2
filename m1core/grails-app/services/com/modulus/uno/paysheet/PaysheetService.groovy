@@ -309,15 +309,17 @@ class PaysheetService {
     String type = "99"
     String bank = "001"
     String branch = "001"
+		int consecutive = 0
 
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
       if (employee."${salary}" > 0) {
-        String counter = "${index+1}".padLeft(9,"0")
-        String destinyAccount = employee.prePaysheetEmployee.account.padRight(20,' ')
-        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(15,'0')
-        String adjustName = employee.prePaysheetEmployee.nameEmployee.length() > 40 ? employee.prePaysheetEmployee.nameEmployee.substring(0,40) : employee.prePaysheetEmployee.nameEmployee
-        String name = clearSpecialCharsFromString(adjustName).padRight(40," ")
-        file.append("${counter}${rfc}${type}${destinyAccount}${amount}${name}${bank}${branch}\n")
+				consecutive++
+				String counter = "${consecutive}".padLeft(9,"0")
+				String destinyAccount = employee.prePaysheetEmployee.account.padRight(20,' ')
+				String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(15,'0')
+				String adjustName = employee.prePaysheetEmployee.nameEmployee.length() > 40 ? employee.prePaysheetEmployee.nameEmployee.substring(0,40) : employee.prePaysheetEmployee.nameEmployee
+				String name = clearSpecialCharsFromString(adjustName).padRight(40," ")
+				file.append("${counter}${rfc}${type}${destinyAccount}${amount}${name}${bank}${branch}\n")
       }
     }
 
@@ -456,16 +458,18 @@ class PaysheetService {
     String type = "99"
     String bank = "001"
     String branch = "001"
+		int consecutive = 0
 
     dispersionData.employees.eachWithIndex { employee, index ->
       if (employee."${salary}" > 0) {
-        log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
-        String counter = "${index+1}".padLeft(9,"0")
-        String destinyAccount = employee.prePaysheetEmployee.account.padRight(20,' ')
-        String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(15,'0')
-        String adjustName = employee.prePaysheetEmployee.nameEmployee.length() > 40 ? employee.prePaysheetEmployee.nameEmployee.substring(0,40) : employee.prePaysheetEmployee.nameEmployee
-        String name = clearSpecialCharsFromString(adjustName).padRight(40," ")
-        file.append("${counter}${rfc}${type}${destinyAccount}${amount}${name}${bank}${branch}\n")
+				log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
+				consecutive++
+				String counter = "${consecutive}".padLeft(9,"0")
+				String destinyAccount = employee.prePaysheetEmployee.account.padRight(20,' ')
+				String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).replace(".","").padLeft(15,'0')
+				String adjustName = employee.prePaysheetEmployee.nameEmployee.length() > 40 ? employee.prePaysheetEmployee.nameEmployee.substring(0,40) : employee.prePaysheetEmployee.nameEmployee
+				String name = clearSpecialCharsFromString(adjustName).padRight(40," ")
+				file.append("${counter}${rfc}${type}${destinyAccount}${amount}${name}${bank}${branch}\n")
       }
     }
     log.info "File created: ${file.text}"
@@ -550,7 +554,7 @@ class PaysheetService {
       summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
       summaryInterBank.allPayers = payers
       summaryInterBank.totalSA = employeesInterBank*.imssSalaryNet.sum()
-      summaryInterBank.totalIAS = employeesInterBank*.salaryAssimilable.sum()
+      summaryInterBank.totalIAS = employeesInterBank*.netAssimilable.sum()
       summaryInterBank.type = "InterBank"
       if (summaryInterBank.totalSA > 0 || summaryInterBank.totalIAS >0)
         summary.add(summaryInterBank)

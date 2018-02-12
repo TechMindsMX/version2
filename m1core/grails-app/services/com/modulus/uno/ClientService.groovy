@@ -13,7 +13,13 @@ class ClientService {
 
   def addClientToCompany(ClientBusinessEntity client, Company company){
     if(isClientOfThisCompany(client, company))throw new BusinessException(messageSource.getMessage('exception.client.already.exist', null, LCH.getLocale()))
-    def clientLink = new ClientLink(type:client.class.simpleName, clientRef: client.rfc, company: company).save()
+    def clientLink = new ClientLink(type:client.class.simpleName, clientRef: client.rfc, company: company)
+    clientLink.save()
+    if (clientLink.hasErrors()){
+      log.error "Error al guardar el client ${clientLink.dump()}"
+      throw new BusinessException("Los datos del cliente son erroneos")
+    }
+
     company.addToBusinessEntities(client)
     clientLink
   }
@@ -48,4 +54,17 @@ class ClientService {
     clientLink
   }
 
+  ClientLink clientAlreadyExistsInCompany(String rfc, Company company){
+    ClientLink.findByClientRefAndCompany(rfc, company)
+  }
+
+  ClientLink createClientForRowClient(Map rowClient, Company company) {
+    ClientLink clientLink = new ClientLink(
+      type:"BusinessEntity",
+      clientRef:rowClient.RFC,
+      company:company
+    )
+    clientLink.save()
+    clientLink
+    }    
 }

@@ -10,6 +10,7 @@ class BusinessEntityService {
   def providerService
   def employeeService
   def bankAccountService
+  def addressService
   def emailSenderService
   SaleOrderService saleOrderService
   PaymentService paymentService
@@ -102,6 +103,7 @@ class BusinessEntityService {
       entity=""
     def criteria = BusinessEntity.createCriteria()
     def list = criteria.listDistinct {
+      eq 'status', BusinessEntityStatus.ACTIVE
       or{
         like 'rfc', "%${keyword}%"
         names{
@@ -235,33 +237,127 @@ class BusinessEntityService {
     xlsLayoutsBusinessEntityService."generateLayoutFor${entityType.toUpperCase()}"()
   }
 
+  def exportXlsForBusinessRelationships(String entityType, Company company) {
+    def businessEntityList = company.businessEntities.toList().sort{it.id}
+    if(entityType != "All Entities"){
+      return xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(giveListOfTheEntityType(entityType, businessEntityList))
+    }
+    else {
+      return xlsLayoutsBusinessEntityService.exportListOfBusinessEntities(businessEntityList)
+    } 
+  }
+
+  List<BusinessEntity> giveListOfTheEntityType(String entityType, List<BusinessEntity> businessEntityList){
+    def businessEntityListForType = []
+    businessEntityList.each{ data ->
+      data.getBusinessEntityType().toString() == entityType?businessEntityListForType << data: " "
+    }
+    businessEntityListForType
+  }
+
   def processXlsMassiveForEMPLEADO(def file, Company company) {
     log.info "Processing massive registration for Employee"
-    List data = xlsImportService.parseXlsMassiveEmployee(file)
-    List results = processDataFromXls(data, company)
-    log.info "Data: ${data}"
+    File xlsFile = xlsImportService.getFileToProcess(file)
+    List data = xlsImportService.parseXlsMassiveEmployee(xlsFile)
+    def headers = getKeyForData(data)
+    List results = processDataFromXlsEMPLEADO(data, company)
+    log.info "Headers: ${headers}"
     log.info "Results: ${results}"
-    [data:data, results:results]
+    [results:results, headers:headers, data:data]
+  }
+
+  def processXlsMassiveForCLIENTE(def file, Company company) {
+    log.info "Processing massive registration for Client"
+    File xlsFile = xlsImportService.getFileToProcess(file)
+    List data = xlsImportService.parseXlsMassiveClient(xlsFile)
+    def headers = getKeyForData(data)
+    List results = processDataFromXlsCLIENTE(data, company)
+    log.info "Headers: ${headers}"
+    log.info "Results: ${results}"
+    [results:results, headers:headers, data:data]
+  }
+
+  def processXlsMassiveForPROVEEDOR(def file, Company company) {
+    log.info "Processing massive registration for Provider"
+    File xlsFile = xlsImportService.getFileToProcess(file)
+    List data = xlsImportService.parseXlsMassiveProvider(xlsFile)
+    def headers = getKeyForData(data)
+    List results = processDataFromXlsPROVEEDOR(data, company)
+    log.info "Headers: ${headers}"
+    log.info "Results: ${results}"
+    [results:results, headers:headers, data:data]
+  }
+
+  def processXlsMassiveForCLIENTE_PROVEEDOR(def file, Company company) {
+    log.info "Processing massive registration for Client_Provider"
+    File xlsFile = xlsImportService.getFileToProcess(file)
+    List data = xlsImportService.parseXlsMassiveClient_Provider(xlsFile)
+    def headers = getKeyForData(data)
+    List results = processDataFromXlsCLIENTE_PROVEEDOR(data, company)
+    log.info "Headers: ${headers}"
+    log.info "Results: ${results}"
+    [results:results, headers:headers, data:data]
+  }
+
+  def getKeyForData(List data) {
+    def headers = data.first().keySet()
+    headers
   }
 
 
-  List processDataFromXls(List data, Company company) {
+  List processDataFromXlsEMPLEADO(List data, Company company) {
     List results = []
     data.each { employee ->
       String result = saveEmployeeImportData(employee, company)
       results.add(result)
       if (result == "Registrado") {
-        addEmployeeToCompany(employee.RFC, company)
+        addBusinessEntityToCompany(employee.RFC, company)
+      }
+    }
+    results
+  }
+ 
+  List processDataFromXlsCLIENTE(List data, Company company) {
+    List results = []
+    data.each { client ->
+      String result = saveClientImportData(client, company)
+      results.add(result)
+      if (result == "Registrado") {
+        addBusinessEntityToCompany(client.RFC, company)
+      }
+    }
+    results
+  }
+
+  List processDataFromXlsPROVEEDOR(List data, Company company) {
+    List results = []
+    data.each { provider ->
+      String result = saveProviderImportData(provider, company)
+      results.add(result)
+      if (result == "Registrado") {
+        addBusinessEntityToCompany(provider.RFC, company)
+      }
+    }
+    results
+  }
+
+  List processDataFromXlsCLIENTE_PROVEEDOR(List data, Company company) {
+    List results = []
+    data.each { clientProvider ->
+      String result = saveClientProviderImportData(clientProvider, company)
+      results.add(result)
+      if (result == "Registrado") {
+        addBusinessEntityToCompany(clientProvider.RFC, company)
       }
     }
     results
   }
 
   @Transactional
-  def addEmployeeToCompany(String rfc, Company company) {
-    log.debug "Adding employee to company: ${rfc}"
+  def addBusinessEntityToCompany(String rfc, Company company) {
+    log.debug "Adding business entity to company: ${rfc}"
     BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
-    company.addToBusinessEntities((EmployeeBusinessEntity) businessEntity)
+    company.addToBusinessEntities(businessEntity)
     company.save()
   }
 
@@ -284,7 +380,7 @@ class BusinessEntityService {
       return "Error: RFC"
     }
 
-    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowEmployee(businessEntity, rowEmployee)
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowEmployee)
     if (!bankAccount || bankAccount?.hasErrors()) {
       transactionStatus.setRollbackOnly()
       return "Error: datos bancarios"
@@ -297,8 +393,112 @@ class BusinessEntityService {
         return "Error: datos de IMSS"
       }
     }
+    "Registrado"
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  def saveClientImportData(Map rowClient, Company company) {
+    if(checkIfTypeOfBusinessEntityIsCorrect(rowClient.PERSONA)) {
+      transactionStatus.setRollbackOnly()
+      return "Error: tipo de cliente"
+    }
+
+    if (clientService.clientAlreadyExistsInCompany(rowClient.RFC, company)){
+      transactionStatus.setRollbackOnly()
+      return "Error: el RFC del cliente ya existe"
+    }
+    
+    ClientLink clientLink = clientService.createClientForRowClient(rowClient, company)
+    BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowClient)
+    if(businessEntity.hasErrors()){
+        transactionStatus.setRollbackOnly()
+        return "Error: RFC"
+    }
+
+    BankAccount bankAccount = bankAccountService.createBankAccountForClientFromRowClient(businessEntity, rowClient)
+    if(!bankAccount || bankAccount?.hasErrors()){
+      transactionStatus.setRollbackOnly()
+      return "Error: datos bancarios"
+    }
+
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
+    if (!address || address?.hasErrors()) {
+        transactionStatus.setRollbackOnly()
+        return "Error: Datos en la dirección"
+    }
 
     "Registrado"
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  def saveProviderImportData(Map rowProvider, Company company) {
+    if(checkIfTypeOfBusinessEntityIsCorrect(rowProvider.PERSONA)) {
+      transactionStatus.setRollbackOnly()
+      return "Error: tipo de proveedor"
+    }
+
+    if (providerService.providerAlreadyExistsInCompany(rowProvider.RFC, company)){
+      transactionStatus.setRollbackOnly()
+      return "Error: el RFC del proveedor ya existe"
+    }
+
+    ProviderLink providerLink = providerService.createProviderForRowProvider(rowProvider, company)
+    BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowProvider)
+      if(businessEntity.hasErrors()){
+        transactionStatus.setRollbackOnly()
+        return "Error: RFC"
+      }
+
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowProvider)
+    if (!bankAccount || bankAccount?.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      return "Error: datos bancarios"
+    }
+
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowProvider)
+    if (!address || address?.hasErrors()) {
+        transactionStatus.setRollbackOnly()
+        return "Error: Datos de la dirección"
+    }
+    "Registrado"
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  def saveClientProviderImportData(Map rowClientProvider, Company company){
+    if(checkIfTypeOfBusinessEntityIsCorrect(rowClientProvider.PERSONA)) {
+      transactionStatus.setRollbackOnly()
+      return "Error: tipo de cliente/proveedor"
+    }
+
+    if (providerService.providerAlreadyExistsInCompany(rowClientProvider.RFC, company) || clientService.clientAlreadyExistsInCompany(rowClientProvider.RFC, company)){
+      transactionStatus.setRollbackOnly()
+      return "Error: el RFC del cliente/proveedor ya existe"
+    }
+
+    ProviderLink providerLink = providerService.createProviderForRowProvider(rowClientProvider, company)
+    ClientLink clientLink = clientService.createClientForRowClient(rowClientProvider, company)
+    BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowClientProvider)
+      if(businessEntity.hasErrors()){
+        transactionStatus.setRollbackOnly()
+        return "Error: RFC"
+      }
+
+    BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowClientProvider)
+    if (!bankAccount || bankAccount?.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      return "Error: datos bancarios"
+    }
+
+    Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClientProvider)
+    if (!address || address?.hasErrors()) {
+        transactionStatus.setRollbackOnly()
+        return "Error: Datos de la dirección"
+    }
+    "Registrado"
+  }
+
+  def checkIfTypeOfBusinessEntityIsCorrect(String persona){
+    persona.toUpperCase().replace('Í', 'I') != "FISICA" && persona.toUpperCase() != "MORAL"
   }
 
   def createBusinessEntityForRowEmployee(Map employeeMap) {
@@ -309,17 +509,36 @@ class BusinessEntityService {
     )
 
     businessEntity.save()
-
-    createComposeNameForBusinessEntityFromRowEmployee(businessEntity, employeeMap)
+    createComposeNameForBusinessEntityFromRowBusinessEntity(businessEntity, employeeMap)
   }
 
-  def createComposeNameForBusinessEntityFromRowEmployee(BusinessEntity businessEntity, Map employeeMap) {
-    ComposeName lastName = new ComposeName(value:employeeMap.PATERNO, type:NameType.APELLIDO_PATERNO)
-    ComposeName motherLastName = new ComposeName(value:employeeMap.MATERNO, type:NameType.APELLIDO_MATERNO)
-    ComposeName name = new ComposeName(value:employeeMap.NOMBRE, type:NameType.NOMBRE)
+  def createBusinessEntityForRowBusinessEntity(Map businessMap) {
+    BusinessEntity businessEntity = new BusinessEntity(
+      rfc:businessMap.RFC,
+      type:BusinessEntityType."${businessMap.PERSONA}",
+      status:BusinessEntityStatus.TO_AUTHORIZE
+      )
+
+    businessEntity.save()
+    if("${businessMap.PERSONA}" == "FISICA")
+      return createComposeNameForBusinessEntityFromRowBusinessEntity(businessEntity, businessMap)
+    else if("${businessMap.PERSONA}" == "MORAL")
+      return appendDataToBusinessEntityFromMap(businessEntity, businessMap)
+  }
+
+  def createComposeNameForBusinessEntityFromRowBusinessEntity(BusinessEntity businessEntity, Map businessMap) {
+    ComposeName lastName = new ComposeName(value:businessMap.PATERNO, type:NameType.APELLIDO_PATERNO)
+    ComposeName motherLastName = new ComposeName(value:businessMap.MATERNO, type:NameType.APELLIDO_MATERNO)
+    ComposeName name = new ComposeName(value:businessMap.NOMBRE, type:NameType.NOMBRE)
     businessEntity.addToNames(lastName)
     businessEntity.addToNames(motherLastName)
     businessEntity.addToNames(name)
+    businessEntity.save()
+    businessEntity
+  }
+
+  def appendDataToBusinessEntityFromMap(BusinessEntity businessEntity, Map businessMap) {
+    businessEntity.addToNames(new ComposeName(value:businessMap.RAZON_SOCIAL, type:NameType.RAZON_SOCIAL))
     businessEntity.save()
     businessEntity
   }

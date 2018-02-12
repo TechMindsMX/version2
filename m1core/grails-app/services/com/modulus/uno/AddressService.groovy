@@ -105,4 +105,27 @@ class AddressService {
     customAddressTypes
   }
 
+  def createAddressForBusinessEntityFromRowBusinessEntity(BusinessEntity businessEntity, Map rowBusinessEntity) {
+    Address address = new Address(
+      street:rowBusinessEntity.CALLE,
+      streetNumber:rowBusinessEntity.NUMEXTERIOR,
+      suite:rowBusinessEntity.NUMINTERIOR,
+      zipCode:rowBusinessEntity.CODIGO_POSTAL,
+      colony:rowBusinessEntity.COLONIA,
+      country:rowBusinessEntity.PAIS,
+      city:rowBusinessEntity.CIUDAD,
+      town:rowBusinessEntity."DELEGACION/MUNICIPIO",
+      federalEntity:rowBusinessEntity.ENTIDAD_FEDERATIVA?:rowBusinessEntity.CIUDAD,
+      addressType:rowBusinessEntity.TIPO_DE_DIRECCION
+    )
+
+    address.save()
+    log.info "Address ${address.dump()}"
+    if (address.id) {
+      businessEntity.addToAddresses(address)
+      businessEntity.save()
+    }
+    address
+  }
+
 }

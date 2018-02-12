@@ -103,6 +103,11 @@
 
       </div>
       </div>
+        </div>
+      </div><!--Close Portlet-->
+
+      </div>
+      
     </div>
 
     <div class="row">
@@ -146,7 +151,6 @@
       </div>
     </div>
     <asset:javascript src="purchaseOrder/show.js"/>
-
 
 
 

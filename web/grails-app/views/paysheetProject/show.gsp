@@ -15,6 +15,14 @@
     </div>
     <div id="show-paysheet-project" class="content scaffold-edit" role="main">
         <g:render template="paysheetProjectData"/>
+        <g:render template="listEmployees"/>
+
+        <g:if test="${employeesList}">
+          <g:form action="addEmployees" id="${paysheetProject.id}">
+            <g:render template="chooseEmployees"/>
+          </g:form>
+        </g:if>
+
         <g:render template="listPayers"/>
         <g:render template="listBillers"/>
 
@@ -37,5 +45,7 @@
         </div>
 
     </div>
+
+    <asset:javascript src="businessEntity/selectEntities.js"/>
   </body>
 </html>

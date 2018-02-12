@@ -4,12 +4,14 @@ import grails.converters.JSON
 
 class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, EmployeeBusinessEntity {
 
+  def businessEntityService
+
   String rfc
   String website
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
 
   BusinessEntityType type
-  BusinessEntityStatus status = BusinessEntityStatus.ACTIVE
+  BusinessEntityStatus status = BusinessEntityStatus.TO_AUTHORIZE
 
   String artemisaId
 
@@ -88,6 +90,10 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
   String getNumber() {
     EmployeeLink employee = EmployeeLink.findByEmployeeRef(this.rfc)
     employee?.number
+  }
+
+  def getBusinessEntityType(){
+    businessEntityService.getClientProviderType(this.rfc)
   }
 
 }
