@@ -87,4 +87,26 @@ class PaysheetProjectController {
     paysheetProjectService.deletePayer(payer)
     redirect action:"show", id:paysheetProject.id
   }
+
+  def chooseBillers(PaysheetProject paysheetProject) {
+    List<Company> corporateCompanies = paysheetProjectService.getCompaniesInCorporate(session.company.toLong())
+    render view:"show", model:[paysheetProject:paysheetProject, billersList:corporateCompanies]
+  }
+
+  def addBillerCompany(BillerPaysheetProjectCommand command) {
+    log.info "Biller Paysheet project command: ${command.dump()}"
+    BillerPaysheetProject billerPaysheetProject = command.createBillerPaysheetProject()
+    log.info "Biller Paysheet project to save: ${billerPaysheetProject.dump()}"
+    paysheetProjectService.saveBillerPaysheetProject(billerPaysheetProject)
+   
+    redirect action:"show", id:billerPaysheetProject.paysheetProject.id
+  }
+
+  def deleteBiller(BillerPaysheetProject biller) {
+    log.info "Deleting biller paysheet project: ${biller.dump()}"
+    PaysheetProject paysheetProject = biller.paysheetProject
+    paysheetProjectService.deleteBiller(biller)
+    redirect action:"show", id:paysheetProject.id
+  }
+
 }
