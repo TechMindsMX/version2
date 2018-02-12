@@ -37,13 +37,13 @@
             </div>
           </div>
         </div>
-        <g:if test="${paysheetEmployeeList}">
+        <g:if test="${resultList}">
           <div class="row">
               <g:render template="simulatorPaysheetData"></g:render>
           </div>
           <div class="portlet-footer">
             <div align="right">
-              <g:link action="exportPaysheetEmployee" class="btn btn-primary text-right">Exportar XLS</g:link> 
+              <g:link action="exportSimulatedPaysheet" class="btn btn-primary text-right">Exportar XLS</g:link> 
             </div>
           </div>          
         </g:if>
