@@ -2,6 +2,8 @@ package com.modulus.uno.quotation
 import  com.modulus.uno.BusinessEntityService
 import com.modulus.uno.Period
 import com.modulus.uno.CollaboratorService
+import com.modulus.uno.User
+import com.modulus.uno.Corporate
 import java.text.SimpleDateFormat
 
 import com.modulus.uno.Company
@@ -57,6 +59,7 @@ class QuotationContractController {
     def create(){
     	Company company = Company.get(session.company)
 
+
       def clients = businessEntityService.findBusinessEntityByKeyword("","CLIENT" , company)
     	respond new QuotationContract(), model:[company:company,
                                               clients:clients
@@ -92,17 +95,19 @@ class QuotationContractController {
     def update(QuotationContractCommand quotationContractCommand) {
      Integer id = params.id.toInteger()
       quotationContractService.update(quotationContractCommand, id)
-       redirect(action: 'edit', id: params.id)
+       redirect(action: 'index', id: params.id)
     }
 
     def show(QuotationContract quotationContract) {
       Company company = Company.get(session.company)
-      [quotationContract:quotationContract, company:company]
+      List<User> users = quotationContractService.getListUsersForCorpotate(quotationContract, company)
+      def availableUsers = users - quotationContract.users
+      [quotationContract:quotationContract, company:company, users:users, availableUsers:availableUsers]
     }
 
     def chooseClientForBalance(){
       Company company = Company.get(session.company)
-      List<QuotationContract> quotationContractList =  QuotationContract.findAllByCompany(company)
+      List<QuotationContract> quotationContractList = quotationContractService.getListOfClientsFromTheCurrentUser(company)
       render view:"balance", model:[quotationContractList:quotationContractList]
     }
 
@@ -112,7 +117,17 @@ class QuotationContractController {
       render view: 'balance', model:[balance:balance, period:period]
 
     }
+    
+    def addUsers(UserListCommand userListCommand){
+      QuotationContract quotationContract = QuotationContract.get(params.quotationId.toInteger())
+      quotationContractService.addUsersToQuotationContract(userListCommand.checkBe, quotationContract)
+      redirect action: 'show', id:params.quotationId
+    }
 
-
+    def deleteUserFromQuotationContract(User user){
+      QuotationContract quotationContract = QuotationContract.get(params.quotationId.toInteger())
+      quotationContractService.removeOneUserOfQuotationContract(quotationContract, user)
+      redirect action: 'show', id:params.quotationId
+    }
 
 }

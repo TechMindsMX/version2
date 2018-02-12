@@ -12,7 +12,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
+        Solitudes de Cotización
       </h1>
     </div>
 
@@ -45,7 +45,11 @@
                     <dt>Descripción</dt>
                     <dd>${quotationRequest.description}</dd>
                     <dt>Monto para la cotización</dt>
-                    <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                    <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
+                    <dt>Subtotal de la cotización</dt>
+                    <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
+                    <dt>Iva de la cotización</dt>
+                    <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
                   </dl>
                 </div>
                 <div class="col-md-12">
@@ -54,8 +58,12 @@
                 </div>
                 <div class="col-md-12">
                   <br>
-                  <dt>Concepto </dt>
-                  <g:select class="form-control" name="satConcept" from="${SatConcept.values()}"/>
+                  <dt>Producto </dt>
+                  <g:select name="productId" class="form-control"
+                  from="${products}"
+                  optionValue="name"
+                  optionKey="id">
+                  </g:select>
                 </div>
                 <div class="col-md-3">
                   <br>
@@ -66,7 +74,9 @@
             </div>
             <input id="id" name="id" type="hidden" value="${quotationRequest.id}"/>
             <input id="quotation" name="quotation" value="${quotationRequest.quotationContract.id}" type="hidden"/>
-            <input id="amount" name="amount" value="${quotationRequest.amount}" type="hidden"/>
+            <input id="total" name="total" value="${quotationRequest.total}" type="hidden"/>
+            <input id="subtotal" name="subtotal" value="${quotationRequest.subtotal}" type="hidden"/>
+            <input id="iva" name="iva" value="${quotationRequest.iva}" type="hidden"/>
             <input id="description" name="description" value="${quotationRequest?.description}" type="hidden"/>
             <div class=" portlet-footer">
               <div class="row">
@@ -106,9 +116,13 @@
                   <dt>Descripción</dt>
                   <dd>${quotationRequest.description}</dd>
                   <dt>Monto para la cotización</dt>
-                  <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
-                  <dt>Concepto</dt>
-                  <dd>${quotationRequest.satConcept}</dd>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
+                  <dt>Subtotal de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
+                  <dt>Iva de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
+                  <dt>Producto</dt>
+                  <dd>${quotationRequest.product.name}</dd>
                 </dl>
               </div>
             </div>
@@ -144,7 +158,11 @@
                   <dt>Descripción</dt>
                   <dd>${quotationRequest.description}</dd>
                   <dt>Monto para la cotización</dt>
-                  <dd>${modulusuno.formatPrice(number:quotationRequest.amount)}</dd>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.total)}</dd>
+                  <dt>Subtotal de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.subtotal)}</dd>
+                  <dt>Iva de la cotización</dt>
+                  <dd>${modulusuno.formatPrice(number:quotationRequest.iva)}</dd>
                 </dl>
               </div>
             </div>
@@ -163,7 +181,29 @@
                   <g:link class="btn btn-primary" controller="quotationRequest" action="edit" id="${quotationRequest.id}">Editar</g:link>
                 </div>
                 <div class="col-md-2">
-                  <g:link class="btn btn-primary" controller="quotationRequest" action="delete" id="${quotationRequest.id}">Borrar</g:link>
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm">
+                    <i class="fa fa-trash"></i> Borrar
+                  </button>
+                  <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title" id="myModalLabel">Confirme la acción</h4>
+                        </div>
+                        <div class="modal-body">
+                          ¿Está seguro de eliminar la solicitud de cotización?
+                        </div>
+                        <div class="modal-footer">
+                          <g:link action="delete" id="${quotationRequest.id}" class="btn btn-primary">
+                            Sí
+                          </g:link>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

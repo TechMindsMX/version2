@@ -9,8 +9,8 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
-        <small>${company}</small>
+        Editar contrato de Cotización
+        <small>${quotationContract.client}</small>
       </h1>
     </div>
 
@@ -48,7 +48,7 @@
         <div class="row">
           <div class="col-md-3">
             <label><g:message code="Fecha Apertura" /></label>
-            <input class="form-control" id="datepickerQuotation" name="initDate" required="required" value="${formatDate(format:'dd-MM-yyyy',  date: quotationContract.initDate)}">
+            <input class="form-control" id="datepickerQuotation" name="initDate" required="required" value="${formatDate(format:'dd/MM/yyyy',  date: quotationContract.initDate)}">
           </div>
           <div class="col-md-4">
             <label><g:message code="Comisión"/></label>
@@ -63,7 +63,7 @@
               <g:link class="btn btn-default" controller="quotationContract" action="index">Cancelar</g:link>
             </div>
             <div class="col-md-6 text-right">
-              <g:submitButton name="save" class="btn btn-primary" value="${message(code: 'default.button.save.label', default: 'Save')}" />
+              <g:submitButton name="save" class="btn btn-primary" value="${message(code: 'default.button.save.label', default: 'Actualizar')}" />
             </div>
           </div>
         </div>

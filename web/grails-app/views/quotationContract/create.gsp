@@ -9,7 +9,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-list-alt fa-3x"></i>
-        Cotización
+        Crear contrato de Cotización
         <small>${company}</small>
       </h1>
     </div>
