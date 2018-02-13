@@ -68,6 +68,7 @@ class CompanyController {
 
   @Transactional
   def update(Company company) {
+    company.grossAnnualBilling = new BigDecimal(params.grossAnnualBilling)
     if (company == null) {
       transactionStatus.setRollbackOnly()
       notFound()
