@@ -1,6 +1,7 @@
 <%! import com.modulus.uno.paysheet.PaysheetStatus %>
 <%! import com.modulus.uno.paysheet.PaymentSchema %>
 <%! import com.modulus.uno.paysheet.PaymentWay %>
+<%! import com.modulus.uno.paysheet.PaysheetEmployeeStatus %>
 
 <style>
   th,td {
@@ -23,32 +24,33 @@
         <table class="table table-striped table-condensed">
           <thead>
             <tr>
-              <th>No. Empl</th>
-              <th>Nombre</th>
-              <th>RFC</th>
-              <th>CURP</th>
-              <th>Cód. Banco</th>
-              <th>Banco</th>
-              <th>Clabe</th>
-              <th>Cuenta</th>
-              <th>Tarjeta</th>
-							<th>Forma de Pago</th>
-              <th>SA Bruto</th>
-              <th>Cuota Social</th>
-              <th>Subsidio</th>
-              <th>ISR SA</th>
-              <th>Incidencias Percep</th>
-              <th>Incidencias Deduc</th>
-              <th>SA Neto</th>
-              <th>IAS Bruto</th>
-              <th>ISR IAS</th>
-              <th>IAS Neto</th>
-              <th>Subtotal</th>
-              <th>Costo Nominal</th>
-              <th>Comisión</th>
-              <th>IVA</th>
-              <th>Total</th>
-              <th></th>
+              <th class="text-center">No. Empl</th>
+              <th class="text-center">Nombre</th>
+              <th class="text-center">RFC</th>
+              <th class="text-center">CURP</th>
+              <th class="text-center">Cód. Banco</th>
+              <th class="text-center">Banco</th>
+              <th class="text-center">Clabe</th>
+              <th class="text-center">Cuenta</th>
+              <th class="text-center">Tarjeta</th>
+							<th class="text-center">Forma de Pago</th>
+              <th class="text-center">SA Bruto</th>
+              <th class="text-center">Cuota Social</th>
+              <th class="text-center">Subsidio</th>
+              <th class="text-center">ISR SA</th>
+              <th class="text-center">Incidencias Percep</th>
+              <th class="text-center">Incidencias Deduc</th>
+              <th class="text-center">SA Neto</th>
+              <th class="text-center">IAS Bruto</th>
+              <th class="text-center">ISR IAS</th>
+              <th class="text-center">IAS Neto</th>
+              <th class="text-center">Subtotal</th>
+              <th class="text-center">Costo Nominal</th>
+              <th class="text-center">Comisión</th>
+              <th class="text-center">IVA</th>
+              <th class="text-center">Total</th>
+              <th class="text-center">Estatus</th>
+              <th class="text-center"></th>
             </tr>
           </thead>
           <tbody>
@@ -64,7 +66,7 @@
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>
                 <td>
-									<g:if test="${employee.prePaysheetEmployee.bank}">
+									<g:if test="${employee.prePaysheetEmployee.bank && employee.status == PaysheetEmployeeStatus.PENDING}">
 										<g:link action="changePaymentWayFromEmployee" id="${employee.id}" title="Cambiar forma de pago">
 											<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
 										</g:link>
@@ -88,8 +90,11 @@
                 <td class="text-right">${modulusuno.formatPrice(number:employee.paysheetIva)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.totalToInvoice)}</td>
                 <td class="text-center">
+                  <g:message code="paysheet.employee.status.${employee.status}"/>
+                </td>
+                <td class="text-center">
                   <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-                    <g:if test="${employee.paymentWay == PaymentWay.CASH}">
+                    <g:if test="${employee.paymentWay == PaymentWay.CASH && employee.status == PaysheetEmployeeStatus.PENDING}">
                       <g:link class="btn btn-primary" action="setPayedToEmployee" id="${employee.id}">Pagar</g:link>
                     </g:if>
                   </sec:ifAnyGranted>
