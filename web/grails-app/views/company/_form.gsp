@@ -2,6 +2,7 @@
 <label>${message(code:"company.taxRegime")} *</label>
   <g:select name="taxRegime" from="${CompanyTaxRegime.values()}" class="form-control" value="${company.taxRegime}" valueMessagePrefix="CompanyTaxRegime"/>
 <f:field bean="company" property="bussinessName" label="${message(code:"company.bussinessName")}*" wrapper="home"/>
+<f:field bean="company" property="aliasCompany" label="${message(code:"company.aliasCompany")}" wrapper="home"/>
 <f:field bean="company" property="webSite" label="${message(code:"company.webSite")}" wrapper="home" />
 <f:field bean="company" property="employeeNumbers" label="${message(code:"company.employeeNumbers")}*" wrapper="home" />
 <f:field bean="company" property="grossAnnualBilling" label="${message(code:"company.grossAnnualBilling")}*"wrapper="home" />
