@@ -1,5 +1,6 @@
 <%! import com.modulus.uno.paysheet.PaysheetStatus %>
 <%! import com.modulus.uno.paysheet.PaymentSchema %>
+<%! import com.modulus.uno.paysheet.PaymentWay %>
 
 <style>
   th,td {
@@ -47,6 +48,7 @@
               <th>Comisión</th>
               <th>IVA</th>
               <th>Total</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -85,6 +87,13 @@
                 <td class="text-right">${modulusuno.formatPrice(number:employee.commission)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.paysheetIva)}</td>
                 <td class="text-right">${modulusuno.formatPrice(number:employee.totalToInvoice)}</td>
+                <td class="text-center">
+                  <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
+                    <g:if test="${employee.paymentWay == PaymentWay.CASH}">
+                      <g:link class="btn btn-primary" action="setPayedToEmployee" id="${employee.id}">Pagar</g:link>
+                    </g:if>
+                  </sec:ifAnyGranted>
+                </td>
               </tr>
             </g:each>
           </tbody>
