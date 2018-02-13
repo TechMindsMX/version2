@@ -1,5 +1,6 @@
 package com.modulus.uno.paysheet
 
+import grails.transaction.Transactional
 import com.modulus.uno.Company
 
 class PaysheetController {
@@ -132,4 +133,10 @@ class PaysheetController {
     renderPdf(template: "/documentTemplates/simulatedPaysheet", model: [importResultList:importResultList, date:date], filename: "NominaSimulada_${date}.pdf")
   }
 
+  @Transactional
+  def setPayedToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.PAYED
+    paysheetEmployee.save()
+    redirect action:"show", id:paysheetEmployee.paysheet.id
+  }
 }
