@@ -109,7 +109,7 @@ class InvoiceService {
       Concepto concepto = new Concepto(
         cantidad:item.quantity, 
         valorUnitario:item.price, 
-        descuento:item.discount, 
+        descuento:item.appliedDiscount, 
         claveProd:item.satKey ?: "01010101",
         descripcion:item.name, 
         unidad:item.unitType,
