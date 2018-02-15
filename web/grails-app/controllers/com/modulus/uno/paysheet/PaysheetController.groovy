@@ -17,7 +17,9 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images]
+ 		List payers = paysheetService.getPayersToPaymentDispersion(paysheet)
+		def banks = paysheetService.getBanksFromPayers(payers)   
+    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:banks]
   }
 
   def list() {
@@ -138,5 +140,12 @@ class PaysheetController {
     paysheetEmployee.status = PaysheetEmployeeStatus.PAYED
     paysheetEmployee.save()
     redirect action:"show", id:paysheetEmployee.paysheet.id
+  }
+
+  @Transactional
+  def uploadResultDispersionFile(Paysheet paysheet) {
+    log.info "Upload result dispersion file to paysheet: ${paysheet.id}"
+    paysheetService.uploadResultDispersionFileToPaysheet(paysheet, params)
+    redirect action:"show", id:paysheet.id
   }
 }
