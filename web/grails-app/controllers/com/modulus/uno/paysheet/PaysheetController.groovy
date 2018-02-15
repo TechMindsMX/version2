@@ -17,9 +17,8 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
- 		List payers = paysheetService.getPayersToPaymentDispersion(paysheet)
-		def banks = paysheetService.getBanksFromPayers(payers)   
-    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:banks]
+		def dispersionBanks = paysheetService.getDispersionBanksFromPaysheet(paysheet)   
+    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:dispersionBanks]
   }
 
   def list() {
