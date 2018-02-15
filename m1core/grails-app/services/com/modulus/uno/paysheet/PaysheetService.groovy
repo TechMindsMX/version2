@@ -572,4 +572,16 @@ class PaysheetService {
     banksPayers.sort{it.name}
   }
 
+  @Transactional
+  def uploadResultDispersionFileToPaysheet(Paysheet paysheet, def params) {
+    def resultFile = params.file
+    def asset = s3AssetService.createTempFilesOfMultipartsFiles(resultFile,"PaysheetResultDispersionFile")
+    Bank bank = Bank.get(params.bank)
+    DispersionResultFile dispersionResultFile = new DispersionResultFile(
+      bank:bank,
+      file:asset,
+      paysheet:paysheet
+    )
+    dispersionResultFile.save()
+  }
 }
