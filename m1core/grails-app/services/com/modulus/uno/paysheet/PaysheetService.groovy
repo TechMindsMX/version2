@@ -269,8 +269,9 @@ class PaysheetService {
     banksPayers.sort{it.name}
   }
 
-  List<Bank> getDispersionBanksFromPaysheet(Paysheet paysheet) {
-    []
+  def getDispersionBanksFromPaysheet(Paysheet paysheet) {
+ 		List summary = prepareDispersionSummary(paysheet) 
+    summary.bank
   }
 
   @Transactional
