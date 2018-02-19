@@ -61,4 +61,10 @@ class EmployeeService {
     employeeLink
   }
 
+  @Transactional
+  def deleteEmployeeLinkForRfcAndCompany(String rfc, Company company) {
+    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(rfc, company)
+    employeeLink?.delete()
+  }
+
 }
