@@ -66,5 +66,11 @@ class ClientService {
     )
     clientLink.save()
     clientLink
-    }    
+  }
+
+  def deleteClientLinkForRfcAndCompany(String rfc, Company company) {
+    ClientLink clientLink = ClientLink.findByClientRefAndCompany(rfc, company)
+    clientLink?.delete()
+  }
+
 }
