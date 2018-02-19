@@ -58,5 +58,16 @@ class ProviderServiceSpec extends Specification {
     result.contains(be)
   }
 
-
+  void "Should delete a provider"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The provider"
+      ProviderLink providerLink = new ProviderLink(providerRef:"TheRFC", company:company).save(validate:false)
+    and:"The RFC"
+      String rfc = "TheRFC"
+    when:
+      def result = service.deleteProviderLinkForRfcAndCompany(rfc, company)
+    then:
+      !ProviderLink.findByProviderRefAndCompany(rfc, company)
+  }
 }
