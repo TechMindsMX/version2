@@ -85,9 +85,8 @@ class ClientServiceSpec extends Specification {
   void "Should delete a client link"() {
     given: "A company"
       Company company = new Company().save(validate:false)
-    and:"The RFC"
+    and:"The Client Link"
       ClientLink clientLink = new ClientLink(type:'CLIENTE',clientRef:"TheRFC",company:company).save(validate:false)
-      clientLink.save(validate:false)
     and:
       String rfc = "TheRFC"
     when: "Generate the subaccount"
