@@ -31,4 +31,16 @@ class EmployeeServiceSpec extends Specification {
       employee.hasErrors()
   }
 
+  void "Should delete a employee"() {
+    given:"The Company"
+      Company company = new Company().save(validate:false)
+    and:"The employee"
+      EmployeeLink employeeLink = new EmployeeLink(employeeRef:"TheRFC", company:company).save(validate:false)
+    and:"The RFC"
+      String rfc = "TheRFC"
+    when:
+      def result = service.deleteEmployeeLinkForRfcAndCompany(rfc, company)
+    then:
+      !EmployeeLink.findByEmployeeRefAndCompany(rfc, company)
+  }
 }
