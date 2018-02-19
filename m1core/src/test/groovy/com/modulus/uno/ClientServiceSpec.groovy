@@ -65,16 +65,14 @@ class ClientServiceSpec extends Specification {
       result.contains(be)
    }
 
-  @Ignore
   void "Should generate a subaccount stp to client"() {
     given: "A company"
-      def company = new Company(accounts:[], legalRepresentatives:[]).save(validate:false)
+      Company company = new Company(accounts:[], legalRepresentatives:[]).save(validate:false)
       ModulusUnoAccount modulusUnoAccount = new ModulusUnoAccount(integraUuid:"uuidCompany", stpClabe:"646180111900010007").save(validate:false)
       company.accounts << modulusUnoAccount
       company.save(validate:false)
     and:"A client link"
-      ClientLink clientLink = new ClientLink(type:'CLIENTE',clientRef:"cliente",company:company).save()
-      clientLink.company = new Company()
+      ClientLink clientLink = new ClientLink(type:'CLIENTE',clientRef:"cliente",company:company).save(validate:false)
       clientLink.save(validate:false)
     and:
       stpClabeService.generateSTPSubAccount(_, _) >> "TheSubAccountStp"
@@ -83,5 +81,20 @@ class ClientServiceSpec extends Specification {
     then:
       result.stpClabe == "TheSubAccountStp"
   }
+
+  void "Should delete a client link"() {
+    given: "A company"
+      Company company = new Company().save(validate:false)
+    and:"The RFC"
+      ClientLink clientLink = new ClientLink(type:'CLIENTE',clientRef:"TheRFC",company:company).save(validate:false)
+      clientLink.save(validate:false)
+    and:
+      String rfc = "TheRFC"
+    when: "Generate the subaccount"
+      def result = service.deleteClientLinkForRfcAndCompany(rfc, company)
+    then:
+      !ClientLink.findByClientRefAndCompany(rfc, company) 
+  }
+
 
 }
