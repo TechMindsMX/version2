@@ -83,6 +83,7 @@ class BusinessEntityController {
 
   @Transactional
   def update(BusinessEntity businessEntity) {
+    log.info "Business entity to update: ${businessEntity.dump()}"
     if (businessEntity == null) {
       transactionStatus.setRollbackOnly()
       notFound()
