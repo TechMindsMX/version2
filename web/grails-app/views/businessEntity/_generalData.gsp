@@ -35,6 +35,7 @@
                 <g:link class="edit btn btn-primary" action="authorize" resource="${this.businessEntity}">Autorizar</g:link>
               </g:if>
             </sec:ifAnyGranted>
+            <g:link class="btn btn-primary" action="edit" id="${businessEntity.id}">Editar</g:link>
           </fieldset>
         </div>
       </div>
@@ -72,12 +73,10 @@
   </div>
   <div class="panel-footer">
     <div class="row">
-      <div class="col-md-12">
         <g:if test="${relation=='CLIENTE' || relation=='CLIENTE_PROVEEDOR'}">
         <div class="col-md-6">
           <div class="property-value">
             <span class="property-label"><g:message code="businessEntity.label.stpAccount" default="Cuenta para pago referenciado"/></span>
-
           </div>
         </div>
         <div class="col-md-6" align="right">
@@ -97,7 +96,6 @@
           </div>
         </div>
         </g:if>
-      </div>
     </div>
   </div>
 </div>
