@@ -191,12 +191,12 @@ class BusinessEntityService {
 
   @Transactional
   def updateBusinessEntity(BusinessEntity businessEntity, Company company, def params) {
-    updateDataToBusinessEntity(businessEntity, params)
+    updateDataToBusinessEntity(businessEntity, company, params)
     updateLeadTypeToBusinessEntity(businessEntity, params.clientProviderType, company)
     businessEntity
   }
 
-  def updateDataToBusinessEntity(BusinessEntity businessEntity, def params) {
+  def updateDataToBusinessEntity(BusinessEntity businessEntity, Company company, def params) {
     if(businessEntity.type == BusinessEntityType.FISICA){
       updateNamesToBusinessEntity(businessEntity, (String[])[params.name, params.lastName, params.motherLastName])
       updateDataToEmployeeLink(businessEntity, company, params)
