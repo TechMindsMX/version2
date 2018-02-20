@@ -48,7 +48,7 @@
     </div>
     </g:if>
 
-    <dl class="dl-horizontal">
+    <dl class="dl">
       <dt>RFC</dt>
       <dd>${businessEntity.rfc}</dd>
       <g:if test="${relation == 'EMPLEADO'}">
