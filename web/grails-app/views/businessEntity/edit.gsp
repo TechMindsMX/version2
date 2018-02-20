@@ -32,7 +32,7 @@
               </g:hasErrors>
               <g:form resource="${this.businessEntity}" method="PUT">
                 <g:hiddenField name="version" value="${this.businessEntity?.version}" />
-                <g:hiddenField name="backRfc" value="${this.businessEntity?.rfc}" />
+                <g:hiddenField name="id" value="${this.businessEntity?.id}" />
                 <fieldset class="form">
                   <g:render template="form" bean="${businessEntity}"/>
                 </fieldset>
