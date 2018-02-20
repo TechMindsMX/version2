@@ -55,10 +55,17 @@ class EmployeeService {
     if (businessEntity.rfc.substring(0,10) != params.curp.substring(0,10)) {
       throw new BusinessException("La CURP no corresponde al RFC")
     }
-    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRef(params.backRfc)
-    employeeLink.employeeRef = businessEntity.rfc
+    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(businessEntity.rfc, company)
     employeeLink.curp = params.curp
+    employeeLink.number = params.number
+    employeeLink.save()
     employeeLink
+  }
+
+  @Transactional
+  def deleteEmployeeLinkForRfcAndCompany(String rfc, Company company) {
+    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(rfc, company)
+    employeeLink?.delete()
   }
 
 }

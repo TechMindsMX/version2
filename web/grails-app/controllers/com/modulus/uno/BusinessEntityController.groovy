@@ -83,6 +83,7 @@ class BusinessEntityController {
 
   @Transactional
   def update(BusinessEntity businessEntity) {
+    log.info "Business entity to update: ${businessEntity.dump()}"
     if (businessEntity == null) {
       transactionStatus.setRollbackOnly()
       notFound()
@@ -96,18 +97,7 @@ class BusinessEntityController {
       return
     }
 
-    def company = Company.findById(session.company.toLong())
-
-    if (params.backRfc != businessEntity.rfc) {
-      if (businessEntityService.existsBusinessEntityInCompany(businessEntity.rfc, company)) {
-        transactionStatus.setRollbackOnly()
-        flash.message = "El RFC indicado ya está registrado en la empresa con otra relación comercial"
-        log.info "Business entity with rfc existing: ${businessEntity.dump()}"
-        String clientProviderType = businessEntityService.getClientProviderType(businessEntity.rfc)
-        render  view:'edit', model:[businessEntity:businessEntity, clientProviderType:clientProviderType, params:params]
-        return
-      }
-    }
+    def company = Company.get(session.company)
 
     businessEntityService.updateBusinessEntity(businessEntity, company, params)
 

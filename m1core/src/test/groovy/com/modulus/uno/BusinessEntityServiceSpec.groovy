@@ -384,4 +384,130 @@ class BusinessEntityServiceSpec extends Specification {
       "EMPLEADO"          | [new BusinessEntity(rfc:"PAG770214PR1").save(validate:false), new BusinessEntity(rfc:"PAGC770214400").save(validate:false), new BusinessEntity(rfc:"PAGC770214GU1").save(validate:false), new BusinessEntity(rfc:"PAED890323CPP").save(validate:false) ] ||  1
   }
 
+  void "Should update the lead type from CLIENTE to PROVEEDOR to business entity"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"CLIENTE").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The client link"
+      ClientLink clientLink = new ClientLink(clientRef:"CLIENTE", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "PROVEEDOR"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      1 * clientService.deleteClientLinkForRfcAndCompany(_, _)
+      1 * providerService.addProviderToCompany(_, _)
+   }
+
+  void "Should update the lead type from CLIENTE to CLIENTE_PROVEEDOR to business entity"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"CLIENTE").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The client link"
+      ClientLink clientLink = new ClientLink(clientRef:"CLIENTE", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "CLIENTE_PROVEEDOR"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      0 * clientService.deleteClientLinkForRfcAndCompany(_, _)
+      1 * providerService.addProviderToCompany(_, _)
+   }
+
+  void "Should update the lead type from PROVEEDOR to CLIENTE to business entity"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"PROVEEDOR").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The provider link"
+      ProviderLink providerLink = new ProviderLink(providerRef:"PROVEEDOR", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "CLIENTE"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      1 * providerService.deleteProviderLinkForRfcAndCompany(_, _)
+      1 * clientService.addClientToCompany(_, _)
+   }
+
+  void "Should update the lead type from PROVEEDOR to CLIENTE_PROVEEDOR to business entity"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"PROVEEDOR").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The provider link"
+      ProviderLink providerLink = new ProviderLink(providerRef:"PROVEEDOR", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "CLIENTE_PROVEEDOR"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      0 * providerService.deleteProviderLinkForRfcAndCompany(_, _)
+      1 * clientService.addClientToCompany(_, _)
+   }
+
+  void "Should update the lead type from CLIENTE_PROVEEDOR to CLIENTE to business entity"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"CLIENTE_PROVEEDOR").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The client && provider link"
+      ProviderLink providerLink = new ProviderLink(providerRef:"CLIENTE_PROVEEDOR", company:company).save(validate:false)
+      ClientLink clientLink = new ClientLink(clientRef:"CLIENTE_PROVEEDOR", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "CLIENTE"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      1 * providerService.deleteProviderLinkForRfcAndCompany(_, _)
+   }
+
+  void "Should update the lead type from CLIENTE_PROVEEDOR to PROVEEDOR to business entity"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"CLIENTE_PROVEEDOR").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The client && provider link"
+      ProviderLink providerLink = new ProviderLink(providerRef:"CLIENTE_PROVEEDOR", company:company).save(validate:false)
+      ClientLink clientLink = new ClientLink(clientRef:"CLIENTE_PROVEEDOR", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "PROVEEDOR"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      1 * clientService.deleteClientLinkForRfcAndCompany(_, _)
+   }
+
+  void "Should throw a business exception when try update lead type from EMPLEADO to another"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"EMPLEADO").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The employee link"
+      EmployeeLink employeeLink = new EmployeeLink(employeeRef:"EMPLEADO", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "PROVEEDOR"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      thrown BusinessException
+   }
+
+  void "Should throw a business exception when try update lead type from any to EMPLEADO"() {
+    given:"The business entity"
+      BusinessEntity businessEntity = new BusinessEntity(rfc:"CLIENTE").save(validate:false)
+    and:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The employee link"
+      ClientLink clientLink = new ClientLink(clientRef:"CLIENTE", company:company).save(validate:false)
+    and:"The new lead type"
+      String newLeadType = "EMPLEADO"
+    when:
+      def result = service.updateLeadTypeToBusinessEntity(businessEntity, newLeadType, company)
+    then:
+      thrown BusinessException
+   }
+
 }

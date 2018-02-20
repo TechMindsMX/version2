@@ -57,5 +57,11 @@ class ProviderService {
     )
     providerLink.save()
     providerLink
-    }   
+  }
+
+  def deleteProviderLinkForRfcAndCompany(String rfc, Company company) {
+    ProviderLink providerLink = ProviderLink.findByProviderRefAndCompany(rfc, company)
+    providerLink?.delete()
+  }
+
 }
