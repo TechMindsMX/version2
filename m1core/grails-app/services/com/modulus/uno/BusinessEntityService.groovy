@@ -155,7 +155,7 @@ class BusinessEntityService {
   }
 
   @Transactional
-  def updateDataToBusinessEntity(BusinessEntity businessEntity, String businessName) {
+  def updateBusinessNameToBusinessEntity(BusinessEntity businessEntity, String businessName) {
     businessEntity.names.each{
       if(it.type == NameType.RAZON_SOCIAL){
         it.value = businessName
@@ -191,25 +191,62 @@ class BusinessEntityService {
 
   @Transactional
   def updateBusinessEntity(BusinessEntity businessEntity, Company company, def params) {
-    LeadType leadType = LeadType."${params.clientProviderType}"
+    updateDataToBusinessEntity(businessEntity, params)
+    updateLeadTypeToBusinessEntity(businessEntity, params.clientProviderType, company)
+    businessEntity
+  }
+
+  def updateDataToBusinessEntity(BusinessEntity businessEntity, def params) {
     if(businessEntity.type == BusinessEntityType.FISICA){
       updateNamesToBusinessEntity(businessEntity, (String[])[params.name, params.lastName, params.motherLastName])
+      updateDataToEmployeeLink(businessEntity, company, params)
     } else {
-      updateDataToBusinessEntity(businessEntity, params.businessName)
+      updateBusinessNameToBusinessEntity(businessEntity, params.businessName)
     }
+  }
 
-
-    if(leadType == LeadType.CLIENTE || leadType == LeadType.CLIENTE_PROVEEDOR){
-      clientService.updateClientToCompany(businessEntity, params.backRfc)
-    }
-    if(leadType == LeadType.PROVEEDOR || leadType == LeadType.CLIENTE_PROVEEDOR){
-      deleteLinksForRfc(businessEntity.rfc)
-      providerService.addProviderToCompany(businessEntity, company)
-    }
-    if(leadType == LeadType.EMPLEADO){
+  def updateDataToEmployeeLink(BusinessEntity businessEntity, Company company, def params) {
+    LeadType currentLeadType = getClientProviderType(businessEntity.rfc)
+    if (currentLeadType == LeadType.EMPLEADO) {
       employeeService.updateEmployeeToCompany(businessEntity, company, params)
     }
+  }
 
+  def updateLeadTypeToBusinessEntity(BusinessEntity businessEntity, String leadType, Company company) {
+    LeadType newLeadType = LeadType."${leadType}"
+    LeadType currentLeadType = getClientProviderType(businessEntity.rfc)
+    if ((newLeadType == LeadType.EMPLEADO || currentLeadType == LeadType.EMPLEADO) && currentLeadType != newLeadType) {
+      throw new BusinessException("No es posible cambiar de ${currentLeadType} a ${newLeadType}")
+    }
+    if (currentLeadType != newLeadType) {
+      "updateFrom${currentLeadType}To${newLeadType}"(businessEntity, company)
+    }
+  }
+
+  def updateFromCLIENTEToPROVEEDOR(BusinessEntity businessEntity, Company company) {
+    clientService.deleteClientLinkForRfcAndCompany(businessEntity.rfc, company)
+    providerService.addProviderToCompany(businessEntity, company)
+  }
+
+  def updateFromCLIENTEToCLIENTE_PROVEEDOR(BusinessEntity businessEntity, Company company) {
+    providerService.addProviderToCompany(businessEntity, company)
+  }
+
+  def updateFromPROVEEDORToCLIENTE(BusinessEntity businessEntity, Company company) {
+    providerService.deleteProviderLinkForRfcAndCompany(businessEntity.rfc, company)
+    clientService.addClientToCompany(businessEntity, company)
+  }
+
+  def updateFromPROVEEDORToCLIENTE_PROVEEDOR(BusinessEntity businessEntity, Company company) {
+    clientService.addClientToCompany(businessEntity, company)
+  }
+
+  def updateFromCLIENTE_PROVEEDORToCLIENTE(BusinessEntity businessEntity, Company company) {
+    providerService.deleteProviderLinkForRfcAndCompany(businessEntity.rfc, company)
+  }
+
+  def updateFromCLIENTE_PROVEEDORToPROVEEDOR(BusinessEntity businessEntity, Company company) {
+    clientService.deleteClientLinkForRfcAndCompany(businessEntity.rfc, company)
   }
 
   Map getClientData(Company company, BusinessEntity businessEntity, LeadType relation) {
