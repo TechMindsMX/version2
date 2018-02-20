@@ -215,6 +215,7 @@ class BusinessEntityService {
   def updateLeadTypeToBusinessEntity(BusinessEntity businessEntity, String leadType, Company company) {
     LeadType newLeadType = LeadType."${leadType}"
     LeadType currentLeadType = getClientProviderType(businessEntity.rfc)
+    log.info "Update lead type from ${currentLeadType} to ${newLeadType}"
     if ((newLeadType == LeadType.EMPLEADO || currentLeadType == LeadType.EMPLEADO) && currentLeadType != newLeadType) {
       throw new BusinessException("No es posible cambiar de ${currentLeadType} a ${newLeadType}")
     }
