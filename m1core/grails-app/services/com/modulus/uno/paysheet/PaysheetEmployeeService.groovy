@@ -138,5 +138,28 @@ class PaysheetEmployeeService {
     }
   } 
 
+  PaysheetEmployee setIMSSPayedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_PAYED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setASSIMILABLEPayedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_PAYED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setPayedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.PAYED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setRejectedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.REJECTED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
 
 }
