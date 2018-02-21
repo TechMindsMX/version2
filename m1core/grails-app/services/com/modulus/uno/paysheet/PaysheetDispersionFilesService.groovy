@@ -12,6 +12,7 @@ import java.math.RoundingMode
 
 class PaysheetDispersionFilesService {
   
+  PaysheetEmployeeService paysheetEmployeeService
   PaysheetProjectService paysheetProjectService
   S3AssetService s3AssetService
 
@@ -307,5 +308,50 @@ class PaysheetDispersionFilesService {
       paysheet:paysheet
     )
     dispersionResultFile.save() 
+  }
+
+  @Transactional
+  def processResultDispersionFile(Paysheet paysheet, def params) {
+    Map dataResultDispersionFile = buildDataResultDispersionFile(params)
+    "processResultDispersionFileFor${bank.name.replace(" ","")}"(paysheet, dataResultDispersionFile)
+    uploadResultDispersionFile(paysheet, resultFile, bank)
+  }
+
+  Map buildDataResultDispersionFile(def params) {
+    Map dataResultDispersionFile = [:]
+    dataResultDispersionFile.resultFile = getResultFile(params.file)
+    dataResultDispersionFile.bank = Bank.get(params.bank)
+    dataResultDispersionFile.schema = PaymentSchema."params.schema"
+  }
+
+  File getResultFile(def resultFile) {
+    File results = new File(resultFile.getOriginalFilename())
+    multipart.transferTo(results)
+    results
+  }
+
+  List processResultDispersionFileForBBVABANCOMER(Paysheet paysheet, Map dataResultDispersionFile) {
+    List processResults = []
+    def lines = dataResultDispersionFile.resultFile.readLines()
+    lines.eachWithIndex { line, index ->
+      if (index>0 && line.length() > 122) {
+        Map result = [:]
+        String account = line.substring(27,37)
+        String resultMessage = line.substring(122).replaceAll("[^a-zA-Z0-9 ]","").trim()
+        result.account = account
+        result.result = resultMessage
+        PaysheetEmployee employee = paysheet.employees.find { emp -> emp.prePaysheetEmployee.bank == dataResultDispersionFile.bank && emp.prePaysheetEmployee.account == account && emp.paymentWay == PaymentWay.BANKING && [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(emp.status) }
+        result.employee = employee
+        if (employee) {
+          result == "OPERACION EXITOSA" ? setPayedStatusToEmployeeAboutSchema(employee, dataResultDispersionFile.schema)  : paysheetEmployeeService.setRejectedStatusToEmployee(employee)
+        }
+        processResults.add(result)
+      }
+    }
+    processResults
+  }
+
+  def setPayedStatusToEmployeeAboutSchema(PaysheetEmployee employee, PaymentSchema paymentSchema) {
+    employee.status == PaysheetEmployeeStatus.PENDING ? paysheetEmployeeService."set${paymentSchema}PayedStatusToEmployee"(employee) : paysheetEmployeeService.setPayedStatusToEmployee(employee)
   }
 }
