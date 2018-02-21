@@ -5,6 +5,10 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
 import java.text.*
+import org.springframework.core.io.Resource
+import org.springframework.core.io.ClassPathResource
+import org.springframework.mock.web.MockMultipartFile
+
 import com.modulus.uno.Company
 import com.modulus.uno.BankAccount
 import com.modulus.uno.Bank
@@ -22,13 +26,16 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 
   S3AssetService s3AssetService = Mock(S3AssetService)
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
+  PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
+
+  Resource resultDispersionBBVAAllCasesResource = new ClassPathResource("resultDispersion/resultDispersionBBVAAllCases.exp")
 
   def setup() {
     service.s3AssetService = s3AssetService
     service.paysheetProjectService = paysheetProjectService
+    service.paysheetEmployeeService = paysheetEmployeeService
   }
 
-//ok
 	void "Should prepare dispersion data for bank"() {
 		given:"The paysheet"
 			Bank bank = new Bank(name:"BANCO").save(validate:false)
@@ -49,7 +56,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
       result.idPaysheet == 1
 	}
 
-//ok
 	void "Should create dispersion files for dispersion data"() {
 		given:"The dispersion data"
 			List<PaysheetEmployee> employees = [createPaysheetEmployee()]
@@ -63,7 +69,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.size() == 2
 	}
 
-//ok
   void "Should create the payment dispersion SA BBVA file"() {
     given:"employees list"
       PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
@@ -84,7 +89,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'120000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
-//ok
   void "Should create the payment dispersion IAS BBVA file"() {
     given:"employees list"
       PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
@@ -102,7 +106,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'300000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
-//ok
   void "Should create the payment dispersion SA Default file"() {
     given:"employees list"
       PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
@@ -123,7 +126,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[0] == "000EmployeeAccount000000000AccountSAMXN0000000001200.00SSA-DEFAULTLAYOUT             "
 	}
 
-//ok
   void "Should create the payment dispersion IAS Default file"() {
     given:"employees list"
       PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
@@ -141,7 +143,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[0] == "000EmployeeAccount00000000AccountIASMXN0000000003000.00IAS-DEFAULTLAYOUT             "
 	}
 
-//ok
 	void "Should upload dispersion files to S3"() {
 		given:"The files"
 			List files = [new File("/tmp/file01.txt"), new File("/tmp/file02.txt")]
@@ -153,7 +154,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.size() == 2
 	}
 
-//ok
 	void "Should add the dispersion files to paysheet"() {
 		given:"The paysheet"
 			Paysheet paysheet = new Paysheet().save(validate:false)
@@ -165,7 +165,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			paysheet.dispersionFiles.size() == 1
 	}
 
-//ok
   void "Should create the payment dispersion file inter bank SA"() {
     given:"The dispersion data"
       PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
@@ -182,7 +181,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'120000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
-//ok
   void "Should create the payment dispersion file inter bank IAS"() {
     given:"The dispersion data"
       PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
@@ -196,7 +194,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'300000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
 	}
 
-//ok
 	void "Should obtain the payers list for payment dispersion"() {
 		given:"The paysheet project"
       PaysheetProject paysheetProject = new PaysheetProject(payers:[new PayerPaysheetProject().save(validate:false)]).save(validate:false)
@@ -214,7 +211,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.size() == 1
 	}
 
-//ok
 	void "Should create dispersion file SA for SANTANDER bank"() {
 		given:"The dispersion data"
       PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
@@ -245,7 +241,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[2] == "30000200001${'120000'.padLeft(18,'0')}"
 	}
 
-//ok
 	void "Should create dispersion file IAS for SANTANDER bank"() {
 		given:"The dispersion data"
       PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
@@ -273,7 +268,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[2] == "30000200001${'300000'.padLeft(18,'0')}"
 	}
 
-//ok
 	void "Should create dispersion file SA for BANAMEX bank"() {
 		given:"The dispersion data"
       PaysheetEmployee employeeWithoutSA = createPaysheetEmployee()
@@ -305,7 +299,6 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'120000'.padLeft(18,'0')}000001${'120000'.padLeft(18,'0')}"
 	}
 
-//ok
 	void "Should create dispersion file IAS for BANAMEX bank"() {
 		given:"The dispersion data"
       PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
@@ -333,6 +326,40 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
+
+  void "Should process result dispersion file for BBVA-BANCOMER"() {
+    given:"The paysheet"
+      Bank bank = new Bank(name:"BBVA").save(validate:false)
+      Paysheet paysheet = createPaysheetForTestProcessResultDispersionFile(bank)
+    and:"The data result dispersion file"
+      File resultDispersionBBVAAllCases = resultDispersionBBVAAllCasesResource.getFile()
+      Map dataResultDispersionFile = [resultFile:resultDispersionBBVAAllCases, bank:bank, schema:PaymentSchema.IMSS]
+    when:""
+      def results = service.processResultDispersionFileForBBVABANCOMER(paysheet, dataResultDispersionFile)
+    then:""
+      results.result == ["OPERACION EXITOSA","OPERACION FALLIDA", "OPERACION EXITOSA", "NO EXISTE", "ERROR NO IDENTIFICADO", "ERROR NO IDENTIFICADO"]
+      results[5].employee == null
+      results.size() == 6
+  }
+
+  private Paysheet createPaysheetForTestProcessResultDispersionFile(Bank bank) {
+    Paysheet paysheet = new Paysheet().save(validate:false)
+    List employees = [
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.PENDING, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201801")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.IMSS_PAYED, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201802")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.ASSIMILABLE_PAYED, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201803")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.PENDING, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201804")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.PENDING, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201805")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.CASH, status:PaysheetEmployeeStatus.PENDING, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201806")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.REJECTED, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201807")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.REJECTED, prePaysheetEmployee: new PrePaysheetEmployee(bank:new Bank(name:"ANOTHER").save(validate:false), account:"2018201808")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.PAYED, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201809")).save(validate:false),
+      new PaysheetEmployee(paymentWay:PaymentWay.BANKING, status:PaysheetEmployeeStatus.CANCELED, prePaysheetEmployee: new PrePaysheetEmployee(bank:bank, account:"2018201810")).save(validate:false)
+    ] 
+    paysheet.employees = employees
+    paysheet.save(validate:false)
+    paysheet
+  }
 
   private PaysheetEmployee createPaysheetEmployee() {
 		Company company = new Company().save(validate:false)
