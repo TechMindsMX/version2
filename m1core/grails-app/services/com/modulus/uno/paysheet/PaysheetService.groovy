@@ -275,9 +275,7 @@ class PaysheetService {
   }
 
   @Transactional
-  def uploadResultDispersionFileToPaysheet(Paysheet paysheet, def params) {
-    def resultFile = params.file
-    Bank bank = Bank.get(params.bank)
-    paysheetDispersionFilesService.uploadResultDispersionFile(paysheet, resultFile, bank)
+  def processResultDispersionFileToPaysheet(Paysheet paysheet, def params) {
+    paysheetDispersionFilesService.processResultDispersionFile(paysheet, params)
   }
 }
