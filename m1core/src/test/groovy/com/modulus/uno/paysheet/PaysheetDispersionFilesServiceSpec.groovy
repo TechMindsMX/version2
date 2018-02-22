@@ -337,7 +337,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
     when:""
       def results = service.processResultDispersionFileForBBVABANCOMER(paysheet, dataResultDispersionFile)
     then:""
-      results.result == ["OPERACION EXITOSA","OPERACION FALLIDA", "OPERACION EXITOSA", "NO EXISTE", "ERROR NO IDENTIFICADO", "ERROR NO IDENTIFICADO"]
+      results.resultMessage == ["OPERACION EXITOSA","OPERACION FALLIDA", "OPERACION EXITOSA", "NO EXISTE", "ERROR NO IDENTIFICADO", "ERROR NO IDENTIFICADO"]
       results[5].employee == null
       results.size() == 6
   }
