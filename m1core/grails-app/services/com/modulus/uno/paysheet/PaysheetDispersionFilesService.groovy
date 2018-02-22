@@ -300,33 +300,58 @@ class PaysheetDispersionFilesService {
     text.toUpperCase().replace("Ñ","N").replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U").replace("Ü","U").replaceAll("[^a-zA-Z0-9 ]","")
   }
 
-  def uploadResultDispersionFile(Paysheet paysheet, def resultFile, Bank bank) {
-    def asset = s3AssetService.createTempFilesOfMultipartsFiles(resultFile,"PaysheetResultDispersionFile")
+  DispersionResultFile uploadResultDispersionFile(Paysheet paysheet, Map dataResultDispersionFile) {
+    def asset = s3AssetService.createTempFilesOfMultipartsFiles(dataResultDispersionFile.originalFile,"PaysheetResultDispersionFile")
     DispersionResultFile dispersionResultFile = new DispersionResultFile(
-      bank:bank,
+      bank:dataResultDispersionFile.bank,
+      schema:dataResultDispersionFile.schema,
       file:asset,
       paysheet:paysheet
     )
     dispersionResultFile.save() 
+    saveDetailsForDispersionResultFile(dispersionResultFile, dataResultDispersionFile.processResults)
+    dispersionResultFile
+  }
+
+  def saveDetailsForDispersionResultFile(DispersionResultFile dispersionResultFile, List processResults) {
+    processResults.each { resultDetail ->
+      DispersionResultFileDetail detail = new DispersionResultFileDetail(
+        account: resultDetail.account,
+        resultMessage:resultDetail.resultMessage,
+        status:resultDetail.status,
+        dispersionResultFile:dispersionResultFile
+      )
+      detail.save()
+    }
   }
 
   @Transactional
   def processResultDispersionFile(Paysheet paysheet, def params) {
     Map dataResultDispersionFile = buildDataResultDispersionFile(params)
-    "processResultDispersionFileFor${bank.name.replace(" ","")}"(paysheet, dataResultDispersionFile)
-    uploadResultDispersionFile(paysheet, resultFile, bank)
+    List processResults = "processResultDispersionFileFor${dataResultDispersionFile.bank.name.replace(" ","")}"(paysheet, dataResultDispersionFile)
+    if (processResults.status.contains("FOUND")) {
+      dataResultDispersionFile.processResults = processResults
+      uploadResultDispersionFile(paysheet, dataResultDispersionFile)
+    }
+    processResults
   }
 
   Map buildDataResultDispersionFile(def params) {
     Map dataResultDispersionFile = [:]
+    dataResultDispersionFile.originalFile = params.file
     dataResultDispersionFile.resultFile = getResultFile(params.file)
     dataResultDispersionFile.bank = Bank.get(params.bank)
-    dataResultDispersionFile.schema = PaymentSchema."params.schema"
+    dataResultDispersionFile.schema = PaymentSchema."${params.schema}"
+    dataResultDispersionFile
   }
 
   File getResultFile(def resultFile) {
     File results = new File(resultFile.getOriginalFilename())
-    multipart.transferTo(results)
+    results.createNewFile()
+    FileOutputStream fos = new FileOutputStream(results)
+    fos.write(resultFile.getBytes())
+    fos.close()
+    log.info "File results: ${results.exists()}"
     results
   }
 
@@ -338,12 +363,14 @@ class PaysheetDispersionFilesService {
         Map result = [:]
         String account = line.substring(27,37)
         String resultMessage = line.substring(122).replaceAll("[^a-zA-Z0-9 ]","").trim()
+        result.schema = dataResultDispersionFile.schema
         result.account = account
-        result.result = resultMessage
+        result.resultMessage = resultMessage
         PaysheetEmployee employee = paysheet.employees.find { emp -> emp.prePaysheetEmployee.bank == dataResultDispersionFile.bank && emp.prePaysheetEmployee.account == account && emp.paymentWay == PaymentWay.BANKING && [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(emp.status) }
         result.employee = employee
+        result.status = employee ? DispersionResultFileDetailStatus.FOUND : DispersionResultFileDetailStatus.NOT_FOUND
         if (employee) {
-          result == "OPERACION EXITOSA" ? setPayedStatusToEmployeeAboutSchema(employee, dataResultDispersionFile.schema)  : paysheetEmployeeService.setRejectedStatusToEmployee(employee)
+          resultMessage == "OPERACION EXITOSA" ? setPayedStatusToEmployeeAboutSchema(employee, dataResultDispersionFile.schema)  : paysheetEmployeeService.setRejectedStatusToEmployee(employee)
         }
         processResults.add(result)
       }
