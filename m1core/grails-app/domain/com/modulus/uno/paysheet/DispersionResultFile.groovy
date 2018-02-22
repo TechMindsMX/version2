@@ -6,6 +6,7 @@ import com.modulus.uno.Bank
 class DispersionResultFile {
 
   Bank bank
+  PaymentSchema schema
   S3Asset file
 
   static belongsTo = [paysheet:Paysheet]
