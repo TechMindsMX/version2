@@ -346,8 +346,7 @@ class PaysheetDispersionFilesService {
   }
 
   File getResultFile(def resultFile) {
-    File results = new File(resultFile.getOriginalFilename())
-    results.createNewFile()
+    File results = File.createTempFile("resultFile", ".exp")
     FileOutputStream fos = new FileOutputStream(results)
     fos.write(resultFile.getBytes())
     fos.close()
