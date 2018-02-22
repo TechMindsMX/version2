@@ -10,6 +10,7 @@ class DispersionResultFile {
   S3Asset file
 
   static belongsTo = [paysheet:Paysheet]
+  static hasMany = [details:DispersionResultFileDetail]
 
   Date dateCreated
   Date lastUpdated
