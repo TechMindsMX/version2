@@ -1,7 +1,7 @@
 package com.modulus.uno.paysheet
 
 enum DispersionResultFileDetailStatus {
-  FOUND("ENCONTRADO"), NOT_FOUND("NO ENCONTRADO")
+  APPLIED("APLICADO"), NOT_FOUND("NO ENCONTRADO"), AMOUNT_ERROR("ERROR EN MONTO"), REJECTED("RECHAZADO"), PROCESSED("PROCESADO")
 
   private final String description
 
