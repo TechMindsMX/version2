@@ -5,6 +5,7 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
 import java.text.*
+import java.math.RoundingMode
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ClassPathResource
 import org.springframework.mock.web.MockMultipartFile
@@ -326,6 +327,28 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
+
+  @Unroll
+  void "Should get status for current result = #theCurrentResult"() {
+    given:"The employee"
+      PaysheetEmployee employee = theEmployee
+    and:"The map result"
+      Map result = theCurrentResult
+    when:
+      def status = service.getStatusForCurrentResult(employee, result)
+    then:
+      status == expectedStatus
+    where:
+      theEmployee    |   theCurrentResult    ||   expectedStatus
+      null | [schema:PaymentSchema.IMSS, amount:3000, resultMessage:"OPERACION EXITOSA"] || DispersionResultFileDetailStatus.NOT_FOUND
+      new PaysheetEmployee(salaryImss:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), netAssimilable:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false)).save(validate:false) | [schema:PaymentSchema.IMSS, amount:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), resultMessage:"OPERACION EXITOSA"] || DispersionResultFileDetailStatus.APPLIED
+      new PaysheetEmployee(salaryImss:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), netAssimilable:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false)).save(validate:false) | [schema:PaymentSchema.ASSIMILABLE, amount:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), resultMessage:"OPERACION EXITOSA"] || DispersionResultFileDetailStatus.APPLIED
+      new PaysheetEmployee(salaryImss:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), netAssimilable:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false)).save(validate:false) | [schema:PaymentSchema.IMSS, amount:3000, resultMessage:"OPERACION EXITOSA"] || DispersionResultFileDetailStatus.AMOUNT_ERROR
+      new PaysheetEmployee(salaryImss:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), netAssimilable:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false)).save(validate:false) | [schema:PaymentSchema.ASSIMILABLE, amount:3000, resultMessage:"OPERACION EXITOSA"] || DispersionResultFileDetailStatus.AMOUNT_ERROR
+      new PaysheetEmployee(salaryImss:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), netAssimilable:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false)).save(validate:false) | [schema:PaymentSchema.ASSIMILABLE, amount:3000, resultMessage:"OPERACION FALLIDA"] || DispersionResultFileDetailStatus.REJECTED
+      new PaysheetEmployee(salaryImss:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), netAssimilable:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false), status:PaysheetEmployeeStatus.IMSS_PAYED).save(validate:false) | [schema:PaymentSchema.IMSS, amount:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), resultMessage:"OPERACION EXITOSA"] || DispersionResultFileDetailStatus.PROCESSED
+      new PaysheetEmployee(salaryImss:new BigDecimal(1000).setScale(2, RoundingMode.HALF_UP), netAssimilable:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false), status:PaysheetEmployeeStatus.ASSIMILABLE_PAYED).save(validate:false) | [schema:PaymentSchema.ASSIMILABLE, amount:new BigDecimal(2000).setScale(2, RoundingMode.HALF_UP), resultMessage:"OPERACION EXITOSA"] || DispersionResultFileDetailStatus.PROCESSED
+  }
 
   void "Should process result dispersion file for BBVA-BANCOMER"() {
     given:"The paysheet"
