@@ -49,7 +49,7 @@
 				<ul>
 				<g:each in="${paysheet.dispersionResultFiles.sort{it.id}}" var="resultFile">
 					<li>
-						<a href="${baseUrlDocuments}/${resultFile.file.title}.${resultFile.file.mimeType}"><i class="glyphicon glyphicon-download-alt"></i>${resultFile.bank} - ${resultFile.schema}</a>
+						<a href="${baseUrlDocuments}/${resultFile.file.title}.${resultFile.file.mimeType}"><i class="glyphicon glyphicon-download-alt"></i>${resultFile.bank} - ${resultFile.paymentSchema}</a>
 					</li>
 				</g:each>
 				</ul>
