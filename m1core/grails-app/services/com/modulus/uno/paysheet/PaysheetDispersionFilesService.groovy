@@ -304,7 +304,7 @@ class PaysheetDispersionFilesService {
     def asset = s3AssetService.createTempFilesOfMultipartsFiles(dataResultDispersionFile.originalFile,"PaysheetResultDispersionFile")
     DispersionResultFile dispersionResultFile = new DispersionResultFile(
       bank:dataResultDispersionFile.bank,
-      schema:dataResultDispersionFile.schema,
+      paymentSchema:dataResultDispersionFile.schema,
       file:asset,
       paysheet:paysheet
     )
@@ -329,7 +329,7 @@ class PaysheetDispersionFilesService {
   def processResultDispersionFile(Paysheet paysheet, def params) {
     Map dataResultDispersionFile = buildDataResultDispersionFile(params)
     List processResults = "processResultDispersionFileFor${dataResultDispersionFile.bank.name.replace(" ","")}"(paysheet, dataResultDispersionFile)
-    if (processResults.status.contains("FOUND")) {
+    if (processResults.status.contains(DispersionResultFileDetailStatus.APPLIED)) {
       dataResultDispersionFile.processResults = processResults
       uploadResultDispersionFile(paysheet, dataResultDispersionFile)
     }
@@ -341,7 +341,7 @@ class PaysheetDispersionFilesService {
     dataResultDispersionFile.originalFile = params.file
     dataResultDispersionFile.resultFile = getResultFile(params.file)
     dataResultDispersionFile.bank = Bank.get(params.bank)
-    dataResultDispersionFile.schema = PaymentSchema."${params.schema}"
+    dataResultDispersionFile.schema = PaymentSchema.values().find { it.toString()==params.schema }
     dataResultDispersionFile
   }
 
@@ -350,7 +350,6 @@ class PaysheetDispersionFilesService {
     FileOutputStream fos = new FileOutputStream(results)
     fos.write(resultFile.getBytes())
     fos.close()
-    log.info "File results: ${results.exists()}"
     results
   }
 
@@ -360,24 +359,51 @@ class PaysheetDispersionFilesService {
     lines.eachWithIndex { line, index ->
       if (index>0 && line.length() > 122) {
         Map result = [:]
-        String account = line.substring(27,37)
+        String account = line.substring(27,47).trim()
+        BigDecimal amount = new BigDecimal(line.substring(47,62))/100
         String resultMessage = line.substring(122).replaceAll("[^a-zA-Z0-9 ]","").trim()
         result.schema = dataResultDispersionFile.schema
         result.account = account
+        result.amount = amount
         result.resultMessage = resultMessage
         PaysheetEmployee employee = paysheet.employees.find { emp -> emp.prePaysheetEmployee.bank == dataResultDispersionFile.bank && emp.prePaysheetEmployee.account == account && emp.paymentWay == PaymentWay.BANKING && [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(emp.status) }
         result.employee = employee
-        result.status = employee ? DispersionResultFileDetailStatus.FOUND : DispersionResultFileDetailStatus.NOT_FOUND
-        if (employee) {
-          resultMessage == "OPERACION EXITOSA" ? setPayedStatusToEmployeeAboutSchema(employee, dataResultDispersionFile.schema)  : paysheetEmployeeService.setRejectedStatusToEmployee(employee)
-        }
+        result = changeStatusToEmployeeForResult(employee, result)
         processResults.add(result)
       }
     }
     processResults
   }
 
+  Map changeStatusToEmployeeForResult(PaysheetEmployee employee, Map result) {
+    result.status = getStatusForCurrentResult(employee, result)
+    if (result.status == DispersionResultFileDetailStatus.APPLIED) {
+      setPayedStatusToEmployeeAboutSchema(employee, result.schema)
+    }
+    if (result.status == DispersionResultFileDetailStatus.REJECTED) {
+      paysheetEmployeeService.setRejectedStatusToEmployee(employee)
+    }
+    result
+  }
+
+  DispersionResultFileDetailStatus getStatusForCurrentResult(PaysheetEmployee employee, Map result) {
+    DispersionResultFileDetailStatus status = DispersionResultFileDetailStatus.NOT_FOUND
+    if (employee) {
+      if (result.resultMessage == "OPERACION EXITOSA") {
+        BigDecimal schemaSalary = result.schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
+        if ( (employee.status == PaysheetEmployeeStatus.IMSS_PAYED && result.schema == PaymentSchema.IMSS) || (employee.status == PaysheetEmployeeStatus.ASSIMILABLE_PAYED && result.schema == PaymentSchema.ASSIMILABLE) ) {
+          status = DispersionResultFileDetailStatus.PROCESSED
+        } else {
+          status = schemaSalary == result.amount ? DispersionResultFileDetailStatus.APPLIED : DispersionResultFileDetailStatus.AMOUNT_ERROR
+        }
+      } else {
+        status = DispersionResultFileDetailStatus.REJECTED
+      }
+    }
+    status
+  }
+
   def setPayedStatusToEmployeeAboutSchema(PaysheetEmployee employee, PaymentSchema paymentSchema) {
-    employee.status == PaysheetEmployeeStatus.PENDING ? paysheetEmployeeService."set${paymentSchema}PayedStatusToEmployee"(employee) : paysheetEmployeeService.setPayedStatusToEmployee(employee)
+    employee.status == PaysheetEmployeeStatus.PENDING ? paysheetEmployeeService."set${paymentSchema.name()}PayedStatusToEmployee"(employee) : paysheetEmployeeService.setPayedStatusToEmployee(employee)
   }
 }
