@@ -145,7 +145,6 @@ class PaysheetController {
   def processResultDispersionFile(Paysheet paysheet) {
     log.info "Process result dispersion file to paysheet: ${paysheet.id}"
     List processResults = paysheetService.processResultDispersionFileToPaysheet(paysheet, params)
-    log.info "Results process: ${processResults}"
 		def dispersionBanks = paysheetService.getDispersionBanksFromPaysheet(paysheet)
     render view:"show", model:[paysheet:paysheet, processResults:processResults, baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:dispersionBanks]
   }
