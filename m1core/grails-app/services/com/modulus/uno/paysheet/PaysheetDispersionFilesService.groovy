@@ -341,6 +341,7 @@ class PaysheetDispersionFilesService {
     dataResultDispersionFile.originalFile = params.file
     dataResultDispersionFile.resultFile = getResultFile(params.file)
     dataResultDispersionFile.bank = Bank.get(params.bank)
+    dataResultDispersionFile.resultFileType = params.resultFileType
     dataResultDispersionFile.schema = PaymentSchema.values().find { it.toString()==params.schema }
     dataResultDispersionFile
   }
@@ -405,6 +406,26 @@ class PaysheetDispersionFilesService {
     processResults
   }
 
+  List processResultDispersionFileForBANAMEX(Paysheet paysheet, Map dataResultDispersionFile) {
+    List processResults = []
+    def lines = dataResultDispersionFile.resultFile.readLines()
+    lines.eachWithIndex { line, index ->
+      if (line.startsWith("3000101001")) {
+        Map result = [:]
+        BigDecimal amount = new BigDecimal(line.substring(10,28))/100
+        String account = line.substring(43,66).trim()
+        result.schema = dataResultDispersionFile.schema
+        result.account = account
+        result.amount = amount
+        result.resultMessage = dataResultDispersionFile.resultFileType
+        PaysheetEmployee employee = paysheet.employees.find { emp -> emp.prePaysheetEmployee.bank == dataResultDispersionFile.bank && account.contains(emp.prePaysheetEmployee.account) && emp.paymentWay == PaymentWay.BANKING && [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(emp.status) }
+        result.employee = employee
+        result = changeStatusToEmployeeForResult(employee, result)
+        processResults.add(result)
+      }
+    }
+    processResults
+  }
 
   Map changeStatusToEmployeeForResult(PaysheetEmployee employee, Map result) {
     result.status = getStatusForCurrentResult(employee, result)
@@ -420,10 +441,10 @@ class PaysheetDispersionFilesService {
   DispersionResultFileDetailStatus getStatusForCurrentResult(PaysheetEmployee employee, Map result) {
     DispersionResultFileDetailStatus status = DispersionResultFileDetailStatus.NOT_FOUND
     if (employee) {
-      if (["OPERACION EXITOSA", "ABONO REALIZADO EXITOSAMENTE"].contains(result.resultMessage)) {
+      if (["OPERACION EXITOSA", "ABONO REALIZADO EXITOSAMENTE", "EXITOSOS"].contains(result.resultMessage)) {
         BigDecimal schemaSalary = result.schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
         if ( (employee.status == PaysheetEmployeeStatus.IMSS_PAYED && result.schema == PaymentSchema.IMSS) || (employee.status == PaysheetEmployeeStatus.ASSIMILABLE_PAYED && result.schema == PaymentSchema.ASSIMILABLE) ) {
-          status = DispersionResultFileDetailStatus.PROCESSED
+          status = DispersionResultFileDetailStatus.PREVIOUS_PROCESSED
         } else {
           status = schemaSalary == result.amount ? DispersionResultFileDetailStatus.APPLIED : DispersionResultFileDetailStatus.AMOUNT_ERROR
         }
