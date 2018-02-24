@@ -15,7 +15,11 @@
         <g:form action="processResultDispersionFile" method="POST" enctype="multipart/form-data" id="${paysheet.id}">
           <div class="form-group">
             <label>Banco:</label>
-            <g:select class="form-control" name="bank" from="${paysheetBanks}" optionKey="id" required="required"/>
+            <g:select class="form-control" id="bank" name="bank" from="${paysheetBanks}" optionKey="id" required="required"/>
+          </div>
+          <div id="resultFileTypeDiv" class="form-group">
+            <label>Tipo de Archivo de Resultados:</label>
+            <g:select class="form-control" name="resultFileType" from="${['EXITOSOS', 'FALLIDOS']}" required="required"/>
           </div>
           <div class="form-group">
             <label>Esquema:</label>
