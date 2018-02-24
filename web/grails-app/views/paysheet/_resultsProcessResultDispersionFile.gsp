@@ -1,6 +1,9 @@
 <g:if test="${!processResults}">
   <div class="alert alert-warning" role="alert">No se pudo procesar el archivo</div>
 </g:if><g:else>
+  <div class="row">
+    <h4>Registros procesados de archivo de resultados de dispersión</h4>
+  </div>
   <div class="table-responsive">
     <table class="table table-striped table-condensed">
       <thead>
@@ -10,7 +13,7 @@
         <th class="text-center">Empleado</th>
         <th class="text-center">Esquema</th>
         <th class="text-center">Estatus</th>
-        <th class="text-center">Mensaje</th>
+        <th class="text-center">Mensaje del Archivo</th>
       </tr>
       </thead>
       <tbody>
