@@ -375,6 +375,37 @@ class PaysheetDispersionFilesService {
     processResults
   }
 
+  List processResultDispersionFileForSANTANDER(Paysheet paysheet, Map dataResultDispersionFile) {
+    List processResults = []
+    def lines = dataResultDispersionFile.resultFile.readLines()
+    lines.eachWithIndex { line, index ->
+      if (index>1) {
+        def data = line.tokenize("\t")
+        if (data.size()>6) {
+          String operation = data[2]
+          if (operation == "ABONO NOMINA") {
+            Map result = [:]
+            String account = data[3]
+            BigDecimal amount = data[5].isNumber() ? new BigDecimal(data[5].toDouble()).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
+            String resultMessage = data[6].toUpperCase()
+
+            result.schema = dataResultDispersionFile.schema
+            result.account = account
+            result.amount = amount
+            result.resultMessage = resultMessage
+
+            PaysheetEmployee employee = paysheet.employees.find { emp -> emp.prePaysheetEmployee.bank == dataResultDispersionFile.bank && emp.prePaysheetEmployee.account == account && emp.paymentWay == PaymentWay.BANKING && [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(emp.status) }
+            result.employee = employee
+            result = changeStatusToEmployeeForResult(employee, result)
+            processResults.add(result)
+          }
+        }
+      }
+    }
+    processResults
+  }
+
+
   Map changeStatusToEmployeeForResult(PaysheetEmployee employee, Map result) {
     result.status = getStatusForCurrentResult(employee, result)
     if (result.status == DispersionResultFileDetailStatus.APPLIED) {
@@ -389,7 +420,7 @@ class PaysheetDispersionFilesService {
   DispersionResultFileDetailStatus getStatusForCurrentResult(PaysheetEmployee employee, Map result) {
     DispersionResultFileDetailStatus status = DispersionResultFileDetailStatus.NOT_FOUND
     if (employee) {
-      if (result.resultMessage == "OPERACION EXITOSA") {
+      if (["OPERACION EXITOSA", "ABONO REALIZADO EXITOSAMENTE"].contains(result.resultMessage)) {
         BigDecimal schemaSalary = result.schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
         if ( (employee.status == PaysheetEmployeeStatus.IMSS_PAYED && result.schema == PaymentSchema.IMSS) || (employee.status == PaysheetEmployeeStatus.ASSIMILABLE_PAYED && result.schema == PaymentSchema.ASSIMILABLE) ) {
           status = DispersionResultFileDetailStatus.PROCESSED
@@ -404,6 +435,6 @@ class PaysheetDispersionFilesService {
   }
 
   def setPayedStatusToEmployeeAboutSchema(PaysheetEmployee employee, PaymentSchema paymentSchema) {
-    employee.status == PaysheetEmployeeStatus.PENDING ? paysheetEmployeeService."set${paymentSchema.name()}PayedStatusToEmployee"(employee) : paysheetEmployeeService.setPayedStatusToEmployee(employee)
+    employee.status == PaysheetEmployeeStatus.PENDING && employee.imssSalaryNet > 0 && employee.netAssimilable > 0 ? paysheetEmployeeService."set${paymentSchema.name()}PayedStatusToEmployee"(employee) : paysheetEmployeeService.setPayedStatusToEmployee(employee)
   }
 }
