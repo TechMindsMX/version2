@@ -48,7 +48,7 @@ class BankAccount {
       products << (clabe[i].toInteger()*factor)%10
     }
 
-    new Integer(10-(products.sum()%10))
+    products.sum()%10 ? new Integer(10-(products.sum()%10)) : 0
   }
 
   String toString() {
