@@ -425,6 +425,11 @@ class BusinessEntityService {
     }
 
     if (rowEmployee.IMSS == "S") {
+      if (dataImssEmployeeService.existsNssInCompanyAlready(company, rowEmployee.NSS)) {
+        transactionStatus.setRollbackOnly()
+        return "Error: datos de IMSS, el NSS ya está registrado en la empresa con otro empleado"
+      }
+
       DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForRowEmployee(rowEmployee, employeeLink)
       if (!dataImssEmployee || dataImssEmployee?.hasErrors()) {
         transactionStatus.setRollbackOnly()
