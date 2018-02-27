@@ -52,7 +52,7 @@ class PrePaysheetController {
 
   def addEmployees(PrePaysheet prePaysheet) {
     List employeesAvailableToAdd = prePaysheetService.getEmployeesAvailableToAdd(prePaysheet)
-    List dataImssEmployees = prePaysheetService.getDataImssForEmployees(employeesAvailableToAdd)
+    List dataImssEmployees = prePaysheetService.getDataImssForEmployees(employeesAvailableToAdd, prePaysheet.paysheetContract.company)
     List netPaymentEmployees = prePaysheetService.getNetPaymentForEmployees(employeesAvailableToAdd, prePaysheet)
     respond prePaysheet, model:[employeesAvailableToAdd:employeesAvailableToAdd, dataImssEmployees:dataImssEmployees, netPaymentEmployees:netPaymentEmployees]
   }
