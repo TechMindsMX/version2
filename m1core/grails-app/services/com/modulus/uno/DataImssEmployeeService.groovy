@@ -6,7 +6,7 @@ class DataImssEmployeeService {
 
   @Transactional
   DataImssEmployee saveDataImss(DataImssEmployee dataImss) {
-    if (existsNssInCompanyAlready(dataImss.employee.company, dataImss.nss)) {
+    if (existsNssInCompanyAlready(dataImss.employee.company, dataImss)) {
       transactionStatus.setRollbackOnly()
       throw new BusinessException("El NSS indicado ya se encuentra registrado en la empresa")
     }
@@ -47,14 +47,15 @@ class DataImssEmployeeService {
     DataImssEmployee.findByEmployee(employee)
   }
 
-  def existsNssInCompanyAlready(Company company, String nss) {
+  def existsNssInCompanyAlready(Company company, DataImssEmployee dataImssToSave) {
     def criteria = DataImssEmployee.createCriteria()
     def exists = criteria.get {
       employee {
         eq ("company", company)
       }
-      eq("nss", nss)
+      eq("nss", dataImssToSave.nss)
     }
+    dataImssToSave.id && exists ? dataImssToSave.id != exists.id : !dataImssToSave.id && exists
   }
 
 }
