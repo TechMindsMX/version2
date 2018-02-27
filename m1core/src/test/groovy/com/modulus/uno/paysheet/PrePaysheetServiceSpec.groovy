@@ -93,16 +93,17 @@ class PrePaysheetServiceSpec extends Specification {
 
   void "Should get net payments for employees"() {
     given:"The employees"
+      Company company = new Company().save(validate:false)
       List<BusinessEntity> beEmployees = [
         new BusinessEntity(rfc:"A").save(validate:false),
         new BusinessEntity(rfc:"B").save(validate:false),
         new BusinessEntity(rfc:"C").save(validate:false),
         new BusinessEntity(rfc:"D").save(validate:false)
       ]
-      EmployeeLink elA = new EmployeeLink(employeeRef:"A").save(validate:false)
-      EmployeeLink elB = new EmployeeLink(employeeRef:"B").save(validate:false)
-      EmployeeLink elC = new EmployeeLink(employeeRef:"C").save(validate:false)
-      EmployeeLink elD = new EmployeeLink(employeeRef:"D").save(validate:false)
+      EmployeeLink elA = new EmployeeLink(employeeRef:"A", company:company).save(validate:false)
+      EmployeeLink elB = new EmployeeLink(employeeRef:"B", company:company).save(validate:false)
+      EmployeeLink elC = new EmployeeLink(employeeRef:"C", company:company).save(validate:false)
+      EmployeeLink elD = new EmployeeLink(employeeRef:"D", company:company).save(validate:false)
     and:"The data imss"
       DataImssEmployee dieA = new DataImssEmployee(employee:elA, baseImssMonthlySalary:new BigDecimal(5000), totalMonthlySalary:new BigDecimal(10000)).save(validate:false)
       DataImssEmployee dieB = new DataImssEmployee(employee:elB, baseImssMonthlySalary:new BigDecimal(5000), totalMonthlySalary:new BigDecimal(5000)).save(validate:false)
@@ -111,7 +112,8 @@ class PrePaysheetServiceSpec extends Specification {
       PaysheetProject paysheetProject = new PaysheetProject(integrationFactor:1.0501, occupationalRiskRate:0.879).save(validate:false)
       paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
     and:"The pre-paysheet"
-      PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.BIWEEKLY).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.BIWEEKLY, paysheetContract:paysheetContract).save(validate:false)
     and:
       simulatorPaysheetService.createPaysheetEmployee(_) >> new PaysheetEmployee(salaryImss:2500, socialQuota:63.18, subsidySalary:162.44, incomeTax:166.57, prePaysheetEmployee:new PrePaysheetEmployee(incidences:[]))
     when:
