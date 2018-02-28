@@ -78,7 +78,7 @@ class PrePaysheetService {
   List<BusinessEntity> obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet) {
     List<BusinessEntity> beInPrePaysheet = []
     prePaysheet.employees.each { emp ->
-      beInPrePaysheet.add(BusinessEntity.findByRfc(emp.rfc))
+      beInPrePaysheet.add(prePaysheet.paysheetContract.company.businessEntities.find { be -> be.rfc == emp.rfc })
     }
     beInPrePaysheet.sort{ it.id }
   }
