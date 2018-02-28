@@ -389,7 +389,7 @@ class BusinessEntityService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveEmployeeImportData(Map rowEmployee, Company company) {
-    if (employeeService.employeeAlreadyExistsInCompany(rowEmployee.RFC, company)) {
+    if (existsBusinessEntityInCompany(rowEmployee.RFC, company)) {
       transactionStatus.setRollbackOnly()
       return [result:"Error: el RFC del empleado ya existe"]
     }
@@ -431,79 +431,85 @@ class BusinessEntityService {
   def saveClientImportData(Map rowClient, Company company) {
     if(checkIfTypeOfBusinessEntityIsCorrect(rowClient.PERSONA)) {
       transactionStatus.setRollbackOnly()
-      return "Error: tipo de cliente"
+      return [result:"Error: tipo de cliente"]
     }
 
-    if (clientService.clientAlreadyExistsInCompany(rowClient.RFC, company)){
+    if (existsBusinessEntityInCompany(rowClient.RFC, company)){
       transactionStatus.setRollbackOnly()
-      return "Error: el RFC del cliente ya existe"
+      return [result:"Error: el RFC del cliente ya existe"]
     }
     
     ClientLink clientLink = clientService.createClientForRowClient(rowClient, company)
     BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowClient)
     if(businessEntity.hasErrors()){
         transactionStatus.setRollbackOnly()
-        return "Error: RFC"
+        return [result:"Error: RFC"]
     }
 
     BankAccount bankAccount = bankAccountService.createBankAccountForClientFromRowClient(businessEntity, rowClient)
     if(!bankAccount || bankAccount?.hasErrors()){
       transactionStatus.setRollbackOnly()
-      return "Error: datos bancarios"
+      return [result:"Error: datos bancarios"]
     }
 
     Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClient)
     if (!address || address?.hasErrors()) {
         transactionStatus.setRollbackOnly()
-        return "Error: Datos en la dirección"
+        return [result:"Error: Datos en la dirección"]
     }
 
-    "Registrado"
+    [result:"Registrado", businessEntity:businessEntity]
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveProviderImportData(Map rowProvider, Company company) {
     if(checkIfTypeOfBusinessEntityIsCorrect(rowProvider.PERSONA)) {
       transactionStatus.setRollbackOnly()
-      return "Error: tipo de proveedor"
+      return [result:"Error: tipo de proveedor"]
     }
 
-    if (providerService.providerAlreadyExistsInCompany(rowProvider.RFC, company)){
+    if (existsBusinessEntityInCompany(rowProvider.RFC, company)){
       transactionStatus.setRollbackOnly()
-      return "Error: el RFC del proveedor ya existe"
+      return [result:"Error: el RFC del proveedor ya existe"]
     }
 
     ProviderLink providerLink = providerService.createProviderForRowProvider(rowProvider, company)
     BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowProvider)
       if(businessEntity.hasErrors()){
         transactionStatus.setRollbackOnly()
-        return "Error: RFC"
+        return [result:"Error: RFC"]
       }
+
+    if (!rowProvider.CLABE.isNumber()) {
+      transactionStatus.setRollbackOnly()
+      return [result:"Error: La CLABE no es valor válido"]
+    }
 
     BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowProvider)
     if (!bankAccount || bankAccount?.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      return "Error: datos bancarios"
+      return [result:"Error: datos bancarios"]
     }
 
     Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowProvider)
     if (!address || address?.hasErrors()) {
         transactionStatus.setRollbackOnly()
-        return "Error: Datos de la dirección"
+        return [result:"Error: Datos de la dirección"]
     }
-    "Registrado"
+
+    [result:"Registrado", businessEntity:businessEntity]
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   def saveClientProviderImportData(Map rowClientProvider, Company company){
     if(checkIfTypeOfBusinessEntityIsCorrect(rowClientProvider.PERSONA)) {
       transactionStatus.setRollbackOnly()
-      return "Error: tipo de cliente/proveedor"
+      return [result:"Error: tipo de cliente/proveedor"]
     }
 
-    if (providerService.providerAlreadyExistsInCompany(rowClientProvider.RFC, company) || clientService.clientAlreadyExistsInCompany(rowClientProvider.RFC, company)){
+    if (existsBusinessEntityInCompany(rowClientProvider.RFC, company)){
       transactionStatus.setRollbackOnly()
-      return "Error: el RFC del cliente/proveedor ya existe"
+      return [result:"Error: el RFC del cliente/proveedor ya existe"]
     }
 
     ProviderLink providerLink = providerService.createProviderForRowProvider(rowClientProvider, company)
@@ -511,21 +517,27 @@ class BusinessEntityService {
     BusinessEntity businessEntity = createBusinessEntityForRowBusinessEntity(rowClientProvider)
       if(businessEntity.hasErrors()){
         transactionStatus.setRollbackOnly()
-        return "Error: RFC"
+        return [result:"Error: RFC"]
       }
+
+    if (!rowClientProvider.CLABE.isNumber()) {
+      transactionStatus.setRollbackOnly()
+      return [result:"Error: La CLABE no es valor válido"]
+    }
 
     BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowClientProvider)
     if (!bankAccount || bankAccount?.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      return "Error: datos bancarios"
+      return [result:"Error: datos bancarios"]
     }
 
     Address address = addressService.createAddressForBusinessEntityFromRowBusinessEntity(businessEntity, rowClientProvider)
     if (!address || address?.hasErrors()) {
         transactionStatus.setRollbackOnly()
-        return "Error: Datos de la dirección"
+        return [result:"Error: Datos de la dirección"]
     }
-    "Registrado"
+
+    [result:"Registrado", businessEntity:businessEntity]
   }
 
   def checkIfTypeOfBusinessEntityIsCorrect(String persona){
