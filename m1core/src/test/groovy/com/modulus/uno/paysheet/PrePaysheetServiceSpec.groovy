@@ -33,7 +33,8 @@ class PrePaysheetServiceSpec extends Specification {
   void "Should get employees available to add a prepaysheet when paysheet project has employees"() {
     given: "The Paysheet Contract"
       List allEmployees = [new BusinessEntity(rfc:"A").save(validate:false), new BusinessEntity(rfc:"B").save(validate:false), new BusinessEntity(rfc:"C").save(validate:false), new BusinessEntity(rfc:"D").save(validate:false), new BusinessEntity(rfc:"E").save(validate:false)]
-      PaysheetContract paysheetContract = new PaysheetContract(employees:[]).save(validate:false)
+      Company company = new Company(businessEntities:allEmployees).save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(employees:[], company:company).save(validate:false)
       paysheetContract.employees = allEmployees
       paysheetContract.save(validate:false)
     and:"The Paysheet Project"
@@ -59,7 +60,9 @@ class PrePaysheetServiceSpec extends Specification {
       PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
     and:"A employee"
       BusinessEntity employee = new BusinessEntity(rfc:"RFC").save(validate:false)
-      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC").save(validate:false)
+      company.addToBusinessEntities(employee)
+      company.save(validate:false)
+      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
     and:"The params"
       Map params = [bankAccount1:null, netPayment1:"5000", note1:"TRAMITAR CUENTA"]
     when:
@@ -76,7 +79,9 @@ class PrePaysheetServiceSpec extends Specification {
       PrePaysheet prePaysheet = new PrePaysheet(company:company).save(validate:false)
     and:"A employee"
       BusinessEntity employee = new BusinessEntity(rfc:"RFC").save(validate:false)
-      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC").save(validate:false)
+      company.addToBusinessEntities(employee)
+      company.save(validate:false)
+      EmployeeLink empLink = new EmployeeLink(curp:"CURP", number:"NOEMP", employeeRef:"RFC", company:company).save(validate:false)
     and:"The params"
       Map params = [bankAccount1:"1", netPayment1:"5000", note1:"TRAMITAR CUENTA"]
     and:"The bank account"
