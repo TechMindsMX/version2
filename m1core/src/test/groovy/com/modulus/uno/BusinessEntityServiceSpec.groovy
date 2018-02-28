@@ -327,13 +327,13 @@ class BusinessEntityServiceSpec extends Specification {
       Company company = new Company().save(validate:false)
     and:"The business entities"
       BusinessEntity beEmp01 = new BusinessEntity(rfc:"A", status:BusinessEntityStatus.ACTIVE).save(validate:false)
-      EmployeeLink emp01 = new EmployeeLink(employeeRef:"A").save(validate:false)
+      EmployeeLink emp01 = new EmployeeLink(employeeRef:"A", company:company).save(validate:false)
       BusinessEntity beEmp02 = new BusinessEntity(rfc:"B", status:BusinessEntityStatus.ACTIVE).save(validate:false)
-      EmployeeLink emp02 = new EmployeeLink(employeeRef:"B").save(validate:false)
+      EmployeeLink emp02 = new EmployeeLink(employeeRef:"B", company:company).save(validate:false)
       BusinessEntity beEmp03 = new BusinessEntity(rfc:"C", status:BusinessEntityStatus.TO_AUTHORIZE).save(validate:false)
-      EmployeeLink emp03 = new EmployeeLink(employeeRef:"C").save(validate:false)
+      EmployeeLink emp03 = new EmployeeLink(employeeRef:"C", company:company).save(validate:false)
       BusinessEntity beCli = new BusinessEntity(rfc:"X", status:BusinessEntityStatus.ACTIVE).save(validate:false)
-      ClientLink cli = new ClientLink(clientRef:"X").save(validate:false)
+      ClientLink cli = new ClientLink(clientRef:"X", company:company).save(validate:false)
       company.addToBusinessEntities(beEmp01)
       company.addToBusinessEntities(beEmp02)
       company.addToBusinessEntities(beEmp03)
@@ -510,4 +510,26 @@ class BusinessEntityServiceSpec extends Specification {
       thrown BusinessException
    }
 
+  @Unroll
+  void "Should return #exists if a rfc=#theRfc exists in company"() {
+    given:"The business entities in company"
+      BusinessEntity be1= new BusinessEntity(rfc:"UNO").save(validate:false)
+      BusinessEntity be2= new BusinessEntity(rfc:"DOS").save(validate:false)
+      BusinessEntity be3= new BusinessEntity(rfc:"TRES").save(validate:false)
+      BusinessEntity be4= new BusinessEntity(rfc:"CUATRO").save(validate:false)
+      BusinessEntity be5= new BusinessEntity(rfc:"CINCO").save(validate:false)
+    and: "The company"
+      Company company = new Company(businessEntities:[be1, be2, be3, be4, be5]).save(validate:false)
+    and: "The rfc"
+      String rfc = theRfc
+    when:
+      def result = service.existsBusinessEntityInCompany(rfc, company)
+    then:
+      result == exists
+    where:
+      theRfc    ||  exists
+      "UNO"     ||  true
+      "TRES"    ||  true
+      "NO"      ||  false
+  }
 }
