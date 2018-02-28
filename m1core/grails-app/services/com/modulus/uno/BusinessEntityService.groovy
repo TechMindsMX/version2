@@ -335,10 +335,10 @@ class BusinessEntityService {
   List processDataFromXlsEMPLEADO(List data, Company company) {
     List results = []
     data.each { employee ->
-      String result = saveEmployeeImportData(employee, company)
-      results.add(result)
-      if (result == "Registrado") {
-        addBusinessEntityToCompany(employee.RFC, company)
+      Map resultData = saveEmployeeImportData(employee, company)
+      results.add(resultData.result)
+      if (resultData.result == "Registrado") {
+        addBusinessEntityToCompany(resultData.businessEntity, company)
       }
     }
     results
@@ -347,10 +347,10 @@ class BusinessEntityService {
   List processDataFromXlsCLIENTE(List data, Company company) {
     List results = []
     data.each { client ->
-      String result = saveClientImportData(client, company)
-      results.add(result)
-      if (result == "Registrado") {
-        addBusinessEntityToCompany(client.RFC, company)
+      Map resultData = saveClientImportData(client, company)
+      results.add(resultData.result)
+      if (resultData.result == "Registrado") {
+        addBusinessEntityToCompany(resultData.businessEntity, company)
       }
     }
     results
@@ -359,10 +359,10 @@ class BusinessEntityService {
   List processDataFromXlsPROVEEDOR(List data, Company company) {
     List results = []
     data.each { provider ->
-      String result = saveProviderImportData(provider, company)
-      results.add(result)
-      if (result == "Registrado") {
-        addBusinessEntityToCompany(provider.RFC, company)
+      Map resultData = saveProviderImportData(provider, company)
+      results.add(resultData.result)
+      if (resultData.result == "Registrado") {
+        addBusinessEntityToCompany(resultData.businessEntity, company)
       }
     }
     results
@@ -371,19 +371,18 @@ class BusinessEntityService {
   List processDataFromXlsCLIENTE_PROVEEDOR(List data, Company company) {
     List results = []
     data.each { clientProvider ->
-      String result = saveClientProviderImportData(clientProvider, company)
-      results.add(result)
-      if (result == "Registrado") {
-        addBusinessEntityToCompany(clientProvider.RFC, company)
+      Map resultData = saveClientProviderImportData(clientProvider, company)
+      results.add(resultData.result)
+      if (resultData.result == "Registrado") {
+        addBusinessEntityToCompany(resultData.businessEntity, company)
       }
     }
     results
   }
 
   @Transactional
-  def addBusinessEntityToCompany(String rfc, Company company) {
-    log.debug "Adding business entity to company: ${rfc}"
-    BusinessEntity businessEntity = BusinessEntity.findByRfc(rfc)
+  def addBusinessEntityToCompany(BusinessEntity businessEntity, Company company) {
+    log.debug "Adding business entity to company: ${businessEntity.dump()}"
     company.addToBusinessEntities(businessEntity)
     company.save()
   }
@@ -392,40 +391,40 @@ class BusinessEntityService {
   def saveEmployeeImportData(Map rowEmployee, Company company) {
     if (employeeService.employeeAlreadyExistsInCompany(rowEmployee.RFC, company)) {
       transactionStatus.setRollbackOnly()
-      return "Error: el RFC del empleado ya existe"
+      return [result:"Error: el RFC del empleado ya existe"]
     }
 
     EmployeeLink employeeLink = employeeService.createEmployeeForRowEmployee(rowEmployee, company)
     if (!employeeLink || employeeLink?.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      return "Error: CURP"
+      return [result:"Error: CURP"]
     }
 
     BusinessEntity businessEntity = createBusinessEntityForRowEmployee(rowEmployee)
     if (businessEntity.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      return "Error: RFC"
+      return [result:"Error: RFC"]
     }
 
     BankAccount bankAccount = bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(businessEntity, rowEmployee)
     if (!bankAccount || bankAccount?.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      return "Error: datos bancarios"
+      return [result:"Error: datos bancarios"]
     }
 
     if (rowEmployee.IMSS == "S") {
       if (dataImssEmployeeService.existsNssInCompanyAlready(company, new DataImssEmployee(nss:rowEmployee.NSS))) {
         transactionStatus.setRollbackOnly()
-        return "Error: datos de IMSS, el NSS ya está registrado en la empresa con otro empleado"
+        return [result:"Error: datos de IMSS, el NSS ya está registrado en la empresa con otro empleado"]
       }
 
       DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForRowEmployee(rowEmployee, employeeLink)
       if (!dataImssEmployee || dataImssEmployee?.hasErrors()) {
         transactionStatus.setRollbackOnly()
-        return "Error: datos de IMSS"
+        return [result:"Error: datos de IMSS"]
       }
     }
-    "Registrado"
+    [result:"Registrado", businessEntity:businessEntity]
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
