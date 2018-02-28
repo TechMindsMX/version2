@@ -252,9 +252,9 @@ class BusinessEntityServiceSpec extends Specification {
       bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(_,_) >> bankAccount
       dataImssEmployeeService.createDataImssForRowEmployee(_,_) >> dataImss
     when:
-      def result = service.saveEmployeeImportData(rowEmployee, company)
+      def resultData = service.saveEmployeeImportData(rowEmployee, company)
     then:
-      result == expected
+      resultData.result == expected
     where:
       row       | existingEmployee    | employeeLink    |   bankAccount | dataImss   ||  expected
       [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false) | null  | null || "Error: RFC"
