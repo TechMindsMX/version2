@@ -17,13 +17,13 @@
       <div class="portlet portlet-blue">
         <div id="horizontalFormExample" class="panel-collapse collapse in">
 
-        <g:if test="${!prePaysheetList}">
+        <g:if test="${paysheetContracts}">
           <g:form action="listPrePaysheetsForPaysheetContract">
             <g:render template="choosePaysheetContract"/>
           </g:form>
         </g:if>
 
-        <g:if test="${prePaysheetList}">
+        <g:if test="${!paysheetContracts}">
 
           <div class="portlet-body">
             <div class="table-responsive">
