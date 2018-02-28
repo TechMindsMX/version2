@@ -87,17 +87,6 @@ class BusinessEntityService {
     businessEntity
   }
 
-  @Transactional
-  def deleteLinksForRfc(String rfc){
-    def clientLink = ClientLink.findByClientRef(rfc)
-    clientLink?.delete()
-    def providerLink = ProviderLink.findByProviderRef(rfc)
-    providerLink?.delete()
-    def employeeLink = EmployeeLink.findByEmployeeRef(rfc)
-    employeeLink?.delete()
-
-  }
-
   def findBusinessEntityByKeyword(String keyword, String entity, Company company){
     if (!entity)
       entity=""
@@ -166,11 +155,11 @@ class BusinessEntityService {
   }
 
   def findBusinessEntityAndProviderLinkByRFC(String rfc){
-    def businessEntity =  BusinessEntity.findByRfc(rfc)
+    BusinessEntity businessEntity =  BusinessEntity.findByRfc(rfc)
+    Company company = Company.list().find { it.businessEntities.id.contains(businessEntity.id) } 
     if(businessEntity)
-      return ProviderLink.findByProviderRef(businessEntity.rfc)
-      businessEntity
-
+      return ProviderLink.findByProviderRefAndCompany(businessEntity.rfc, company)
+    businessEntity
   }
 
   def knowIfBusinessEntityHaveABankAccountOrAddress(def rfc) {
@@ -616,12 +605,12 @@ class BusinessEntityService {
 
   List<BusinessEntity> getAllActiveEmployeesForCompany(Company company) {
     company.businessEntities.findAll { be ->
-      (be.status == BusinessEntityStatus.ACTIVE) && (EmployeeLink.findByEmployeeRef(be.rfc))
+      (be.status == BusinessEntityStatus.ACTIVE) && (EmployeeLink.findByEmployeeRefAndCompany(be.rfc, company))
     }.sort { it.id }
   }
 
   boolean existsBusinessEntityInCompany(String rfc, Company company) {
-    ProviderLink.findByProviderRef(rfc) || ClientLink.findByClientRef(rfc) || EmployeeLink.findByEmployeeRef(rfc)
+    company.businessEntities.find { it.rfc == rfc } ? true : false
   }
 
 }
