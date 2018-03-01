@@ -381,7 +381,8 @@ class BusinessEntityService {
   }
 
   @Transactional
-  def addBusinessEntityToCompany(BusinessEntity businessEntity, Company company) {
+  def addBusinessEntityToCompany(Long businessEntityId, Company company) {
+    BusinessEntity businessEntity = BusinessEntity.get(businessEntityId)
     log.debug "Adding business entity to company: ${businessEntity.dump()}"
     company.addToBusinessEntities(businessEntity)
     company.save()
@@ -424,7 +425,7 @@ class BusinessEntityService {
         return [result:"Error: datos de IMSS"]
       }
     }
-    [result:"Registrado", businessEntity:businessEntity]
+    [result:"Registrado", businessEntity:businessEntity.id]
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -458,7 +459,7 @@ class BusinessEntityService {
         return [result:"Error: Datos en la dirección"]
     }
 
-    [result:"Registrado", businessEntity:businessEntity]
+    [result:"Registrado", businessEntity:businessEntity.id]
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -497,7 +498,7 @@ class BusinessEntityService {
         return [result:"Error: Datos de la dirección"]
     }
 
-    [result:"Registrado", businessEntity:businessEntity]
+    [result:"Registrado", businessEntity:businessEntity.id]
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -537,7 +538,7 @@ class BusinessEntityService {
         return [result:"Error: Datos de la dirección"]
     }
 
-    [result:"Registrado", businessEntity:businessEntity]
+    [result:"Registrado", businessEntity:businessEntity.id]
   }
 
   def checkIfTypeOfBusinessEntityIsCorrect(String persona){
