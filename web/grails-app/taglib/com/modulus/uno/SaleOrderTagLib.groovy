@@ -22,7 +22,7 @@ class SaleOrderTagLib {
     int lengthFolio = attrs.saleOrder.folio.length()
     String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio}" : "${attrs.saleOrder.folio}_${attrs.saleOrder.id}"
     def file = "${nameFile}.${attrs.format}"
-    def rfc = "AAA010101AAA"
+    def rfc = "AAA010101AAA/${attrs.saleOrder.company.id}"
     if (Environment.current == Environment.PRODUCTION) {
       rfc = "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}"
     }
@@ -34,7 +34,7 @@ class SaleOrderTagLib {
     int lengthFolio = attrs.saleOrder.folio.length()
     String nameFile = lengthFolio > 36 ? "${attrs.saleOrder.folio.substring(0,36)}" : "${attrs.saleOrder.folio}"
     def file = "${nameFile}.${attrs.format}"
-    def rfc = "AAA010101AAA"
+    def rfc = "AAA010101AAA/${saleOrder.company.id}"
     if (Environment.current == Environment.PRODUCTION) {
       rfc = "${attrs.saleOrder.company.rfc}/${attrs.saleOrder.company.id}"
     }
