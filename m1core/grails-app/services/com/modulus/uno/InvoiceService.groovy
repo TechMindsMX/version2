@@ -25,11 +25,15 @@ class InvoiceService {
     }
 
     def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    if (!result) {
+      throw new RestException("No se pudo generar la factura") 
+    }
     result.text
   }
 
   private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
     FacturaCommand facturaCommand = new FacturaCommand(
+      id:saleOrder.company.id.toString(),
       datosDeFacturacion: getDatosDeFacturacion(saleOrder), 
       emisor: buildEmitterFromSaleOrder(saleOrder), 
       receptor:buildReceiverFromSaleOrder(saleOrder),
@@ -38,6 +42,7 @@ class InvoiceService {
       betweenIntegrated: false,
       conceptos: buildConceptsFromSaleOrder(saleOrder)
     )
+    log.info "Command invoice created: ${facturaCommand.dump()}"
     facturaCommand.emitter = facturaCommand.emisor.datosFiscales.rfc
     facturaCommand.totalesImpuestos = buildSummaryTaxes(facturaCommand)
     facturaCommand
@@ -85,7 +90,6 @@ class InvoiceService {
   }
 
   private Contribuyente buildReceiverFromSaleOrder(SaleOrder saleOrder) {
-    //TODO: Implementar catálogo usos cfdi para selección al ejecutar la orden de venta
     new Contribuyente(
       datosFiscales: new DatosFiscales(
         rfc: (Environment.current == Environment.PRODUCTION) ? saleOrder.rfc : "LAN7008173R5",
@@ -104,8 +108,10 @@ class InvoiceService {
   }
 
   private List<Concepto> buildConceptsFromSaleOrder(SaleOrder saleOrder) {
+    log.info "Build concepts from ${saleOrder.dump()}"
     def conceptos = []
     saleOrder.items.toList().sort{it.name}.each { item ->
+      log.info "Current item: ${item.dump()}"
       Concepto concepto = new Concepto(
         cantidad:item.quantity, 
         valorUnitario:item.price, 
@@ -117,6 +123,7 @@ class InvoiceService {
         impuestos:buildTaxesFromItem(item),
         retenciones:buildTaxWithholdingsFromItem(item)
       )
+      log.info "Builded concept: ${concepto.dump()}"
       conceptos.add(concepto)
     }
     conceptos
@@ -200,10 +207,15 @@ class InvoiceService {
     def factura = createInvoiceFromSaleOrder(saleOrder)
     log.info "Factura to preview: ${factura.dump()}"
     String file = "previo.pdf"
-    String rfc = "${saleOrder.company.rfc}"
+    String rfc = "${saleOrder.company.rfc}/${saleOrder.company.id}"
     def url = grailsApplication.config.modulus.showFactura
     url = url.replace('#rfc',rfc).replace('#file',file)
+    log.info "Url: ${url}"
     def result = restService.sendFacturaCommandWithAuth(factura, url)
+    log.info "Result rest: ${result?.dump()}"
+    if (!result) {
+      throw new RestException("No se pudo generar la vista previa") 
+    }
     log.info "Preview invoice generated for sale order ${saleOrder.id} with template ${saleOrder.pdfTemplate}"
     result.data
   }
