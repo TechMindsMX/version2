@@ -243,82 +243,79 @@ class BusinessEntityServiceSpec extends Specification {
   @Unroll
   void "Should obtain #expected for row employee #row"() {
     given:"A company"
-      Company company = new Company(rfc:"RFCCompany").save(validate:false)
+      Company company = new Company(rfc:"RFCCompany", businessEntities:theCurrentEntities).save(validate:false)
     and:"The row employee"
       Map rowEmployee = row
     and:"Find employee"
-      employeeService.employeeAlreadyExistsInCompany(_,_) >> existingEmployee
       employeeService.createEmployeeForRowEmployee(_,_) >> employeeLink
       bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(_,_) >> bankAccount
       dataImssEmployeeService.createDataImssForRowEmployee(_,_) >> dataImss
     when:
-      def result = service.saveEmployeeImportData(rowEmployee, company)
+      def resultData = service.saveEmployeeImportData(rowEmployee, company)
     then:
-      result == expected
+      resultData.result == expected
     where:
-      row       | existingEmployee    | employeeLink    |   bankAccount | dataImss   ||  expected
-      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   null    | new EmployeeLink().save(validate:false) | null  | null || "Error: RFC"
-      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   new EmployeeLink().save(validate:false)   |  null | null  | null  || "Error: el RFC del empleado ya existe"
-      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   null   |  null | null | null  || "Error: CURP"
-      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   null   |  new EmployeeLink().save(validate:false) | new BankAccount().save(validate:false) | null  || "Error: datos de IMSS"
-      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456"]  |   null   |  new EmployeeLink().save(validate:false) | null | null || "Error: datos bancarios"
-      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   null   | new EmployeeLink().save(validate:false)  | new BankAccount().save(validate:false) | new DataImssEmployee().save(validate:false) || "Registrado"
+      row       | theCurrentEntities   | employeeLink    |   bankAccount | dataImss   ||  expected
+      [RFC:"PAG770214501", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]   |   []    | new EmployeeLink().save(validate:false) | null  | null || "Error: RFC"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   [new BusinessEntity(rfc:"PAGC770214422").save(validate:false)]   |  null | null  | null  || "Error: el RFC del empleado ya existe"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100"]  |   []   |  null | null | null  || "Error: CURP"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   []   |  new EmployeeLink().save(validate:false) | new BankAccount().save(validate:false) | null  || "Error: datos de IMSS"
+      [RFC:"PAGC770214422", CURP:"PAGC871011HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456"]  |   []   |  new EmployeeLink().save(validate:false) | null | null || "Error: datos bancarios"
+      [RFC:"PAGC770214422", CURP:"PAGC770214HOCLTH00", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", NO_EMPL:"EMP-100", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", IMSS:"S"]  |   []   | new EmployeeLink().save(validate:false)  | new BankAccount().save(validate:false) | new DataImssEmployee().save(validate:false) || "Registrado"
   }
 
   @Unroll
   void "Should obtain #expected for row client #row"(){
     given:"A company"
-      Company company = new Company(rfc:"RFCCompany").save(validate:false)
+      Company company = new Company(rfc:"RFCCompany", businessEntities:theCurrentEntities).save(validate:false)
     and:"The row client"
       Map rowClient = row
     and:"Find client"
-      clientService.clientAlreadyExistsInCompany(_,_) >> existingClient
       clientService.createClientForRowClient(_,_) >> clientLink
       bankAccountService.createBankAccountForClientFromRowClient(_,_) >> bankAccounts
       addressService.createAddressForBusinessEntityFromRowBusinessEntity(_,_) >> addresses
     when:
       def result = service.saveClientImportData(rowClient, company)
     then:
-      result == expected
+      result.result == expected
     where:
-      row       | existingClient    | clientLink    ||  expected
-      [RFC:"AGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"FISICA", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ClientLink().save(validate:false)  || "Error: RFC"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"FISICA", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | new ClientLink().save(validate:false) | null || "Error: el RFC del cliente ya existe"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"fizica", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ClientLink().save(validate:false) || "Error: tipo de cliente"
-      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MORAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | new ClientLink().save(validate:false) | null || "Error: el RFC del cliente ya existe"
-      [RFC:"AG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MORAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ClientLink().save(validate:false)  || "Error: RFC"
-      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MOAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ClientLink().save(validate:false)  || "Error: tipo de cliente"
-      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MORAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ClientLink().save(validate:false) || "Registrado"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"FISICA", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ClientLink().save(validate:false) || "Registrado"
+      row       | theCurrentEntities    | clientLink    ||  expected
+      [RFC:"AGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"FISICA", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ClientLink().save(validate:false)  || "Error: RFC"
+      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"FISICA", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [new BusinessEntity(rfc:"PAGC770214422").save(validate:false)] | null || "Error: el RFC del cliente ya existe"
+      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"fizica", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ClientLink().save(validate:false) || "Error: tipo de cliente"
+      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MORAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [new BusinessEntity(rfc:"PAG770214ELP").save(validate:false)] | null || "Error: el RFC del cliente ya existe"
+      [RFC:"AG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MORAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ClientLink().save(validate:false)  || "Error: RFC"
+      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MOAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ClientLink().save(validate:false)  || "Error: tipo de cliente"
+      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"MORAL", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ClientLink().save(validate:false) || "Registrado"
+      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", CLAVE_BANCO:"002", ULTIMOS_4_DIGITOS_TARJETA:"9999", PERSONA:"FISICA", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ClientLink().save(validate:false) || "Registrado"
   }
 
   @Unroll
   void "Should obtain #expected for row provider #row"(){
     given:"A company"
-      Company company = new Company(rfc:"RFCCompany").save(validate:false)
+      Company company = new Company(rfc:"RFCCompany", businessEntities:theCurrentEntities).save(validate:false)
     and:"The row provider"
       Map rowProvider = row
     and:"Find provider"
-      providerService.providerAlreadyExistsInCompany(_,_) >> existingProvider
       providerService.createProviderForRowProvider(_,_) >> providerLink
       bankAccountService.createBankAccountForBusinessEntityFromRowBusinessEntity(_,_) >> bankAccount
       addressService.createAddressForBusinessEntityFromRowBusinessEntity(_,_) >> addresses
     when:
       def result = service.saveProviderImportData(rowProvider, company)
     then:
-      result == expected
+      result.result == expected
     where:
-      row       | existingProvider    | providerLink    |   bankAccount ||  expected
-      [RFC:"AGC77014422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false)   || "Error: RFC"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FIZICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Error: tipo de proveedor"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | new ProviderLink().save(validate:false) | null | new BankAccount().save(validate:false) || "Error: el RFC del proveedor ya existe"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | null || "Error: datos bancarios"
-      [RFC:"AG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false)  || "Error: RFC"
-      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MOROL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Error: tipo de proveedor"
-      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | new ProviderLink().save(validate:false) | null | new BankAccount().save(validate:false) || "Error: el RFC del proveedor ya existe"
-      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | null || "Error: datos bancarios"
-      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Registrado"
-      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | null | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Registrado"
+      row       | theCurrentEntities    | providerLink    |   bankAccount ||  expected
+      [RFC:"AGC77014422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false)   || "Error: RFC"
+      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FIZICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Error: tipo de proveedor"
+      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [new BusinessEntity(rfc:"PAGC770214422").save(validate:false)] | null | new BankAccount().save(validate:false) || "Error: el RFC del proveedor ya existe"
+      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | null || "Error: datos bancarios"
+      [RFC:"AG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false)  || "Error: RFC"
+      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MOROL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Error: tipo de proveedor"
+      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [new BusinessEntity(rfc:"PAG770214ELP").save(validate:false)] | null | new BankAccount().save(validate:false) || "Error: el RFC del proveedor ya existe"
+      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | null || "Error: datos bancarios"
+      [RFC:"PAG770214ELP", RAZON_SOCIAL:"El Paisano La'a", PERSONA:"MORAL", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Registrado"
+      [RFC:"PAGC770214422", PATERNO:"ApPaterno", MATERNO:"ApMaterno", NOMBRE:"Nombre", PERSONA:"FISICA", CLABE:"036180009876543217", NUMTARJETA:"1234567890123456", CALLE:"Sabadel", NUMEXTERIOR:"112", NUMINTERIOR:"5", CODIGO_POSTAL:"09860", COLONIA:"BELLAVISTA", "DELEGACION/MUNICIPIO":"IZTAPALAPA", PAIS:"MEXICO", CIUDAD:"CIUDAD DE MEXICO", ENTIDAD_FEDERATIVA:"CIUDAD DE MEXICO", TIPO_DE_DIRECCION:"SOCIAL"] | [] | new ProviderLink().save(validate:false) | new BankAccount().save(validate:false) || "Registrado"
       
   }
 
@@ -327,13 +324,13 @@ class BusinessEntityServiceSpec extends Specification {
       Company company = new Company().save(validate:false)
     and:"The business entities"
       BusinessEntity beEmp01 = new BusinessEntity(rfc:"A", status:BusinessEntityStatus.ACTIVE).save(validate:false)
-      EmployeeLink emp01 = new EmployeeLink(employeeRef:"A").save(validate:false)
+      EmployeeLink emp01 = new EmployeeLink(employeeRef:"A", company:company).save(validate:false)
       BusinessEntity beEmp02 = new BusinessEntity(rfc:"B", status:BusinessEntityStatus.ACTIVE).save(validate:false)
-      EmployeeLink emp02 = new EmployeeLink(employeeRef:"B").save(validate:false)
+      EmployeeLink emp02 = new EmployeeLink(employeeRef:"B", company:company).save(validate:false)
       BusinessEntity beEmp03 = new BusinessEntity(rfc:"C", status:BusinessEntityStatus.TO_AUTHORIZE).save(validate:false)
-      EmployeeLink emp03 = new EmployeeLink(employeeRef:"C").save(validate:false)
+      EmployeeLink emp03 = new EmployeeLink(employeeRef:"C", company:company).save(validate:false)
       BusinessEntity beCli = new BusinessEntity(rfc:"X", status:BusinessEntityStatus.ACTIVE).save(validate:false)
-      ClientLink cli = new ClientLink(clientRef:"X").save(validate:false)
+      ClientLink cli = new ClientLink(clientRef:"X", company:company).save(validate:false)
       company.addToBusinessEntities(beEmp01)
       company.addToBusinessEntities(beEmp02)
       company.addToBusinessEntities(beEmp03)
@@ -510,4 +507,26 @@ class BusinessEntityServiceSpec extends Specification {
       thrown BusinessException
    }
 
+  @Unroll
+  void "Should return #exists if a rfc=#theRfc exists in company"() {
+    given:"The business entities in company"
+      BusinessEntity be1= new BusinessEntity(rfc:"UNO").save(validate:false)
+      BusinessEntity be2= new BusinessEntity(rfc:"DOS").save(validate:false)
+      BusinessEntity be3= new BusinessEntity(rfc:"TRES").save(validate:false)
+      BusinessEntity be4= new BusinessEntity(rfc:"CUATRO").save(validate:false)
+      BusinessEntity be5= new BusinessEntity(rfc:"CINCO").save(validate:false)
+    and: "The company"
+      Company company = new Company(businessEntities:[be1, be2, be3, be4, be5]).save(validate:false)
+    and: "The rfc"
+      String rfc = theRfc
+    when:
+      def result = service.existsBusinessEntityInCompany(rfc, company)
+    then:
+      result == exists
+    where:
+      theRfc    ||  exists
+      "UNO"     ||  true
+      "TRES"    ||  true
+      "NO"      ||  false
+  }
 }
