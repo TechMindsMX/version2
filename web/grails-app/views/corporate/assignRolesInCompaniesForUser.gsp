@@ -27,7 +27,7 @@
         <div class="portlet portlet-blue">
           <div class="portlet-body">
             <div class="table-responsive">
-            <table class="table">
+            <table class="table table-condensed table-striped">
               <thead>
                 <tr>
                   <th></th>
@@ -41,7 +41,7 @@
                 </tr>
               </thead>
               <tbody>
-                <g:each status="b" in="${companies}" var="company">
+                <g:each status="b" in="${companies.sort{it.bussinessName}}" var="company">
                   <tr>
                     <td>${company}</td>
                     <g:each status="a" in="${roles}" var="someRole">
