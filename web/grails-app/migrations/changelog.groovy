@@ -119,5 +119,7 @@ databaseChangeLog = {
   include file: 'add-roles-quotation.groovy'
   include file: 'adding-columns-paymentway-paymentmethod-and-invoicepurpose-to-quotation-request.groovy'
   include file: 'adding-column-status-to-corporate.groovy'
-    include file: 'drop-unique-constraint-to-nss-from-data-imss-employee.groovy'
+  include file: 'drop-unique-constraint-to-nss-from-data-imss-employee.groovy'
+  include file: 'adding-column-alias-to-company.groovy'
+  include file: 'drop-unique-constraint-to-rfc-in-company.groovy'
 }

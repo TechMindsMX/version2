@@ -12,7 +12,7 @@
       <h1>
         <i class="fa fa-university fa-2x"></i>
         <g:message code="Estado de Cuenta"/>
-        <small>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</small>
+        <small>${accountStatement.company} - ${accountStatement.company.rfc}</small>
       </h1>
     </div>
     <div class="row">
@@ -20,7 +20,7 @@
         <div class="portlet">
           <div class="portlet-heading">
             <h2>Saldo Global</h2>
-            <h4>${accountStatement.company.bussinessName} - ${accountStatement.company.rfc}</h4>
+            <h4>${accountStatement.company} - ${accountStatement.company.rfc}</h4>
           </div>
           <div class="portlet-body">
             <div class="table-responsive">
