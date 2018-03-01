@@ -96,7 +96,7 @@
                     <td>${be}</td>
                     <td>${be.website}</td>
                     <td>${be.type}</td>
-                    <td><my:whatIsThisBusinessEntity be="${be}" /></td>
+                    <td><my:whatIsThisBusinessEntity be="${be}" company="${company}" /></td>
                     <td><g:message code="businessEntity.status.${be.status}"/></td>
                   </tr>
                 </g:each>
