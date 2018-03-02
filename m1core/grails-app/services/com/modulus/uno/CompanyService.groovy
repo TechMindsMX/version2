@@ -277,21 +277,21 @@ class CompanyService {
     formattedTransactions
   }
 
-  def sendDocumentsPerInvoice(def params, def rfc) {
-    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert, serie:params.serie]
+  def sendDocumentsPerInvoice(def params, Company company) {
+    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serie:params.serie]
     def result = restService.sendFilesForInvoiceM1(documents)
     result
   }
 
-  def updateDocumentsToStamp(def params, def rfc) {
-    def documents = [key:params.key,cer:params.cer,logo:params.logo,,password:params.password, rfc:rfc, certNumber:params.numCert, serie:params.serie]
+  def updateDocumentsToStamp(def params, Company company) {
+    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serie:params.serie]
     log.info "Updating documents to stamp: ${documents}"
     def result = restService.updateFilesForInvoice(documents)
     result
   }
 
-  def isAvailableForGenerateInvoices(String rfc) {
-    def response = restService.existEmisorForGenerateInvoice(rfc)
+  def isAvailableForGenerateInvoices(Company company) {
+    def response = restService.existEmisorForGenerateInvoice(company.rfc, company.id.toString())
   }
 
   PendingAccounts obtainPendingAccountsOfPeriod(Date startDate, Date endDate, Company company) {
@@ -341,7 +341,7 @@ class CompanyService {
 
   Boolean isCompanyEnabledToStamp(Company company) {
     Address fiscalAddress = company.addresses.find {it.addressType == AddressType.FISCAL}
-    def documents = isAvailableForGenerateInvoices(company.rfc)
+    def documents = isAvailableForGenerateInvoices(company)
     documents.status && fiscalAddress
   }
 
@@ -360,7 +360,7 @@ class CompanyService {
   }
 
   void changeSerieForInvoicesOfCompany(Company company, String serie, String folio) {
-    Map newSerie = [rfc:company.rfc, serie:serie, folio:folio]
+    Map newSerie = [rfc:company.rfc, id:company.id.toString(), serie:serie, folio:folio]
     invoiceService.changeSerieAndInitialFolioToStampInvoiceForEmitter(newSerie)
   }
 

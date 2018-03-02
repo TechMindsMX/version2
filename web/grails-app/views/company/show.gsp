@@ -43,6 +43,12 @@
                <div class="col-sm-12"><g:message code="${company.taxRegime}"/></div>
              </div>
              <f:display bean="company" property="bussinessName" wrapper="describe" /></b>
+             <div class="form-group">
+              <label class="col-sm-12 control-label">Alias</label>
+              <div class="col-sm-12">
+               ${company.aliasCompany}
+               </div>
+             </div>
              <f:display bean="company" property="webSite"  wrapper="describe" />
              <f:display bean="company" property="employeeNumbers" wrapper="describe" />
              <f:display bean="company" property="numberOfAuthorizations" wrapper="describe" />
