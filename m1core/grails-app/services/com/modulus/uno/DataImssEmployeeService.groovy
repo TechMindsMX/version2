@@ -23,7 +23,7 @@ class DataImssEmployeeService {
       nss:rowEmployee.NSS,
       registrationDate:Date.parse("dd-MM-yyyy", parseRegistrationDateFromRowEmployeeToString(rowEmployee.FECHA_ALTA)),
       baseImssMonthlySalary:new BigDecimal(rowEmployee.SA_BRUTO),
-      totalMonthlySalary:new BigDecimal(rowEmployee.SA_BRUTO)+new BigDecimal(rowEmployee.IAS),
+      totalMonthlySalary:new BigDecimal(rowEmployee.NETO),
       holidayBonusRate:new BigDecimal(rowEmployee.PRIMA_VAC),
       annualBonusDays:new Double(rowEmployee.DIAS_AGUINALDO.toString()).intValue(),
       paymentPeriod:paymentPeriod
