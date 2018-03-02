@@ -15,7 +15,7 @@ class BreakdownPaymentEmployeeService {
 
   @Transactional
   BreakdownPaymentEmployee generateBreakdownPaymentEmployee(PaysheetEmployee paysheetEmployee) {
-    EmployeeLink employee = EmployeeLink.findByEmployeeRef(paysheetEmployee.prePaysheetEmployee.rfc)
+    EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(paysheetEmployee.prePaysheetEmployee.rfc, paysheetEmployee.paysheet.paysheetContract.company)
     if (!employee) {
       throw new BusinessException("El empleado de la prenómina con RFC ${paysheetEmployee.prePaysheetEmployee.rfc} ya no fue encontrado en los registros de la empresa")
     }

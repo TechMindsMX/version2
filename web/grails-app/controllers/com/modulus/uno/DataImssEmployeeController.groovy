@@ -5,8 +5,9 @@ class DataImssEmployeeController {
   DataImssEmployeeService dataImssEmployeeService
 
   def create() {
+    Company company = Company.get(session.company)
     BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
-    EmployeeLink employee = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
+    EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(businessEntity.rfc, company)
     respond new DataImssEmployee(), model:[businessEntity:businessEntity, employee:employee]
   }
 
@@ -15,7 +16,7 @@ class DataImssEmployeeController {
 
     if (command.hasErrors()) {
       BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
-      EmployeeLink employee = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
+      EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(businessEntity.rfc, company)
       render view:"create", model:[dataImssEmployee:command, businessEntity:businessEntity, employee:employee]
       return
     }
@@ -26,7 +27,7 @@ class DataImssEmployeeController {
     log.info "Data Imss Instance: ${dataImssEmployee.dump()}"
     if (dataImssEmployee.hasErrors()) {
       BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
-      EmployeeLink employee = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
+      EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(businessEntity.rfc, company)
       render view:"create", model:[dataImssEmployee:dataImssEmployee, businessEntity:businessEntity, employee:employee]
       return
     }
@@ -44,7 +45,7 @@ class DataImssEmployeeController {
 
     if (command.hasErrors()) {
       BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
-      EmployeeLink employee = EmployeeLink.findByEmployeeRef(businessEntity.rfc)
+      EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(businessEntity.rfc, company)
       render view:"edit", model:[dataImssEmployee:command, businessEntity:businessEntity, employee:employee]
       return
     }

@@ -10,9 +10,9 @@ class BusinessEntityTagLib {
 
   def whatIsThisBusinessEntity = { attrs ->
     String type = ""
-    type = clientService.isClient(attrs.be) ? "Cliente" : ""
-    type += providerService.isProvider(attrs.be) ? (type ? " - Proveedor" : "Proveedor") : ""
-    type += employeeService.isEmployee(attrs.be) ? (type ? " - Emp/Colaborador" : "Emp/Colaborador") : ""
+    type = clientService.isClientOfThisCompany(attrs.be, attrs.company) ? "Cliente" : ""
+    type += providerService.isProviderOfThisCompany(attrs.be, attrs.company) ? (type ? " - Proveedor" : "Proveedor") : ""
+    type += employeeService.isEmployeeOfThisCompany(attrs.be, attrs.company) ? (type ? " - Emp/Colaborador" : "Emp/Colaborador") : ""
     out <<  type
   }
 

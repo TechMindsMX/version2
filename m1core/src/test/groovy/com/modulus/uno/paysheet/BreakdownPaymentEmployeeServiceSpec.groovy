@@ -297,7 +297,7 @@ class BreakdownPaymentEmployeeServiceSpec extends Specification {
       PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
       Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
       PaysheetEmployee paysheetEmployee = new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee, paysheet:paysheet).save(validate:false)
-      EmployeeLink employee = new EmployeeLink(employeeRef:"RFC").save(validate:false)
+      EmployeeLink employee = new EmployeeLink(employeeRef:"RFC", company:company).save(validate:false)
     and:
       PaysheetProject paysheetProject = new PaysheetProject(integrationFactor:new BigDecimal(1.0452), occupationalRiskRate:new BigDecimal(0.54355)).save(validate:false)
       paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject

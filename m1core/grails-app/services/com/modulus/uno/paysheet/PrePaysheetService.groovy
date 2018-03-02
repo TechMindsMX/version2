@@ -40,7 +40,7 @@ class PrePaysheetService {
   List<BigDecimal> getNetPaymentForEmployees(List<BusinessEntity> beEmployees, PrePaysheet prePaysheet) {
     List<BigDecimal> netPayments = []
     int daysPeriod = prePaysheet.paymentPeriod.getDays()
-    List dataImss = getDataImssForEmployees(beEmployees)
+    List dataImss = getDataImssForEmployees(beEmployees, prePaysheet.paysheetContract.company)
     dataImss.each { di ->
       BigDecimal netPayment = di ? (di.totalMonthlySalary/30*daysPeriod).setScale(2, RoundingMode.HALF_UP) : new BigDecimal(0)
       if (di && di.monthlyAssimilableSalary <= 0) {
@@ -51,10 +51,10 @@ class PrePaysheetService {
     netPayments
   }
 
-  List<DataImssEmployee> getDataImssForEmployees(List<BusinessEntity> beEmployees) {
+  List<DataImssEmployee> getDataImssForEmployees(List<BusinessEntity> beEmployees, Company company) {
     List<DataImssEmployee> dataImss = []
     beEmployees.each { be ->
-      EmployeeLink employee = EmployeeLink.findByEmployeeRef(be.rfc)
+      EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(be.rfc, company)
       DataImssEmployee dataImssEmployee = DataImssEmployee.findByEmployee(employee)
       dataImss.add(dataImssEmployee)
     }
@@ -78,7 +78,7 @@ class PrePaysheetService {
   List<BusinessEntity> obtainBusinessEntitiesFromEmployeesPrePaysheet(prePaysheet) {
     List<BusinessEntity> beInPrePaysheet = []
     prePaysheet.employees.each { emp ->
-      beInPrePaysheet.add(BusinessEntity.findByRfc(emp.rfc))
+      beInPrePaysheet.add(prePaysheet.paysheetContract.company.businessEntities.find { be -> be.rfc == emp.rfc })
     }
     beInPrePaysheet.sort{ it.id }
   }
