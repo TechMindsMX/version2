@@ -123,4 +123,6 @@ databaseChangeLog = {
   include file: 'adding-column-alias-to-company.groovy'
   include file: 'drop-unique-constraint-to-rfc-in-company.groovy'
     include file: 'adding-column-employer-registration-to-paysheet-contract.groovy'
+    include file: 'adding-columns-for-paysheet-receipt-into-data-imss-employee.groovy'
+    include file: 'adding-column-federal-entity-to-paysheet-project.groovy'
 }
