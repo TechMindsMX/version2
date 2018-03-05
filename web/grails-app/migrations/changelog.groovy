@@ -122,4 +122,5 @@ databaseChangeLog = {
   include file: 'drop-unique-constraint-to-nss-from-data-imss-employee.groovy'
   include file: 'adding-column-alias-to-company.groovy'
   include file: 'drop-unique-constraint-to-rfc-in-company.groovy'
+    include file: 'adding-column-employer-registration-to-paysheet-contract.groovy'
 }
