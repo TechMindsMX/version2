@@ -2,6 +2,9 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 import org.springframework.transaction.annotation.Propagation
+import com.modulus.uno.paysheet.ContractType
+import com.modulus.uno.paysheet.RegimeType
+import com.modulus.uno.paysheet.WorkDayType
 
 @Transactional
 class BusinessEntityService {
@@ -414,18 +417,76 @@ class BusinessEntityService {
     }
 
     if (rowEmployee.IMSS == "S") {
-      if (dataImssEmployeeService.existsNssInCompanyAlready(company, new DataImssEmployee(nss:rowEmployee.NSS))) {
+      String error = existingErrorsInDataImssEmployee(rowEmployee, company)
+      if (error) {
         transactionStatus.setRollbackOnly()
-        return [result:"Error: datos de IMSS, el NSS ya está registrado en la empresa con otro empleado"]
+        return [result: error]
       }
 
       DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForRowEmployee(rowEmployee, employeeLink)
+      println "Data imss employee: ${dataImssEmployee.dump()}"
       if (!dataImssEmployee || dataImssEmployee?.hasErrors()) {
         transactionStatus.setRollbackOnly()
         return [result:"Error: datos de IMSS"]
       }
     }
     [result:"Registrado", businessEntity:businessEntity.id]
+  }
+
+  String existingErrorsInDataImssEmployee(Map rowEmployee, Company company) {
+    if (!rowEmployee.NSS || !rowEmployee.FECHA_ALTA || !rowEmployee.SA_BRUTO || !rowEmployee.NETO || !rowEmployee.PRIMA_VAC || !rowEmployee.DIAS_AGUINALDO || !rowEmployee.PERIODO_PAGO || !rowEmployee.TIPO_CONTRATO || !rowEmployee.TIPO_REGIMEN || !rowEmployee.TIPO_JORNADA || !rowEmployee.DEPARTAMENTO || !rowEmployee.PUESTO) {
+      return "Error: Existen campos vacíos después del campo IMSS, y se usó la opción S"
+    }
+
+    if (dataImssEmployeeService.existsNssInCompanyAlready(company, new DataImssEmployee(nss:rowEmployee.NSS))) {
+      return "Error: el NSS ya está registrado en la empresa con otro empleado"
+    }
+
+    if (!rowEmployee.SA_BRUTO.isNumber()) {
+      return "Error: el valor de SA_BRUTO no es válido"
+    }
+
+    if (!rowEmployee.NETO.isNumber()) {
+      return "Error: el valor de NETO no es válido"
+    }
+
+    if (new BigDecimal(rowEmployee.NETO) < new BigDecimal(rowEmployee.SA_BRUTO)) {
+      return "Error: el valor de NETO no debe ser menor al de SA_BRUTO"
+    }
+
+    if (!rowEmployee.PRIMA_VAC.isNumber()) {
+      return "Error: el valor del campo PRIMA_VAC no es un número"
+    }
+
+    if (new BigDecimal(rowEmployee.PRIMA_VAC) < 0 || new BigDecimal(rowEmployee.PRIMA_VAC) > 100) {
+      return "Error: el valor del campo PRIMA_VAC debe estar entre 0 y 100"
+    }
+
+    if (!rowEmployee.DIAS_AGUINALDO.isNumber()) {
+      return "Error: el valor del campo DIAS_AGUINALDO no es un número"
+    }
+
+    if (new BigDecimal(rowEmployee.DIAS_AGUINALDO) < 15) {
+      return "Error: el valor del campo DIAS_AGUINALDO no puede ser menor de 15"
+    }
+
+		if (!PaymentPeriod.find { it.toString() == rowEmployee.PERIODO_PAGO.toUpperCase() }) {
+       return "Error: el valor del período de pago no es válido"
+    }
+
+    if (!ContractType.find { it.key == rowEmployee.TIPO_CONTRATO }) {
+      return "Error: el valor del tipo de contrato no es válido"
+    }
+
+    if (!RegimeType.find { it.key == rowEmployee.TIPO_REGIMEN }) {
+      return "Error: el valor del tipo de régimen no es válido"
+    }
+
+    if (!WorkDayType.find { it.key == rowEmployee.TIPO_JORNADA }) {
+      return "Error: el valor del tipo de jornada no es válido"
+    }
+
+    ""
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
