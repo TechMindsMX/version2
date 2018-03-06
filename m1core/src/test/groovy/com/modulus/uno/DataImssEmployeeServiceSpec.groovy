@@ -13,7 +13,7 @@ class DataImssEmployeeServiceSpec extends Specification {
     given:"A employee"
       EmployeeLink employee = new EmployeeLink().save(validate:false)
     and:"The data imss"
-      DataImssEmployee dataImss = new DataImssEmployee(employee:employee, nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), totalMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(25), annualBonusDays:15, paymentPeriod:PaymentPeriod.BIWEEKLY)
+      DataImssEmployee dataImss = new DataImssEmployee(employee:employee, nss:"NSS", registrationDate:new Date(), baseImssMonthlySalary:new BigDecimal(1000), totalMonthlySalary:new BigDecimal(2500), holidayBonusRate:new BigDecimal(25), annualBonusDays:15, paymentPeriod:PaymentPeriod.BIWEEKLY, department:"DEPARTMENT", job:"HELPER")
     when:
       def result = service.saveDataImss(dataImss)
     then:
