@@ -10,7 +10,7 @@ enum ContractType {
   HOURLY_WORK("07","Modalidad de contratación por pago de hora laborada"),
   LABOR_COMMISSION("08","Modalidad de trabajo por comisión laboral"),
   WORK_WITHOUT_RELATION("09","Modalidades de contratación donde no existe relación de trabajo"),
-  RETIREMENT("100","Jubilación, pensión, retiro"),
+  RETIREMENT("10","Jubilación, pensión, retiro"),
   OTHER("99","Otro contrato")
 
   private final String key
