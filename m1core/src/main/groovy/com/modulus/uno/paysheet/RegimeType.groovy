@@ -10,7 +10,7 @@ enum RegimeType {
   MEMBERS_COUNCIL_ASSIMILATED ("07", "Asimilados Miembros consejos"),
   COMMISSION_AGENTS_ASSIMILATED ("08", "Asimilados comisionistas"),
   FEES_ASSIMILATED ("09", "Asimilados Honorarios"),
-  ACTIONS_ASSIMILATED ("100", "Asimilados acciones"),
+  ACTIONS_ASSIMILATED ("10", "Asimilados acciones"),
   OTHERS_ASSIMILATED ("11", "Asimilados otros"),
   RETIREES_OR_PENSIONERS ("12", "Jubilados o Pensionados"),
   OTHER ("99", "Otro Regimen")
