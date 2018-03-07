@@ -424,7 +424,7 @@ class BusinessEntityService {
       }
 
       DataImssEmployee dataImssEmployee = dataImssEmployeeService.createDataImssForRowEmployee(rowEmployee, employeeLink)
-      println "Data imss employee: ${dataImssEmployee.dump()}"
+      log.info "Data imss employee: ${dataImssEmployee.dump()}"
       if (!dataImssEmployee || dataImssEmployee?.hasErrors()) {
         transactionStatus.setRollbackOnly()
         return [result:"Error: datos de IMSS"]
@@ -434,7 +434,7 @@ class BusinessEntityService {
   }
 
   String existingErrorsInDataImssEmployee(Map rowEmployee, Company company) {
-    if (!rowEmployee.NSS || !rowEmployee.FECHA_ALTA || !rowEmployee.SA_BRUTO || !rowEmployee.NETO || !rowEmployee.PRIMA_VAC || !rowEmployee.DIAS_AGUINALDO || !rowEmployee.PERIODO_PAGO || !rowEmployee.TIPO_CONTRATO || !rowEmployee.TIPO_REGIMEN || !rowEmployee.TIPO_JORNADA || !rowEmployee.DEPARTAMENTO || !rowEmployee.PUESTO) {
+    if (!rowEmployee.NSS || !rowEmployee.FECHA_ALTA || rowEmployee.SA_BRUTO == null || rowEmployee.NETO == null || rowEmployee.PRIMA_VAC == null || rowEmployee.DIAS_AGUINALDO == null || !rowEmployee.PERIODO_PAGO || !rowEmployee.TIPO_CONTRATO || !rowEmployee.TIPO_REGIMEN || !rowEmployee.TIPO_JORNADA || !rowEmployee.DEPARTAMENTO || !rowEmployee.PUESTO) {
       return "Error: Existen campos vacíos después del campo IMSS, y se usó la opción S"
     }
 
@@ -442,19 +442,27 @@ class BusinessEntityService {
       return "Error: el NSS ya está registrado en la empresa con otro empleado"
     }
 
-    if (!rowEmployee.SA_BRUTO.isNumber()) {
+    if (rowEmployee.FECHA_ALTA instanceof String) {
+      try {
+        Date.parse("dd-MM-yyyy", rowEmployee.FECHA_ALTA)
+      } catch (Exception e) {
+        return "Error: la fecha de alta no es válida"
+      }
+    }
+
+    if (rowEmployee.SA_BRUTO instanceof String && !rowEmployee.SA_BRUTO.isNumber()) {
       return "Error: el valor de SA_BRUTO no es válido"
     }
 
-    if (!rowEmployee.NETO.isNumber()) {
+    if (rowEmployee.NETO instanceof String && !rowEmployee.NETO.isNumber()) {
       return "Error: el valor de NETO no es válido"
     }
 
-    if (new BigDecimal(rowEmployee.NETO) < new BigDecimal(rowEmployee.SA_BRUTO)) {
-      return "Error: el valor de NETO no debe ser menor al de SA_BRUTO"
+    if (new BigDecimal(rowEmployee.NETO) <= 0) {
+      return "Error: el valor de NETO debe ser mayor a 0"
     }
 
-    if (!rowEmployee.PRIMA_VAC.isNumber()) {
+    if (rowEmployee.PRIMA_VAC instanceof String && !rowEmployee.PRIMA_VAC.isNumber()) {
       return "Error: el valor del campo PRIMA_VAC no es un número"
     }
 
@@ -462,7 +470,7 @@ class BusinessEntityService {
       return "Error: el valor del campo PRIMA_VAC debe estar entre 0 y 100"
     }
 
-    if (!rowEmployee.DIAS_AGUINALDO.isNumber()) {
+    if (rowEmployee.DIAS_AGUINALDO instanceof String && !rowEmployee.DIAS_AGUINALDO.isNumber()) {
       return "Error: el valor del campo DIAS_AGUINALDO no es un número"
     }
 
