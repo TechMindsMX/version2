@@ -141,7 +141,7 @@ class InvoiceService {
     List<Impuesto> holdings = []
     
     if (item.ivaRetention){
-      holdings.add(new Impuesto(base:item.price, importe:item.ivaRetention, tasa:item.ivaRetention/item.price, impuesto:'002', tipoFactor:"Tasa"))
+      holdings.add(new Impuesto(base:item.quantity * item.priceWithDiscount, importe:item.quantity * item.ivaRetention, tasa:item.ivaRetention/item.priceWithDiscount, impuesto:'002', tipoFactor:"Tasa"))
     }
 
     holdings
@@ -187,8 +187,8 @@ class InvoiceService {
   private List<Impuesto> buildSummaryForHoldings(FacturaCommand facturaCommand) {
     List<Impuesto> summary = []
     def allTaxes = facturaCommand.conceptos.retenciones.flatten()
-    def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tasa:it.tasa, tipoFactor:it.tipoFactor] }.collect { k, v ->
-      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
+    def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tipoFactor:it.tipoFactor] }.collect { k, v ->
+      [impuesto:k.impuesto, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
     }
     summaryTaxes.each {
       summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
