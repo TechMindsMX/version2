@@ -122,4 +122,7 @@ databaseChangeLog = {
   include file: 'drop-unique-constraint-to-nss-from-data-imss-employee.groovy'
   include file: 'adding-column-alias-to-company.groovy'
   include file: 'drop-unique-constraint-to-rfc-in-company.groovy'
+  include file: 'create-domain-dispersion-result-file-and-add-relation-to-paysheet.groovy'
+  include file: 'adding-column-schema-to-dispersion-result-file.groovy'
+  include file: 'create-domain-dispersion-result-file-detail.groovy'
 }

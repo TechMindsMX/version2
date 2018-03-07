@@ -51,6 +51,11 @@
 					<g:render template="dispersionFiles"/>
 				</div>
 			</div>
+      <div class="row">
+        <div class="col-md-12">
+          <g:render template="resultDispersionFiles"/>
+        </div>
+      </div>
 			</g:if>
 			
       <div class="row">
