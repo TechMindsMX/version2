@@ -1,5 +1,9 @@
 package com.modulus.uno
 
+import com.modulus.uno.paysheet.ContractType
+import com.modulus.uno.paysheet.RegimeType
+import com.modulus.uno.paysheet.WorkDayType
+
 class DataImssEmployee {
 
   EmployeeLink employee
@@ -10,6 +14,12 @@ class DataImssEmployee {
   BigDecimal holidayBonusRate
   Integer annualBonusDays
   PaymentPeriod paymentPeriod = PaymentPeriod.WEEKLY
+  ContractType contractType = ContractType.INDEFINED
+  RegimeType regimeType = RegimeType.OTHER
+  WorkDayType workDayType = WorkDayType.DIURNAL
+  String department
+  String job
+
 
   static constraints = {
     employee nullable:false

@@ -12,6 +12,7 @@ class PaysheetContract {
   BusinessEntity client
   Date initDate
   User executive
+  String employerRegistration
 
   static belongsTo = [company:Company]
   static hasMany = [employees:BusinessEntity, projects:PaysheetProject, users:User]
