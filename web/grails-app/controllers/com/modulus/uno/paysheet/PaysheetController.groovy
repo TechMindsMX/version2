@@ -1,5 +1,6 @@
 package com.modulus.uno.paysheet
 
+import grails.transaction.Transactional
 import com.modulus.uno.Company
 
 class PaysheetController {
@@ -16,7 +17,8 @@ class PaysheetController {
   }
 
   def show(Paysheet paysheet) {
-    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images]
+		def dispersionBanks = paysheetService.getDispersionBanksFromPaysheet(paysheet)
+    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:dispersionBanks]
   }
 
   def list() {
@@ -132,4 +134,18 @@ class PaysheetController {
     renderPdf(template: "/documentTemplates/simulatedPaysheet", model: [importResultList:importResultList, date:date], filename: "NominaSimulada_${date}.pdf")
   }
 
+  @Transactional
+  def setPayedToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.PAYED
+    paysheetEmployee.save()
+    redirect action:"show", id:paysheetEmployee.paysheet.id
+  }
+
+  @Transactional
+  def processResultDispersionFile(Paysheet paysheet) {
+    log.info "Process result dispersion file to paysheet: ${paysheet.id}"
+    List processResults = paysheetService.processResultDispersionFileToPaysheet(paysheet, params)
+		def dispersionBanks = paysheetService.getDispersionBanksFromPaysheet(paysheet)
+    render view:"show", model:[paysheet:paysheet, processResults:processResults, baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:dispersionBanks]
+  }
 }
