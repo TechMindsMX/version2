@@ -1,6 +1,7 @@
 package com.modulus.uno.paysheet
 
 import com.modulus.uno.BusinessEntity
+import com.modulus.uno.FederalEntity
 
 class PaysheetProject {
 
@@ -9,6 +10,7 @@ class PaysheetProject {
   BigDecimal integrationFactor
   BigDecimal occupationalRiskRate
   BigDecimal commission
+  FederalEntity federalEntity = FederalEntity.DIF
 
   static belongsTo = [paysheetContract:PaysheetContract]
   static hasMany = [payers:PayerPaysheetProject, employees:BusinessEntity, billers:BillerPaysheetProject]

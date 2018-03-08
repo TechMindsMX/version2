@@ -125,4 +125,7 @@ databaseChangeLog = {
   include file: 'create-domain-dispersion-result-file-and-add-relation-to-paysheet.groovy'
   include file: 'adding-column-schema-to-dispersion-result-file.groovy'
   include file: 'create-domain-dispersion-result-file-detail.groovy'
+  include file: 'adding-column-employer-registration-to-paysheet-contract.groovy'
+  include file: 'adding-columns-for-paysheet-receipt-into-data-imss-employee.groovy'
+  include file: 'adding-column-federal-entity-to-paysheet-project.groovy'
 }
