@@ -51,13 +51,8 @@ class PaysheetDispersionFilesService {
 
   Map getPayersForPaysheetAndBank(Paysheet paysheet, Map dispersionDataForBank) {
     List payers = getPayersToPaymentDispersion(paysheet)
-    payers.each { payer ->
-      if (payer.company.banksAccounts.contains(dispersionDataForBank.saBankAccount)) {
-        dispersionDataForBank.saPayer = payer.company.bussinessName
-      } else if (payer.company.banksAccounts.contains(dispersionDataForBank.iasBankAccount)) {
-        dispersionDataForBank.iasPayer = payer.company.bussinessName
-      }
-    }
+    dispersionDataForBank.saPayer = (payers.find { it.paymentSchema == PaymentSchema.IMSS && it.company.banksAccounts.contains(dispersionDataForBank.saBankAccount) }).company.bussinessName
+    dispersionDataForBank.iasPayer = (payers.find { it.paymentSchema == PaymentSchema.ASSIMILABLE && it.company.banksAccounts.contains(dispersionDataForBank.iasBankAccount) }).company.bussinessName
     dispersionDataForBank
   }
 
