@@ -29,6 +29,7 @@
               </g:hasErrors>
 
               <g:form action="update">
+                <g:hiddenField name="id" value="${paysheetContract.id}"/>
                 <fieldset class="form">
                   <g:render template="form" bean="${paysheetContract}"/>
                 </fieldset>
