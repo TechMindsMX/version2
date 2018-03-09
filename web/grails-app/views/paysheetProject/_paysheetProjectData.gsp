@@ -9,7 +9,7 @@
   <div class="portlet-body">
 
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-3">
           <label><strong><g:message code="paysheetProject.label.name"/></strong></label><br/>
           <label>${paysheetProject.name}</label>
         </div>
@@ -17,6 +17,10 @@
           <label><strong><g:message code="paysheetProject.label.description"/></strong></label><br/>
           <label>${paysheetProject.description}</label>
         </div>       
+        <div class="col-md-3">
+          <label><strong><g:message code="paysheetProject.label.federalEntity"/></strong></label><br/>
+          <label>${paysheetProject.federalEntity}</label>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-4">
@@ -29,7 +33,7 @@
         </div>
         <div class="col-md-4">
           <label><strong><g:message code="paysheetProject.label.commission"/></strong></label><br/>
-          <label><g:formatNumber format="#,##0.000000" number="${paysheetProject.commission}" locale="es_MX"/></label>
+          <label><g:formatNumber format="#,##0.00" number="${paysheetProject.commission}" locale="es_MX"/></label>
         </div>
       </div>
 

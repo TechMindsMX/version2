@@ -23,6 +23,7 @@
               <th class="text-center">F.I.</th>
               <th class="text-center">R.T. (%)</th>
               <th class="text-center">Comisión (%)</th>
+              <th class="text-center">Entidad</th>
             </tr>
           </thead>
           <tbody>
@@ -33,6 +34,7 @@
               <td class="text-right">${project.integrationFactor}</td>
               <td class="text-right">${project.occupationalRiskRate}</td>
               <td class="text-right"><g:formatNumber number="${project.commission}" format="#0.000000" locale="es_MX"/></td>
+              <td class="text-center">${project.federalEntity}</td>
             </tr>
           </g:each>
           </tbody>
