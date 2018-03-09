@@ -67,6 +67,14 @@ class PaysheetContractController {
     respond paysheetContract
   }
 
+  def edit(PaysheetContract paysheetContract) {
+    Company company = Company.get(session.company)
+    def clients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
+    clients.add(0, paysheetContract.client)
+    List<User> users = companyService.getUsersWithRoleForCompany("ROLE_OPERATOR_PAYSHEET", company)
+    respond paysheetContract, model:[company:company, clients:clients, users:users] 
+  }
+
   def addEmployees(PaysheetContract paysheetContract){
     List<BusinessEntity> availableEmployees = paysheetContractService.getEmployeesAvailableToAdd(paysheetContract)
     render view:"show", model:[paysheetContract:paysheetContract, availableEmployees:availableEmployees]
