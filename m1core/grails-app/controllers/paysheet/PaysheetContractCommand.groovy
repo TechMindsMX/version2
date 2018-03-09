@@ -7,6 +7,7 @@ import com.modulus.uno.Company
 
 class PaysheetContractCommand implements Validateable {
   
+  String id
   String clientId
   String initDate
   String executiveId
@@ -14,6 +15,7 @@ class PaysheetContractCommand implements Validateable {
   String employerRegistration
 
   static constraints = {
+    id nullable:true
     clientId nullable:false
     initDate nullable:false
     executiveId nullable:false
@@ -30,4 +32,14 @@ class PaysheetContractCommand implements Validateable {
       employerRegistration:this.employerRegistration
     )
   }
+
+  PaysheetContract updatePaysheetContract() {
+    PaysheetContract paysheetContract = PaysheetContract.get(this.id)
+    paysheetContract.client = BusinessEntity.get(this.clientId)
+    paysheetContract.initDate = Date.parse("dd/MM/yyyy", this.initDate)
+    paysheetContract.executive = User.get(this.executiveId)
+    paysheetContract.employerRegistration = this.employerRegistration
+    paysheetContract
+  }
+
 }
