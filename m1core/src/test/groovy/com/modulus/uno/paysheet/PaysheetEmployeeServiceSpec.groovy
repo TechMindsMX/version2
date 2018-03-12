@@ -31,8 +31,10 @@ class PaysheetEmployeeServiceSpec extends Specification {
 
   void "Should calculate imss salary for employee"() {
     given:"The paysheet employee"
-      PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.WEEKLY).save(validate:false)
-      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet).save(validate:false)
+      Company company = new Company().save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.WEEKLY, paysheetContract:paysheetContract).save(validate:false)
+      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet, paysheetContract:paysheetContract).save(validate:false)
       PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(rfc:"RFC").save(validate:false)
       PaysheetEmployee paysheetEmployee = new PaysheetEmployee(paysheet:paysheet, prePaysheetEmployee:prePaysheetEmployee).save(validate:false)
     and:
@@ -46,8 +48,10 @@ class PaysheetEmployeeServiceSpec extends Specification {
   @Unroll
   void "Should calculate the salary subsidy = #subs for employee with base salary = #bs"() {
     given:"The paysheet employee"
-      PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.WEEKLY).save(validate:false)
-      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet).save(validate:false)
+      Company company = new Company().save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract(company:company).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paymentPeriod:PaymentPeriod.WEEKLY, paysheetContract:paysheetContract).save(validate:false)
+      Paysheet paysheet = new Paysheet(prePaysheet:prePaysheet, paysheetContract:paysheetContract).save(validate:false)
       PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(rfc:"RFC").save(validate:false)
       PaysheetEmployee paysheetEmployee = new PaysheetEmployee(paysheet:paysheet, prePaysheetEmployee:prePaysheetEmployee).save(validate:false)
     and:

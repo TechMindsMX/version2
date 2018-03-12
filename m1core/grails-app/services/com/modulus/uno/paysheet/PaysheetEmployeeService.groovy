@@ -47,7 +47,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal getBaseMonthlyImssSalary(PaysheetEmployee paysheetEmployee) {
-    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRef(paysheetEmployee.prePaysheetEmployee.rfc)
+    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(paysheetEmployee.prePaysheetEmployee.rfc, paysheetEmployee.paysheet.paysheetContract.company)
     DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employeeLink)
     dataImssEmployee.baseImssMonthlySalary
   }
@@ -85,7 +85,7 @@ class PaysheetEmployeeService {
   }
 
   BigDecimal getMonthlyAssimilableForEmployee(PaysheetEmployee paysheetEmployee) {
-    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRef(paysheetEmployee.prePaysheetEmployee.rfc)
+    EmployeeLink employeeLink = EmployeeLink.findByEmployeeRefAndCompany(paysheetEmployee.prePaysheetEmployee.rfc, paysheetEmployee.paysheet.paysheetContract.company)
     DataImssEmployee dataImssEmployee = dataImssEmployeeService.getDataImssForEmployee(employeeLink)
     dataImssEmployee.monthlyAssimilableSalary
   }

@@ -6,6 +6,8 @@ import org.grails.plugins.excelimport.*
 
 class XlsImportService {
 
+  ExcelImportService excelImportService
+
   Map COLUMN_MAP_EMPLOYEE = [
     startRow: 1,
     columnMap:  ['A':'RFC', 'B':'CURP', 'C':'PATERNO', 'D':'MATERNO', 'E':'NOMBRE', 'F':'NO_EMPL','G':'BANCO', 'H':'CLABE','I':'CUENTA','J':'SUCURSAL', 'K':'NUMTARJETA', 'L':'IMSS', 'M':'NSS', 'N':'FECHA_ALTA', 'O':'SA_BRUTO', 'P':'IAS', 'Q':'PRIMA_VAC', 'R':'DIAS_AGUINALDO', 'S':'PERIODO_PAGO']
@@ -52,7 +54,6 @@ class XlsImportService {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_EMPLOYEE.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_EMPLOYEE}"
-    ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_EMPLOYEE)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
@@ -63,7 +64,6 @@ class XlsImportService {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_CLIENT.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_CLIENT}"
-    ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_CLIENT)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
@@ -74,7 +74,6 @@ class XlsImportService {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_PROVIDER.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_PROVIDER}"
-    ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_PROVIDER)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
@@ -85,7 +84,6 @@ class XlsImportService {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_CLIENT_PROVIDER.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_CLIENT_PROVIDER}"
-    ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_CLIENT_PROVIDER)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
@@ -111,7 +109,6 @@ class XlsImportService {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_PREPAYSHEET.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_SIMULATOR}"
-    ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_PREPAYSHEET)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
@@ -123,7 +120,6 @@ class XlsImportService {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     COLUMN_MAP_SIMULATOR.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${COLUMN_MAP_SIMULATOR}"
-    ExcelImportService excelImportService = new ExcelImportService()
     List data = excelImportService.convertColumnMapConfigManyRows(workbook, COLUMN_MAP_SIMULATOR)
     log.info "Data: ${data}"
     validateNotEmptyData(data)
@@ -135,7 +131,6 @@ class XlsImportService {
     Workbook workbook = getWorkbookFromXlsFile(xlsFile)
     CELL_MAP_SIMULATOR.sheet = workbook.getSheetName(0)
     log.info "Column Map: ${CELL_MAP_SIMULATOR}"
-    ExcelImportService excelImportService = new ExcelImportService()
     Map data = excelImportService.convertFromCellMapToMapWithValues(workbook, CELL_MAP_SIMULATOR)
     log.info "Data: ${data}"
     data

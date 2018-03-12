@@ -253,13 +253,14 @@ class PurchaseOrderController {
     //TODO Esto se soluciona con un wrapper o parse a una entidad
     responsePOST[0].descuento = responsePOST[0].isNull("descuento") ? "" : responsePOST[0].descuento
     responsePOST[0].serie = responsePOST[0].isNull("serie") ? "" : responsePOST[0].serie
-    def isAExistentProvirder = businessEntityService.findBusinessEntityAndProviderLinkByRFC(responsePOST.emisor.rfc)
+    def isAExistentProvider = businessEntityService.findBusinessEntityAndProviderLinkByRFC(responsePOST.emisor.rfc)
     def providerExistent
     def providerBankAccountAndAddress
-    if (isAExistentProvirder == null)
+    if (!isAExistentProvider) {
       providerExistent = message(code:"businessEntity.provider.notExist")
-    if (isAExistentProvirder)
+    } else {
       providerBankAccountAndAddress = validateBankAccountsAndAddressOfProvider(responsePOST.emisor.rfc)
+    }
     def invoiceInformationAndErrors = ["inf":responsePOST,"errors": providerExistent,"bank": providerBankAccountAndAddress]
     render invoiceInformationAndErrors as JSON
   }

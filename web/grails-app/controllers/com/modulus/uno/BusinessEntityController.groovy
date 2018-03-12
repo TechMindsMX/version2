@@ -26,7 +26,7 @@ class BusinessEntityController {
     boolean businessEntityToAuthorize = allBusinessEntitiesCompany.find {it.status == BusinessEntityStatus.TO_AUTHORIZE} ? true : false
     def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
 
-    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize, clientProviderType:LeadType.CLIENTE]
+    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize, clientProviderType:LeadType.CLIENTE, company:company]
   }
 
   def show(BusinessEntity businessEntity) {
