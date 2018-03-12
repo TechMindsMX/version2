@@ -9,6 +9,7 @@ class PrePaysheetEmployee {
   String nameEmployee
   Bank bank
   String clabe
+  String branch
   String account
   String cardNumber
   BigDecimal netPayment
@@ -23,5 +24,6 @@ class PrePaysheetEmployee {
     account nullable:true
     cardNumber nullable:true
     note nullable:true, blank:true
+    branch nullable:true
   }
 }
