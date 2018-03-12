@@ -272,7 +272,7 @@ class PaysheetDispersionFilesService {
         file.append("${lineGlobal}\n")
         employeesNoZeroSalary.eachWithIndex { employee, index ->
           String amount = (employee."${salary}".setScale(2, RoundingMode.HALF_UP)*100).intValue().toString().padLeft(18,"0")
-          String destinyBranchAccount = employee.prePaysheetEmployee.clabe.substring(3,6).padLeft(13,"0")
+          String destinyBranchAccount = employee.prePaysheetEmployee.branch.padLeft(13,"0")
           String destinyAccount = employee.prePaysheetEmployee.account.padLeft(7," ")
           String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
           String reference = "${dispersionDataForBank.idPaysheet}${employeeNumberCleaned ?: index}".padRight(16," ")
