@@ -148,4 +148,13 @@ class PaysheetController {
 		def dispersionBanks = paysheetService.getDispersionBanksFromPaysheet(paysheet)
     render view:"show", model:[paysheet:paysheet, processResults:processResults, baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:dispersionBanks]
   }
+
+  @Transactional
+  def cancel(Paysheet paysheet) {
+    log.info "Cancelling paysheet: ${paysheet.id}"
+    paysheet.status = PaysheetStatus.CANCELED
+    paysheet.save()
+    redirect action:"list"
+  }
+
 }
