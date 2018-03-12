@@ -296,7 +296,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines().size() == 4
 			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'SA COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
 			result.readLines()[1] == "21001${'120000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'AccountSA'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
-			result.readLines()[2] == "3000101001${'120000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+			result.readLines()[2] == "3000101001${'120000'.padLeft(18,'0')}01${'180'.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'120000'.padLeft(18,'0')}000001${'120000'.padLeft(18,'0')}"
 	}
 
@@ -324,7 +324,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines().size() == 4
 			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'IAS COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
 			result.readLines()[1] == "21001${'300000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'AccountIAS'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
-			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'180'.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
 
@@ -397,7 +397,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
     PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"SOMEPROJECT").save(validate:false)
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       paysheet: new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false),
-      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num").save(validate:false),
+      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num", branch:"180").save(validate:false),
       salaryImss: getValueInBigDecimal("1000"),
       socialQuota: getValueInBigDecimal("100"),
       subsidySalary: getValueInBigDecimal("500"),
