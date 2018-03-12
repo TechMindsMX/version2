@@ -29,6 +29,7 @@
             <div class="table-responsive">
               <table class="table">
                 <tr>
+                  <th>No.</th>
                   <th>Proyecto</th>
                   <th>Período de Pago</th>
                   <th>Del</th>
@@ -38,7 +39,8 @@
                 </tr>
                 <g:each in="${prePaysheetList}" var="prePaysheet">
                   <tr>
-                    <td><g:link action="show" id="${prePaysheet.id}">${prePaysheet.paysheetProject}</g:link></td>
+                    <td><g:link action="show" id="${prePaysheet.id}">${prePaysheet.id}</g:link></td>
+                    <td>${prePaysheet.paysheetProject}</td>
                     <td>${prePaysheet.paymentPeriod}</td>
                     <td><g:formatDate format="dd-MM-yyyy" date="${prePaysheet.initPeriod}"/></td>
                     <td><g:formatDate format="dd-MM-yyyy" date="${prePaysheet.endPeriod}"/></td>

@@ -104,6 +104,7 @@ class PrePaysheetService {
       note:params."note${employee.id}",
       bank:bankAccount?.banco,
       clabe:bankAccount?.clabe,
+      branch:bankAccount?.branchNumber,
       account:bankAccount?.accountNumber,
       cardNumber:bankAccount?.cardNumber
     )
