@@ -17,16 +17,14 @@
 						<g:each in="${dispersionSummary}" var="summaryBank">
               <g:hiddenField name="bank" value="${summaryBank.bank.id}"/>
 							<tr>
-								<td colspan="4"><strong>${summaryBank.type=="SameBank" ? summaryBank.bank.name : "INTERBANCARIO"}</strong></td>
+								<td colspan="4"><strong>${summaryBank.type=="SameBank" ? summaryBank.bank.name : "INTERBANCARIO-BBVA"}</strong></td>
               </tr>
               <tr>
 								<td style="width:10%"></td>
 								<td style="width:20%"><strong>SA</strong></td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalSA)}</td>
 								<td style="width:50%" class="text-center">
-                  <g:if test="${summaryBank.bank.name!='STP'}">
-                    <g:select class="form-control" name="saBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/>
-                  </g:if>
+                  <g:select class="form-control" name="saBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/>
                 </td>
 							</tr>
               <tr>
@@ -34,9 +32,7 @@
 								<td style="width:20%"><strong>IAS</strong></td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalIAS)}</td>
 								<td style="width:50%" class="text-center">
-                  <g:if test="${summaryBank.bank.name!='STP'}">
-                    <g:select class="form-control" name="iasBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
-                  </g:if>
+                  <g:select class="form-control" name="iasBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
                 </td>
 							</tr>
 						</g:each>
