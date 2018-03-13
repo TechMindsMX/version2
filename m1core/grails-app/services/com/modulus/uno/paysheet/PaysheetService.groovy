@@ -246,9 +246,9 @@ class PaysheetService {
     def employeesInterBank = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }
     if (employeesInterBank) {
       Map summaryInterBank = [:]
-      summaryInterBank.bank = Bank.findByName("STP")
-      summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS }, null)
-      summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
+      summaryInterBank.bank = Bank.findByBankingCode("40012")
+      summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS }, summaryInterBank.bank)
+      summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, summaryInterBank.bank)
       summaryInterBank.allPayers = payers
       summaryInterBank.totalSA = employeesInterBank*.imssSalaryNet.sum()
       summaryInterBank.totalIAS = employeesInterBank*.netAssimilable.sum()
