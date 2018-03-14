@@ -16,6 +16,7 @@
 						<tbody>
 						<g:each in="${dispersionSummary}" var="summaryBank">
               <g:hiddenField name="bank" value="${summaryBank.bank.id}"/>
+              <g:hiddenField name="type" value="${summaryBank.type}"/>
 							<tr>
 								<td colspan="4"><strong>${summaryBank.type=="SameBank" ? summaryBank.bank.name : "INTERBANCARIO-BBVA"}</strong></td>
               </tr>
