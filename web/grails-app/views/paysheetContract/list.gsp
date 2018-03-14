@@ -22,12 +22,14 @@
               <table class="table">
                 <tr>
                   <th>Cliente</th>
+                  <th>Registro Patronal</th>
                   <th>Fecha Inicio</th>
                   <th>Ejecutivo</th>
                 </tr>
                 <g:each in="${paysheetContractList}" var="paysheetContract">
                   <tr>
                     <td><g:link action="show" id="${paysheetContract.id}">${paysheetContract.client}</g:link></td>
+                    <td>${paysheetContract.employerRegistration}</td>
                     <td><g:formatDate format="dd-MM-yyyy" date="${paysheetContract.initDate}"/></td>
                     <td>${paysheetContract.executive.name}</td>
                   </tr>

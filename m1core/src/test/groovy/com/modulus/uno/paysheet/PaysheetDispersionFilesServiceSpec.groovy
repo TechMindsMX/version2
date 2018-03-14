@@ -40,16 +40,21 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 	void "Should prepare dispersion data for bank"() {
 		given:"The paysheet"
 			Bank bank = new Bank(name:"BANCO").save(validate:false)
-			Paysheet paysheet = new Paysheet().save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"TheProject").save(validate:false)
+			Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
 			PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(bank:bank)
 			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee).save(validate:false))
 		and:"the charge bank account"
 			BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
 		and:"the payment message"
 			Date applyDate = new Date()
-			Map dispersionData = [paymentMessage:"Payment Message", applyDate:applyDate]
+      List dataByBank = [[bank:bank, saBankAccount:bankAccount, iasBankAccount:bankAccount, type:"Same Bank"]]
+			Map dispersionData = [paymentMessage:"Payment Message", applyDate:applyDate, dataByBank:dataByBank]
+    and:
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> new PaysheetProject(payers:[new PayerPaysheetProject(paymentSchema:PaymentSchema.IMSS, company:new Company(banksAccounts:[bankAccount]).save(validate:false)).save(validate:false), new PayerPaysheetProject(paymentSchema:PaymentSchema.ASSIMILABLE, company:new Company(banksAccounts:[bankAccount]).save(validate:false)).save(validate:false)]).save(validate:false)
 		when:
-			def result = service.prepareDispersionDataForBank(paysheet, bank, dispersionData)
+			def result = service.prepareDispersionDataForBank(paysheet, dispersionData, dataByBank.first())
 		then:
 			result.employees.size() == 1
 			result.paymentMessage == "Payment Message"
@@ -174,12 +179,12 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
       employeeWithoutSA.subsidySalary = getValueInBigDecimal("0")
       employeeWithoutSA.incomeTax = getValueInBigDecimal("0")
       List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutSA]
-      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
+      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1", saBankAccount:new BankAccount(accountNumber:"InterBankSA").save(validate:false), iasBankAccount:new BankAccount(accountNumber:"InterBankIAS").save(validate:false)]
     when:
       def result = service.createDispersionFileInterBank(dispersionData, "SA")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'120000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
+			result.readLines()[0] == "${'Clabe interbanking'.padLeft(18,'0')}${'InterBankSA'.padLeft(18,'0')}MXP${'1200.00'.padLeft(16,'0')}${'NAME EMPLOYEE CLEANED'.padRight(30,' ')}40Cla${'TRN SS 1'.padRight(30,' ')}H"
 	}
 
   void "Should create the payment dispersion file inter bank IAS"() {
@@ -187,12 +192,12 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
       PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
       employeeWithoutIAS.netAssimilable = getValueInBigDecimal("0")
       List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutIAS]
-      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
+      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1", saBankAccount:new BankAccount(accountNumber:"InterBankSA").save(validate:false), iasBankAccount:new BankAccount(accountNumber:"InterBankIAS").save(validate:false)]
     when:
       def result = service.createDispersionFileInterBank(dispersionData, "IAS")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'300000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
+			result.readLines()[0] == "${'Clabe interbanking'.padLeft(18,'0')}${'InterBankIAS'.padLeft(18,'0')}MXP${'3000.00'.padLeft(16,'0')}${'NAME EMPLOYEE CLEANED'.padRight(30,' ')}40Cla${'TRN SS 1'.padRight(30,' ')}H"
 	}
 
 	void "Should obtain the payers list for payment dispersion"() {
@@ -296,7 +301,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines().size() == 4
 			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'SA COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
 			result.readLines()[1] == "21001${'120000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'AccountSA'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
-			result.readLines()[2] == "3000101001${'120000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+			result.readLines()[2] == "3000101001${'120000'.padLeft(18,'0')}01${'180'.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'120000'.padLeft(18,'0')}000001${'120000'.padLeft(18,'0')}"
 	}
 
@@ -324,7 +329,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			result.readLines().size() == 4
 			result.readLines()[0] == "1000000012345${new Date().format('yyMMdd')}0001${'IAS COMPANY'.padRight(36,' ')}${'BANAMEXLAYOUT'.padRight(20,' ')}15D01"
 			result.readLines()[1] == "21001${'300000'.padLeft(18,'0')}03${'180'.padLeft(13,'0')}${'AccountIAS'.padLeft(7,' ')}${'1'.padLeft(6,'0')}"
-			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'be '.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
+			result.readLines()[2] == "3000101001${'300000'.padLeft(18,'0')}01${'180'.padLeft(13,'0')}${'EmployeeAccount'.padLeft(7,' ')}${'1NUM'.padRight(16,' ')}${'NameEmp LastNameEmp MotherLastNameEmp'.toUpperCase().padRight(55,' ')}${''.padRight(140,' ')}000000${''.padRight(152,' ')}"
 			result.readLines()[3] == "4001${'1'.padLeft(6,'0')}${'300000'.padLeft(18,'0')}000001${'300000'.padLeft(18,'0')}"
 	}
 
@@ -397,7 +402,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
     PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"SOMEPROJECT").save(validate:false)
     PaysheetEmployee paysheetEmployee = new PaysheetEmployee(
       paysheet: new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false),
-      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num").save(validate:false),
+      prePaysheetEmployee: new PrePaysheetEmployee(rfc:"RFC", account:"EmployeeAccount", nameEmployee:"Náme ?Emplóyee Cleañed", clabe:"Clabe interbanking", bank: bank , numberEmployee:"Num", branch:"180").save(validate:false),
       salaryImss: getValueInBigDecimal("1000"),
       socialQuota: getValueInBigDecimal("100"),
       subsidySalary: getValueInBigDecimal("500"),

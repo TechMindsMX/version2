@@ -87,7 +87,7 @@ class PaysheetService {
 
   Map getEmployeesToExport(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'INCIDENCIAS PERCEP', 'INCIDENCIAS DEDUC', 'TOTAL IMSS', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SA BRUTO', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'INCIDENCIAS PERCEP', 'INCIDENCIAS DEDUC', 'SA NETO', 'IAS BRUTO', 'ISR IAS', 'IAS NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
     employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'totalIncidencesImssPerceptions', 'totalIncidencesImssDeductions', 'imssSalaryNet', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
     employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
     employees
@@ -123,9 +123,9 @@ class PaysheetService {
 
   Map getEmployeesToExportImss(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'INCIDENCIAS PERCEP', 'INCIDENCIAS DEDUC', 'TOTAL IMSS']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SA BRUTO', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'INCIDENCIAS PERCEP', 'INCIDENCIAS DEDUC', 'SA NETO']
     employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'totalIncidencesImssPerceptions', 'totalIncidencesImssDeductions', 'imssSalaryNet']
-    employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
+    employees.data = paysheet.employees.findAll { emp -> emp.paymentWay == PaymentWay.BANKING && emp.imssSalaryNet }.sort {it.prePaysheetEmployee.nameEmployee}
     employees
   }
 
@@ -142,9 +142,9 @@ class PaysheetService {
 
   Map getEmployeesToExportAssimilable(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'IAS BRUTO', 'ISR IAS', 'IAS NETO']
     employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable']
-    employees.data = paysheet.employees.sort {it.prePaysheetEmployee.nameEmployee}
+    employees.data = paysheet.employees.findAll { emp -> emp.paymentWay == PaymentWay.BANKING && emp.netAssimilable }.sort {it.prePaysheetEmployee.nameEmployee}
     employees
   }
 
@@ -168,12 +168,18 @@ class PaysheetService {
 		List idsBanks = Arrays.asList(dispersionData.bank)
 		List idsSaBankAccounts = dispersionData.saBankAccount ? Arrays.asList(dispersionData.saBankAccount) : []
 		List idsIasBankAccounts = dispersionData.iasBankAccount ? Arrays.asList(dispersionData.iasBankAccount) : []
-    List<Bank> banks = Bank.findAllByIdInList(idsBanks)
-    List<BankAccount> saBankAccounts = idsSaBankAccounts ? BankAccount.findAllByIdInList(idsSaBankAccounts) : []
-    List<BankAccount> iasBankAccounts = idsIasBankAccounts ? BankAccount.findAllByIdInList(idsIasBankAccounts) : []
-    dispersionData.banks = banks
-    dispersionData.saBankAccounts = saBankAccounts
-    dispersionData.iasBankAccounts = iasBankAccounts
+    List types = Arrays.asList(dispersionData.type)
+    List dispersionDataByBank = []
+    idsBanks.eachWithIndex { idBank, index ->
+      Map dispersionDataBank = [
+        bank: Bank.get(idBank),
+        saBankAccount: BankAccount.get(idsSaBankAccounts[index]),
+        iasBankAccount: BankAccount.get(idsIasBankAccounts[index]),
+        type: types[index]
+      ]
+      dispersionDataByBank.add(dispersionDataBank)
+    }
+    dispersionData.dataByBank = dispersionDataByBank
 		dispersionData.applyDate = dispersionData.applyDate ? Date.parse("dd/MM/yyyy", dispersionData.applyDate) : null
     dispersionData
   }
@@ -191,9 +197,9 @@ class PaysheetService {
 
   Map getEmployeesOnCashToExport(Paysheet paysheet) {
     Map employees = [:]
-    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SALARIO IMSS', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'TOTAL IMSS', 'ASIMILABLE BRUTO', 'ISR ASIMILABLE', 'ASIMILABLE NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
+    employees.headers = ['RFC','CURP','NOMBRE','NO. EMPL.','CÓD. BANCO','BANCO','CLABE', 'CUENTA', 'TARJETA', 'SA BRUTO', 'CARGA SOCIAL TRABAJADOR', 'SUBSIDIO', 'ISR', 'SA NETO', 'IAS BRUTO', 'ISR IAS', 'IAS NETO', 'SUBTOTAL', 'CARGA SOCIAL EMPRESA', 'ISN', 'COSTO NOMINAL', 'COMISION', 'TOTAL NÓMINA', 'IVA', 'TOTAL A FACTURAR']
     employees.properties = ['prePaysheetEmployee.rfc', 'prePaysheetEmployee.curp', 'prePaysheetEmployee.nameEmployee', 'prePaysheetEmployee.numberEmployee', 'prePaysheetEmployee.bank.bankingCode', 'prePaysheetEmployee.bank.name', 'prePaysheetEmployee.clabe', 'prePaysheetEmployee.account', 'prePaysheetEmployee.cardNumber', 'salaryImss', 'socialQuota', 'subsidySalary', 'incomeTax', 'imssSalaryNet', 'crudeAssimilable', 'incomeTaxAssimilable', 'netAssimilable', 'totalSalaryEmployee', 'socialQuotaEmployer', 'paysheetTax', 'paysheetCost', 'commission', 'paysheetTotal', 'paysheetIva', 'totalToInvoice']
-    employees.data = paysheet.employees.findAll { emp -> !emp.prePaysheetEmployee.bank }.sort { it.prePaysheetEmployee.nameEmployee }
+    employees.data = paysheet.employees.findAll { emp -> emp.paymentWay == PaymentWay.CASH || emp.paymentWay == PaymentWay.ONLY_CASH }.sort { it.prePaysheetEmployee.nameEmployee }
     employees
   }
 
@@ -246,9 +252,9 @@ class PaysheetService {
     def employeesInterBank = paysheet.employees.findAll{ e-> if(!banksPayers.contains(e.prePaysheetEmployee.bank) && e.paymentWay==PaymentWay.BANKING){ return e} }
     if (employeesInterBank) {
       Map summaryInterBank = [:]
-      summaryInterBank.bank = Bank.findByName("STP")
-      summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS }, null)
-      summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, null)
+      summaryInterBank.bank = Bank.findByBankingCode("40012")
+      summaryInterBank.saPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.IMSS }, summaryInterBank.bank)
+      summaryInterBank.iasPayers = getDataPayersFromPayers(payers.findAll { it.paymentSchema == PaymentSchema.ASSIMILABLE }, summaryInterBank.bank)
       summaryInterBank.allPayers = payers
       summaryInterBank.totalSA = employeesInterBank*.imssSalaryNet.sum()
       summaryInterBank.totalIAS = employeesInterBank*.netAssimilable.sum()
@@ -263,7 +269,9 @@ class PaysheetService {
     def banksPayers = [] as Set
     payers.each { payer ->
       payer.company.banksAccounts.each { bankAccount ->
-        banksPayers.add(bankAccount.banco)
+        if (grailsApplication.config.paysheet.banks.split(",").contains(bankAccount.banco.bankingCode)) {
+          banksPayers.add(bankAccount.banco)
+        }
       }
     }
     banksPayers.sort{it.name}
