@@ -26,6 +26,7 @@ class PaysheetEmployeeServiceSpec extends Specification {
     service.breakdownPaymentEmployeeService = breakdownPaymentEmployeeService
     service.paysheetProjectService = paysheetProjectService
     grailsApplication.config.paysheet.paysheetTax = "3.00"
+    grailsApplication.config.paysheet.banks = "40002,40012,40014"
     grailsApplication.config.iva = 16
   }
 
