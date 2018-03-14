@@ -23,6 +23,7 @@ class PaysheetServiceSpec extends Specification {
     service.paysheetEmployeeService = paysheetEmployeeService
     service.prePaysheetService = prePaysheetService
     service.paysheetDispersionFilesService = paysheetDispersionFilesService
+    grailsApplication.config.paysheet.banks = "40002,40012,40014"
   }
 
   void "Should create paysheet from a prepaysheet"() {
@@ -62,8 +63,9 @@ class PaysheetServiceSpec extends Specification {
 
 	void "Should complement the dispersion data"() {
 		given:
-			String[] ids = ["1","2","3"]
-			Map dispersionData = [bank:ids, saBankAccount:ids, iasBankAccount:ids]
+			String[] ids = ["1","2","3","2"]
+      String[] types = ["SameBank", "SameBank", "SameBank", "InterBank"]
+			Map dispersionData = [bank:ids, saBankAccount:ids, iasBankAccount:ids, type:types]
 		and:
 			BankAccount bankAccount1 = new BankAccount().save(validate:false)
 			BankAccount bankAccount2 = new BankAccount().save(validate:false)
@@ -74,7 +76,7 @@ class PaysheetServiceSpec extends Specification {
 		when:
 			Map result = service.complementDispersionData(dispersionData)
 		then:
-			result.banks.size() == 3
+			result.dataByBank.size() == 4
 	}
 
 	void "Should get dispersion summary for paysheet"() {
@@ -96,7 +98,7 @@ class PaysheetServiceSpec extends Specification {
 		given:"The paysheet"
 			PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
 		and:"Stp bank"
-			Bank stpBank = new Bank(name:"STP").save(validate:false)
+			Bank stpBank = new Bank(bankingCode:"40012").save(validate:false)
 		and:"Payers list"
       List payers = createPayersList()
 	  and:"Summary"
@@ -105,7 +107,7 @@ class PaysheetServiceSpec extends Specification {
 			def result = service.addInterBankSummary(summary, paysheetEmployee.paysheet, payers) 
 		then:
 			result.size() == 1
-			result.first().bank.name == "STP"
+			result.first().bank.bankingCode == "40012"
 			result.first().totalSA == new BigDecimal(1200)
 			result.first().totalIAS == new BigDecimal(3000)
 	}
@@ -194,15 +196,19 @@ class PaysheetServiceSpec extends Specification {
 
   private def createPayersList() {
     Company companyOne = new Company(rfc:"UNO").save(validate:false)
-    BankAccount account1 = new BankAccount(banco:new Bank(name:"BANK01", bankingCode:"999")).save(validate:false)
-    BankAccount account2 = new BankAccount(banco:new Bank(name:"BANK02")).save(validate:false)
+    BankAccount account1 = new BankAccount(banco:new Bank(name:"BANK01", bankingCode:"40002")).save(validate:false)
+    BankAccount account2 = new BankAccount(banco:new Bank(name:"BANK02", bankingCode:"40012")).save(validate:false)
+    BankAccount account3 = new BankAccount(banco:new Bank(name:"BANK03", bankingCode:"40072")).save(validate:false)
+    BankAccount account4 = new BankAccount(banco:new Bank(name:"BANK04", bankingCode:"40127")).save(validate:false)
     companyOne.addToBanksAccounts(account1)
+    companyOne.addToBanksAccounts(account3)
     companyOne.save(validate:false)
     Company companyTwo = new Company(rfc:"DOS").save(validate:false)
-    Bank anotherBank = new Bank(name:"ANOTHER").save(validate:false)
+    Bank anotherBank = new Bank(name:"ANOTHER", bankingCode:"40014").save(validate:false)
     BankAccount another = new BankAccount(banco:anotherBank).save(validate:false)
     companyTwo.addToBanksAccounts(account2)
     companyTwo.addToBanksAccounts(another)
+    companyTwo.addToBanksAccounts(account4)
     companyTwo.save(validate:false)
     [new PayerPaysheetProject(paymentSchema:PaymentSchema.IMSS, company:companyOne).save(validate:false), new PayerPaysheetProject(paymentSchema:PaymentSchema.ASSIMILABLE, company:companyTwo)] 
   }
