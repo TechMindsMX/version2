@@ -40,16 +40,21 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 	void "Should prepare dispersion data for bank"() {
 		given:"The paysheet"
 			Bank bank = new Bank(name:"BANCO").save(validate:false)
-			Paysheet paysheet = new Paysheet().save(validate:false)
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:"TheProject").save(validate:false)
+			Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
 			PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(bank:bank)
 			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee).save(validate:false))
 		and:"the charge bank account"
 			BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
 		and:"the payment message"
 			Date applyDate = new Date()
-			Map dispersionData = [paymentMessage:"Payment Message", applyDate:applyDate]
+      List dataByBank = [[bank:bank, saBankAccount:bankAccount, iasBankAccount:bankAccount, type:"Same Bank"]]
+			Map dispersionData = [paymentMessage:"Payment Message", applyDate:applyDate, dataByBank:dataByBank]
+    and:
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> new PaysheetProject(payers:[new PayerPaysheetProject(paymentSchema:PaymentSchema.IMSS, company:new Company(banksAccounts:[bankAccount]).save(validate:false)).save(validate:false), new PayerPaysheetProject(paymentSchema:PaymentSchema.ASSIMILABLE, company:new Company(banksAccounts:[bankAccount]).save(validate:false)).save(validate:false)]).save(validate:false)
 		when:
-			def result = service.prepareDispersionDataForBank(paysheet, bank, dispersionData)
+			def result = service.prepareDispersionDataForBank(paysheet, dispersionData, dataByBank.first())
 		then:
 			result.employees.size() == 1
 			result.paymentMessage == "Payment Message"
@@ -174,12 +179,12 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
       employeeWithoutSA.subsidySalary = getValueInBigDecimal("0")
       employeeWithoutSA.incomeTax = getValueInBigDecimal("0")
       List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutSA]
-      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
+      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1", saBankAccount:new BankAccount(accountNumber:"InterBankSA").save(validate:false), iasBankAccount:new BankAccount(accountNumber:"InterBankIAS").save(validate:false)]
     when:
       def result = service.createDispersionFileInterBank(dispersionData, "SA")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'120000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
+			result.readLines()[0] == "${'Clabe interbanking'.padLeft(18,'0')}${'InterBankSA'.padLeft(18,'0')}MXP${'1200.00'.padLeft(16,'0')}${'NAME EMPLOYEE CLEANED'.padRight(30,' ')}40Cla${'TRN SS 1'.padRight(30,' ')}H"
 	}
 
   void "Should create the payment dispersion file inter bank IAS"() {
@@ -187,12 +192,12 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
       PaysheetEmployee employeeWithoutIAS = createPaysheetEmployee()
       employeeWithoutIAS.netAssimilable = getValueInBigDecimal("0")
       List<PaysheetEmployee> employees = [createPaysheetEmployee(), employeeWithoutIAS]
-      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1"]
+      Map dispersionData = [employees:employees, paymentMessage:"TRN ss 1", saBankAccount:new BankAccount(accountNumber:"InterBankSA").save(validate:false), iasBankAccount:new BankAccount(accountNumber:"InterBankIAS").save(validate:false)]
     when:
       def result = service.createDispersionFileInterBank(dispersionData, "IAS")
     then:
       result.readLines().size() == 1
-			result.readLines()[0] == "${'1'.padLeft(9,'0')}${''.padLeft(16,' ')}99${'EmployeeAccount'.padRight(20,' ')}${'300000'.padLeft(15,'0')}${'NAME EMPLOYEE CLEANED'.padRight(40,' ')}001001"
+			result.readLines()[0] == "${'Clabe interbanking'.padLeft(18,'0')}${'InterBankIAS'.padLeft(18,'0')}MXP${'3000.00'.padLeft(16,'0')}${'NAME EMPLOYEE CLEANED'.padRight(30,' ')}40Cla${'TRN SS 1'.padRight(30,' ')}H"
 	}
 
 	void "Should obtain the payers list for payment dispersion"() {
