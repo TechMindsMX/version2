@@ -52,6 +52,14 @@ enum PerceptionType {
     this.description = description
   }
 
+  String getKey() {
+    this.key
+  }
+
+  String getDescription() {
+    this.description
+  }
+
   String toString() {
     "${this.key} - ${this.description}"
   }
