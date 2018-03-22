@@ -10,12 +10,15 @@ class PrePaysheetEmployeeIncidence {
   BigDecimal exemptAmount = new BigDecimal(0)
   BigDecimal taxedAmount = new BigDecimal(0)
 
+  ExtraHourIncidence extraHourIncidence
+
   static belongsTo = [prePaysheetEmployee:PrePaysheetEmployee]
 
   static constraints = {
     description nullable:false
     exemptAmount nullable:false
     taxedAmount nullable:false
+    extraHourIncidence nullable:true
   }
   
 }
