@@ -1,7 +1,7 @@
 package com.modulus.uno.paysheet
 
 enum IncidenceType {
-  PERCEPTION(1, "Percepción"), DEDUCTION(-1, "Deducción")
+  PERCEPTION(1, "Percepción"), DEDUCTION(-1, "Deducción"), OTHER_PERCEPTION(1, "Otros pagos")
 
   private final int factor
   private final String description
