@@ -5,24 +5,31 @@ import grails.validation.Validateable
 
 class PrePaysheetEmployeeIncidenceCommand implements Validateable{
 
+  String internalKey
   String description
+  String keyType
   String type
   String schema
   String prePaysheetEmployeeId
-  String amount
+  String exemptAmount
+  String taxedAmount
 
   static constraints = {
     description nullable:false
-    amount nullable:false
+    exemptAmount nullable:false
+    taxedAmount nullable:false
   }
 
   public PrePaysheetEmployeeIncidence createPrePaysheetEmployeeIncidence() {
     PrePaysheetEmployee prePaysheetEmployee = PrePaysheetEmployee.get(this.prePaysheetEmployeeId)
     new PrePaysheetEmployeeIncidence(
+        internalKey:this.internalKey,
         description:this.description,
+        keyType:this.keyType,
         type:IncidenceType.values().find { it.toString() == this.type },
         paymentSchema:PaymentSchema.values().find { it.toString() == this.schema },
-        amount: getValueInBigDecimal(this.amount),
+        exemptAmount: getValueInBigDecimal(this.amount),
+        taxedAmount: getValueInBigDecimal(this.taxedAmount),
         prePaysheetEmployee: prePaysheetEmployee
     )
   }
