@@ -130,4 +130,5 @@ databaseChangeLog = {
   include file: 'adding-column-federal-entity-to-paysheet-project.groovy'
     include file: 'adding-column-branch-to-pre-paysheet-employee.groovy'
     include file: 'adding-columns-key-keyType-taxed-amount-to-pre-paysheet-employee-incidence.groovy'
+    include file: 'create-domain-extra-hour-incidence-and-add-relation-to-pre-paysheet-employee-incidence.groovy'
 }
