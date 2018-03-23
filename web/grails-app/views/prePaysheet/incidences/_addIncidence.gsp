@@ -2,6 +2,7 @@
 <%! import com.modulus.uno.paysheet.PaymentSchema %>
 <%! import com.modulus.uno.paysheet.PerceptionType %>
 <%! import com.modulus.uno.paysheet.DeductionType %>
+<%! import com.modulus.uno.paysheet.ExtraHourType %>
 <div class="row">
   <div class="col-md-12">
     <div class="table-responsive">
@@ -37,13 +38,13 @@
               </div>
             </td>
             <td>
-              <div class="input-group">
+              <div id="exemptAmount" class="input-group">
                 <div class="input-group-addon">$</div>
                 <input type="text" name="exemptAmount" class="form-control" required="" value="0" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta con 2 decimales)"/>
               </div>
             </td>
             <td>
-              <div class="input-group">
+              <div id="taxedAmount" class="input-group">
                 <div class="input-group-addon">$</div>
                 <input type="text" name="taxedAmount" class="form-control" required="" value="0" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta con 2 decimales)"/>
               </div>
@@ -58,6 +59,33 @@
           </tr>
         </tbody>
       </table>
+      <div id="extraHours">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="input-group">
+              <label><strong>Días</strong></label><br/>
+              <input id="extraHoursDays" name="extraHoursDays" class="form-control" type="number" min="1" step="1"/>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group">
+              <label><strong>Tipo</strong></label><br/>
+              <g:select id="extraHoursType" name="extraHoursType" from="${ExtraHourType.values()}" class="form-control" noSelection="['':'Elija el esquema de pago']" />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group">
+              <label><strong>Horas</strong></label><br/>
+              <input id="extraHoursQuantity" name="extraHoursQuantity" class="form-control" type="number" min="1" step="1"/>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group">
+              <label><strong>Importe</strong></label><br/>
+              <input type="text" id="extraHoursAmount" name="extraHoursAmount" class="form-control" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta con 2 decimales)"/>
+            </div>
+          </div>
+      </div>
     </div>
   </div>
 </div>
