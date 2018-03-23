@@ -14,6 +14,10 @@ enum ExtraHourType {
     this.description = description
   }
 
+  String getKey() {
+    this.key
+  }
+
   String toString() {
     this.description
   }
