@@ -42,9 +42,10 @@ class PrePaysheetEmployeeIncidenceCommand implements Validateable{
 
     ExtraHourIncidence extraHourIncidence
     if (incidenceObj == PerceptionType.P019) {
+      ExtraHourType extraHourType = ExtraHourType.values().find { it.toString() == this.extraHoursType  }
       extraHourIncidence = new ExtraHourIncidence(
         days: this.extraHoursDays.toInteger(),
-        type: this.extraHoursType,
+        type: extraHourType.key,
         quantity: this.extraHoursQuantity.toInteger(),
         amount: getValueInBigDecimal(this.extraHoursAmount)
       )
