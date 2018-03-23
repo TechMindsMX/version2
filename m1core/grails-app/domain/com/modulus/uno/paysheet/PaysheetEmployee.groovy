@@ -46,12 +46,12 @@ class PaysheetEmployee {
 
   BigDecimal getTotalIncidencesImssPerceptions() {
     def incidencesPerceptionImss = this.prePaysheetEmployee.incidences.collect { incidence ->
-      if (incidence.type == IncidenceType.PERCEPTION && incidence.paymentSchema == PaymentSchema.IMSS) {
+      if (incidence.type != IncidenceType.DEDUCTION && incidence.paymentSchema == PaymentSchema.IMSS) {
         incidence
       }
     }.grep()
 
-    incidencesPerceptionImss ? incidencesPerceptionImss*.amount.sum() : 0
+    incidencesPerceptionImss ? incidencesPerceptionImss*.exemptAmount.sum() + incidencesPerceptionImss*.taxedAmount.sum() + incidencesPerceptionImss*.extraHourIncidence?.amount.sum() : 0
   }
 
   BigDecimal getTotalIncidencesImssDeductions() {
@@ -61,17 +61,18 @@ class PaysheetEmployee {
       }
     }.grep()
 
-    incidencesDeductionImss ? incidencesDeductionImss*.amount.sum() : 0
+    incidencesDeductionImss ? incidencesDeductionImss*.exemptAmount.sum() + incidencesDeductionImss*.taxedAmount.sum() : 0
   }
 
   BigDecimal getTotalIncidencesAssimilablePerceptions() {
     def incidencesPerceptionAssimilable = this.prePaysheetEmployee.incidences.collect { incidence ->
-      if (incidence.type == IncidenceType.PERCEPTION && incidence.paymentSchema == PaymentSchema.ASSIMILABLE) {
+      if (incidence.type != IncidenceType.DEDUCTION && incidence.paymentSchema == PaymentSchema.ASSIMILABLE) {
         incidence
       }
     }.grep()
 
-    incidencesPerceptionAssimilable ? incidencesPerceptionAssimilable*.amount.sum() : 0
+    incidencesPerceptionAssimilable ? incidencesPerceptionAssimilable*.exemptAmount.sum() + incidencesPerceptionAssimilable*.taxedAmount.sum() + incidencesPerceptionAssimilable*.extraHourIncidence?.amount.sum()  : 0
+
   }
 
   BigDecimal getTotalIncidencesAssimilableDeductions() {
@@ -81,6 +82,7 @@ class PaysheetEmployee {
       }
     }.grep()
 
-    incidencesDeductionAssimilable ? incidencesDeductionAssimilable*.amount.sum() : 0
+    incidencesDeductionAssimilable ? incidencesDeductionAssimilable*.exemptAmount.sum() + incidencesDeductionAssimilable*.taxedAmount.sum() : 0
+
   }
 }
