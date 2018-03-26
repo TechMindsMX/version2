@@ -4,16 +4,22 @@
 <input type="hidden" name="idEmployee" value="${employee.id}"/>
 <input type="hidden" name="businessEntityId" value="${businessEntity.id}"/>
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.nss"/></label>
       <input class="form-control" type="number" name="nss" value="${dataImssEmployee?.nss}" required=""/>
     </div>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.registrationDate"/></label><br/>
       <g:datePicker class="form-control" name="registrationDate" value="${dataImssEmployee?.registrationDate}" precision="day" relativeYears="[-20..0]" required=""/>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label><g:message code="dataImssEmployee.label.dischargeDate"/></label><br/>
+      <input type="text" id="dpDischarge" name="dischargeDate" value="${dataImssEmployee?.dischargeDate?.format('dd/MM/yyyy')}">
     </div>
   </div>
 </div>
