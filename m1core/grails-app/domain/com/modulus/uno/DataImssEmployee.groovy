@@ -9,6 +9,7 @@ class DataImssEmployee {
   EmployeeLink employee
   String nss
   Date registrationDate
+  Date dischargeDate
   BigDecimal baseImssMonthlySalary
   BigDecimal totalMonthlySalary
   BigDecimal holidayBonusRate
@@ -25,6 +26,7 @@ class DataImssEmployee {
     employee nullable:false
     nss nullable:false
     registrationDate nullable:false
+    dischargeDate nullable:true
     baseImssMonthlySalary nullable:false, min:0.0
     totalMonthlySalary nullable:false, min:0.0
     holidayBonusRate nullable:false, min:0.0, max:100.0
