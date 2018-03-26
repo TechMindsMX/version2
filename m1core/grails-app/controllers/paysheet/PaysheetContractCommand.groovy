@@ -13,6 +13,8 @@ class PaysheetContractCommand implements Validateable {
   String executiveId
   String companyId
   String employerRegistration
+  String serie
+  String folio
 
   static constraints = {
     id nullable:true
@@ -21,6 +23,8 @@ class PaysheetContractCommand implements Validateable {
     executiveId nullable:false
     companyId nullable:false
     employerRegistration nullable:false, blank:false
+    serie nullable:true, blank:true
+    folio nullable:false, min:1
   }
 
   PaysheetContract createPaysheetContract() {
