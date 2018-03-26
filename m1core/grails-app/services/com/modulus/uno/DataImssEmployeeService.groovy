@@ -5,6 +5,13 @@ import com.modulus.uno.paysheet.ContractType
 import com.modulus.uno.paysheet.RegimeType
 import com.modulus.uno.paysheet.WorkDayType
 
+import org.joda.time.DateTime
+import org.joda.time.Interval
+import org.joda.time.Period
+import org.joda.time.PeriodType
+import org.joda.time.format.PeriodFormatter
+import org.joda.time.format.PeriodFormatterBuilder
+
 class DataImssEmployeeService {
 
   @Transactional
@@ -69,4 +76,18 @@ class DataImssEmployeeService {
     dataImssToSave.id && exists ? dataImssToSave.id != exists.id : !dataImssToSave.id && exists
   }
 
+  String calculateLaborOldInSATFormat(DataImssEmployee dataImssEmployee) {
+    Date endDate = dataImssEmployee.dischargeDate ?: new Date()
+    DateTime dtStart = new DateTime(dataImssEmployee.registrationDate)
+    DateTime dtEnd = new DateTime(endDate)
+
+    Interval interval = new Interval(dtStart.millis, dtEnd.millis)
+    Period period = interval.toPeriod(PeriodType.yearMonthDay())
+
+    PeriodFormatter pf = new PeriodFormatterBuilder().appendYears().appendSuffix("Y")
+    .appendMonths().appendSuffix("M")
+    .appendDays().appendSuffix("D").toFormatter()
+
+    "P${pf.print(period).trim()}"
+  }
 }
