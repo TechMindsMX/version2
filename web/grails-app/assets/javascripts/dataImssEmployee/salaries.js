@@ -31,3 +31,11 @@ function calculateIasSalary() {
 
   $('#iasSalary').val((total-sa).toFixed(2));
 }
+
+$( function() {
+  $( "#dpDischarge" ).datepicker({
+    dateFormat: 'dd/mm/yyyy'
+  });
+} );
+
+
