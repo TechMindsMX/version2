@@ -47,7 +47,7 @@ class DataImssEmployeeServiceSpec extends Specification {
   @Unroll
   void "Should calculate labor old = #theLaborOld when registration date is #theStartDate and discharge date is #theEndDate" () {
     given:"The data imss employee"
-      DataImssEmployee dataImssEmployee = new DataImssEmployee(registrationDate:theStartDate).save(validate:false)
+      DataImssEmployee dataImssEmployee = new DataImssEmployee(registrationDate:theStartDate, dischargeDate:theEndDate).save(validate:false)
     when:
       String laborOld = service.calculateLaborOldInSATFormat(dataImssEmployee)
     then:
@@ -57,8 +57,9 @@ class DataImssEmployeeServiceSpec extends Specification {
       Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "01-02-2018")    ||    "P1M" 
       Date.parse("dd-MM-yyy", "01-02-2018")   |  Date.parse("dd-MM-yyy", "01-03-2018")    ||    "P1M" 
       Date.parse("dd-MM-yyy", "01-04-2018")   |  Date.parse("dd-MM-yyy", "01-05-2018")    ||    "P1M" 
-      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "30-01-2018")    ||    "P30D" 
+      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "31-01-2018")    ||    "P30D" 
       Date.parse("dd-MM-yyy", "16-02-2018")   |  Date.parse("dd-MM-yyy", "28-02-2018")    ||    "P12D" 
-      Date.parse("dd-MM-yyy", "16-02-2017")   |  Date.parse("dd-MM-yyy", "15-02-2018")    ||    "P1Y" 
+      Date.parse("dd-MM-yyy", "16-02-2017")   |  Date.parse("dd-MM-yyy", "16-02-2018")    ||    "P1Y" 
+      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "26-03-2018")    ||    "P2M25D" 
   }
 }
