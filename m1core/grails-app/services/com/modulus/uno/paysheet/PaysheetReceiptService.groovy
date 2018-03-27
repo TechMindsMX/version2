@@ -8,7 +8,8 @@ class PaysheetReceiptService {
   PaysheetReceipt createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceipt paysheetReceipt = new PaysheetReceipt(
       datosDeFacturacion: createInvoiceDataFromPaysheetEmployee(paysheetEmployee),
-      emisor: createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+      emisor: createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
+      receptor: createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
     )
   }
 
@@ -32,4 +33,28 @@ class PaysheetReceiptService {
     )
   }
 
+  Empleado createReceiverFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    new Empleado(
+      rfc: paysheetEmployee.prePaysheetEmployee.rfc,
+      nombre: paysheetEmployee.prePaysheetEmployee.nameEmployee,
+      curp: paysheetEmployee.prePaysheetEmployee.curp,
+      datosBancarios: new DatosBancarios(banco:paysheetEmployee.prePaysheetEmployee.bank.bankingCode.substring(2,5), cuenta:paysheetEmployee.prePaysheetEmployee.account),
+      datosLaborales: createJobDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    )
+  }
+
+  DatosLaborales createJobDataFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheetEmployee.paysheet.paysheetContract, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
+    EmployeeLink employeeLink = EmployeeLink.findByCompanyAndEmployeeRef(paysheetEmployee.paysheet.paysheetContract.company, paysheetEmployee.prePaysheetEmployee.rfc)
+    DataImssEmployee dataImssEmployee = DataImssEmployee.findByEmployee(employeeLink)
+    new DatosLaborales (
+      entidad: paysheetProject.federalEntity,
+      noEmpleado: paysheetEmployee.prePaysheetEmployee.numberEmployee,
+      tipoContrato:,
+      periodoPago:,
+      tipoRegimen:,
+      tipoJornada:,
+      datosImss:
+    )
+  }
 }
