@@ -13,7 +13,7 @@
   <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.registrationDate"/></label><br/>
-      <g:datePicker class="form-control" name="registrationDate" value="${dataImssEmployee?.registrationDate}" precision="day" relativeYears="[-20..0]" required=""/>
+      <input type="text" id="dpRegistration" name="registrationDate" value="${dataImssEmployee?.registrationDate?.format('dd/MM/yyyy')}" required="">
     </div>
   </div>
   <div class="col-md-4">
