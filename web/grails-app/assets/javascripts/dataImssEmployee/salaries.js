@@ -33,9 +33,16 @@ function calculateIasSalary() {
 }
 
 $( function() {
-  $( "#dpDischarge" ).datepicker({
-    dateFormat: 'dd/mm/yyyy'
+  $( "#dpRegistration" ).datepicker({
+    dateFormat: 'dd/mm/yy',
+    maxDate: 0
   });
 } );
 
+$( function() {
+  $( "#dpDischarge" ).datepicker({
+    dateFormat: 'dd/mm/yy',
+    maxDate: 0
+  });
+} );
 
