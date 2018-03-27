@@ -10,8 +10,8 @@ class DataImssEmployeeCommand implements Validateable {
 
   String idEmployee
   String nss
-  Date registrationDate
-  Date dischargeDate
+  String registrationDate
+  String dischargeDate
   String baseImssMonthlySalary
   String totalMonthlySalary
   String holidayBonusRate
@@ -44,8 +44,8 @@ class DataImssEmployeeCommand implements Validateable {
     EmployeeLink employee = EmployeeLink.get(this.idEmployee)
     new DataImssEmployee(
       employee:employee,
-      registrationDate:this.registrationDate,
-      dischargeDate:this.dischargeDate,
+      registrationDate:Date.parse("dd/MM/yyyy", this.registrationDate),
+      dischargeDate:this.dischargeDate ? Date.parse("dd/MM/yyyy", this.dischargeDate) : null,
       nss:this.nss,
       baseImssMonthlySalary:getValueInBigDecimal(this.baseImssMonthlySalary),
       totalMonthlySalary:getValueInBigDecimal(this.totalMonthlySalary),
