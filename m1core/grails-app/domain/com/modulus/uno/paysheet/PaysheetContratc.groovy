@@ -14,7 +14,7 @@ class PaysheetContract {
   User executive
   String employerRegistration
   String serie
-  Integer folio
+  Integer folio = new Integer(1)
 
   static belongsTo = [company:Company]
   static hasMany = [employees:BusinessEntity, projects:PaysheetProject, users:User]
