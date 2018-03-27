@@ -24,7 +24,7 @@ class PaysheetContractCommand implements Validateable {
     companyId nullable:false
     employerRegistration nullable:false, blank:false
     serie nullable:true, blank:true
-    folio nullable:false, min:1
+    folio nullable:false
   }
 
   PaysheetContract createPaysheetContract() {
@@ -33,7 +33,9 @@ class PaysheetContractCommand implements Validateable {
       initDate:Date.parse("dd/MM/yyyy", this.initDate),
       executive:User.get(this.executiveId),
       company:Company.get(this.companyId),
-      employerRegistration:this.employerRegistration
+      employerRegistration:this.employerRegistration,
+      serie:this.serie,
+      folio:this.folio.toInteger()
     )
   }
 
@@ -43,6 +45,8 @@ class PaysheetContractCommand implements Validateable {
     paysheetContract.initDate = Date.parse("dd/MM/yyyy", this.initDate)
     paysheetContract.executive = User.get(this.executiveId)
     paysheetContract.employerRegistration = this.employerRegistration
+    paysheetContract.serie = this.serie
+    paysheetContract.folio = this.folio.toInteger()
     paysheetContract
   }
 
