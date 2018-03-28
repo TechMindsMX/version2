@@ -2,8 +2,12 @@ package com.modulus.uno.paysheet
 
 import com.modulus.uno.invoice.paysheet.*
 import com.modulus.uno.invoice.*
+import com.modulus.uno.DataImssEmployeeService
 
 class PaysheetReceiptService {
+
+  PaysheetProjectService paysheetProjectService
+  DataImssEmployeeService dataImssEmployeeService
 
   PaysheetReceipt createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceipt paysheetReceipt = new PaysheetReceipt(
@@ -50,11 +54,20 @@ class PaysheetReceiptService {
     new DatosLaborales (
       entidad: paysheetProject.federalEntity,
       noEmpleado: paysheetEmployee.prePaysheetEmployee.numberEmployee,
-      tipoContrato:,
-      periodoPago:,
-      tipoRegimen:,
-      tipoJornada:,
-      datosImss:
+      tipoContrato: paymentSchema == PaymentSchema.IMSS ? dataImssEmployee.contractType.key : ContractType.WORK_WITHOUT_RELATION.key,
+      periodoPago: dataImssEmployee.paymentPeriod.key,
+      tipoRegimen: paymentSchema == PaymentSchema.IMSS ? dataImssEmployee.regimeType.key : RegimeType.FEES_ASSIMILATED.key,
+      tipoJornada: dataImssEmployee.workDayType.key,
+      datosImss: new DatosImss (
+        antiguedad: dataImssEmployeeService.calculateLaborOldInSATFormat(dataImssEmployee),
+        departamento: dataImssEmployee.department,
+        fechaAlta: dataImssEmployee.registrationDate.format("yyyy-MM-dd"),
+        nss: dataImssEmployee.nss,
+        puesto: dataImssEmployee.job,
+        riesgo:"1",
+        salarioBaseCotizacion: paymentSchema == PaymentSchema.IMSS ? paysheetEmployee.breakdownPayment.baseQuotation : new BigDecimal(0),
+        salarioDiarioIntegrado: paymentSchema == PaymentSchema.IMSS ? paysheetEmployee.breakdownPayment.integratedDailySalary : new BigDecimal(0)
+      )
     )
   }
 }
