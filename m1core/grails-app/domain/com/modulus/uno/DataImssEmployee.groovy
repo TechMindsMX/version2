@@ -38,14 +38,4 @@ class DataImssEmployee {
     this.totalMonthlySalary - this.baseImssMonthlySalary
   }
 
-  /*
-  Integer getAntiquityInWeeks() {
-  }
-
-  Integer getAntiquityInDays() {
-  }
-
-  String getAntiquityInYearsMonthsDays() {
-  }
-  */
 }
