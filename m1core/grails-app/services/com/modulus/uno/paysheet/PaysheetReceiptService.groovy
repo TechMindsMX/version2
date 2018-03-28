@@ -1,7 +1,11 @@
 package com.modulus.uno.paysheet
 
-import com.modulus.uno.invoice.paysheet.*
+import com.modulus.uno.invoice.paysheetReceipt.*
 import com.modulus.uno.invoice.*
+
+import com.modulus.uno.DataImssEmployee
+import com.modulus.uno.EmployeeLink
+
 import com.modulus.uno.DataImssEmployeeService
 
 class PaysheetReceiptService {
