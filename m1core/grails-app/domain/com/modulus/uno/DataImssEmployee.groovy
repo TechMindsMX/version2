@@ -3,6 +3,7 @@ package com.modulus.uno
 import com.modulus.uno.paysheet.ContractType
 import com.modulus.uno.paysheet.RegimeType
 import com.modulus.uno.paysheet.WorkDayType
+import com.modulus.uno.paysheet.JobRisk
 
 class DataImssEmployee {
 
@@ -18,6 +19,7 @@ class DataImssEmployee {
   ContractType contractType = ContractType.INDEFINED
   RegimeType regimeType = RegimeType.OTHER
   WorkDayType workDayType = WorkDayType.DIURNAL
+  JobRisk jobRisk = JobRisk.CLASS_01
   String department
   String job
 
@@ -32,6 +34,7 @@ class DataImssEmployee {
     holidayBonusRate nullable:false, min:0.0, max:100.0
     annualBonusDays nullable:false, min:15
     paymentPeriod nullable:false
+    jobRisk nullable:false
   }
 
   BigDecimal getMonthlyAssimilableSalary() {
