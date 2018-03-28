@@ -49,6 +49,8 @@
           <dd>${dataImssEmployee.department}</dd>
           <dt><g:message code="dataImssEmployee.label.job"/></dt>
           <dd>${dataImssEmployee.job}</dd>
+          <dt><g:message code="dataImssEmployee.label.jobRisk"/></dt>
+          <dd>${dataImssEmployee.jobRisk}</dd>
           <dt><g:message code="dataImssEmployee.label.contractType"/></dt>
           <dd>${dataImssEmployee.contractType}</dd>
           <dt><g:message code="dataImssEmployee.label.workDayType"/></dt>
