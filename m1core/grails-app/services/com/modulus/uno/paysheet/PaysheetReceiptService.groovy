@@ -68,7 +68,7 @@ class PaysheetReceiptService {
         fechaAlta: dataImssEmployee.registrationDate.format("yyyy-MM-dd"),
         nss: dataImssEmployee.nss,
         puesto: dataImssEmployee.job,
-        riesgo:"1",
+        riesgo: dataImssEmployee.jobRisk.key,
         salarioBaseCotizacion: paymentSchema == PaymentSchema.IMSS ? paysheetEmployee.breakdownPayment.baseQuotation : new BigDecimal(0),
         salarioDiarioIntegrado: paymentSchema == PaymentSchema.IMSS ? paysheetEmployee.breakdownPayment.integratedDailySalary : new BigDecimal(0)
       )
