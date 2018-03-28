@@ -133,4 +133,5 @@ databaseChangeLog = {
     include file: 'create-domain-extra-hour-incidence-and-add-relation-to-pre-paysheet-employee-incidence.groovy'
     include file: 'adding-column-discharge-date-into-data-imss-employee.groovy'
     include file: 'adding-folio-and-serie-into-paysheet-contract.groovy'
+    include file: 'adding-column-job-risk-to-data-imss-employee.groovy'
 }
