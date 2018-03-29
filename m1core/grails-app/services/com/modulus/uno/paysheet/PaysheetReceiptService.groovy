@@ -83,7 +83,8 @@ class PaysheetReceiptService {
       fechaFin: paysheetEmployee.paysheet.prePaysheet.endPeriod.format("yyyy-MM-dd"),
       fechaPago: paysheetEmployee.paysheet.prePaysheet.endPeriod.format("yyyy-MM-dd"),
       diasPagados: paysheetEmployee.paysheet.prePaysheet.endPeriod - paysheetEmployee.paysheet.prePaysheet.initPeriod + 1,
-      percepciones: createPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+      percepciones: createPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
+      deducciones: createDeductionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
     )
   }
 
@@ -116,6 +117,33 @@ class PaysheetReceiptService {
       perceptionIncidences.add(detalle)
     }
     perceptionIncidences    
+  }
+
+  Deducciones createDeductionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    Deducciones deducciones = new Percepciones(detalles:[])
+    deducciones.detalles.add("createDeductionDetailForSchema${schema.name()}"(paysheetEmployee))
+    deducciones.detalles.addAll(addDeductionIncidenceForSchema(paysheetEmployee, schema))
+    deducciones
+  }
+
+  DetalleNomina createDeductionDetailForSchemaIMSS(PaysheetEmployee paysheetEmployee) {
+    if ((paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax) > 0) {
+      new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax)
+    }
+  }
+
+  DetalleNomina createDeductionDetailForSchemaASSIMILABLE(PaysheetEmployee paysheetEmployee) {
+      new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.incomeTaxAssimilable)
+  }
+
+  List<DetalleNomina> addDeductionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.find { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType != DeductionType.D002.key && paymentSchema == schema }
+    List<DetalleNomina> deductionIncidences = []
+    incidences.each { incidence -> 
+      DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
+      deductionIncidences.add(detalle)
+    }
+    deductionIncidences    
   }
 
   Concepto createConceptForPaysheetEmployee(PaysheetEmployee paysheetEmployee) {
