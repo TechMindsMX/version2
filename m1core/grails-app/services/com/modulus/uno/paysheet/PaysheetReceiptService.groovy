@@ -17,7 +17,9 @@ class PaysheetReceiptService {
     PaysheetReceipt paysheetReceipt = new PaysheetReceipt(
       datosDeFacturacion: createInvoiceDataFromPaysheetEmployee(paysheetEmployee),
       emisor: createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
-      receptor: createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+      receptor: createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
+      nomina: createPaysheetDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
+      concepto: createConceptForPaysheetEmployee(paysheetEmployee)
     )
   }
 
@@ -73,5 +75,50 @@ class PaysheetReceiptService {
         salarioDiarioIntegrado: paymentSchema == PaymentSchema.IMSS ? paysheetEmployee.breakdownPayment.integratedDailySalary : new BigDecimal(0)
       )
     )
+  }
+
+  Nomina createPaysheetDataFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    new Nomina (
+      fechaInicio: paysheetEmployee.paysheet.prePaysheet.initPeriod.format("yyyy-MM-dd"),
+      fechaFin: paysheetEmployee.paysheet.prePaysheet.endPeriod.format("yyyy-MM-dd"),
+      fechaPago: paysheetEmployee.paysheet.prePaysheet.endPeriod.format("yyyy-MM-dd"),
+      diasPagados: paysheetEmployee.paysheet.prePaysheet.endPeriod - paysheetEmployee.paysheet.prePaysheet.initPeriod + 1,
+      percepciones: createPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    )
+  }
+
+  Percepciones createPerceptionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    Percepciones percepciones = new Percepciones(detalles:[])
+    percepciones.detalles.add("createSalaryDetailForSchema${schema.name()}"(paysheetEmployee))
+    percepciones.detalles.addAll(addPerceptionIncidenceForSchema(paysheetEmployee, schema))
+    percepciones
+  }
+
+  DetalleNomina createSalaryDetailForSchemaIMSS(PaysheetEmployee paysheetEmployee) {
+    new DetalleNomina(clave: PerceptionType.P001.name(), descripcion: PerceptionType.P001.description, tipo: PerceptionType.P001.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.salaryImss)
+  }
+
+  DetalleNomina createSalaryDetailForSchemaASSIMILABLE(PaysheetEmployee paysheetEmployee) {
+      new DetalleNomina(clave: PerceptionType.P046.name(), descripcion: PerceptionType.P046.description, tipo: PerceptionType.P046.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.crudeAssimilable)
+  }
+
+  List<DetalleNomina> addPerceptionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.find { incidence -> incidence.type == IncidenceType.PERCEPTION && incidence.keyType != PerceptionType.P001.key && incidence.keyType != PerceptionType.P046.key && paymentSchema == schema }
+    List<DetalleNomina> perceptionIncidences = []
+    incidences.each { incidence -> 
+      DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
+      if (incidence.extraHourIncidence) {
+        detalle.diasHrsExtra = incidence.extraHourIncidence.days
+        detalle.tipoHrsExtra = incidence.extraHourIncidence.type
+        detalle.totalHrsExtra = incidence.extraHourIncidence.quantity
+        detalle.importeHrsExtra = incidence.extraHourIncidence.amount
+      }
+      perceptionIncidences.add(detalle)
+    }
+    perceptionIncidences    
+  }
+
+  Concepto createConceptForPaysheetEmployee(PaysheetEmployee paysheetEmployee) {
+    new Concepto ()
   }
 }
