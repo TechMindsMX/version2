@@ -84,7 +84,8 @@ class PaysheetReceiptService {
       fechaPago: paysheetEmployee.paysheet.prePaysheet.endPeriod.format("yyyy-MM-dd"),
       diasPagados: paysheetEmployee.paysheet.prePaysheet.endPeriod - paysheetEmployee.paysheet.prePaysheet.initPeriod + 1,
       percepciones: createPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
-      deducciones: createDeductionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+      deducciones: createDeductionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
+      otrosPagos: createOtherPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
     )
   }
 
@@ -145,6 +146,23 @@ class PaysheetReceiptService {
     }
     deductionIncidences    
   }
+
+  List<DetalleNomina> createOtherPerceptionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.find { incidence -> incidence.type == IncidenceType.OTHER_PERCEPTION && paymentSchema == schema }
+    List<DetalleNomina> otherPerceptionIncidences = []
+    incidences.each { incidence -> 
+      DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
+      if (incidence.extraHourIncidence) {
+        detalle.diasHrsExtra = incidence.extraHourIncidence.days
+        detalle.tipoHrsExtra = incidence.extraHourIncidence.type
+        detalle.totalHrsExtra = incidence.extraHourIncidence.quantity
+        detalle.importeHrsExtra = incidence.extraHourIncidence.amount
+      }
+      otherPerceptionIncidences.add(detalle)
+    }
+    otherPerceptionIncidences    
+  }
+
 
   Concepto createConceptForPaysheetEmployee(PaysheetEmployee paysheetEmployee) {
     new Concepto ()
