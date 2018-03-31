@@ -19,8 +19,11 @@ class PaysheetReceiptService {
       emisor: createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
       receptor: createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
       nomina: createPaysheetDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
-      concepto: createConceptForPaysheetEmployee(paysheetEmployee)
+      esquema: schema.toString(),
+      id: paysheetEmployee.paysheet.paysheetContract.company
     )
+    paysheetReceipt.concepto = createConceptForPaysheetEmployee(paysheetReceipt)
+    paysheetReceipt
   }
 
   DatosDeFacturacion createInvoiceDataFromPaysheetEmployee(PaysheetEmployee paysheetEmployee) {
@@ -164,7 +167,10 @@ class PaysheetReceiptService {
   }
 
 
-  Concepto createConceptForPaysheetEmployee(PaysheetEmployee paysheetEmployee) {
-    new Concepto ()
+  Concepto createConceptForPaysheetEmployee(PaysheetReceipt paysheetReceipt) {
+    new Concepto (
+      valorUnitario: paysheetReceipt.nomina.percepciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.percepciones.detalles*.importeGravado.sum() + paysheetReceipt.nomina.otrosPagos*.importeExento.sum() + paysheetReceipt.nomina.otrosPagos*.importeGravado.sum(),
+      descuento: paysheetReceipt.nomina.deducciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.deducciones.detalles*.importeGravado.sum()
+    )
   }
 }
