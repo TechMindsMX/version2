@@ -57,7 +57,7 @@ class PaysheetReceiptService {
     )
   }
 
-  DatosLaborales createJobDataFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+  DatosLaborales createJobDataFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema paymentSchema) {
     PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheetEmployee.paysheet.paysheetContract, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
     EmployeeLink employeeLink = EmployeeLink.findByCompanyAndEmployeeRef(paysheetEmployee.paysheet.paysheetContract.company, paysheetEmployee.prePaysheetEmployee.rfc)
     DataImssEmployee dataImssEmployee = DataImssEmployee.findByEmployee(employeeLink)
