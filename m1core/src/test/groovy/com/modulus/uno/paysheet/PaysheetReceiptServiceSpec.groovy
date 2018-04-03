@@ -15,27 +15,52 @@ import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.Address
 import com.modulus.uno.AddressType
+import com.modulus.uno.PaymentPeriod
 
 import com.modulus.uno.DataImssEmployeeService
 
 @TestFor(PaysheetReceiptService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, PaysheetContract, PayerPaysheetProject, PaysheetProject, Address])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, PaysheetContract, PayerPaysheetProject, PaysheetProject, Address, EmployeeLink, DataImssEmployee, BreakdownPaymentEmployee])
 class PaysheetReceiptServiceSpec extends Specification {
 
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
   DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
   PaysheetContract paysheetContract
+  Company company
 
   def setup() {
     service.paysheetProjectService = paysheetProjectService
     service.dataImssEmployeeService = dataImssEmployeeService
     paysheetContract = createPaysheetContract()
+    company = createCompanyForContract()
+  }
+
+  private Company createCompanyForContract() {
+    new Company(
+      rfc:"RFC-CLIENT",
+      bussinessName: "THE CLIENT CONTRACT"
+    ).save(validate:false)
+  }
+
+  private PrePaysheetEmployee createPrePaysheetEmployee() {
+    new PrePaysheetEmployee (
+      rfc:"BUPA690824IRA",
+      curp:"BUPA690824HDFRRL02",
+      numberEmployee:"NUM-EMP",
+      nameEmployee:"EMPLEADO MODULUS UNO",
+      bank: new Bank(name:"THEBANK", bankingCode:"40072").save(validate:false),
+      clabe: "012180000191120163",
+      branch: "180",
+      account: "00019112016",
+      netPayment: new BigDecimal(16500)
+    ).save(validate:false)
   }
 
   private PaysheetEmployee createPaysheetEmployee() {
     new PaysheetEmployee (
       paysheet: createPaysheet(),
-      prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false),
+      prePaysheetEmployee: createPrePaysheetEmployee(),
+      breakdownPayment: new BreakdownPaymentEmployee(baseQuotation: new BigDecimal(2670.64), integratedDailySalary: new BigDecimal(87.85)).save(false),
       salaryImss: new BigDecimal(2500),
       socialQuota: new BigDecimal(63.44),
       subsidySalary: new BigDecimal(162.44),
@@ -54,7 +79,8 @@ class PaysheetReceiptServiceSpec extends Specification {
     new PaysheetContract (
       employerRegistration:"REGPATRONAL",
       folio: new Integer(0),
-      serie: "TESTNOM"
+      serie: "TESTNOM",
+      company: company
     ).save(validate:false)
   }
 
@@ -67,9 +93,11 @@ class PaysheetReceiptServiceSpec extends Specification {
 
   private PaysheetProject createPaysheetProject() {
     new PaysheetProject(
-      name:"TESTPROJECT",
+      name: "TESTPROJECT",
       paysheetContract: paysheetContract,
-      payers:createPayersPaysheetProject()
+      federalEntity: "DIF",
+      integrationFactor: new BigDecimal(1.0542),
+      payers: createPayersPaysheetProject()
     ).save(validate:false)
   }
 
@@ -79,6 +107,33 @@ class PaysheetReceiptServiceSpec extends Specification {
       new PayerPaysheetProject(company:new Company(bussinessName:"SA-PAYER", rfc:"AAA010101AAA", addresses:[address]).save(validate:false), paymentSchema:PaymentSchema.IMSS).save(validate:false),
       new PayerPaysheetProject(company:new Company(bussinessName:"IAS-PAYER", rfc:"AAA010101AAA", addresses:[address]).save(validate:false), paymentSchema:PaymentSchema.ASSIMILABLE).save(validate:false)
     ]
+  }
+
+  private EmployeeLink createEmployeeLink() {
+    new EmployeeLink (
+      employeeRef: "BUPA690824IRA",
+      company: company
+    ).save(validate:false)
+  }
+
+  private DataImssEmployee createDataImssEmployeeForEmployee(EmployeeLink employee) {
+    new DataImssEmployee (
+      employee:employee,
+      nss:"NSS-EMPLOYEE",
+      registrationDate: Date.parse("dd-MM-yyyy", "01-01-2018"),
+      dischargeDate: Date.parse("dd-MM-yyyy", "01-02-2018"),
+      baseImssMonthlySalary: new BigDecimal(5000),
+      totalMonthlySalary: new BigDecimal(33000),
+      holidayBonusRate: new BigDecimal(25),
+      annualBonusDays: new Integer(15),
+      paymentPeriod: PaymentPeriod.BIWEEKLY,
+      contractType: ContractType.UNDEFINED,
+      regimeType: RegimeType.SALARIES,
+      workDayType: WorkDayType.DIURNAL,
+      jobRisk: JobRisk.CLASS_01,
+      department: "ADMINISTRACION",
+      job: "AUXILIAR ADMINISTRATIVO"
+    ).save(validate:false)
   }
 
   void "Should create the paysheet receipt invoice data from paysheet employee"() {
@@ -111,4 +166,34 @@ class PaysheetReceiptServiceSpec extends Specification {
       PaymentSchema.IMSS  || "SA-PAYER" | "AAA010101AAA" | "11700"
       PaymentSchema.ASSIMILABLE  || "IAS-PAYER" | "AAA010101AAA" | "11700"
   }
+
+  @Unroll
+  void "Should create the paysheet receipt receiver from paysheet employee and schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    and:
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> createPaysheetProject()
+      dataImssEmployeeService.calculateLaborOldInSATFormat(_) >> "P1M"
+    and:
+      EmployeeLink employeeLink = createEmployeeLink()
+      EmployeeLink.metaClass.static.findByCompanyAndEmployeeRef = { employeeLink }
+      DataImssEmployee.metaClass.static.findByEmployee = { createDataImssEmployeeForEmployee(employeeLink) }
+    when:
+      def receiver = service.createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    then:
+      receiver.rfc == "BUPA690824IRA"
+      receiver.nombre == "EMPLEADO MODULUS UNO"
+      receiver.curp == "BUPA690824HDFRRL02"
+      receiver.datosBancarios.banco == "072"
+      receiver.datosBancarios.cuenta == "00019112016"
+      receiver.datosLaborales.tipoContrato == theContractType
+      receiver.datosLaborales.tipoRegimen == theRegimeType
+    where:
+      theSchema                   ||    theContractType           |   theRegimeType
+      PaymentSchema.IMSS          || ContractType.UNDEFINED.key   |   RegimeType.SALARIES.key
+      PaymentSchema.ASSIMILABLE   || ContractType.WORK_WITHOUT_RELATION.key  | RegimeType.FEES_ASSIMILATED.key
+  }
+
 }
