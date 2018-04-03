@@ -16,7 +16,7 @@ class DataImssEmployee {
   BigDecimal holidayBonusRate
   Integer annualBonusDays
   PaymentPeriod paymentPeriod = PaymentPeriod.WEEKLY
-  ContractType contractType = ContractType.INDEFINED
+  ContractType contractType = ContractType.UNDEFINED
   RegimeType regimeType = RegimeType.OTHER
   WorkDayType workDayType = WorkDayType.DIURNAL
   JobRisk jobRisk = JobRisk.CLASS_01
