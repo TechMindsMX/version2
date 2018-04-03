@@ -109,7 +109,7 @@ class PaysheetReceiptService {
   }
 
   List<DetalleNomina> addPerceptionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.find { incidence -> incidence.type == IncidenceType.PERCEPTION && incidence.keyType != PerceptionType.P001.key && incidence.keyType != PerceptionType.P046.key && paymentSchema == schema }
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.PERCEPTION && incidence.keyType != PerceptionType.P001.key && incidence.keyType != PerceptionType.P046.key && incidence.paymentSchema == schema }
     List<DetalleNomina> perceptionIncidences = []
     incidences.each { incidence -> 
       DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
@@ -121,7 +121,7 @@ class PaysheetReceiptService {
       }
       perceptionIncidences.add(detalle)
     }
-    perceptionIncidences    
+    perceptionIncidences 
   }
 
   Deducciones createDeductionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
@@ -142,7 +142,7 @@ class PaysheetReceiptService {
   }
 
   List<DetalleNomina> addDeductionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.find { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType != DeductionType.D002.key && paymentSchema == schema }
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType != DeductionType.D002.key && incidence.paymentSchema == schema }
     List<DetalleNomina> deductionIncidences = []
     incidences.each { incidence -> 
       DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
@@ -152,7 +152,7 @@ class PaysheetReceiptService {
   }
 
   List<DetalleNomina> createOtherPerceptionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.find { incidence -> incidence.type == IncidenceType.OTHER_PERCEPTION && paymentSchema == schema }
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.OTHER_PERCEPTION && incidence.paymentSchema == schema }
     List<DetalleNomina> otherPerceptionIncidences = []
     incidences.each { incidence -> 
       DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
