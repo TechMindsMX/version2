@@ -125,9 +125,10 @@ class PaysheetReceiptService {
   }
 
   Deducciones createDeductionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    Deducciones deducciones = new Percepciones(detalles:[])
+    Deducciones deducciones = new Deducciones(detalles:[])
     deducciones.detalles.add("createDeductionDetailForSchema${schema.name()}"(paysheetEmployee))
     deducciones.detalles.addAll(addDeductionIncidenceForSchema(paysheetEmployee, schema))
+    deducciones.detalles = deducciones.detalles - null
     deducciones
   }
 
@@ -148,7 +149,7 @@ class PaysheetReceiptService {
       DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
       deductionIncidences.add(detalle)
     }
-    deductionIncidences    
+    deductionIncidences
   }
 
   List<DetalleNomina> createOtherPerceptionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
