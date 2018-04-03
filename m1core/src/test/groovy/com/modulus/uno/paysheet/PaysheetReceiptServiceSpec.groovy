@@ -13,19 +13,23 @@ import com.modulus.uno.BankAccount
 import com.modulus.uno.Bank
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
+import com.modulus.uno.Address
+import com.modulus.uno.AddressType
 
 import com.modulus.uno.DataImssEmployeeService
 
 @TestFor(PaysheetReceiptService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, PaysheetContract, PayerPaysheetProject, PaysheetProject])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, PaysheetContract, PayerPaysheetProject, PaysheetProject, Address])
 class PaysheetReceiptServiceSpec extends Specification {
 
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
   DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
+  PaysheetContract paysheetContract
 
   def setup() {
     service.paysheetProjectService = paysheetProjectService
     service.dataImssEmployeeService = dataImssEmployeeService
+    paysheetContract = createPaysheetContract()
   }
 
   private PaysheetEmployee createPaysheetEmployee() {
@@ -48,18 +52,36 @@ class PaysheetReceiptServiceSpec extends Specification {
 
   private PaysheetContract createPaysheetContract() {
     new PaysheetContract (
+      employerRegistration:"REGPATRONAL",
       folio: new Integer(0),
       serie: "TESTNOM"
-    )
+    ).save(validate:false)
   }
 
   private Paysheet createPaysheet() {
     new Paysheet(
-      paysheetContract:createPaysheetContract()
-    )
+      paysheetContract: paysheetContract,
+      prePaysheet: new PrePaysheet(paysheetProject:"TESTPROJECT").save(validate:false)
+    ).save(validate:false)
   }
 
-  void "Should create the invoice data from paysheetEmployee"() {
+  private PaysheetProject createPaysheetProject() {
+    new PaysheetProject(
+      name:"TESTPROJECT",
+      paysheetContract: paysheetContract,
+      payers:createPayersPaysheetProject()
+    ).save(validate:false)
+  }
+
+  private List<PayerPaysheetProject> createPayersPaysheetProject() {
+    Address address = new Address(street:"BOSQUES DE DURAZNOS", streetNumber:"140", zipCode:"11700", colony:"BOSQUES DE LAS LOMAS", country:"MEXICO", city:"MIGUEL HIDALGO", federalEntity:"CIUDAD DE MEXICO", addressType:AddressType.FISCAL).save(validate:false)
+    [
+      new PayerPaysheetProject(company:new Company(bussinessName:"SA-PAYER", rfc:"AAA010101AAA", addresses:[address]).save(validate:false), paymentSchema:PaymentSchema.IMSS).save(validate:false),
+      new PayerPaysheetProject(company:new Company(bussinessName:"IAS-PAYER", rfc:"AAA010101AAA", addresses:[address]).save(validate:false), paymentSchema:PaymentSchema.ASSIMILABLE).save(validate:false)
+    ]
+  }
+
+  void "Should create the paysheet receipt invoice data from paysheet employee"() {
     given:"The paysheet employee"
       PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
     when:
@@ -67,5 +89,26 @@ class PaysheetReceiptServiceSpec extends Specification {
     then:
       invoiceData.folio == "1"
       invoiceData.serie == "TESTNOM"
+  }
+
+  @Unroll
+  void "Should create the paysheet receipt emitter from paysheet employee and schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    and:
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> createPaysheetProject()
+    when:
+      def emitter = service.createEmitterFromPaysheetEmployee(paysheetEmployee, schema)
+    then:
+      emitter.registroPatronal == "REGPATRONAL"
+      emitter.datosFiscales.razonSocial == theBusinessName
+      emitter.datosFiscales.rfc == theRfc
+      emitter.datosFiscales.codigoPostal == theZipCode
+    where:
+      theSchema     || theBusinessName  | theRfc  | theZipCode
+      PaymentSchema.IMSS  || "SA-PAYER" | "AAA010101AAA" | "11700"
+      PaymentSchema.ASSIMILABLE  || "IAS-PAYER" | "AAA010101AAA" | "11700"
   }
 }
