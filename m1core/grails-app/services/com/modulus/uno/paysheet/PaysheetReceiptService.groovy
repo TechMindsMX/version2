@@ -5,6 +5,7 @@ import com.modulus.uno.invoice.*
 
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
+import com.modulus.uno.AddressType
 
 import com.modulus.uno.DataImssEmployeeService
 
