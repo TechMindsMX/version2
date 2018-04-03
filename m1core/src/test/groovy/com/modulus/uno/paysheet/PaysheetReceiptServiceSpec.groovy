@@ -224,4 +224,21 @@ class PaysheetReceiptServiceSpec extends Specification {
       PaymentSchema.IMSS          ||    3                   |   ["001","010", "019"]
       PaymentSchema.ASSIMILABLE   ||    2                   |   ["046", "012"] 
   }
+
+  @Unroll
+  void "Should create deductions from paysheet employee for schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    when:
+      def deductions = service.createDeductionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    then:
+      deductions.detalles.size() == totalDeductions
+      deductions.detalles.tipo.sort() == listKeys.sort()
+    where:
+      theSchema                   ||    totalDeductions    |  listKeys
+      PaymentSchema.IMSS          ||    1                   |   ["007"]
+      PaymentSchema.ASSIMILABLE   ||    2                   |   ["002", "013"] 
+  }
 }
