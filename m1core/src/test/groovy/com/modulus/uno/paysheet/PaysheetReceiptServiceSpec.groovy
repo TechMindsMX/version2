@@ -20,7 +20,7 @@ import com.modulus.uno.PaymentPeriod
 import com.modulus.uno.DataImssEmployeeService
 
 @TestFor(PaysheetReceiptService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, PaysheetContract, PayerPaysheetProject, PaysheetProject, Address, EmployeeLink, DataImssEmployee, BreakdownPaymentEmployee])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, PaysheetContract, PayerPaysheetProject, PaysheetProject, Address, EmployeeLink, DataImssEmployee, BreakdownPaymentEmployee, PrePaysheetEmployeeIncidence, ExtraHourIncidence])
 class PaysheetReceiptServiceSpec extends Specification {
 
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
@@ -52,8 +52,20 @@ class PaysheetReceiptServiceSpec extends Specification {
       clabe: "012180000191120163",
       branch: "180",
       account: "00019112016",
-      netPayment: new BigDecimal(16500)
+      netPayment: new BigDecimal(16500),
+      incidences: createIncidences()
     ).save(validate:false)
+  }
+
+  private List<PrePaysheetEmployeeIncidence> createIncidences() {
+    [
+      new PrePaysheetEmployeeIncidence(internalKey:"P010", description:"Premios por puntualidad", keyType:"010", type: IncidenceType.PERCEPTION, paymentSchema: PaymentSchema.IMSS, exemptAmount: new BigDecimal(100), taxedAmount: new BigDecimal(0)).save(validate:false),
+      new PrePaysheetEmployeeIncidence(internalKey:"P019", description:"Horas extra", keyType:"019", type: IncidenceType.PERCEPTION, paymentSchema: PaymentSchema.IMSS, exemptAmount: new BigDecimal(0), taxedAmount: new BigDecimal(0), extraHourIncidence: new ExtraHourIncidence(days:1, type:"01", quantity:2, amount: new BigDecimal(43.93)).save(validate:false)).save(validate:false),
+      new PrePaysheetEmployeeIncidence(internalKey:"P004", description:"Reembolso de Gastos Médicos Dentales y Hospitalarios", keyType:"004", type: IncidenceType.OTHER_PERCEPTION, paymentSchema: PaymentSchema.IMSS, exemptAmount: new BigDecimal(500), taxedAmount: new BigDecimal(0)).save(validate:false),
+      new PrePaysheetEmployeeIncidence(internalKey:"P012", description:"Seguro de Gastos Médicos Mayores", keyType:"012", type: IncidenceType.PERCEPTION, paymentSchema: PaymentSchema.ASSIMILABLE, exemptAmount: new BigDecimal(1000), taxedAmount: new BigDecimal(0)).save(validate:false),
+      new PrePaysheetEmployeeIncidence(internalKey:"D007", description:"Pensión alimenticia", keyType:"007", type: IncidenceType.DEDUCTION, paymentSchema: PaymentSchema.IMSS, exemptAmount: new BigDecimal(300), taxedAmount: new BigDecimal(0)).save(validate:false),
+      new PrePaysheetEmployeeIncidence(internalKey:"D013", description:"Pagos hechos con exceso al trabajador", keyType:"013", type: IncidenceType.DEDUCTION, paymentSchema: PaymentSchema.ASSIMILABLE, exemptAmount: new BigDecimal(1000), taxedAmount: new BigDecimal(0)).save(validate:false)
+    ]
   }
 
   private PaysheetEmployee createPaysheetEmployee() {
@@ -196,4 +208,20 @@ class PaysheetReceiptServiceSpec extends Specification {
       PaymentSchema.ASSIMILABLE   || ContractType.WORK_WITHOUT_RELATION.key  | RegimeType.FEES_ASSIMILATED.key
   }
 
+  @Unroll
+  void "Should create perceptions from paysheet employee for schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    when:
+      def perceptions = service.createPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    then:
+      perceptions.detalles.size() == totalPerceptions
+      perceptions.detalles.tipo.sort() == listKeys.sort()
+    where:
+      theSchema                   ||    totalPerceptions    |  listKeys
+      PaymentSchema.IMSS          ||    3                   |   ["001","010", "019"]
+      PaymentSchema.ASSIMILABLE   ||    2                   |   ["046", "012"] 
+  }
 }
