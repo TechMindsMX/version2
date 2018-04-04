@@ -19,6 +19,11 @@ class PaysheetReceiptService {
   RestService restService
   def grailsApplication
 
+  String generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    PaysheetReceiptCommand paysheetReceipt = createPaysheetDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    stampPaysheetReceipt(paysheetReceipt)
+  }
+
   PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand (
       datosDeFacturacion: createInvoiceDataFromPaysheetEmployee(paysheetEmployee),
