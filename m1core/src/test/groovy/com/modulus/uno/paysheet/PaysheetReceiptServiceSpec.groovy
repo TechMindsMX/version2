@@ -260,4 +260,57 @@ class PaysheetReceiptServiceSpec extends Specification {
       PaymentSchema.ASSIMILABLE   ||    1                   |   ["036"] 
   }
 
+  @Unroll
+  void "Should create perceptions from paysheet employee without incidences for schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences = []
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    when:
+      def perceptions = service.createPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    then:
+      perceptions.detalles.size() == totalPerceptions
+      perceptions.detalles.tipo.sort() == listKeys.sort()
+    where:
+      theSchema                   ||    totalPerceptions    |  listKeys
+      PaymentSchema.IMSS          ||    1                   |   ["001"]
+      PaymentSchema.ASSIMILABLE   ||    1                   |   ["046"] 
+  }
+
+  @Unroll
+  void "Should create deductions from paysheet employee without incidences for schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences = []
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    when:
+      def deductions = service.createDeductionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    then:
+      deductions.detalles.size() == totalDeductions
+      deductions.detalles.tipo.sort() == listKeys.sort()
+    where:
+      theSchema                   ||    totalDeductions    |  listKeys
+      PaymentSchema.IMSS          ||    0                   |   []
+      PaymentSchema.ASSIMILABLE   ||    1                   |   ["002"] 
+  }
+
+  @Unroll
+  void "Should create other perceptions from paysheet employee without incidences for schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences = []
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    when:
+      def otherPerceptions = service.createOtherPerceptionsFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    then:
+      otherPerceptions.size() == totalPerceptions
+    where:
+      theSchema                   ||    totalPerceptions
+      PaymentSchema.IMSS          ||    0               
+      PaymentSchema.ASSIMILABLE   ||    0               
+  }
+
 }
