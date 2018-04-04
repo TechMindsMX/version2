@@ -163,4 +163,32 @@ class PaysheetEmployeeService {
     paysheetEmployee
   }
 
+  @Transactional
+  PaysheetEmployee savePaysheetReceiptUuid(PaysheetEmployee paysheetEmployee, String paysheetReceiptUuid) {
+    paysheetEmployee.paysheetReceiptUuid = paysheetReceiptUuid
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setIMSSStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setASSIMILABLEStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setFullStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.FULL_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setStampedStatusToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(paysheetEmployee.status) ? "set${schema.name()}StampedStatusToEmployee"(paysheetEmployee) : [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status) ? setFullStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+  }
 }
