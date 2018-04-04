@@ -17,8 +17,13 @@ class PaysheetEmployee {
   PaysheetEmployeeStatus status = PaysheetEmployeeStatus.PENDING
   BreakdownPaymentEmployee breakdownPayment
 	PaymentWay paymentWay = PaymentWay.BANKING
+  String paysheetReceiptUuid
 
   static belongsTo = [paysheet:Paysheet]
+
+  static constraints = {
+    paysheetReceiptUuid nullable:true
+  } 
 
   BigDecimal getImssSalaryNet() {
     this.salaryImss - this.socialQuota + this.subsidySalary - this.incomeTax + getTotalIncidencesImssPerceptions() - getTotalIncidencesImssDeductions()
