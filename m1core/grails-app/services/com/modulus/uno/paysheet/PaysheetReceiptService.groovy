@@ -7,13 +7,17 @@ import com.modulus.uno.PaysheetReceiptCommand
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.AddressType
+import com.modulus.uno.RestException
 
 import com.modulus.uno.DataImssEmployeeService
+import com.modulus.uno.RestService
 
 class PaysheetReceiptService {
 
   PaysheetProjectService paysheetProjectService
   DataImssEmployeeService dataImssEmployeeService
+  RestService restService
+  def grailsApplication
 
   PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand (
@@ -176,4 +180,17 @@ class PaysheetReceiptService {
       descuento: paysheetReceipt.nomina.deducciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.deducciones.detalles*.importeGravado.sum()
     )
   }
+
+  String stampPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
+    def result = restService.sendFacturaCommandWithAuth(paysheetReceipt, grailsApplication.config.modulus.paysheetReceiptCreate)
+    if (!result) {
+      throw new RestException("No se pudo generar el recibo de nómina") 
+    }
+    if (result.text.startsWith("Error")) {
+      throw new RestException(result.text) 
+    }
+
+    result.text
+  }
+
 }
