@@ -182,7 +182,22 @@ class PaysheetServiceSpec extends Specification {
     when:
       def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
     then:
-      !paysheetResult.employees[0].paysheetReceiptUuid
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
+      3 * paysheetEmployeeService.savePaysheetReceiptUuid(_, _)
+      3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
+  }
+
+  void "Should generate paysheet receipts from paysheet for schema ASSIMILABLE"() {
+    given:"The paysheet"
+      Paysheet paysheet = createPaysheetWithEmployees()
+    and:"The schema"
+      PaymentSchema schema = PaymentSchema.ASSIMILABLE
+    and:
+      paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> "UUID_PAYSHEET_RECEIPT"
+    when:
+      def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
+    then:
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
       3 * paysheetEmployeeService.savePaysheetReceiptUuid(_, _)
       3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
   }
