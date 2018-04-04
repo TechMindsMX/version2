@@ -3,6 +3,7 @@ package com.modulus.uno.paysheet
 import com.modulus.uno.invoice.paysheetReceipt.*
 import com.modulus.uno.invoice.*
 
+import com.modulus.uno.PaysheetReceiptCommand
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.AddressType
@@ -14,8 +15,8 @@ class PaysheetReceiptService {
   PaysheetProjectService paysheetProjectService
   DataImssEmployeeService dataImssEmployeeService
 
-  PaysheetReceipt createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    PaysheetReceipt paysheetReceipt = new PaysheetReceipt(
+  PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand (
       datosDeFacturacion: createInvoiceDataFromPaysheetEmployee(paysheetEmployee),
       emisor: createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
       receptor: createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
@@ -23,7 +24,7 @@ class PaysheetReceiptService {
       esquema: schema.toString(),
       id: paysheetEmployee.paysheet.paysheetContract.company
     )
-    paysheetReceipt.concepto = createConceptForPaysheetEmployee(paysheetReceipt)
+    paysheetReceipt.concepto = createConceptForPaysheetEmployee(paysheetReceiptCommand)
     paysheetReceipt
   }
 
@@ -169,7 +170,7 @@ class PaysheetReceiptService {
   }
 
 
-  Concepto createConceptForPaysheetEmployee(PaysheetReceipt paysheetReceipt) {
+  Concepto createConceptForPaysheetEmployee(PaysheetReceiptCommand paysheetReceipt) {
     new Concepto (
       valorUnitario: paysheetReceipt.nomina.percepciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.percepciones.detalles*.importeGravado.sum() + paysheetReceipt.nomina.otrosPagos*.importeExento.sum() + paysheetReceipt.nomina.otrosPagos*.importeGravado.sum(),
       descuento: paysheetReceipt.nomina.deducciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.deducciones.detalles*.importeGravado.sum()
