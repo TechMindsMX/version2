@@ -16,8 +16,11 @@ import com.modulus.uno.EmployeeLink
 import com.modulus.uno.Address
 import com.modulus.uno.AddressType
 import com.modulus.uno.PaymentPeriod
+import com.modulus.uno.PaysheetReceiptCommand
+import com.modulus.uno.RestException
 
 import com.modulus.uno.DataImssEmployeeService
+import com.modulus.uno.RestService
 
 @TestFor(PaysheetReceiptService)
 @Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, PaysheetContract, PayerPaysheetProject, PaysheetProject, Address, EmployeeLink, DataImssEmployee, BreakdownPaymentEmployee, PrePaysheetEmployeeIncidence, ExtraHourIncidence])
@@ -25,14 +28,17 @@ class PaysheetReceiptServiceSpec extends Specification {
 
   PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
   DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
+  RestService restService = Mock(RestService)
   PaysheetContract paysheetContract
   Company company
 
   def setup() {
     service.paysheetProjectService = paysheetProjectService
     service.dataImssEmployeeService = dataImssEmployeeService
+    service.restService = restService
     paysheetContract = createPaysheetContract()
     company = createCompanyForContract()
+    grailsApplication.config.modulus.paysheetReceiptCreate = "paysheetreceipt/create"
   }
 
   private Company createCompanyForContract() {
@@ -311,6 +317,39 @@ class PaysheetReceiptServiceSpec extends Specification {
       theSchema                   ||    totalPerceptions
       PaymentSchema.IMSS          ||    0               
       PaymentSchema.ASSIMILABLE   ||    0               
+  }
+
+  void "Should stamp a paysheet receipt" () {
+    given:"The paysheet receipt"
+      PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
+    and:
+      restService.sendFacturaCommandWithAuth(_, _) >> [text:"UUID_PAYSHEET_RECEIPT"]
+    when:
+      def result = service.stampPaysheetReceipt(paysheetReceipt)
+    then:
+      result == "UUID_PAYSHEET_RECEIPT"
+  }
+
+  void "Should thrown an exception when try stamp a paysheet receipt when result starts with 'Error'" () {
+    given:"The paysheet receipt"
+      PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
+    and:
+      restService.sendFacturaCommandWithAuth(_, _) >> [text:"Error: falló el timbrado del recibo"]
+    when:
+      def result = service.stampPaysheetReceipt(paysheetReceipt)
+    then:
+      thrown RestException
+  }
+
+  void "Should thrown an exception when try stamp a paysheet receipt when result is null" () {
+    given:"The paysheet receipt"
+      PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
+    and:
+      restService.sendFacturaCommandWithAuth(_, _) >> null
+    when:
+      def result = service.stampPaysheetReceipt(paysheetReceipt)
+    then:
+      thrown RestException
   }
 
 }
