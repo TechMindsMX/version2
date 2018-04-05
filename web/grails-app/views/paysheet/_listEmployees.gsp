@@ -94,7 +94,7 @@
                 </td>
                 <td class="text-center">
                   <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-                    <g:if test="${(employee.paymentWay == PaymentWay.CASH || employee.paymentWay == PaymentWay.ONLY_CASH) && employee.status == PaysheetEmployeeStatus.PENDING}">
+                    <g:if test="${(employee.paymentWay == PaymentWay.CASH || employee.paymentWay == PaymentWay.ONLY_CASH) && employee.status == PaysheetEmployeeStatus.PENDING && paysheet.status == PaysheetStatus.AUTHORIZED}">
                       <g:link class="btn btn-primary" action="setPayedToEmployee" id="${employee.id}">Pagar</g:link>
                     </g:if>
                   </sec:ifAnyGranted>
@@ -113,6 +113,12 @@
 				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary}">
 					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
+        </g:if>
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status)}}">
+          <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'IMSS']">Timbrar SA</g:link>
+        </g:if>
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status)}}">
+          <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'Asimilable']">Timbrar IAS</g:link>
         </g:if>
 				</sec:ifAnyGranted>
       </div>
