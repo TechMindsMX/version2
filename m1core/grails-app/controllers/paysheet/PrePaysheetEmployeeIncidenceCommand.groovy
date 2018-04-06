@@ -14,7 +14,6 @@ class PrePaysheetEmployeeIncidenceCommand implements Validateable{
   String extraHoursDays
   String extraHoursType
   String extraHoursQuantity
-  String extraHoursAmount
 
   static constraints = {
     incidence nullable:false
@@ -28,9 +27,6 @@ class PrePaysheetEmployeeIncidenceCommand implements Validateable{
       (obj.incidence != PerceptionType.P019.toString() || val) ? true : false
     })
     extraHoursQuantity (nullable:true, validator: { val, obj ->
-      (obj.incidence != PerceptionType.P019.toString() || val) ? true : false
-    })
-    extraHoursAmount (nullable:true, validator: { val, obj ->
       (obj.incidence != PerceptionType.P019.toString() || val) ? true : false
     })
   }
@@ -47,7 +43,7 @@ class PrePaysheetEmployeeIncidenceCommand implements Validateable{
         days: this.extraHoursDays.toInteger(),
         type: extraHourType.key,
         quantity: this.extraHoursQuantity.toInteger(),
-        amount: getValueInBigDecimal(this.extraHoursAmount)
+        amount: getValueInBigDecimal(this.exemptAmount) + getValueInBigDecimal(this.taxedAmount)
       )
     }
 
