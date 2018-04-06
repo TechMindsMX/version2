@@ -290,7 +290,7 @@ class PaysheetService {
 
   Paysheet generatePaysheetReceiptsFromPaysheetForSchema(Paysheet paysheet, PaymentSchema schema) {
     List<PaysheetEmployeeStatus> statusSchema = schema == PaymentSchema.IMSS ? [PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.PAYED] : [PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.PAYED]
-    def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) }
+    def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) && employee.paymentWay == PaymentWay.BANKING }
     employees.each { employee ->
       String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
       paysheetEmployeeService.savePaysheetReceiptUuid(employee, paysheetReceiptUuid)
