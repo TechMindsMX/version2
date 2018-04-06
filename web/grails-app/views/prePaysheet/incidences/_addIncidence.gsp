@@ -61,28 +61,22 @@
       </table>
       <div id="extraHours">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="input-group">
               <label><strong>Días</strong></label><br/>
               <input id="extraHoursDays" name="extraHoursDays" class="form-control" type="number" min="1" step="1"/>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="input-group">
               <label><strong>Tipo</strong></label><br/>
               <g:select id="extraHoursType" name="extraHoursType" from="${ExtraHourType.values()}" class="form-control" noSelection="['':'Elija el esquema de pago']" />
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="input-group">
               <label><strong>Horas</strong></label><br/>
               <input id="extraHoursQuantity" name="extraHoursQuantity" class="form-control" type="number" min="1" step="1"/>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="input-group">
-              <label><strong>Importe</strong></label><br/>
-              <input type="text" id="extraHoursAmount" name="extraHoursAmount" class="form-control" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta con 2 decimales)"/>
             </div>
           </div>
       </div>
