@@ -109,20 +109,20 @@
 
   <div class="row">
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED || paysheet.status == PaysheetStatus.CREATED}">
-      <div class="col-md-4">
+      <div class="col-md-6">
 				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary}">
 					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
-        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status)}}">
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status) && it.paymentWay == PaymentWay.BANKING }}">
           <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'IMSS']">Timbrar SA</g:link>
         </g:if>
-        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status)}}">
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status) && it.paymentWay == PaymentWay.BANKING }}">
           <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'Asimilable']">Timbrar IAS</g:link>
         </g:if>
 				</sec:ifAnyGranted>
       </div>
-      <div class="col-md-8 text-right">
+      <div class="col-md-6 text-right">
         <g:link class="btn btn-default" action="exportToXlsCash" id="${paysheet.id}">XLS EFECTIVO/CHEQUE</g:link>
         <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
         <g:link class="btn btn-default" action="exportToXlsAssimilable" id="${paysheet.id}">XLS Asimilables</g:link>
