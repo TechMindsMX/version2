@@ -76,10 +76,9 @@ class DataImssEmployeeService {
     dataImssToSave.id && exists ? dataImssToSave.id != exists.id : !dataImssToSave.id && exists
   }
 
-  String calculateLaborOldInSATFormat(DataImssEmployee dataImssEmployee) {
-    Date endDate = dataImssEmployee.dischargeDate ?: new Date()
+  String calculateLaborOldInSATFormat(DataImssEmployee dataImssEmployee, Date paymentDate) {
     DateTime dtStart = new DateTime(dataImssEmployee.registrationDate)
-    DateTime dtEnd = new DateTime(endDate)
+    DateTime dtEnd = new DateTime(paymentDate)
 
     Interval interval = new Interval(dtStart.millis, dtEnd.millis)
     Period period = interval.toPeriod(PeriodType.yearMonthDay())
