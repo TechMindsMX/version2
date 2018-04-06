@@ -19,6 +19,6 @@ class Paysheet {
   }
 
   BigDecimal getTotal() {
-    employees*.totalToInvoice.sum() ?: 0
+    employees*.totalToInvoice?.sum() ?: 0
   }
 }
