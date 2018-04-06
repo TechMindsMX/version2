@@ -78,15 +78,14 @@ class DataImssEmployeeService {
 
   String calculateLaborOldInSATFormat(DataImssEmployee dataImssEmployee, Date paymentDate) {
     DateTime dtStart = new DateTime(dataImssEmployee.registrationDate)
-    DateTime dtEnd = new DateTime(paymentDate)
+    DateTime dtEnd = new DateTime(paymentDate+1)
 
     Interval interval = new Interval(dtStart.millis, dtEnd.millis)
     Period period = interval.toPeriod(PeriodType.yearMonthDay())
 
-    PeriodFormatter pf = new PeriodFormatterBuilder().appendYears().appendSuffix("Y")
-    .appendMonths().appendSuffix("M")
-    .appendDays().appendSuffix("D").toFormatter()
+    String antYears = period.years ? "${period.years}Y" : ""
+    String antMonths = period.months ? "${period.months}M" : period.years ? "0M" : ""
 
-    "P${pf.print(period).trim()}"
+    "P${antYears}${antMonths}${period.days}D"
   }
 }
