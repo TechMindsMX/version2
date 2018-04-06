@@ -54,12 +54,12 @@ class DataImssEmployeeServiceSpec extends Specification {
       laborOld == theLaborOld
     where:
       theStartDate                            |   theEndDate                              ||    theLaborOld
-      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "01-02-2018")    ||    "P1M" 
-      Date.parse("dd-MM-yyy", "01-02-2018")   |  Date.parse("dd-MM-yyy", "01-03-2018")    ||    "P1M" 
-      Date.parse("dd-MM-yyy", "01-04-2018")   |  Date.parse("dd-MM-yyy", "01-05-2018")    ||    "P1M" 
-      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "31-01-2018")    ||    "P30D" 
-      Date.parse("dd-MM-yyy", "16-02-2018")   |  Date.parse("dd-MM-yyy", "28-02-2018")    ||    "P12D" 
-      Date.parse("dd-MM-yyy", "16-02-2017")   |  Date.parse("dd-MM-yyy", "16-02-2018")    ||    "P1Y" 
-      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "26-03-2018")    ||    "P2M25D" 
+      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "01-02-2018")    ||    "P1M1D" 
+      Date.parse("dd-MM-yyy", "01-02-2018")   |  Date.parse("dd-MM-yyy", "01-03-2018")    ||    "P1M1D" 
+      Date.parse("dd-MM-yyy", "01-04-2018")   |  Date.parse("dd-MM-yyy", "01-05-2018")    ||    "P1M1D" 
+      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "31-01-2018")    ||    "P1M0D" 
+      Date.parse("dd-MM-yyy", "16-02-2018")   |  Date.parse("dd-MM-yyy", "28-02-2018")    ||    "P13D" 
+      Date.parse("dd-MM-yyy", "16-02-2017")   |  Date.parse("dd-MM-yyy", "16-02-2018")    ||    "P1Y0M1D" 
+      Date.parse("dd-MM-yyy", "01-01-2018")   |  Date.parse("dd-MM-yyy", "26-03-2018")    ||    "P2M26D" 
   }
 }
