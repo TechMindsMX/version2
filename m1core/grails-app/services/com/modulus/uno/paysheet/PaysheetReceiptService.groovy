@@ -36,6 +36,7 @@ class PaysheetReceiptService {
       id: paysheetEmployee.paysheet.paysheetContract.company.id
     )
     paysheetReceipt.concepto = createConceptForPaysheetEmployee(paysheetReceipt)
+    log.info "Concepto: ${paysheetReceipt.concepto.dump()}"
     paysheetReceipt
   }
 
@@ -49,12 +50,19 @@ class PaysheetReceiptService {
   Contribuyente createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, PaymentSchema schema) {
     PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheetEmployee.paysheet.paysheetContract, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
     PayerPaysheetProject payer = paysheetProject.payers.find { payer -> payer.paymentSchema == schema }
+    Address address = payer.company.addresses.find { address -> address.addressType == AddressType.FISCAL }
     new Contribuyente (
       registroPatronal: paysheetEmployee.paysheet.paysheetContract.employerRegistration,
       datosFiscales: new DatosFiscales (
         razonSocial: payer.company.bussinessName,
         rfc: (Environment.current == Environment.PRODUCTION) ? payer.company.rfc : "AAA010101AAA",
-        codigoPostal: payer.company.addresses.find { address -> address.addressType == AddressType.FISCAL }.zipCode
+        calle: address.street,
+        noExterior: address.streetNumber,
+        noInterior: address.suite ?: "SN",
+        ciudad: address.city,
+        colonia: address.colony ?: address:neighboorhood,
+        delegacion: address.town,
+        codigoPostal: address.zipCode
       )
     )
   }
@@ -183,7 +191,7 @@ class PaysheetReceiptService {
 
   Concepto createConceptForPaysheetEmployee(PaysheetReceiptCommand paysheetReceipt) {
     new Concepto (
-      valorUnitario: paysheetReceipt.nomina.percepciones?.detalles*.importeExento.sum() ?: 0 + paysheetReceipt.nomina.percepciones?.detalles*.importeGravado.sum() ?: 0 + paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeExento.sum() : 0 + paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeGravado.sum() : 0,
+      valorUnitario: (paysheetReceipt.nomina.percepciones?.detalles*.importeExento.sum() ?: 0) + (paysheetReceipt.nomina.percepciones?.detalles*.importeGravado.sum() ?: 0) + (paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeExento.sum() : 0) + (paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeGravado.sum() : 0),
       descuento: paysheetReceipt.nomina.deducciones.detalles ? paysheetReceipt.nomina.deducciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.deducciones.detalles*.importeGravado.sum() : 0
     )
   }
