@@ -70,7 +70,7 @@
           <div class="col-md-4">
             <div class="input-group">
               <label><strong>Tipo</strong></label><br/>
-              <g:select id="extraHoursType" name="extraHoursType" from="${ExtraHourType.values()}" class="form-control" noSelection="['':'Elija el esquema de pago']" />
+              <g:select id="extraHoursType" name="extraHoursType" from="${ExtraHourType.values()}" class="form-control" noSelection="['':'Elija el tipo de horas extra']" />
             </div>
           </div>
           <div class="col-md-4">
