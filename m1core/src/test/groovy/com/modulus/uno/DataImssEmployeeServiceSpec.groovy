@@ -45,11 +45,11 @@ class DataImssEmployeeServiceSpec extends Specification {
   }
 
   @Unroll
-  void "Should calculate labor old = #theLaborOld when registration date is #theStartDate and discharge date is #theEndDate" () {
+  void "Should calculate labor old = #theLaborOld when registration date is #theStartDate and payment date is #theEndDate" () {
     given:"The data imss employee"
-      DataImssEmployee dataImssEmployee = new DataImssEmployee(registrationDate:theStartDate, dischargeDate:theEndDate).save(validate:false)
+      DataImssEmployee dataImssEmployee = new DataImssEmployee(registrationDate:theStartDate).save(validate:false)
     when:
-      String laborOld = service.calculateLaborOldInSATFormat(dataImssEmployee)
+      String laborOld = service.calculateLaborOldInSATFormat(dataImssEmployee, theEndDate)
     then:
       laborOld == theLaborOld
     where:
