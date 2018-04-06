@@ -12,6 +12,8 @@ import com.modulus.uno.RestException
 import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.RestService
 
+import grails.util.Environment
+
 class PaysheetReceiptService {
 
   PaysheetProjectService paysheetProjectService
@@ -20,7 +22,7 @@ class PaysheetReceiptService {
   def grailsApplication
 
   String generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    PaysheetReceiptCommand paysheetReceipt = createPaysheetDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
+    PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
     stampPaysheetReceipt(paysheetReceipt)
   }
 
@@ -31,9 +33,9 @@ class PaysheetReceiptService {
       receptor: createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
       nomina: createPaysheetDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
       esquema: schema.toString(),
-      id: paysheetEmployee.paysheet.paysheetContract.company
+      id: paysheetEmployee.paysheet.paysheetContract.company.id
     )
-    paysheetReceipt.concepto = createConceptForPaysheetEmployee(paysheetReceiptCommand)
+    paysheetReceipt.concepto = createConceptForPaysheetEmployee(paysheetReceipt)
     paysheetReceipt
   }
 
@@ -44,14 +46,14 @@ class PaysheetReceiptService {
     )
   }
 
-  Contribuyente createEmitterFromPaysheetEmployee(paysheetEmployee, PaymentSchema schema) {
+  Contribuyente createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, PaymentSchema schema) {
     PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheetEmployee.paysheet.paysheetContract, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
     PayerPaysheetProject payer = paysheetProject.payers.find { payer -> payer.paymentSchema == schema }
     new Contribuyente (
       registroPatronal: paysheetEmployee.paysheet.paysheetContract.employerRegistration,
       datosFiscales: new DatosFiscales (
         razonSocial: payer.company.bussinessName,
-        rfc: payer.company.rfc,
+        rfc: (Environment.current == Environment.PRODUCTION) ? payer.company.rfc : "AAA010101AAA",
         codigoPostal: payer.company.addresses.find { address -> address.addressType == AddressType.FISCAL }.zipCode
       )
     )
@@ -59,7 +61,7 @@ class PaysheetReceiptService {
 
   Empleado createReceiverFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     new Empleado(
-      rfc: paysheetEmployee.prePaysheetEmployee.rfc,
+      rfc: (Environment.current == Environment.PRODUCTION) ? paysheetEmployee.prePaysheetEmployee.rfc : "BUPA690824IRA",
       nombre: paysheetEmployee.prePaysheetEmployee.nameEmployee,
       curp: paysheetEmployee.prePaysheetEmployee.curp,
       datosBancarios: new DatosBancarios(banco:paysheetEmployee.prePaysheetEmployee.bank.bankingCode.substring(2,5), cuenta:paysheetEmployee.prePaysheetEmployee.account),
@@ -72,14 +74,14 @@ class PaysheetReceiptService {
     EmployeeLink employeeLink = EmployeeLink.findByCompanyAndEmployeeRef(paysheetEmployee.paysheet.paysheetContract.company, paysheetEmployee.prePaysheetEmployee.rfc)
     DataImssEmployee dataImssEmployee = DataImssEmployee.findByEmployee(employeeLink)
     new DatosLaborales (
-      entidad: paysheetProject.federalEntity,
+      entidad: paysheetProject.federalEntity.name(),
       noEmpleado: paysheetEmployee.prePaysheetEmployee.numberEmployee,
       tipoContrato: paymentSchema == PaymentSchema.IMSS ? dataImssEmployee.contractType.key : ContractType.WORK_WITHOUT_RELATION.key,
       periodoPago: dataImssEmployee.paymentPeriod.key,
       tipoRegimen: paymentSchema == PaymentSchema.IMSS ? dataImssEmployee.regimeType.key : RegimeType.FEES_ASSIMILATED.key,
       tipoJornada: dataImssEmployee.workDayType.key,
       datosImss: new DatosImss (
-        antiguedad: dataImssEmployeeService.calculateLaborOldInSATFormat(dataImssEmployee),
+        antiguedad: dataImssEmployeeService.calculateLaborOldInSATFormat(dataImssEmployee, paysheetEmployee.paysheet.prePaysheet.endPeriod),
         departamento: dataImssEmployee.department,
         fechaAlta: dataImssEmployee.registrationDate.format("yyyy-MM-dd"),
         nss: dataImssEmployee.nss,
@@ -181,8 +183,8 @@ class PaysheetReceiptService {
 
   Concepto createConceptForPaysheetEmployee(PaysheetReceiptCommand paysheetReceipt) {
     new Concepto (
-      valorUnitario: paysheetReceipt.nomina.percepciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.percepciones.detalles*.importeGravado.sum() + paysheetReceipt.nomina.otrosPagos*.importeExento.sum() + paysheetReceipt.nomina.otrosPagos*.importeGravado.sum(),
-      descuento: paysheetReceipt.nomina.deducciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.deducciones.detalles*.importeGravado.sum()
+      valorUnitario: paysheetReceipt.nomina.percepciones?.detalles*.importeExento.sum() ?: 0 + paysheetReceipt.nomina.percepciones?.detalles*.importeGravado.sum() ?: 0 + paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeExento.sum() : 0 + paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeGravado.sum() : 0,
+      descuento: paysheetReceipt.nomina.deducciones.detalles ? paysheetReceipt.nomina.deducciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.deducciones.detalles*.importeGravado.sum() : 0
     )
   }
 
