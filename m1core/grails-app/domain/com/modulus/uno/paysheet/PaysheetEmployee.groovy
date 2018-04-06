@@ -38,15 +38,15 @@ class PaysheetEmployee {
   }
 
   BigDecimal getPaysheetTotal() {
-    getPaysheetCost() + this.commission
+    getPaysheetCost() ?: 0 + this.commission ?: 0
   }
 
   BigDecimal getPaysheetIva() {
-    getPaysheetTotal() * (this.ivaRate / 100)
+    getPaysheetTotal() ?: 0 * (this.ivaRate / 100)
   }
 
   BigDecimal getTotalToInvoice() {
-    getPaysheetTotal() + getPaysheetIva()
+    getPaysheetTotal() ?: 0 + getPaysheetIva() ?: 0
   }
 
   BigDecimal getTotalIncidencesImssPerceptions() {
@@ -56,7 +56,7 @@ class PaysheetEmployee {
       }
     }.grep()
 
-    incidencesPerceptionImss ? incidencesPerceptionImss*.exemptAmount.sum() + incidencesPerceptionImss*.taxedAmount.sum() + incidencesPerceptionImss*.extraHourIncidence?.amount.sum() : 0
+    incidencesPerceptionImss ? incidencesPerceptionImss*.exemptAmount.sum() ?: 0 + incidencesPerceptionImss*.taxedAmount.sum() ?: 0 : 0
   }
 
   BigDecimal getTotalIncidencesImssDeductions() {
