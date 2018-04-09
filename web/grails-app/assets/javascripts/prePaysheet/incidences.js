@@ -7,6 +7,7 @@ $("#incidenceType").change( function() {
   $("#extraHours").hide();
   $("#perceptions").val("");
   $("#deductions").val("");
+  $("#exemptAmount").attr("readOnly", false);
   if (this.value == '') {
     $("#perceptions").hide();
     $("#deductions").hide();
@@ -15,6 +16,7 @@ $("#incidenceType").change( function() {
     $("#deductions").show();
     $("#perceptions").removeAttr("required");
     $("#deductions").attr("required", true);
+    $("#exemptAmount").attr("readOnly", true);
   } else {
     $("#perceptions").show();
     $("#deductions").hide(); 
