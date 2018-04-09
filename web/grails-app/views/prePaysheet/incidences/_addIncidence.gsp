@@ -38,9 +38,9 @@
               </div>
             </td>
             <td>
-              <div id="exemptAmount" class="input-group">
+              <div class="input-group">
                 <div class="input-group-addon">$</div>
-                <input type="text" name="exemptAmount" class="form-control" required="" value="0" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta con 2 decimales)"/>
+                <input type="text" id="exemptAmount" name="exemptAmount" class="form-control" required="" value="0" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta con 2 decimales)"/>
               </div>
             </td>
             <td>
