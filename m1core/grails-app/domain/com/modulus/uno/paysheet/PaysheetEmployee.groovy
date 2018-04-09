@@ -56,7 +56,7 @@ class PaysheetEmployee {
       }
     }.grep()
 
-    incidencesPerceptionImss ? incidencesPerceptionImss*.exemptAmount.sum() ?: 0 + incidencesPerceptionImss*.taxedAmount.sum() ?: 0 : 0
+    incidencesPerceptionImss ? (incidencesPerceptionImss*.exemptAmount.sum() ?: 0) + (incidencesPerceptionImss*.taxedAmount.sum() ?: 0) : 0
   }
 
   BigDecimal getTotalIncidencesImssDeductions() {
@@ -66,7 +66,7 @@ class PaysheetEmployee {
       }
     }.grep()
 
-    incidencesDeductionImss ? incidencesDeductionImss*.exemptAmount.sum() + incidencesDeductionImss*.taxedAmount.sum() : 0
+    incidencesDeductionImss ? (incidencesDeductionImss*.exemptAmount.sum() ?: 0) + (incidencesDeductionImss*.taxedAmount.sum() ?: 0) : 0
   }
 
   BigDecimal getTotalIncidencesAssimilablePerceptions() {
@@ -76,7 +76,7 @@ class PaysheetEmployee {
       }
     }.grep()
 
-    incidencesPerceptionAssimilable ? incidencesPerceptionAssimilable*.exemptAmount.sum() + incidencesPerceptionAssimilable*.taxedAmount.sum() + incidencesPerceptionAssimilable*.extraHourIncidence?.amount.sum()  : 0
+    incidencesPerceptionAssimilable ? (incidencesPerceptionAssimilable*.exemptAmount.sum() ?: 0) + (incidencesPerceptionAssimilable*.taxedAmount.sum() ?: 0) : 0
 
   }
 
@@ -87,7 +87,7 @@ class PaysheetEmployee {
       }
     }.grep()
 
-    incidencesDeductionAssimilable ? incidencesDeductionAssimilable*.exemptAmount.sum() + incidencesDeductionAssimilable*.taxedAmount.sum() : 0
+    incidencesDeductionAssimilable ? (incidencesDeductionAssimilable*.exemptAmount.sum() ?: 0) + (incidencesDeductionAssimilable*.taxedAmount.sum() ?: 0) : 0
 
   }
 }
