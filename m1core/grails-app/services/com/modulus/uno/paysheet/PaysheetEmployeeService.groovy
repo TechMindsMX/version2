@@ -190,6 +190,22 @@ class PaysheetEmployeeService {
 
   @Transactional
   PaysheetEmployee setStampedStatusToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(paysheetEmployee.status) ? "set${schema.name()}StampedStatusToEmployee"(paysheetEmployee) : [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status) ? setFullStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}StampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+  }
+
+  Boolean employeeIsPayed(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasSAAndIASPayment(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.imssSalaryNet && paysheetEmployee.netAssimilable
+  }
+
+  Boolean employeeIsOnlySchemaStamped(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasOnlySchemaPayment(PaysheetEmployee paysheetEmployee) {
+    !paysheetEmployee.imssSalaryNet || !paysheetEmployee.netAssimilable
   }
 }
