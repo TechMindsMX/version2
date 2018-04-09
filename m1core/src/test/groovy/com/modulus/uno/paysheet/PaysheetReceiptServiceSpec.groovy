@@ -174,7 +174,7 @@ class PaysheetReceiptServiceSpec extends Specification {
     and:
       paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> createPaysheetProject()
     when:
-      def emitter = service.createEmitterFromPaysheetEmployee(paysheetEmployee, schema)
+      def emitter = service.createEmitterFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
     then:
       emitter.registroPatronal == "REGPATRONAL"
       emitter.datosFiscales.razonSocial == theBusinessName
