@@ -6,6 +6,7 @@ import com.modulus.uno.invoice.*
 import com.modulus.uno.PaysheetReceiptCommand
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
+import com.modulus.uno.Address
 import com.modulus.uno.AddressType
 import com.modulus.uno.RestException
 
@@ -60,7 +61,7 @@ class PaysheetReceiptService {
         noExterior: address.streetNumber,
         noInterior: address.suite ?: "SN",
         ciudad: address.city,
-        colonia: address.colony ?: address:neighboorhood,
+        colonia: address.colony ?: address.neighboorhood,
         delegacion: address.town,
         codigoPostal: address.zipCode
       )
