@@ -61,12 +61,12 @@
                 <td>${employee.prePaysheetEmployee.rfc}</td>
                 <td>${employee.prePaysheetEmployee.curp}</td>
                 <td>${employee.prePaysheetEmployee.bank?.bankingCode}</td>
-                <td>${employee.prePaysheetEmployee.bank ? employee.prePaysheetEmployee.bank.name : "EFECTIVO/CHEQUE"}</td>
+                <td>${employee.prePaysheetEmployee.bank.name}</td>
                 <td>${employee.prePaysheetEmployee.clabe}</td>
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>
                 <td>
-									<g:if test="${employee.prePaysheetEmployee.bank && employee.status == PaysheetEmployeeStatus.PENDING}">
+									<g:if test="${employee.paymentWay != PaymentWay.ONLY_CASH && employee.status == PaysheetEmployeeStatus.PENDING}">
 										<g:link action="changePaymentWayFromEmployee" id="${employee.id}" title="Cambiar forma de pago">
 											<g:message code="paysheet.payment.way.${employee.paymentWay}"/>
 										</g:link>
@@ -94,7 +94,7 @@
                 </td>
                 <td class="text-center">
                   <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-                    <g:if test="${employee.paymentWay == PaymentWay.CASH && employee.status == PaysheetEmployeeStatus.PENDING}">
+                    <g:if test="${(employee.paymentWay == PaymentWay.CASH || employee.paymentWay == PaymentWay.ONLY_CASH) && employee.status == PaysheetEmployeeStatus.PENDING}">
                       <g:link class="btn btn-primary" action="setPayedToEmployee" id="${employee.id}">Pagar</g:link>
                     </g:if>
                   </sec:ifAnyGranted>

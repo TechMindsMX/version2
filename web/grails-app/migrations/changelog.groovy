@@ -128,4 +128,5 @@ databaseChangeLog = {
   include file: 'adding-column-employer-registration-to-paysheet-contract.groovy'
   include file: 'adding-columns-for-paysheet-receipt-into-data-imss-employee.groovy'
   include file: 'adding-column-federal-entity-to-paysheet-project.groovy'
+  include file: 'adding-column-branch-to-pre-paysheet-employee.groovy'
 }

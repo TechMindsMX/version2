@@ -67,6 +67,49 @@ class PaysheetContractController {
     respond paysheetContract
   }
 
+  def edit(PaysheetContract paysheetContract) {
+    Company company = Company.get(session.company)
+    def clients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
+    clients.add(0, paysheetContract.client)
+    List<User> users = companyService.getUsersWithRoleForCompany("ROLE_OPERATOR_PAYSHEET", company)
+    respond paysheetContract, model:[company:company, clients:clients, users:users] 
+  }
+  
+  @Transactional
+  def update(PaysheetContractCommand command) {
+    log.info "Updating paysheet contract: ${command.dump()}"
+    Company company = Company.get(session.company)
+    if (!command) {
+      transactionStatus.setRollbackOnly()
+      notFound()
+      return
+    }
+
+    PaysheetContract paysheetContract = command.updatePaysheetContract()
+    log.info "PaysheetContrat to update: ${paysheetContract.dump()}"
+
+    def clients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
+    clients.add(0, paysheetContract.client)
+    List<User> users = companyService.getUsersWithRoleForCompany("ROLE_OPERATOR_PAYSHEET", company)
+
+    if (command.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      respond command.errors, view:"edit", model:[company:company, clients:clients, users:users]
+      return
+    }
+
+    paysheetContractService.savePaysheetContract(paysheetContract)
+
+    log.info "Paysheet Contract updated: ${paysheetContract.dump()}"
+    if (paysheetContract.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      respond paysheetContract.errors, view:"edit", model:[company:company, clients:clients, users:users]
+      return
+    }
+
+    redirect action:"show", id:paysheetContract.id 
+  }
+
   def addEmployees(PaysheetContract paysheetContract){
     List<BusinessEntity> availableEmployees = paysheetContractService.getEmployeesAvailableToAdd(paysheetContract)
     render view:"show", model:[paysheetContract:paysheetContract, availableEmployees:availableEmployees]
