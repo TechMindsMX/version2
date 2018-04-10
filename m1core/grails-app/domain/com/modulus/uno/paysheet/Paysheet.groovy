@@ -12,7 +12,7 @@ class Paysheet {
   Date lastUpdated
 
   static belongsTo = [paysheetContract:PaysheetContract]
-  static hasMany = [employees:PaysheetEmployee, dispersionFiles:S3Asset]
+  static hasMany = [employees:PaysheetEmployee, dispersionFiles:S3Asset, dispersionResultFiles:DispersionResultFile]
 
   static constraints = {
     rejectReason nullable:true
