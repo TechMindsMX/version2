@@ -163,4 +163,49 @@ class PaysheetEmployeeService {
     paysheetEmployee
   }
 
+  @Transactional
+  PaysheetEmployee savePaysheetReceiptUuid(PaysheetEmployee paysheetEmployee, String paysheetReceiptUuid) {
+    paysheetEmployee.paysheetReceiptUuid = paysheetReceiptUuid
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setIMSSStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setASSIMILABLEStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setFullStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.FULL_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  @Transactional
+  PaysheetEmployee setStampedStatusToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}StampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+  }
+
+  Boolean employeeIsPayed(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasSAAndIASPayment(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.imssSalaryNet && paysheetEmployee.netAssimilable
+  }
+
+  Boolean employeeIsOnlySchemaStamped(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasOnlySchemaPayment(PaysheetEmployee paysheetEmployee) {
+    !paysheetEmployee.imssSalaryNet || !paysheetEmployee.netAssimilable
+  }
 }

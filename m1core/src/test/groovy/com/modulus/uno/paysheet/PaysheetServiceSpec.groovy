@@ -18,11 +18,13 @@ class PaysheetServiceSpec extends Specification {
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
   PaysheetDispersionFilesService paysheetDispersionFilesService = Mock(PaysheetDispersionFilesService)
   PrePaysheetService prePaysheetService = Mock(PrePaysheetService)
+  PaysheetReceiptService paysheetReceiptService = Mock(PaysheetReceiptService)
 
   def setup() {
     service.paysheetEmployeeService = paysheetEmployeeService
     service.prePaysheetService = prePaysheetService
     service.paysheetDispersionFilesService = paysheetDispersionFilesService
+    service.paysheetReceiptService = paysheetReceiptService
     grailsApplication.config.paysheet.banks = "40002,40012,40014"
   }
 
@@ -169,6 +171,56 @@ class PaysheetServiceSpec extends Specification {
 			[new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"UNO"))] 	|| "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: UNO"
 			[new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"UNO")), new PaysheetEmployee(prePaysheetEmployee:new PrePaysheetEmployee(rfc:"DOS"))] 	|| "LOS SIGUIENTES EMPLEADOS RESULTARON CON UN NETO A PAGAR DISTINTO AL INDICADO EN LA PRENÓMINA: UNO,DOS"
 	}
+
+  void "Should generate paysheet receipts from paysheet for schema IMSS"() {
+    given:"The paysheet"
+      Paysheet paysheet = createPaysheetWithEmployees()
+    and:"The schema"
+      PaymentSchema schema = PaymentSchema.IMSS
+    and:
+      paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> "UUID_PAYSHEET_RECEIPT"
+    when:
+      def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
+    then:
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
+      3 * paysheetEmployeeService.savePaysheetReceiptUuid(_, _)
+      3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
+  }
+
+  void "Should generate paysheet receipts from paysheet for schema ASSIMILABLE"() {
+    given:"The paysheet"
+      Paysheet paysheet = createPaysheetWithEmployees()
+    and:"The schema"
+      PaymentSchema schema = PaymentSchema.ASSIMILABLE
+    and:
+      paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> "UUID_PAYSHEET_RECEIPT"
+    when:
+      def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
+    then:
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
+      3 * paysheetEmployeeService.savePaysheetReceiptUuid(_, _)
+      3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
+  }
+
+  private Paysheet createPaysheetWithEmployees() {
+    Paysheet paysheet = new Paysheet(employees:[]).save(validate:false)
+    paysheet.employees.addAll(createEmployeesForTestPaysheetReceipts())
+    paysheet
+  }
+
+  private def createEmployeesForTestPaysheetReceipts() {
+    [
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.PENDING).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.PAYED).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.CANCELED).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.REJECTED).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.IMSS_PAYED).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.ASSIMILABLE_PAYED).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.IMSS_STAMPED).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.ASSIMILABLE_STAMPED).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.FULL_STAMPED).save(validate:false)
+    ]
+  }
 
   private PaysheetEmployee createPaysheetEmployee() {
 		Company company = new Company().save(validate:false)

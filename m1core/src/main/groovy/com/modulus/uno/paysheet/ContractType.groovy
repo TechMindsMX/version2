@@ -1,7 +1,7 @@
 package com.modulus.uno.paysheet
 
 enum ContractType {
-  INDEFINED("01", "Contrato de trabajo por tiempo indeterminado"),
+  UNDEFINED("01", "Contrato de trabajo por tiempo indeterminado"),
   DEFINED_WORK("02", "Contrato de trabajo para obra determinada"),
   DEFINED_TIME("03", "Contrato de trabajo por tiempo determinado"),
   SEASON_WORK("04","Contrato de trabajo por temporada"),

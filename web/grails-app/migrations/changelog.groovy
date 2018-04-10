@@ -129,4 +129,11 @@ databaseChangeLog = {
   include file: 'adding-columns-for-paysheet-receipt-into-data-imss-employee.groovy'
   include file: 'adding-column-federal-entity-to-paysheet-project.groovy'
     include file: 'adding-column-branch-to-pre-paysheet-employee.groovy'
+    include file: 'adding-columns-key-keyType-taxed-amount-to-pre-paysheet-employee-incidence.groovy'
+    include file: 'create-domain-extra-hour-incidence-and-add-relation-to-pre-paysheet-employee-incidence.groovy'
+    include file: 'adding-column-discharge-date-into-data-imss-employee.groovy'
+    include file: 'adding-folio-and-serie-into-paysheet-contract.groovy'
+    include file: 'adding-column-job-risk-to-data-imss-employee.groovy'
+    include file: 'adding-column-paysheet-receipt-uuid-to-paysheet-employee.groovy'
+    include file: 'updating-column-contract-type-indefined-to-undefined-into-data-imss-employee.groovy'
 }

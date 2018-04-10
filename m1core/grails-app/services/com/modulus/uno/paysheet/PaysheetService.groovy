@@ -14,6 +14,7 @@ class PaysheetService {
   PrePaysheetService prePaysheetService
   def grailsApplication
   PaysheetDispersionFilesService paysheetDispersionFilesService
+  PaysheetReceiptService paysheetReceiptService
 
   @Transactional
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
@@ -286,4 +287,16 @@ class PaysheetService {
   def processResultDispersionFileToPaysheet(Paysheet paysheet, def params) {
     paysheetDispersionFilesService.processResultDispersionFile(paysheet, params)
   }
+
+  Paysheet generatePaysheetReceiptsFromPaysheetForSchema(Paysheet paysheet, PaymentSchema schema) {
+    List<PaysheetEmployeeStatus> statusSchema = schema == PaymentSchema.IMSS ? [PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.PAYED] : [PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.PAYED]
+    def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) && employee.paymentWay == PaymentWay.BANKING }
+    employees.each { employee ->
+      String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
+      paysheetEmployeeService.savePaysheetReceiptUuid(employee, paysheetReceiptUuid)
+      paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
+    }
+    paysheet
+  }
+
 }
