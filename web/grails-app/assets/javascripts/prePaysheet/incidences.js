@@ -65,3 +65,7 @@ $("#perceptions").change( function() {
 $("#deductions").change( function() {
   $("#incidence").val(this.value);
 });
+
+$("#others").change( function() {
+  $("#incidence").val(this.value);
+});
