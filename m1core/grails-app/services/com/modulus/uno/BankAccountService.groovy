@@ -130,7 +130,7 @@ class BankAccountService {
   }
 
   BankAccount createBankAccountForBusinessEntityFromRowBusinessEntity(BusinessEntity businessEntity, Map rowBusinessEntity) {
-    Map dataBank = getDataBankFromClabe(rowBusinessEntity.CLABE)
+    Map dataBank = getDataBankFromRowEmployee(rowBusinessEntity)
     BankAccount bankAccount = new BankAccount(
       accountNumber:dataBank.accountNumber,
       branchNumber:dataBank.branchNumber,

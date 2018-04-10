@@ -2,6 +2,9 @@ package com.modulus.uno
 
 import java.text.*
 import grails.validation.Validateable
+import com.modulus.uno.paysheet.ContractType
+import com.modulus.uno.paysheet.RegimeType
+import com.modulus.uno.paysheet.WorkDayType
 
 class DataImssEmployeeCommand implements Validateable {
 
@@ -13,6 +16,11 @@ class DataImssEmployeeCommand implements Validateable {
   String holidayBonusRate
   String annualBonusDays
   String paymentPeriod
+  String contractType
+  String regimeType
+  String workDayType
+  String department
+  String job
 
   static constraints = {
     idEmployee nullable:false
@@ -23,6 +31,11 @@ class DataImssEmployeeCommand implements Validateable {
     holidayBonusRate nullable:false
     annualBonusDays nullable:false
     paymentPeriod nullable:false
+    contractType nullable:false
+    regimeType nullable:false
+    workDayType nullable:false
+    department nullable:false
+    job nullable:false
   }
 
   DataImssEmployee createDataImssEmployee() {
@@ -35,7 +48,12 @@ class DataImssEmployeeCommand implements Validateable {
       totalMonthlySalary:getValueInBigDecimal(this.totalMonthlySalary),
       holidayBonusRate:getValueInBigDecimal(this.holidayBonusRate),
       annualBonusDays:this.annualBonusDays.toInteger(),
-      paymentPeriod:PaymentPeriod.find { it.toString() == this.paymentPeriod }
+      paymentPeriod:PaymentPeriod.find { it.toString() == this.paymentPeriod },
+      contractType:ContractType.find { it.toString() == this.contractType },
+      regimeType:RegimeType.find { it.toString() == this.regimeType },
+      workDayType:WorkDayType.find { it.toString() == this.workDayType },
+      department:this.department,
+      job:this.job
     )
   }
 

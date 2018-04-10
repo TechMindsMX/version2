@@ -22,24 +22,40 @@
   </div>
   <g:if test="${dataImssEmployee}">
   <div class="panel-body">
-    <dl>
-      <dt>Número de Seguro Social</dt>
-      <dd>${dataImssEmployee.nss}</dd>
-      <dt>Fecha de Alta</dt>
-      <dd><g:formatDate date="${dataImssEmployee.registrationDate}" format="dd-MM-yyyy"/></dd>
-      <dt>SA Bruto Mensual</dt>
-      <dd>${modulusuno.formatPrice(number:dataImssEmployee.baseImssMonthlySalary)}</dd>
-      <dt>IAS</dt>
-      <dd>${modulusuno.formatPrice(number:(dataImssEmployee.totalMonthlySalary - dataImssEmployee.baseImssMonthlySalary))}</dd>
-      <dt>Total Mensual</dt>
-      <dd>${modulusuno.formatPrice(number:dataImssEmployee.totalMonthlySalary)}</dd>
-      <dt>Prima vacacional (%)</dt>
-      <dd><g:formatNumber number="${dataImssEmployee.holidayBonusRate}" type="number" maxFractionDigits="2"/></dd>
-      <dt>Días de Aguinaldo</dt>
-      <dd><g:formatNumber number="${dataImssEmployee.annualBonusDays}" type="number" maxFractionDigits="2"/></dd>
-      <dt>Periodicidad de pago</dt>
-      <dd>${dataImssEmployee.paymentPeriod}</dd>
-    </dl>
+    <div class="row">
+      <div class="col-md-6">
+        <dl>
+          <dt><g:message code="dataImssEmployee.label.nss"/></dt>
+          <dd>${dataImssEmployee.nss}</dd>
+          <dt><g:message code="dataImssEmployee.label.registrationDate"/></dt>
+          <dd><g:formatDate date="${dataImssEmployee.registrationDate}" format="dd-MM-yyyy"/></dd>
+          <dt><g:message code="dataImssEmployee.label.baseImssMonthlySalary"/></dt>
+          <dd>${modulusuno.formatPrice(number:dataImssEmployee.baseImssMonthlySalary)}</dd>
+          <dt><g:message code="dataImssEmployee.label.totalMonthlySalary"/></dt>
+          <dd>${modulusuno.formatPrice(number:dataImssEmployee.totalMonthlySalary)}</dd>
+          <dt><g:message code="dataImssEmployee.label.holidayBonusRate"/></dt>
+          <dd><g:formatNumber number="${dataImssEmployee.holidayBonusRate}" type="number" maxFractionDigits="2"/></dd>
+          <dt><g:message code="dataImssEmployee.label.annualBonusDays"/></dt>
+          <dd><g:formatNumber number="${dataImssEmployee.annualBonusDays}" type="number" maxFractionDigits="2"/></dd>
+        </dl>
+      </div>
+      <div class="col-md-6">
+        <dl>
+          <dt><g:message code="dataImssEmployee.label.paymentPeriod"/></dt>
+          <dd>${dataImssEmployee.paymentPeriod}</dd>
+          <dt><g:message code="dataImssEmployee.label.department"/></dt>
+          <dd>${dataImssEmployee.department}</dd>
+          <dt><g:message code="dataImssEmployee.label.job"/></dt>
+          <dd>${dataImssEmployee.job}</dd>
+          <dt><g:message code="dataImssEmployee.label.contractType"/></dt>
+          <dd>${dataImssEmployee.contractType}</dd>
+          <dt><g:message code="dataImssEmployee.label.workDayType"/></dt>
+          <dd>${dataImssEmployee.workDayType}</dd>
+          <dt><g:message code="dataImssEmployee.label.regimeType"/></dt>
+          <dd>${dataImssEmployee.regimeType}</dd>
+        </dl>
+      </div>
+    </div>
   </div>
   <div class="panel-footer">
     <div class="row">
