@@ -1,6 +1,7 @@
 <%! import com.modulus.uno.paysheet.IncidenceType %>
 <%! import com.modulus.uno.paysheet.PaymentSchema %>
 <%! import com.modulus.uno.paysheet.PerceptionType %>
+<%! import com.modulus.uno.paysheet.OtherPerceptionType %>
 <%! import com.modulus.uno.paysheet.DeductionType %>
 <%! import com.modulus.uno.paysheet.ExtraHourType %>
 <div class="row">
@@ -30,6 +31,7 @@
                 <g:hiddenField name="incidence" value="" required=""/>
                 <g:select id="perceptions" name="perceptions" from="${PerceptionType.values()}" class="form-control" noSelection="['':'Elija la incidencia']"/>
                 <g:select id="deductions" name="deductions" from="${DeductionType.values()}" class="form-control" noSelection="['':'Elija la incidencia']"/>
+                <g:select id="others" name="others" from="${OtherPerceptionType.values()}" class="form-control" noSelection="['':'Elija la incidencia']"/>
               </div>
             </td>
             <td>
