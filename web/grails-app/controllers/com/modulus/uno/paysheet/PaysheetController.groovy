@@ -32,7 +32,7 @@ class PaysheetController {
     PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
     List<Paysheet> paysheetList = Paysheet.findAllByPaysheetContract(paysheetContract, params)
     Integer paysheetCount = Paysheet.countByPaysheetContract(paysheetContract)
-    render view:"list", model:[client:paysheetContract.client, paysheetList:paysheetList, paysheetCount:paysheetCount]
+    render view:"list", model:[paysheetContract:paysheetContract, paysheetList:paysheetList, paysheetCount:paysheetCount]
   }
 
   def sendToAuthorize(Paysheet paysheet) {
