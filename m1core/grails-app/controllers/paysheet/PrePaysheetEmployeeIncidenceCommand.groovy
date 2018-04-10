@@ -34,7 +34,7 @@ class PrePaysheetEmployeeIncidenceCommand implements Validateable{
   public PrePaysheetEmployeeIncidence createPrePaysheetEmployeeIncidence() {
     PrePaysheetEmployee prePaysheetEmployee = PrePaysheetEmployee.get(this.prePaysheetEmployeeId)
     IncidenceType incidenceType = IncidenceType.values().find { it.toString() == this.type }
-    def incidenceObj = incidenceType == IncidenceType.DEDUCTION ? DeductionType.values().find { it.toString() == this.incidence } : PerceptionType.values().find { it.toString() == this.incidence }
+    def incidenceObj = incidenceType == IncidenceType.DEDUCTION ? DeductionType.values().find { it.toString() == this.incidence } : (incidenceType == IncidenceType.PERCEPTION ? PerceptionType.values().find { it.toString() == this.incidence } : OtherPerceptionType.values().find { it.toString() == this.incidence })
 
     ExtraHourIncidence extraHourIncidence
     if (incidenceObj == PerceptionType.P019) {
