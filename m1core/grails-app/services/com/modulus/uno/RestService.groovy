@@ -91,6 +91,7 @@ class RestService {
         multipart "logo", bodyMap.logo.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
         multipart "password", bodyMap.password.bytes
         multipart "rfc", bodyMap.rfc.bytes
+        multipart "id", bodyMap.id.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
         multipart "serie", bodyMap.serie.bytes
       }
@@ -98,9 +99,9 @@ class RestService {
     response
   }
 
-  def existEmisorForGenerateInvoice(String rfc) {
+  def existEmisorForGenerateInvoice(String rfc, String id) {
     log.info "CALLING Service: Verify if exist emisor"
-    String endpoint = "${grailsApplication.config.modulus.invoice}/${rfc}"
+    String endpoint = "${grailsApplication.config.modulus.invoice}/${rfc}/${id}"
     def response = wsliteRequestService.doRequest(facturacionUrl){
       endpointUrl endpoint
     }.doit()
@@ -146,8 +147,8 @@ class RestService {
 
   def updateFilesForInvoice(def bodyMap) {
     log.info "Calling Service : Update files to stamp"
-    log.info "Path: ${facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
-    def endpoint = "${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}"
+    log.info "Path: ${facturacionUrl}${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}/${bodyMap.id}"
+    def endpoint = "${grailsApplication.config.modulus.invoice}/${bodyMap.rfc}/${bodyMap.id}"
     def response = wsliteRequestService.doRequest(facturacionUrl){
       endpointUrl endpoint
       method HTTPMethod.POST
@@ -166,7 +167,7 @@ class RestService {
   def updateSerieForEmitter(Map params) {
     log.info "Calling Service : Update serie for emitter"
     def url = grailsApplication.config.modulus.updateSerieForEmitter
-    url = url.replace('#rfc', params.rfc)
+    url = url.replace('#rfc', "${params.rfc}/${params.id}")
 
     log.info "Path: ${facturacionUrl}${url}"
     def endpoint = "${url}"

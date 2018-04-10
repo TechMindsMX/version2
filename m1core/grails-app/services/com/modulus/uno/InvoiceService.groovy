@@ -209,7 +209,7 @@ class InvoiceService {
   }
 
   void cancelBill(SaleOrder saleOrder) {
-    CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${saleOrder.folio.length()>36 ? saleOrder.folio.substring(0,36) : saleOrder.folio}", rfc:"${saleOrder.company.rfc}")
+    CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${saleOrder.folio.length()>36 ? saleOrder.folio.substring(0,36) : saleOrder.folio}", rfc:"${saleOrder.company.rfc}", id:"${saleOrder.company.id}")
     def result = restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
     if (!result) {
       throw new RestException("No se pudo realizar la cancelación, intente más tarde")

@@ -24,35 +24,41 @@
       <div class="col-md-12 col-lg-12">
         <g:form action="saveRolesForUser" method="POST" class="form-horizontal" role="form">
         <g:hiddenField name="username" value="${user.username}" />
-        <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th></th>
-              <g:each status="i" in="${roles}" var="role">
-                <th>
-                  <a role="button" data-toggle="popover" data-trigger="hover" data-placement="top" title="${message(code:'role.authority.'+role.authority.toLowerCase())}" data-content="${message(code:'role.authority.'+role.authority.toLowerCase())}" class="information">
-                    <g:message code="role.authority.${role.authority.toLowerCase()}" />
-                  </a>
-                </th>
-              </g:each>
-            </tr>
-          </thead>
-          <tbody>
-            <g:each status="b" in="${companies}" var="company">
-              <tr>
-                <td>${company}</td>
-                <g:each status="a" in="${roles}" var="someRole">
-                  <td>
-                    <modulusuno:checkboxForRoleAtCompany company="${company}" role="${someRole}" rolesOfUser="${rolesOfUser}" />
-                  </td>
-                </g:each>
-              </tr>
-            </g:each>
-          </tbody>
-        </table>
+        <div class="portlet portlet-blue">
+          <div class="portlet-body">
+            <div class="table-responsive">
+              <table class="table table-condensed table-striped">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <g:each status="i" in="${roles}" var="role">
+                      <th class="text-center">
+                        <a role="button" data-toggle="popover" data-trigger="hover" data-placement="top" title="${message(code:'role.authority.'+role.authority.toLowerCase())}" data-content="${message(code:'role.authority.'+role.authority.toLowerCase())}" class="information">
+                          <g:message code="role.authority.${role.authority.toLowerCase()}" />
+                        </a>
+                      </th>
+                    </g:each>
+                  </tr>
+                </thead>
+                <tbody>
+                  <g:each status="b" in="${companies.sort{it.bussinessName}}" var="company">
+                    <tr>
+                      <td>${company}</td>
+                      <g:each status="a" in="${roles}" var="someRole">
+                        <td class="text-center">
+                          <modulusuno:checkboxForRoleAtCompany company="${company}" role="${someRole}" rolesOfUser="${rolesOfUser}" />
+                        </td>
+                      </g:each>
+                    </tr>
+                  </g:each>
+                </tbody>
+              </table>
+            </div>
+            <div class="row text-right">
+              <input class="save btn btn-default" type="submit" value="Aplicar" />
+            </div>
+          </div>
         </div>
-        <input class="save btn btn-default" type="submit" value="${message(code: 'default.button.save.label', default: 'Save')}" />
         </g:form>
       </div>
     </div>

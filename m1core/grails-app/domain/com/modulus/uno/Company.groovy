@@ -7,6 +7,7 @@ class Company implements Linker {
 
   String rfc
   String bussinessName
+  String aliasCompany
   String webSite
   Integer employeeNumbers
   BigDecimal grossAnnualBilling
@@ -32,17 +33,18 @@ class Company implements Linker {
 
   static constraints = {
     bussinessName blank:false,size:1..100
+    aliasCompany nullable:true, blank:true
     webSite nullable:true,size:5..50
     grossAnnualBilling max:250000000.00
-    rfc unique:true,blank:false,size:10..50,matches:/^[A-Z]{3,4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/
+    rfc blank:false,size:10..50,matches:/^[A-Z]{3,4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/
     numberOfAuthorizations nullable:false
     artemisaId nullable:true
   }
 
   String toString(){
-    bussinessName
+    aliasCompany ? "${bussinessName} / ${aliasCompany}" : bussinessName
   }
-
+ 
   static marshaller = {
     JSON.registerObjectMarshaller(Company, 1) { m ->
       return [

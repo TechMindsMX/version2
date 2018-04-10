@@ -35,7 +35,7 @@ class CompanyController {
       def balance, usd, documents
       params.sepomexUrl = grails.util.Holders.grailsApplication.config.sepomex.url
       if (company.status == CompanyStatus.ACCEPTED) {
-        documents = companyService.isAvailableForGenerateInvoices(company.rfc)
+        documents = companyService.isAvailableForGenerateInvoices(company)
         if (company.accounts){
           balance = modulusUnoService.consultBalanceOfAccount(company.accounts.first().stpClabe)
         }
@@ -68,6 +68,7 @@ class CompanyController {
 
   @Transactional
   def update(Company company) {
+    company.grossAnnualBilling = new BigDecimal(params.grossAnnualBilling)
     if (company == null) {
       transactionStatus.setRollbackOnly()
       notFound()
@@ -194,7 +195,7 @@ class CompanyController {
 
   def sendFilesToCreateInvoice() {
     Company company = Company.get(session.company)
-    def responseStatus = companyService.sendDocumentsPerInvoice(params, company.rfc)
+    def responseStatus = companyService.sendDocumentsPerInvoice(params, company)
     flash.responseStatus = responseStatus
     redirect(action:"show",id:"${session.company.toLong()}")
   }
@@ -279,7 +280,7 @@ class CompanyController {
 
   def updateDocumentsToStamp() {
     def company = Company.get(session.company)
-    def responseStatus = companyService.updateDocumentsToStamp(params, company.rfc)
+    def responseStatus = companyService.updateDocumentsToStamp(params, company)
     flash.responseStatus = "Archivos de Facturación Actualizados"//responseStatus
     redirect action:"show", id:company.id
 
