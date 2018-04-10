@@ -5,6 +5,16 @@
     <asset:stylesheet src="third-party/modulus-uno-theme/css/style.css"/>
     <asset:stylesheet src="third-party/modulus-uno-theme/css/plugins.css"/>
     <asset:stylesheet src="third-party/modulus-uno-theme/css/demo.css"/>
+    <style>
+      body {
+      background-image: url(/assets/third-party/modulus-uno-theme/img/m1-back.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      background-color: #FFFFFF;
+      }
+    </style>
     <title><g:message code="recovery.password.label" /></title>
   </head>
   <body class="login">
