@@ -183,7 +183,7 @@ class PaysheetServiceSpec extends Specification {
       def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
     then:
       3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
-      3 * paysheetEmployeeService.savePaysheetReceiptUuid(_, _)
+      3 * paysheetEmployeeService.savePaysheetReceiptUuidIMSS(_, _)
       3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
   }
 
@@ -198,7 +198,7 @@ class PaysheetServiceSpec extends Specification {
       def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
     then:
       3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
-      3 * paysheetEmployeeService.savePaysheetReceiptUuid(_, _)
+      3 * paysheetEmployeeService.savePaysheetReceiptUuidAsimilable(_, _)
       3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
   }
 
