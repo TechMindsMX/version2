@@ -17,12 +17,14 @@ class PaysheetEmployee {
   PaysheetEmployeeStatus status = PaysheetEmployeeStatus.PENDING
   BreakdownPaymentEmployee breakdownPayment
 	PaymentWay paymentWay = PaymentWay.BANKING
-  String paysheetReceiptUuid
+  String paysheetReceiptUuidSA
+  String paysheetReceiptUuidIAS
 
   static belongsTo = [paysheet:Paysheet]
 
   static constraints = {
-    paysheetReceiptUuid nullable:true
+    paysheetReceiptUuidSA nullable:true
+    paysheetReceiptUuidIAS nullable:true
   } 
 
   BigDecimal getImssSalaryNet() {
