@@ -293,7 +293,7 @@ class PaysheetService {
     def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) && employee.paymentWay == PaymentWay.BANKING }
     employees.each { employee ->
       String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
-      paysheetEmployeeService.savePaysheetReceiptUuid(employee, paysheetReceiptUuid)
+      paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, paysheetReceiptUuid)
       paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
     }
     paysheet

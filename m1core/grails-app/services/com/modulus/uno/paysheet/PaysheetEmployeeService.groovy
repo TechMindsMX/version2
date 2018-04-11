@@ -164,8 +164,15 @@ class PaysheetEmployeeService {
   }
 
   @Transactional
-  PaysheetEmployee savePaysheetReceiptUuid(PaysheetEmployee paysheetEmployee, String paysheetReceiptUuid) {
-    paysheetEmployee.paysheetReceiptUuid = paysheetReceiptUuid
+  PaysheetEmployee savePaysheetReceiptUuidIMSS(PaysheetEmployee paysheetEmployee, String paysheetReceiptUuid) {
+    paysheetEmployee.paysheetReceiptUuidSA = paysheetReceiptUuid
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  @Transactional
+  PaysheetEmployee savePaysheetReceiptUuidAsimilable(PaysheetEmployee paysheetEmployee, String paysheetReceiptUuid) {
+    paysheetEmployee.paysheetReceiptUuidIAS = paysheetReceiptUuid
     paysheetEmployee.save()
     paysheetEmployee
   }
