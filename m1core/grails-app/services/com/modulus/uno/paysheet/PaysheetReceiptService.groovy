@@ -34,7 +34,7 @@ class PaysheetReceiptService {
       receptor: createReceiverFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
       nomina: createPaysheetDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema),
       esquema: schema.toString(),
-      id: paysheetEmployee.paysheet.paysheetContract.company.id
+      id: getCompanyIdSchemaPayer(paysheetEmployee, schema)
     )
     paysheetReceipt.concepto = createConceptForPaysheetEmployee(paysheetReceipt)
     log.info "Concepto: ${paysheetReceipt.concepto.dump()}"
@@ -195,6 +195,12 @@ class PaysheetReceiptService {
       valorUnitario: (paysheetReceipt.nomina.percepciones?.detalles*.importeExento.sum() ?: 0) + (paysheetReceipt.nomina.percepciones?.detalles*.importeGravado.sum() ?: 0) + (paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeExento.sum() : 0) + (paysheetReceipt.nomina.otrosPagos ? paysheetReceipt.nomina.otrosPagos*.importeGravado.sum() : 0),
       descuento: paysheetReceipt.nomina.deducciones.detalles ? paysheetReceipt.nomina.deducciones.detalles*.importeExento.sum() + paysheetReceipt.nomina.deducciones.detalles*.importeGravado.sum() : 0
     )
+  }
+
+  String getCompanyIdSchemaPayer(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheetEmployee.paysheet.paysheetContract, paysheetEmployee.paysheet.prePaysheet.paysheetProject)
+    PayerPaysheetProject payer = paysheetProject.payers.find { payer -> payer.paymentSchema == schema } 
+    payer.company.id.toString()
   }
 
   String stampPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
