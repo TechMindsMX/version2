@@ -97,6 +97,9 @@
                     <g:if test="${(employee.paymentWay == PaymentWay.CASH || employee.paymentWay == PaymentWay.ONLY_CASH) && employee.status == PaysheetEmployeeStatus.PENDING && paysheet.status == PaysheetStatus.AUTHORIZED}">
                       <g:link class="btn btn-primary" action="setPayedToEmployee" id="${employee.id}">Pagar</g:link>
                     </g:if>
+                    <g:if test="${[PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
+                      <g:link class="btn btn-primary" controller="paysheetEmployee" action="showPaysheetReceipts" id="${employee.id}">Recibos</g:link>
+                    </g:if>
                   </sec:ifAnyGranted>
                 </td>
               </tr>
