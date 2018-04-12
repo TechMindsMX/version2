@@ -292,9 +292,12 @@ class PaysheetService {
     List<PaysheetEmployeeStatus> statusSchema = schema == PaymentSchema.IMSS ? [PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.PAYED] : [PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.PAYED]
     def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) && employee.paymentWay == PaymentWay.BANKING }
     employees.each { employee ->
-      String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
-      paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, paysheetReceiptUuid)
-      paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
+      BigDecimal salarySchema = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
+      if (salarySchema > 0) {
+        String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
+        paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, paysheetReceiptUuid)
+        paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
+      }
     }
     paysheet
   }
