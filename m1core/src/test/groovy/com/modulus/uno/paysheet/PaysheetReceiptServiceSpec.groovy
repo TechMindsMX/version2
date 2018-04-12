@@ -229,7 +229,7 @@ class PaysheetReceiptServiceSpec extends Specification {
     where:
       theSchema                   ||    totalPerceptions    |  listKeys
       PaymentSchema.IMSS          ||    3                   |   ["001","010", "019"]
-      PaymentSchema.ASSIMILABLE   ||    2                   |   ["046", "012"] 
+      PaymentSchema.ASSIMILABLE   ||    1                   |   ["046"] 
   }
 
   @Unroll
@@ -245,8 +245,8 @@ class PaysheetReceiptServiceSpec extends Specification {
       deductions.detalles.tipo.sort() == listKeys.sort()
     where:
       theSchema                   ||    totalDeductions    |  listKeys
-      PaymentSchema.IMSS          ||    1                   |   ["007"]
-      PaymentSchema.ASSIMILABLE   ||    2                   |   ["002", "013"] 
+      PaymentSchema.IMSS          ||    3                   |   ["001","002","007"]
+      PaymentSchema.ASSIMILABLE   ||    1                   |   ["002"] 
   }
 
   @Unroll
@@ -263,7 +263,7 @@ class PaysheetReceiptServiceSpec extends Specification {
     where:
       theSchema                   ||    totalPerceptions    |  listKeys
       PaymentSchema.IMSS          ||    1                   |   ["004"]
-      PaymentSchema.ASSIMILABLE   ||    1                   |   ["036"] 
+      PaymentSchema.ASSIMILABLE   ||    0                   |   [] 
   }
 
   @Unroll
@@ -298,7 +298,7 @@ class PaysheetReceiptServiceSpec extends Specification {
       deductions.detalles.tipo.sort() == listKeys.sort()
     where:
       theSchema                   ||    totalDeductions    |  listKeys
-      PaymentSchema.IMSS          ||    0                   |   []
+      PaymentSchema.IMSS          ||    2                   |   ["001","002"]
       PaymentSchema.ASSIMILABLE   ||    1                   |   ["002"] 
   }
 

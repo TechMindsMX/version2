@@ -130,65 +130,78 @@ class PaysheetReceiptService {
   }
 
   List<DetalleNomina> addPerceptionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.PERCEPTION && incidence.keyType != PerceptionType.P001.key && incidence.keyType != PerceptionType.P046.key && incidence.paymentSchema == schema }
     List<DetalleNomina> perceptionIncidences = []
-    incidences.each { incidence -> 
-      DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
-      if (incidence.extraHourIncidence) {
-        detalle.diasHrsExtra = incidence.extraHourIncidence.days
-        detalle.tipoHrsExtra = incidence.extraHourIncidence.type
-        detalle.totalHrsExtra = incidence.extraHourIncidence.quantity
-        detalle.importeHrsExtra = incidence.extraHourIncidence.amount
+    if (schema == PaymentSchema.IMSS) {
+      def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.PERCEPTION && incidence.keyType != PerceptionType.P001.key && incidence.keyType != PerceptionType.P046.key && incidence.paymentSchema == schema }
+      incidences.each { incidence -> 
+        DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
+        if (incidence.extraHourIncidence) {
+          detalle.diasHrsExtra = incidence.extraHourIncidence.days
+          detalle.tipoHrsExtra = incidence.extraHourIncidence.type
+          detalle.totalHrsExtra = incidence.extraHourIncidence.quantity
+          detalle.importeHrsExtra = incidence.extraHourIncidence.amount
+        }
+        perceptionIncidences.add(detalle)
       }
-      perceptionIncidences.add(detalle)
     }
     perceptionIncidences 
   }
 
   Deducciones createDeductionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     Deducciones deducciones = new Deducciones(detalles:[])
-    deducciones.detalles.add("createDeductionDetailForSchema${schema.name()}"(paysheetEmployee))
+    deducciones.detalles.addAll("createDeductionDetailForSchema${schema.name()}"(paysheetEmployee))
     deducciones.detalles.addAll(addDeductionIncidenceForSchema(paysheetEmployee, schema))
     deducciones.detalles = deducciones.detalles - null
     deducciones
   }
 
-  DetalleNomina createDeductionDetailForSchemaIMSS(PaysheetEmployee paysheetEmployee) {
-    if ((paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax) > 0) {
-      new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax)
+  List<DetalleNomina> createDeductionDetailForSchemaIMSS(PaysheetEmployee paysheetEmployee) {
+    List<DetalleNomina> deductions = []
+    deductions.add(new DetalleNomina(clave: DeductionType.D001.name(), descripcion: DeductionType.D001.description, tipo: DeductionType.D001.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.socialQuota))
+    if ((paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax) < 0) {
+      deductions.add(new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.incomeTax - paysheetEmployee.subsidySalary))
     }
+    deductions
   }
 
-  DetalleNomina createDeductionDetailForSchemaASSIMILABLE(PaysheetEmployee paysheetEmployee) {
-      new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.incomeTaxAssimilable)
+  List<DetalleNomina> createDeductionDetailForSchemaASSIMILABLE(PaysheetEmployee paysheetEmployee) {
+    [new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.incomeTaxAssimilable)]
   }
 
   List<DetalleNomina> addDeductionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType != DeductionType.D002.key && incidence.paymentSchema == schema }
     List<DetalleNomina> deductionIncidences = []
-    incidences.each { incidence -> 
-      DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
-      deductionIncidences.add(detalle)
+    if (schema == PaymentSchema.IMSS) {
+      def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType != DeductionType.D002.key && incidence.paymentSchema == schema }
+      incidences.each { incidence -> 
+        DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
+        deductionIncidences.add(detalle)
+      }
     }
     deductionIncidences
   }
 
   List<DetalleNomina> createOtherPerceptionsFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.OTHER_PERCEPTION && incidence.paymentSchema == schema }
     List<DetalleNomina> otherPerceptionIncidences = []
-    incidences.each { incidence -> 
-      DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
-      if (incidence.extraHourIncidence) {
-        detalle.diasHrsExtra = incidence.extraHourIncidence.days
-        detalle.tipoHrsExtra = incidence.extraHourIncidence.type
-        detalle.totalHrsExtra = incidence.extraHourIncidence.quantity
-        detalle.importeHrsExtra = incidence.extraHourIncidence.amount
+
+    if (schema == PaymentSchema.IMSS) { 
+      if ((paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax) > 0) {
+        otherPerceptionIncidences.add(new DetalleNomina(clave: OtherPerceptionType.O002.name(), descripcion: OtherPerceptionType.O002.description, tipo: OtherPerceptionType.O002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax, subsidio: paysheetEmployee.subsidySalary))
       }
-      otherPerceptionIncidences.add(detalle)
+
+      def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.OTHER_PERCEPTION && incidence.paymentSchema == schema }
+      incidences.each { incidence -> 
+        DetalleNomina detalle = new DetalleNomina(clave: incidence.internalKey, descripcion: incidence.description, tipo: incidence.keyType, importeExento: incidence.exemptAmount, importeGravado: incidence.taxedAmount)
+        if (incidence.extraHourIncidence) {
+          detalle.diasHrsExtra = incidence.extraHourIncidence.days
+          detalle.tipoHrsExtra = incidence.extraHourIncidence.type
+          detalle.totalHrsExtra = incidence.extraHourIncidence.quantity
+          detalle.importeHrsExtra = incidence.extraHourIncidence.amount
+        }
+        otherPerceptionIncidences.add(detalle)
+      }
     }
     otherPerceptionIncidences    
   }
-
 
   Concepto createConceptForPaysheetEmployee(PaysheetReceiptCommand paysheetReceipt) {
     new Concepto (
