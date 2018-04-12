@@ -210,15 +210,15 @@ class PaysheetServiceSpec extends Specification {
 
   private def createEmployeesForTestPaysheetReceipts() {
     [
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.PENDING).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.PAYED).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.CANCELED).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.REJECTED).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.IMSS_PAYED).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.ASSIMILABLE_PAYED).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.IMSS_STAMPED).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.ASSIMILABLE_STAMPED).save(validate:false),
-      new PaysheetEmployee(status:PaysheetEmployeeStatus.FULL_STAMPED).save(validate:false)
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.PENDING, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.PAYED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.CANCELED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.REJECTED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.IMSS_PAYED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.ASSIMILABLE_PAYED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.IMSS_STAMPED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false),
+      new PaysheetEmployee(status:PaysheetEmployeeStatus.FULL_STAMPED, salaryImss:new BigDecimal(2500), socialQuota: new BigDecimal(63.44), subsidySalary: new BigDecimal(162.44), incomeTax:new BigDecimal(166.57), netAssimilable: new BigDecimal(15067.57), prePaysheetEmployee: new PrePaysheetEmployee().save(validate:false)).save(validate:false)
     ]
   }
 
