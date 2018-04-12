@@ -185,7 +185,7 @@ class PaysheetReceiptService {
 
     if (schema == PaymentSchema.IMSS) { 
       if ((paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax) > 0) {
-        otherPerceptionIncidences.add(new DetalleNomina(clave: OtherPerceptionType.O002.name(), descripcion: OtherPerceptionType.O002.description, tipo: OtherPerceptionType.O002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax), subsidio: paysheetEmployee.subsidySalary)
+        otherPerceptionIncidences.add(new DetalleNomina(clave: OtherPerceptionType.O002.name(), descripcion: OtherPerceptionType.O002.description, tipo: OtherPerceptionType.O002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax, subsidio: paysheetEmployee.subsidySalary))
       }
 
       def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.OTHER_PERCEPTION && incidence.paymentSchema == schema }
