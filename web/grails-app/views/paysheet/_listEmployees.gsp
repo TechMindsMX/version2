@@ -24,6 +24,7 @@
         <table class="table table-striped table-condensed">
           <thead>
             <tr>
+              <th></th>
               <th class="text-center">No. Empl</th>
               <th class="text-center">Nombre</th>
               <th class="text-center">RFC</th>
@@ -56,6 +57,13 @@
           <tbody>
             <g:each in="${paysheet.employees.sort{ it.prePaysheetEmployee.nameEmployee }}" var="employee">
               <tr>
+                <td>
+                  <g:if test="${![PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
+                    <g:link class="btn btn-primary" controller="paysheetEmployee" action="reloadData" id="${employee.id}">
+                      <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                    </g:link>
+                  </g:if>
+                </td>
                 <td>${employee.prePaysheetEmployee.numberEmployee}</td>
                 <td>${employee.prePaysheetEmployee.nameEmployee}</td>
                 <td>${employee.prePaysheetEmployee.rfc}</td>

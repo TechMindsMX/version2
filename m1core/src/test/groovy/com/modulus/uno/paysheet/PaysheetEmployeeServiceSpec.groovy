@@ -12,9 +12,13 @@ import com.modulus.uno.PaymentPeriod
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.Company
 import com.modulus.uno.Bank
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.ComposeName
+import com.modulus.uno.BusinessEntityType
+import com.modulus.uno.NameType
 
 @TestFor(PaysheetEmployeeService)
-@Mock([PaysheetEmployee, Paysheet, PrePaysheet, PrePaysheetEmployee, DataImssEmployee, EmployeeLink, Company, BreakdownPaymentEmployee, PaysheetProject, Bank, PaysheetContract])
+@Mock([PaysheetEmployee, Paysheet, PrePaysheet, PrePaysheetEmployee, DataImssEmployee, EmployeeLink, Company, BreakdownPaymentEmployee, PaysheetProject, Bank, PaysheetContract, BusinessEntity, ComposeName])
 class PaysheetEmployeeServiceSpec extends Specification {
 
   DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
@@ -255,4 +259,39 @@ class PaysheetEmployeeServiceSpec extends Specification {
       PaysheetEmployeeStatus.FULL_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
       PaysheetEmployeeStatus.FULL_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
   }
+
+  void "Should reload data for employee"() {
+    given:"The paysheet employee"
+      Company company = new Company().save(validate:false)
+      PaysheetEmployee paysheetEmployee = new PaysheetEmployee (
+        paysheet: new Paysheet(paysheetContract:new PaysheetContract(company:company).save(validate:false)).save(validate:false),
+        prePaysheetEmployee: new PrePaysheetEmployee(rfc:"rfc", curp:"old-curp", nameEmployee:"old name", numberEmployee:"old number").save(validate:false)
+      ).save(validate:false)
+    and:"The business entity updated"
+      BusinessEntity businessEntity = new BusinessEntity (
+        rfc:"rfc",
+        type: BusinessEntityType.FISICA,
+        names: [
+          new ComposeName(value:"new", type:NameType.NOMBRE).save(validate:false),
+          new ComposeName(value:"name", type:NameType.APELLIDO_PATERNO).save(validate:false),
+          new ComposeName(value:"employee", type:NameType.APELLIDO_MATERNO).save(validate:false)
+        ]
+      ).save(validate:false)
+      company.addToBusinessEntities(businessEntity)
+      company.save(validate:false)
+    and:"The employee link"
+      EmployeeLink employeeLink = new EmployeeLink(
+        employeeRef:"rfc",
+        curp: "newCurp",
+        number: "newNumber",
+        company: company
+      ).save(validate:false)
+    when:
+      def result = service.reloadDataEmployee(paysheetEmployee)
+    then:
+      result.prePaysheetEmployee.curp == "newCurp"
+      result.prePaysheetEmployee.nameEmployee == "new name employee"
+      result.prePaysheetEmployee.numberEmployee == "newNumber"
+  }
+
 }
