@@ -58,6 +58,7 @@ class PaysheetReceiptServiceSpec extends Specification {
       clabe: "012180000191120163",
       branch: "180",
       account: "00019112016",
+      cardNumber: "1111222233334444",
       netPayment: new BigDecimal(16500),
       incidences: createIncidences()
     ).save(validate:false)
@@ -350,6 +351,28 @@ class PaysheetReceiptServiceSpec extends Specification {
       def result = service.stampPaysheetReceipt(paysheetReceipt)
     then:
       thrown RestException
+  }
+
+  void "Should build data bank with bank and account when paysheet employee has account"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    when:
+      def result = service.buildDataBankForEmployee(paysheetEmployee)
+    then:
+      result.banco && result.cuenta
+      result.cuenta == "00019112016"
+  }
+
+  void "Should build data bank with bank and card number  when paysheet employee hasn't account"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.account = ""
+      paysheetEmployee.save(validate:false)
+    when:
+      def result = service.buildDataBankForEmployee(paysheetEmployee)
+    then:
+      result.banco && result.cuenta
+      result.cuenta == "1111222233334444"
   }
 
 }
