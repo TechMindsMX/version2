@@ -71,8 +71,7 @@ class PrePaysheetController {
     params.max = 25
     PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
     Map prePaysheets = prePaysheetService.getListAndCountPrePaysheetsForPaysheetContract(paysheetContract, params)
-    render view:"list", model:[client:paysheetContract.client, prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
-   
+    render view:"list", model:[paysheetContract:paysheetContract, prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
   }
 
   @Transactional

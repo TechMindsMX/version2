@@ -61,7 +61,7 @@
                 <td>${employee.prePaysheetEmployee.rfc}</td>
                 <td>${employee.prePaysheetEmployee.curp}</td>
                 <td>${employee.prePaysheetEmployee.bank?.bankingCode}</td>
-                <td>${employee.prePaysheetEmployee.bank.name}</td>
+                <td>${employee.prePaysheetEmployee.bank?.name}</td>
                 <td>${employee.prePaysheetEmployee.clabe}</td>
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>
@@ -117,10 +117,10 @@
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary}">
 					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
-        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status) && it.paymentWay == PaymentWay.BANKING && it.imssSalaryNet }}">
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status) && it.imssSalaryNet }}">
           <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'IMSS']">Timbrar SA</g:link>
         </g:if>
-        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status) && it.paymentWay == PaymentWay.BANKING && it.netAssimilable }}">
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status) && it.netAssimilable }}">
           <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'Asimilable']">Timbrar IAS</g:link>
         </g:if>
 				</sec:ifAnyGranted>

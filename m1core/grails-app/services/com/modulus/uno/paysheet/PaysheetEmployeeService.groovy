@@ -22,7 +22,7 @@ class PaysheetEmployeeService {
       paysheet:paysheet,
       breakdownPayment: new BreakdownPaymentEmployee(),
       ivaRate: new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
-			paymentWay: (prePaysheetEmployee.bank && prePaysheetEmployee.account && banksLayout.contains(prePaysheetEmployee.bank.bankingCode)) || (!banksLayout.contains(prePaysheetEmployee.bank.bankingCode) && prePaysheetEmployee.clabe) ? PaymentWay.BANKING : PaymentWay.ONLY_CASH
+			paymentWay: (prePaysheetEmployee.bank && prePaysheetEmployee.account && banksLayout.contains(prePaysheetEmployee.bank?.bankingCode)) || (!banksLayout.contains(prePaysheetEmployee.bank?.bankingCode) && prePaysheetEmployee.clabe) ? PaymentWay.BANKING : PaymentWay.ONLY_CASH
     )
 
     if (prePaysheetEmployee.netPayment > 0) {
