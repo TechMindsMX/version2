@@ -73,9 +73,15 @@ class PaysheetReceiptService {
       rfc: (Environment.current == Environment.PRODUCTION) ? paysheetEmployee.prePaysheetEmployee.rfc : "BUPA690824IRA",
       nombre: paysheetEmployee.prePaysheetEmployee.nameEmployee,
       curp: paysheetEmployee.prePaysheetEmployee.curp,
-      datosBancarios: new DatosBancarios(banco:paysheetEmployee.prePaysheetEmployee.bank.bankingCode.substring(2,5), cuenta:paysheetEmployee.prePaysheetEmployee.account),
+      datosBancarios: buildDataBankForEmployee(paysheetEmployee),
       datosLaborales: createJobDataFromPaysheetEmployeeAndSchema(paysheetEmployee, schema)
     )
+  }
+
+  DatosBancarios buildDataBankForEmployee(PaysheetEmployee paysheetEmployee) {
+    String bank = paysheetEmployee.prePaysheetEmployee.account || paysheetEmployee.prePaysheetEmployee.cardNumber ? paysheetEmployee.prePaysheetEmployee.bank.bankingCode.substring(2,5) : ""
+    String account = paysheetEmployee.prePaysheetEmployee.account ?: (paysheetEmployee.prePaysheetEmployee.cardNumber ?: (paysheetEmployee.prePaysheetEmployee.clabe ?: ""))
+    new DatosBancarios(banco:bank, cuenta:account)
   }
 
   DatosLaborales createJobDataFromPaysheetEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema paymentSchema) {
