@@ -13,7 +13,7 @@ class PaysheetProject {
   FederalEntity federalEntity = FederalEntity.DIF
 
   static belongsTo = [paysheetContract:PaysheetContract]
-  static hasMany = [payers:PayerPaysheetProject, employees:BusinessEntity, billers:BillerPaysheetProject]
+  static hasMany = [payers:PayerPaysheetProject, employees:BusinessEntity, billers:BillerPaysheetProject, users:UserEmployee]
 
   static constraints = {
     name nullable:false, blank:false
