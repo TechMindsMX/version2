@@ -1,19 +1,25 @@
 package com.modulus.uno.paysheet
 
 import grails.transaction.Transactional
-import com.modulus.uno.Company
-import com.modulus.uno.Corporate
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CorporateService
-import com.modulus.uno.CompanyStatus
-import com.modulus.uno.BusinessEntity
 import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.UserService
+import com.modulus.uno.Company
+import com.modulus.uno.Corporate
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.User
+import com.modulus.uno.Profile
+import com.modulus.uno.Role
+import com.modulus.uno.CompanyStatus
+import com.modulus.uno.NameType
 
 class PaysheetProjectService {
 
   CompanyService companyService
   CorporateService corporateService
   BusinessEntityService businessEntityService
+  UserService userService
 
   @Transactional
   PaysheetProject savePaysheetProject(PaysheetProject paysheetProject) {
@@ -79,6 +85,39 @@ class PaysheetProjectService {
   @Transactional
   def deleteBiller(BillerPaysheetProject billerPaysheetProject) {
     billerPaysheetProject.delete()
+  }
+
+  @Transactional
+  UserEmployee createUserForPaysheetProjectEmployee(PaysheetProject paysheetProject, BusinessEntity businessEntity) {
+    User user = createUserFromEmployee(businessEntity)
+    UserEmployee userEmployee = new UserEmployee (
+      user: user,
+      businessEntity: businessEntity,
+      paysheetProject: paysheetProject
+    )
+    userEmployee.save()
+    userEmployee
+  }
+
+  User createUserFromEmployee(BusinessEntity businessEntity) {
+    User user = new User (
+      username:businessEntity.rfc,
+      password:businessEntity.curp,
+      enabled:true,
+      accountExpired:false,
+      accountLocked:false,
+      passwordExpired:false
+    )
+
+    Profile profile = new Profile (
+      name: businessEntity.names.find { it.type == NameType.NOMBRE },
+      lastName: businessEntity.names.find { it.type == NameType.APELLIDO_PATERNO },
+      motherLastName: businessEntity.names.find { it.type == NameType.APELLIDO_MATERNO },
+      email: "fakemail@mail.com"
+    )
+
+    userService.createUserWithoutRole(user, profile)
+    userService.setAuthorityToUser(user, "ROLE_EMPLOYEE")
   }
 
 }
