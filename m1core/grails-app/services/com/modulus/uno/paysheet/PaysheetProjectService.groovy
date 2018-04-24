@@ -88,6 +88,21 @@ class PaysheetProjectService {
   }
 
   @Transactional
+  def generateUsersForEmployeesFromPaysheetProject(PaysheetProject paysheetProject) {
+    def employeesWithoutUser = paysheetProject.employees - paysheetProject.users?.businessEntity
+    employeesWithoutUser.each { employee ->
+      log.info "Create user for employee ${employee.dump()}"
+      UserEmployee userEmployee = createUserForPaysheetProjectEmployee(paysheetProject, employee)
+      log.info "User created: ${userEmployee.user.username}"
+      Corporate corporate = corporateService.getCorporateFromCompany(paysheetProject.paysheetContract.company.id)
+      println "Corporate: ${corporate?.dump()}"
+      corporateService.addUserToCorporate(corporate.id, userEmployee.user)
+      paysheetProject.addToUsers(userEmployee)
+      paysheetProject.save()
+    }
+    paysheetProject
+  }
+
   UserEmployee createUserForPaysheetProjectEmployee(PaysheetProject paysheetProject, BusinessEntity businessEntity) {
     User user = createUserFromEmployee(businessEntity)
     UserEmployee userEmployee = new UserEmployee (
@@ -118,6 +133,7 @@ class PaysheetProjectService {
 
     userService.createUserWithoutRole(user, profile)
     userService.setAuthorityToUser(user, "ROLE_EMPLOYEE")
+    user
   }
 
 }
