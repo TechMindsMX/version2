@@ -5,12 +5,14 @@ import com.modulus.uno.CompanyService
 import com.modulus.uno.CorporateService
 import com.modulus.uno.BusinessEntityService
 import com.modulus.uno.UserService
+import com.modulus.uno.RoleService
 import com.modulus.uno.Company
 import com.modulus.uno.Corporate
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.User
 import com.modulus.uno.Profile
 import com.modulus.uno.Role
+import com.modulus.uno.UserRoleCompany
 import com.modulus.uno.CompanyStatus
 import com.modulus.uno.NameType
 
@@ -20,6 +22,7 @@ class PaysheetProjectService {
   CorporateService corporateService
   BusinessEntityService businessEntityService
   UserService userService
+  RoleService roleService
 
   @Transactional
   PaysheetProject savePaysheetProject(PaysheetProject paysheetProject) {
@@ -102,8 +105,19 @@ class PaysheetProjectService {
 
   UserEmployee createUserForPaysheetProjectEmployee(PaysheetProject paysheetProject, BusinessEntity businessEntity) {
     User user = createUserFromEmployee(businessEntity)
+
+    Corporate corporateUser = corporateService.findCorporateOfUser(user)
     Corporate corporate = corporateService.getCorporateFromCompany(paysheetProject.paysheetContract.company.id)
-    corporateService.addUserToCorporate(corporate.id, user)
+
+    if (!corporateUser || corporateUser.id != corporate.id) {
+      corporateService.addUserToCorporate(corporate.id, user)
+    }
+
+    Role roleEmployee = user.authorities.find { it.authority == "ROLE_EMPLOYEE" } 
+    UserRoleCompany currentUserRoleCompany = roleService.findRolesForUserAtThisCompany(user, paysheetProject.paysheetContract.company)
+    if (!currentUserRoleCompany || (currentUserRoleCompany && !currentUserRoleCompany?.roles?.contains(roleEmployee))) {
+      roleService.createRolesForUserAtThisCompany([roleEmployee], user, paysheetProject.paysheetContract.company)
+    }
 
     UserEmployee userEmployee = new UserEmployee (
       user: user,
@@ -115,7 +129,12 @@ class PaysheetProjectService {
   }
 
   User createUserFromEmployee(BusinessEntity businessEntity) {
-    User user = new User (
+    User user = User.findByUsername(businessEntity.rfc)
+    if (user) {
+      return user
+    }
+
+    user = new User (
       username:businessEntity.rfc,
       password:businessEntity.curp,
       enabled:true,
