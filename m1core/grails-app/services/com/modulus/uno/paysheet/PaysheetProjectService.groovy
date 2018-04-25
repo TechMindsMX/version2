@@ -94,9 +94,6 @@ class PaysheetProjectService {
       log.info "Create user for employee ${employee.dump()}"
       UserEmployee userEmployee = createUserForPaysheetProjectEmployee(paysheetProject, employee)
       log.info "User created: ${userEmployee.user.username}"
-      Corporate corporate = corporateService.getCorporateFromCompany(paysheetProject.paysheetContract.company.id)
-      println "Corporate: ${corporate?.dump()}"
-      corporateService.addUserToCorporate(corporate.id, userEmployee.user)
       paysheetProject.addToUsers(userEmployee)
       paysheetProject.save()
     }
@@ -105,6 +102,9 @@ class PaysheetProjectService {
 
   UserEmployee createUserForPaysheetProjectEmployee(PaysheetProject paysheetProject, BusinessEntity businessEntity) {
     User user = createUserFromEmployee(businessEntity)
+    Corporate corporate = corporateService.getCorporateFromCompany(paysheetProject.paysheetContract.company.id)
+    corporateService.addUserToCorporate(corporate.id, user)
+
     UserEmployee userEmployee = new UserEmployee (
       user: user,
       businessEntity: businessEntity,
