@@ -6,6 +6,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import java.text.*
 import com.modulus.uno.Company
+import com.modulus.uno.User
+import com.modulus.uno.UserRole
+import com.modulus.uno.UserRoleCompany
 import com.modulus.uno.Corporate
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.EmployeeLink
@@ -13,17 +16,20 @@ import com.modulus.uno.ComposeName
 import com.modulus.uno.NameType
 import com.modulus.uno.UserService
 import com.modulus.uno.CorporateService
+import com.modulus.uno.RoleService
 
 @TestFor(PaysheetProjectService)
-@Mock([PaysheetProject, Company, PaysheetContract, Corporate, UserEmployee, EmployeeLink, BusinessEntity, ComposeName])
+@Mock([PaysheetProject, Company, PaysheetContract, Corporate, UserEmployee, EmployeeLink, BusinessEntity, ComposeName, User, UserRole, UserRoleCompany])
 class PaysheetProjectServiceSpec extends Specification {
 
   CorporateService corporateService = Mock(CorporateService)
   UserService userService = Mock(UserService)
+  RoleService roleService = Mock(RoleService)
 
   def setup() {
     service.userService = userService
     service.corporateService = corporateService
+    service.roleService = roleService
   }
 
   void "Should create users for employees from paysheet project"() {
@@ -47,6 +53,8 @@ class PaysheetProjectServiceSpec extends Specification {
     then:
       1 * userService.createUserWithoutRole(_, _)
       1 * userService.setAuthorityToUser(_, _)
+      1 * corporateService.addUserToCorporate(_, _)
+      1 * roleService.createRolesForUserAtThisCompany(_, _, _)
   }
 
   void "Should create user for a paysheet project employee"() {
