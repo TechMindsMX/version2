@@ -71,6 +71,7 @@ class SaleOrderController {
     String messageSuccess = message(code:"saleOrder.already.executed")
     if (saleOrderIsInStatus(saleOrder, SaleOrderStatus.AUTORIZADA)) {
       saleOrderService.executeSaleOrder(saleOrder)
+      emailSenderService.notifySaleOrderChangeStatus(saleOrder)
       messageSuccess = message(code:"saleOrder.executed.message")
     }
     redirect action:'list', params:[messageSuccess:messageSuccess]
