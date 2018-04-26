@@ -6,7 +6,7 @@ import wslite.rest.*
 import grails.transaction.Transactional
 import com.modulus.uno.catalogs.UnitType
 
-@Transactional
+@Transactional(readOnly = true)
 class SaleOrderController {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -22,6 +22,7 @@ class SaleOrderController {
   def emailSenderService
   CollaboratorService collaboratorService
 
+  @Transactional
   def authorizeSaleOrder(SaleOrder saleOrder){
     saleOrder = saleOrderService.addAuthorizationToSaleOrder(saleOrder, springSecurityService.currentUser)
     if (saleOrderService.isFullAuthorized(saleOrder)) {
@@ -31,6 +32,7 @@ class SaleOrderController {
     redirect action:'list', params:[status:'POR_AUTORIZAR']
   }
 
+  @Transactional
   def authorizeCancelBill(SaleOrder saleOrder) {
     saleOrder.status = SaleOrderStatus.CANCELACION_AUTORIZADA
     saleOrder.save()
@@ -48,6 +50,7 @@ class SaleOrderController {
     respond saleOrder
   }
 
+  @Transactional
   def cancelSaleOrder(SaleOrder saleOrder){
     flash.message = message(code: 'saleOrder.cancel', args: [:])
     saleOrderService.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELADA)
@@ -61,16 +64,19 @@ class SaleOrderController {
     render view:'create',model:([company:company, clients:clients, client:client] + params)
   }
 
+  @Transactional
   def deleteOrder(SaleOrder saleOrder) {
     saleOrderService.deleteSaleOrder(saleOrder)
     redirect action:'list'
   }
 
+  @Transactional
   def executeSaleOrder(SaleOrder saleOrder){
     log.info "Execute saleOrder ${saleOrder.id} with pdf template ${saleOrder.pdfTemplate}"
     String messageSuccess = message(code:"saleOrder.already.executed")
     if (saleOrderIsInStatus(saleOrder, SaleOrderStatus.AUTORIZADA)) {
       saleOrderService.executeSaleOrder(saleOrder)
+      emailSenderService.notifySaleOrderChangeStatus(saleOrder)
       messageSuccess = message(code:"saleOrder.executed.message")
     }
     redirect action:'list', params:[messageSuccess:messageSuccess]
@@ -80,6 +86,7 @@ class SaleOrderController {
     saleOrder.status == statusExpected
   }
 
+  @Transactional
   def executeCancelBill(SaleOrder saleOrder) {
     saleOrderService.executeCancelBill(saleOrder)
     redirect action:'list', params:[status:"${SaleOrderStatus.CANCELACION_AUTORIZADA}"]
@@ -158,6 +165,7 @@ class SaleOrderController {
     response.outputStream << file
   }
 
+  @Transactional
   def save(SaleOrderCommand saleOrderCommand) {
     log.info "Creating a sale order: ${saleOrderCommand.dump()}"
     if (!saleOrderCommand) {
@@ -173,7 +181,7 @@ class SaleOrderController {
       redirect action:'create'
     }
 
-    saleOrder.save flush:true
+    saleOrder.save()
 
     if (saleOrder.id) {
       redirect action:'show', id:saleOrder.id
@@ -186,13 +194,13 @@ class SaleOrderController {
   def searchClientForSale(){
     def company = Company.get(session.company ? session.company.toLong() : params.companyId)
     def clients = businessEntityService.findBusinessEntityByKeyword(params.q, "CLIENT", company)
-    //TODO : Filtrar a los proveedores...
     if(clients.isEmpty()){
       flash.message = "No se encontró cliente."
     }
     render view:'create',model:([company:company, clients:clients] + params)
   }
 
+  @Transactional
   def sendOrderToConfirmation(SaleOrder saleOrder){
     saleOrderService.sendOrderToConfirmation(saleOrder)
     flash.message = message(code: 'saleOrder.validation', args: [:])
@@ -215,12 +223,14 @@ class SaleOrderController {
     [companies:companies]
   }
 
+  @Transactional
   def rejectSaleOrder(SaleOrder saleOrder){
     saleOrderService.cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.RECHAZADA)
     flash.message = message(code: 'saleOrder.execute', args: [:])
     redirect action:'list'
   }
 
+  @Transactional
   def update(SaleOrder saleOrder) {
     if (saleOrder == null) {
       notFound()
@@ -243,6 +253,7 @@ class SaleOrderController {
     }
   }
 
+  @Transactional
   def requestCancelBill(SaleOrder saleOrder) {
     saleOrder.status = SaleOrderStatus.CANCELACION_POR_AUTORIZAR
     saleOrder.save()
@@ -250,6 +261,7 @@ class SaleOrderController {
     redirect action:'list'
   }
 
+  @Transactional
   def deleteItem(SaleOrderItem item) {
     Long idSaleOrder = item.saleOrder.id
     saleOrderService.deleteItemFromSaleOrder(item.saleOrder, item)
