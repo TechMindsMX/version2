@@ -82,17 +82,18 @@ class SaleOrderService {
     saleOrder
   }
 
-  def executeSaleOrder(SaleOrder saleOrder){
+  SaleOrder executeSaleOrder(SaleOrder saleOrder){
     commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
     String uuidFolio = invoiceService.generateFactura(saleOrder)
-    updateSaleOrderFromGeneratedBill(uuidFolio, saleOrder)
+    log.info "Stamp UUID: ${uuidFolio}"
+    saleOrder = updateSaleOrderFromGeneratedBill(uuidFolio, saleOrder)
+    saleOrder
   }
 
-  private updateSaleOrderFromGeneratedBill(String uuidFolio, SaleOrder saleOrder) {
+  SaleOrder updateSaleOrderFromGeneratedBill(String uuidFolio, SaleOrder saleOrder) {
     saleOrder.folio = uuidFolio
     saleOrder.status = SaleOrderStatus.EJECUTADA
-    saleOrder.save()
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    saleOrder.save(flush:true)
     saleOrder
   }
 
