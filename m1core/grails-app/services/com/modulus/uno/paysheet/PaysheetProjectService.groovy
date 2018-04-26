@@ -1,6 +1,7 @@
 package com.modulus.uno.paysheet
 
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CorporateService
 import com.modulus.uno.BusinessEntityService
@@ -103,6 +104,7 @@ class PaysheetProjectService {
     paysheetProject
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   UserEmployee createUserForPaysheetProjectEmployee(PaysheetProject paysheetProject, BusinessEntity businessEntity) {
     User user = createUserFromEmployee(businessEntity)
 
