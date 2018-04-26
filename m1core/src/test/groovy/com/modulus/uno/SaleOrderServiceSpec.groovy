@@ -128,10 +128,11 @@ class SaleOrderServiceSpec extends Specification {
   given:"A sale order"
     SaleOrder saleOrder = new SaleOrder()
     saleOrder.save(validate:false)
+  and:
+    invoiceService.generateFactura(_) >> "uuid_folio"
   when:"We authoriza a sale order"
     def result = service.executeSaleOrder(saleOrder)
   then:"We expect new status"
-    1 * invoiceService.generateFactura(saleOrder) >> "uuid_folio"
     result instanceof SaleOrder
     result.folio == 'uuid_folio'
   }

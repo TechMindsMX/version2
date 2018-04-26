@@ -1,10 +1,10 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 import java.text.SimpleDateFormat
 import groovy.sql.Sql
 
-@Transactional
 class SaleOrderService {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -18,6 +18,7 @@ class SaleOrderService {
 
 
   // TODO: Code Review
+  @Transactional
   def createSaleOrderWithAddress(def params) {
     Long companyId = params.companyId.toLong()
     Long clientId = params.clientId.toLong()
@@ -41,6 +42,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   def createSaleOrder(BusinessEntity businessEntity, Company company, def fechaCobro, String externalId, String note, PaymentWay paymentWay) {
     def saleOrder = new SaleOrder(rfc:businessEntity.rfc, clientName: businessEntity.toString(), company:company, externalId:externalId, note:note, paymentWay:paymentWay)
     saleOrder.status = SaleOrderStatus.CREADA
@@ -49,6 +51,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   def addItemToSaleOrder(SaleOrder saleOrder, SaleOrderItem... items){
     items.each {
       saleOrder.addToItems(it)
@@ -57,6 +60,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   def sendOrderToConfirmation(SaleOrder saleOrder){
     saleOrder.status = SaleOrderStatus.POR_AUTORIZAR
     saleOrder.save()
@@ -69,12 +73,14 @@ class SaleOrderService {
     alreadyAuthorizations >= saleOrder.company.numberOfAuthorizations
   }
 
+  @Transactional
   def addAuthorizationToSaleOrder(SaleOrder saleOrder, User user) {
     Authorization authorization = new Authorization(user:user).save()
     saleOrder.addToAuthorizations(authorization)
     saleOrder.save()
   }
 
+  @Transactional
   def authorizeSaleOrder(SaleOrder saleOrder){
     saleOrder.status = SaleOrderStatus.AUTORIZADA
     saleOrder.save()
@@ -82,20 +88,25 @@ class SaleOrderService {
     saleOrder
   }
 
-  def executeSaleOrder(SaleOrder saleOrder){
+  @Transactional
+  SaleOrder executeSaleOrder(SaleOrder saleOrder){
     commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
     String uuidFolio = invoiceService.generateFactura(saleOrder)
-    updateSaleOrderFromGeneratedBill(uuidFolio, saleOrder)
-  }
-
-  private updateSaleOrderFromGeneratedBill(String uuidFolio, SaleOrder saleOrder) {
-    saleOrder.folio = uuidFolio
-    saleOrder.status = SaleOrderStatus.EJECUTADA
-    saleOrder.save()
-    emailSenderService.notifySaleOrderChangeStatus(saleOrder)
+    log.info "Stamp UUID: ${uuidFolio}"
+    saleOrder = updateSaleOrderFromGeneratedBill(uuidFolio, saleOrder.id)
     saleOrder
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  SaleOrder updateSaleOrderFromGeneratedBill(String uuidFolio, Long saleOrderId) {
+    SaleOrder saleOrder = SaleOrder.get(saleOrderId)
+    saleOrder.folio = uuidFolio
+    saleOrder.status = SaleOrderStatus.EJECUTADA
+    saleOrder.save()
+    saleOrder
+  }
+
+  @Transactional
   def executeCancelBill(SaleOrder saleOrder) {
     invoiceService.cancelBill(saleOrder)
     cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELACION_EJECUTADA)
@@ -105,6 +116,7 @@ class SaleOrderService {
     "${grailsApplication.config.modulus.facturacionUrl}${grailsApplication.config.modulus.showFactura}/${saleOrder.folio}_${saleOrder.id}/${format}"
   }
 
+  @Transactional
   def addTheAddressToSaleOrder(SaleOrder saleOrder, Address address){
     saleOrder.addToAddresses(address)
     saleOrder.save()
@@ -143,10 +155,12 @@ class SaleOrderService {
     saleOrders
   }
 
+  @Transactional
   def deleteItemFromSaleOrder(SaleOrder saleOrder, SaleOrderItem item) {
     SaleOrderItem.executeUpdate("delete SaleOrderItem item where item.id = :id", [id: item.id])
   }
 
+  @Transactional
   def createOrUpdateSaleOrder(def params) {
     SaleOrder saleOrder = SaleOrder.findByExternalId(params.externalId)
     if (saleOrder) {
@@ -158,6 +172,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   def updateDateChargeForOrder(Long id, Date chargeDate) {
     SaleOrder saleOrder = SaleOrder.get(id)
     if (!saleOrder.originalDate)
@@ -205,6 +220,7 @@ class SaleOrderService {
     listResult
   }
 
+  @Transactional
   def deleteSaleOrder(SaleOrder saleOrder) {
     Sql sql = new Sql(dataSource)
     sql.execute("delete from sale_order_item where sale_order_id=${saleOrder.id}")
@@ -220,6 +236,7 @@ class SaleOrderService {
     SaleOrder.findAllByCompanyAndStatus(company, SaleOrderStatus.EJECUTADA)
   }
 
+  @Transactional
   SaleOrder addPaymentToSaleOrder(SaleOrder saleOrder, BigDecimal amount, BigDecimal changeType) {
     BigDecimal amountPayment = saleOrder.currency == "MXN" ? amount : amount/changeType
     SaleOrderPayment saleOrderPayment = new SaleOrderPayment(amount:amountPayment)
@@ -263,6 +280,7 @@ class SaleOrderService {
     salesOrderConciliated.amountPayed.sum()
   }
 
+  @Transactional
   SaleOrder createCommissionsInvoiceForCompanyAndPeriod(Company company, Period period) {
     SaleOrder saleOrder = createCommissionsSaleOrder(company, period)
     List balances = commissionTransactionService.getCommissionsBalanceInPeriodForCompanyAndStatus(company, CommissionTransactionStatus.PENDING, period)
@@ -272,6 +290,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   SaleOrder createCommissionsSaleOrder(Company company, Period period) {
     Company emitter = Company.findByRfc(grailsApplication.config.m1emitter.rfc)
     Address address = company.addresses.find { addr -> addr.addressType == AddressType.FISCAL }
@@ -289,6 +308,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   SaleOrder createItemsForCommissionsSaleOrder(saleOrder, balances) {
     balances.each { balance ->
       if (balance.balance) {
@@ -309,6 +329,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   SaleOrder cancelOrRejectSaleOrder(SaleOrder saleOrder, SaleOrderStatus status) {
     saleOrder.status = status
     saleOrder.save()
