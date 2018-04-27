@@ -231,4 +231,9 @@ class PaysheetEmployeeService {
     paysheetEmployee.save()
     paysheetEmployee
   }
+
+  PaysheetEmployee findEmployeeForRfcAndPaysheet(String rfc, Paysheet paysheet) {
+    paysheet.employees.find { employee -> employee.prePaysheetEmployee.rfc == rfc }
+  }
+
 }
