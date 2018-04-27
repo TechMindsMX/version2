@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<%! import com.modulus.uno.paysheet.PaymentSchema %>
 <html>
   <head>
     <meta name="layout" content="main" />
@@ -10,34 +9,33 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-credit-card-alt fa-3x"></i>
-        Lista de Recibos de Nómina
+        Recibos de Nómina
         <small>
-          ${employee.prePaysheetEmployee.rfc} - ${employee.prePaysheetEmployee.nameEmployee}<br/>
+          ${user.username} - ${user.name}<br/>
         </small>
       </h1>
     </div>
     <div class="content scaffold-edit" role="main">
       <div class="portlet portlet-blue">
         <div class="portlet-heading">
+          <g:form action="showPaysheetReceiptsOfUserForPaysheet">
           <div class="row">
-            <div class="col-md-12">
-              Nómina del: ${modulusuno.dateFormat(date:employee.paysheet.prePaysheet.initPeriod)} al: ${modulusuno.dateFormat(date:employee.paysheet.prePaysheet.endPeriod)}<br/>
+            <div class="col-md-10">
+              <g:select class="form-control" name="paysheetId" from="${payedPaysheetsOfUser.sort()}" optionKey="id" value="${paysheet?.id}"/>
+            </div>
+            <div class="col-md-2 text-right">
+              <button class="btn btn-primary" type="submit"/>Buscar</button>
             </div>
           </div>
+          </g:form>
         </div>
  
+        <g:if test="${employee}">
         <div class="portlet-body">
           <g:render template="linksPaysheetReceiptsOfEmployee"/>
         </div>
+        </g:if>
 
-        <div class="portlet-footer">
-          <div class="row">
-            <div class="col-md-8"></div>
-            <div class="col-md-4 text-right">
-              <g:link class="btn btn-primary" controller="paysheet" action="show" id="${employee.paysheet.id}">Ir a la nómina</g:link>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </body>
