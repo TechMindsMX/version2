@@ -71,7 +71,7 @@ class PaysheetProjectServiceSpec extends Specification {
     and:
       corporateService.getCorporateFromCompany(_) >> new Corporate().save(validate:false)
     when:
-      def result = service.createUserForPaysheetProjectEmployee(paysheetProject, employee1)
+      def result = service.createUserForPaysheetProjectEmployee(paysheetProject, employee1.id)
     then:
       result
   }
