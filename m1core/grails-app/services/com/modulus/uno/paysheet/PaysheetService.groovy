@@ -302,4 +302,19 @@ class PaysheetService {
     paysheet
   }
 
+  List<Paysheet> getPaysheetsStampedForEmployee(String rfc) {
+    def paysheetCrit = Paysheet.createCriteria()
+
+    def payedPaysheetsForEmployee = paysheetCrit.list {
+      employees {
+        prePaysheetEmployee {
+          eq("rfc", rfc)
+        }
+        'in'("status", [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED])
+      }
+    }
+
+    payedPaysheetsForEmployee
+  }
+
 }
