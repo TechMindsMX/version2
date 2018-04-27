@@ -11,7 +11,7 @@
       <div class="col-md-12 text-right">
         <g:if test="${!availableEmployees}">
           <g:if test="${paysheetProject.employees}">
-            <g:link class="btn btn-primary" action="chooseEmployees" id="${paysheetProject.id}">Crear Usuarios</g:link>
+            <g:link class="btn btn-primary" action="generateUsers" id="${paysheetProject.id}">Crear Usuarios</g:link>
           </g:if>
           <g:link class="btn btn-primary" action="chooseEmployees" id="${paysheetProject.id}">Agregar Empleados</g:link>
         </g:if>
