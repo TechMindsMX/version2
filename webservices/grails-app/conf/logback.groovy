@@ -27,7 +27,7 @@ appender('ROLLING',RollingFileAppender) {
       '%m%n%wex' // Message
   }
    rollingPolicy(TimeBasedRollingPolicy){
-    FileNamePattern = "${basePath}/logs/modulusuno-%d{yyyy-MM}.log"
+    FileNamePattern = "${basePath}/logs/modulusuno.log"
   }
 
 }
