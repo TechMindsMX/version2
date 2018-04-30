@@ -16,6 +16,7 @@ conversionRule 'wex', org.springframework.boot.logging.logback.WhitespaceThrowab
 def bySecond = timestamp("yyyyMMdd'T'HHmmss")
 
 appender('ROLLING',RollingFileAppender) {
+  file = "${basePath}/logs/modulusuno.log"
   encoder(PatternLayoutEncoder){
     charset = Charset.forName('UTF-8')
     pattern =
