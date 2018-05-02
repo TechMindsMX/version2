@@ -66,6 +66,8 @@
       <dd>
         <g:render template="businessName" model="[businessEntity: businessEntity, relation: relation]" />
       </dd>
+      <dt>Correo Electrónico</dt>
+      <dd>${businessEntity.email ?: 'No registrado'}</dd>
       <dt>Estatus</dt>
       <dd><g:message code="businessEntity.status.${businessEntity.status}"/></dd>
     </dl>
