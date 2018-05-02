@@ -17,13 +17,13 @@
   <div class="col-md-4">
     <div class="form-group">
       <label>Del:</label><br/>
-      <g:datePicker name="initDatePeriod" value="${prePaysheet.initPeriod}" precision="day" years="${2017..new Date()[Calendar.YEAR]}" required=""/>
+      <g:datePicker name="initDatePeriod" value="${prePaysheet?.initPeriod}" precision="day" years="${2017..new Date()[Calendar.YEAR]}" required=""/>
     </div>
   </div>
   <div class="col-md-4">
     <div class="form-group">
       <label>Al:</label><br/>
-      <g:datePicker name="endDatePeriod" value="${prePaysheet.endPeriod}" precision="day" years="${2017..new Date()[Calendar.YEAR]}" required=""/>
+      <g:datePicker name="endDatePeriod" value="${prePaysheet?.endPeriod}" precision="day" years="${2017..new Date()[Calendar.YEAR]}" required=""/>
     </div>
   </div>
 </div>
@@ -32,7 +32,7 @@
   <div class="col-md-12">
     <div class="form-group">
       <label><g:message code="prePaysheet.label.accountExecutive"/></label>
-      <input class="form-control" type="text" name="accountExecutive" value="${prePaysheet?.accountExecutive?:prePaysheet?.paysheetContract?.executive.name}" required="" maxLength="200"/>
+      <input class="form-control" type="text" name="accountExecutive" value="${prePaysheet?.accountExecutive?:prePaysheet?.paysheetContract?.executive?.name}" required="" maxLength="200"/>
     </div>
   </div>
 </div>
