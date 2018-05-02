@@ -90,6 +90,10 @@
     <input id="businessName" name="businessName" class="form-control" value="${params.businessName}"/>
   </g:else>
 </div>
+
+<label><g:message code="businessEntity.email" /></label>
+<input id="email" name="email" value="${businessEntity?.email}" class="form-control" />
+
 </f:with>
 
 <input type="hidden" id="company" name="company" value="${session.company}" />
