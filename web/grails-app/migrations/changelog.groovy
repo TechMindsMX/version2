@@ -138,4 +138,5 @@ databaseChangeLog = {
   include file: 'updating-column-contract-type-indefined-to-undefined-into-data-imss-employee.groovy'
   include file: 'adding-column-paysheet-receipt-uuid-ias-to-paysheet-employee.groovy'
   include file: 'create-domain-user-employee.groovy'
+    include file: 'adding-column-email-to-business-entity.groovy'
 }
