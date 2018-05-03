@@ -54,7 +54,8 @@ class PurchaseOrderDocumentsService {
         retentions = xmlParsed[cfdiNs.conceptos][cfdiNs.concepto][cfdiNs.impuestos][cfdiNs.retenciones][cfdiNs.retencion]
       }
       itemsXml.eachWithIndex { xmlItem, index ->
-        def taxItem = taxes != [] ? taxes[index] : ""
+        def taxItem = taxes != [] ? taxes.find { it.'@impuesto' == "002" } : ""
+        log.info "Tax item type 002: ${taxItem}"
         def retentionItem = retentions != [] ? retentions[index] : ""
 				Map xmlDataItem = [xmlItem:xmlItem, taxItem:taxItem, retentionItem:retentionItem, version:xmlParsed.'@version']
         createOrderItemFromXmlItem(order, xmlDataItem)
