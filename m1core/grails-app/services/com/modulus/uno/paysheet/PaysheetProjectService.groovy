@@ -138,7 +138,7 @@ class PaysheetProjectService {
       name: businessEntity.names.find { it.type == NameType.NOMBRE }.value,
       lastName: businessEntity.names.find { it.type == NameType.APELLIDO_PATERNO }.value,
       motherLastName: businessEntity.names.find { it.type == NameType.APELLIDO_MATERNO }.value,
-      email: "fakemail@mail.com"
+      email: businessEntity.email ?: "fakemail@mail.com"
     )
 
     userService.createUserWithoutRole(user, profile)

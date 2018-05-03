@@ -12,6 +12,7 @@ class BusinessEntityCommand implements Validateable {
   String motherLastName
   String businessName
   String number
+  String email
 
   BusinessEntityType type
   LeadType clientProviderType
@@ -19,6 +20,7 @@ class BusinessEntityCommand implements Validateable {
   static constraints = {
     website nullable:true,blank:false,size:5..50,url:true
     number nullable:true
+    email nullable:true, blank:true, email:true, size:6..200
     curp(nullable:true, blank:true,size:10..50,validator: { val, obj ->
       if(obj.clientProviderType == LeadType.EMPLEADO && obj.type == BusinessEntityType.FISICA && !(val ==~ /^[A-Z]{4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]+)$/) ) {
         false
