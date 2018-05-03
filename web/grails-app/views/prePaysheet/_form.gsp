@@ -1,9 +1,12 @@
 <input type="hidden" name="contractId" value="${prePaysheet?.paysheetContract?.id}"/>
+<g:if test="${prePaysheet?.paysheetContract?.projects.findAll { !it.payers }}">
+  <div class="alert alert-warning" role="alert">Existen proyectos que no tienen empleados y/o pagadoras definidos: ${prePaysheet?.paysheetContract?.projects.findAll { !it.payers || !it.employees }.name.sort()}</div>
+</g:if>
 <div class="row">
   <div class="col-md-12">
     <div class="form-group">
       <label><g:message code="prePaysheet.label.paysheetProject"/></label>
-      <g:select class="form-control" name="paysheetProject" from="${prePaysheet?.paysheetContract?.projects.sort{it.name}}" optionKey="name" optionValue="name" value="${prePaysheet?.paysheetProject}"/>
+      <g:select class="form-control" name="paysheetProject" from="${(prePaysheet?.paysheetContract?.projects.findAll { it.payers && it.employees })?.sort{it.name}}" optionKey="name" optionValue="name" value="${prePaysheet?.paysheetProject}"/>
     </div>
   </div>
 </div>
