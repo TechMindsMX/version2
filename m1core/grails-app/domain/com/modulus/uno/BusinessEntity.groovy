@@ -9,6 +9,7 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
   String rfc
   String website
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]
+  String email
 
   BusinessEntityType type
   BusinessEntityStatus status = BusinessEntityStatus.TO_AUTHORIZE
@@ -34,6 +35,7 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
       }
     })
     status nullable:false
+    email nullable:true, blank:true, email:true,size:6..200
   }
 
   String toString(){

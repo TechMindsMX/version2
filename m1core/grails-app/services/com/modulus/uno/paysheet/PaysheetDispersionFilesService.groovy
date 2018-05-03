@@ -46,7 +46,7 @@ class PaysheetDispersionFilesService {
 
   List<PaysheetEmployee> getPaysheetEmployeesForBank(def allEmployees, Bank bank) {
     allEmployees.collect { employee ->
-      if (employee.prePaysheetEmployee.bank==bank && employee.paymentWay == PaymentWay.BANKING) {
+      if (employee.prePaysheetEmployee.bank==bank && employee.paymentWay == PaymentWay.BANKING &&  [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(employee.status)) {
         employee
       }
     }.grep()
@@ -126,6 +126,7 @@ class PaysheetDispersionFilesService {
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+    List<PaysheetEmployeeStatus> statuses = "SA" ? [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.ASSIMILABLE_PAYED] : [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED]
 		String sourceAccount = dispersionData."${account}".accountNumber.padLeft(18,'0')
     String currency = "MXP"
     String type = "40"
@@ -134,7 +135,7 @@ class PaysheetDispersionFilesService {
     String disp = "H"
 
     dispersionData.employees.eachWithIndex { employee, index ->
-      if (employee."${salary}" > 0) {
+      if (employee."${salary}" > 0 && statuses.contains(employee.status)) {
 				log.info "Payment dispersion interbank record for employee: ${employee?.dump()}"
 				String destinyAccount = employee.prePaysheetEmployee.clabe.padLeft(18,'0')
         String bankCode = destinyAccount.substring(0,3)
@@ -163,12 +164,13 @@ class PaysheetDispersionFilesService {
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+    List<PaysheetEmployeeStatus> statuses = "SA" ? [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.ASSIMILABLE_PAYED] : [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED]
 		String sourceAccount = dispersionDataForBank."${account}".accountNumber.padLeft(18,'0')
 		String currency = "MXN"
 		String message = "${schema.padLeft(3,'S')}-${clearSpecialCharsFromString(dispersionDataForBank.paymentMessage).padRight(26,' ')}"
 
     dispersionDataForBank.employees.each { employee ->
-      if (employee."${salary}" > 0) {
+      if (employee."${salary}" > 0 && statuses.contains(employee.status)) {
         String destinyAccount = employee.prePaysheetEmployee.account.padLeft(18,'0')
 
         String amount = (new DecimalFormat('##0.00').format(employee."${salary}")).padLeft(16,'0')
@@ -186,6 +188,7 @@ class PaysheetDispersionFilesService {
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+    List<PaysheetEmployeeStatus> statuses = "SA" ? [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.ASSIMILABLE_PAYED] : [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED]
     String rfc = "".padLeft(16," ")
     String type = "99"
     String bank = "001"
@@ -193,7 +196,7 @@ class PaysheetDispersionFilesService {
 		int consecutive = 0
 
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
-      if (employee."${salary}" > 0) {
+      if (employee."${salary}" > 0 && statuses.contains(employee.status)) {
 				consecutive++
 				String counter = "${consecutive}".padLeft(9,"0")
 				String destinyAccount = employee.prePaysheetEmployee.account.padRight(20,' ')
@@ -214,6 +217,7 @@ class PaysheetDispersionFilesService {
 
 		String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+    List<PaysheetEmployeeStatus> statuses = "SA" ? [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.ASSIMILABLE_PAYED] : [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED]
     String sourceAccount = dispersionDataForBank."${account}".accountNumber.padRight(11,'  ')
 		//HEADER
 		String header = "100001E${new Date().format('MMddyyyy')}${sourceAccount}     ${dispersionDataForBank.applyDate.format('MMddyyyy')}"
@@ -223,7 +227,7 @@ class PaysheetDispersionFilesService {
 		BigDecimal total = new BigDecimal(0)
     Integer countEmployees = 0
     dispersionDataForBank.employees.eachWithIndex { employee, index ->
-      if (employee."${salary}" > 0) {
+      if (employee."${salary}" > 0 && statuses.contains(employee.status)) {
         String counter = "2${(index+2).toString().padLeft(5,'0')}"
         String employeeNumberCleaned = clearSpecialCharsFromString(employee.prePaysheetEmployee.numberEmployee ?: "")
         String employeeNumber = employeeNumberCleaned ? (employeeNumberCleaned.length() > 7 ? employeeNumberCleaned.substring(0,7) : employeeNumberCleaned.padRight(7,' ')) : " ".padRight(7, " ") 
@@ -254,6 +258,7 @@ class PaysheetDispersionFilesService {
     File file = File.createTempFile("dispersion_${schema}_BANAMEX",".txt")
 		
 		String account = schema == "SA" ? "saBankAccount" : "iasBankAccount"
+    List<PaysheetEmployeeStatus> statuses = "SA" ? [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.ASSIMILABLE_PAYED] : [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED]
     BankAccount chargeBankAccount = dispersionDataForBank."${account}"
 		if (!chargeBankAccount.clientNumber){
 			log.info "La cuenta no tiene registrado el número de cliente"
@@ -262,7 +267,7 @@ class PaysheetDispersionFilesService {
       log.info "Dispersion data for bank: ${dispersionDataForBank}"
       String salary = schema == "SA" ? "imssSalaryNet" : "netAssimilable"
       
-      def employeesNoZeroSalary = dispersionDataForBank.employees.findAll { employee -> employee."${salary}">0 }
+      def employeesNoZeroSalary = dispersionDataForBank.employees.findAll { employee -> employee."${salary}">0 && statuses.contains(employee.status) }
       if (!employeesNoZeroSalary) {
         log.info "El salario de los empleados para el esquema ${schema} está en ceros"
         file.append("El salario de los empleados para el esquema ${schema} está en ceros")
