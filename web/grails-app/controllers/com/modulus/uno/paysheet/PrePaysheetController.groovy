@@ -36,6 +36,8 @@ class PrePaysheetController {
       transactionStatus.setRollbackOnly()
       log.info "Contract ${paysheetContract.dump()}"
       log.info "Executive: ${paysheetContract.executive.name}"
+      log.info "Employees: ${paysheetContract.projects.employees}"
+      log.info "Payers: ${paysheetContract.projects.payers}"
       log.info "Error: ${command.errors}"
       render view:"create", model:[prePaysheet:new PrePaysheet(paysheetContract:paysheetContract), prePaysheetCommand: command]
       return
