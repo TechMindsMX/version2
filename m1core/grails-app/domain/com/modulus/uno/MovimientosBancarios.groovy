@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import com.modulus.uno.status.ConciliationStatus
+
 class MovimientosBancarios {
 
   String concept

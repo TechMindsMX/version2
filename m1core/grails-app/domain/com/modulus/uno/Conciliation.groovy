@@ -1,5 +1,8 @@
 package com.modulus.uno
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.status.ConciliationStatus
+
 class Conciliation {
 
   Company company
