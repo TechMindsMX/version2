@@ -1,6 +1,8 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import grails.converters.JSON
+
+import com.modulus.uno.CurrencyType
 
 class SaleOrderItem {
 

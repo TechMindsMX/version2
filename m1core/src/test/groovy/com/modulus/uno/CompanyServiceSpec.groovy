@@ -12,6 +12,7 @@ import spock.lang.Ignore
 
 import com.modulus.uno.stp.StpService
 import com.modulus.uno.stp.FinalTransactionResultService
+import com.modulus.uno.saleorder.SaleOrderService
 
 @TestFor(CompanyService)
 @Mock([Company,Corporate,Address,S3Asset,User,UserRole,Role,UserRoleCompany,Profile, ModulusUnoAccount, Commission, Bank, Transaction, MovimientosBancarios, BankAccount])

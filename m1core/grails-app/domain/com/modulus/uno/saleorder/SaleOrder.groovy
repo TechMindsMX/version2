@@ -1,7 +1,17 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import java.math.RoundingMode
 import grails.converters.JSON
+
+import com.modulus.uno.Company
+import com.modulus.uno.Address
+import com.modulus.uno.Authorization
+import com.modulus.uno.S3Asset
+import com.modulus.uno.RejectReason
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.PaymentMethod
+import com.modulus.uno.InvoicePurpose
+import com.modulus.uno.status.SaleOrderStatus
 
 class SaleOrder {
 

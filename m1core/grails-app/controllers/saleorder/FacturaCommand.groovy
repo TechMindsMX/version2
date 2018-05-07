@@ -1,6 +1,7 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import com.modulus.uno.invoice.*
+import com.modulus.uno.MessageCommand
 
 class FacturaCommand implements MessageCommand {
   String id

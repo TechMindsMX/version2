@@ -1,4 +1,4 @@
-import com.modulus.uno.SaleOrder
+import com.modulus.uno.saleorder.SaleOrder
 
 databaseChangeLog = {
 

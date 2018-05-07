@@ -2,6 +2,7 @@ package com.modulus.uno
 
 import java.text.*
 import grails.validation.Validateable
+import com.modulus.uno.saleorder.SaleOrder
 
 class ConciliationCommand implements Validateable {
 

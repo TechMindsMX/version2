@@ -1,7 +1,15 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import java.text.*
 import grails.validation.Validateable
+
+import com.modulus.uno.Company
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Address
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.PaymentMethod
+import com.modulus.uno.InvoicePurpose
+import com.modulus.uno.status.SaleOrderStatus
 
 class SaleOrderCommand implements Validateable {
 

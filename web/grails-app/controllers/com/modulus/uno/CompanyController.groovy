@@ -5,6 +5,8 @@ import grails.transaction.Transactional
 import java.text.SimpleDateFormat
 import pl.touk.excel.export.WebXlsxExporter
 
+import com.modulus.uno.saleorder.SaleOrder
+
 class CompanyController {
 
   def springSecurityService
