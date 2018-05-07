@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Propagation
 import com.modulus.uno.paysheet.ContractType
 import com.modulus.uno.paysheet.RegimeType
 import com.modulus.uno.paysheet.WorkDayType
+import com.modulus.uno.saleorder.SaleOrderService
 
 @Transactional
 class BusinessEntityService {

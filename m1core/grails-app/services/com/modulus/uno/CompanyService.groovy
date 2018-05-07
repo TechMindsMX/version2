@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Propagation
 import com.modulus.uno.stp.StpService
 import com.modulus.uno.stp.FinalTransactionResultService
 import com.modulus.uno.stp.FinalTransactionResultStatus
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.status.CommissionTransactionStatus
 
 @Transactional
 class CompanyService {
@@ -29,16 +31,6 @@ class CompanyService {
   StpService stpService
   MovimientosBancariosService movimientosBancariosService
   FinalTransactionResultService finalTransactionResultService
-
-  def addingActorToCompany(Company company, User user) {
-    company.addToActors(user)
-    company.save()
-  }
-
-  def addingLegalRepresentativeToCompany(Company company, User user){
-    company.addToLegalRepresentatives(user)
-    company.save()
-  }
 
   def allCompaniesByUser(User user){
     Company.createCriteria().list {
