@@ -1,5 +1,3 @@
-import com.modulus.uno.SaleOrder
-
 databaseChangeLog = {
 
     changeSet(author: "tim (generated)", id: "1486681466430-1") {
