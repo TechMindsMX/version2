@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import static org.springframework.http.HttpStatus.*
 import grails.converters.JSON
@@ -6,20 +6,36 @@ import wslite.rest.*
 import grails.transaction.Transactional
 import com.modulus.uno.catalogs.UnitType
 
+import com.modulus.uno.ClientService
+import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.CompanyService
+import com.modulus.uno.DocumentService
+import com.modulus.uno.S3AssetService
+import com.modulus.uno.EmailSenderService
+import com.modulus.uno.CollaboratorService
+
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
+import com.modulus.uno.Product
+import com.modulus.uno.Corporate
+
+import com.modulus.uno.Period
+import com.modulus.uno.status.SaleOrderStatus
+
 @Transactional(readOnly = true)
 class SaleOrderController {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-  def clientService
-  def businessEntityService
+  ClientService clientService
+  BusinessEntityService businessEntityService
   SaleOrderService saleOrderService
   def springSecurityService
-  def companyService
-  def documentService
-  def businessEntity
-  def s3AssetService
-  def emailSenderService
+  CompanyService companyService
+  DocumentService documentService
+  BusinessEntity businessEntity
+  S3AssetService s3AssetService
+  EmailSenderService emailSenderService
   CollaboratorService collaboratorService
 
   @Transactional

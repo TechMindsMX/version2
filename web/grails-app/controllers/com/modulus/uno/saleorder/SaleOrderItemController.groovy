@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
