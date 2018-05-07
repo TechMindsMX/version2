@@ -1,9 +1,13 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import com.github.rahulsom.swaggydoc.*
 import com.wordnik.swagger.annotations.*
 import static org.springframework.http.HttpStatus.*
 import grails.converters.JSON
+
+import com.modulus.uno.ClientService
+import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.CompanyService
 
 @Api
 class SaleOrderController {
@@ -37,6 +41,8 @@ class SaleOrderController {
       @ApiImplicitParam(name = 'note', value = '', required = false, dataType = 'string',paramType = 'form'),
       @ApiImplicitParam(name = 'externalId', value = '', required = true, dataType = 'string',paramType = 'form'),
       @ApiImplicitParam(name = 'paymentWay', value = '0, 1, 2 o 3; (0=NA, 1=EFECTIVO,2=CHEQUE,3=TRANSFERENCIA)', required = true, dataType = 'string',paramType = 'form'),
+      @ApiImplicitParam(name = 'paymentMethod', value = '0 ó 1; (0=PUE, 1=PPD)', required = true, dataType = 'string',paramType = 'form'),
+      @ApiImplicitParam(name = 'invoicePurpose', value = '0..21', required = true, dataType = 'string',paramType = 'form'),
       @ApiImplicitParam(name = 'currencyUsd', value = 'MXN o USD', required = true, dataType = 'string',paramType = 'form')
       ])
   def save(SaleOrderCommand saleOrderCommand) {
@@ -57,13 +63,16 @@ class SaleOrderController {
     @ApiImplicitParam(name = 'name', value = '', dataType = 'string',paramType = 'form'),
     @ApiImplicitParam(name = 'quantity', value = '', dataType = 'number',paramType = 'form'),
     @ApiImplicitParam(name = 'price', value = '', dataType = 'number',paramType = 'form'),
-    @ApiImplicitParam(name = 'ieps', value = '', dataType = 'number',paramType = 'form'),
-    @ApiImplicitParam(name = 'iva', value = '', dataType = 'number',paramType = 'form'),
+    @ApiImplicitParam(name = 'discount', value = '%', dataType = 'number',paramType = 'form'),
+    @ApiImplicitParam(name = 'ivaRetention', value = 'Monto', dataType = 'number',paramType = 'form'),
+    @ApiImplicitParam(name = 'iva', value = '%', dataType = 'number',paramType = 'form'),
     @ApiImplicitParam(name = 'unitType', value = 'UNIDADES,KILOGRAMOS,METROS,LITROS,HORAS,SERVICIO,PAQUETES,CAJA, PIEZA,TONELADAS,TAMBOS', dataType = 'string',paramType = 'form'),
+    @ApiImplicitParam(name = 'satKey', value = '', dataType = 'string',paramType = 'form'),
     @ApiImplicitParam(name = 'saleOrderId', value = '', dataType = 'number',paramType = 'form')
       ])
   def saveSaleOrderItem(SaleOrderItemCommand command) {
     def saleOrder = SaleOrder.findById(params.saleOrderId)
+    log.info "Item command: ${command.dump()}"
     def saleOrderItem = command.createSaleOrderItem()
     saleOrderItem.saleOrder = saleOrder
 
