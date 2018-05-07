@@ -2,6 +2,8 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 
+import com.modulus.uno.status.SaleOrderStatus
+
 class DashboardController {
 
   def companyService
