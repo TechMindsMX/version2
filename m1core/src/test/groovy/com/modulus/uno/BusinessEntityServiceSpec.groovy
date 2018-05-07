@@ -6,6 +6,8 @@ import java.lang.Void as Should
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import com.modulus.uno.saleorder.SaleOrderService
+
 @TestFor(BusinessEntityService)
 @Mock([BusinessEntity, ComposeName, ClientLink, ProviderLink, Company, EmployeeLink, BankAccount, DataImssEmployee])
 class BusinessEntityServiceSpec extends Specification {

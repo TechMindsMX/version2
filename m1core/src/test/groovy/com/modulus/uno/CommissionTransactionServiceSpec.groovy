@@ -5,6 +5,11 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import grails.test.mixin.Mock
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.SaleOrderItem
+import com.modulus.uno.status.CommissionTransactionStatus
+
+
 @TestFor(CommissionTransactionService)
 @Mock([CommissionTransaction, Company, Transaction, SaleOrder, SaleOrderItem, Commission])
 class CommissionTransactionServiceSpec extends Specification {
