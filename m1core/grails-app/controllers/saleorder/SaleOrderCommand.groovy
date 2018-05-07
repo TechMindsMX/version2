@@ -9,6 +9,7 @@ import com.modulus.uno.Address
 import com.modulus.uno.PaymentWay
 import com.modulus.uno.PaymentMethod
 import com.modulus.uno.InvoicePurpose
+import com.modulus.uno.status.SaleOrderStatus
 
 class SaleOrderCommand implements Validateable {
 

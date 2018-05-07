@@ -10,6 +10,7 @@ import com.modulus.uno.stp.FinalTransactionResultService
 import com.modulus.uno.stp.FinalTransactionResultStatus
 import com.modulus.uno.saleorder.SaleOrder
 import com.modulus.uno.status.CommissionTransactionStatus
+import com.modulus.uno.status.SaleOrderStatus
 
 @Transactional
 class CompanyService {
