@@ -3,7 +3,7 @@ package com.modulus.uno
 import grails.transaction.Transactional
 
 import com.modulus.uno.status.SaleOrderStatus
-
+import com.modulus.uno.saleorder.SaleOrder
 class DashboardController {
 
   def companyService
