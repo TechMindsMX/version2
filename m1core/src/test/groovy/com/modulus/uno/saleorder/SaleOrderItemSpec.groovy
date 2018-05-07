@@ -1,9 +1,11 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import grails.test.mixin.TestFor
 
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import com.modulus.uno.CurrencyType
 
 @TestFor(SaleOrderItem)
 class SaleOrderItemSpec extends Specification {
