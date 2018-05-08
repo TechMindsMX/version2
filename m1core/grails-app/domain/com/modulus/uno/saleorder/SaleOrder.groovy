@@ -40,7 +40,7 @@ class SaleOrder {
 
   static belongsTo = [company:Company]
 
-  static hasMany = [addresses:Address, items:SaleOrderItem,authorizations:Authorization, documents:S3Asset, payments:SaleOrderPayment]
+  static hasMany = [addresses:Address, items:SaleOrderItem,authorizations:Authorization, documents:S3Asset, payments:SaleOrderPayment, creditNotes:CreditNote]
 
   static constraints = {
     rfc blank:false,size:10..50
