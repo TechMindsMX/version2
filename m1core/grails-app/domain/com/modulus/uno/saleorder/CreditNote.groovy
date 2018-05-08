@@ -17,6 +17,7 @@ class CreditNote {
   Date lastUpdated
   
   static belongsTo = [saleOrder:SaleOrder]
+  static hasMany = [items:CreditNoteItem]
 
   static constraints = {
     folio nullable:true
