@@ -13,6 +13,7 @@ class CreditNoteItemCommand implements Validateable{
   String sku
   String name
   String unitType
+  String creditNoteId
 
   CreditNoteItem createCreditNoteItem() {
     new CreditNoteItem(
@@ -23,7 +24,8 @@ class CreditNoteItemCommand implements Validateable{
       discount:getValueInBigDecimal(this.discount),
       ivaRetention:getValueInBigDecimal(this.ivaRetention?:"0"),
       iva:getValueInBigDecimal(this.iva?:"0"),
-      unitType:this.unitType
+      unitType:this.unitType,
+      creditNote:CreditNote.get(this.creditNoteId)
     )
   }
 
