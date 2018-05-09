@@ -4,6 +4,15 @@
     <h4>Agregar Concepto</h4>
   </div>
   <div class="portlet-body">
+
+    <g:if test="${errors}">
+      <ul class="errors alert alert-danger alert-dismissable" role="alert">
+        <g:each in="${errors}" var="error">
+          <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
+        </g:each>
+      </ul>
+    </g:if>
+
     <div class="table-responsive">
       <table class="table table-condensed">
         <thead>
@@ -18,7 +27,7 @@
         </thead>
         <tbody>
           <g:if test="${creditNote.status == CreditNoteStatus.CREATED}">
-            <g:hiddenField name="creditNote.id" value="${creditNote.id}"/>
+            <g:hiddenField name="creditNoteId" value="${creditNote.id}"/>
             <tr>
               <td>
                 <div class="input-group">
