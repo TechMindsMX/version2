@@ -27,4 +27,40 @@ class CreditNoteItem {
     quantity min:0.0
   }
 
+  BigDecimal getAmountDiscount() {
+    this.price * (this.discount/100)
+  }
+
+  BigDecimal getAppliedDiscount() {
+    this.quantity * this.getAmountDiscount()
+  }
+
+  BigDecimal getPriceWithDiscount() {
+    this.price - this.getAmountDiscount()
+  }
+
+  BigDecimal getAmountIVA(){
+    this.getPriceWithDiscount() * (this.iva/100)
+  }
+
+  BigDecimal getAppliedIVA() {
+    this.quantity * this.getAmountIVA()
+  }
+
+  BigDecimal getAmountWithoutTaxes(){
+    this.quantity * this.getPriceWithDiscount()
+  }
+
+  BigDecimal getNetPrice(){
+    this.getPriceWithDiscount() + this.getAmountIVA() - this.ivaRetention
+  }
+
+  BigDecimal getNetAmount(){
+    this.quantity * this.getNetPrice()
+  }
+
+  BigDecimal getTotalIvaRetention() {
+    this.quantity * this.ivaRetention
+  }
+
 }
