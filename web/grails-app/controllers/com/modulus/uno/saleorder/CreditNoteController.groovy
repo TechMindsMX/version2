@@ -34,7 +34,7 @@ class CreditNoteController {
   }
 
   def show(CreditNote creditNote) {
-    respond creditNote, model:[saleOrder:creditNote.saleOrder]
+    respond creditNote, model:[saleOrder:creditNote.saleOrder, errors:params.errors]
   }
 
   protected void notFound() {
