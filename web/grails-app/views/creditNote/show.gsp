@@ -49,5 +49,6 @@
         </div>
       </div>
     </div>
+    <asset:javascript src="creditNote/show.js"/>
   </body>
 </html>
