@@ -45,6 +45,9 @@
             <g:form controller="creditNoteItem" action="save">
               <g:render template="addItems"/>
             </g:form>
+            <div class="row">
+              <g:render template="listItems"/>
+            </div>
           </div>
         </div>
       </div>
