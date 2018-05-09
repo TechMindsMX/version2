@@ -9,12 +9,11 @@ class CreditNoteItem {
   BigDecimal discount = new BigDecimal(0)
   BigDecimal ivaRetention = new BigDecimal(0)
   BigDecimal iva = new BigDecimal(0)
-  CurrencyType currencyType = CurrencyType.PESOS
 
   String sku
   String name
   String unitType
-  String satKey
+  String satKey = "84111506"
 
   static belongsTo = [creditNote:CreditNote]
 
