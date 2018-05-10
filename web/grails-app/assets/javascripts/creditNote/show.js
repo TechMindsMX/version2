@@ -1,4 +1,4 @@
-$('#name').on('change',function(){
+$('#item').on('change',function(){
   $('#sku').val('');
   $('#quantity').val('');
   $('#price').val('');
@@ -19,6 +19,7 @@ $('#name').on('change',function(){
     if(data.error!==undefined){
       return false;
     } else {
+      if(data.name!==undefined){$('#name').val(data.name);}
       if(data.sku!==undefined){$('#sku').val(data.sku);}
       if(data.quantity!==undefined){$('#quantity').val(data.quantity.toFixed(2));$('#originalQuantity').val(data.quantity.toFixed(2));}
       if(data.price!==undefined){$('#price').val(data.price.toFixed(2));$('#originalPrice').val(data.price.toFixed(2));}
