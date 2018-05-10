@@ -28,7 +28,7 @@
               <g:each in="${saleOrder.creditNotes}" var="creditNote">
                 <tr>
                   <td class="text-center"><g:link controller="creditNote" action="show" id="${creditNote.id}">${creditNote.id}</g:link></td>
-                  <td class="text-right">Total</td>
+                  <td class="text-right">${modulusuno.formatPrice(number:creditNote.total)}</td>
                   <td class="text-center">${creditNote.status}</td>
                 </tr>
               </g:each>
