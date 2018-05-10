@@ -23,4 +23,28 @@ class CreditNote {
     folio nullable:true
   }
 
+  BigDecimal getTotalIVA(){
+    items*.appliedIVA.sum() ?: 0
+  }
+
+  BigDecimal getTotalIvaRetention(){
+    items*.totalIvaRetention.sum() ?: 0
+  }
+
+  BigDecimal getTotal(){
+    getSubtotal() + getTotalIVA() - getTotalIvaRetention()
+  }
+
+  BigDecimal getSubtotal(){
+    items*.amountWithoutTaxes.sum() ?: 0
+  }
+
+  BigDecimal getSubtotalWithDiscount() {
+    getSubtotal() - getAmountDiscount()
+  }
+
+  BigDecimal getTotalDiscount(){
+    items*.appliedDiscount.sum() ?: 0
+  }
+
 }
