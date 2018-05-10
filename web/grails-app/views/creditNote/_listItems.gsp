@@ -29,6 +29,40 @@
         </td>
         <td>&nbsp;</td>
       </tr>
+      </g:each>
     </tbody>
+    <tr>
+      <td colspan="5" class="text-right"><strong>Subtotal</strong></td>
+      <td class="text-right">
+        ${modulusuno.formatPrice(number:creditNote.subtotal)}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="5" class="text-right"><strong>Descuentos</strong></td>
+      <td class="text-right">
+        ${modulusuno.formatPrice(number:creditNote.totalDiscount)}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="5" class="text-right"><strong>IVA</strong></td>
+      <td class="text-right">
+        ${modulusuno.formatPrice(number:creditNote.totalIVA)}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="5" class="text-right"><strong>Retención IVA</strong></td>
+      <td class="text-right">
+        ${modulusuno.formatPrice(number:creditNote.totalIvaRetention)}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="5" class="text-right"><strong>Total</strong></td>
+      <td class="text-right">
+        <strong>
+          ${modulusuno.formatPrice(number:creditNote.total)}
+        </strong>
+      </td>
+    </tr>
+
   </table>
 </div>
