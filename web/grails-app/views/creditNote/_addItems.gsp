@@ -31,7 +31,8 @@
             <tr>
               <td>
                 <div class="input-group">
-                  <g:select class="form-control" name="name" from="${creditNote.saleOrder.items}" var="item" optionKey="id" optionValue="name" noSelection="['':'Elija el producto']"/>
+                  <g:select class="form-control" name="item" from="${creditNote.saleOrder.items.sort{it.id}}" var="item" optionKey="id" optionValue="name" noSelection="['':'Elija el producto']" required=""/>
+                  <input type="hidden" id="name" name="name" value=""/>
                 </div>
                 <div class="input-group">
                   <div class="input-group-addon">SKU</div>
@@ -40,12 +41,13 @@
               </td>
               <td>
                 <input class="form-control" id="quantity" name="quantity" type="number"/>
+                <input type="hidden" id="originalQuantity" name="originalQuantity" value=""/>
               </td>
               <td>
                 <div class="input-group">
                   <div class="input-group-addon">$</div>
                   <input type="text" id="price" name="price" class="form-control" required="" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta con 2 decimales)"/>
-                  <input type="hidden" id="originalPrice" name="originalPrice" value="" readOnly=""/>
+                  <input type="hidden" id="originalPrice" name="originalPrice" value=""/>
                 </div>
                 <div class="input-group">
                   <div class="input-group-addon">%</div>
@@ -64,7 +66,8 @@
                 </div>
                 <div class="input-group">
                   <div class="input-group-addon">$</div>
-                  <input type="text" id="netprice" name="netprice" class="form-control" value="" readonly=""/>
+                  <input type="text" id="netprice" name="netprice" class="form-control" value="" readonly="" required=""/>
+                  <input type="hidden" id="originalNetprice" name="originalNetprice" class="form-control" value="" readonly=""/>
                 </div>
               </td>
               <td>
@@ -73,7 +76,8 @@
                 </div>
               </td>
               <td>
-                <input class="form-control" id="amount" name="amount" type="number" value="" readOnly=""/>
+                <input class="form-control" id="amount" name="amount" type="number" value="" readOnly="" required="" min="0.01"/>
+                <input type="hidden" id="originalAmount" name="originalAmount" class="form-control" value="" readonly=""/>
               </td>
               <td class="text-center">
                 <button class="btn btn-primary" type="submit">Agregar</button>
