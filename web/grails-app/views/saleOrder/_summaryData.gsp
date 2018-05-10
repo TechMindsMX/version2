@@ -18,6 +18,8 @@
 <dl class="dl-horizontal">
   <dt>Subtotal</dt>
   <dd>${modulusuno.formatPrice(number:saleOrder.subtotal)}</dd>
+  <dt>Descuento</dt>
+  <dd>${modulusuno.formatPrice(number:saleOrder.totalDiscount)}</dd>
   <dt>IVA</dt>
   <dd>${modulusuno.formatPrice(number:saleOrder.totalIVA)}</dd>
   <dt>Retención IVA</dt>
