@@ -25,7 +25,7 @@ class CreditNoteItemController {
       return
     }
 
-    creditNoteItem.save
+    creditNoteItem.save()
 
     redirect controller:"creditNote", action:"show", id:creditNoteItem.creditNote.id
   }
