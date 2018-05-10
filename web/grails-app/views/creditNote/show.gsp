@@ -42,11 +42,29 @@
             <h4>Detalle de la Nota de Crédito</h4>
           </div>
           <div class="portlet-body">
-            <g:form controller="creditNoteItem" action="save">
-              <g:render template="addItems"/>
-            </g:form>
+            <g:if test="${creditNote.status == CreditNoteStatus.CREATED}">
+              <g:form controller="creditNoteItem" action="save">
+                <g:render template="addItems"/>
+              </g:form>
+            </g:if>
             <div class="row">
               <g:render template="listItems"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="portlet">
+          <div class="portlet-body">
+            <div class="row">
+              <div class="col-md-4">
+                <g:link class="btn btn-primary" controller="saleOrder" action="show" id="${saleOrder.id}">Regresar</g:link>
+              </div>
+              <div class="col-md-8 text-right">
+              </div>
             </div>
           </div>
         </div>
