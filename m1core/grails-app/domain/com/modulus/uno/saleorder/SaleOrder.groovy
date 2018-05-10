@@ -70,15 +70,11 @@ class SaleOrder {
     getSubtotal() + getTotalIVA() - getTotalIvaRetention()
   }
 
-  def getSubtotal(){
+  BigDecimal getSubtotal(){
     items*.amountWithoutTaxes.sum() ?: 0
   }
 
-  def getAmountDiscount() {
-    getSubtotal()*(discount/100)
-  }
-
-  def getSubtotalWithDiscount() {
+  BigDecimal getSubtotalWithDiscount() {
     getSubtotal() - getAmountDiscount()
   }
 
