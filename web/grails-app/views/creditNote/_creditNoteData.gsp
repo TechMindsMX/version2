@@ -22,6 +22,20 @@
             <dd>${creditNote.status}</dd>
           </dl>
         </div>
+			  <div class="col-md-6">
+          <dl class="dl-horizontal">
+            <dt>Subtotal</dt>
+            <dd>${modulusuno.formatPrice(number:creditNote.subtotal)}</dd>
+            <dt>Descuento</dt>
+            <dd>${modulusuno.formatPrice(number:creditNote.totalDiscount)}</dd>
+            <dt>IVA</dt>
+            <dd>${modulusuno.formatPrice(number:creditNote.totalIVA)}</dd>
+            <dt>Retención IVA</dt>
+            <dd>${modulusuno.formatPrice(number:creditNote.totalIvaRetention)}</dd>
+            <dt>Total</dt>
+            <dd>${modulusuno.formatPrice(number:creditNote.total)}</dd>
+          </dl>
+        </div>
       </div>
     </div>
   </div>
