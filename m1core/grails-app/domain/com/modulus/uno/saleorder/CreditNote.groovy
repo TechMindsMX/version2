@@ -3,6 +3,7 @@ package com.modulus.uno.saleorder
 import com.modulus.uno.PaymentWay
 import com.modulus.uno.PaymentMethod
 import com.modulus.uno.InvoicePurpose
+import com.modulus.uno.Authorization
 import com.modulus.uno.status.CreditNoteStatus
 
 class CreditNote {
@@ -17,7 +18,7 @@ class CreditNote {
   Date lastUpdated
   
   static belongsTo = [saleOrder:SaleOrder]
-  static hasMany = [items:CreditNoteItem]
+  static hasMany = [items:CreditNoteItem, authorizations:Authorization]
 
   static constraints = {
     folio nullable:true
