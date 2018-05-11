@@ -37,17 +37,18 @@ class ProductController {
       return
     }
 
+    Company company = Company.get(session.company)
     def product = command.createProduct()
-    product.company = Company.get(session.company)
+    product.company = company
 
    if (!product.validate()){
-      render view:'create', model:[product:product]
+      render view:'create', model:[product:product, unitTypes:UnitType.findAllByCompany(company)]
       return
     }
 
     if (product.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      render product.errors, view:'create'
+      render view:'create', model:[product:product, unitTypes:UnitType.findAllByCompany(company)]
       return
     }
 
