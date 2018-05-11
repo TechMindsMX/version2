@@ -37,6 +37,12 @@ class CreditNoteController {
     respond creditNote, model:[saleOrder:creditNote.saleOrder, errors:params.errors]
   }
 
+  @Transactional
+  def requestAuthorization(CreditNote creditNote) {
+    creditNoteService.sendToAuthorize(creditNote)
+    redirect action:"show", id:creditNote.id
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
