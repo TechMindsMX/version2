@@ -19,7 +19,7 @@ class CreditNoteService {
   CreditNote sendToAuthorize(CreditNote creditNote) {
     creditNote.status = CreditNoteStatus.TO_AUTHORIZE
     creditNote.save()
-    //emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    emailSenderService.notifyCreditNoteChangeStatus(creditNote)
     creditNote
   }
 
