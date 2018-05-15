@@ -33,3 +33,10 @@
     <g:link class="btn btn-primary" action="authorize" id="${creditNote.id}">Autorizar</g:link>
   </g:if>
 </sec:ifAnyGranted>
+
+
+<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
+  <g:if test="${creditNote.status == CreditNoteStatus.AUTHORIZED}">
+    <g:link class="btn btn-primary" action="apply" id="${creditNote.id}">Aplicar</g:link>
+  </g:if>
+</sec:ifAnyGranted>
