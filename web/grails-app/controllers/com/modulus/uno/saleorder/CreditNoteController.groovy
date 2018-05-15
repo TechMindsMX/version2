@@ -43,6 +43,12 @@ class CreditNoteController {
     redirect action:"show", id:creditNote.id
   }
 
+  @Transactional
+  def authorize(CreditNote creditNote) {
+    creditNoteService.processAuthorization(creditNote)
+    redirect action:"show", id:creditNote.id
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
