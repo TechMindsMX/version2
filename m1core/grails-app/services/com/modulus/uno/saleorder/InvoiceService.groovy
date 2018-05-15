@@ -42,7 +42,7 @@ class InvoiceService {
     result.text
   }
 
-  private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
+  FacturaCommand createInvoiceFromSaleOrder(SaleOrder saleOrder){
     FacturaCommand facturaCommand = new FacturaCommand(
       id:saleOrder.company.id.toString(),
       datosDeFacturacion: getDatosDeFacturacion(saleOrder), 
@@ -130,7 +130,7 @@ class InvoiceService {
         claveProd:item.satKey ?: "01010101",
         descripcion:item.name, 
         unidad:item.unitType,
-        claveUnidad:getUnitKeyFromItem(item),
+        claveUnidad:getUnitKeyFromItem(item.saleOrder.company, item),
         impuestos:buildTaxesFromItem(item),
         retenciones:buildTaxWithholdingsFromItem(item)
       )
@@ -140,12 +140,12 @@ class InvoiceService {
     conceptos
   }
 
-  private String getUnitKeyFromItem(SaleOrderItem item) {
-    UnitType unitType = UnitType.findByCompanyAndName(item.saleOrder.company, item.unitType)
+  String getUnitKeyFromItem(Company company, def item) {
+    UnitType unitType = UnitType.findByCompanyAndName(company, item.unitType)
     unitType ? unitType.unitKey : "XNA"
   }
 
-  private List<Impuesto> buildTaxesFromItem(SaleOrderItem item) {
+  List<Impuesto> buildTaxesFromItem(def item) {
     List<Impuesto> taxes = []
     
     if (item.iva){
@@ -155,7 +155,7 @@ class InvoiceService {
     taxes
   }
 
-  private List<Impuesto> buildTaxWithholdingsFromItem(SaleOrderItem item) {
+  List<Impuesto> buildTaxWithholdingsFromItem(def item) {
     List<Impuesto> holdings = []
     
     if (item.ivaRetention){
@@ -165,7 +165,7 @@ class InvoiceService {
     holdings
   }
 
-  private TotalesImpuestos buildSummaryTaxes(FacturaCommand facturaCommand) {
+  TotalesImpuestos buildSummaryTaxes(FacturaCommand facturaCommand) {
     new TotalesImpuestos(
       totalImpuestosTrasladados: calculateTaxesTotal(facturaCommand),
       totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand),
