@@ -11,4 +11,6 @@ class DatosDeFacturacion {
   String moneda = 'MXN'
   BigDecimal tipoDeCambio = new BigDecimal(1)
   String addendaLabel
+  String tipoRelacion
+  String cfdiRelacionado
 }
