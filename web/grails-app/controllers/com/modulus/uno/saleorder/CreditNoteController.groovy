@@ -1,11 +1,13 @@
 package com.modulus.uno.saleorder
 
 import grails.transaction.Transactional
+import com.modulus.uno.CompanyService
 
 @Transactional(readOnly = true)
 class CreditNoteController {
 
   CreditNoteService creditNoteService
+  CompanyService companyService
 
   def create(SaleOrder saleOrder) {
     render view:"create", model:[saleOrder:saleOrder]
@@ -34,7 +36,7 @@ class CreditNoteController {
   }
 
   def show(CreditNote creditNote) {
-    respond creditNote, model:[saleOrder:creditNote.saleOrder, errors:params.errors]
+    respond creditNote, model:[saleOrder:creditNote.saleOrder, isEnabledToStamp:companyService.isCompanyEnabledToStamp(creditNote.saleOrder.company), errors:params.errors]
   }
 
   @Transactional
