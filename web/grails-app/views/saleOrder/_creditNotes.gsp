@@ -20,6 +20,7 @@
             <thead>
               <tr>
                 <th class="text-center">No.</th>
+                <th class="text-center">Fecha de Creación</th>
                 <th class="text-center">Total</th>
                 <th class="text-center">Estatus</th>
               </tr>
@@ -28,6 +29,7 @@
               <g:each in="${saleOrder.creditNotes}" var="creditNote">
                 <tr>
                   <td class="text-center"><g:link controller="creditNote" action="show" id="${creditNote.id}">${creditNote.id}</g:link></td>
+                  <td class="text-center">${formatDate(date:creditNote.dateCreated, format:'dd-MM-yyyy')}</td>
                   <td class="text-right">${modulusuno.formatPrice(number:creditNote.total)}</td>
                   <td class="text-center">${creditNote.status}</td>
                 </tr>
