@@ -319,4 +319,12 @@ class PurchaseOrderController {
     render view:"list", model:[purchaseOrder: purchaseOrders, filterValues:[providerName:params.providerName]] 
   }
 
+  def listMissingDocs() {
+    params.max = params.max ?: 25
+    params.sort = "dateCreated"
+    params.order = "desc"
+    def purchaseOrders = purchaseOrderService.getPurchaseOrdersWithMissingDocs(session.company.toLong(), params)
+
+    render view:"list", model:[purchaseOrder: purchaseOrders.list, purchaseOrderCount: purchaseOrders.items]
+  }
 }
