@@ -87,7 +87,11 @@ class SaleOrder {
   }
 
   BigDecimal getAmountToPay() {
-    getTotal() - getAmountPayed()
+    getTotal() - getAmountPayed() - getTotalCreditNotes()
+  }
+
+  BigDecimal getTotalCreditNotes() {
+    creditNotes*.total.sum()
   }
 
   String toString(){
