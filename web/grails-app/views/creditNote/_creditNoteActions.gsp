@@ -32,6 +32,10 @@
   <g:if test="${creditNote.status == CreditNoteStatus.TO_AUTHORIZE}">
     <g:link class="btn btn-primary" action="authorize" id="${creditNote.id}">Autorizar</g:link>
   </g:if>
+  <g:if test="${creditNote.status == CreditNoteStatus.APPLIED}">
+    <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'xml')}" class="btn btn-success" download>XML</a>
+    <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'pdf')}" class="btn btn-default" download>PDF</a>
+  </g:if>
 </sec:ifAnyGranted>
 
 
