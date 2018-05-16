@@ -26,6 +26,8 @@
   <dd>${modulusuno.formatPrice(number:saleOrder.totalIvaRetention)}</dd>
   <dt>Total</dt>
   <dd>${modulusuno.formatPrice(number:saleOrder.total)}</dd>
+  <dt>Notas de Crédito</dt>
+  <dd>${modulusuno.formatPrice(number:saleOrder.totalCreditNotes)}</dd>
   <dt>Por pagar</dt>
   <dd>${modulusuno.formatPrice(number:saleOrder.amountToPay > 0 ? saleOrder.amountToPay : 0)}</dd>
 </dl>
