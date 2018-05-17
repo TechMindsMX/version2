@@ -12,6 +12,7 @@ import com.modulus.uno.PaymentWay
 import com.modulus.uno.PaymentMethod
 import com.modulus.uno.InvoicePurpose
 import com.modulus.uno.status.SaleOrderStatus
+import com.modulus.uno.status.CreditNoteStatus
 
 class SaleOrder {
 
@@ -87,11 +88,11 @@ class SaleOrder {
   }
 
   BigDecimal getAmountToPay() {
-    getTotal() - getAmountPayed() - getTotalCreditNotes()
+    getTotal() - getAmountPayed() - getTotalCreditNotesApplied()
   }
 
-  BigDecimal getTotalCreditNotes() {
-    creditNotes*.total.sum()
+  BigDecimal getTotalCreditNotesApplied() {
+    (creditNotes.findAll { it.status == CreditNoteStatus.APPLIED })*.total.sum()
   }
 
   String toString(){
