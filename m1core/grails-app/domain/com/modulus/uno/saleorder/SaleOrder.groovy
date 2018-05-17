@@ -92,7 +92,7 @@ class SaleOrder {
   }
 
   BigDecimal getTotalCreditNotesApplied() {
-    (creditNotes.findAll { it.status == CreditNoteStatus.APPLIED })*.total.sum()
+    (creditNotes.findAll { it.status == CreditNoteStatus.APPLIED })*.total.sum() ?: 0
   }
 
   String toString(){
