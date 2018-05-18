@@ -283,10 +283,11 @@ class PurchaseOrderService {
     results
   }
 
-  Map getPurchaseOrdersWithMissingDocs(Long companyId) {
-    Company company = Company.get(companyId)
+  Map getPurchaseOrdersWithMissingDocs(Company company) {
+    println "Purchase orders: ${company.purchaseOrders.status}"
     Map orders = [:]
     List<PurchaseOrder> allOrders = PurchaseOrder.findAllByCompanyAndStatus(company, PurchaseOrderStatus.PAGADA)
+    println "Orders payeds: ${allOrders}"
     List<PurchaseOrder> ordersMissingDocs = allOrders.findAll { order ->
       !order.documents || order.documents.size() == 1
     }
