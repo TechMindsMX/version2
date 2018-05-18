@@ -159,7 +159,8 @@ class RestService {
         multipart "logo", bodyMap.logo.bytes, bodyMap.logo.contentType, bodyMap.logo.originalFilename
         multipart "password", bodyMap.password.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
-        multipart "serie", bodyMap.serie.bytes
+        multipart "serieIncomes", bodyMap.serieIncomes.bytes
+        multipart "serieExpenses", bodyMap.serieExpenses.bytes
       }
     }.doit()
     response
