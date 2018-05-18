@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import org.springframework.context.i18n.LocaleContextHolder as LCH
 import org.springframework.transaction.annotation.Propagation
 
+import com.modulus.uno.saleorder.InvoiceService
 import com.modulus.uno.stp.StpService
 import com.modulus.uno.stp.FinalTransactionResultService
 import com.modulus.uno.stp.FinalTransactionResultStatus
@@ -27,7 +28,7 @@ class CompanyService {
   def corporateService
   DirectorService directorService
   TransactionService transactionService
-  def invoiceService
+  InvoiceService invoiceService
   CommissionTransactionService commissionTransactionService
   StpService stpService
   MovimientosBancariosService movimientosBancariosService
@@ -271,7 +272,7 @@ class CompanyService {
   }
 
   def sendDocumentsPerInvoice(def params, Company company) {
-    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serie:params.serie]
+    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
     def result = restService.sendFilesForInvoiceM1(documents)
     result
   }
@@ -352,8 +353,8 @@ class CompanyService {
     company.accounts.first().aliasStp && company.commissions.find { it.type == CommissionType.PAGO }
   }
 
-  void changeSerieForInvoicesOfCompany(Company company, String serie, String folio) {
-    Map newSerie = [rfc:company.rfc, id:company.id.toString(), serie:serie, folio:folio]
+  void changeSerieForInvoicesOfCompany(Company company, def params) {
+    Map newSerie = [rfc:company.rfc, id:company.id.toString(), serie:params.serie, folio:params.folio, type:params.type]
     invoiceService.changeSerieAndInitialFolioToStampInvoiceForEmitter(newSerie)
   }
 
