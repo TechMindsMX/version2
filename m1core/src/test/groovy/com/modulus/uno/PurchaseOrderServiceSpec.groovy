@@ -232,7 +232,6 @@ class PurchaseOrderServiceSpec extends Specification {
   @Unroll
   void "Should get all purchase orders with missing docs when current purchase orders is #thePurchaseOrders"() {
     given:
-      println "The purchase orders: ${thePurchaseOrders}"
       Company company = new Company(purchaseOrders:thePurchaseOrders).save(validate:false)
     when:
       def results = service.getPurchaseOrdersWithMissingDocs(company)
@@ -243,12 +242,22 @@ class PurchaseOrderServiceSpec extends Specification {
     []                  ||  0
     [createPurchaseOrderForTest(PurchaseOrderStatus.PAGADA)] || 1
     [createPurchaseOrderForTest(PurchaseOrderStatus.PAGADA), createPurchaseOrderForTest(PurchaseOrderStatus.CREADA)] || 1
-    [
-      new PurchaseOrder(providerName:"UNO", status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:100, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true),
-      new PurchaseOrder(providerName:"DOS", status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true),
-      new PurchaseOrder(providerName:"TRES", status:PurchaseOrderStatus.AUTORIZADA, items:[new PurchaseOrderItem(quantity:1, price:10, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true),
-      new PurchaseOrder(providerName:"CUATRO", status:PurchaseOrderStatus.CANCELADA, items:[new PurchaseOrderItem(quantity:1, price:1, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true)
-    ] || 2
+  }
+
+  void "Should get all purchase orders with missing docs when current purchase orders"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The current purchaseOrders"
+      PurchaseOrder po1 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po2 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po3 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.AUTORIZADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po4 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.CANCELADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po5 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)], documents: [Mock(S3Asset)]).save(validate:false)
+      PurchaseOrder po6 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)], documents: [Mock(S3Asset), Mock(S3Asset)]).save(validate:false)
+    when:
+      def results = service.getPurchaseOrdersWithMissingDocs(company)
+    then: "value"
+      results.items == 3    
   }
 
   private PaymentToPurchase createPayment(String amount) {
@@ -263,12 +272,4 @@ class PurchaseOrderServiceSpec extends Specification {
 		purchaseOrder
 	}
 
-  private List<PurchaseOrder> createPurchaseOrderList() {
-    [
-      new PurchaseOrder(id:1, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false),
-      new PurchaseOrder(id:2, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false),
-      new PurchaseOrder(id:3, status:PurchaseOrderStatus.AUTORIZADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false),
-      new PurchaseOrder(id:4, status:PurchaseOrderStatus.CANCELADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
-    ]
-  }
 }
