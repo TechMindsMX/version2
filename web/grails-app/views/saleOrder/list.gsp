@@ -29,14 +29,14 @@
         <table class="table table-condensed table-striped">
         <thead>
          <tr>
-           <th>No. de Orden</th>
-           <th>Fecha de Creación</th>
-           <th>RFC</th>
-           <th>Cliente</th>
-           <th>Estatus</th>
-           <th>Fecha de Cobro</th>
-           <th>Moneda</th>
-           <th>Total</th>
+           <th class="text-center">No. de Orden</th>
+           <th class="text-center">Fecha de Creación</th>
+           <th class="text-center">RFC</th>
+           <th class="text-center">Cliente</th>
+           <th class="text-center">Estatus</th>
+           <th class="text-center">Fecha de Cobro</th>
+           <th class="text-center">Moneda</th>
+           <th class="text-center">Total</th>
           </tr>
           <thead>
           <g:if test="${saleOrders.isEmpty()}">
@@ -58,6 +58,11 @@
           </tr>
          </g:each>
          <tbody>
+         <tfoot>
+            <td colspan="6"></td>
+            <td class="text-right"><strong>Suma Total</strong></td>
+            <td class="text-right"><strong>${modulusuno.formatPrice(number: saleOrders*.total.sum())}</strong></td>
+         </tfoot>
        </table>
        <g:if test="${!filterValues}">
        <nav>
