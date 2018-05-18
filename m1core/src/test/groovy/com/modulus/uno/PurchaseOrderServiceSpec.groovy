@@ -135,7 +135,7 @@ class PurchaseOrderServiceSpec extends Specification {
   @Unroll
   void "Should save the payment to purchase order when source is #theSource"() {
     given: "A purchase order"
-      PurchaseOrder purchaseOrder = createPurchaseOrderForTest()
+      PurchaseOrder purchaseOrder = createPurchaseOrderForTest(PurchaseOrderStatus.AUTORIZADA)
 		and:"Payment data"
 			Map paymentData = [amount:theAmount, sourcePayment:theSource]
     and:
@@ -229,26 +229,46 @@ class PurchaseOrderServiceSpec extends Specification {
       [providerName:"Proveedor 5"]    |   0
   }
 
-  void "Should get all purchase orders with missing docs"() {
+  @Unroll
+  void "Should get all purchase orders with missing docs when current purchase orders is #thePurchaseOrders"() {
     given:
-      Company company = new Company(purchaseOrders:[]).save(validate:false)
+      println "The purchase orders: ${thePurchaseOrders}"
+      Company company = new Company(purchaseOrders:thePurchaseOrders).save(validate:false)
     when:
-      def results = service.getPurchaseOrdersWithMissingDocs(1)
+      def results = service.getPurchaseOrdersWithMissingDocs(company)
     then: "value"
-      !results.list
-      results.items == 0
+      results.items == theExpectedItems
+    where:
+    thePurchaseOrders   || theExpectedItems
+    []                  ||  0
+    [createPurchaseOrderForTest(PurchaseOrderStatus.PAGADA)] || 1
+    [createPurchaseOrderForTest(PurchaseOrderStatus.PAGADA), createPurchaseOrderForTest(PurchaseOrderStatus.CREADA)] || 1
+    [
+      new PurchaseOrder(providerName:"UNO", status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:100, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true),
+      new PurchaseOrder(providerName:"DOS", status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true),
+      new PurchaseOrder(providerName:"TRES", status:PurchaseOrderStatus.AUTORIZADA, items:[new PurchaseOrderItem(quantity:1, price:10, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true),
+      new PurchaseOrder(providerName:"CUATRO", status:PurchaseOrderStatus.CANCELADA, items:[new PurchaseOrderItem(quantity:1, price:1, ieps:0, iva:0).save(validate:false)]).save(validate:false, flush:true)
+    ] || 2
   }
-
 
   private PaymentToPurchase createPayment(String amount) {
     new PaymentToPurchase(amount: new BigDecimal(amount)).save()
   }
 
-	private PurchaseOrder createPurchaseOrderForTest() {
-		PurchaseOrder purchaseOrder = new PurchaseOrder(status:PurchaseOrderStatus.AUTORIZADA).save(validate:false)
+	private PurchaseOrder createPurchaseOrderForTest(PurchaseOrderStatus status) {
+		PurchaseOrder purchaseOrder = new PurchaseOrder(status:status).save(validate:false)
 		PurchaseOrderItem item = new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0, purchaseOrder:purchaseOrder).save(validate:false)
 		purchaseOrder.addToItems(item)
 		purchaseOrder.save(validate:false)
 		purchaseOrder
 	}
+
+  private List<PurchaseOrder> createPurchaseOrderList() {
+    [
+      new PurchaseOrder(id:1, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false),
+      new PurchaseOrder(id:2, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false),
+      new PurchaseOrder(id:3, status:PurchaseOrderStatus.AUTORIZADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false),
+      new PurchaseOrder(id:4, status:PurchaseOrderStatus.CANCELADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+    ]
+  }
 }
