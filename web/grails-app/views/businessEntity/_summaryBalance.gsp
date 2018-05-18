@@ -25,10 +25,12 @@
         </thead>
         <tbody>
           <tr>
-            <td>${modulusuno.formatPrice(number:clientData.totalSoldForClient)}</td>
-            <td>${modulusuno.formatPrice(number:clientData.totalSoldForClientStatusConciliated)}</td>
-            <td>${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}</td>
-            <td>${modulusuno.formatPrice(number:clientData.totalPending)}</td>
+            <td class="text-right">${modulusuno.formatPrice(number:clientData.totalSoldForClient)}</td>
+            <td class="text-right">${modulusuno.formatPrice(number:clientData.totalSoldForClientStatusConciliated)}</td>
+            <td class="text-right">${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}</td>
+            <td class="text-right">
+              <g:link controller="saleOrder" action="listOrdersWithAmountToPayForClient" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalPending)}</g:link>
+            </td>
           </tr>
         </tbody>
       </table>
