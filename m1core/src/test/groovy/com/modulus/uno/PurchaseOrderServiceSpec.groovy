@@ -59,7 +59,8 @@ class PurchaseOrderServiceSpec extends Specification {
     result instanceof PurchaseOrder
   }
 
-  void "verify if exist  or not original date in purchaseOrder"() {
+  @Unroll
+  void "should update the payment date with #sendDate for a purchase order"() {
     given:
       def purchaseOrder = new PurchaseOrder()
       purchaseOrder.providerName = "prueba"
@@ -67,14 +68,14 @@ class PurchaseOrderServiceSpec extends Specification {
       purchaseOrder.originalDate = originalDate
       purchaseOrder.save(validate:false)
     when:
-      def purchaseORderResult = service.updateDatePaymentForOrder(1, sendDate)
+      def purchaseOrderResult = service.updateDatePaymentForOrder(1, newDate)
     then:
-      purchaseORderResult.originalDate != null
-      purchaseORderResult.fechaPago == sendDate
+      purchaseOrderResult.originalDate != null
+      purchaseOrderResult.fechaPago == newDate
    where:
-      fechaPago     | originalDate  | sendDate      | fechaPagoOriginal
-      new Date()    | null          | new Date()+5  | new Date()
-      new Date()+1  | new Date()+17 | new Date()+17 | new Date()+17
+      fechaPago     | originalDate  || newDate
+      new Date()    | null          || new Date()+5  
+      new Date()+1  | new Date()+10 || new Date()+17
 
   }
 
@@ -226,6 +227,16 @@ class PurchaseOrderServiceSpec extends Specification {
       [providerName:"Proveedor 2"]    |   3
       [providerName:"Proveedor 22"]    |   1
       [providerName:"Proveedor 5"]    |   0
+  }
+
+  void "Should get all purchase orders with missing docs"() {
+    given:
+      Company company = new Company(purchaseOrders:[]).save(validate:false)
+    when:
+      def results = service.getPurchaseOrdersWithMissingDocs(1)
+    then: "value"
+      !results.list
+      results.items == 0
   }
 
 
