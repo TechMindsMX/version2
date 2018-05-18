@@ -10,7 +10,7 @@
       <h1>
         <i class="fa fa-credit-card-alt fa-3x"></i>
         Lista de Pre-Nóminas
-        <small>${client}</small>
+        <small>${paysheetContract?.client}</small>
       </h1>
     </div>
     <div class="content scaffold-edit" role="main">
@@ -56,7 +56,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="pagination">
-                    <g:paginate total="${prePaysheetCount ?: 0}" />
+                    <g:paginate total="${prePaysheetCount ?: 0}" params="[paysheetContractId:paysheetContract.id]"/>
                 </div>
               </div>
             </div>

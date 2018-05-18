@@ -14,6 +14,7 @@ class PaysheetService {
   PrePaysheetService prePaysheetService
   def grailsApplication
   PaysheetDispersionFilesService paysheetDispersionFilesService
+  PaysheetReceiptService paysheetReceiptService
 
   @Transactional
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
@@ -213,8 +214,8 @@ class PaysheetService {
 			summaryBank.saPayers = getPayersForBankAndSchema(payers, bank, PaymentSchema.IMSS)
 			summaryBank.iasPayers = getPayersForBankAndSchema(payers, bank, PaymentSchema.ASSIMILABLE)
 			summaryBank.allPayers = payers
-			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.imssSalaryNet.sum()
-			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING){ return e} }*.netAssimilable.sum()
+			summaryBank.totalSA = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING && [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(e.status)){ return e} }*.imssSalaryNet.sum()
+			summaryBank.totalIAS = paysheet.employees.findAll{ e-> if(e.prePaysheetEmployee.bank==bank && e.paymentWay==PaymentWay.BANKING && [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED].contains(e.status)){ return e} }*.netAssimilable.sum()
 			summaryBank.type = "SameBank"
       if (summaryBank.totalSA > 0 || summaryBank.totalIAS >0)
 			  summary.add(summaryBank)
@@ -286,4 +287,34 @@ class PaysheetService {
   def processResultDispersionFileToPaysheet(Paysheet paysheet, def params) {
     paysheetDispersionFilesService.processResultDispersionFile(paysheet, params)
   }
+
+  Paysheet generatePaysheetReceiptsFromPaysheetForSchema(Paysheet paysheet, PaymentSchema schema) {
+    List<PaysheetEmployeeStatus> statusSchema = schema == PaymentSchema.IMSS ? [PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.PAYED] : [PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.PAYED]
+    def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) }
+    employees.each { employee ->
+      BigDecimal salarySchema = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
+      if (salarySchema > 0) {
+        String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
+        paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, paysheetReceiptUuid)
+        paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
+      }
+    }
+    paysheet
+  }
+
+  List<Paysheet> getPaysheetsStampedForEmployee(String rfc) {
+    def paysheetCrit = Paysheet.createCriteria()
+
+    def payedPaysheetsForEmployee = paysheetCrit.list {
+      employees {
+        prePaysheetEmployee {
+          eq("rfc", rfc)
+        }
+        'in'("status", [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED])
+      }
+    }
+
+    payedPaysheetsForEmployee
+  }
+
 }

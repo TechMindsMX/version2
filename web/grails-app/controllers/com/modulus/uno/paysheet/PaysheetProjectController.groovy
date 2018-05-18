@@ -133,4 +133,9 @@ class PaysheetProjectController {
     redirect action:"show", id:paysheetProject.id
   }
 
+  def generateUsers(PaysheetProject paysheetProject) {
+    paysheetProjectService.generateUsersForEmployeesFromPaysheetProject(paysheetProject)
+    redirect action:"show", id:paysheetProject.id
+  }
+
 }

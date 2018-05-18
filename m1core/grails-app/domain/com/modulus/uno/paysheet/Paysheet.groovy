@@ -19,6 +19,10 @@ class Paysheet {
   }
 
   BigDecimal getTotal() {
-    employees*.totalToInvoice.sum() ?: 0
+    employees*.totalToInvoice?.sum() ?: 0
+  }
+
+  String toString() {
+    "${this.id} - ${this.paysheetContract.client} - ${this.prePaysheet.initPeriod.format('dd-MM-yyyy')} / ${this.prePaysheet.endPeriod.format('dd-MM-yyyy')}"
   }
 }

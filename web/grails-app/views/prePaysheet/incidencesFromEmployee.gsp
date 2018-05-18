@@ -56,5 +56,6 @@
       </div>
 
     </div>
+    <asset:javascript src="prePaysheet/incidences.js"/>
   </body>
 </html>

@@ -13,11 +13,19 @@ class PaysheetContract {
   Date initDate
   User executive
   String employerRegistration
+  String serie
+  Integer folio = new Integer(1)
 
   static belongsTo = [company:Company]
   static hasMany = [employees:BusinessEntity, projects:PaysheetProject, users:User]
 
   static constraint = {
     client nullable:false
+    serie nullable:true, blank:true
+    folio nullable:false, min:1
+  }
+
+  Integer getNextFolio() {
+    this.folio ? this.folio++ : 1
   }
 }

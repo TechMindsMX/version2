@@ -4,6 +4,8 @@ import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.PaymentPeriod
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
 import java.math.RoundingMode
 import grails.transaction.Transactional
 
@@ -22,7 +24,7 @@ class PaysheetEmployeeService {
       paysheet:paysheet,
       breakdownPayment: new BreakdownPaymentEmployee(),
       ivaRate: new BigDecimal(grailsApplication.config.iva).setScale(2, RoundingMode.HALF_UP),
-			paymentWay: (prePaysheetEmployee.bank && prePaysheetEmployee.account && banksLayout.contains(prePaysheetEmployee.bank.bankingCode)) || (!banksLayout.contains(prePaysheetEmployee.bank.bankingCode) && prePaysheetEmployee.clabe) ? PaymentWay.BANKING : PaymentWay.ONLY_CASH
+			paymentWay: (prePaysheetEmployee.bank && prePaysheetEmployee.account && banksLayout.contains(prePaysheetEmployee.bank?.bankingCode)) || (!banksLayout.contains(prePaysheetEmployee.bank?.bankingCode) && prePaysheetEmployee.clabe) ? PaymentWay.BANKING : PaymentWay.ONLY_CASH
     )
 
     if (prePaysheetEmployee.netPayment > 0) {
@@ -161,6 +163,77 @@ class PaysheetEmployeeService {
     paysheetEmployee.status = PaysheetEmployeeStatus.REJECTED
     paysheetEmployee.save()
     paysheetEmployee
+  }
+
+  @Transactional
+  PaysheetEmployee savePaysheetReceiptUuidIMSS(PaysheetEmployee paysheetEmployee, String paysheetReceiptUuid) {
+    paysheetEmployee.paysheetReceiptUuidSA = paysheetReceiptUuid
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  @Transactional
+  PaysheetEmployee savePaysheetReceiptUuidAsimilable(PaysheetEmployee paysheetEmployee, String paysheetReceiptUuid) {
+    paysheetEmployee.paysheetReceiptUuidIAS = paysheetReceiptUuid
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setIMSSStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setASSIMILABLEStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee setFullStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.FULL_STAMPED
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  @Transactional
+  PaysheetEmployee setStampedStatusToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}StampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+  }
+
+  Boolean employeeIsPayed(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasSAAndIASPayment(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.imssSalaryNet && paysheetEmployee.netAssimilable
+  }
+
+  Boolean employeeIsOnlySchemaStamped(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasOnlySchemaPayment(PaysheetEmployee paysheetEmployee) {
+    !paysheetEmployee.imssSalaryNet || !paysheetEmployee.netAssimilable
+  }
+
+  @Transactional
+  PaysheetEmployee reloadDataEmployee(PaysheetEmployee paysheetEmployee) {
+    Company company = paysheetEmployee.paysheet.paysheetContract.company
+    BusinessEntity businessEntity = company.businessEntities.find { be -> be.rfc == paysheetEmployee.prePaysheetEmployee.rfc }
+    paysheetEmployee.prePaysheetEmployee.curp = businessEntity.curp
+    paysheetEmployee.prePaysheetEmployee.nameEmployee = businessEntity.toString()
+    paysheetEmployee.prePaysheetEmployee.numberEmployee = businessEntity.number
+    if (paysheetEmployee.status == PaysheetEmployeeStatus.PENDING) {
+      
+    }
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployee findEmployeeForRfcAndPaysheet(String rfc, Paysheet paysheet) {
+    paysheet.employees.find { employee -> employee.prePaysheetEmployee.rfc == rfc }
   }
 
 }

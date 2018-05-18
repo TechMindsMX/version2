@@ -5,25 +5,58 @@ import grails.validation.Validateable
 
 class PrePaysheetEmployeeIncidenceCommand implements Validateable{
 
-  String description
+  String incidence
   String type
   String schema
   String prePaysheetEmployeeId
-  String amount
+  String exemptAmount
+  String taxedAmount
+  String extraHoursDays
+  String extraHoursType
+  String extraHoursQuantity
 
   static constraints = {
-    description nullable:false
-    amount nullable:false
+    incidence nullable:false
+    schema nullable:false
+    exemptAmount nullable:false
+    taxedAmount nullable:false
+    extraHoursDays (nullable:true, validator: { val, obj ->
+      (obj.incidence != PerceptionType.P019.toString() || val) ? true : false
+    })
+    extraHoursType (nullable:true, validator: { val, obj ->
+      (obj.incidence != PerceptionType.P019.toString() || val) ? true : false
+    })
+    extraHoursQuantity (nullable:true, validator: { val, obj ->
+      (obj.incidence != PerceptionType.P019.toString() || val) ? true : false
+    })
   }
 
   public PrePaysheetEmployeeIncidence createPrePaysheetEmployeeIncidence() {
     PrePaysheetEmployee prePaysheetEmployee = PrePaysheetEmployee.get(this.prePaysheetEmployeeId)
+    IncidenceType incidenceType = IncidenceType.values().find { it.toString() == this.type }
+    def incidenceObj = incidenceType == IncidenceType.DEDUCTION ? DeductionType.values().find { it.toString() == this.incidence } : (incidenceType == IncidenceType.PERCEPTION ? PerceptionType.values().find { it.toString() == this.incidence } : OtherPerceptionType.values().find { it.toString() == this.incidence })
+
+    ExtraHourIncidence extraHourIncidence
+    if (incidenceObj == PerceptionType.P019) {
+      ExtraHourType extraHourType = ExtraHourType.values().find { it.toString() == this.extraHoursType  }
+      extraHourIncidence = new ExtraHourIncidence(
+        days: this.extraHoursDays.toInteger(),
+        type: extraHourType.key,
+        quantity: this.extraHoursQuantity.toInteger(),
+        amount: getValueInBigDecimal(this.exemptAmount) + getValueInBigDecimal(this.taxedAmount)
+      )
+    }
+
     new PrePaysheetEmployeeIncidence(
-        description:this.description,
-        type:IncidenceType.values().find { it.toString() == this.type },
+        internalKey:incidenceObj.name(),
+        description:incidenceObj.description,
+        keyType:incidenceObj.key,
+        type: incidenceType,
         paymentSchema:PaymentSchema.values().find { it.toString() == this.schema },
-        amount: getValueInBigDecimal(this.amount),
-        prePaysheetEmployee: prePaysheetEmployee
+        exemptAmount: getValueInBigDecimal(this.exemptAmount),
+        taxedAmount: getValueInBigDecimal(this.taxedAmount),
+        prePaysheetEmployee: prePaysheetEmployee,
+        extraHourIncidence: extraHourIncidence
     )
   }
 

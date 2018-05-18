@@ -2,6 +2,9 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.status.SaleOrderStatus
+
 @Transactional(readOnly=true)
 class EmailSenderService {
 

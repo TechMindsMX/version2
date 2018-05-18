@@ -16,8 +16,12 @@ class PrePaysheetCommand implements Validateable {
     paysheetProject nullable:false, blank:false
     paymentPeriod nullable:false, blank:false
     accountExecutive nullable:false, blank:false
-    initDatePeriod nullable:false
-    endDatePeriod nullable:false
+    initDatePeriod nullable:false, validator: { val, obj ->
+      (obj.endDatePeriod && val.before(obj.endDatePeriod)) ?: false
+     }
+    endDatePeriod nullable:false, validator: { val, obj ->
+      (obj.initDatePeriod && val.after(obj.initDatePeriod)) ?: false
+     }
   }
 
   PrePaysheet createPrePaysheet() {

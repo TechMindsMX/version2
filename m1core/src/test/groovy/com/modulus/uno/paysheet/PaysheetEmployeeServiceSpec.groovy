@@ -12,9 +12,13 @@ import com.modulus.uno.PaymentPeriod
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.Company
 import com.modulus.uno.Bank
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.ComposeName
+import com.modulus.uno.BusinessEntityType
+import com.modulus.uno.NameType
 
 @TestFor(PaysheetEmployeeService)
-@Mock([PaysheetEmployee, Paysheet, PrePaysheet, PrePaysheetEmployee, DataImssEmployee, EmployeeLink, Company, BreakdownPaymentEmployee, PaysheetProject, Bank, PaysheetContract])
+@Mock([PaysheetEmployee, Paysheet, PrePaysheet, PrePaysheetEmployee, DataImssEmployee, EmployeeLink, Company, BreakdownPaymentEmployee, PaysheetProject, Bank, PaysheetContract, BusinessEntity, ComposeName])
 class PaysheetEmployeeServiceSpec extends Specification {
 
   DataImssEmployeeService dataImssEmployeeService = Mock(DataImssEmployeeService)
@@ -209,5 +213,85 @@ class PaysheetEmployeeServiceSpec extends Specification {
       new BigDecimal(100250.75).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(147235.17).setScale(2, RoundingMode.HALF_UP)
 
    }
+
+  @Unroll
+  void "Should set stamped status to employee when employee status = #theCurrentStatus and schema = #theSchema"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = new PaysheetEmployee(status:theCurrentStatus, prePaysheetEmployee:new PrePaysheetEmployee().save(validate:false), salaryImss:theImssSalary, netAssimilable:theNetAssimilable).save(validate:false)
+    and:"The schema"
+      PaymentSchema schema = theSchema
+    when:
+      def result = service.setStampedStatusToEmployee(paysheetEmployee, schema)
+    then:
+      result.status == theExpectedStatus
+    where:
+      theCurrentStatus              |     theSchema                   |  theImssSalary     |  theNetAssimilable    ||  theExpectedStatus
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(1000)  |  new BigDecimal(2000) ||  PaysheetEmployeeStatus.IMSS_STAMPED
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(1000)  |  new BigDecimal(0) ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(0)  |  new BigDecimal(1000) ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(2000)         ||  PaysheetEmployeeStatus.IMSS_STAMPED
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(0)         ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(0)  |  new BigDecimal(2000)         ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(0)  ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(0)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(2000)        ||  PaysheetEmployeeStatus.IMSS_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(0)        ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(0)  |  new BigDecimal(2000)        ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(0)  ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(0)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.IMSS  | new BigDecimal(1000)  |  new BigDecimal(2000)          ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.IMSS  | new BigDecimal(1000)  |  new BigDecimal(0)          ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.IMSS  | new BigDecimal(0)  |  new BigDecimal(2000)          ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.FULL_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.FULL_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+  }
+
+  void "Should reload data for employee"() {
+    given:"The paysheet employee"
+      Company company = new Company().save(validate:false)
+      PaysheetEmployee paysheetEmployee = new PaysheetEmployee (
+        paysheet: new Paysheet(paysheetContract:new PaysheetContract(company:company).save(validate:false)).save(validate:false),
+        prePaysheetEmployee: new PrePaysheetEmployee(rfc:"rfc", curp:"old-curp", nameEmployee:"old name", numberEmployee:"old number").save(validate:false)
+      ).save(validate:false)
+    and:"The business entity updated"
+      BusinessEntity businessEntity = new BusinessEntity (
+        rfc:"rfc",
+        type: BusinessEntityType.FISICA,
+        names: [
+          new ComposeName(value:"new", type:NameType.NOMBRE).save(validate:false),
+          new ComposeName(value:"name", type:NameType.APELLIDO_PATERNO).save(validate:false),
+          new ComposeName(value:"employee", type:NameType.APELLIDO_MATERNO).save(validate:false)
+        ]
+      ).save(validate:false)
+      company.addToBusinessEntities(businessEntity)
+      company.save(validate:false)
+    and:"The employee link"
+      EmployeeLink employeeLink = new EmployeeLink(
+        employeeRef:"rfc",
+        curp: "newCurp",
+        number: "newNumber",
+        company: company
+      ).save(validate:false)
+    when:
+      def result = service.reloadDataEmployee(paysheetEmployee)
+    then:
+      result.prePaysheetEmployee.curp == "newCurp"
+      result.prePaysheetEmployee.nameEmployee == "new name employee"
+      result.prePaysheetEmployee.numberEmployee == "newNumber"
+  }
 
 }

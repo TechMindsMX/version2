@@ -24,6 +24,7 @@
         <table class="table table-striped table-condensed">
           <thead>
             <tr>
+              <th></th>
               <th class="text-center">No. Empl</th>
               <th class="text-center">Nombre</th>
               <th class="text-center">RFC</th>
@@ -56,12 +57,19 @@
           <tbody>
             <g:each in="${paysheet.employees.sort{ it.prePaysheetEmployee.nameEmployee }}" var="employee">
               <tr>
+                <td>
+                  <g:if test="${![PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
+                    <g:link class="btn btn-primary" controller="paysheetEmployee" action="reloadData" id="${employee.id}">
+                      <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                    </g:link>
+                  </g:if>
+                </td>
                 <td>${employee.prePaysheetEmployee.numberEmployee}</td>
                 <td>${employee.prePaysheetEmployee.nameEmployee}</td>
                 <td>${employee.prePaysheetEmployee.rfc}</td>
                 <td>${employee.prePaysheetEmployee.curp}</td>
                 <td>${employee.prePaysheetEmployee.bank?.bankingCode}</td>
-                <td>${employee.prePaysheetEmployee.bank.name}</td>
+                <td>${employee.prePaysheetEmployee.bank?.name}</td>
                 <td>${employee.prePaysheetEmployee.clabe}</td>
                 <td>${employee.prePaysheetEmployee.account}</td>
                 <td>${employee.prePaysheetEmployee.cardNumber}</td>
@@ -94,8 +102,11 @@
                 </td>
                 <td class="text-center">
                   <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-                    <g:if test="${(employee.paymentWay == PaymentWay.CASH || employee.paymentWay == PaymentWay.ONLY_CASH) && employee.status == PaysheetEmployeeStatus.PENDING}">
+                    <g:if test="${(employee.paymentWay == PaymentWay.CASH || employee.paymentWay == PaymentWay.ONLY_CASH) && employee.status == PaysheetEmployeeStatus.PENDING && paysheet.status == PaysheetStatus.AUTHORIZED}">
                       <g:link class="btn btn-primary" action="setPayedToEmployee" id="${employee.id}">Pagar</g:link>
+                    </g:if>
+                    <g:if test="${[PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
+                      <g:link class="btn btn-primary" controller="paysheetEmployee" action="showPaysheetReceipts" id="${employee.id}">Recibos</g:link>
                     </g:if>
                   </sec:ifAnyGranted>
                 </td>
@@ -109,14 +120,20 @@
 
   <div class="row">
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED || paysheet.status == PaysheetStatus.CREATED}">
-      <div class="col-md-4">
+      <div class="col-md-6">
 				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-        <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary}">
+        <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary && paysheet.employees.findAll { [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(it.status)} }">
 					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
+        </g:if>
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status) && it.imssSalaryNet }}">
+          <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'IMSS']">Timbrar SA</g:link>
+        </g:if>
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status) && it.netAssimilable }}">
+          <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'Asimilable']">Timbrar IAS</g:link>
         </g:if>
 				</sec:ifAnyGranted>
       </div>
-      <div class="col-md-8 text-right">
+      <div class="col-md-6 text-right">
         <g:link class="btn btn-default" action="exportToXlsCash" id="${paysheet.id}">XLS EFECTIVO/CHEQUE</g:link>
         <g:link class="btn btn-default" action="exportToXlsImss" id="${paysheet.id}">XLS IMSS</g:link>
         <g:link class="btn btn-default" action="exportToXlsAssimilable" id="${paysheet.id}">XLS Asimilables</g:link>

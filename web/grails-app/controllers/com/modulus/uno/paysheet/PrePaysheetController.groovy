@@ -24,7 +24,6 @@ class PrePaysheetController {
   @Transactional
   def save(PrePaysheetCommand command) {
     log.info "Saving prePaysheet: ${command.dump()}"
-    PaysheetContract paysheetContract = PaysheetContract.get(command.contractId)
 
     if (!command) {
       transactionStatus.setRollbackOnly()
@@ -32,9 +31,15 @@ class PrePaysheetController {
       return
     }
 
+    PaysheetContract paysheetContract = PaysheetContract.get(command.contractId)
     if (command.hasErrors()) {
       transactionStatus.setRollbackOnly()
-      respond command.errors, view:"create", model:[prePaysheet:new PrePaysheet(paysheetContract:paysheetContract)]
+      log.info "Contract ${paysheetContract.dump()}"
+      log.info "Executive: ${paysheetContract.executive.name}"
+      log.info "Employees: ${paysheetContract.projects.employees}"
+      log.info "Payers: ${paysheetContract.projects.payers}"
+      log.info "Error: ${command.errors}"
+      render view:"create", model:[prePaysheet:new PrePaysheet(paysheetContract:paysheetContract), prePaysheetCommand: command]
       return
     }
 
@@ -42,8 +47,9 @@ class PrePaysheetController {
     prePaysheetService.savePrePaysheet(prePaysheet)
 
     if (prePaysheet.hasErrors()) {
+      log.info "Error prepaysheet"
       transactionStatus.setRollbackOnly()
-      respond prePaysheet.errors, view:"create"
+      respond prePaysheet.errors, view:"create", model:[prePaysheet:new PrePaysheet(paysheetContract:paysheetContract)]
       return
     }
 
@@ -71,8 +77,7 @@ class PrePaysheetController {
     params.max = 25
     PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
     Map prePaysheets = prePaysheetService.getListAndCountPrePaysheetsForPaysheetContract(paysheetContract, params)
-    render view:"list", model:[client:paysheetContract.client, prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
-   
+    render view:"list", model:[paysheetContract:paysheetContract, prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
   }
 
   @Transactional

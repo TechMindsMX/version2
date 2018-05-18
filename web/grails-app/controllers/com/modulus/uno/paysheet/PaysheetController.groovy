@@ -32,7 +32,7 @@ class PaysheetController {
     PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
     List<Paysheet> paysheetList = Paysheet.findAllByPaysheetContract(paysheetContract, params)
     Integer paysheetCount = Paysheet.countByPaysheetContract(paysheetContract)
-    render view:"list", model:[client:paysheetContract.client, paysheetList:paysheetList, paysheetCount:paysheetCount]
+    render view:"list", model:[paysheetContract:paysheetContract, paysheetList:paysheetList, paysheetCount:paysheetCount]
   }
 
   def sendToAuthorize(Paysheet paysheet) {
@@ -155,6 +155,13 @@ class PaysheetController {
     paysheet.status = PaysheetStatus.CANCELED
     paysheet.save()
     redirect action:"list"
+  }
+
+  def generatePaysheetReceipts(Paysheet paysheet) {
+    log.info "Generating paysheet receipts from paysheet ${paysheet.id} for schema ${params.schema}"
+    PaymentSchema schema = PaymentSchema.values().find { it.toString() == params.schema }
+    paysheetService.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
+    redirect action:"show", id:paysheet.id
   }
 
 }

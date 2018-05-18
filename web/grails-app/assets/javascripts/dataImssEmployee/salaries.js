@@ -31,3 +31,18 @@ function calculateIasSalary() {
 
   $('#iasSalary').val((total-sa).toFixed(2));
 }
+
+$( function() {
+  $( "#dpRegistration" ).datepicker({
+    dateFormat: 'dd/mm/yy',
+    maxDate: 0
+  });
+} );
+
+$( function() {
+  $( "#dpDischarge" ).datepicker({
+    dateFormat: 'dd/mm/yy',
+    maxDate: 0
+  });
+} );
+

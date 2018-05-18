@@ -3,6 +3,9 @@ package com.modulus.uno
 import grails.transaction.Transactional
 import java.math.RoundingMode
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.status.CommissionTransactionStatus
+
 @Transactional
 class CommissionTransactionService {
 

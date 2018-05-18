@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import java.math.RoundingMode
 
 import com.modulus.uno.stp.StpService
+import com.modulus.uno.saleorder.SaleOrder
 
 @Transactional
 class ModulusUnoService {
