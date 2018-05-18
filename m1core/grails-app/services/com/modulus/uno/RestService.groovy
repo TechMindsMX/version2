@@ -93,7 +93,8 @@ class RestService {
         multipart "rfc", bodyMap.rfc.bytes
         multipart "id", bodyMap.id.bytes
         multipart "certNumber", bodyMap.certNumber.bytes
-        multipart "serie", bodyMap.serie.bytes
+        multipart "serieIncomes", bodyMap.serieIncomes.bytes
+        multipart "serieExpenses", bodyMap.serieExpenses.bytes
       }
     }.doit()
     response
@@ -171,7 +172,7 @@ class RestService {
 
     log.info "Path: ${facturacionUrl}${url}"
     def endpoint = "${url}"
-    def data = [serie:params.serie, folio:params.folio]
+    def data = [serie:params.serie, folio:params.folio, type:params.type]
     def response = wsliteRequestService.doRequest(facturacionUrl){
       endpointUrl endpoint
       method HTTPMethod.POST
