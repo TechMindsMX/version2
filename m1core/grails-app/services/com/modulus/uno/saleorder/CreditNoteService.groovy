@@ -3,6 +3,7 @@ package com.modulus.uno.saleorder
 import grails.transaction.Transactional
 import com.modulus.uno.Authorization
 import com.modulus.uno.EmailSenderService
+import com.modulus.uno.CommissionTransactionService
 import com.modulus.uno.status.CreditNoteStatus
 import com.modulus.uno.invoice.Concepto
 import com.modulus.uno.invoice.MetodoDePago
@@ -15,6 +16,7 @@ class CreditNoteService {
   def springSecurityService
   def grailsApplication
   EmailSenderService emailSenderService
+  CommissionTransactionService commissionTransactionService
   InvoiceService invoiceService
   RestService restService
 
@@ -66,6 +68,7 @@ class CreditNoteService {
     creditNoteCommand = defineDataFromCreditNote(creditNote, creditNoteCommand)
     String folioStamp = sendToStampCreditNote(creditNoteCommand)
     creditNote = applyCreditNoteWithFolio(creditNote, folioStamp)
+    commissionTransactionService.registerCommissionForCreditNote(creditNote)
     creditNote
   }
 
