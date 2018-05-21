@@ -38,6 +38,8 @@ class SaleOrder {
   BigDecimal changeType = new BigDecimal(0)
   PaymentMethod paymentMethod = PaymentMethod.PUE
   InvoicePurpose invoicePurpose = InvoicePurpose.G01
+  String invoiceFolio
+  String invoiceSerie
 
   static belongsTo = [company:Company]
 
@@ -57,6 +59,8 @@ class SaleOrder {
     pdfTemplate nullable:true
     currency nullable:false
     changeType nullable:true
+    invoiceFolio nullable:true
+    invoiceSerie nullable:true
   }
 
   BigDecimal getTotalIVA(){
