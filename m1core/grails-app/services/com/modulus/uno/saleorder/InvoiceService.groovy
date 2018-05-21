@@ -1,6 +1,8 @@
 package com.modulus.uno.saleorder
 
 import grails.util.Environment
+import groovy.json.JsonSlurper
+
 import com.modulus.uno.invoice.*
 import com.modulus.uno.catalogs.UnitType
 import com.modulus.uno.Company
@@ -17,7 +19,7 @@ class InvoiceService {
   RestService restService
   def grailsApplication
 
-  String generateFactura(SaleOrder saleOrder){
+  Map generateFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
     log.info "Factura command to send: ${factura.dump()}"
     log.info "Datos de Facturación to send: ${factura.datosDeFacturacion.dump()}"
@@ -32,14 +34,16 @@ class InvoiceService {
       log.info "${ti.dump()}" 
     }
 
-    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    def resultStamp = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    log.info "Result stamp: ${resultStamp.text}"
+    def result = new JsonSlurper().parseText(resultStamp.text)
     if (!result) {
       throw new RestException("No se pudo generar la factura") 
     }
-    if (result.text.startsWith("Error")) {
-      throw new RestException(result.text) 
+    if (result.error) {
+      throw new RestException(result.error) 
     }
-    result.text
+    result 
   }
 
   FacturaCommand createInvoiceFromSaleOrder(SaleOrder saleOrder){
