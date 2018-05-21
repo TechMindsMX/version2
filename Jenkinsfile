@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   tools {
-    gradle "Gradle 2.10"
+    gradle "Gradle 3.3"
   }
 
   environment {
@@ -10,6 +10,14 @@ pipeline {
   }
 
   stages {
+
+    stage('Preparing the configuration') {
+      steps{
+        dir("config") {
+          echo 'Setting repo of configuration TODO'
+        }
+      }
+    }
 
     stage('Update Assets') {
       steps{
@@ -21,29 +29,33 @@ pipeline {
         }
       }
     }
+
     stage('Test App') {
       steps{
         dir("m1core") {
           echo 'Testing app'
-          echo env.HOME
+          sh './grailsw -Dgrails.env=test clean'
           sh './grailsw -Dgrails.env=test clean -unit'
         }
       }
     }
 
-    /*stage('Build App') {
+    stage('Build App') {
       when {
         expression {
-          env.BRANCH_NAME in ["master", "stage", "production"]
+          env.BRANCH_NAME in ["master", "stage", "production","feature/633"]
         }
       }
       steps{
-        echo 'Building app'
-        sh 'gradle clean shadowJar -x test'
+        dir("web") {
+          echo 'Building app'
+          sh './grailsw -Dgrails.env=test clean'
+          sh './grailsw -Dgrails.env=test war'
+        }
       }
     }
 
-    stage('Transfer Jar'){
+    /*stage('Transfer Jar'){
       when {
         expression {
           env.BRANCH_NAME in ["master", "stage", "production"]
