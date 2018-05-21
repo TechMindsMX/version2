@@ -70,7 +70,7 @@ class CreditNoteService {
   }
 
   FacturaCommand defineDataFromCreditNote(CreditNote creditNote, FacturaCommand creditNoteCommand) {
-    creditNoteCommand.id = creditNote.id
+    creditNoteCommand.id = creditNote.saleOrder.company.id
     creditNoteCommand.observaciones = ""
     creditNoteCommand.datosDeFacturacion.tipoDeComprobante = "E"
     creditNoteCommand.datosDeFacturacion.metodoDePago = new MetodoDePago(clave:creditNote.paymentMethod.name(), descripcion:creditNote.paymentMethod.description)
