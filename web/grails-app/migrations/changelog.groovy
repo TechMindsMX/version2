@@ -143,4 +143,5 @@ databaseChangeLog = {
     include file: 'create-domain-credit-note-item.groovy'
     include file: 'drop-column-currency-type-into--credit-note-item.groovy'
     include file: 'adding-authorizations-to-credit-note.groovy'
+    include file: 'adding-invoice-folio-and-invoice-serie-to-sale-order.groovy'
 }
