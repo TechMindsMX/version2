@@ -36,6 +36,8 @@
            <th>Estatus</th>
            <th>Fecha de Cobro</th>
            <th>Moneda</th>
+           <th>Serie</th>
+           <th>Folio</th>
            <th>Total</th>
           </tr>
           <thead>
@@ -54,6 +56,8 @@
             <td><g:message code="saleOrder.status.${sale.status}" default="${sale.status}"/> </td>
             <td><g:formatDate format="dd-MM-yyyy" date="${sale.fechaCobro}"/></td>
             <td>${sale.currency}</td>
+            <td>${sale.invoiceSerie}</td>
+            <td>${sale.invoiceFolio}</td>
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
           </tr>
          </g:each>

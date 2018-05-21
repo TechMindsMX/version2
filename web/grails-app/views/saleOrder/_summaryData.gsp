@@ -2,6 +2,11 @@
 <dl class="dl-horizontal">
   <dt>No. de Orden</dt>
   <dd>${saleOrder.id}</dd>
+  <dt>Serie</dt>
+  <dd>${saleOrder.invoiceSerie}</dd>
+  <dt>Folio</dt>
+  <dd>${saleOrder.invoiceFolio}</dd>
+
   <dt>Fecha de Creación</dt>
   <dd>${formatDate(date:saleOrder.dateCreated, format:'dd-MMMM-yyyy')}</dd>
   <g:hiddenField name="saleCurrency" value="${saleOrder.currency}"/>
