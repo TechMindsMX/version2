@@ -21,14 +21,17 @@ pipeline {
         }
       }
     }
-    /*stage('Test App') {
+    stage('Test App') {
       steps{
-        echo 'Testing app'
-        sh 'gradle clean test'
+        dir("web") {
+          echo 'Testing app'
+          echo $env.HOME
+          sh './grailsw -Dgrails.env=test clean -unit'
+        }
       }
     }
 
-    stage('Build App') {
+    /*stage('Build App') {
       when {
         expression {
           env.BRANCH_NAME in ["master", "stage", "production"]
