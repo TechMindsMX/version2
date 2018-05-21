@@ -2,7 +2,9 @@
 
 <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
   <g:if test="${creditNote.status == CreditNoteStatus.CREATED}">
-    <g:link class="btn btn-primary" action="requestAuthorization" id="${creditNote.id}">Solicitar Autorización</g:link>
+    <g:if test="${creditNote.items}">
+      <g:link class="btn btn-primary" action="requestAuthorization" id="${creditNote.id}">Solicitar Autorización</g:link>
+    </g:if>
     
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm">
       <i class="fa fa-trash"></i> Borrar
