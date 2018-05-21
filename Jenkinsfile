@@ -23,9 +23,9 @@ pipeline {
     }
     stage('Test App') {
       steps{
-        dir("web") {
+        dir("m1core") {
           echo 'Testing app'
-          echo $env.HOME
+          echo env.HOME
           sh './grailsw -Dgrails.env=test clean -unit'
         }
       }
