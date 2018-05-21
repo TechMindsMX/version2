@@ -14,7 +14,7 @@ class CreditNoteTagLib {
 
   private def createUrlToShowFile(def attrs) {
     def file = "${attrs.creditNote.folio}.${attrs.format}"
-    def rfc = "AAA010101AAA/1"
+    def rfc = "AAA010101AAA/${attrs.creditNote.saleOrder.company.id}"
     if (Environment.current == Environment.PRODUCTION) {
       rfc = "${attrs.creditNote.saleOrder.company.rfc}/${attrs.creditNote.saleOrder.company.id}"
     }
