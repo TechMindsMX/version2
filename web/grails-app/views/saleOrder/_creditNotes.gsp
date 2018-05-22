@@ -21,6 +21,8 @@
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center">Fecha de Creación</th>
+                <th class="text-center">Serie</th>
+                <th class="text-center">Folio</th>
                 <th class="text-center">Total</th>
                 <th class="text-center">Estatus</th>
               </tr>
@@ -30,6 +32,8 @@
                 <tr>
                   <td class="text-center"><g:link controller="creditNote" action="show" id="${creditNote.id}">${creditNote.id}</g:link></td>
                   <td class="text-center">${formatDate(date:creditNote.dateCreated, format:'dd-MM-yyyy')}</td>
+                  <td class="text-center">${creditNote.invoiceSerie}</td>
+                  <td class="text-center">${creditNote.invoiceFolio}</td>
                   <td class="text-right">${modulusuno.formatPrice(number:creditNote.total)}</td>
                   <td class="text-center">${creditNote.status}</td>
                 </tr>

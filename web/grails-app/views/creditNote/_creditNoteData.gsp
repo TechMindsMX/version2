@@ -18,6 +18,10 @@
             <dd>${creditNote.paymentWay}</dd>
             <dt>Método de Pago:</dt>
             <dd>${creditNote.paymentMethod}</dd>
+            <dt>Serie:</dt>
+            <dd>${creditNote.invoiceSerie}</dd>
+            <dt>Folio:</dt>
+            <dd>${creditNote.invoiceFolio}</dd>
             <dt>Estatus:</dt>
             <dd>${creditNote.status}</dd>
           </dl>
