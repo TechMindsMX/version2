@@ -1,6 +1,8 @@
 package com.modulus.uno.saleorder
 
 import grails.transaction.Transactional
+import groovy.json.JsonSlurper
+
 import com.modulus.uno.Authorization
 import com.modulus.uno.EmailSenderService
 import com.modulus.uno.CommissionTransactionService
@@ -66,8 +68,8 @@ class CreditNoteService {
   CreditNote processApplyCreditNote(CreditNote creditNote) {
     FacturaCommand creditNoteCommand = invoiceService.createInvoiceFromSaleOrder(creditNote.saleOrder)
     creditNoteCommand = defineDataFromCreditNote(creditNote, creditNoteCommand)
-    String folioStamp = sendToStampCreditNote(creditNoteCommand)
-    creditNote = applyCreditNoteWithFolio(creditNote, folioStamp)
+    Map stampData = sendToStampCreditNote(creditNoteCommand)
+    creditNote = applyCreditNoteWithFolio(creditNote, stampData)
     commissionTransactionService.registerCommissionForCreditNote(creditNote)
     creditNote
   }
@@ -106,20 +108,23 @@ class CreditNoteService {
   }
 
   def sendToStampCreditNote(FacturaCommand creditNoteCommand) {
-    def result = restService.sendFacturaCommandWithAuth(creditNoteCommand, grailsApplication.config.modulus.facturaCreate)
+    def resultStamp = restService.sendFacturaCommandWithAuth(creditNoteCommand, grailsApplication.config.modulus.facturaCreate)
+    def result = new JsonSlurper().parseText(resultStamp.text)
     if (!result) {
       throw new RestException("No se pudo generar la Nota de Crédito") 
     }
-    if (result.text.startsWith("Error")) {
-      throw new RestException(result.text) 
+    if (result.error) {
+      throw new RestException(result.error)
     }
-    result.text 
+    result
   }
 
   @Transactional
-  CreditNote applyCreditNoteWithFolio(CreditNote creditNote, String folioStamp) {
+  CreditNote applyCreditNoteWithFolio(CreditNote creditNote, Map stampData) {
     creditNote.status = CreditNoteStatus.APPLIED
-    creditNote.folio = folioStamp
+    creditNote.folio = stampData.stampId
+    creditNote.invoiceSerie = stampData.serie
+    creditNote.invoiceFolio = stampData.folio
     creditNote.save()
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
     creditNote
