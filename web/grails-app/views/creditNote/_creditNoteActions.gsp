@@ -42,7 +42,12 @@
 
 
 <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-  <g:if test="${creditNote.status == CreditNoteStatus.AUTHORIZED}">
+  <g:if test="${creditNote.status == CreditNoteStatus.AUTHORIZED && isEnabledToStamp}">
     <g:link class="btn btn-primary" action="apply" id="${creditNote.id}">Aplicar</g:link>
+  </g:if>
+  <g:if test="${!isEnabledToStamp}">
+    <div class="alert alert-warning">
+      No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
+    </div>
   </g:if>
 </sec:ifAnyGranted>
