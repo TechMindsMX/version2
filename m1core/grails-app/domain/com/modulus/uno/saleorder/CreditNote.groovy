@@ -13,6 +13,8 @@ class CreditNote {
   PaymentMethod paymentMethod = PaymentMethod.PUE
   InvoicePurpose invoicePurpose = InvoicePurpose.G02
   String folio
+  String invoiceFolio
+  String invoiceSerie
 
   Date dateCreated
   Date lastUpdated
@@ -22,6 +24,8 @@ class CreditNote {
 
   static constraints = {
     folio nullable:true
+    invoiceFolio nullable:true
+    invoiceSerie nullable:true
   }
 
   BigDecimal getTotalIVA(){
