@@ -10,44 +10,48 @@
   <div id="defaultPortlet" class="panel-collapse collapse in">
     <div class="portlet-body">
 			<div class="row">
-			<div class="col-md-6">
-        <g:render template="summaryData"/>
-			</div>
-			<div class="col-md-6">
-			<g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA || saleOrder.status == SaleOrderStatus.PAGADA}">
-				<h4>Pagos registrados</h4>
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Fecha</th>
-								<th>Monto</th>
-							</tr>
-						</thead>
-						<tbody>
-							<g:each in="${saleOrder.payments.sort{it.dateCreated}}" var="payment">
-								<tr>
-									<td><g:formatDate format="dd-MM-yyyy" date="${payment.dateCreated}"/></td>
-									<td>${modulusuno.formatPrice(number:payment.amount)}</td>
-								</tr>
-							</g:each>
-						</tbody>
-					</table>
-				</div>
-			</g:if>
-			</div>
-			</div>
-      <p>
-      <g:if test="${saleOrder.status == SaleOrderStatus.CANCELADA || saleOrder.status == SaleOrderStatus.RECHAZADA}">
-      <div class="alert alert-danger" role="alert">
-        <label class="control-label">Motivo ${message(code:'saleOrder.rejectReason.'+saleOrder.status)}:</label>
-        <g:message code="rejectReason.${saleOrder.rejectReason}" default="${saleOrder.rejectReason}"/>
-        <textarea class="form-control" rows="3" cols="60" readonly>${saleOrder.comments}</textarea>
-      </div>
+        <div class="col-md-6">
+          <g:render template="summaryData"/>
+        </div>
+        <div class="col-md-6">
+        <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA || saleOrder.status == SaleOrderStatus.PAGADA}">
+          <h4>Pagos registrados</h4>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Monto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <g:each in="${saleOrder.payments.sort{it.dateCreated}}" var="payment">
+                  <tr>
+                    <td><g:formatDate format="dd-MM-yyyy" date="${payment.dateCreated}"/></td>
+                    <td>${modulusuno.formatPrice(number:payment.amount)}</td>
+                  </tr>
+                </g:each>
+              </tbody>
+            </table>
+          </div>
         </g:if>
-      </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <g:if test="${saleOrder.status == SaleOrderStatus.CANCELADA || saleOrder.status == SaleOrderStatus.RECHAZADA}">
+            <div class="alert alert-danger" role="alert">
+              <label class="control-label">Motivo ${message(code:'saleOrder.rejectReason.'+saleOrder.status)}:</label>
+              <g:message code="rejectReason.${saleOrder.rejectReason}" default="${saleOrder.rejectReason}"/>
+              <textarea class="form-control" rows="3" cols="60" readonly>${saleOrder.comments}</textarea>
+            </div>
+          </g:if>
+        </div>
+      </div>
       <!-- actions section -->
-      <g:render template="saleOrderActions"/>
+      <div class="row">
+        <g:render template="saleOrderActions"/>
+      </div>
       <!-- end actions section -->
     </div>
   </div>
