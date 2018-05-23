@@ -63,7 +63,7 @@
               <div class="col-md-4">
                 <g:link class="btn btn-primary" controller="saleOrder" action="show" id="${saleOrder.id}">Regresar</g:link>
               </div>
-              <div class="col-md-8 text-right">
+              <div class="col-md-8">
                 <g:render template="creditNoteActions"/>
               </div>
             </div>
