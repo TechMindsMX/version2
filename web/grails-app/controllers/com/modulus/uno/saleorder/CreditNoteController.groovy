@@ -57,6 +57,13 @@ class CreditNoteController {
     redirect action:"show", id:creditNote.id
   }
 
+  @Transactional
+  def deleteCreditNote(CreditNote creditNote) {
+    SaleOrder saleOrder = creditNote.saleOrder
+    creditNoteService.deleteCreditNote(creditNote)
+    redirect controller:"saleOrder", action:"show", id:saleOrder.id
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
