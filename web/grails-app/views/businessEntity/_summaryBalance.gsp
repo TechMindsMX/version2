@@ -26,10 +26,13 @@
         <tbody>
           <tr>
             <td class="text-right">
-              <g:link controller="saleOrder" action="getAllSaleOrdersExecutedAndAuthorizedForRfc" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalSoldForClient)}</g:link>
+              <g:link controller="saleOrder" action="listTotalAmountExecutedAndAuthorized" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalSoldForClient)}</g:link>
             </td>
-            <td class="text-right">${modulusuno.formatPrice(number:clientData.totalSoldForClientStatusConciliated)}</td>
-            <td class="text-right">${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}</td>
+            <td class="text-right">
+              <g:link controller="saleOrder" action="listOrdersAlreadyConciliate" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalSoldForClientStatusConciliated)}</g:link>
+            </td>
+            <td class="text-right">${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}
+            </td>
             <td class="text-right">
               <g:link controller="saleOrder" action="listOrdersWithAmountToPayForClient" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalPending)}</g:link>
             </td>
