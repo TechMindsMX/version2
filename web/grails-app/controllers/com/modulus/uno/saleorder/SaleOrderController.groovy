@@ -342,4 +342,10 @@ class SaleOrderController {
     List<SaleOrder> list = saleOrderService.getAllSaleOrdersWithAmountToPayForRfc(company, businessEntity.rfc)
     render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
   }
+
+  def getAllSaleOrdersExecutedAndAuthorizedForRfc(BusinessEntity businessEntity) {
+    Company company = Company.get(session.company)
+    List<SaleOrder> list = saleOrderService.getAllSaleOrdersWithAmountExecutedAndAuthorized(company, businessEntity.rfc)
+    render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
+  }
 }
