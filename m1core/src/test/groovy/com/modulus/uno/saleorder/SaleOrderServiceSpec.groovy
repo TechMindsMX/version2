@@ -375,4 +375,23 @@ class SaleOrderServiceSpec extends Specification {
     then:
       result.size() == 2
   }
+
+  void "Should get all sale orders with amount to pay for Rfc"() {
+    given:"The company"
+      Company company = new Company(rfc:"CO1").save(validate:false)
+    and:"The rfc"
+      String rfc = "RFC"
+    and:"The existing sale orders"
+      SaleOrderItem item = new SaleOrderItem(price:100, quantity:1).save(validate:false)
+      SaleOrderPayment pay50 = new SaleOrderPayment(amount:50).save(validate:false)
+      SaleOrderPayment pay100 = new SaleOrderPayment(amount:100).save(validate:false)
+      SaleOrder saleOrder1 = new SaleOrder(rfc:"RFC", company:company, status:SaleOrderStatus.EJECUTADA, items:[item], payments:[pay50]).save(validate:false)
+      SaleOrder saleOrder4 = new SaleOrder(rfc:"RFC", company:company, status:SaleOrderStatus.EJECUTADA, items:[item], payments:[]).save(validate:false)
+      SaleOrder saleOrder2 = new SaleOrder(rfc:"RFC", company:company, status:SaleOrderStatus.EJECUTADA, items:[item], payments:[pay100]).save(validate:false)
+      SaleOrder saleOrder3 = new SaleOrder(rfc:"RFC", company:company, status:SaleOrderStatus.CANCELADA).save(validate:false)
+    when:
+      def result = service.getAllSaleOrdersWithAmountToPayForRfc(company, rfc)
+    then:
+      result.size() == 2
+  }
 }
