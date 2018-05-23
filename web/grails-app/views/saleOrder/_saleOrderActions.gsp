@@ -22,6 +22,11 @@
   </div>
 </div>
 
+<g:if test="${!isEnabledToStamp && [SaleOrderStatus.AUTORIZADA, SaleOrderStatus.EJECUTADA, SaleOrderStatus.CANCELACION_AUTORIZADA, SaleOrderStatus.CANCELACION_EJECUTADA].contains(saleOrder.status)}">
+  <div class="alert alert-warning">
+    No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
+  </div>
+</g:if>
 
 <div class="col-md-4">
   <g:if test="${!params.backController}">
@@ -30,12 +35,12 @@
     <g:link class="btn btn-default text-right" controller="${params.backController}" action="${params.backAction}" id="${params.backId}">Regresar</g:link>
   </g:else>
 
-  <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA || saleOrder.status == SaleOrderStatus.PAGADA}">
+  <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
     <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-success" download>XML</a>
     <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default" download>PDF</a>
   </g:if>
 
-  <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_EJECUTADA}">
+  <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_EJECUTADA && isEnabledToStamp}">
     <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-default" download>Acuse XML</a>
     <a href="${modulusuno.invoiceAccuseUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default" download>Acuse PDF</a>
   </g:if>
@@ -101,12 +106,6 @@
       <div class="container-fluid">
         <g:form name="executeSale">
           <input type="hidden" id="saleOrderId" name="id" value="${saleOrder.id}"/>
-          <g:if test="${!isEnabledToStamp}">
-            <div class="alert alert-warning">
-              No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
-            </div>
-          </g:if>
-
           <g:if test="${isEnabledToStamp}">
             <div class="row">
               <div class="col-md-6 text-right">
@@ -141,7 +140,7 @@
       </div>
     </g:if>
 
-    <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_AUTORIZADA}">
+    <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_AUTORIZADA && isEnabledToStamp}">
       <div class="text-right">
         <g:link action="executeCancelBill" class="btn btn-danger" id="${saleOrder.id}">Ejecutar Cancelación de Factura</g:link>
       </div>
