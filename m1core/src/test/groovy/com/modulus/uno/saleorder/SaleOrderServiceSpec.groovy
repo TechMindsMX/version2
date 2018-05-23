@@ -356,4 +356,23 @@ class SaleOrderServiceSpec extends Specification {
       [rfc:"", clientName:"Cliente 5"]    |   0
       [rfc:"C6", clientName:"Cliente 2"]    |   0
   }
+
+  void "Should get all sale orders executed and authorized for RFC"() {
+    given:"The company"
+      Company company = new Company(rfc:"CO1").save(validate:false)
+    and:"The rfc"
+      String rfc = "RFC"
+    and:"The existing sale orders"
+      SaleOrder saleOrder1 = new SaleOrder(rfc:"RFC", company:company, status:SaleOrderStatus.AUTORIZADA).save(validate:false)
+      SaleOrder saleOrder2 = new SaleOrder(rfc:"RFC", company:company, status:SaleOrderStatus.EJECUTADA).save(validate:false)
+      SaleOrder saleOrder3 = new SaleOrder(rfc:"RFC", company:company, status:SaleOrderStatus.CANCELADA).save(validate:false)
+      SaleOrder saleOrder4 = new SaleOrder(rfc:"RFC1", company:company, status:SaleOrderStatus.AUTORIZADA).save(validate:false)
+      SaleOrder saleOrder5 = new SaleOrder(rfc:"RFC1", company:company, status:SaleOrderStatus.EJECUTADA).save(validate:false)
+      SaleOrder saleOrder6 = new SaleOrder(rfc:"RFC", company:new Company(rfc:"CO2").save(validate:false), status:SaleOrderStatus.AUTORIZADA).save(validate:false)
+      SaleOrder saleOrder7 = new SaleOrder(rfc:"RFC", company:new Company(rfc:"CO2").save(validate:false), status:SaleOrderStatus.EJECUTADA).save(validate:false)
+    when:
+      def result = service.getAllSaleOrdersExecutedAndAuthorizedForRfc(company, rfc)
+    then:
+      result.size() == 2
+  }
 }
