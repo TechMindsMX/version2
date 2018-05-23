@@ -1,7 +1,14 @@
 <%! import com.modulus.uno.status.CreditNoteStatus %>
+<g:if test="${creditNote.status == CreditNoteStatus.APPLIED && isEnabledToStamp}">
+  <div class="text-right">
+    <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'xml')}" class="btn btn-success" download>XML</a>
+    <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'pdf')}" class="btn btn-default" download>PDF</a>
+  </div>
+</g:if>
 
 <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
   <g:if test="${creditNote.status == CreditNoteStatus.CREATED}">
+    <div class="text-right">
     <g:if test="${creditNote.items}">
       <g:link class="btn btn-primary" action="requestAuthorization" id="${creditNote.id}">Solicitar Autorización</g:link>
     </g:if>
@@ -9,6 +16,7 @@
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm">
       <i class="fa fa-trash"></i> Borrar
     </button>
+    </div>
 
     <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
@@ -34,12 +42,7 @@
   <g:if test="${creditNote.status == CreditNoteStatus.TO_AUTHORIZE}">
     <g:link class="btn btn-primary" action="authorize" id="${creditNote.id}">Autorizar</g:link>
   </g:if>
-  <g:if test="${creditNote.status == CreditNoteStatus.APPLIED}">
-    <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'xml')}" class="btn btn-success" download>XML</a>
-    <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'pdf')}" class="btn btn-default" download>PDF</a>
-  </g:if>
 </sec:ifAnyGranted>
-
 
 <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
   <g:if test="${creditNote.status == CreditNoteStatus.AUTHORIZED && isEnabledToStamp}">
