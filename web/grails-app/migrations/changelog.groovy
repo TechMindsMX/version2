@@ -139,4 +139,10 @@ databaseChangeLog = {
   include file: 'adding-column-paysheet-receipt-uuid-ias-to-paysheet-employee.groovy'
   include file: 'create-domain-user-employee.groovy'
   include file: 'adding-column-email-to-business-entity.groovy'
+  include file: 'create-domain-credit-note.groovy'
+    include file: 'create-domain-credit-note-item.groovy'
+    include file: 'drop-column-currency-type-into--credit-note-item.groovy'
+    include file: 'adding-authorizations-to-credit-note.groovy'
+    include file: 'adding-invoice-folio-and-invoice-serie-to-sale-order.groovy'
+    include file: 'adding-columns-invoice-serie-and-invoice-folio-to-credit-note.groovy'
 }

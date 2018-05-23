@@ -289,7 +289,7 @@ class CompanyController {
   }
 
   def changeSerieForInvoices(Company company) {
-    companyService.changeSerieForInvoicesOfCompany(company, params.serie, params.folio)
+    companyService.changeSerieForInvoicesOfCompany(company, params)
     redirect action:"show", id:company.id
   }
 

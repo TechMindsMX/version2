@@ -2,6 +2,7 @@ package com.modulus.uno.saleorder
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import grails.converters.JSON
 
 @Transactional(readOnly = true)
 class SaleOrderItemController {
@@ -102,6 +103,11 @@ class SaleOrderItemController {
       }
       '*'{ render status: NO_CONTENT }
     }
+  }
+
+  def getSaleOrderItem() {
+    SaleOrderItem item = SaleOrderItem.get(params.itemId)
+    render item as JSON
   }
 
   protected void notFound() {

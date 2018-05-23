@@ -110,16 +110,18 @@ class SaleOrderService {
   @Transactional
   SaleOrder executeSaleOrder(SaleOrder saleOrder){
     commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
-    String uuidFolio = invoiceService.generateFactura(saleOrder)
-    log.info "Stamp UUID: ${uuidFolio}"
-    saleOrder = updateSaleOrderFromGeneratedBill(uuidFolio, saleOrder.id)
+    Map stampData = invoiceService.generateFactura(saleOrder)
+    log.info "Stamp UUID: ${stampData.stampId}"
+    saleOrder = updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
     saleOrder
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  SaleOrder updateSaleOrderFromGeneratedBill(String uuidFolio, Long saleOrderId) {
+  SaleOrder updateSaleOrderFromGeneratedBill(Map stampData, Long saleOrderId) {
     SaleOrder saleOrder = SaleOrder.get(saleOrderId)
-    saleOrder.folio = uuidFolio
+    saleOrder.folio = stampData.stampId
+    saleOrder.invoiceFolio = stampData.folio
+    saleOrder.invoiceSerie = stampData.serie
     saleOrder.status = SaleOrderStatus.EJECUTADA
     saleOrder.save()
     saleOrder

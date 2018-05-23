@@ -419,7 +419,6 @@ class NotifyServiceSpec extends Specification {
     params.trackingKey == "Rastreo"
     params.referenceNumber == "Referencia"
     params.amount == "1000"
-    params.dateCreated == payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
     params.company == "NO IDENTIFICADO"
     params.url == URL
   }

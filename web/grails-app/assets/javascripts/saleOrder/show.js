@@ -89,6 +89,7 @@ var optionsBySku = {
             if(data.price!==undefined){$('#price').val(calculatePriceWithCurrency(data.price, data.currency));}
             if(data.iva!==undefined){$('#iva').val(data.iva.toFixed(2));}
             if(data.unit!==undefined){$('#unit').val(data.unit).prop('selected',true);}
+            if(data.satKey!==undefined){$('#satKey').val(data.satKey);}
             calculateAmountAndNetPrice()
               return true;
           }
@@ -106,6 +107,7 @@ var optionsBySku = {
 
 $("#product-name").easyAutocomplete(options);
 $("#sku").easyAutocomplete(optionsBySku);
+$("#satKey").easyAutocomplete(optionsBySku);
 
 //actualizar SKU, PRECIO Y UNIDAD
 /* Ponemos evento blur a la escucha sobre id nombre en id cliente. */

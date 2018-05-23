@@ -41,7 +41,6 @@
     </tr>
     </g:each>
     </tbody>
-    <tfooter>
     <tr>
       <td colspan="5" class="text-right"><strong>Subtotal</strong></td>
       <td class="text-right">
@@ -74,7 +73,6 @@
         </strong>
       </td>
     </tr>
-    </tfooter>
   </table>
 </div>
 
