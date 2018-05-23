@@ -343,9 +343,16 @@ class SaleOrderController {
     render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
   }
 
-  def getAllSaleOrdersExecutedAndAuthorizedForRfc(BusinessEntity businessEntity) {
+  def listTotalAmountExecutedAndAuthorized(BusinessEntity businessEntity) {
     Company company = Company.get(session.company)
-    List<SaleOrder> list = saleOrderService.getAllSaleOrdersWithAmountExecutedAndAuthorized(company, businessEntity.rfc)
+    List<SaleOrder> list = saleOrderService.getAllSaleOrdersExecutedAndAuthorizedForRfc(company, businessEntity.rfc)
     render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
   }
+
+  def listOrdersAlreadyConciliate(BusinessEntity businessEntity) {
+    Company company = Company.get(session.company)
+    List<SaleOrder> list = saleOrderService.getAllSaleOrdersAlreadyConciliate(company, businessEntity.rfc)
+    render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
+  }
+
 }
