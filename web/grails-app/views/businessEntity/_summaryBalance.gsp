@@ -25,7 +25,9 @@
         </thead>
         <tbody>
           <tr>
-            <td class="text-right">${modulusuno.formatPrice(number:clientData.totalSoldForClient)}</td>
+            <td class="text-right">
+              <g:link controller="saleOrder" action="getAllSaleOrdersExecutedAndAuthorizedForRfc" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalSoldForClient)}</g:link>
+            </td>
             <td class="text-right">${modulusuno.formatPrice(number:clientData.totalSoldForClientStatusConciliated)}</td>
             <td class="text-right">${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}</td>
             <td class="text-right">
