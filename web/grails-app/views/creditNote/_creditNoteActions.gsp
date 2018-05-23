@@ -29,7 +29,7 @@
             ¿Está seguro de eliminar la nota de crédito?
           </div>
           <div class="modal-footer">
-            <g:link class="btn btn-primary" action="deleteCreditNote" id="${saleOrder.id}">Sí</g:link>
+            <g:link class="btn btn-primary" action="deleteCreditNote" id="${creditNote.id}">Sí</g:link>
             <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
           </div>
         </div>
@@ -40,13 +40,17 @@
 
 <sec:ifAnyGranted roles="ROLE_AUTHORIZER_EJECUTOR">
   <g:if test="${creditNote.status == CreditNoteStatus.TO_AUTHORIZE}">
-    <g:link class="btn btn-primary" action="authorize" id="${creditNote.id}">Autorizar</g:link>
+    <div class="text-right">
+      <g:link class="btn btn-primary" action="authorize" id="${creditNote.id}">Autorizar</g:link>
+    </div>
   </g:if>
 </sec:ifAnyGranted>
 
 <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
   <g:if test="${creditNote.status == CreditNoteStatus.AUTHORIZED && isEnabledToStamp}">
-    <g:link class="btn btn-primary" action="apply" id="${creditNote.id}">Aplicar</g:link>
+    <div class="text-right">
+      <g:link class="btn btn-primary" action="apply" id="${creditNote.id}">Aplicar</g:link>
+    </div>
   </g:if>
   <g:if test="${!isEnabledToStamp}">
     <div class="alert alert-warning">
