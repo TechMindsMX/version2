@@ -2,6 +2,7 @@ package com.modulus.uno.saleorder
 
 import grails.transaction.Transactional
 import groovy.json.JsonSlurper
+import groovy.sql.Sql
 
 import com.modulus.uno.Authorization
 import com.modulus.uno.EmailSenderService
@@ -21,6 +22,7 @@ class CreditNoteService {
   CommissionTransactionService commissionTransactionService
   InvoiceService invoiceService
   RestService restService
+  def dataSource
 
   @Transactional
   CreditNote saveCreditNote(CreditNote creditNote) {
@@ -130,4 +132,11 @@ class CreditNoteService {
     creditNote
   }
 
+  @Transactional
+  def deleteCreditNote(CreditNote creditNote) {
+    Sql sql = new Sql(dataSource)
+    sql.execute("delete from credit_note_item where credit_note_id=${creditNote.id}")
+    creditNote.delete()
+  }
+ 
 }
