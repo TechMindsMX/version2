@@ -387,4 +387,9 @@ class SaleOrderService {
     }
   }
 
+  List<SaleOrder> getAllSaleOrdersAlreadyConciliate(Company company, String rfc) {
+    def allExecutedForClient = SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
+    allExecutedForClient.findAll { saleOrder -> saleOrder.payments }
+  }
+
 }
