@@ -379,4 +379,12 @@ class SaleOrderService {
     allExecutedForClient.findAll { saleOrder -> saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP) > 0 }
   }
 
+  List<SaleOrder> getAllSaleOrdersExecutedAndAuthorizedForRfc(Company company, String rfc) {
+    SaleOrder.createCriteria().list{
+      eq("rfc", rfc)
+      eq("company", company)
+      'in'("status", [SaleOrderStatus.EJECUTADA, SaleOrderStatus.AUTORIZADA])
+    }
+  }
+
 }
