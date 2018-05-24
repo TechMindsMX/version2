@@ -177,12 +177,10 @@ class PaysheetServiceSpec extends Specification {
       Paysheet paysheet = createPaysheetWithEmployees()
     and:"The schema"
       PaymentSchema schema = PaymentSchema.IMSS
-    and:
-      paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> "UUID_PAYSHEET_RECEIPT"
     when:
       def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
     then:
-      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> [stampId:"UUID_PAYSHEET_RECEIPT", serie:"NOM", folio:"1"]
       3 * paysheetEmployeeService.savePaysheetReceiptUuidIMSS(_, _)
       3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
   }
@@ -192,12 +190,10 @@ class PaysheetServiceSpec extends Specification {
       Paysheet paysheet = createPaysheetWithEmployees()
     and:"The schema"
       PaymentSchema schema = PaymentSchema.ASSIMILABLE
-    and:
-      paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> "UUID_PAYSHEET_RECEIPT"
     when:
       def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
     then:
-      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> [stampId:"UUID_PAYSHEET_RECEIPT", serie:"NOM", folio:"1"]
       3 * paysheetEmployeeService.savePaysheetReceiptUuidAsimilable(_, _)
       3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
   }
