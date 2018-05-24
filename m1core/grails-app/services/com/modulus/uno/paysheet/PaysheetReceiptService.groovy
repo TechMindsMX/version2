@@ -14,6 +14,7 @@ import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.RestService
 
 import grails.util.Environment
+import groovy.json.JsonSlurper
 
 class PaysheetReceiptService {
 
@@ -22,7 +23,7 @@ class PaysheetReceiptService {
   RestService restService
   def grailsApplication
 
-  String generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+  Map generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
     stampPaysheetReceipt(paysheetReceipt)
   }
@@ -222,16 +223,18 @@ class PaysheetReceiptService {
     payer.company.id.toString()
   }
 
-  String stampPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
-    def result = restService.sendFacturaCommandWithAuth(paysheetReceipt, grailsApplication.config.modulus.paysheetReceiptCreate)
-    if (!result) {
+  Map stampPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
+    def resultStamp = restService.sendFacturaCommandWithAuth(paysheetReceipt, grailsApplication.config.modulus.paysheetReceiptCreate)
+    if (!resultStamp) {
       throw new RestException("No se pudo generar el recibo de nómina") 
     }
-    if (result.text.startsWith("Error")) {
-      throw new RestException(result.text) 
+
+    def result = new JsonSlurper().parseText(resultStamp.text)
+    if (result.error) {
+      throw new RestException(result.error) 
     }
 
-    result.text
+    result
   }
 
 }
