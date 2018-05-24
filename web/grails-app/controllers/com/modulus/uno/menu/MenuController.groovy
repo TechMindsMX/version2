@@ -6,7 +6,7 @@ import grails.transaction.Transactional
 @Transactional(readOnly = true)
 class MenuController {
 
-  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", removeSubmenu: "DELETE"]
 
 	MenuOperationsService menuOperationsService
   MenuService menuService

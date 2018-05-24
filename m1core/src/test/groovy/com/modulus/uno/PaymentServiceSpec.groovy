@@ -4,6 +4,7 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
+import com.modulus.uno.saleorder.SaleOrder
 
 @TestFor(PaymentService)
 @Mock([Payment, SaleOrder, Company])

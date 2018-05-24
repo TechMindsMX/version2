@@ -5,6 +5,12 @@ import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.SaleOrderItem
+import com.modulus.uno.saleorder.SaleOrderPayment
+import com.modulus.uno.saleorder.SaleOrderService
+import com.modulus.uno.status.ConciliationStatus
+
 @TestFor(ConciliationService)
 @Mock([Conciliation, Payment, SaleOrder, SaleOrderPayment, SaleOrderItem, Company, MovimientosBancarios])
 class ConciliationServiceSpec extends Specification {

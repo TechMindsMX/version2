@@ -2,6 +2,10 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 import java.math.RoundingMode
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.CreditNote
+import com.modulus.uno.status.SaleOrderStatus
+import com.modulus.uno.status.CreditNoteStatus
 
 @Transactional
 class NotifyService {
@@ -360,6 +364,56 @@ class NotifyService {
     'params': params
     ]
     emailerMap
+  }
+
+  def prepareParametersToSendForCreditNote(CreditNote creditNote, CreditNoteStatus status){
+    def paramsMap = [:]
+    def paramsFields
+    def orderStatus
+    switch(status){
+      case CreditNoteStatus.CREATED:
+      paramsFields=["id"]
+      orderStatus="CREADA"
+      break
+      case CreditNoteStatus.TO_AUTHORIZE:
+      paramsFields=["id"]
+      orderStatus="PUESTA EN ESPERA DE SER AUTORIZADA"
+      break
+      case CreditNoteStatus.AUTHORIZED:
+      paramsFields=["id"]
+      orderStatus="AUTORIZADA"
+      break
+      case CreditNoteStatus.REJECTED:
+      paramsFields=["id", "rejectReason", "comments"]
+      orderStatus="RECHAZADA"
+      break
+      case CreditNoteStatus.APPLIED:
+      paramsFields=["id"]
+      orderStatus="EJECUTADA"
+      break
+      case CreditNoteStatus.CANCELED:
+      paramsFields=["id", "rejectReason", "comments"]
+      orderStatus="CANCELADA"
+      break
+      case CreditNoteStatus.CANCEL_TO_AUTHORIZE:
+      paramsFields=["id", "rejectReason", "comments"]
+      orderStatus="CANCELADA POR AUTORIZAR"
+      break
+      case CreditNoteStatus.CANCEL_AUTHORIZED:
+      paramsFields=["id", "rejectReason", "comments"]
+      orderStatus="CANCELACION AUTORIZADA"
+      break
+      case CreditNoteStatus.CANCEL_APPLIED:
+      paramsFields=["id", "rejectReason", "comments"]
+      orderStatus="CANCELACION EJECUTADA"
+      break
+    }
+    paramsMap = buildParamsEmailMap(creditNote, paramsFields)
+    paramsMap.clientName = creditNote.saleOrder.clientName
+    paramsMap.rfc = creditNote.saleOrder.rfc
+    paramsMap.status = orderStatus
+    paramsMap.url=corporateService.findCorporateByCompanyId(creditNote.saleOrder.company.id)
+    paramsMap
   }
 
   private buildParamsEmailMap(def order, def fieldsEmail){

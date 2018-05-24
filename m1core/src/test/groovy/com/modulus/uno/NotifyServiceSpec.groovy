@@ -5,6 +5,11 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import grails.test.mixin.Mock
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.SaleOrderItem
+import com.modulus.uno.status.SaleOrderStatus
+
+
 @TestFor(NotifyService)
 @Mock([NotificationForState, GroupNotification, User, FeesReceipt, BusinessEntity, CashOutOrder, LoanOrder, LoanPaymentOrder, SaleOrder, Company, PurchaseOrder,Corporate,SaleOrderItem, Bank, BankAccount, PaymentToPurchase, Transaction, ModulusUnoAccount, Payment, ComposeName, PurchaseOrderItem])
 class NotifyServiceSpec extends Specification {
@@ -414,7 +419,6 @@ class NotifyServiceSpec extends Specification {
     params.trackingKey == "Rastreo"
     params.referenceNumber == "Referencia"
     params.amount == "1000"
-    params.dateCreated == payment.dateCreated.format("dd-MM-yyyy hh:mm:ss")
     params.company == "NO IDENTIFICADO"
     params.url == URL
   }

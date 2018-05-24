@@ -5,8 +5,15 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import grails.test.mixin.Mock
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.SaleOrderItem
+import com.modulus.uno.saleorder.CreditNote
+import com.modulus.uno.saleorder.CreditNoteItem
+import com.modulus.uno.status.CommissionTransactionStatus
+
+
 @TestFor(CommissionTransactionService)
-@Mock([CommissionTransaction, Company, Transaction, SaleOrder, SaleOrderItem, Commission])
+@Mock([CommissionTransaction, Company, Transaction, SaleOrder, SaleOrderItem, Commission, CreditNote, CreditNoteItem])
 class CommissionTransactionServiceSpec extends Specification {
 
   GrailsApplicationMock grailsApplication = new GrailsApplicationMock()
@@ -182,6 +189,55 @@ class CommissionTransactionServiceSpec extends Specification {
     then:
       transactions.first().status == CommissionTransactionStatus.PENDING
       transactions.first().invoice == null
+  }
+
+  @Unroll
+  void "Should save a invoice commission transaction with amount=#amountExpected when commission fee=#fee and percentage=#percentage and credit note total=#price for a company"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:fee, percentage:percentage, type:CommissionType.FACTURA).save(validate:false)
+      company.addToCommissions(commission)
+    and:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(company:company).save(validate:false)
+      CreditNote creditNote = new CreditNote(saleOrder:saleOrder).save(validate:false)
+      CreditNoteItem creditNoteItem = new CreditNoteItem()
+      creditNoteItem.price = price
+      creditNoteItem.quantity = 1
+      creditNoteItem.save(validate:false)
+      creditNote.addToItems(creditNoteItem)
+    when:
+      def transaction = service.registerCommissionForCreditNote(creditNote)
+    then:
+      transaction.id
+      transaction.amount == amountExpected
+    where:
+    fee   | percentage  | price   ||  amountExpected
+    2     | 0           | 100     ||  2
+    2     | 0           | 50      ||  2
+    0     | 10          | 100     ||  10
+    0     | 5           | 100     ||  5
+    0     | 10          | 50      ||  5
+  }
+
+  void "Should throw exception when company hasn't invoice commission"() {
+    given:"A company"
+      Company company = new Company(rfc:"XXX010101XXX").save(validate:false)
+    and:"The invoice commission"
+      Commission commission = new Commission(fee:2, percentage:0, type:CommissionType.PAGO).save(validate:false)
+      company.addToCommissions(commission)
+    and:"The sale order"
+      SaleOrder saleOrder = new SaleOrder(company:company).save(validate:false)
+      CreditNote creditNote = new CreditNote(saleOrder:saleOrder).save(validate:false)
+      CreditNoteItem creditNoteItem = new CreditNoteItem()
+      creditNoteItem.price = 100
+      creditNoteItem.quantity = 1
+      creditNoteItem.save(validate:false)
+      creditNote.addToItems(creditNoteItem)
+    when:
+      def transaction = service.registerCommissionForCreditNote(creditNote)
+    then:
+      thrown BusinessException
   }
 
 }

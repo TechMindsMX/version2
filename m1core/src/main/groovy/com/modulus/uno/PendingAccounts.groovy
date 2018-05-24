@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import com.modulus.uno.saleorder.SaleOrder
+
 class PendingAccounts {
   BigDecimal totalCharges
   BigDecimal totalPayments

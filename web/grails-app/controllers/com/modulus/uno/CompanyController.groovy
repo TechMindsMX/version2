@@ -5,6 +5,8 @@ import grails.transaction.Transactional
 import java.text.SimpleDateFormat
 import pl.touk.excel.export.WebXlsxExporter
 
+import com.modulus.uno.saleorder.SaleOrder
+
 class CompanyController {
 
   def springSecurityService
@@ -287,7 +289,7 @@ class CompanyController {
   }
 
   def changeSerieForInvoices(Company company) {
-    companyService.changeSerieForInvoicesOfCompany(company, params.serie, params.folio)
+    companyService.changeSerieForInvoicesOfCompany(company, params)
     redirect action:"show", id:company.id
   }
 

@@ -71,8 +71,7 @@
                     </tr>
                     <g:each in="${quotationRequestList}" var="request">
                       <tr>
-                        <td 
-                        ><g:link action="show" id="${request.id}"><g:formatDate format="dd-MM-yyyy" date="${request.dateCreated}" class="form-control"/></g:link></td>
+                        <td><g:link action="show" id="${request.id}"><g:formatDate format="dd-MM-yyyy" date="${request.dateCreated}" class="form-control"/></g:link></td>
                         <td class="text-center">${request.description}</td>
                         <td class="text-right">${request.commission}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:request.total)}</td>

@@ -3,6 +3,10 @@ package com.modulus.uno
 import grails.transaction.Transactional
 import java.math.RoundingMode
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.CreditNote
+import com.modulus.uno.status.CommissionTransactionStatus
+
 @Transactional
 class CommissionTransactionService {
 
@@ -148,6 +152,34 @@ class CommissionTransactionService {
       tr.invoice = null
       tr.save()
     }
+  }
+
+  CommissionTransaction registerCommissionForCreditNote(CreditNote creditNote) {
+    FeeCommand feeCommand = createFeeCommandForCreditNote(creditNote)
+    def commission = saveCommissionTransaction(feeCommand)
+    commission
+  }
+
+  private FeeCommand createFeeCommandForCreditNote(CreditNote creditNote) {
+    def command = null
+    Commission commission = creditNote.saleOrder.company.commissions.find { com ->
+        com.type == CommissionType."FACTURA"
+    }
+
+    if (!commission) {
+      throw new BusinessException("No existe comisión de facturación registrada")
+    }
+
+    BigDecimal amountFee = 0
+    if (commission){
+      if (commission.fee){
+        amountFee = commission.fee * 1.0
+      } else {
+        amountFee = creditNote.total * (commission.percentage/100)
+      }
+      command = new FeeCommand(companyId:creditNote.saleOrder.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type)
+    }
+    command
   }
 
 }

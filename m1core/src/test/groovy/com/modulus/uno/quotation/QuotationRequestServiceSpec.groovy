@@ -4,12 +4,11 @@ import grails.test.mixin.TestFor
 import spock.lang.Specification
 import grails.test.mixin.Mock
 import org.springframework.mock.web.MockHttpServletRequest
-import com.modulus.uno.SaleOrderService
-import com.modulus.uno.SaleOrder
+import com.modulus.uno.saleorder.SaleOrderService
+import com.modulus.uno.saleorder.SaleOrder
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntityType
-import com.modulus.uno.Address
 import com.modulus.uno.Address
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
@@ -27,8 +26,6 @@ class QuotationRequestServiceSpec extends Specification {
 
     def cleanup() {
     }
-
-    
 
 }
 

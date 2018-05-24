@@ -1,5 +1,8 @@
 package com.modulus.uno
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.status.CommissionTransactionStatus
+
 class CommissionTransaction {
 
   String uuid = UUID.randomUUID().toString().replace('-','')[0..15]

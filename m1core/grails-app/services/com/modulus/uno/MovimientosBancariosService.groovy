@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import com.modulus.uno.status.ConciliationStatus
 
 @Transactional
 class MovimientosBancariosService {

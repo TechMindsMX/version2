@@ -2,6 +2,11 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.CreditNote
+import com.modulus.uno.status.SaleOrderStatus
+import com.modulus.uno.status.CreditNoteStatus
+
 @Transactional(readOnly=true)
 class EmailSenderService {
 
@@ -302,4 +307,47 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
 
   }
+
+  //CreditNote
+  def notifyCreditNoteChangeStatus(CreditNote creditNote){
+    def emailList
+    def idEmailer
+    def paramsEmailer=notifyService.prepareParametersToSendForCreditNote(creditNote, creditNote.status)
+    switch(creditNote.status){
+      case CreditNoteStatus.TO_AUTHORIZE:
+      idEmailer = grailsApplication.config.emailer.creditNoteAcceptStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_AUTHORIZER_VISOR", "ROLE_AUTHORIZER_EJECUTOR"])
+      break
+      case CreditNoteStatus.AUTHORIZED:
+      idEmailer = grailsApplication.config.emailer.creditNoteAcceptStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
+      break
+      case CreditNoteStatus.REJECTED:
+      idEmailer = grailsApplication.config.emailer.creditNoteCancelStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_OPERATOR_VISOR", "ROLE_OPERATOR_EJECUTOR"])
+      break
+      case CreditNoteStatus.APPLIED:
+      idEmailer = grailsApplication.config.emailer.creditNoteAcceptStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
+      break
+      case CreditNoteStatus.CANCELED:
+      idEmailer = grailsApplication.config.emailer.creditNoteCancelStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
+      break
+      case CreditNoteStatus.CANCEL_TO_AUTHORIZE:
+      idEmailer = grailsApplication.config.emailer.creditNoteCancelStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_AUTHORIZER_VISOR", "ROLE_AUTHORIZER_EJECUTOR"])
+      break
+      case CreditNoteStatus.CANCEL_AUTHORIZED:
+      idEmailer = grailsApplication.config.emailer.creditNoteCancelStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_FICO_VISOR", "ROLE_FICO_EJECUTOR"])
+      break
+      case CreditNoteStatus.CANCEL_APPLIED:
+      idEmailer = grailsApplication.config.emailer.creditNoteCancelStatus
+      emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
+      break
+    }
+    notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
+  }
+
 }
