@@ -283,4 +283,11 @@ class PurchaseOrderService {
     results
   }
 
+  Map getPurchaseOrdersWithMissingDocs(Company company) {
+    List<PurchaseOrder> allOrders = PurchaseOrder.findAllByCompanyAndStatus(company, PurchaseOrderStatus.PAGADA)
+    List<PurchaseOrder> ordersMissingDocs = allOrders.findAll { order ->
+      !order.documents || order.documents.size() == 1
+    }
+    [list:ordersMissingDocs, items:ordersMissingDocs.size()]
+  }
 }

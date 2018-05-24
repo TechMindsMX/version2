@@ -59,7 +59,8 @@ class PurchaseOrderServiceSpec extends Specification {
     result instanceof PurchaseOrder
   }
 
-  void "verify if exist  or not original date in purchaseOrder"() {
+  @Unroll
+  void "should update the payment date with #sendDate for a purchase order"() {
     given:
       def purchaseOrder = new PurchaseOrder()
       purchaseOrder.providerName = "prueba"
@@ -67,14 +68,14 @@ class PurchaseOrderServiceSpec extends Specification {
       purchaseOrder.originalDate = originalDate
       purchaseOrder.save(validate:false)
     when:
-      def purchaseORderResult = service.updateDatePaymentForOrder(1, sendDate)
+      def purchaseOrderResult = service.updateDatePaymentForOrder(1, newDate)
     then:
-      purchaseORderResult.originalDate != null
-      purchaseORderResult.fechaPago == sendDate
+      purchaseOrderResult.originalDate != null
+      purchaseOrderResult.fechaPago == newDate
    where:
-      fechaPago     | originalDate  | sendDate      | fechaPagoOriginal
-      new Date()    | null          | new Date()+5  | new Date()
-      new Date()+1  | new Date()+17 | new Date()+17 | new Date()+17
+      fechaPago     | originalDate  || newDate
+      new Date()    | null          || new Date()+5  
+      new Date()+1  | new Date()+10 || new Date()+17
 
   }
 
@@ -134,7 +135,7 @@ class PurchaseOrderServiceSpec extends Specification {
   @Unroll
   void "Should save the payment to purchase order when source is #theSource"() {
     given: "A purchase order"
-      PurchaseOrder purchaseOrder = createPurchaseOrderForTest()
+      PurchaseOrder purchaseOrder = createPurchaseOrderForTest(PurchaseOrderStatus.AUTORIZADA)
 		and:"Payment data"
 			Map paymentData = [amount:theAmount, sourcePayment:theSource]
     and:
@@ -228,16 +229,47 @@ class PurchaseOrderServiceSpec extends Specification {
       [providerName:"Proveedor 5"]    |   0
   }
 
+  @Unroll
+  void "Should get all purchase orders with missing docs when current purchase orders is #thePurchaseOrders"() {
+    given:
+      Company company = new Company(purchaseOrders:thePurchaseOrders).save(validate:false)
+    when:
+      def results = service.getPurchaseOrdersWithMissingDocs(company)
+    then: "value"
+      results.items == theExpectedItems
+    where:
+    thePurchaseOrders   || theExpectedItems
+    []                  ||  0
+    [createPurchaseOrderForTest(PurchaseOrderStatus.PAGADA)] || 1
+    [createPurchaseOrderForTest(PurchaseOrderStatus.PAGADA), createPurchaseOrderForTest(PurchaseOrderStatus.CREADA)] || 1
+  }
+
+  void "Should get all purchase orders with missing docs when current purchase orders"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The current purchaseOrders"
+      PurchaseOrder po1 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po2 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po3 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.AUTORIZADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po4 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.CANCELADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)]).save(validate:false)
+      PurchaseOrder po5 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)], documents: [Mock(S3Asset)]).save(validate:false)
+      PurchaseOrder po6 = new PurchaseOrder(company:company, status:PurchaseOrderStatus.PAGADA, items:[new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0).save(validate:false)], documents: [Mock(S3Asset), Mock(S3Asset)]).save(validate:false)
+    when:
+      def results = service.getPurchaseOrdersWithMissingDocs(company)
+    then: "value"
+      results.items == 3    
+  }
 
   private PaymentToPurchase createPayment(String amount) {
     new PaymentToPurchase(amount: new BigDecimal(amount)).save()
   }
 
-	private PurchaseOrder createPurchaseOrderForTest() {
-		PurchaseOrder purchaseOrder = new PurchaseOrder(status:PurchaseOrderStatus.AUTORIZADA).save(validate:false)
+	private PurchaseOrder createPurchaseOrderForTest(PurchaseOrderStatus status) {
+		PurchaseOrder purchaseOrder = new PurchaseOrder(status:status).save(validate:false)
 		PurchaseOrderItem item = new PurchaseOrderItem(quantity:1, price:1000, ieps:0, iva:0, purchaseOrder:purchaseOrder).save(validate:false)
 		purchaseOrder.addToItems(item)
 		purchaseOrder.save(validate:false)
 		purchaseOrder
 	}
+
 }
