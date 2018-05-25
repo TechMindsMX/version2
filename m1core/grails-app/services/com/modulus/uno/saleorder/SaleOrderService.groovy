@@ -109,6 +109,7 @@ class SaleOrderService {
 
   @Transactional
   SaleOrder executeSaleOrder(SaleOrder saleOrder){
+    //TODO: Aplicar la comisión después de timbrar, implica validar si la empresa ya tiene comisión de factura registrada antes de timbrar
     commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
     Map stampData = invoiceService.generateFactura(saleOrder)
     log.info "Stamp UUID: ${stampData.stampId}"
