@@ -240,5 +240,40 @@ class CommissionTransactionServiceSpec extends Specification {
       thrown BusinessException
   }
 
+  @Unroll
+  void "Should get the commission type = #type for a company"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The commissions company"
+      Commission commission1 = new Commission(type:CommissionType.FACTURA, company:company).save(validate:false)
+      Commission commission2 = new Commission(type:CommissionType.FIJA, company:company).save(validate:false)
+      Commission commission3 = new Commission(type:CommissionType.PAGO, company:company).save(validate:false)
+      Commission commission4 = new Commission(type:CommissionType.DEPOSITO, company:company).save(validate:false)
+      Commission commission5 = new Commission(type:CommissionType.RECIBO_NOMINA, company:company).save(validate:false)
+      company.commissions = [commission1, commission2, commission3, commission4, commission5]
+      company.save(validate:false)
+    when:
+      def result = service.getCommissionForCompanyByType(company, type)
+    then:
+      result
+    where:
+      type << [CommissionType.FACTURA, CommissionType.DEPOSITO, CommissionType.FIJA, CommissionType.PAGO, CommissionType.RECIBO_NOMINA]
+  }
+
+  void "Should don't get the commission type for a company"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The commissions company"
+      Commission commission1 = new Commission(type:CommissionType.FACTURA, company:company).save(validate:false)
+      Commission commission2 = new Commission(type:CommissionType.FIJA, company:company).save(validate:false)
+      Commission commission3 = new Commission(type:CommissionType.DEPOSITO, company:company).save(validate:false)
+      company.commissions = [commission1, commission2, commission3]
+      company.save(validate:false)
+    when:
+      def result = service.getCommissionForCompanyByType(company, CommissionType.PAGO)
+    then:
+      !result
+  }
+
 }
 
