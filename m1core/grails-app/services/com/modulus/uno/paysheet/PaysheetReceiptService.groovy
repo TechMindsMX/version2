@@ -4,6 +4,7 @@ import com.modulus.uno.invoice.paysheetReceipt.*
 import com.modulus.uno.invoice.*
 
 import com.modulus.uno.PaysheetReceiptCommand
+import com.modulus.uno.Company
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.Address
@@ -25,7 +26,9 @@ class PaysheetReceiptService {
 
   Map generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
-    stampPaysheetReceipt(paysheetReceipt)
+    Map stampData = stampPaysheetReceipt(paysheetReceipt)
+    registerCommissionTransaction(paysheetEmployee, paysheetReceipt.id, schema)
+    stampData
   }
 
   PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
@@ -235,6 +238,12 @@ class PaysheetReceiptService {
     }
 
     result
+  }
+
+  def registerCommissionTransaction(PaysheetEmployee employee, PaysheetReceiptCommand paysheetReceipt, PaymentSchema schema) {
+    BigDecimal commissionBaseAmount = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
+    Company company = Company.get(paysheetReceipt.id)
+    commissionTransactionService.registerCommissionTransactionForPaysheetReceipt(commissionBaseAmount, company)
   }
 
 }
