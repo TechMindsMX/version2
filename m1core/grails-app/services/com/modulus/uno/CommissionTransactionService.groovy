@@ -182,5 +182,37 @@ class CommissionTransactionService {
     command
   }
 
+  Commission getCommissionForCompanyByType(Company company, CommissionType type) {
+    company.commissions.find { com ->
+        com.type == type
+    }
+  }
+
+  CommissionTransaction registerCommissionForPaysheetReceipt(BigDecimal baseAmount, Company company) {
+    FeeCommand feeCommand = createFeeCommandForPaysheetReceipt(baseAmount, company)
+    def commission = saveCommissionTransaction(feeCommand)
+    commission
+  }
+
+  private FeeCommand createFeeCommandForPaysheetReceipt(BigDecimal baseAmount, Company company) {
+    def command = null
+    Commission commission = getCommissionForCompanyByType(company, CommissionType.RECIBO_NOMINA) 
+
+    if (!commission) {
+      throw new BusinessException("No existe comisión de Recibos de Nómina registrada")
+    }
+
+    BigDecimal amountFee = 0
+    if (commission){
+      if (commission.fee){
+        amountFee = commission.fee * 1.0
+      } else {
+        amountFee = baseAmount * (commission.percentage/100)
+      }
+      command = new FeeCommand(companyId:company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type)
+    }
+    command
+  }
+
 }
 
