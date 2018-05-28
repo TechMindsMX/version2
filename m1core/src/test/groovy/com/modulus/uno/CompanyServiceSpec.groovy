@@ -466,6 +466,17 @@ and:
       result == false
   }
 
+  void "Should return is not enabled to stamp when company is missing commission type for invoice"() {
+    given: "A company"
+      Company company = createCompany()
+    and: "documents to stamp"
+      restService.existEmisorForGenerateInvoice(_, _) >> [status:true]
+    when: "we verify status"
+      Boolean result = service.isCompanyEnabledToStamp(company)
+    then:
+      result == false
+  }
+
   void "Should assign alias stp to company account m1"() {
     given:"A company"
       Company company = createCompany()
