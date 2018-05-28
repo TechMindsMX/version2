@@ -18,7 +18,8 @@ class PaysheetController {
 
   def show(Paysheet paysheet) {
 		def dispersionBanks = paysheetService.getDispersionBanksFromPaysheet(paysheet)
-    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:dispersionBanks]
+    Map statusPayersToStamp = paysheetService.checkPayersToStamp(paysheet)
+    respond paysheet, model:[baseUrlDocuments:grailsApplication.config.grails.url.base.images, paysheetBanks:dispersionBanks, statusPayersToStamp:statusPayersToStamp]
   }
 
   def list() {
