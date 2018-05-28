@@ -466,6 +466,19 @@ and:
       result == false
   }
 
+  void "Should return is enabled to stamp when company have all data to invoice"() {
+    given: "A company"
+      Company company = createCompany()
+    and: "documents to stamp"
+      restService.existEmisorForGenerateInvoice(_, _) >> [status:true]
+    and: "the commission"
+      commissionTransactionService.getCommissionForCompanyByType(_, _) >> new Commission().save(validate:false)
+    when: "we verify status"
+      Boolean result = service.isCompanyEnabledToStamp(company)
+    then:
+      result
+  }
+
   void "Should return is not enabled to stamp when company is missing commission type for invoice"() {
     given: "A company"
       Company company = createCompany()
