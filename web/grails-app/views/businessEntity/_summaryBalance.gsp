@@ -31,7 +31,8 @@
             <td class="text-right">
               <g:link controller="saleOrder" action="listOrdersAlreadyConciliate" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalSoldForClientStatusConciliated)}</g:link>
             </td>
-            <td class="text-right">${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}
+            <td class="text-right">
+              <g:link controller="payment" action="referencedPaymentsByRfc" id="${businessEntity.id}" params="[rfc: businessEntity.rfc]">${modulusuno.formatPrice(number:clientData.paymentsFromClientToPay)}</g:link>
             </td>
             <td class="text-right">
               <g:link controller="saleOrder" action="listOrdersWithAmountToPayForClient" id="${businessEntity.id}">${modulusuno.formatPrice(number:clientData.totalPending)}</g:link>
