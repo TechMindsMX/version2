@@ -64,9 +64,7 @@ class CommissionTransactionService {
 
   private FeeCommand createFeeCommandForSaleOrder(SaleOrder saleOrder) {
     def command = null
-    Commission commission = saleOrder.company.commissions.find { com ->
-        com.type == CommissionType."FACTURA"
-    }
+    Commission commission = getCommissionForCompanyByType(saleOrder.company, CommissionType.FACTURA) 
 
     if (!commission) {
       throw new BusinessException("No existe comisión de facturación registrada")
@@ -97,9 +95,7 @@ class CommissionTransactionService {
   }
 
   private FeeCommand createFeeCommandForFixedCommissionOfCompany(Company company) {
-     Commission commission = company.commissions.find { com ->
-        com.type == CommissionType."FIJA"
-    }
+    Commission commission = getCommissionForCompanyByType(company, CommissionType.FIJA) 
 
     if (!commission) {
       throw new BusinessException("No existe comisión fija registrada para la empresa")
@@ -162,9 +158,7 @@ class CommissionTransactionService {
 
   private FeeCommand createFeeCommandForCreditNote(CreditNote creditNote) {
     def command = null
-    Commission commission = creditNote.saleOrder.company.commissions.find { com ->
-        com.type == CommissionType."FACTURA"
-    }
+    Commission commission = getCommissionForCompanyByType(creditNote.saleOrder.company, CommissionType.FACTURA) 
 
     if (!commission) {
       throw new BusinessException("No existe comisión de facturación registrada")
