@@ -4,6 +4,7 @@ import grails.test.mixin.TestFor
 import spock.lang.Specification
 import spock.lang.Unroll
 import grails.test.mixin.Mock
+import java.math.RoundingMode
 
 import com.modulus.uno.saleorder.SaleOrder
 import com.modulus.uno.saleorder.SaleOrderItem
@@ -273,6 +274,41 @@ class CommissionTransactionServiceSpec extends Specification {
       def result = service.getCommissionForCompanyByType(company, CommissionType.PAGO)
     then:
       !result
+  }
+
+  @Unroll
+  void "Should get fee command with amount = #theAmount for a commission transaction of type paysheet receipt when the commission fee = #theFee and percentage = #thePercent"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The commission type for paysheet receipt"
+      Commission commission = new Commission(type:CommissionType.RECIBO_NOMINA, fee:theFee, percentage:thePercent).save(validate:false)
+      company.addToCommissions(commission)
+    and:"The base amount"
+      BigDecimal baseAmount = new BigDecimal(2500)
+    when:
+      def command = service.createFeeCommandForPaysheetReceipt(baseAmount, company)
+    then:
+      command
+      command.amount == theAmount.setScale(2, RoundingMode.HALF_UP)
+      command.type == "RECIBO_NOMINA"
+    where:
+      theFee        |   thePercent        || theAmount
+      new BigDecimal(5)   | new BigDecimal(0)     || new BigDecimal(5)
+      new BigDecimal(0)   | new BigDecimal(10)     || new BigDecimal(250)
+  }
+
+  void "Should thrown a exception when try get fee command for a commission transaction of type paysheet receipt"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The commission type for paysheet receipt"
+      Commission commission = new Commission(type:CommissionType.FACTURA, fee:new BigDecimal(5)).save(validate:false)
+      company.addToCommissions(commission)
+    and:"The base amount"
+      BigDecimal baseAmount = new BigDecimal(2500)
+    when:
+      def command = service.createFeeCommandForPaysheetReceipt(baseAmount, company)
+    then:
+      thrown BusinessException
   }
 
 }
