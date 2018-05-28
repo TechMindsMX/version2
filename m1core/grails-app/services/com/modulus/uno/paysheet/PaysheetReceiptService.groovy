@@ -243,7 +243,7 @@ class PaysheetReceiptService {
   def registerCommissionTransaction(PaysheetEmployee employee, PaysheetReceiptCommand paysheetReceipt, PaymentSchema schema) {
     BigDecimal commissionBaseAmount = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
     Company company = Company.get(paysheetReceipt.id)
-    commissionTransactionService.registerCommissionTransactionForPaysheetReceipt(commissionBaseAmount, company)
+    commissionTransactionService.registerCommissionForPaysheetReceipt(commissionBaseAmount, company)
   }
 
 }
