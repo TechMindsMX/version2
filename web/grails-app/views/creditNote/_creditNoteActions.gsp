@@ -71,6 +71,27 @@
   <g:if test="${creditNote.status == CreditNoteStatus.AUTHORIZED && isEnabledToStamp}">
     <div class="text-right">
       <g:link class="btn btn-primary" action="apply" id="${creditNote.id}">Aplicar</g:link>
+      <a data-toggle="collapse" role="button" href="#inputReasonReject" class="btn btn-danger" aria-expanded="false" aria-controls="inputReasonReject">Rechazar</a>
+
+          <div class="row">
+            <div class="col-md-12">
+              <br/>       
+              <div class="collapse" id="inputReasonReject">
+                <div class="well">
+                  <g:form action="rejectCreditNote" id="${creditNote.id}">
+                    <div class="form-group">
+                      <g:select name="rejectReason" from="${RejectReason.values()}" optionKey="name" optionValue="description" value="${creditNote.rejectReason}" class="form-control" />
+                      <br/>
+                      <g:textArea name="comments" placeholder="Comentarios opcionales" rows="3" cols="60" maxLength="255" class="form-control"/>
+                      <br/>
+                      <button type="submit" class="btn btn-danger">Rechazar</button>
+                    </div>
+                  </g:form>
+                </div>
+              </div>
+            </div>
+          </div>
+
     </div>
   </g:if>
   <g:if test="${!isEnabledToStamp}">
