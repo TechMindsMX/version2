@@ -139,4 +139,12 @@ class CreditNoteService {
     creditNote.delete()
   }
  
+  @Transactional
+  CreditNote cancelOrRejectCreditNote(CreditNote creditNote, CreditNoteStatus status) {
+    creditNote.status = status
+    creditNote.save()
+    emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    creditNote
+  }
+
 }
