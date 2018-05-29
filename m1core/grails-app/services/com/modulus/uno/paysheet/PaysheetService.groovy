@@ -299,8 +299,8 @@ class PaysheetService {
     employees.each { employee ->
       BigDecimal salarySchema = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
       if (salarySchema > 0) {
-        Map stampData = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
-        paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, stampData.stampId)
+        String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
+        paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, paysheetReceiptUuid)
         paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
       }
     }
