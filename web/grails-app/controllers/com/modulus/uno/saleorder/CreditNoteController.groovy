@@ -71,6 +71,12 @@ class CreditNoteController {
     redirect controller:"saleOrder", action:"show", id:creditNote.saleOrder.id
   }
 
+  @Transactional
+  def rejectCreditNote(CreditNote creditNote){
+    creditNoteService.cancelOrRejectCreditNote(creditNote, CreditNoteStatus.REJECTED)
+    redirect controller:"saleOrder", action:"show", id:creditNote.saleOrder.id
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
