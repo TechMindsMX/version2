@@ -221,7 +221,7 @@ class PaysheetServiceSpec extends Specification {
       result.statusPayerIAS
   }
 
-  void "Should get status false for SA payers to stamp for a paysheet"() {
+  void "Should get status false for  payers to stamp for a paysheet"() {
     given:"The paysheet"
       PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
       PaysheetProject paysheetProject = new PaysheetProject(payers:createPayersList()).save(validate:false)
@@ -229,27 +229,11 @@ class PaysheetServiceSpec extends Specification {
       Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
     and:
       paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
-      commissionTransactionService.getCommissionForCompanyByType(_, _) >>> [null, new Commission(type:CommissionType.RECIBO_NOMINA).save(validate:false)]
+      commissionTransactionService.getCommissionForCompanyByType(_, _) >>> [null, null]
     when:
       def result = service.checkPayersToStamp(paysheet)
     then:
       !result.statusPayerSA
-      result.statusPayerIAS
-  }
-
-  void "Should get status false for IAS payers to stamp for a paysheet"() {
-    given:"The paysheet"
-      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
-      PaysheetProject paysheetProject = new PaysheetProject(payers:createPayersList()).save(validate:false)
-      PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:paysheetProject).save(validate:false)
-      Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
-    and:
-      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
-      commissionTransactionService.getCommissionForCompanyByType(_, _) >>> [new Commission(type:CommissionType.RECIBO_NOMINA).save(validate:false), null]
-    when:
-      def result = service.checkPayersToStamp(paysheet)
-    then:
-      result.statusPayerSA
       !result.statusPayerIAS
   }
 

@@ -324,20 +324,18 @@ class PaysheetReceiptServiceSpec extends Specification {
     given:"The paysheet receipt"
       PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
     and:
-      restService.sendFacturaCommandWithAuth(_, _) >> [text:"{\"stampId\":\"UUID_PAYSHEET_RECEIPT\", \"serie\":\"NOM\", \"folio\":\"1\"}"]
+      restService.sendFacturaCommandWithAuth(_, _) >> "UUID_PAYSHEET_RECEIPT"
     when:
       def result = service.stampPaysheetReceipt(paysheetReceipt)
     then:
-      result.stampId == "UUID_PAYSHEET_RECEIPT"
-      result.serie == "NOM"
-      result.folio == "1"
+      result == "UUID_PAYSHEET_RECEIPT"
   }
 
   void "Should thrown an exception when try stamp a paysheet receipt when result starts with 'Error'" () {
     given:"The paysheet receipt"
       PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
     and:
-      restService.sendFacturaCommandWithAuth(_, _) >> [text:"{\"error\":\"falló el timbrado del recibo\"}"]
+      restService.sendFacturaCommandWithAuth(_, _) >> "error:falló el timbrado del recibo"
     when:
       def result = service.stampPaysheetReceipt(paysheetReceipt)
     then:
