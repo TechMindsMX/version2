@@ -41,6 +41,18 @@
           </dl>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          <g:if test="${creditNote.status == CreditNoteStatus.CANCELED || creditNote.status == CreditNoteStatus.REJECTED}">
+            <div class="alert alert-danger" role="alert">
+              <label class="control-label">Motivo ${message(code:'creditNote.rejectReason.'+creditNote.status)}:</label>
+              <g:message code="rejectReason.${creditNote.rejectReason}" default="${creditNote.rejectReason}"/>
+              <textarea class="form-control" rows="3" cols="60" readonly>${creditNote.comments}</textarea>
+            </div>
+          </g:if>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
