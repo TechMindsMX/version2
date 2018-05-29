@@ -12,6 +12,7 @@ import com.modulus.uno.AddressType
 import com.modulus.uno.RestException
 
 import com.modulus.uno.DataImssEmployeeService
+import com.modulus.uno.CommissionTransactionService
 import com.modulus.uno.RestService
 
 import grails.util.Environment
@@ -21,14 +22,15 @@ class PaysheetReceiptService {
 
   PaysheetProjectService paysheetProjectService
   DataImssEmployeeService dataImssEmployeeService
+  CommissionTransactionService commissionTransactionService
   RestService restService
   def grailsApplication
 
-  Map generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+  String generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
-    Map stampData = stampPaysheetReceipt(paysheetReceipt)
-    registerCommissionTransaction(paysheetEmployee, paysheetReceipt.id, schema)
-    stampData
+    String stampUuid = stampPaysheetReceipt(paysheetReceipt)
+    registerCommissionTransaction(paysheetEmployee, paysheetReceipt, schema)
+    stampUuid
   }
 
   PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
@@ -226,18 +228,17 @@ class PaysheetReceiptService {
     payer.company.id.toString()
   }
 
-  Map stampPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
-    def resultStamp = restService.sendFacturaCommandWithAuth(paysheetReceipt, grailsApplication.config.modulus.paysheetReceiptCreate)
-    if (!resultStamp) {
+  String stampPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
+    def result = restService.sendFacturaCommandWithAuth(paysheetReceipt, grailsApplication.config.modulus.paysheetReceiptCreate)
+    if (!result) {
       throw new RestException("No se pudo generar el recibo de nómina") 
     }
 
-    def result = new JsonSlurper().parseText(resultStamp.text)
-    if (result.error) {
-      throw new RestException(result.error) 
+    if (result.text.startsWith("Error")) {
+      throw new RestException(result.text) 
     }
 
-    result
+    result.text
   }
 
   def registerCommissionTransaction(PaysheetEmployee employee, PaysheetReceiptCommand paysheetReceipt, PaymentSchema schema) {
