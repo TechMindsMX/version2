@@ -89,6 +89,12 @@ class CreditNoteController {
     redirect action:"show", id:creditNote.id
   }
 
+  @Transactional
+  def applyCancelCreditNote(CreditNote creditNote) {
+    creditNoteService.applyCancelCreditNote(creditNote)
+    redirect action:"show", id:creditNote.id
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
