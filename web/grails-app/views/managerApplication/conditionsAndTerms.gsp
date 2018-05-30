@@ -15,7 +15,23 @@
 
     <div class="row">
       <div class="col-lg-12">
-        <textarea class="form-control" rows="15">${conditionsAndTerms}</textarea>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>
+                  <g:each in="${conditionsAndTerms}" var="line">
+                      <p class="text-justify text-muted">${line}</p>
+                  </g:each>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
