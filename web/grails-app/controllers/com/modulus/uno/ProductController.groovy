@@ -54,13 +54,7 @@ class ProductController {
 
     product.save flush:true
 
-    request.withFormat {
-      form multipartForm {
-        flash.message = message(code: 'product.created', args: [:])
-        redirect action:'show', id: product.id, params: params
-      }
-      '*' { respond product, [status: CREATED] }
-    }
+    redirect action:"show", id:product.id
   }
 
   def edit(Product product) {

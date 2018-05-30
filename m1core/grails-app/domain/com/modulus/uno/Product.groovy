@@ -18,7 +18,7 @@ class Product {
 
   static constraints = {
     sku blank:false,size:4..50,matches:/^[A-Za-z0-9-]*$/, unique: 'company'
-    name blank:false,size:1..300
+    name blank:false,size:1..500
     price min:0.0,max:250000000.00
     ieps min:0.0,max:100.00
     iva min:0.0,max:100.00
