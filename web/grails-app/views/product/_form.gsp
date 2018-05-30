@@ -9,7 +9,7 @@
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.name.label")}</label>
-    <g:textField name="name" class="form-control" required="" value="${product?.name}" maxLength="300"/>
+    <g:textField name="name" class="form-control" required="" value="${product?.name}" maxLength="500"/>
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.price.label")}</label>

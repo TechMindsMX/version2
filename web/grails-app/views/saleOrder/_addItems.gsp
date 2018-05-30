@@ -24,7 +24,7 @@
         </td>
         <td>
           <div class="input-group easy-autocomplete col-xs-12">
-            <input id="product-name" name="name" type="text" class="form-control" autocomplete="off" placeholder="Nombre del producto" required="" maxlength="300" />
+            <input id="product-name" name="name" type="text" class="form-control" autocomplete="off" placeholder="Nombre del producto" required="" maxlength="500" />
           </div>
           <div class="input-group easy-autocomplete col-xs-10">
             <input type="text" id="sku" name="sku" class="form-control" autocomplete="off" placeholder="SKU" required="" pattern=".{4,50}" maxlength="50" title="4 caracteres mínimo"/>
