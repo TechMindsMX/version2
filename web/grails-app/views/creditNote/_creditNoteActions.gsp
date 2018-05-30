@@ -105,6 +105,13 @@
 
     </div>
   </g:if>
+
+  <g:if test="${creditNote.status == CreditNoteStatus.CANCEL_AUTHORIZED && isEnabledToStamp}">
+    <div class="text-right">
+      <g:link class="btn btn-danger" action="applyCancelCreditNote" id="${creditNote.id}">Ejecutar Cancelación</g:link>
+    </div>
+  </g:if>
+
   <g:if test="${!isEnabledToStamp}">
     <div class="alert alert-warning">
       No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
