@@ -1,7 +1,7 @@
 databaseChangeLog = {
   include file: 'initial-structure.groovy'
   include file: 'create-m1-roles.groovy'
-  include file: 'adding-user-admin-production.groovy'
+  //include file: 'adding-user-admin-production.groovy'
   include file: 'adding-list-banks.groovy'
   include file: 'adding-colunm-reference-to-payment.groovy'
   include file: 'adding-uuid-to-purchase-order.groovy'
@@ -129,4 +129,5 @@ databaseChangeLog = {
   include file: 'adding-columns-for-paysheet-receipt-into-data-imss-employee.groovy'
   include file: 'adding-column-federal-entity-to-paysheet-project.groovy'
   include file: 'adding-column-branch-to-pre-paysheet-employee.groovy'
+  include file: 'modify-size-column-name-into-sale-order-item-and-product.groovy'
 }
