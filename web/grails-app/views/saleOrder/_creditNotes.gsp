@@ -28,7 +28,7 @@
               </tr>
             </thead>
             <tbody>
-              <g:each in="${saleOrder.creditNotes}" var="creditNote">
+              <g:each in="${saleOrder.creditNotes.sort{it.id}}" var="creditNote">
                 <tr>
                   <td class="text-center"><g:link controller="creditNote" action="show" id="${creditNote.id}">${creditNote.id}</g:link></td>
                   <td class="text-center">${formatDate(date:creditNote.dateCreated, format:'dd-MM-yyyy')}</td>
