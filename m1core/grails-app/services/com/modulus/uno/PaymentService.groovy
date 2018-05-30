@@ -68,4 +68,11 @@ class PaymentService {
     }
      paymentToConciliated.amount.sum()
   }
+
+  Map findReferencedPaymentsByRfc(Company company, String rfc) {
+   Map payments = [:]
+   List<Payment> paymentsList = Payment.findAllByCompanyAndRfc(company, rfc)
+   payments.list = paymentsList
+   payments
+  }
 }

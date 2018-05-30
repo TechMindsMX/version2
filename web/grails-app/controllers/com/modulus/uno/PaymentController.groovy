@@ -4,6 +4,8 @@ import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 import java.math.RoundingMode
 
+import com.modulus.uno.BusinessEntity
+
 class PaymentController {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -148,4 +150,10 @@ class PaymentController {
     render view:"conciliation", model:[bankingWithdraws:bankingWithdraws, styleClasses:styleClasses]
   }
 
+  def referencedPaymentsByRfc(String rfc) {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabBankingDeposits:"", tabBankingWithdraws:""]
+    def payments = paymentService.findReferencedPaymentsByRfc(company, rfc)
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
+  }
 }
