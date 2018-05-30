@@ -4,6 +4,7 @@ import com.modulus.uno.PaymentWay
 import com.modulus.uno.PaymentMethod
 import com.modulus.uno.InvoicePurpose
 import com.modulus.uno.Authorization
+import com.modulus.uno.RejectReason
 import com.modulus.uno.status.CreditNoteStatus
 
 class CreditNote {
@@ -15,6 +16,8 @@ class CreditNote {
   String folio
   String invoiceFolio
   String invoiceSerie
+  RejectReason rejectReason
+  String comments
 
   Date dateCreated
   Date lastUpdated
@@ -26,6 +29,8 @@ class CreditNote {
     folio nullable:true
     invoiceFolio nullable:true
     invoiceSerie nullable:true
+    rejectReason nullable:true
+    comments nullable:true
   }
 
   BigDecimal getTotalIVA(){

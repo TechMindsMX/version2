@@ -1,7 +1,8 @@
+<%! import com.modulus.uno.CommissionType %>
 <f:with bean="commission">
 <div class="form-group">
   <label for="">${message(code:"commission.type.label")}</label>
-  <g:select name="type" from="${com.modulus.uno.CommissionType.values()}" value="${commission.type}" class="form-control" />
+  <g:select name="type" from="${CommissionType.values()}" value="${commission.type}" class="form-control" />
 </div>
 <div class="form-group">
   <label for="">${message(code:"commission.fee.label")}</label>
