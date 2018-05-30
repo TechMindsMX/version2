@@ -175,4 +175,11 @@ class CreditNoteService {
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
   }
 
+  @Transactional
+  def applyCancelCreditNote(CreditNote creditNote) {
+    invoiceService.cancelCreditNote(creditNote)
+    updateStatusForCreditNote(creditNote, CreditNoteStatus.CANCEL_APPLIED)
+    emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+  }
+
 }
