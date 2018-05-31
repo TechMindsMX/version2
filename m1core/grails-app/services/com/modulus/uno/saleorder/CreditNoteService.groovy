@@ -148,38 +148,44 @@ class CreditNoteService {
   CreditNote cancelCreditNote(CreditNote creditNote) {
     updateStatusForCreditNote(creditNote, CreditNoteStatus.CANCELED)
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    creditNote
   }
 
   @Transactional
   CreditNote rejectCreditNote(CreditNote creditNote) {
     updateStatusForCreditNote(creditNote, CreditNoteStatus.REJECTED)
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    creditNote
   }
 
   @Transactional
-  def executeCancelCreditNote(CreditNote creditNote) {
+  CreditNote executeCancelCreditNote(CreditNote creditNote) {
     invoiceService.cancelCreditNote(creditNote)
     updateStatusForCreditNote(creditNote, CreditNoteStatus.CANCEL_APPLIED)
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    creditNote
   }
 
   @Transactional
-  def sendToAuthorizeCancelCreditNote(CreditNote creditNote) {
+  CreditNote sendToAuthorizeCancelCreditNote(CreditNote creditNote) {
     updateStatusForCreditNote(creditNote, CreditNoteStatus.CANCEL_TO_AUTHORIZE)
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    creditNote
   }
 
   @Transactional
-  def authorizeCancelCreditNote(CreditNote creditNote) {
+  CreditNote authorizeCancelCreditNote(CreditNote creditNote) {
     updateStatusForCreditNote(creditNote, CreditNoteStatus.CANCEL_AUTHORIZED)
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    creditNote
   }
 
   @Transactional
-  def applyCancelCreditNote(CreditNote creditNote) {
+  CreditNote applyCancelCreditNote(CreditNote creditNote) {
     invoiceService.cancelCreditNote(creditNote)
     updateStatusForCreditNote(creditNote, CreditNoteStatus.CANCEL_APPLIED)
     emailSenderService.notifyCreditNoteChangeStatus(creditNote)
+    creditNote
   }
 
 }
