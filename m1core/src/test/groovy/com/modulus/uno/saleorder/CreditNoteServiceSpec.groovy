@@ -38,14 +38,23 @@ class CreditNoteServiceSpec extends Specification {
     grailsApplication.config.modulus.facturaCreate = "EndPoint_to_stamp"
   }
 
-  void "Should change status to TO_AUTHORIZE for a credit note"() {
+  @Unroll
+  void "Should change status to #newStatus for a credit note when call the service #theService"() {
     given:"The credit note"
-      CreditNote creditNote = new CreditNote(status:CreditNoteStatus.CREATED).save(validate:false)
+      CreditNote creditNote = new CreditNote(status:currentStatus).save(validate:false)
     when:
-      def result = service.sendToAuthorize(creditNote)
+      def result = service."${theService}"(creditNote)
     then:
-      result.status == CreditNoteStatus.TO_AUTHORIZE
+      result.status == newStatus
       1 * emailSenderService.notifyCreditNoteChangeStatus(_)
+    where:
+      currentStatus       |       theService      ||    newStatus
+      CreditNoteStatus.CREATED        |   "sendToAuthorize"     || CreditNoteStatus.TO_AUTHORIZE 
+      CreditNoteStatus.TO_AUTHORIZE   |   "cancelCreditNote"    || CreditNoteStatus.CANCELED
+      CreditNoteStatus.AUTHORIZED     |   "rejectCreditNote"    || CreditNoteStatus.REJECTED
+      CreditNoteStatus.APPLIED        |   "sendToAuthorizeCancelCreditNote"    || CreditNoteStatus.CANCEL_TO_AUTHORIZE
+      CreditNoteStatus.CANCEL_TO_AUTHORIZE        |   "authorizeCancelCreditNote"    || CreditNoteStatus.CANCEL_AUTHORIZED
+      CreditNoteStatus.CANCEL_AUTHORIZED        |   "executeCancelCreditNote"    || CreditNoteStatus.CANCEL_APPLIED
   }
 
   void "Should add authorization to credit note but not change status to AUTHORIZED"() {
