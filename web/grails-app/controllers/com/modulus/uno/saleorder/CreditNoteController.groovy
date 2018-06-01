@@ -2,6 +2,7 @@ package com.modulus.uno.saleorder
 
 import grails.transaction.Transactional
 import com.modulus.uno.CompanyService
+import com.modulus.uno.status.CreditNoteStatus
 
 @Transactional(readOnly = true)
 class CreditNoteController {
@@ -62,6 +63,36 @@ class CreditNoteController {
     SaleOrder saleOrder = creditNote.saleOrder
     creditNoteService.deleteCreditNote(creditNote)
     redirect controller:"saleOrder", action:"show", id:saleOrder.id
+  }
+
+  @Transactional
+  def cancelCreditNote(CreditNote creditNote){
+    creditNoteService.cancelCreditNote(creditNote)
+    redirect controller:"saleOrder", action:"show", id:creditNote.saleOrder.id
+  }
+
+  @Transactional
+  def rejectCreditNote(CreditNote creditNote){
+    creditNoteService.rejectCreditNote(creditNote)
+    redirect controller:"saleOrder", action:"show", id:creditNote.saleOrder.id
+  }
+
+  @Transactional
+  def requestCancelCreditNote(CreditNote creditNote) {
+    creditNoteService.sendToAuthorizeCancelCreditNote(creditNote)
+    redirect action:"show", id:creditNote.id
+  }
+
+  @Transactional
+  def authorizeCancelCreditNote(CreditNote creditNote) {
+    creditNoteService.authorizeCancelCreditNote(creditNote)
+    redirect action:"show", id:creditNote.id
+  }
+
+  @Transactional
+  def applyCancelCreditNote(CreditNote creditNote) {
+    creditNoteService.applyCancelCreditNote(creditNote)
+    redirect action:"show", id:creditNote.id
   }
 
   protected void notFound() {

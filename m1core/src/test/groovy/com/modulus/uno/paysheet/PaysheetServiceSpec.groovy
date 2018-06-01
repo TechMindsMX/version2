@@ -10,21 +10,28 @@ import com.modulus.uno.BankAccount
 import com.modulus.uno.Bank
 import com.modulus.uno.BusinessEntityType
 import com.modulus.uno.ModulusUnoAccount
+import com.modulus.uno.Commission
+import com.modulus.uno.CommissionType
+import com.modulus.uno.CommissionTransactionService
 
 @TestFor(PaysheetService)
-@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, ModulusUnoAccount, PaysheetContract, PayerPaysheetProject, PaysheetProject])
+@Mock([Paysheet, PrePaysheet, Company, PaysheetEmployee, PrePaysheetEmployee, BankAccount, Bank, ModulusUnoAccount, PaysheetContract, PayerPaysheetProject, PaysheetProject, Commission])
 class PaysheetServiceSpec extends Specification {
 
   PaysheetEmployeeService paysheetEmployeeService = Mock(PaysheetEmployeeService)
   PaysheetDispersionFilesService paysheetDispersionFilesService = Mock(PaysheetDispersionFilesService)
   PrePaysheetService prePaysheetService = Mock(PrePaysheetService)
   PaysheetReceiptService paysheetReceiptService = Mock(PaysheetReceiptService)
+  PaysheetProjectService paysheetProjectService = Mock(PaysheetProjectService)
+  CommissionTransactionService commissionTransactionService = Mock(CommissionTransactionService)
 
   def setup() {
     service.paysheetEmployeeService = paysheetEmployeeService
     service.prePaysheetService = prePaysheetService
     service.paysheetDispersionFilesService = paysheetDispersionFilesService
     service.paysheetReceiptService = paysheetReceiptService
+    service.paysheetProjectService = paysheetProjectService
+    service.commissionTransactionService = commissionTransactionService
     grailsApplication.config.paysheet.banks = "40002,40012,40014"
   }
 
@@ -177,12 +184,10 @@ class PaysheetServiceSpec extends Specification {
       Paysheet paysheet = createPaysheetWithEmployees()
     and:"The schema"
       PaymentSchema schema = PaymentSchema.IMSS
-    and:
-      paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> "UUID_PAYSHEET_RECEIPT"
     when:
       def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
     then:
-      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> [stampId:"UUID_PAYSHEET_RECEIPT", serie:"NOM", folio:"1"]
       3 * paysheetEmployeeService.savePaysheetReceiptUuidIMSS(_, _)
       3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
   }
@@ -192,14 +197,44 @@ class PaysheetServiceSpec extends Specification {
       Paysheet paysheet = createPaysheetWithEmployees()
     and:"The schema"
       PaymentSchema schema = PaymentSchema.ASSIMILABLE
-    and:
-      paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> "UUID_PAYSHEET_RECEIPT"
     when:
       def paysheetResult = service.generatePaysheetReceiptsFromPaysheetForSchema(paysheet, schema)
     then:
-      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _)
+      3 * paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(_, _) >> [stampId:"UUID_PAYSHEET_RECEIPT", serie:"NOM", folio:"1"]
       3 * paysheetEmployeeService.savePaysheetReceiptUuidAsimilable(_, _)
       3 * paysheetEmployeeService.setStampedStatusToEmployee(_, _)
+  }
+
+  void "Should get statuses true for payers to stamp for a paysheet"() {
+    given:"The paysheet"
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      PaysheetProject paysheetProject = new PaysheetProject(payers:createPayersList()).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:paysheetProject).save(validate:false)
+      Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
+    and:
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
+      commissionTransactionService.getCommissionForCompanyByType(_, _) >>> [new Commission(type:CommissionType.RECIBO_NOMINA).save(validate:false), new Commission(type:CommissionType.RECIBO_NOMINA).save(validate:false)]
+    when:
+      def result = service.checkPayersToStamp(paysheet)
+    then:
+      result.statusPayerSA
+      result.statusPayerIAS
+  }
+
+  void "Should get status false for  payers to stamp for a paysheet"() {
+    given:"The paysheet"
+      PaysheetContract paysheetContract = new PaysheetContract().save(validate:false)
+      PaysheetProject paysheetProject = new PaysheetProject(payers:createPayersList()).save(validate:false)
+      PrePaysheet prePaysheet = new PrePaysheet(paysheetProject:paysheetProject).save(validate:false)
+      Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
+    and:
+      paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(_, _) >> paysheetProject
+      commissionTransactionService.getCommissionForCompanyByType(_, _) >>> [null, null]
+    when:
+      def result = service.checkPayersToStamp(paysheet)
+    then:
+      !result.statusPayerSA
+      !result.statusPayerIAS
   }
 
   private Paysheet createPaysheetWithEmployees() {

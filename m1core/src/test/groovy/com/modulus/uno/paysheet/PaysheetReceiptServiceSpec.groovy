@@ -335,7 +335,7 @@ class PaysheetReceiptServiceSpec extends Specification {
     given:"The paysheet receipt"
       PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
     and:
-      restService.sendFacturaCommandWithAuth(_, _) >> [text:"Error: falló el timbrado del recibo"]
+      restService.sendFacturaCommandWithAuth(_, _) >> [text:"Error:falló el timbrado del recibo"]
     when:
       def result = service.stampPaysheetReceipt(paysheetReceipt)
     then:

@@ -64,9 +64,7 @@ class CommissionTransactionService {
 
   private FeeCommand createFeeCommandForSaleOrder(SaleOrder saleOrder) {
     def command = null
-    Commission commission = saleOrder.company.commissions.find { com ->
-        com.type == CommissionType."FACTURA"
-    }
+    Commission commission = getCommissionForCompanyByType(saleOrder.company, CommissionType.FACTURA) 
 
     if (!commission) {
       throw new BusinessException("No existe comisión de facturación registrada")
@@ -97,9 +95,7 @@ class CommissionTransactionService {
   }
 
   private FeeCommand createFeeCommandForFixedCommissionOfCompany(Company company) {
-     Commission commission = company.commissions.find { com ->
-        com.type == CommissionType."FIJA"
-    }
+    Commission commission = getCommissionForCompanyByType(company, CommissionType.FIJA) 
 
     if (!commission) {
       throw new BusinessException("No existe comisión fija registrada para la empresa")
@@ -162,9 +158,7 @@ class CommissionTransactionService {
 
   private FeeCommand createFeeCommandForCreditNote(CreditNote creditNote) {
     def command = null
-    Commission commission = creditNote.saleOrder.company.commissions.find { com ->
-        com.type == CommissionType."FACTURA"
-    }
+    Commission commission = getCommissionForCompanyByType(creditNote.saleOrder.company, CommissionType.FACTURA) 
 
     if (!commission) {
       throw new BusinessException("No existe comisión de facturación registrada")
@@ -178,6 +172,38 @@ class CommissionTransactionService {
         amountFee = creditNote.total * (commission.percentage/100)
       }
       command = new FeeCommand(companyId:creditNote.saleOrder.company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type)
+    }
+    command
+  }
+
+  Commission getCommissionForCompanyByType(Company company, CommissionType type) {
+    company.commissions.find { com ->
+        com.type == type
+    }
+  }
+
+  CommissionTransaction registerCommissionForPaysheetReceipt(BigDecimal baseAmount, Company company) {
+    FeeCommand feeCommand = createFeeCommandForPaysheetReceipt(baseAmount, company)
+    def commission = saveCommissionTransaction(feeCommand)
+    commission
+  }
+
+  private FeeCommand createFeeCommandForPaysheetReceipt(BigDecimal baseAmount, Company company) {
+    def command = null
+    Commission commission = getCommissionForCompanyByType(company, CommissionType.RECIBO_NOMINA) 
+
+    if (!commission) {
+      throw new BusinessException("No existe comisión de Recibos de Nómina registrada")
+    }
+
+    BigDecimal amountFee = 0
+    if (commission){
+      if (commission.fee){
+        amountFee = commission.fee * 1.0
+      } else {
+        amountFee = baseAmount * (commission.percentage/100)
+      }
+      command = new FeeCommand(companyId:company.id, amount:amountFee.setScale(2, RoundingMode.HALF_UP),type:commission.type)
     }
     command
   }
