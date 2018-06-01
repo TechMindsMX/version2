@@ -59,6 +59,11 @@
           </tr>
          </g:each>
          <tbody>
+         <tfoot>
+            <td colspan="6"></td>
+            <td class="text-right"><strong>Suma Total</strong></td>
+            <td class="text-right"><strong>${modulusuno.formatPrice(number: saleOrders*.total.sum())}</strong></td>
+         </tfoot>
        </table>
        </div>
        <g:if test="${!filterValues}">
