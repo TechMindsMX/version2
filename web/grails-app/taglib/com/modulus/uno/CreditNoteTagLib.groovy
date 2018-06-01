@@ -22,4 +22,19 @@ class CreditNoteTagLib {
     url.replace('#rfc',rfc).replace('#file',file)
   }
 
+  def cancelAccuseUrl = { attrs, body ->
+    out << "${grailsApplication.config.modulus.facturacionUrl}${createUrlToShowAccuse(attrs)}"
+  }
+
+  private def createUrlToShowAccuse(def attrs) {
+    def file = "${attrs.creditNote.folio.substring(0,36)}.${attrs.format}"
+    def rfc = "AAA010101AAA/${attrs.creditNote.saleOrder.company.id}"
+    if (Environment.current == Environment.PRODUCTION) {
+      rfc = "${attrs.creditNote.saleOrder.company.rfc}/${attrs.creditNote.saleOrder.company.id}"
+    }
+    def url = grailsApplication.config.modulus.showAccuse
+    url.replace('#rfc',rfc).replace('#file',file)
+  }
+
+
 }
