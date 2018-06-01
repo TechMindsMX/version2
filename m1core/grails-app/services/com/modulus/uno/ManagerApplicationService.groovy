@@ -158,19 +158,19 @@ class ManagerApplicationService {
     result
   }
 
-  String getConditionsAndTerms() {
+  def getConditionsAndTerms() {
     File conditions = new File(grailsApplication.config.conditionsAndTerms)
-    String textConditions = "Términos y Condiciones"
+    def textConditions = "Términos y Condiciones"
     if (conditions.exists())
-      textConditions = conditions.text
+      textConditions = conditions.readLines()
     textConditions
   }
 
-  String getPrivacyNotice() {
+  def getPrivacyNotice() {
     File privacy = new File(grailsApplication.config.privacyNotice)
-    String textPrivacy = "Aviso de Privacidad"
+    def textPrivacy = "Aviso de Privacidad"
     if (privacy.exists())
-      textPrivacy = privacy.text
+      textPrivacy = privacy.readLines()
     textPrivacy
   }
 
