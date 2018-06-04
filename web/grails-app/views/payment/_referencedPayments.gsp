@@ -4,7 +4,9 @@
       <th>Fecha</th>
       <th>Monto</th>
       <th>Cliente</th>
-      <th></th>
+      <th class="text-center">
+        <g:link class="btn btn-primary" controller="payment" action="referencedPaymentsConciliated">Ver conciliadas</g:link>
+      </th>
     </tr>
     <g:if test="${payments}">
     <g:each in="${payments.list}" var="payment">
