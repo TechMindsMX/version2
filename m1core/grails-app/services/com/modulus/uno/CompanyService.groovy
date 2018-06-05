@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import java.text.SimpleDateFormat
 import org.springframework.context.i18n.LocaleContextHolder as LCH
 import org.springframework.transaction.annotation.Propagation
+import grails.util.Environment
 
 import com.modulus.uno.saleorder.InvoiceService
 import com.modulus.uno.stp.StpService
@@ -272,24 +273,29 @@ class CompanyService {
   }
 
   def sendDocumentsPerInvoice(def params, Company company) {
-    validateCertificate(company.rfc, params.cer)
-    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:params.numCert, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
+    String certNumber = validateCertificateAndGetNumber(company.rfc, params.cer)
+    log.info "Cert Number from file cer: ${certNumber}"
+    def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:certNumber, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
     def result = restService.sendFilesForInvoiceM1(documents)
     result
   }
 
-  def validateCertificate(String rfc, def cerFile) {
-    File cer = new File("${System.getProperty('java.io.tmpdir')}/${cerFile.name}")
+  def validateCertificateAndGetNumber(String rfc, def cerFile) {
+    File cer = File.createTempFile("${System.getProperty('java.io.tmpdir')}/${cerFile.name}",".tmp")
     cerFile.transferTo(cer)
     String numCert = cer.text.substring(14,34)
     if (!numCert.isNumber()) {
       throw new BusinessException("El número de certificado no es válido")
     }
 
-    if (!cer.text.contains(rfc)) {
-      throw new BusinessException("El RFC de la empresa no corresponde al del certificado")
+    if (Environment.current != Environment.PRODUCTION) {
+      rfc = "AAA010101AAA"
     }
-    "Ok"
+
+    if (!cer.text.contains(rfc)) {
+      throw new BusinessException("El RFC de la empresa no corresponde al incluido en el certificado")
+    }
+    numCert
   }
 
   def updateDocumentsToStamp(def params, Company company) {
