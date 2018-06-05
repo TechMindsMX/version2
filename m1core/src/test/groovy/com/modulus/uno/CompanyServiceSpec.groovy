@@ -674,7 +674,7 @@ and:
       def certif = txtCert.getFile()
       def fileCert = new MockMultipartFile("certificate.cer", "", "plain/text", certif.getBytes())
     when:
-      def result = service.validateCertificateAndGetNumber(rfc, fileCert)
+      def result = service.validateCertificateAndGetNumber(rfc, fileCert.bytes)
     then:
       result
     where:
@@ -688,7 +688,7 @@ and:
     and: "The multipart file with certificate"
       def fileCert = new MockMultipartFile("certificate.cer", "", "plain/text", certWrongRfc.getBytes())
     when:
-      def result = service.validateCertificateAndGetNumber(rfc, fileCert)
+      def result = service.validateCertificateAndGetNumber(rfc, fileCert.bytes)
     then:
       thrown BusinessException
   }
@@ -699,7 +699,7 @@ and:
     and: "The multipart file with certificate"
       def fileCert = new MockMultipartFile("certificate.cer", "", "plain/text", certWrong.getBytes())
     when:
-      def result = service.validateCertificateAndGetNumber(rfc, fileCert)
+      def result = service.validateCertificateAndGetNumber(rfc, fileCert.bytes)
     then:
       thrown BusinessException
   }
