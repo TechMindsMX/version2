@@ -273,7 +273,7 @@ class CompanyService {
   }
 
   def sendDocumentsPerInvoice(def params, Company company) {
-    String certNumber = validateCertificateAndGetNumber(company.rfc, params.cer)
+    String certNumber = validateCertificateAndGetNumber(company.rfc, params.cer.bytes)
     log.info "Cert Number from file cer: ${certNumber}"
     def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:certNumber, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
     def result = restService.sendFilesForInvoiceM1(documents)
@@ -281,8 +281,8 @@ class CompanyService {
   }
 
   def validateCertificateAndGetNumber(String rfc, def cerFile) {
-    File cer = File.createTempFile("${System.getProperty('java.io.tmpdir')}/${cerFile.name}",".tmp")
-    cerFile.transferTo(cer)
+    File cer = File.createTempFile("${System.getProperty('java.io.tmpdir')}/cerFile",".tmp")
+    cer.bytes = cerFile
     String numCert = cer.text.substring(14,34)
     if (!numCert.isNumber()) {
       throw new BusinessException("El número de certificado no es válido")
