@@ -111,7 +111,7 @@
           <div id="defaultPortlet" class="panel-collapse collapse in">
 						<g:form action="addSubmenu" id="${menu.id}">
             <div class="portlet-body">
-              <table class="table table-condensed">
+              <table class="table table-condensed table-striped">
                 <thead>
                   <tr>
                     <th>Nombre del menú</th>
