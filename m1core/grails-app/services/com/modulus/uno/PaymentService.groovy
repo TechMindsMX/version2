@@ -82,4 +82,11 @@ class PaymentService {
     }
     payments
   }
+  Map findNotReferencedPaymentsForCompanyConciliated(Company company) {
+    Map payments = [:]
+    List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNull(company, PaymentStatus.CONCILIATED)
+    payments.list = paymentsList
+    payments
+  }
+
 }
