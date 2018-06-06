@@ -138,14 +138,14 @@ class PaymentController {
     Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankingDeposits:"active", tabBankingWithdraws:""]
     List<MovimientosBancarios> bankingDeposits = movimientosBancariosService.findBankingDepositsToConciliateForCompany(company)
-    render view:"conciliation", model:[bankingDeposits:bankingDeposits, styleClasses:styleClasses]
+    render view:"conciliation", model:[bankingDeposits:bankingDeposits, styleClasses:styleClasses, conciliated:false]
   }
 
   def conciliateBankingWithdraws() {
     Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankingDeposits:"", tabBankingWithdraws:"active"]
     List<MovimientosBancarios> bankingWithdraws = movimientosBancariosService.findBankingWithdrawsToConciliateForCompany(company)
-    render view:"conciliation", model:[bankingWithdraws:bankingWithdraws, styleClasses:styleClasses]
+    render view:"conciliation", model:[bankingWithdraws:bankingWithdraws, styleClasses:styleClasses, conciliated:false]
   }
 
   def referencedPaymentsConciliated() {
@@ -160,6 +160,20 @@ class PaymentController {
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabBankingDeposits:"", tabBankingWithdraws:""]
     Map payments = paymentService.findNotReferencedPaymentsForCompanyConciliated(company)
     render view:"conciliation", model:[payments:payments, styleClasses:styleClasses, conciliated:true]
+  }
+
+  def conciliateBankingDepositsConciliated() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankingDeposits:"active", tabBankingWithdraws:""]
+    List<MovimientosBancarios> bankingDeposits = movimientosBancariosService.findBankingDepositsForCompanyConciliated(company)
+    render view:"conciliation", model:[bankingDeposits:bankingDeposits, styleClasses:styleClasses, conciliated:true]
+  }
+
+  def conciliateBankingWithdrawsConciliated() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"", tabBankingDeposits:"", tabBankingWithdraws:"active"]
+    List<MovimientosBancarios> bankingWithdraws = movimientosBancariosService.findBankingWithdrawsForCompanyConciliated(company)
+    render view:"conciliation", model:[bankingWithdraws:bankingWithdraws, styleClasses:styleClasses, conciliated:true]
   }
 
 }
