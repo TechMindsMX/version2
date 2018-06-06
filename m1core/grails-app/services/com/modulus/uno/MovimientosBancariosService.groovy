@@ -57,4 +57,12 @@ class MovimientosBancariosService {
     MovimientosBancarios.findAllReconcilableByCuentaInListAndConciliationStatusAndType(company.banksAccounts, ConciliationStatus.TO_APPLY, MovimientoBancarioType.DEBITO, [sort:"dateEvent", order:"desc"])
   }
 
+  List<MovimientosBancarios> findBankingDepositsForCompanyConciliated(Company company) {
+    MovimientosBancarios.findAllReconcilableByCuentaInListAndConciliationStatusAndType(company.banksAccounts, ConciliationStatus.APPLIED, MovimientoBancarioType.CREDITO, [sort:"dateEvent", order:"desc"])
+  }
+
+  List<MovimientosBancarios> findBankingWithdrawsForCompanyConciliated(Company company) {
+    MovimientosBancarios.findAllReconcilableByCuentaInListAndConciliationStatusAndType(company.banksAccounts, ConciliationStatus.APPLIED, MovimientoBancarioType.DEBITO, [sort:"dateEvent", order:"desc"])
+  }
+
 }
