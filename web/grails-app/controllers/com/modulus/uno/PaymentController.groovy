@@ -124,14 +124,14 @@ class PaymentController {
     Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabBankingDeposits:"", tabBankingWithdraws:""]
     Map payments = paymentService.findReferencedPaymentsForCompany(company)
-    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses, conciliated:false]
   }
 
   def notReferencedPayments() {
     Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabBankingDeposits:"", tabBankingWithdraws:""]
     Map payments = paymentService.findNotReferencedPaymentsForCompany(company)
-    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses, conciliated:false]
   }
 
   def conciliateBankingDeposits() {
@@ -147,11 +147,19 @@ class PaymentController {
     List<MovimientosBancarios> bankingWithdraws = movimientosBancariosService.findBankingWithdrawsToConciliateForCompany(company)
     render view:"conciliation", model:[bankingWithdraws:bankingWithdraws, styleClasses:styleClasses]
   }
-    def referencedPaymentsConciliated() {
+
+  def referencedPaymentsConciliated() {
     Company company = Company.get(session.company)
     Map styleClasses = [tabReferenced:"active", tabNotReferenced:"", tabBankingDeposits:"", tabBankingWithdraws:""]
     Map payments = paymentService.findReferencedPaymentsConciliated(company)
-    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses]
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses, conciliated:true]
+  }
+
+  def notReferencedPaymentsConciliated() {
+    Company company = Company.get(session.company)
+    Map styleClasses = [tabReferenced:"", tabNotReferenced:"active", tabBankingDeposits:"", tabBankingWithdraws:""]
+    Map payments = paymentService.findNotReferencedPaymentsForCompanyConciliated(company)
+    render view:"conciliation", model:[payments:payments, styleClasses:styleClasses, conciliated:true]
   }
 
 }
