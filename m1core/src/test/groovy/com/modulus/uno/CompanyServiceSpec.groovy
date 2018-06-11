@@ -9,6 +9,9 @@ import java.util.Calendar
 import static java.util.Calendar.*
 import spock.lang.Unroll
 import spock.lang.Ignore
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.core.io.Resource
+import org.springframework.core.io.ClassPathResource
 
 import com.modulus.uno.stp.StpService
 import com.modulus.uno.stp.FinalTransactionResultService
@@ -33,6 +36,11 @@ class CompanyServiceSpec extends Specification {
   MovimientosBancariosService movimientosBancariosService = Mock(MovimientosBancariosService)
   FinalTransactionResultService finalTransactionResultService = Mock(FinalTransactionResultService)
 
+  File certificate, certWrong, certWrongRfc
+  Resource txtFileCert = new ClassPathResource("certificate.cer")
+  Resource txtFileCertWrong = new ClassPathResource("certWrong.cer")
+  Resource txtFileCertWrongRfc = new ClassPathResource("certWrongRfc.cer")
+
   def setup(){
     service.modulusUnoService = modulusUnoService
     service.purchaseOrderService = purchaseOrderService
@@ -48,6 +56,9 @@ class CompanyServiceSpec extends Specification {
     service.stpService = stpService
     service.movimientosBancariosService = movimientosBancariosService
     service.finalTransactionResultService = finalTransactionResultService
+    certificate = txtFileCert.getFile()
+    certWrong = txtFileCertWrong.getFile()
+    certWrongRfc = txtFileCertWrongRfc.getFile()
   }
 
   Should "create a direction for a Company"(){
@@ -654,4 +665,43 @@ and:
     then:
       result == new BigDecimal(2000)
   }
+
+  void "Should validate the certificate for a company with rfc = #theRfc and the certificate file = #theCertFile"() {
+    given:"The company rfc"
+      String rfc = theRfc 
+    and: "The multipart file with certificate"
+      Resource txtCert = new ClassPathResource(theCertFile)
+      def certif = txtCert.getFile()
+      def fileCert = new MockMultipartFile("certificate.cer", "", "plain/text", certif.getBytes())
+    when:
+      def result = service.validateCertificateAndGetNumber(rfc, fileCert.bytes)
+    then:
+      result
+    where:
+      theRfc    |  theCertFile      || theResult
+      "AAA010101AAA"  |   "certificate.cer"     || "Ok"
+  }
+
+  void "Should thrown a business exception when validate the certificate for a company with distinct RFC"() {
+    given:"The company rfc"
+      String rfc = "GAL121030684"
+    and: "The multipart file with certificate"
+      def fileCert = new MockMultipartFile("certificate.cer", "", "plain/text", certWrongRfc.getBytes())
+    when:
+      def result = service.validateCertificateAndGetNumber(rfc, fileCert.bytes)
+    then:
+      thrown BusinessException
+  }
+
+  void "Should thrown a business exception when validate the certificate for a company because the cert number is wrong"() {
+    given:"The company rfc"
+      String rfc = "AAA010101AAA"
+    and: "The multipart file with certificate"
+      def fileCert = new MockMultipartFile("certificate.cer", "", "plain/text", certWrong.getBytes())
+    when:
+      def result = service.validateCertificateAndGetNumber(rfc, fileCert.bytes)
+    then:
+      thrown BusinessException
+  }
+
 }
