@@ -144,10 +144,10 @@ class SaleOrderServiceSpec extends Specification {
 
   void "should execute a sale order"(){
   given:"A sale order"
-    SaleOrder saleOrder = new SaleOrder()
-    saleOrder.save(validate:false)
+    SaleOrder saleOrder = new SaleOrder(status:SaleOrderStatus.AUTORIZADA).save(validate:false)
   and:
     invoiceService.generateFactura(_) >> [stampId:"uuid", serie:"serie", folio:"folio"]
+    commissionTransactionService.getCommissionForCompanyByType(_, _) >> new Commission(fee:5, type:CommissionType.FACTURA).save(validate:false)
   when:"We authoriza a sale order"
     def result = service.executeSaleOrder(saleOrder)
   then:"We expect new status"
@@ -155,6 +155,7 @@ class SaleOrderServiceSpec extends Specification {
     result.folio == 'uuid'
     result.invoiceFolio == "folio"
     result.invoiceSerie == "serie"
+    result.status == SaleOrderStatus.XML_GENERADO
   }
 
   @Ignore
