@@ -132,6 +132,14 @@ class SaleOrderService {
   }
 
   @Transactional
+  SaleOrder generatePdfForStampedInvoice(SaleOrder saleOrder) {
+    invoiceService.generatePdfForInvoice(saleOrder)
+    saleOrder.status = SaleOrderStatus.EJECUTADA
+    saleOrder.save()
+    saleOrder
+  }
+
+  @Transactional
   def executeCancelBill(SaleOrder saleOrder) {
     invoiceService.cancelBill(saleOrder)
     cancelOrRejectSaleOrder(saleOrder, SaleOrderStatus.CANCELACION_EJECUTADA)
