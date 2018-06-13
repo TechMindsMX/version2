@@ -22,7 +22,7 @@
   </div>
 </div>
 
-<g:if test="${!isEnabledToStamp && [SaleOrderStatus.AUTORIZADA, SaleOrderStatus.EJECUTADA, SaleOrderStatus.CANCELACION_AUTORIZADA, SaleOrderStatus.CANCELACION_EJECUTADA].contains(saleOrder.status)}">
+<g:if test="${!isEnabledToStamp && [SaleOrderStatus.AUTORIZADA, SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.CANCELACION_AUTORIZADA, SaleOrderStatus.CANCELACION_EJECUTADA].contains(saleOrder.status)}">
   <div class="alert alert-warning">
     No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
   </div>
@@ -35,8 +35,13 @@
     <g:link class="btn btn-default text-right" controller="${params.backController}" action="${params.backAction}" id="${params.backId}">Regresar</g:link>
   </g:else>
 
-  <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
+  <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
     <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-success" download>XML</a>
+  </g:if>
+  <g:if test="${[SaleOrderStatus.XML_GENERADO].contains(saleOrder.status) && isEnabledToStamp}">
+    <g:link class="btn btn-default text-right" action="generatePdf" id="${saleOrder.id}">Generar PDF</g:link>
+  </g:if>
+  <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
     <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default" download>PDF</a>
   </g:if>
 
@@ -56,7 +61,7 @@
           <i class="fa fa-trash"></i> Borrar
         </button>
       </g:if>
-      <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA}">
+      <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO].contains(saleOrder.status)}">
         <g:link class="btn btn-danger" action="requestCancelBill" id="${saleOrder.id}">Solicitar Cancelación de Factura</g:link>
       </g:if>
     </div>
@@ -108,10 +113,10 @@
           <input type="hidden" id="saleOrderId" name="id" value="${saleOrder.id}"/>
           <g:if test="${isEnabledToStamp}">
             <div class="row">
-              <div class="col-md-6 text-right">
+              <div class="col-md-4 text-right">
                 <companyInfo:listTemplatesPdfForCompany rfc="${saleOrder.company.rfc}" id="${saleOrder.company.id.toString()}"/>
               </div>
-              <div class="col-md-6 text-right">
+              <div class="col-md-8 text-right">
                 <button id="btnPreview" type="button" class="btn btn-info">Vista Previa</button>
                 <button id="btnExecute" type="button" class="btn btn-success">Ejecutar</button>
                 <a data-toggle="collapse" role="button" href="#inputReasonCancellation" class="btn btn-danger" aria-expanded="false" aria-controls="inputReasonCancellation">Rechazar</a>
