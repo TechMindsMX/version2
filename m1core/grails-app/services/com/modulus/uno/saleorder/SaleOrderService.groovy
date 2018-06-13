@@ -110,9 +110,11 @@ class SaleOrderService {
 
   @Transactional
   SaleOrder executeSaleOrder(SaleOrder saleOrder){
-    //TODO: Aplicar la comisión después de timbrar, implica validar si la empresa ya tiene comisión de factura registrada antes de timbrar
-    commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
+    if (!commissionTransactionService.getCommissionForCompanyByType(saleOrder.company, CommissionType.FACTURA)) {
+      throw new BusinessException("La empresa no tiene comisión de facturación registrada")
+    }
     Map stampData = invoiceService.generateFactura(saleOrder)
+    commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
     log.info "Stamp UUID: ${stampData.stampId}"
     saleOrder = updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
     saleOrder
@@ -124,7 +126,7 @@ class SaleOrderService {
     saleOrder.folio = stampData.stampId
     saleOrder.invoiceFolio = stampData.folio
     saleOrder.invoiceSerie = stampData.serie
-    saleOrder.status = SaleOrderStatus.EJECUTADA
+    saleOrder.status = SaleOrderStatus.XML_GENERADO
     saleOrder.save()
     saleOrder
   }
