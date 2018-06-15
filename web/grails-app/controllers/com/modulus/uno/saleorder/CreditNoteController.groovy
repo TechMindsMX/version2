@@ -59,6 +59,13 @@ class CreditNoteController {
   }
 
   @Transactional
+  def generatePdf(CreditNote creditNote) {
+    creditNoteService.generatePdf(creditNote)
+    redirect action:'show', id:creditNote.id
+  }
+
+
+  @Transactional
   def deleteCreditNote(CreditNote creditNote) {
     SaleOrder saleOrder = creditNote.saleOrder
     creditNoteService.deleteCreditNote(creditNote)
