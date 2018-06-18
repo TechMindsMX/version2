@@ -52,7 +52,12 @@ class InvoiceService {
     factura.datosDeFacturacion.uuid = saleOrder.folio
     factura.datosDeFacturacion.folio = saleOrder.invoiceFolio
     factura.datosDeFacturacion.serie = saleOrder.invoiceSerie
-    restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.pdfFacturaCreate)
+    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.pdfFacturaCreate)
+    log.info "Result generating pdf: ${result}"
+    if (!result) {
+      throw new RestException("No se pudo generar el PDF de la factura")
+    }
+    result
   }
 
   FacturaCommand createInvoiceFromSaleOrder(SaleOrder saleOrder){
