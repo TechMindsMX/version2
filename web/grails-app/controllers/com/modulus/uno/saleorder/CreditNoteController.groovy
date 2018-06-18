@@ -55,7 +55,7 @@ class CreditNoteController {
   @Transactional
   def apply(CreditNote creditNote) {
     creditNoteService.processApplyCreditNote(creditNote)
-    redirect action:"show", id:creditNote.id
+    redirect action:"generatePdf", id:creditNote.id
   }
 
   @Transactional
