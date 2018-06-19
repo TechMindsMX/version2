@@ -179,27 +179,27 @@ class PaysheetEmployeeService {
     paysheetEmployee
   }
 
-  PaysheetEmployee setIMSSStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
-    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_STAMPED
+  PaysheetEmployee setIMSSXmlStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_STAMPED_XML
     paysheetEmployee.save()
     paysheetEmployee
   }
 
-  PaysheetEmployee setASSIMILABLEStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
-    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+  PaysheetEmployee setASSIMILABLEXmlStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML
     paysheetEmployee.save()
     paysheetEmployee
   }
 
-  PaysheetEmployee setFullStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
-    paysheetEmployee.status = PaysheetEmployeeStatus.FULL_STAMPED
+  PaysheetEmployee setFullXmlStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.FULL_STAMPED_XML
     paysheetEmployee.save()
     paysheetEmployee
   }
 
   @Transactional
   PaysheetEmployee setStampedStatusToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}StampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}XmlStampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullXmlStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
   }
 
   Boolean employeeIsPayed(PaysheetEmployee paysheetEmployee) {
@@ -211,7 +211,7 @@ class PaysheetEmployeeService {
   }
 
   Boolean employeeIsOnlySchemaStamped(PaysheetEmployee paysheetEmployee) {
-    [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
+    [PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
   }
 
   Boolean employeeHasOnlySchemaPayment(PaysheetEmployee paysheetEmployee) {
