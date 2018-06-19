@@ -226,38 +226,38 @@ class PaysheetEmployeeServiceSpec extends Specification {
       result.status == theExpectedStatus
     where:
       theCurrentStatus              |     theSchema                   |  theImssSalary     |  theNetAssimilable    ||  theExpectedStatus
-      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(1000)  |  new BigDecimal(2000) ||  PaysheetEmployeeStatus.IMSS_STAMPED
-      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(1000)  |  new BigDecimal(0) ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(0)  |  new BigDecimal(1000) ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
-      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(2000)         ||  PaysheetEmployeeStatus.IMSS_STAMPED
-      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(0)         ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(0)  |  new BigDecimal(2000)         ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
-      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(0)  ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(0)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(2000)        ||  PaysheetEmployeeStatus.IMSS_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(0)        ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(0)  |  new BigDecimal(2000)        ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(0)  ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(0)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.IMSS_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.IMSS  | new BigDecimal(1000)  |  new BigDecimal(2000)          ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.IMSS  | new BigDecimal(1000)  |  new BigDecimal(0)          ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.IMSS  | new BigDecimal(0)  |  new BigDecimal(2000)          ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.FULL_STAMPED   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
-      PaysheetEmployeeStatus.FULL_STAMPED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(1000)  |  new BigDecimal(2000) ||  PaysheetEmployeeStatus.IMSS_STAMPED_XML
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(1000)  |  new BigDecimal(0) ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.IMSS           | new BigDecimal(0)  |  new BigDecimal(1000) ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.PAYED   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(2000)         ||  PaysheetEmployeeStatus.IMSS_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(0)         ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(0)  |  new BigDecimal(2000)         ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(0)  ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(0)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(2000)        ||  PaysheetEmployeeStatus.IMSS_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(1000)  |  new BigDecimal(0)        ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.IMSS   | new BigDecimal(0)  |  new BigDecimal(2000)        ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(1000)  |  new BigDecimal(0)  ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_PAYED   |   PaymentSchema.ASSIMILABLE   | new BigDecimal(0)  |  new BigDecimal(2000)  ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_STAMPED_XML   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_STAMPED_XML   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_STAMPED_XML   |   PaymentSchema.IMSS         | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_STAMPED_XML   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_STAMPED_XML   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.IMSS_STAMPED_XML   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML   |   PaymentSchema.IMSS  | new BigDecimal(1000)  |  new BigDecimal(2000)          ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML   |   PaymentSchema.IMSS  | new BigDecimal(1000)  |  new BigDecimal(0)          ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML   |   PaymentSchema.IMSS  | new BigDecimal(0)  |  new BigDecimal(2000)          ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(0)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(0)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.FULL_STAMPED_XML   |   PaymentSchema.IMSS         | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
+      PaysheetEmployeeStatus.FULL_STAMPED_XML   |   PaymentSchema.ASSIMILABLE  | new BigDecimal(1000)  |  new BigDecimal(2000)   ||  PaysheetEmployeeStatus.FULL_STAMPED_XML
   }
 
   void "Should reload data for employee"() {
