@@ -302,6 +302,7 @@ class PaysheetService {
         String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
         paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, paysheetReceiptUuid)
         paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
+        paysheetEmployeeService."generatePaysheetReceiptPdf${schema.name()}"(employee)
       }
     }
     paysheet
