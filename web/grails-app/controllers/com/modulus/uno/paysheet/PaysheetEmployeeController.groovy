@@ -40,6 +40,13 @@ class PaysheetEmployeeController {
     paysheetEmployeeService.generatePaysheetReceiptPdfIMSS(paysheetEmployee)
     redirect action:"showPaysheetReceipts", id:paysheetEmployee.id
   }
+
+  @Transactional
+  def generatePdfForIASPaysheetReceiptEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployeeService.generatePaysheetReceiptPdfASSIMILABLE(paysheetEmployee)
+    redirect action:"showPaysheetReceipts", id:paysheetEmployee.id
+  }
+
 }
 
 
