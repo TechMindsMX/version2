@@ -14,6 +14,7 @@ class PaysheetEmployeeService {
   BreakdownPaymentEmployeeService breakdownPaymentEmployeeService
   PaysheetProjectService paysheetProjectService
   DataImssEmployeeService dataImssEmployeeService
+  PaysheetReceiptService paysheetReceiptService
   def grailsApplication
 
   @Transactional
@@ -225,15 +226,29 @@ class PaysheetEmployeeService {
     paysheetEmployee.prePaysheetEmployee.curp = businessEntity.curp
     paysheetEmployee.prePaysheetEmployee.nameEmployee = businessEntity.toString()
     paysheetEmployee.prePaysheetEmployee.numberEmployee = businessEntity.number
-    if (paysheetEmployee.status == PaysheetEmployeeStatus.PENDING) {
-      
-    }
     paysheetEmployee.save()
     paysheetEmployee
   }
 
   PaysheetEmployee findEmployeeForRfcAndPaysheet(String rfc, Paysheet paysheet) {
     paysheet.employees.find { employee -> employee.prePaysheetEmployee.rfc == rfc }
+  }
+
+  @Transactional
+  PaysheetEmployee generatePaysheetReceiptPdfIMSS(PaysheetEmployee employee) {
+    paysheetReceiptService.generatePdfFromPaysheetReceiptForEmployeeAndSchema(employee, PaymentSchema.IMSS)
+    setStatusForPdfGeneratedToEmployee(employee, PaymentSchema.IMSS)
+  }
+
+  @Transactional
+  PaysheetEmployee setStatusForPdfGeneratedToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    paysheetEmployee.status = paysheetEmployee.status == PaysheetEmployeeStatus."${schema.name()}_STAMPED_XML" ? PaysheetEmployeeStatus."${schema.name()}_STAMPED" : defineFullStampedStatusForEmployee(paysheetEmployee, schema)
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployeeStatus defineFullStampedStatusForEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    paysheetEmployee.status == PaysheetEmployeeStatus."FULL_STAMPED_XML" ? PaysheetEmployeeStatus."FULL_STAMPED_XML_${schema.name()}_PDF" : PaysheetEmployeeStatus.FULL_STAMPED  
   }
 
 }
