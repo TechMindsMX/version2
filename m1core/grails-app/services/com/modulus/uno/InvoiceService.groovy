@@ -46,6 +46,10 @@ class InvoiceService {
     log.info "Command invoice created: ${facturaCommand.dump()}"
     facturaCommand.emitter = facturaCommand.emisor.datosFiscales.rfc
     facturaCommand.totalesImpuestos = buildSummaryTaxes(facturaCommand)
+    log.info "Total impuestos trasladados: ${facturaCommand.totalesImpuestos.totalImpuestosTrasladados}"
+    log.info "Total impuestos retenidos: ${facturaCommand.totalesImpuestos.totalImpuestosRetenidos}"
+    log.info "Lista impuestos trasladados: ${facturaCommand.totalesImpuestos.impuestos}"
+    log.info "Lista impuestos retenidos: ${facturaCommand.totalesImpuestos.retenciones}"
     facturaCommand
   }
 
@@ -196,7 +200,7 @@ class InvoiceService {
     List<Impuesto> summary = []
     def allTaxes = facturaCommand.conceptos.impuestos.flatten()
     def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tasa:it.tasa, tipoFactor:it.tipoFactor] }.collect { k, v ->
-      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()?.setScale(2, RoundingMode.HALF_UP)]
+      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe.setScale(2, RoundingMode.HALF_UP) }.sum()?.setScale(2, RoundingMode.HALF_UP)]
     }
     summaryTaxes.each {
       summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
@@ -208,7 +212,7 @@ class InvoiceService {
     List<Impuesto> summary = []
     def allTaxes = facturaCommand.conceptos.retenciones.flatten()
     def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tipoFactor:it.tipoFactor] }.collect { k, v ->
-      [impuesto:k.impuesto, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()?.setScale(2, RoundingMode.HALF_UP)]
+      [impuesto:k.impuesto, tipoFactor:k.tipoFactor, importe:v.collect { it.importe.setScale(2, RoundingMode.HALF_UP) }.sum()?.setScale(2, RoundingMode.HALF_UP)]
     }
     summaryTaxes.each {
       summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
