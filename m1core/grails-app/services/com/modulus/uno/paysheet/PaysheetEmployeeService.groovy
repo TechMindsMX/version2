@@ -241,6 +241,12 @@ class PaysheetEmployeeService {
   }
 
   @Transactional
+  PaysheetEmployee generatePaysheetReceiptPdfASSIMILABLE(PaysheetEmployee employee) {
+    paysheetReceiptService.generatePdfFromPaysheetReceiptForEmployeeAndSchema(employee, PaymentSchema.ASSIMILABLE)
+    setStatusForPdfGeneratedToEmployee(employee, PaymentSchema.ASSIMILABLE)
+  }
+
+  @Transactional
   PaysheetEmployee setStatusForPdfGeneratedToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     paysheetEmployee.status = paysheetEmployee.status == PaysheetEmployeeStatus."${schema.name()}_STAMPED_XML" ? PaysheetEmployeeStatus."${schema.name()}_STAMPED" : defineFullStampedStatusForEmployee(paysheetEmployee, schema)
     paysheetEmployee.save()
