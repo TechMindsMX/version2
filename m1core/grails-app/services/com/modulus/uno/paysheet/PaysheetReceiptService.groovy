@@ -17,6 +17,8 @@ import com.modulus.uno.RestService
 
 import grails.util.Environment
 import groovy.json.JsonSlurper
+import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 class PaysheetReceiptService {
 
@@ -26,6 +28,7 @@ class PaysheetReceiptService {
   RestService restService
   def grailsApplication
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   String generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
     String stampUuid = stampPaysheetReceipt(paysheetReceipt)
