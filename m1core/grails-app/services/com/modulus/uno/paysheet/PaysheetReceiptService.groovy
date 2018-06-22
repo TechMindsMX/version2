@@ -33,6 +33,12 @@ class PaysheetReceiptService {
     stampUuid
   }
 
+  def generatePdfFromPaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
+    paysheetReceipt.datosDeFacturacion.uuid = schema == PaymentSchema.IMSS ? paysheetEmployee.paysheetReceiptUuidSA : paysheetEmployee.paysheetReceiptUuidIAS 
+    sendToGeneratePdfFromPaysheetReceipt(paysheetReceipt)
+  }
+
   PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand (
       datosDeFacturacion: createInvoiceDataFromPaysheetEmployee(paysheetEmployee),
@@ -245,6 +251,15 @@ class PaysheetReceiptService {
     BigDecimal commissionBaseAmount = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
     Company company = Company.get(paysheetReceipt.id)
     commissionTransactionService.registerCommissionForPaysheetReceipt(commissionBaseAmount, company)
+  }
+
+  def sendToGeneratePdfFromPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
+    def pdfFile = restService.sendFacturaCommandWithAuth(paysheetReceipt, grailsApplication.config.modulus.paysheetReceiptGeneratePdf)
+    if (!pdfFile) {
+      throw new RestException("No se pudo generar el PDF del recibo de nómina") 
+    }
+
+    pdfFile
   }
 
 }
