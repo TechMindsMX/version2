@@ -294,4 +294,21 @@ class PaysheetEmployeeServiceSpec extends Specification {
       result.prePaysheetEmployee.numberEmployee == "newNumber"
   }
 
+  @Unroll
+  void "Should set the status #newStatus to employee with current status #currentStatus when generate pdf file for schema #theSchema to paysheet employee"() {
+    given:"The employee"
+      PaysheetEmployee paysheetEmployee = new PaysheetEmployee(status:currentStatus).save(validate:false)
+    when:
+      PaysheetEmployee employee = service.setStatusForPdfGeneratedToEmployee(paysheetEmployee, theSchema)
+    then:
+      employee.status == newStatus
+    where:
+      theSchema                 |     currentStatus                       ||      newStatus
+      PaymentSchema.IMSS        | PaysheetEmployeeStatus.IMSS_STAMPED_XML ||  PaysheetEmployeeStatus.IMSS_STAMPED
+      PaymentSchema.IMSS        | PaysheetEmployeeStatus.FULL_STAMPED_XML ||  PaysheetEmployeeStatus.FULL_STAMPED_XML_IMSS_PDF
+      PaymentSchema.IMSS        | PaysheetEmployeeStatus.FULL_STAMPED_XML_IMSS_PDF ||  PaysheetEmployeeStatus.FULL_STAMPED
+      PaymentSchema.ASSIMILABLE | PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML ||  PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+      PaymentSchema.ASSIMILABLE | PaysheetEmployeeStatus.FULL_STAMPED_XML ||  PaysheetEmployeeStatus.FULL_STAMPED_XML_ASSIMILABLE_PDF
+      PaymentSchema.ASSIMILABLE | PaysheetEmployeeStatus.FULL_STAMPED_XML_ASSIMILABLE_PDF ||  PaysheetEmployeeStatus.FULL_STAMPED
+  }
 }
