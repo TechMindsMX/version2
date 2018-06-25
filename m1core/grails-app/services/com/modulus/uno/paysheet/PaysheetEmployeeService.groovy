@@ -8,6 +8,7 @@ import com.modulus.uno.BusinessEntity
 import com.modulus.uno.Company
 import java.math.RoundingMode
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 class PaysheetEmployeeService {
 
@@ -198,9 +199,15 @@ class PaysheetEmployeeService {
     paysheetEmployee
   }
 
-  @Transactional
+  PaysheetEmployee setFullXmlStampedWithPdfStatusForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    paysheetEmployee.status = schema == PaymentSchema.ASSIMILABLE ? PaysheetEmployeeStatus."FULL_STAMPED_XML_IMSS_PDF" : PaysheetEmployeeStatus."FULL_STAMPED_XML_ASSIMILABLE_PDF"
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   PaysheetEmployee setStampedStatusToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}XmlStampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullXmlStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}XmlStampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullXmlStampedStatusToEmployee(paysheetEmployee) : employeeHasXmlAndPdfForSchemaOnly(paysheetEmployee) ? setFullXmlStampedWithPdfStatusForSchema(paysheetEmployee, schema) : paysheetEmployee
   }
 
   Boolean employeeIsPayed(PaysheetEmployee paysheetEmployee) {
@@ -212,7 +219,11 @@ class PaysheetEmployeeService {
   }
 
   Boolean employeeIsOnlySchemaStamped(PaysheetEmployee paysheetEmployee) {
-    [PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
+    [PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasXmlAndPdfForSchemaOnly(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
   }
 
   Boolean employeeHasOnlySchemaPayment(PaysheetEmployee paysheetEmployee) {
