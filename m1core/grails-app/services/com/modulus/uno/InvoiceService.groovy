@@ -143,13 +143,13 @@ class InvoiceService {
     List<Impuesto> taxes = []
     
     if (item.iva){
-      taxes.add(new Impuesto(
+      Impuesto tax = new Impuesto(
         base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
-        importe:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP) * (item.iva / 100).setScale(2, RoundingMode.HALF_UP),
         tasa:item.iva/100, 
         impuesto:'002', 
         tipoFactor:"Tasa")
-      )
+      tax.importe = (tax.base * tax.tasa).setScale(2, RoundingMode.HALF_UP)
+      taxes.add(tax)
     }
 
     taxes
@@ -159,13 +159,13 @@ class InvoiceService {
     List<Impuesto> holdings = []
     
     if (item.ivaRetention){
-      holdings.add(new Impuesto(
+      Impuesto retention = new Impuesto(
         base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
-        importe:(item.quantity * item.ivaRetention).setScale(2, RoundingMode.HALF_UP), 
         tasa:item.ivaRetention/item.priceWithDiscount, 
         impuesto:'002', 
         tipoFactor:"Tasa")
-      )
+      retention.importe = (retention.base * retention.tasa).setScale(2, RoundingMode.HALF_UP) 
+      holdings.add(retention)
     }
 
     holdings
