@@ -13,6 +13,7 @@ import com.modulus.uno.Address
 import com.modulus.uno.AddressType
 import com.modulus.uno.RestService
 import com.modulus.uno.RestException
+import java.math.RoundingMode
 
 class InvoiceService {
 
@@ -60,6 +61,10 @@ class InvoiceService {
     log.info "Command invoice created: ${facturaCommand.dump()}"
     facturaCommand.emitter = facturaCommand.emisor.datosFiscales.rfc
     facturaCommand.totalesImpuestos = buildSummaryTaxes(facturaCommand)
+    log.info "Total impuestos trasladados: ${facturaCommand.totalesImpuestos.totalImpuestosTrasladados}"
+    log.info "Total impuestos retenidos: ${facturaCommand.totalesImpuestos.totalImpuestosRetenidos}"
+    log.info "Lista impuestos trasladados: ${facturaCommand.totalesImpuestos.impuestos}"
+    log.info "Lista impuestos retenidos: ${facturaCommand.totalesImpuestos.retenciones}"
     facturaCommand
   }
 
@@ -153,7 +158,13 @@ class InvoiceService {
     List<Impuesto> taxes = []
     
     if (item.iva){
-      taxes.add(new Impuesto(base:item.quantity * item.priceWithDiscount, importe:item.quantity * item.priceWithDiscount * item.iva / 100, tasa:item.iva/100, impuesto:'002', tipoFactor:"Tasa"))
+      taxes.add(new Impuesto(
+        base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
+        importe:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP) * (item.iva / 100).setScale(2, RoundingMode.HALF_UP),
+        tasa:item.iva/100, 
+        impuesto:'002', 
+        tipoFactor:"Tasa")
+      )
     }
 
     taxes
@@ -163,7 +174,13 @@ class InvoiceService {
     List<Impuesto> holdings = []
     
     if (item.ivaRetention){
-      holdings.add(new Impuesto(base:item.quantity * item.priceWithDiscount, importe:item.quantity * item.ivaRetention, tasa:item.ivaRetention/item.priceWithDiscount, impuesto:'002', tipoFactor:"Tasa"))
+      holdings.add(new Impuesto(
+        base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
+        importe:(item.quantity * item.ivaRetention).setScale(2, RoundingMode.HALF_UP), 
+        tasa:item.ivaRetention/item.priceWithDiscount, 
+        impuesto:'002', 
+        tipoFactor:"Tasa")
+      )
     }
 
     holdings
@@ -181,7 +198,7 @@ class InvoiceService {
   private BigDecimal calculateTaxesTotal(FacturaCommand facturaCommand) {
     BigDecimal total = 0
     facturaCommand.conceptos.each { concepto -> 
-      total += concepto.impuestos*.importe.sum() ?: 0
+      total += concepto.impuestos*.importe.sum()?.setScale(2, RoundingMode.HALF_UP) ?: 0
     }
     total
   }
@@ -189,7 +206,7 @@ class InvoiceService {
   private BigDecimal calculateHoldingsTotal(FacturaCommand facturaCommand) {
     BigDecimal total = 0
     facturaCommand.conceptos.each { concepto -> 
-      total += concepto.retenciones*.importe.sum() ?: 0
+      total += concepto.retenciones*.importe.sum()?.setScale(2, RoundingMode.HALF_UP) ?: 0
     }
     total
   }
@@ -198,7 +215,7 @@ class InvoiceService {
     List<Impuesto> summary = []
     def allTaxes = facturaCommand.conceptos.impuestos.flatten()
     def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tasa:it.tasa, tipoFactor:it.tipoFactor] }.collect { k, v ->
-      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
+      [impuesto:k.impuesto, tasa:k.tasa, tipoFactor:k.tipoFactor, importe:v.collect { it.importe.setScale(2, RoundingMode.HALF_UP) }.sum()?.setScale(2, RoundingMode.HALF_UP)]
     }
     summaryTaxes.each {
       summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))
@@ -210,7 +227,7 @@ class InvoiceService {
     List<Impuesto> summary = []
     def allTaxes = facturaCommand.conceptos.retenciones.flatten()
     def summaryTaxes = allTaxes.groupBy{ [impuesto:it.impuesto, tipoFactor:it.tipoFactor] }.collect { k, v ->
-      [impuesto:k.impuesto, tipoFactor:k.tipoFactor, importe:v.collect { it.importe}.sum()]
+      [impuesto:k.impuesto, tipoFactor:k.tipoFactor, importe:v.collect { it.importe.setScale(2, RoundingMode.HALF_UP) }.sum()?.setScale(2, RoundingMode.HALF_UP)]
     }
     summaryTaxes.each {
       summary.add(new Impuesto(importe:it.importe, tasa:it.tasa, impuesto:it.impuesto, tipoFactor:it.tipoFactor))

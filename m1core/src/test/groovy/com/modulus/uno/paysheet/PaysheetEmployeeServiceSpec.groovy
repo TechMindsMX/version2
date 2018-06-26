@@ -115,10 +115,10 @@ class PaysheetEmployeeServiceSpec extends Specification {
     where:
       bs                                                         ||  it
       new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(4777.06).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(72.07).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(4342.94).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(61.05).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(7452.56).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(140.64).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(6507.12).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(115.99).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(4777.06).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(65.29).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(4342.94).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(58.81).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(7452.56).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(131.82).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(6507.12).setScale(2, RoundingMode.HALF_UP)  || new BigDecimal(107.82).setScale(2, RoundingMode.HALF_UP)
   }
 
   void "Should create a paysheet employee from a prepaysheet employee"() {
@@ -161,10 +161,10 @@ class PaysheetEmployeeServiceSpec extends Specification {
       new BigDecimal(0.01).setScale(2, RoundingMode.HALF_UP)          ||      RateTax.R1
       new BigDecimal(249.57).setScale(2, RoundingMode.HALF_UP)        ||      RateTax.R1
       new BigDecimal(496.07).setScale(2, RoundingMode.HALF_UP)        ||      RateTax.R1
-      new BigDecimal(10298.36).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R6
+      new BigDecimal(10298.36).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R5
       new BigDecimal(15670.89).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R6
       new BigDecimal(20770.29).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R6
-      new BigDecimal(22100.00).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R7
+      new BigDecimal(22100.00).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R6
       new BigDecimal(75000.00).setScale(2, RoundingMode.HALF_UP)      ||      RateTax.R9
       new BigDecimal(72570890.10).setScale(2, RoundingMode.HALF_UP)   ||      RateTax.R11
   }
@@ -181,17 +181,17 @@ class PaysheetEmployeeServiceSpec extends Specification {
       theNetIAS                                                       ||    expectedCrudeIAS
       new BigDecimal(486.74).setScale(2, RoundingMode.HALF_UP)        ||      new BigDecimal(496.27).setScale(2, RoundingMode.HALF_UP)
       new BigDecimal(250.00).setScale(2, RoundingMode.HALF_UP)        ||      new BigDecimal(254.89).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(6050.79).setScale(2, RoundingMode.HALF_UP)       ||      new BigDecimal(6552.89).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(10000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(11305.80).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(15850.80).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(18745.78).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(20000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(24113.81).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(27000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(33315.57).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(31000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(39029.85).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(43000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(56172.71).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(59000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(79516.02).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(64710.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(88051.87).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(72950.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(100536.72).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(85103.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(118950.36).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(6050.79).setScale(2, RoundingMode.HALF_UP)       ||      new BigDecimal(6513.57).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(10000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(11110.73).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(15850.80).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(18511.37).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(20000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(23775.30).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(27000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(32928.02).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(31000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(38156.33).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(43000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(55299.19).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(59000.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(78311.30).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(64710.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(86708.36).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(72950.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(98826.01).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(85103.00).setScale(2, RoundingMode.HALF_UP)      ||      new BigDecimal(117289.42).setScale(2, RoundingMode.HALF_UP)
   }
 
   @Unroll
@@ -207,10 +207,10 @@ class PaysheetEmployeeServiceSpec extends Specification {
     where:
       theNetAssimilable                                       |     thePaymentPeriod       ||    expectedCrudeAssimilable
       new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)     |   PaymentPeriod.BIWEEKLY   || new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(10000).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(12056.91).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(8750.80).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(10423.54).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(52500).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(74548.66).setScale(2, RoundingMode.HALF_UP)
-      new BigDecimal(100250.75).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(147235.17).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(10000).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(11887.65).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(8750.80).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(10305.28).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(52500).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(73718.19).setScale(2, RoundingMode.HALF_UP)
+      new BigDecimal(100250.75).setScale(2, RoundingMode.HALF_UP) |   PaymentPeriod.BIWEEKLY   || new BigDecimal(146067.81).setScale(2, RoundingMode.HALF_UP)
 
    }
 
