@@ -106,7 +106,6 @@ class PaysheetEmployeeServiceSpec extends Specification {
       PaymentPeriod period = PaymentPeriod.WEEKLY
     when:
       BigDecimal incomeTax = service.calculateIncomeTax(payment, period)
-      println "${payment} => ${incomeTax}"
     then:
       incomeTax == it
     where:
