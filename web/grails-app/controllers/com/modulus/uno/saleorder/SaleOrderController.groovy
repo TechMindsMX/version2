@@ -95,7 +95,13 @@ class SaleOrderController {
       emailSenderService.notifySaleOrderChangeStatus(saleOrder)
       messageSuccess = message(code:"saleOrder.executed.message")
     }
-    redirect action:'list', params:[messageSuccess:messageSuccess]
+    redirect action:'generatePdf', id:saleOrder.id 
+  }
+
+  @Transactional
+  def generatePdf(SaleOrder saleOrder) {
+    saleOrderService.generatePdfForStampedInvoice(saleOrder)
+    redirect action:'show', id:saleOrder.id
   }
 
   private Boolean saleOrderIsInStatus(SaleOrder saleOrder, def statusExpected) {

@@ -117,7 +117,7 @@ class CreditNoteServiceSpec extends Specification {
     when:
       def result = service.processApplyCreditNote(creditNote)
     then:
-      result.status == CreditNoteStatus.APPLIED
+      result.status == CreditNoteStatus.XML_GENERATED
       1 * emailSenderService.notifyCreditNoteChangeStatus(_)
       1 * commissionTransactionService.registerCommissionForCreditNote(_)
   }

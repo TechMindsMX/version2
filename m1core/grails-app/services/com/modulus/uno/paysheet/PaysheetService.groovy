@@ -294,7 +294,7 @@ class PaysheetService {
   }
 
   Paysheet generatePaysheetReceiptsFromPaysheetForSchema(Paysheet paysheet, PaymentSchema schema) {
-    List<PaysheetEmployeeStatus> statusSchema = schema == PaymentSchema.IMSS ? [PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.PAYED] : [PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.PAYED]
+    List<PaysheetEmployeeStatus> statusSchema = schema == PaymentSchema.IMSS ? [PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.PAYED] : [PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.PAYED]
     def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) }
     employees.each { employee ->
       BigDecimal salarySchema = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
@@ -302,6 +302,7 @@ class PaysheetService {
         String paysheetReceiptUuid = paysheetReceiptService.generatePaysheetReceiptForEmployeeAndSchema(employee, schema)
         paysheetEmployeeService."savePaysheetReceiptUuid${schema}"(employee, paysheetReceiptUuid)
         paysheetEmployeeService.setStampedStatusToEmployee(employee, schema)
+        paysheetEmployeeService."generatePaysheetReceiptPdf${schema.name()}"(employee)
       }
     }
     paysheet
@@ -315,7 +316,7 @@ class PaysheetService {
         prePaysheetEmployee {
           eq("rfc", rfc)
         }
-        'in'("status", [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED])
+        'in'("status", [PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED_XML, PaysheetEmployeeStatus.FULL_STAMPED])
       }
     }
 
