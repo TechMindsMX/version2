@@ -58,7 +58,7 @@
             <g:each in="${paysheet.employees.sort{ it.prePaysheetEmployee.nameEmployee }}" var="employee">
               <tr>
                 <td>
-                  <g:if test="${![PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
+                  <g:if test="${![PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED_XML,PaysheetEmployeeStatus.FULL_STAMPED_XML_IMSS_PDF, PaysheetEmployeeStatus.FULL_STAMPED_XML_ASSIMILABLE_PDF, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
                     <g:link class="btn btn-primary" controller="paysheetEmployee" action="reloadData" id="${employee.id}">
                       <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
                     </g:link>
