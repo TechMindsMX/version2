@@ -34,6 +34,19 @@ class PaysheetEmployeeController {
     log.info "Paysheet employee: ${employee}"
     render view:"listPaysheetReceipts", model:[user:user, payedPaysheetsOfUser:payedPaysheetsOfUser, paysheet:paysheet, employee:employee]
   }
+
+  @Transactional
+  def generatePdfForSAPaysheetReceiptEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployeeService.generatePaysheetReceiptPdfIMSS(paysheetEmployee)
+    redirect action:"showPaysheetReceipts", id:paysheetEmployee.id
+  }
+
+  @Transactional
+  def generatePdfForIASPaysheetReceiptEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployeeService.generatePaysheetReceiptPdfASSIMILABLE(paysheetEmployee)
+    redirect action:"showPaysheetReceipts", id:paysheetEmployee.id
+  }
+
 }
 
 

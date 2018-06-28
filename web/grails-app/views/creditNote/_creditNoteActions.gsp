@@ -1,13 +1,16 @@
 <%! import com.modulus.uno.status.CreditNoteStatus %>
 <%! import com.modulus.uno.RejectReason %>
-<g:if test="${creditNote.status == CreditNoteStatus.APPLIED && isEnabledToStamp}">
+<g:if test="${[CreditNoteStatus.XML_GENERATED, CreditNoteStatus.APPLIED].contains(creditNote.status) && isEnabledToStamp}">
   <div class="text-right">
     <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'xml')}" class="btn btn-success" download>XML</a>
-    <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'pdf')}" class="btn btn-default" download>PDF</a>
+    <g:if test="${creditNote.status == CreditNoteStatus.APPLIED}">
+      <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'pdf')}" class="btn btn-default" download>PDF</a>
+    </g:if>
+    <g:if test="${creditNote.status == CreditNoteStatus.XML_GENERATED}">
+      <g:link class="btn btn-primary" action="generatePdf" id="${creditNote.id}">Generar PDF</g:link>
+    </g:if>
     <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
-      <g:if test="${creditNote.status == CreditNoteStatus.APPLIED}">
-        <g:link class="btn btn-danger" action="requestCancelCreditNote" id="${creditNote.id}">Solicitar Cancelación</g:link>
-      </g:if>
+      <g:link class="btn btn-danger" action="requestCancelCreditNote" id="${creditNote.id}">Solicitar Cancelación</g:link>
     </sec:ifAnyGranted>
   </div>
 </g:if>

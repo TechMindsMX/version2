@@ -1,6 +1,7 @@
 package com.modulus.uno.invoice
 
 class DatosDeFacturacion {
+  String uuid
   String folio
   String serie
   FormaDePago formaDePago

@@ -39,6 +39,7 @@ class PaysheetReceiptServiceSpec extends Specification {
     paysheetContract = createPaysheetContract()
     company = createCompanyForContract()
     grailsApplication.config.modulus.paysheetReceiptCreate = "paysheetreceipt/create"
+    grailsApplication.config.modulus.paysheetReceiptGeneratePdf = "paysheetreceipt/generatePdf"
   }
 
   private Company createCompanyForContract() {
@@ -374,5 +375,28 @@ class PaysheetReceiptServiceSpec extends Specification {
       result.banco && result.cuenta
       result.cuenta == "1111222233334444"
   }
+
+  void "Should get the pdf file when send to generate it for a paysheet receipt" () {
+    given:"The paysheet receipt"
+      PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
+    and:
+      restService.sendFacturaCommandWithAuth(_, _) >> "Ok"
+    when:
+      def result = service.sendToGeneratePdfFromPaysheetReceipt(paysheetReceipt)
+    then:
+      result == "Ok"
+  }
+
+  void "Should throw exception when send to generate pdf file for a paysheet receipt" () {
+    given:"The paysheet receipt"
+      PaysheetReceiptCommand paysheetReceipt = new PaysheetReceiptCommand()
+    and:
+      restService.sendFacturaCommandWithAuth(_, _) >> null
+    when:
+      def result = service.sendToGeneratePdfFromPaysheetReceipt(paysheetReceipt)
+    then:
+      thrown RestException
+  }
+
 
 }
