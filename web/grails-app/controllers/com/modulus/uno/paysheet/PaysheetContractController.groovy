@@ -18,6 +18,7 @@ class PaysheetContractController {
   
   def list() {
     params.max = 25
+    params.sort = "client.rfc"
     Company company = Company.get(session.company)
     List<PaysheetContract> paysheetContractList = PaysheetContract.findAllByCompany(company, params)
     Integer paysheetContractCount = PaysheetContract.countByCompany(company)
