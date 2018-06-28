@@ -75,6 +75,8 @@ class PrePaysheetController {
 
   def listPrePaysheetsForPaysheetContract() {
     params.max = 25
+    params.sort ="id"
+    params.order = "desc"
     PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
     Map prePaysheets = prePaysheetService.getListAndCountPrePaysheetsForPaysheetContract(paysheetContract, params)
     render view:"list", model:[paysheetContract:paysheetContract, prePaysheetList:prePaysheets.list, prePaysheetCount:prePaysheets.total]
