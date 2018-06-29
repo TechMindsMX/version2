@@ -109,6 +109,16 @@ class RestService {
     response ? response.json : [error:false]
   }
 
+  def getSerieFromInvoice(String emitter, String folio) {
+    log.info "CALLING Service: Get Serie from invoice"
+    String endpoint = "${grailsApplication.config.modulus.invoice}/${emitter}/serie/${folio}"
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl endpoint
+    }.doit()
+    response?.json
+  }
+
+
   private def getAuthMap(){
     [
       username:grailsApplication.config.modulus.username,
