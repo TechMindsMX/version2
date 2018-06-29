@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%! import com.modulus.uno.status.SaleOrderStatus %>
 <html>
 <head>
   <meta name="layout" content="main" />
@@ -52,7 +53,17 @@
             <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
             <td>${sale.clientName}<br/>${sale.rfc}</td>
             <td><g:message code="saleOrder.status.${sale.status}" default="${sale.status}"/> </td>
-            <td class="text-center">${sale.invoiceSerie}</td>
+            <td class="text-center">
+                <g:if test="${sale.invoiceSerie!=null}">
+                  ${sale.invoiceSerie}
+                </g:if><g:else>
+                  <g:if test="${sale.status == SaleOrderStatus.EJECUTADA}">
+                  <g:link class="btn btn-primary" action="loadSerieFromInvoice" id="${sale.id}">
+                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                  </g:link>
+                  </g:if>
+                </g:else>
+            </td>
             <td class="text-center">${sale.invoiceFolio}</td>
             <td class="text-center">${sale.currency}</td>
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
