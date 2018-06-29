@@ -361,4 +361,9 @@ class SaleOrderController {
     render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
   }
 
+  @Transactional
+  def loadSerieFromInvoice(SaleOrder saleOrder) {
+    saleOrderService.getSerieForSaleOrderFromInvoice(saleOrder)
+    redirect action:"list"
+  }
 }
