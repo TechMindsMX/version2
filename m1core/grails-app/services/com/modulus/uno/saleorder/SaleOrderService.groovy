@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Propagation
 import java.text.SimpleDateFormat
 import groovy.sql.Sql
 import java.math.RoundingMode
+import grails.util.Environment
 
 import com.modulus.uno.EmailSenderService
 import com.modulus.uno.CompanyService
@@ -405,4 +406,15 @@ class SaleOrderService {
     allExecutedForClient.findAll { saleOrder -> saleOrder.payments }
   }
 
+  @Transactional
+  SaleOrder getSerieForSaleOrderFromInvoice(SaleOrder saleOrder) {
+    String emitter = "AAA010101AAA/${saleOrder.company.id}"
+    if (Environment.current == Environment.PRODUCTION) {
+      emitter = "${saleOrder.company.rfc}/${saleOrder.company.id}"
+    }
+    String serie = invoiceService.getSerieFromInvoice(emitter, saleOrder.folio)
+    saleOrder.invoiceSerie = serie
+    saleOrder.save()
+    saleOrder
+  }
 }
