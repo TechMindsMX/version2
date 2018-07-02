@@ -64,7 +64,17 @@
                   </g:if>
                 </g:else>
             </td>
-            <td class="text-center">${sale.invoiceFolio}</td>
+            <td class="text-center">
+              <g:if test="${sale.invoiceFolio!=null}">
+                ${sale.invoiceFolio}
+              </g:if><g:else>
+                <g:if test="${sale.status == SaleOrderStatus.EJECUTADA}">
+                  <g:link class="btn btn-primary" action="loadFolioFromInvoice" id="${sale.id}">
+                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                  </g:link>
+                </g:if>
+              </g:else>
+            </td>
             <td class="text-center">${sale.currency}</td>
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
           </tr>
