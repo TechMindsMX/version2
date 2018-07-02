@@ -366,4 +366,11 @@ class SaleOrderController {
     saleOrderService.getSerieForSaleOrderFromInvoice(saleOrder)
     redirect action:"list"
   }
+
+  @Transactional
+  def loadFolioFromInvoice(SaleOrder saleOrder) {
+    saleOrderService.getFolioForSaleOrderFromInvoice(saleOrder)
+    redirect action:"list"
+  }
+
 }
