@@ -124,6 +124,7 @@ class SaleOrderService {
     saleOrder.folio = stampData.stampId
     saleOrder.invoiceFolio = stampData.folio
     saleOrder.invoiceSerie = stampData.serie
+    saleOrder.stampedDate = Date.parse("yyy-MM-dd'T'HH:mm:ss", stampData.stampDate)
     saleOrder.status = SaleOrderStatus.EJECUTADA
     saleOrder.save()
     saleOrder
