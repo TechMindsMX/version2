@@ -147,7 +147,7 @@ class SaleOrderServiceSpec extends Specification {
     SaleOrder saleOrder = new SaleOrder()
     saleOrder.save(validate:false)
   and:
-    invoiceService.generateFactura(_) >> [stampId:"uuid", serie:"serie", folio:"folio"]
+    invoiceService.generateFactura(_) >> [stampId:"uuid", serie:"serie", folio:"folio", stampDate:"2018-05-30T12:20:33"]
   when:"We authoriza a sale order"
     def result = service.executeSaleOrder(saleOrder)
   then:"We expect new status"
@@ -395,5 +395,20 @@ class SaleOrderServiceSpec extends Specification {
       def result = service.getAllSaleOrdersWithAmountToPayForRfc(company, rfc)
     then:
       result.size() == 2
+  }
+
+  void "Should update sale order from generate bill" () {
+    given: "Sale order"
+      SaleOrder saleOrder = new SaleOrder().save(validate:false)
+    and:"The stampData"
+      Map map = [stampId: "123",folio:"321", serie: "serie1", stampDate:"2018-05-30T12:20:33"]
+    when:
+      def result = service.updateSaleOrderFromGeneratedBill(map, saleOrder.id)
+    then:
+      result.folio == "123"
+      result.invoiceFolio == "321"
+      result.invoiceSerie == "serie1"
+      result.stampedDate == Date.parse("yyy-MM-dd'T'HH:mm:ss", "2018-05-30T12:20:33")
+
   }
 }
