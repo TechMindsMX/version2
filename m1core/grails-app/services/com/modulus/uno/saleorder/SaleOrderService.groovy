@@ -417,4 +417,17 @@ class SaleOrderService {
     saleOrder.save()
     saleOrder
   }
+
+  @Transactional
+  SaleOrder getFolioForSaleOrderFromInvoice(SaleOrder saleOrder) {
+    String emitter = "AAA010101AAA/${saleOrder.company.id}"
+    if (Environment.current == Environment.PRODUCTION) {
+      emitter = "${saleOrder.company.rfc}/${saleOrder.company.id}"
+    }
+    String folio = invoiceService.getFolioFromInvoice(emitter, saleOrder.folio)
+    saleOrder.invoiceFolio = folio
+    saleOrder.save()
+    saleOrder
+  }
+
 }
