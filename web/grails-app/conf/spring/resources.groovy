@@ -4,6 +4,10 @@ import com.solab.alarms.*
 import org.springframework.mail.SimpleMailMessage
 import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.config.MapFactoryBean
+import com.modulus.uno.twoFactorAuth.TwoFactorAuthService
+import com.modulus.uno.twoFactorAuth.TwoFactorAuthenticationDetailsSource
+import com.modulus.uno.twoFactorAuth.TwoFactorAuthenticationProvider
+import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy
 
 beans = {
 
@@ -25,4 +29,18 @@ beans = {
     }
   }
 
+  twoFactorAuthValidator(TwoFactorAuthService)
+  twoFactorAuthenticationProvider(TwoFactorAuthenticationProvider) {
+    twoFactorAuthValidator = ref('twoFactorAuthValidator')
+    userDetailsService = ref('userDetailsService')
+    passwordEncoder = ref('passwordEncoder')
+    userCache = ref('userCache')
+    saltSource = ref('saltSource')
+    preAuthenticationChecks = ref('preAuthenticationChecks')
+    postAuthenticationChecks = ref('postAuthenticationChecks')
+    authoritiesMapper = ref('authoritiesMapper')
+    hideUserNotFoundExceptions = true
+  }
+  authenticationDetailsSource(TwoFactorAuthenticationDetailsSource)
+  sessionAuthenticationStrategy(NullAuthenticatedSessionStrategy)
 }
