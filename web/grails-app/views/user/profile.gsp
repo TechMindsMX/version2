@@ -36,8 +36,25 @@
                   <dd>${user.profile.email}</dd>
                 </dl>
                 <br/>
+
+                <g:if test="${user.enable2FA && qrUrl}">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <span>Escanee el código QR con la aplicación Google Authenticator de su teléfono celular para dar de alta la cuenta y usar el segundo factor de autenticación en su siguiente inicio de sesión</span>
+                    </div>
+                    <div class="col-md-6 text-center">
+                      <img src="${qrUrl}"/>
+                    </div>
+                  </div>
+                  <br/>
+                </g:if>
                 <div class="row">
-                  <div class="col-md-12 text-right">
+                  <div class="col-md-4">
+                    <g:link class="btn btn-primary" action="configureTwoFactor" id="${user.id}">
+                      <g:if test="${!user.enable2FA}">Activar Authenticator</g:if><g:else>Desactivar Authenticator</g:else>
+                    </g:link>
+                  </div>
+                  <div class="col-md-8 text-right">
                     <g:link class="home btn small btn-primary" action="edit" id="${user.id}">Editar</g:link>
                     <g:link controller="dashboard"  class="home btn small btn-primary">Regresar</g:link>
                   </div>
