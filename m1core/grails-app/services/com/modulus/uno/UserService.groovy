@@ -1,8 +1,13 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey
+import com.warrenstrange.googleauth.GoogleAuthenticator
 
 class UserService {
+
+  String QR_PREFIX = "https://chart.googleapis.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl="
+  String APP_NAME = "ModulusUno"
 
   def documentService
 
@@ -106,6 +111,26 @@ class UserService {
         eq("email", email)
       }
     }
+  }
+
+  @Transactional
+  User generateKey2FA(User user) {
+    GoogleAuthenticator gAuth = new GoogleAuthenticator()
+    final GoogleAuthenticatorKey key = gAuth.createCredentials()
+    user.key2FA = key.getKey()
+    user.save()
+    user
+  }
+
+  @Transactional
+  User setEnableTwoFactor(User user) {
+    user.enable2FA = !user.enable2FA
+    user.save()
+    user
+  }
+  
+  String generateQRAuthenticatorUrl(User user) {
+    QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, user.username, user.key2FA, APP_NAME), "UTF-8")
   }
 
 }
