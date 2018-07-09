@@ -67,6 +67,25 @@ class UserController {
     }
   }
 
+  def activateTwoFactor(User user) {
+    userService.generateKey2FA(user)
+    userService.setEnableTwoFactor(user)
+    render view:"profile", model:[user:user, qrUrl:userService.generateQRAuthenticatorUrl(user)]
+  }
+
+  def deactivateTwoFactor(User user) {
+    userService.setEnableTwoFactor(user)
+    render view:"profile", model:[user:user]
+  }
+
+  def configureTwoFactor(User user) {
+    if (user.enable2FA) {
+      redirect action:"deactivateTwoFactor", id:user.id
+    } else {
+      redirect action:"activateTwoFactor", id:user.id
+    }
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {
