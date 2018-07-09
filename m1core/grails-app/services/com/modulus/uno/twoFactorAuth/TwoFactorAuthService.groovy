@@ -24,7 +24,6 @@ class TwoFactorAuthService implements TwoFactorAuthValidator {
       if (user.enable2FA) {
         log.info "Validating verification code"
         Totp totp = new Totp(user.key2FA)
-        log.info "Verification code is valid, long: ${isValidLong(code)}, code: ${totp.verify(code)}"
         return (isValidLong(code) && totp.verify(code))
       }
       true
