@@ -196,4 +196,13 @@ class RestService {
     response
   }
 
+    def updateStampedDate(String rfc, String id, String folio) {
+    log.info "CALLING Service: Verify if exist emisor"
+    String endpoint = "${grailsApplication.config.modulus.stampDate}/${rfc}_${folio}"
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl endpoint
+    }.doit()
+    response ? response.json : [error:false]
+  }
+
 }
