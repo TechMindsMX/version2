@@ -425,4 +425,9 @@ class NotifyService {
   private def sendNotify(def arguments){
     restService.sendEmailToEmailer(arguments)
   }
+
+  def parametersForTwoFactorAuth(User user, String qrUrl){
+    def paramsMap = [user: user.username, qrUrl:qrUrl]
+  }
+
 }
