@@ -54,14 +54,14 @@
             <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
             <td class="text-center">
               <g:if test="${sale.status == SaleOrderStatus.EJECUTADA && sale.stampedDate == null}">
-                <g:link class="glyphicon glyphicon-refresh"></g:link>
+                <g:link controller="saleOrder" action="stampedDateForSaleOrders" id="${sale.id}" class="glyphicon glyphicon-refresh"></g:link>
               </g:if>
               <g:else>
                 <g:formatDate format="dd-MM-yyyy" date="${sale.stampedDate}"/>
               </g:else>
             </td>
             <td>${sale.clientName}<br/>${sale.rfc}</td>
-            <td><g:message code="saleOrder.status.${sale.status}" name="${sale.status}" id="status"/> </td>
+            <td><g:message code="saleOrder.status.${sale.status}" default="${sale.status}"/> </td>
             <td class="text-center">${sale.invoiceSerie}</td>
             <td class="text-center">${sale.invoiceFolio}</td>
             <td class="text-center">${sale.currency}</td>
