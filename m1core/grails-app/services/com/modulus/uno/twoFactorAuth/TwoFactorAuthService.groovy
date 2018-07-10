@@ -4,13 +4,17 @@ import groovy.transform.CompileStatic
 import grails.transaction.Transactional
 import org.jboss.aerogear.security.otp.Totp
 import com.modulus.uno.UserService
+import com.modulus.uno.EmailSenderService
 import com.modulus.uno.User
+import com.modulus.uno.UserNotFoundException
+import com.modulus.uno.AccountNoActivatedException
 
 @Transactional
 @CompileStatic
 class TwoFactorAuthService implements TwoFactorAuthValidator {
 
   UserService userService = new UserService()
+  EmailSenderService emailSenderService = new EmailSenderService()
 
     @Transactional(readOnly = true)
     @Override
@@ -38,4 +42,14 @@ class TwoFactorAuthService implements TwoFactorAuthValidator {
     true
   }
 
+  def reSynchronizeUser(String username, String email) {
+    User user = userService.findUserFromUsernameAndEmail(username, email)
+    if(!user) throw new UserNotFoundException("Usuario no encontrado")
+    if(!user.enabled) throw new AccountNoActivatedException("La cuenta está deshabilitada")
+
+    userService.generateKey2FA(user)
+    userService.setEnableTwoFactor(user)
+    String qrUrl = userService.generateQRAuthenticatorUrl(user)
+    emailSenderService.sendEmailForTwoFactorAuth(user, qrUrl)
+  }
 }
