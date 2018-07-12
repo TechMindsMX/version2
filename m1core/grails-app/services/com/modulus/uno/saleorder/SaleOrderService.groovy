@@ -398,11 +398,11 @@ class SaleOrderService {
   }
 
   SaleOrder getStampDateAlreadyUpdate(SaleOrder saleOrder) {
-    String rfc = "AAA010101AAA"
+    String emitter = "AAA010101AAA/${saleOrder.company.id}"
     if (Environment.current == Environment.PRODUCTION) {
-      rfc = "${saleOrder.company.rfc}"
+      emitter = "${saleOrder.company.rfc}/${saleOrder.company.id}"
     }
-    Date stampDate = invoiceService.updateStampedDate(rfc,  saleOrder.company.id, saleOrder.folio)
+    Date stampDate = invoiceService.updateStampedDate(emitter, saleOrder.folio)
     saleOrder.stampedDate = stampDate
     saleOrder.save()
     saleOrder
