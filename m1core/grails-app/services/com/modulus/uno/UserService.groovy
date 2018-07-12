@@ -1,12 +1,22 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey
+import com.warrenstrange.googleauth.GoogleAuthenticator
 
-@Transactional
 class UserService {
+
+  String QR_PREFIX = "https://chart.googleapis.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl="
+  String APP_NAME = "ModulusUno"
 
   def documentService
 
+  User findByUsername(String username) {
+    log.info "Find user with username: ${username}"
+    User.findByUsername(username)
+  }
+
+  @Transactional
   def addInformationToLegalRepresentative(def user, def params) {
     def profile = user.profile
     profile.name = params.profile.name
@@ -42,6 +52,7 @@ class UserService {
     }
   }
 
+  @Transactional
   def createRelationshipIntoLegalRepresentativeAndAsset(S3Asset asset, def userId) {
     def user = User.findById(userId)
     user.profile.addtoDocuments = asset
@@ -49,6 +60,7 @@ class UserService {
     user
   }
 
+  @Transactional
   User createUserWithoutRole(User user,Profile profile){
     profile.save()
     user.profile = profile
@@ -56,6 +68,7 @@ class UserService {
     user
   }
 
+  @Transactional
   User setAuthorityToUser(User user,String authority){
     Role role = Role.findByAuthority(authority)
     UserRole.create user, role
@@ -71,6 +84,7 @@ class UserService {
     users
   }
 
+  @Transactional
   private def createTelephone(params) {
     def telephone = new Telephone()
     telephone.number = params.number
@@ -80,6 +94,7 @@ class UserService {
     telephone
   }
 
+  @Transactional
   private def updateTelephoneOfUser(params) {
     def telephone = Telephone.findById(params.telephone.id)
     telephone.number = params.telephone.number
@@ -96,6 +111,26 @@ class UserService {
         eq("email", email)
       }
     }
+  }
+
+  @Transactional
+  User generateKey2FA(User user) {
+    GoogleAuthenticator gAuth = new GoogleAuthenticator()
+    final GoogleAuthenticatorKey key = gAuth.createCredentials()
+    user.key2FA = key.getKey()
+    user.save()
+    user
+  }
+
+  @Transactional
+  User setEnableTwoFactor(User user) {
+    user.enable2FA = !user.enable2FA
+    user.save()
+    user
+  }
+  
+  String generateQRAuthenticatorUrl(User user) {
+    QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, user.username, user.key2FA, APP_NAME), "UTF-8")
   }
 
 }
