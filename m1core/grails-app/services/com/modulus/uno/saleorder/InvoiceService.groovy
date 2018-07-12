@@ -257,8 +257,8 @@ class InvoiceService {
     }
   }
 
-  Date updateStampedDate(String rfc, String id, String folio) {
-    def result = restService.updateStampedDate(rfc, id, folio)
+  Date updateStampedDate(String emitter, String folio) {
+    def result = restService.updateStampedDate(emitter, folio)
     if (!result) {
       throw new RestException("No se pudo obtener la fecha de timbrado, intente más tarde")
     }
