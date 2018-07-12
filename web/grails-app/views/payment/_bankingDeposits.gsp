@@ -6,7 +6,16 @@
       <th>Concepto</th>
       <th>Referencia</th>
       <th>Monto</th>
-      <th></th>
+      <g:if test="${conciliated}">
+        <th class="text-center">
+          <g:link class="btn btn-primary" controller="payment" action="conciliateBankingDeposits">Ver todas</g:link>
+        </th>
+      </g:if>
+      <g:else>
+        <th class="text-center">
+          <g:link class="btn btn-primary" controller="payment" action="conciliateBankingDepositsConciliated">Ver conciliadas</g:link>
+        </th>
+      </g:else>
     </tr>
     <g:each in="${bankingDeposits}" var="transaction">
     <tr>

@@ -75,4 +75,26 @@ class PaymentService {
    payments.list = paymentsList
    payments
   }
+
+  Map findReferencedPaymentsConciliated(Company company) {
+    Map payments = [:]
+    List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNotNull(company, PaymentStatus.CONCILIATED)
+    if (paymentsList) {
+      List<BusinessEntity> companyClients = businessEntityService.findBusinessEntityByKeyword("", "CLIENT", company)
+      List<BusinessEntity> businessEntities = paymentsList.collect { pay ->
+        companyClients.find { client -> pay.rfc == client.rfc }
+      }
+      payments.list = paymentsList
+      payments.clients = businessEntities
+    }
+    payments
+  }
+
+  Map findNotReferencedPaymentsForCompanyConciliated(Company company) {
+    Map payments = [:]
+    List<Payment> paymentsList = Payment.findAllByCompanyAndStatusAndRfcIsNull(company, PaymentStatus.CONCILIATED)
+    payments.list = paymentsList
+    payments
+  }
+
 }
