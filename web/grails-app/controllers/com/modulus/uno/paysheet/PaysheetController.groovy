@@ -30,6 +30,8 @@ class PaysheetController {
 
   def listPaysheetsForPaysheetContract() {
     params.max = 25
+    params.sort = "id"
+    params.order = "desc"
     PaysheetContract paysheetContract = PaysheetContract.get(params.paysheetContractId)
     List<Paysheet> paysheetList = Paysheet.findAllByPaysheetContract(paysheetContract, params)
     Integer paysheetCount = Paysheet.countByPaysheetContract(paysheetContract)

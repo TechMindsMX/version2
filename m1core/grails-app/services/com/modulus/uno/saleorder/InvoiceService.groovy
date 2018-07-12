@@ -293,4 +293,28 @@ class InvoiceService {
     }
   }
 
+  String getSerieFromInvoice(String emitter, String folio) {
+    def result = restService.getSerieFromInvoice(emitter, folio)
+    if (!result) {
+      throw new RestException("No se pudo obtener la serie de la factura")
+    }
+    log.info "Serie: ${result.serie}"
+    if (result.serie.startsWith("Error")) {
+      throw new RestException("No se pudo obtener la serie de la factura")
+    }
+    result.serie
+  }
+
+  String getFolioFromInvoice(String emitter, String uuid) {
+    def result = restService.getFolioFromInvoice(emitter, uuid)
+    if (!result) {
+      throw new RestException("No se pudo obtener el folio de la factura")
+    }
+    log.info "Folio: ${result.folio}"
+    if (result.folio.startsWith("Error")) {
+      throw new RestException("No se pudo obtener la folio de la factura")
+    }
+    result.folio
+  }
+
 }
