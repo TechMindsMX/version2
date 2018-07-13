@@ -19,6 +19,8 @@ class User implements Serializable {
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
+  String key2FA
+  boolean enable2FA
 
   Profile profile
 
@@ -45,6 +47,7 @@ class User implements Serializable {
 	static constraints = {
 		password blank: false, password: true
 		username blank: false, unique: true
+    key2FA nullable:true
 	}
 
 	static mapping = {
