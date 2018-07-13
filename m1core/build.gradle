@@ -66,7 +66,6 @@ dependencies {
   compile 'org.grails.plugins:aws-sdk-s3:2.1.5'
   compile "joda-time:joda-time:2.9.9"
 
-  provided group: 'org.jboss.aerogear', name: 'aerogear-otp-java', version: '1.0.0'
   compile group: 'com.warrenstrange', name: 'googleauth', version: '1.1.5'
 }
 
