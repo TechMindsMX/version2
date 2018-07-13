@@ -7,7 +7,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.Authentication
-import org.jboss.aerogear.security.otp.Totp
 
 @CompileStatic
 class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
