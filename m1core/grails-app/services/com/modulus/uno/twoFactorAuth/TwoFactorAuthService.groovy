@@ -2,7 +2,6 @@ package com.modulus.uno.twoFactorAuth
 
 import groovy.transform.CompileStatic
 import grails.transaction.Transactional
-import org.jboss.aerogear.security.otp.Totp
 import com.modulus.uno.UserService
 import com.modulus.uno.User
 
@@ -11,6 +10,7 @@ import com.modulus.uno.User
 class TwoFactorAuthService implements TwoFactorAuthValidator {
 
   UserService userService = new UserService()
+  AuthenticatorService authenticatorService = new AuthenticatorService()
 
     @Transactional(readOnly = true)
     @Override
@@ -23,8 +23,7 @@ class TwoFactorAuthService implements TwoFactorAuthValidator {
         }
       if (user.enable2FA) {
         log.info "Validating verification code"
-        Totp totp = new Totp(user.key2FA)
-        return (isValidLong(code) && totp.verify(code))
+        return (isValidLong(code) && authenticatorService.isValidToken(user.key2FA, code.toInteger()))
       }
       true
     }
