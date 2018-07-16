@@ -397,12 +397,14 @@ class SaleOrderService {
     allExecutedForClient.findAll { saleOrder -> saleOrder.payments }
   }
 
-  SaleOrder getStampDateAlreadyUpdate(SaleOrder saleOrder) {
+  @Transactional
+  SaleOrder updateStampDateAlreadyUpdate(SaleOrder saleOrder) {
     String emitter = "AAA010101AAA/${saleOrder.company.id}"
     if (Environment.current == Environment.PRODUCTION) {
       emitter = "${saleOrder.company.rfc}/${saleOrder.company.id}"
     }
-    Date stampDate = invoiceService.updateStampedDate(emitter, saleOrder.folio)
+    Date stampDate = invoiceService.getStampedDate(emitter, saleOrder.folio)
+    log.info "Stamp date got: ${stampDate}"
     saleOrder.stampedDate = stampDate
     saleOrder.save()
     saleOrder
