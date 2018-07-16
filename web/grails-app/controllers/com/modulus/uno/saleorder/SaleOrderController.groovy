@@ -355,10 +355,11 @@ class SaleOrderController {
     render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
   }
 
+  @Transactional
   def stampedDateForSaleOrders(SaleOrder saleOrder) {
     log.info "Sale order ${saleOrder}"
-    def date = saleOrderService.getStampDateAlreadyUpdate(saleOrder)
-    render view:"list", model:[saleOrders: "", filterValues:[rfc:"", clientName:""]]
+    saleOrderService.updateStampDateAlreadyUpdate(saleOrder)
+    redirect action:"list"
   }
 
 }
