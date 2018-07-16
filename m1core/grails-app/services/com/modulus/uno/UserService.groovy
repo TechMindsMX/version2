@@ -126,6 +126,13 @@ class UserService {
     user.save()
     user
   }
+
+  @Transactional
+  User enableTwoFactor(User user) {
+    user.enable2FA = true
+    user.save()
+    user
+  }
   
   String generateQRAuthenticatorUrl(User user) {
     QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, user.username, user.key2FA, APP_NAME), "UTF-8")
