@@ -37,13 +37,29 @@ pipeline {
       }
     }
 
-    /*stage('Build App') {
+    stage('Update Assets') {
       steps{
-        echo 'Building app'
-        sh 'gradle clean build -x test'
+        dir("web") {
+          nodejs(nodeJSInstallationName: 'Node 10.1.0') {
+            echo 'Updating bower'
+            sh 'bower install'
+          }
+        }
       }
     }
 
+
+    stage('Build App') {
+      steps{
+        dir("web") {
+          echo 'Building app'
+          sh './grailsw -Dgrails.env=test clean'
+          sh './grailsw -Dgrails.env=test war'
+        }
+      }
+    }
+
+/*
     stage('Download Config'){
       steps{
         dir("configFiles"){
