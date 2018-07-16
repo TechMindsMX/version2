@@ -48,7 +48,7 @@ class TwoFactorAuthService implements TwoFactorAuthValidator {
     if(!user.enabled) throw new AccountNoActivatedException("La cuenta está deshabilitada")
 
     userService.generateKey2FA(user)
-    userService.setEnableTwoFactor(user)
+    userService.enableTwoFactor(user)
     String qrUrl = userService.generateQRAuthenticatorUrl(user)
     emailSenderService.sendEmailForTwoFactorAuth(user, qrUrl)
   }
