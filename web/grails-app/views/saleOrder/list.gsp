@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.status.SaleOrderStatus%>
 <!DOCTYPE html>
 <%! import com.modulus.uno.status.SaleOrderStatus %>
 <html>
@@ -33,6 +34,7 @@
          <tr>
            <th class="text-center">No. de Orden</th>
            <th class="text-center">Fecha de Creación</th>
+           <th class="text-center">Fecha de Timbrado</th>
            <th class="text-center col-xs-4">Cliente</th>
            <th class="text-center col-xs-2">Estatus</th>
            <th class="text-center">Serie</th>
@@ -51,6 +53,14 @@
          <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
             <td class="text-center"><g:link action="show" id="${sale.id}">${sale.id}</g:link></td>
             <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
+            <td class="text-center">
+              <g:if test="${sale.status == SaleOrderStatus.EJECUTADA && sale.stampedDate == null}">
+                <g:link controller="saleOrder" action="stampedDateForSaleOrders" id="${sale.id}" class="glyphicon glyphicon-refresh"></g:link>
+              </g:if>
+              <g:else>
+                <g:formatDate format="dd-MM-yyyy" date="${sale.stampedDate}"/>
+              </g:else>
+            </td>
             <td>${sale.clientName}<br/>${sale.rfc}</td>
             <td><g:message code="saleOrder.status.${sale.status}" default="${sale.status}"/> </td>
             <td class="text-center">
@@ -81,7 +91,7 @@
          </g:each>
          <tbody>
          <tfoot>
-            <td colspan="6"></td>
+            <td colspan="7"></td>
             <td class="text-right"><strong>Suma Total</strong></td>
             <td class="text-right"><strong>${modulusuno.formatPrice(number: saleOrders*.total.sum())}</strong></td>
          </tfoot>

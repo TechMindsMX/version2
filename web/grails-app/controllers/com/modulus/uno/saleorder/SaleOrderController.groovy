@@ -373,4 +373,9 @@ class SaleOrderController {
     redirect action:"list"
   }
 
+  def stampedDateForSaleOrders(SaleOrder saleOrder) {
+    saleOrderService.updateStampDateAlreadyUpdate(saleOrder)
+    redirect action:"list"
+  }
+
 }

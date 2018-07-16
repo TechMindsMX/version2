@@ -214,4 +214,13 @@ class RestService {
     response
   }
 
+    def getStampedDate(String emitter, String folio) {
+    log.info "CALLING Service: Verify if exist stamp date"
+    String endpoint = "${grailsApplication.config.modulus.invoice}/${emitter}/stampDate/${folio}"
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl endpoint
+    }.doit()
+    response ? response.json : [error:true]
+  }
+
 }
