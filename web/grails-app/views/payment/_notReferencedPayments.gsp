@@ -7,7 +7,7 @@
         <th class="text-right">
           <div class="col-md-3 text-center"></div>
           <div class="col-md-3 text-center">
-            <g:link class="btn btn-primary" controller="payment" action="notReferencedPayments">Ver todas</g:link>
+            <g:link class="btn btn-primary" controller="payment" action="notReferencedPayments">Ver por conciliar</g:link>
           </div>
         </th>
       </g:if>
@@ -25,18 +25,23 @@
     <tr>
       <td><g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}"/></td>
       <td>${modulusuno.formatPrice(number: payment.amount)}</td>
-      <td class="text-center">
-        <div class="col-md-3 text-center">
-        <g:link class="btn btn-primary" controller="conciliation" action="chooseInvoiceToConciliate" id="${payment.id}">
-          Elegir Factura
-        </g:link>
-        </div>
-        <div class="col-md-3 text-center">
-          <g:link class="btn btn-primary" controller="conciliation" action="conciliationWithoutInvoice" id="${payment.id}">
-            Sin Factura
-          </g:link>
-        </div>
-      </td>
+      <g:if test="${conciliated}">
+        
+      </g:if>
+      <g:else>
+        <td class="text-center">
+          <div class="col-md-3 text-center">
+            <g:link class="btn btn-primary" controller="conciliation" action="chooseInvoiceToConciliate" id="${payment.id}">
+              Elegir Factura
+            </g:link>
+          </div>
+          <div class="col-md-3 text-center">
+            <g:link class="btn btn-primary" controller="conciliation" action="conciliationWithoutInvoice" id="${payment.id}">
+              Sin Factura
+            </g:link>
+          </div>
+        </td>
+      </g:else>
     </tr>
     </g:each>
     </g:if>
