@@ -149,12 +149,14 @@
                   </g:else>
                   </tbody>
                 </table>
-              <div class="portlet-body">
+              </div>
             </div>
 						</g:form>
+            <div class="portlet-footer">
+              <button class="btn btn-default button_to_submit" id="button_to_submit" data-content="Por favor seleccione una opción">Agregar submenues</button>
+            </div>
           </div>
         </div>
-        <button class="btn btn-default button_to_submit" id="button_to_submit" data-content="Por favor seleccione una opción">Agregar submenues</button>
       </div>
     </div>
   </body>
