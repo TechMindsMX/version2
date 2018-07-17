@@ -6,9 +6,9 @@
       <th>Concepto</th>
       <th>Referencia</th>
       <th>Monto</th> 
-        <g:if test="${conciliated}">
+      <g:if test="${conciliated}">
         <th class="text-center">
-          <g:link class="btn btn-primary" controller="payment" action="conciliateBankingWithdraws">Ver todas</g:link>
+          <g:link class="btn btn-primary" controller="payment" action="conciliateBankingWithdraws">Ver por conciliar</g:link>
         </th>
       </g:if>
       <g:else>
@@ -24,9 +24,13 @@
       <td>${transaction.concept}</td>
       <td>${transaction.reference}</td>
       <td>${modulusuno.formatPrice(number: transaction.amount)}</td>
-      <td class="text-center">
-        <g:link class="btn btn-primary" controller="conciliation" action="choosePaymentToPurchaseToConciliateWithBankingWithdraw" id="${transaction.id}">Elegir Compra</g:link>
-      </td>
+      <g:if test="${conciliated}">       
+      </g:if>
+      <g:else>
+        <td class="text-center">
+          <g:link class="btn btn-primary" controller="conciliation" action="choosePaymentToPurchaseToConciliateWithBankingWithdraw" id="${transaction.id}">Elegir Compra</g:link>
+        </td>
+      </g:else>
     </tr>
     </g:each>
 
