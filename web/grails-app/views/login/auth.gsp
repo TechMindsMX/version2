@@ -72,7 +72,7 @@
                   <input type="text" name='code' class="form-control" placeholder="Si no lo ha activado, deje vacío" id='code' >
                   <hr>
                   <br/>
-                  <p class="small text-right"><g:link controller="recovery" action="reSynchronizeTwoFactor">Sincronizar otro dispositivo</g:link></p>
+                  <p class="small text-right"><g:link controller="twoFactorAuth" action="reSynchronizeTwoFactor">Sincronizar otro dispositivo</g:link></p>
                 </div>
               </div>
             </div>

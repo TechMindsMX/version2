@@ -350,4 +350,11 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
     notifyService.sendEmailNotifications(emailList, idEmailer, paramsEmailer)
   }
 
+  def sendEmailForTwoFactorAuth(User user, String qrUrl) {
+    def idEmailer=grailsApplication.config.emailer.reSynchronizeTwoFactorAuth
+    def paramsEmailer=notifyService.parametersForTwoFactorAuth(user, qrUrl)
+    notifyService.sendEmailNotifications([user.profile.email], idEmailer, paramsEmailer)
+  }
+
+
 }
