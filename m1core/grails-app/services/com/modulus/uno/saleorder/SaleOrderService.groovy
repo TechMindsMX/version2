@@ -432,6 +432,7 @@ class SaleOrderService {
     saleOrder
   }
 
+  @Transactional
   SaleOrder updateStampDateAlreadyUpdate(SaleOrder saleOrder) {
     String emitter = "AAA010101AAA/${saleOrder.company.id}"
     if (Environment.current == Environment.PRODUCTION) {
