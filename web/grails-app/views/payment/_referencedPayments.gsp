@@ -21,10 +21,14 @@
     <tr>
       <td><g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}"/></td>
       <td>${modulusuno.formatPrice(number: payment.amount)}</td>
-      <td>${ payments.clients.find { it?.rfc == payment.rfc} ?: "EL CLIENTE CON RFC ${payment.rfc} YA NO FUE ENCONTRADO EN LOS REGISTROS DE RELACIONES COMERCIALES" }</td>
+      
       <g:if test="${conciliated}">
+        <td>
+          <g:link>${ payments.clients.find { it?.rfc == payment.rfc} ?: "EL CLIENTE CON RFC ${payment.rfc} YA NO FUE ENCONTRADO EN LOS REGISTROS DE RELACIONES COMERCIALES" } </g:link>
+        </td>
       </g:if>
       <g:else>
+        <td>${ payments.clients.find { it?.rfc == payment.rfc} ?: "EL CLIENTE CON RFC ${payment.rfc} YA NO FUE ENCONTRADO EN LOS REGISTROS DE RELACIONES COMERCIALES" }</td>
         <td class="text-center">
           <button class="btn btn-primary">Elegir Factura</button>
         </td>
