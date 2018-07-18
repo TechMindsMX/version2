@@ -4,7 +4,6 @@
     <meta name="layout" content="main" />
     <g:set var="entityName" value="${message(code: 'menu.label', default: 'Menu')}" />
     <title><g:message code="default.show.label" args="[entityName]" /></title>
-    <asset:javascript src="menu/menu_controller.js" />
 
     <style>
       .button_to_submit {
@@ -159,5 +158,6 @@
         </div>
       </div>
     </div>
+    <asset:javascript src="menu/menu_controller.js" />
   </body>
 </html>
