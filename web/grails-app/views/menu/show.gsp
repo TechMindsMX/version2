@@ -152,12 +152,21 @@
             </div>
 						</g:form>
             <div class="portlet-footer">
-              <button class="btn btn-default button_to_submit" id="button_to_submit" data-content="Por favor seleccione una opción">Agregar submenues</button>
+              <div class="row">
+                <div class="col-md-4">
+                  <button class="btn btn-primary" id="button_to_submit">Agregar submenues</button>
+                </div>
+                <div class="col-md-8">
+                  <div class="alert alert-danger alert-dismissible" id="noSelectionAlert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    Por favor seleccione al menos un submenú
+                  </div>
+                </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <asset:javascript src="menu/menu_controller.js" />
+    <asset:javascript src="menu/submenues.js" />
   </body>
 </html>
