@@ -12,4 +12,8 @@ enum BusinessEntitiesGroupType {
   String getDescription() {
     this.description
   }
+
+  String toString() {
+    this.description
+  }
 }
