@@ -21,7 +21,7 @@ pipeline {
 
     stage('Install plugin') {
       steps{
-        dir("installPlugin"){
+        dir("workspace"){
           sh "git clone -b master --single-branch git@github.com:makingdevs/aws-sdk-grails3.git ."
           sh "./gradlew install"
         }
