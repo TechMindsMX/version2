@@ -119,9 +119,9 @@ pipeline {
 
   }
 
-  /*post {
+  post {
     always {
-      //cleanWs()
+      cleanWs()
     }
-  }*/
+  }
 }
