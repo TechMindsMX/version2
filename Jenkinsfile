@@ -10,11 +10,12 @@ pipeline {
     stage('Download Config for Test'){
       steps{
         dir("configFilesTest"){
-          sh "mkdir -p /home/jenkins/.modulusuno"
-          sh "rm -rf /home/jenkins/.modulusuno/*"
+          //sh "mkdir -p /home/jenkins/.modulusuno"
+          sh "mkdir -p /var/jenkins_home/.modulusuno"
+          sh "rm -rf /var/jenkins_home/.modulusuno/*"
           sh "git clone -b jenkins-new --single-branch git@bitbucket.org:techmindsmx/config-modulusuno-v3.git ."
         }
-        sh 'mv configFilesTest/* /home/jenkins/.modulusuno'
+        sh 'mv configFilesTest/* /var/jenkins_home/.modulusuno'
       }
     }
 
