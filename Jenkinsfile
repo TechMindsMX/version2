@@ -18,6 +18,15 @@ pipeline {
       }
     }
 
+    stage('Install plugin') {
+      steps{
+        dir("installPlugin"){
+          sh "git clone -b master --single-branch git@github.com:makingdevs/aws-sdk-grails3.git ."
+          sh "./gradlew install"
+        }
+      }
+    }
+
     stage('Run Migration App') {
       steps{
         dir("web"){
