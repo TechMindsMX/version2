@@ -7,6 +7,9 @@ import java.text.SimpleDateFormat
 import com.modulus.uno.Bank
 import com.modulus.uno.BankAccount
 import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Commission
+import com.modulus.uno.CommissionType
+import com.modulus.uno.CommissionTransactionService
 
 class PaysheetService {
 
@@ -15,6 +18,8 @@ class PaysheetService {
   def grailsApplication
   PaysheetDispersionFilesService paysheetDispersionFilesService
   PaysheetReceiptService paysheetReceiptService
+  PaysheetProjectService paysheetProjectService
+  CommissionTransactionService commissionTransactionService
 
   @Transactional
   Paysheet createPaysheetFromPrePaysheet(PrePaysheet prePaysheet) {
@@ -317,4 +322,15 @@ class PaysheetService {
     payedPaysheetsForEmployee
   }
 
+  Map checkPayersToStamp(Paysheet paysheet) {
+    PaysheetProject paysheetProject = paysheetProjectService.getPaysheetProjectByPaysheetContractAndName(paysheet.paysheetContract, paysheet.prePaysheet.paysheetProject)
+    Map statusPayersToStamp = [statusPayerSA:false, statusPayerIAS:false]
+    paysheetProject.payers.sort().each() { payer ->
+      Commission paysheetReceiptCommission = commissionTransactionService.getCommissionForCompanyByType(payer.company, CommissionType.RECIBO_NOMINA)
+      if (paysheetReceiptCommission) {
+        if (payer.paymentSchema == PaymentSchema.IMSS) { statusPayersToStamp.statusPayerSA = true } else { statusPayersToStamp.statusPayerIAS = true }
+      }
+    }
+    statusPayersToStamp
+  }
 }

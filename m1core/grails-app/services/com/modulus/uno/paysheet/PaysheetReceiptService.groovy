@@ -4,6 +4,7 @@ import com.modulus.uno.invoice.paysheetReceipt.*
 import com.modulus.uno.invoice.*
 
 import com.modulus.uno.PaysheetReceiptCommand
+import com.modulus.uno.Company
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.Address
@@ -11,20 +12,25 @@ import com.modulus.uno.AddressType
 import com.modulus.uno.RestException
 
 import com.modulus.uno.DataImssEmployeeService
+import com.modulus.uno.CommissionTransactionService
 import com.modulus.uno.RestService
 
 import grails.util.Environment
+import groovy.json.JsonSlurper
 
 class PaysheetReceiptService {
 
   PaysheetProjectService paysheetProjectService
   DataImssEmployeeService dataImssEmployeeService
+  CommissionTransactionService commissionTransactionService
   RestService restService
   def grailsApplication
 
   String generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
-    stampPaysheetReceipt(paysheetReceipt)
+    String stampUuid = stampPaysheetReceipt(paysheetReceipt)
+    registerCommissionTransaction(paysheetEmployee, paysheetReceipt, schema)
+    stampUuid
   }
 
   PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
@@ -227,11 +233,18 @@ class PaysheetReceiptService {
     if (!result) {
       throw new RestException("No se pudo generar el recibo de nómina") 
     }
+
     if (result.text.startsWith("Error")) {
       throw new RestException(result.text) 
     }
 
     result.text
+  }
+
+  def registerCommissionTransaction(PaysheetEmployee employee, PaysheetReceiptCommand paysheetReceipt, PaymentSchema schema) {
+    BigDecimal commissionBaseAmount = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
+    Company company = Company.get(paysheetReceipt.id)
+    commissionTransactionService.registerCommissionForPaysheetReceipt(commissionBaseAmount, company)
   }
 
 }
