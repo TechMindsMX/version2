@@ -4,6 +4,8 @@ import com.modulus.uno.DataImssEmployeeService
 import com.modulus.uno.DataImssEmployee
 import com.modulus.uno.EmployeeLink
 import com.modulus.uno.PaymentPeriod
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
 import java.math.RoundingMode
 import grails.transaction.Transactional
 
@@ -214,5 +216,19 @@ class PaysheetEmployeeService {
 
   Boolean employeeHasOnlySchemaPayment(PaysheetEmployee paysheetEmployee) {
     !paysheetEmployee.imssSalaryNet || !paysheetEmployee.netAssimilable
+  }
+
+  @Transactional
+  PaysheetEmployee reloadDataEmployee(PaysheetEmployee paysheetEmployee) {
+    Company company = paysheetEmployee.paysheet.paysheetContract.company
+    BusinessEntity businessEntity = company.businessEntities.find { be -> be.rfc == paysheetEmployee.prePaysheetEmployee.rfc }
+    paysheetEmployee.prePaysheetEmployee.curp = businessEntity.curp
+    paysheetEmployee.prePaysheetEmployee.nameEmployee = businessEntity.toString()
+    paysheetEmployee.prePaysheetEmployee.numberEmployee = businessEntity.number
+    if (paysheetEmployee.status == PaysheetEmployeeStatus.PENDING) {
+      
+    }
+    paysheetEmployee.save()
+    paysheetEmployee
   }
 }
