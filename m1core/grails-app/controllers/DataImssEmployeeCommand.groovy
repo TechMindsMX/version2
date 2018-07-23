@@ -5,12 +5,14 @@ import grails.validation.Validateable
 import com.modulus.uno.paysheet.ContractType
 import com.modulus.uno.paysheet.RegimeType
 import com.modulus.uno.paysheet.WorkDayType
+import com.modulus.uno.paysheet.JobRisk
 
 class DataImssEmployeeCommand implements Validateable {
 
   String idEmployee
   String nss
-  Date registrationDate
+  String registrationDate
+  String dischargeDate
   String baseImssMonthlySalary
   String totalMonthlySalary
   String holidayBonusRate
@@ -19,6 +21,7 @@ class DataImssEmployeeCommand implements Validateable {
   String contractType
   String regimeType
   String workDayType
+  String jobRisk
   String department
   String job
 
@@ -26,6 +29,7 @@ class DataImssEmployeeCommand implements Validateable {
     idEmployee nullable:false
     nss nullable:false
     registrationDate nullable:false
+    dischargeDate nullable:true
     baseImssMonthlySalary nullable:false
     totalMonthlySalary nullable:false
     holidayBonusRate nullable:false
@@ -34,6 +38,7 @@ class DataImssEmployeeCommand implements Validateable {
     contractType nullable:false
     regimeType nullable:false
     workDayType nullable:false
+    jobRisk nullable:false
     department nullable:false
     job nullable:false
   }
@@ -42,7 +47,8 @@ class DataImssEmployeeCommand implements Validateable {
     EmployeeLink employee = EmployeeLink.get(this.idEmployee)
     new DataImssEmployee(
       employee:employee,
-      registrationDate:this.registrationDate,
+      registrationDate:Date.parse("dd/MM/yyyy", this.registrationDate),
+      dischargeDate:this.dischargeDate ? Date.parse("dd/MM/yyyy", this.dischargeDate) : null,
       nss:this.nss,
       baseImssMonthlySalary:getValueInBigDecimal(this.baseImssMonthlySalary),
       totalMonthlySalary:getValueInBigDecimal(this.totalMonthlySalary),
@@ -52,6 +58,7 @@ class DataImssEmployeeCommand implements Validateable {
       contractType:ContractType.find { it.toString() == this.contractType },
       regimeType:RegimeType.find { it.toString() == this.regimeType },
       workDayType:WorkDayType.find { it.toString() == this.workDayType },
+      jobRisk:JobRisk.find { it.toString() == this.jobRisk },
       department:this.department,
       job:this.job
     )

@@ -29,6 +29,8 @@
           <dd>${dataImssEmployee.nss}</dd>
           <dt><g:message code="dataImssEmployee.label.registrationDate"/></dt>
           <dd><g:formatDate date="${dataImssEmployee.registrationDate}" format="dd-MM-yyyy"/></dd>
+          <dt><g:message code="dataImssEmployee.label.dischargeDate"/></dt>
+          <dd><g:if test="${dataImssEmployee.dischargeDate}"><g:formatDate date="${dataImssEmployee.dischargeDate}" format="dd-MM-yyyy"/></g:if><g:else> - </g:else></dd>
           <dt><g:message code="dataImssEmployee.label.baseImssMonthlySalary"/></dt>
           <dd>${modulusuno.formatPrice(number:dataImssEmployee.baseImssMonthlySalary)}</dd>
           <dt><g:message code="dataImssEmployee.label.totalMonthlySalary"/></dt>
@@ -47,6 +49,8 @@
           <dd>${dataImssEmployee.department}</dd>
           <dt><g:message code="dataImssEmployee.label.job"/></dt>
           <dd>${dataImssEmployee.job}</dd>
+          <dt><g:message code="dataImssEmployee.label.jobRisk"/></dt>
+          <dd>${dataImssEmployee.jobRisk}</dd>
           <dt><g:message code="dataImssEmployee.label.contractType"/></dt>
           <dd>${dataImssEmployee.contractType}</dd>
           <dt><g:message code="dataImssEmployee.label.workDayType"/></dt>

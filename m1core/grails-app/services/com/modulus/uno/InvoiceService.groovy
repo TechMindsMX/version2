@@ -29,6 +29,9 @@ class InvoiceService {
     if (!result) {
       throw new RestException("No se pudo generar la factura") 
     }
+    if (result.text.startsWith("Error")) {
+      throw new RestException(result.text) 
+    }
     result.text
   }
 

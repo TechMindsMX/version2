@@ -64,6 +64,7 @@ dependencies {
   compile 'org.grails.plugins:excel-import:3.0.0.RC4'
   compile 'com.amazonaws:aws-java-sdk-route53:1.11.171'
   compile 'org.grails.plugins:aws-sdk-s3:2.1.5'
+  compile "joda-time:joda-time:2.9.9"
 }
 
 bootRun {
