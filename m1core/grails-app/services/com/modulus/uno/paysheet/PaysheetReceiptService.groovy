@@ -17,6 +17,8 @@ import com.modulus.uno.RestService
 
 import grails.util.Environment
 import groovy.json.JsonSlurper
+import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 class PaysheetReceiptService {
 
@@ -26,11 +28,18 @@ class PaysheetReceiptService {
   RestService restService
   def grailsApplication
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   String generatePaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
     PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
     String stampUuid = stampPaysheetReceipt(paysheetReceipt)
     registerCommissionTransaction(paysheetEmployee, paysheetReceipt, schema)
     stampUuid
+  }
+
+  def generatePdfFromPaysheetReceiptForEmployeeAndSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    PaysheetReceiptCommand paysheetReceipt = createPaysheetReceiptFromPaysheetEmployeeForSchema(paysheetEmployee, schema)
+    paysheetReceipt.datosDeFacturacion.uuid = schema == PaymentSchema.IMSS ? paysheetEmployee.paysheetReceiptUuidSA : paysheetEmployee.paysheetReceiptUuidIAS 
+    sendToGeneratePdfFromPaysheetReceipt(paysheetReceipt)
   }
 
   PaysheetReceiptCommand createPaysheetReceiptFromPaysheetEmployeeForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
@@ -245,6 +254,15 @@ class PaysheetReceiptService {
     BigDecimal commissionBaseAmount = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
     Company company = Company.get(paysheetReceipt.id)
     commissionTransactionService.registerCommissionForPaysheetReceipt(commissionBaseAmount, company)
+  }
+
+  def sendToGeneratePdfFromPaysheetReceipt(PaysheetReceiptCommand paysheetReceipt) {
+    def pdfFile = restService.sendFacturaCommandWithAuth(paysheetReceipt, grailsApplication.config.modulus.paysheetReceiptGeneratePdf)
+    if (!pdfFile) {
+      throw new RestException("No se pudo generar el PDF del recibo de nómina") 
+    }
+
+    pdfFile
   }
 
 }

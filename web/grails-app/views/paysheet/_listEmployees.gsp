@@ -105,7 +105,7 @@
                     <g:if test="${(employee.paymentWay == PaymentWay.CASH || employee.paymentWay == PaymentWay.ONLY_CASH) && employee.status == PaysheetEmployeeStatus.PENDING && paysheet.status == PaysheetStatus.AUTHORIZED}">
                       <g:link class="btn btn-primary" action="setPayedToEmployee" id="${employee.id}">Pagar</g:link>
                     </g:if>
-                    <g:if test="${[PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
+                    <g:if test="${[PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED_XML, PaysheetEmployeeStatus.FULL_STAMPED_XML_IMSS_PDF, PaysheetEmployeeStatus.FULL_STAMPED_XML_ASSIMILABLE_PDF, PaysheetEmployeeStatus.FULL_STAMPED].contains(employee.status)}">
                       <g:link class="btn btn-primary" controller="paysheetEmployee" action="showPaysheetReceipts" id="${employee.id}">Recibos</g:link>
                     </g:if>
                   </sec:ifAnyGranted>
@@ -125,10 +125,10 @@
         <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary && paysheet.employees.findAll { [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(it.status)} }">
 					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
-        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status) && it.imssSalaryNet && statusPayersToStamp.statusPayerSA }}">
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status) && it.imssSalaryNet && statusPayersToStamp.statusPayerSA }}">
           <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'IMSS']">Timbrar SA</g:link>
         </g:if>
-        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status) && it.netAssimilable && statusPayersToStamp.statusPayerIAS }}">
+        <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED].contains(it.status) && it.netAssimilable && statusPayersToStamp.statusPayerIAS }}">
           <g:link class="btn btn-primary" action="generatePaysheetReceipts" id="${paysheet.id}" params="[schema:'Asimilable']">Timbrar IAS</g:link>
         </g:if>
 				</sec:ifAnyGranted>

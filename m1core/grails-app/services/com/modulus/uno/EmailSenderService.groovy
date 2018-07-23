@@ -74,7 +74,7 @@ class EmailSenderService {
       idEmailer = grailsApplication.config.emailer.saleOrderCancelStatus
       emailList = getEmailList(order.company,["ROLE_OPERATOR_VISOR", "ROLE_OPERATOR_EJECUTOR"])
       break
-      case SaleOrderStatus.PAGADA:
+      case [SaleOrderStatus.PAGADA, SaleOrderStatus.XML_GENERADO]:
       idEmailer = grailsApplication.config.emailer.saleOrderAcceptStatus
       emailList = getEmailList(order.company,["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break
@@ -326,7 +326,7 @@ def notifyPurchaseOrderChangeStatus(PurchaseOrder order){
       idEmailer = grailsApplication.config.emailer.creditNoteCancelStatus
       emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_OPERATOR_VISOR", "ROLE_OPERATOR_EJECUTOR"])
       break
-      case CreditNoteStatus.APPLIED:
+      case [CreditNoteStatus.APPLIED, CreditNoteStatus.XML_GENERATED]:
       idEmailer = grailsApplication.config.emailer.creditNoteAcceptStatus
       emailList = getEmailList(creditNote.saleOrder.company, ["ROLE_LEGAL_REPRESENTATIVE_VISOR", "ROLE_LEGAL_REPRESENTATIVE_EJECUTOR"])
       break

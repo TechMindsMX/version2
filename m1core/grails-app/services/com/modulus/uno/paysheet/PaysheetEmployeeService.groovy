@@ -8,12 +8,14 @@ import com.modulus.uno.BusinessEntity
 import com.modulus.uno.Company
 import java.math.RoundingMode
 import grails.transaction.Transactional
+import org.springframework.transaction.annotation.Propagation
 
 class PaysheetEmployeeService {
 
   BreakdownPaymentEmployeeService breakdownPaymentEmployeeService
   PaysheetProjectService paysheetProjectService
   DataImssEmployeeService dataImssEmployeeService
+  PaysheetReceiptService paysheetReceiptService
   def grailsApplication
 
   @Transactional
@@ -179,27 +181,33 @@ class PaysheetEmployeeService {
     paysheetEmployee
   }
 
-  PaysheetEmployee setIMSSStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
-    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_STAMPED
+  PaysheetEmployee setIMSSXmlStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.IMSS_STAMPED_XML
     paysheetEmployee.save()
     paysheetEmployee
   }
 
-  PaysheetEmployee setASSIMILABLEStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
-    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_STAMPED
+  PaysheetEmployee setASSIMILABLEXmlStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML
     paysheetEmployee.save()
     paysheetEmployee
   }
 
-  PaysheetEmployee setFullStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
-    paysheetEmployee.status = PaysheetEmployeeStatus.FULL_STAMPED
+  PaysheetEmployee setFullXmlStampedStatusToEmployee(PaysheetEmployee paysheetEmployee) {
+    paysheetEmployee.status = PaysheetEmployeeStatus.FULL_STAMPED_XML
     paysheetEmployee.save()
     paysheetEmployee
   }
 
-  @Transactional
+  PaysheetEmployee setFullXmlStampedWithPdfStatusForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    paysheetEmployee.status = schema == PaymentSchema.ASSIMILABLE ? PaysheetEmployeeStatus."FULL_STAMPED_XML_IMSS_PDF" : PaysheetEmployeeStatus."FULL_STAMPED_XML_ASSIMILABLE_PDF"
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   PaysheetEmployee setStampedStatusToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
-    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}StampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullStampedStatusToEmployee(paysheetEmployee) : paysheetEmployee
+    employeeIsPayed(paysheetEmployee) && employeeHasSAAndIASPayment(paysheetEmployee) ? "set${schema.name()}XmlStampedStatusToEmployee"(paysheetEmployee) : employeeIsOnlySchemaStamped(paysheetEmployee) || (employeeIsPayed(paysheetEmployee) && employeeHasOnlySchemaPayment(paysheetEmployee)) ? setFullXmlStampedStatusToEmployee(paysheetEmployee) : employeeHasXmlAndPdfForSchemaOnly(paysheetEmployee) ? setFullXmlStampedWithPdfStatusForSchema(paysheetEmployee, schema) : paysheetEmployee
   }
 
   Boolean employeeIsPayed(PaysheetEmployee paysheetEmployee) {
@@ -211,6 +219,10 @@ class PaysheetEmployeeService {
   }
 
   Boolean employeeIsOnlySchemaStamped(PaysheetEmployee paysheetEmployee) {
+    [PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML].contains(paysheetEmployee.status)
+  }
+
+  Boolean employeeHasXmlAndPdfForSchemaOnly(PaysheetEmployee paysheetEmployee) {
     [PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(paysheetEmployee.status)
   }
 
@@ -225,15 +237,35 @@ class PaysheetEmployeeService {
     paysheetEmployee.prePaysheetEmployee.curp = businessEntity.curp
     paysheetEmployee.prePaysheetEmployee.nameEmployee = businessEntity.toString()
     paysheetEmployee.prePaysheetEmployee.numberEmployee = businessEntity.number
-    if (paysheetEmployee.status == PaysheetEmployeeStatus.PENDING) {
-      
-    }
     paysheetEmployee.save()
     paysheetEmployee
   }
 
   PaysheetEmployee findEmployeeForRfcAndPaysheet(String rfc, Paysheet paysheet) {
     paysheet.employees.find { employee -> employee.prePaysheetEmployee.rfc == rfc }
+  }
+
+  @Transactional
+  PaysheetEmployee generatePaysheetReceiptPdfIMSS(PaysheetEmployee employee) {
+    paysheetReceiptService.generatePdfFromPaysheetReceiptForEmployeeAndSchema(employee, PaymentSchema.IMSS)
+    setStatusForPdfGeneratedToEmployee(employee, PaymentSchema.IMSS)
+  }
+
+  @Transactional
+  PaysheetEmployee generatePaysheetReceiptPdfASSIMILABLE(PaysheetEmployee employee) {
+    paysheetReceiptService.generatePdfFromPaysheetReceiptForEmployeeAndSchema(employee, PaymentSchema.ASSIMILABLE)
+    setStatusForPdfGeneratedToEmployee(employee, PaymentSchema.ASSIMILABLE)
+  }
+
+  @Transactional
+  PaysheetEmployee setStatusForPdfGeneratedToEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    paysheetEmployee.status = paysheetEmployee.status == PaysheetEmployeeStatus."${schema.name()}_STAMPED_XML" ? PaysheetEmployeeStatus."${schema.name()}_STAMPED" : defineFullStampedStatusForEmployee(paysheetEmployee, schema)
+    paysheetEmployee.save()
+    paysheetEmployee
+  }
+
+  PaysheetEmployeeStatus defineFullStampedStatusForEmployee(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
+    paysheetEmployee.status == PaysheetEmployeeStatus."FULL_STAMPED_XML" ? PaysheetEmployeeStatus."FULL_STAMPED_XML_${schema.name()}_PDF" : PaysheetEmployeeStatus.FULL_STAMPED  
   }
 
 }

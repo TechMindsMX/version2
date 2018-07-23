@@ -74,6 +74,22 @@ class CreditNoteService {
     creditNote
   }
 
+  @Transactional
+  CreditNote generatePdf(CreditNote creditNote) {
+    FacturaCommand creditNoteCommand = invoiceService.createInvoiceFromSaleOrder(creditNote.saleOrder)
+    creditNoteCommand = defineDataFromCreditNote(creditNote, creditNoteCommand)
+    creditNoteCommand.datosDeFacturacion.uuid = creditNote.folio
+    creditNoteCommand.datosDeFacturacion.folio = creditNote.invoiceFolio
+    creditNoteCommand.datosDeFacturacion.serie = creditNote.invoiceSerie
+    def result = restService.sendFacturaCommandWithAuth(creditNoteCommand, grailsApplication.config.modulus.pdfFacturaCreate)
+    if (!result) {
+      throw new RestException("No se pudo generar el PDF de la factura")
+    }
+    creditNote.status = CreditNoteStatus.APPLIED
+    creditNote.save()
+    creditNote
+  }
+
   FacturaCommand defineDataFromCreditNote(CreditNote creditNote, FacturaCommand creditNoteCommand) {
     creditNoteCommand.id = creditNote.saleOrder.company.id
     creditNoteCommand.observaciones = ""
@@ -121,7 +137,7 @@ class CreditNoteService {
 
   @Transactional
   CreditNote applyCreditNoteWithFolio(CreditNote creditNote, Map stampData) {
-    creditNote.status = CreditNoteStatus.APPLIED
+    creditNote.status = CreditNoteStatus.XML_GENERATED
     creditNote.folio = stampData.stampId
     creditNote.invoiceSerie = stampData.serie
     creditNote.invoiceFolio = stampData.folio

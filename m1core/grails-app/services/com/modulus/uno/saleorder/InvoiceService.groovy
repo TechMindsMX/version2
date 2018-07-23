@@ -21,7 +21,7 @@ class InvoiceService {
   def grailsApplication
 
   Map generateFactura(SaleOrder saleOrder){
-    def factura = createInvoiceFromSaleOrder(saleOrder)
+    FacturaCommand factura = createInvoiceFromSaleOrder(saleOrder)
     log.info "Factura command to send: ${factura.dump()}"
     log.info "Datos de Facturación to send: ${factura.datosDeFacturacion.dump()}"
     log.info "Emisor to send: ${factura.emisor.dump()}"
@@ -45,6 +45,20 @@ class InvoiceService {
       throw new RestException(result.error) 
     }
     result 
+  }
+
+  def generatePdfForInvoice(SaleOrder saleOrder) {
+    log.info "Creating command to send to endpoint api-facturacion"
+    FacturaCommand factura = createInvoiceFromSaleOrder(saleOrder)
+    factura.datosDeFacturacion.uuid = saleOrder.folio
+    factura.datosDeFacturacion.folio = saleOrder.invoiceFolio
+    factura.datosDeFacturacion.serie = saleOrder.invoiceSerie
+    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.pdfFacturaCreate)
+    log.info "Result generating pdf: ${result}"
+    if (!result) {
+      throw new RestException("No se pudo generar el PDF de la factura")
+    }
+    result
   }
 
   FacturaCommand createInvoiceFromSaleOrder(SaleOrder saleOrder){
