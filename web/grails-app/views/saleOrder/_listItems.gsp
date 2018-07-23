@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.SaleOrderStatus %>
+<%! import com.modulus.uno.status.SaleOrderStatus %>
 
 <div class="table-responsive">
   <table class="table table-condensed">

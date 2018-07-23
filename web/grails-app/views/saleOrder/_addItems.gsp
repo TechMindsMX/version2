@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.SaleOrderStatus %>
+<%! import com.modulus.uno.status.SaleOrderStatus %>
 <div class="portlet">
   <div class="portlet-body">
 <div class="table-responsive">

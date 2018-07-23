@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.converters.JSON
+import com.modulus.uno.saleorder.SaleOrder
 
 class Address {
   String street

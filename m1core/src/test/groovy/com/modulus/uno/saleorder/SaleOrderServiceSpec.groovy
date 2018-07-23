@@ -1,4 +1,4 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
@@ -7,6 +7,24 @@ import spock.lang.Ignore
 import spock.lang.Unroll
 import org.springframework.mock.web.MockHttpServletRequest
 import grails.web.servlet.mvc.GrailsParameterMap
+
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Company
+import com.modulus.uno.User
+import com.modulus.uno.Address
+import com.modulus.uno.Authorization
+import com.modulus.uno.Commission
+import com.modulus.uno.status.SaleOrderStatus
+import com.modulus.uno.BusinessEntityType
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.CurrencyType
+import com.modulus.uno.AddressType
+import com.modulus.uno.CommissionType
+import com.modulus.uno.Period
+
+import com.modulus.uno.EmailSenderService
+import com.modulus.uno.CompanyService
+import com.modulus.uno.CommissionTransactionService
 
 @TestFor(SaleOrderService)
 @Mock([BusinessEntity, SaleOrder, SaleOrderItem, Company, User, Address,Authorization, Commission, SaleOrderPayment])

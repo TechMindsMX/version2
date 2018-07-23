@@ -1,9 +1,22 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
 import com.modulus.uno.catalogs.UnitType
+import com.modulus.uno.Company
+import com.modulus.uno.ModulusUnoAccount
+import com.modulus.uno.ClientLink
+import com.modulus.uno.BankAccount
+import com.modulus.uno.Bank
+import com.modulus.uno.CommissionTransaction
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.PaymentMethod
+import com.modulus.uno.AddressType
+import com.modulus.uno.InvoicePurpose
+import com.modulus.uno.Address
+import com.modulus.uno.RestService
+import com.modulus.uno.RestException
 
 @TestFor(InvoiceService)
 @Mock([SaleOrder, SaleOrderItem, Company, ModulusUnoAccount, ClientLink, CommissionTransaction, BankAccount, Bank, UnitType])

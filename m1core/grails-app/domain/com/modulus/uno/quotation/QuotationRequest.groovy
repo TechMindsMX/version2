@@ -1,6 +1,6 @@
 package com.modulus.uno.quotation
 
-import com.modulus.uno.SaleOrder
+import com.modulus.uno.saleorder.SaleOrder
 import com.modulus.uno.Company
 import com.modulus.uno.Product
 import com.modulus.uno.InvoicePurpose

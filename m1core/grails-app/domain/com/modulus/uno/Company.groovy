@@ -2,6 +2,7 @@ package com.modulus.uno
 
 import grails.converters.JSON
 import com.modulus.uno.paysheet.PaysheetProject
+import com.modulus.uno.saleorder.SaleOrder
 
 class Company implements Linker {
 

@@ -1,21 +1,40 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import grails.transaction.Transactional
 import org.springframework.transaction.annotation.Propagation
 import java.text.SimpleDateFormat
 import groovy.sql.Sql
 
+import com.modulus.uno.EmailSenderService
+import com.modulus.uno.CompanyService
+import com.modulus.uno.CommissionTransactionService
+
+import com.modulus.uno.Company
+import com.modulus.uno.BusinessEntity
+import com.modulus.uno.Address
+import com.modulus.uno.Authorization
+import com.modulus.uno.Conciliation
+import com.modulus.uno.User
+
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.Period
+import com.modulus.uno.BusinessException
+import com.modulus.uno.AddressType
+import com.modulus.uno.CommissionType
+import com.modulus.uno.status.SaleOrderStatus
+import com.modulus.uno.status.ConciliationStatus
+import com.modulus.uno.status.CommissionTransactionStatus
+
 class SaleOrderService {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
-  def emailSenderService
-  def invoiceService
+  EmailSenderService emailSenderService
+  InvoiceService invoiceService
   def grailsApplication
-  def companyService
+  CompanyService companyService
   def springSecurityService
   def dataSource
-  def commissionTransactionService
-
+  CommissionTransactionService commissionTransactionService
 
   // TODO: Code Review
   @Transactional

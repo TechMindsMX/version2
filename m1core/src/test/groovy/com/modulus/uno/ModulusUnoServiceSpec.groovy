@@ -9,6 +9,8 @@ import java.lang.Void as Should
 
 import com.modulus.uno.stp.StpClabeService
 import com.modulus.uno.stp.StpService
+import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.saleorder.SaleOrderItem
 
 @TestFor(ModulusUnoService)
 //TODO esto es demasiado para un servicio posible refactor

@@ -1,4 +1,5 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
+
 import java.text.*
 import grails.validation.Validateable
 

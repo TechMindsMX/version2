@@ -1,13 +1,21 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import grails.util.Environment
 import com.modulus.uno.invoice.*
 import com.modulus.uno.catalogs.UnitType
 import java.math.RoundingMode
+import com.modulus.uno.Company
+import com.modulus.uno.ClientLink
+import com.modulus.uno.BankAccount
+import com.modulus.uno.PaymentWay
+import com.modulus.uno.Address
+import com.modulus.uno.AddressType
+import com.modulus.uno.RestService
+import com.modulus.uno.RestException
 
 class InvoiceService {
 
-  def restService
+  RestService restService
   def grailsApplication
 
   String generateFactura(SaleOrder saleOrder){

@@ -1,6 +1,8 @@
-package com.modulus.uno
+package com.modulus.uno.saleorder
 
 import grails.converters.JSON
+
+import com.modulus.uno.CurrencyType
 
 class SaleOrderItem {
 
@@ -69,13 +71,15 @@ class SaleOrderItem {
       return [
         id:m.id,
         sku:m.sku,
+        name:m.name,
         quantity:m.quantity,
         price:m.price,
         discount:m.discount,
-        ieps:m.ieps,
+        ivaRetention:m.ivaRetention,
         iva:m.iva,
         unitType:m.unitType,
-        currencyType:m.currencyType
+        currencyType:m.currencyType.name(),
+        satKey:m.satKey
       ]
     }
   }
