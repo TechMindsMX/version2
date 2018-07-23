@@ -290,7 +290,7 @@ class PaysheetService {
 
   Paysheet generatePaysheetReceiptsFromPaysheetForSchema(Paysheet paysheet, PaymentSchema schema) {
     List<PaysheetEmployeeStatus> statusSchema = schema == PaymentSchema.IMSS ? [PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.PAYED] : [PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.PAYED]
-    def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) && employee.paymentWay == PaymentWay.BANKING }
+    def employees = paysheet.employees.findAll { employee -> statusSchema.contains(employee.status) }
     employees.each { employee ->
       BigDecimal salarySchema = schema == PaymentSchema.IMSS ? employee.imssSalaryNet : employee.netAssimilable
       if (salarySchema > 0) {
