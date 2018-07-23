@@ -26,6 +26,11 @@
       <div class="portlet-body">
         
         <modulusuno:showFilters controller="purchaseOrder" action="search" filters="['providerName']" labels="['PROVEEDOR']" filterValues="${filterValues}" viewAll="list"/>
+        <div class="row">
+          <div class="col-md-12 text-right">
+            <g:link class="btn btn-primary" action="listMissingDocs">Pendientes de Factura</g:link>
+          </div>
+        </div>
 
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>

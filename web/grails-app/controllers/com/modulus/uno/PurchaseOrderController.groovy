@@ -319,4 +319,10 @@ class PurchaseOrderController {
     render view:"list", model:[purchaseOrder: purchaseOrders, filterValues:[providerName:params.providerName]] 
   }
 
+  def listMissingDocs() {
+    Company company = Company.get(session.company)
+    def purchaseOrders = purchaseOrderService.getPurchaseOrdersWithMissingDocs(company)
+
+    render view:"list", model:[purchaseOrder: purchaseOrders.list, purchaseOrderCount: purchaseOrders.items]
+  }
 }
