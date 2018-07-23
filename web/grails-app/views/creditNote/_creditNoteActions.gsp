@@ -4,6 +4,11 @@
   <div class="text-right">
     <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'xml')}" class="btn btn-success" download>XML</a>
     <a href="${modulusuno.creditNoteUrl(creditNote:creditNote, format:'pdf')}" class="btn btn-default" download>PDF</a>
+    <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
+      <g:if test="${creditNote.status == CreditNoteStatus.APPLIED}">
+        <g:link class="btn btn-danger" action="requestCancelCreditNote" id="${creditNote.id}">Solicitar Cancelación</g:link>
+      </g:if>
+    </sec:ifAnyGranted>
   </div>
 </g:if>
 
@@ -37,6 +42,7 @@
       </div>
     </div>
   </g:if>
+
 </sec:ifAnyGranted>
 
 <sec:ifAnyGranted roles="ROLE_AUTHORIZER_EJECUTOR">
@@ -63,6 +69,11 @@
               </div>
             </div>
 
+    </div>
+  </g:if>
+  <g:if test="${creditNote.status == CreditNoteStatus.CANCEL_TO_AUTHORIZE}">
+    <div class="text-right">
+      <g:link class="btn btn-danger" action="authorizeCancelCreditNote" id="${creditNote.id}">Autorizar Cancelación</g:link>
     </div>
   </g:if>
 </sec:ifAnyGranted>
@@ -94,6 +105,13 @@
 
     </div>
   </g:if>
+
+  <g:if test="${creditNote.status == CreditNoteStatus.CANCEL_AUTHORIZED && isEnabledToStamp}">
+    <div class="text-right">
+      <g:link class="btn btn-danger" action="applyCancelCreditNote" id="${creditNote.id}">Ejecutar Cancelación</g:link>
+    </div>
+  </g:if>
+
   <g:if test="${!isEnabledToStamp}">
     <div class="alert alert-warning">
       No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
