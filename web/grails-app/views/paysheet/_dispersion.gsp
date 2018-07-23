@@ -25,7 +25,7 @@
 								<td style="width:20%"><strong>SA</strong></td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalSA)}</td>
 								<td style="width:50%" class="text-center">
-                  <g:select class="form-control" name="saBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description"/>
+                  <g:select class="form-control" name="saBankAccount" from="${summaryBank.saPayers}" optionKey="bankAccountId" optionValue="description" required=""/>
                 </td>
 							</tr>
               <tr>
@@ -33,7 +33,7 @@
 								<td style="width:20%"><strong>IAS</strong></td>
 								<td style="width:20%" class="text-right">${modulusuno.formatPrice(number:summaryBank.totalIAS)}</td>
 								<td style="width:50%" class="text-center">
-                  <g:select class="form-control" name="iasBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description"/> 
+                  <g:select class="form-control" name="iasBankAccount" from="${summaryBank.iasPayers}" optionKey="bankAccountId" optionValue="description" required=""/> 
                 </td>
 							</tr>
 						</g:each>
