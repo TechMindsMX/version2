@@ -317,4 +317,13 @@ class InvoiceService {
     result.folio
   }
 
+  Date getStampedDate(String emitter, String folio) {
+    def result = restService.getStampedDate(emitter, folio)
+    log.info "Result: ${result}"
+    if (!result || result.error) {
+      throw new RestException("Error al intentar obtener la fecha de timbrado")
+    }
+    Date.parse("yyy-MM-dd'T'HH:mm:ss", result.stampDate)
+  }
+
 }

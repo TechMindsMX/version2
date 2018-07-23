@@ -1,5 +1,6 @@
 package com.modulus.uno.saleorder
 
+import grails.util.Environment
 import grails.transaction.Transactional
 import org.springframework.transaction.annotation.Propagation
 import java.text.SimpleDateFormat
@@ -127,6 +128,7 @@ class SaleOrderService {
     saleOrder.folio = stampData.stampId
     saleOrder.invoiceFolio = stampData.folio
     saleOrder.invoiceSerie = stampData.serie
+    saleOrder.stampedDate = Date.parse("yyy-MM-dd'T'HH:mm:ss", stampData.stampDate)
     saleOrder.status = SaleOrderStatus.XML_GENERADO
     saleOrder.save()
     saleOrder
@@ -407,11 +409,16 @@ class SaleOrderService {
   }
 
   @Transactional
+<<<<<<< HEAD
   SaleOrder getSerieForSaleOrderFromInvoice(SaleOrder saleOrder) {
+=======
+  SaleOrder updateStampDateAlreadyUpdate(SaleOrder saleOrder) {
+>>>>>>> origin/feature/651
     String emitter = "AAA010101AAA/${saleOrder.company.id}"
     if (Environment.current == Environment.PRODUCTION) {
       emitter = "${saleOrder.company.rfc}/${saleOrder.company.id}"
     }
+<<<<<<< HEAD
     String serie = invoiceService.getSerieFromInvoice(emitter, saleOrder.folio)
     saleOrder.invoiceSerie = serie
     saleOrder.save()
@@ -430,4 +437,12 @@ class SaleOrderService {
     saleOrder
   }
 
+=======
+    Date stampDate = invoiceService.getStampedDate(emitter, saleOrder.folio)
+    log.info "Stamp date got: ${stampDate}"
+    saleOrder.stampedDate = stampDate
+    saleOrder.save()
+    saleOrder
+  }
+>>>>>>> origin/feature/651
 }

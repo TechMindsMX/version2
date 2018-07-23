@@ -147,5 +147,6 @@ databaseChangeLog = {
   include file: 'adding-invoice-folio-and-invoice-serie-to-sale-order.groovy'
   include file: 'adding-columns-invoice-serie-and-invoice-folio-to-credit-note.groovy'
   include file: 'adding-columns-reject-reason-and-comments-to-credit-note.groovy'
-    include file: 'adding-columns-key-and-enabled-2FA-into-user.groovy'
+  include file: 'adding-columns-key-and-enabled-2FA-into-user.groovy'
+  include file: 'adding-column-stamped-date-into-sale-order.groovy'
 }

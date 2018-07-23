@@ -40,6 +40,7 @@ class SaleOrder {
   InvoicePurpose invoicePurpose = InvoicePurpose.G01
   String invoiceFolio
   String invoiceSerie
+  Date stampedDate
 
   static belongsTo = [company:Company]
 
@@ -61,6 +62,7 @@ class SaleOrder {
     changeType nullable:true
     invoiceFolio nullable:true
     invoiceSerie nullable:true
+    stampedDate nullable:true
   }
 
   BigDecimal getTotalIVA(){
