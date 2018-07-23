@@ -21,6 +21,14 @@
               <div class="message" role="status">${flash.message}</div>
             </g:if>
 
+              <g:hasErrors bean="${prePaysheetCommand}">
+                <ul class="error alert alert-danger" role="alert">
+                  <g:eachError bean="${prePaysheetCommand}" var="error">
+                  <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message code="prePaysheet.error.${error.field}" args="${[error.defaultMessage.replace('{0}','')]}"/></li>
+                  </g:eachError>
+                </ul>
+              </g:hasErrors>
+
               <g:hasErrors bean="${prePaysheet}">
                 <ul class="error alert alert-danger" role="alert">
                   <g:eachError bean="${prePaysheet}" var="error">

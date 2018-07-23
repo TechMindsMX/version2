@@ -122,7 +122,7 @@
     <g:if test="${paysheet.status == PaysheetStatus.TO_AUTHORIZE || paysheet.status == PaysheetStatus.AUTHORIZED || paysheet.status == PaysheetStatus.CREATED}">
       <div class="col-md-6">
 				<sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-        <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary}">
+        <g:if test="${paysheet.status == PaysheetStatus.AUTHORIZED && !dispersionSummary && paysheet.employees.findAll { [PaysheetEmployeeStatus.PENDING, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED].contains(it.status)} }">
 					<g:link class="btn btn-primary" action="prepareDispersion" id="${paysheet.id}">Dispersar Pagos</g:link>
         </g:if>
         <g:if test="${paysheet.employees.findAll{ [PaysheetEmployeeStatus.PAYED, PaysheetEmployeeStatus.IMSS_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_PAYED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED].contains(it.status) && it.imssSalaryNet }}">

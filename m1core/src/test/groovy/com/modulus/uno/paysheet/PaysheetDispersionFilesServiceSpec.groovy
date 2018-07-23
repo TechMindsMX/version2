@@ -45,6 +45,10 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 			Paysheet paysheet = new Paysheet(paysheetContract:paysheetContract, prePaysheet:prePaysheet).save(validate:false)
 			PrePaysheetEmployee prePaysheetEmployee = new PrePaysheetEmployee(bank:bank)
 			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee).save(validate:false))
+			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee, status:PaysheetEmployeeStatus.PAYED).save(validate:false))
+			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee, status:PaysheetEmployeeStatus.IMSS_PAYED).save(validate:false))
+			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee, status:PaysheetEmployeeStatus.ASSIMILABLE_PAYED).save(validate:false))
+			paysheet.addToEmployees(new PaysheetEmployee(prePaysheetEmployee:prePaysheetEmployee, status:PaysheetEmployeeStatus.FULL_STAMPED).save(validate:false))
 		and:"the charge bank account"
 			BankAccount bankAccount = new BankAccount(banco:bank).save(validate:false)
 		and:"the payment message"
@@ -56,7 +60,7 @@ class PaysheetDispersionFilesServiceSpec extends Specification {
 		when:
 			def result = service.prepareDispersionDataForBank(paysheet, dispersionData, dataByBank.first())
 		then:
-			result.employees.size() == 1
+			result.employees.size() == 3
 			result.paymentMessage == "Payment Message"
 			result.applyDate == applyDate
       result.idPaysheet == 1
