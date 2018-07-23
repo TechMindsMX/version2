@@ -1,8 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey
-import com.warrenstrange.googleauth.GoogleAuthenticator
+import com.modulus.uno.twoFactorAuth.AuthenticatorService
 
 class UserService {
 
@@ -10,6 +9,7 @@ class UserService {
   String APP_NAME = "ModulusUno"
 
   def documentService
+  AuthenticatorService authenticatorService
 
   User findByUsername(String username) {
     log.info "Find user with username: ${username}"
@@ -115,9 +115,7 @@ class UserService {
 
   @Transactional
   User generateKey2FA(User user) {
-    GoogleAuthenticator gAuth = new GoogleAuthenticator()
-    final GoogleAuthenticatorKey key = gAuth.createCredentials()
-    user.key2FA = key.getKey()
+    user.key2FA = authenticatorService.generateKey()
     user.save()
     user
   }
@@ -125,6 +123,13 @@ class UserService {
   @Transactional
   User setEnableTwoFactor(User user) {
     user.enable2FA = !user.enable2FA
+    user.save()
+    user
+  }
+
+  @Transactional
+  User enableTwoFactor(User user) {
+    user.enable2FA = true
     user.save()
     user
   }
