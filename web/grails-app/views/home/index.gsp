@@ -11,6 +11,13 @@
     <asset:stylesheet src="application.css"/>
     <asset:javascript src="application.js"/>
 
+    <style>
+      .fixed-panel {
+        min-height: 50%;
+        max-height: 65%;
+        overflow-y: scroll;
+      }
+    </style>
 
   </head>
   <body>
@@ -81,14 +88,20 @@
         </button>
 
         <div class="modal fade" id="modalPrivacyNotice" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
+          <div class="modal-dialog fixed-panel" role="document">
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <label><h3>Aviso de Privacidad</h3></label>
               </div>
               <div class="modal-body">
-                <textarea class="form-control" rows="15">${privacyNotice}</textarea>
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                    <g:each in="${privacyNotice}" var="line">
+                      <p class="text-justify text-muted">${line}</p>
+                    </g:each>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
