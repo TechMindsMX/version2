@@ -1,3 +1,8 @@
+grails.plugin.springsecurity.providerNames = [
+  'twoFactorAuthenticationProvider',
+  'anonymousAuthenticationProvider',
+  'rememberMeAuthenticationProvider']
+
 grails.views.default.codec = "html"
 grails.views.gsp.encoding = "UTF-8"
 grails.converters.encoding = "UTF-8"
