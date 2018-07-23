@@ -2,10 +2,11 @@ package com.modulus.uno.saleorder
 
 import grails.util.Environment
 import groovy.json.JsonSlurper
+import java.math.RoundingMode
 
 import com.modulus.uno.invoice.*
 import com.modulus.uno.catalogs.UnitType
-import java.math.RoundingMode
+
 import com.modulus.uno.Company
 import com.modulus.uno.ClientLink
 import com.modulus.uno.BankAccount
@@ -172,13 +173,15 @@ class InvoiceService {
     List<Impuesto> taxes = []
     
     if (item.iva){
-      taxes.add(new Impuesto(
+      Impuesto tax = new Impuesto(
         base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
         importe:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP) * (item.iva / 100).setScale(2, RoundingMode.HALF_UP),
         tasa:item.iva/100, 
         impuesto:'002', 
-        tipoFactor:"Tasa")
+        tipoFactor:"Tasa"
       )
+      tax.importe = (tax.base * tax.tasa).setScale(2, RoundingMode.HALF_UP)
+      taxes.add(tax)
     }
 
     taxes
@@ -188,13 +191,15 @@ class InvoiceService {
     List<Impuesto> holdings = []
     
     if (item.ivaRetention){
-      holdings.add(new Impuesto(
+      Impuesto retention = new Impuesto(
         base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
         importe:(item.quantity * item.ivaRetention).setScale(2, RoundingMode.HALF_UP), 
         tasa:item.ivaRetention/item.priceWithDiscount, 
         impuesto:'002', 
-        tipoFactor:"Tasa")
+        tipoFactor:"Tasa"
       )
+      retention.importe = (retention.base * retention.tasa).setScale(2, RoundingMode.HALF_UP) 
+      holdings.add(retention)
     }
 
     holdings
@@ -286,6 +291,30 @@ class InvoiceService {
     if (!result) {
       throw new RestException("No se pudo realizar la cancelación, intente más tarde")
     }
+  }
+
+  String getSerieFromInvoice(String emitter, String folio) {
+    def result = restService.getSerieFromInvoice(emitter, folio)
+    if (!result) {
+      throw new RestException("No se pudo obtener la serie de la factura")
+    }
+    log.info "Serie: ${result.serie}"
+    if (result.serie.startsWith("Error")) {
+      throw new RestException("No se pudo obtener la serie de la factura")
+    }
+    result.serie
+  }
+
+  String getFolioFromInvoice(String emitter, String uuid) {
+    def result = restService.getFolioFromInvoice(emitter, uuid)
+    if (!result) {
+      throw new RestException("No se pudo obtener el folio de la factura")
+    }
+    log.info "Folio: ${result.folio}"
+    if (result.folio.startsWith("Error")) {
+      throw new RestException("No se pudo obtener la folio de la factura")
+    }
+    result.folio
   }
 
 }
