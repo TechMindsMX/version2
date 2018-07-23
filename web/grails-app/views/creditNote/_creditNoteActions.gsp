@@ -12,6 +12,13 @@
   </div>
 </g:if>
 
+<g:if test="${creditNote.status == CreditNoteStatus.CANCEL_APPLIED && isEnabledToStamp}">
+  <div class="text-right">
+    <a href="${modulusuno.cancelAccuseUrl(creditNote:creditNote, format:'xml')}" class="btn btn-default" download>Acuse XML</a>
+    <a href="${modulusuno.cancelAccuseUrl(creditNote:creditNote, format:'pdf')}" class="btn btn-default" download>Acuse PDF</a>
+  </div>
+</g:if>
+
 <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR,ROLE_OPERATOR_EJECUTOR">
   <g:if test="${creditNote.status == CreditNoteStatus.CREATED}">
     <div class="text-right">
