@@ -27,4 +27,18 @@ class PaymentServiceSpec extends Specification {
       result.status == PaymentStatus.CONCILIATED
   }
 
+  void "Should find conciliate payments by Rfc"() {
+    given:"The company"
+      Company company = new Company(rfc:"CO1").save(validate:false)
+    and:"The rfc"
+      String rfc = "RFC"
+    and:
+      Payment payment = new Payment(company:company, rfc: "RFC").save(validate:false)
+      Payment payment1 = new Payment(company:company, rfc: "RFC1").save(validate:false)
+    when:
+      def result = service.findReferencedPaymentsByRfc(company, rfc)
+    then:
+      result.size() == 1
+  }
+
 }

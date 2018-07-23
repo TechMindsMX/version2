@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import org.springframework.transaction.annotation.Propagation
 import java.text.SimpleDateFormat
 import groovy.sql.Sql
+import java.math.RoundingMode
 
 import com.modulus.uno.EmailSenderService
 import com.modulus.uno.CompanyService
@@ -373,6 +374,24 @@ class SaleOrderService {
       order('dateCreated', 'desc')
     }
     results
+  }
+
+  List<SaleOrder> getAllSaleOrdersWithAmountToPayForRfc(Company company, String rfc) {
+    def allExecutedForClient = SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
+    allExecutedForClient.findAll { saleOrder -> saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP) > 0 }
+  }
+
+  List<SaleOrder> getAllSaleOrdersExecutedAndAuthorizedForRfc(Company company, String rfc) {
+    SaleOrder.createCriteria().list{
+      eq("rfc", rfc)
+      eq("company", company)
+      'in'("status", [SaleOrderStatus.EJECUTADA, SaleOrderStatus.AUTORIZADA])
+    }
+  }
+
+  List<SaleOrder> getAllSaleOrdersAlreadyConciliate(Company company, String rfc) {
+    def allExecutedForClient = SaleOrder.findAllByCompanyAndRfcAndStatus(company, rfc, SaleOrderStatus.EJECUTADA)
+    allExecutedForClient.findAll { saleOrder -> saleOrder.payments }
   }
 
 }

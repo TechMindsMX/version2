@@ -336,4 +336,23 @@ class SaleOrderController {
 
     render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName]] 
   }
+
+  def listOrdersWithAmountToPayForClient(BusinessEntity businessEntity) {
+    Company company = Company.get(session.company)
+    List<SaleOrder> list = saleOrderService.getAllSaleOrdersWithAmountToPayForRfc(company, businessEntity.rfc)
+    render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
+  }
+
+  def listTotalAmountExecutedAndAuthorized(BusinessEntity businessEntity) {
+    Company company = Company.get(session.company)
+    List<SaleOrder> list = saleOrderService.getAllSaleOrdersExecutedAndAuthorizedForRfc(company, businessEntity.rfc)
+    render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
+  }
+
+  def listOrdersAlreadyConciliate(BusinessEntity businessEntity) {
+    Company company = Company.get(session.company)
+    List<SaleOrder> list = saleOrderService.getAllSaleOrdersAlreadyConciliate(company, businessEntity.rfc)
+    render view:"list", model:[saleOrders: list, filterValues:[rfc:businessEntity.rfc, clientName:businessEntity]]
+  }
+
 }
