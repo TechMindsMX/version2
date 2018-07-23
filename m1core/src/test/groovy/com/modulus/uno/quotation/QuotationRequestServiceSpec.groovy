@@ -27,8 +27,6 @@ class QuotationRequestServiceSpec extends Specification {
     def cleanup() {
     }
 
-    
-
 }
 
 

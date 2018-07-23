@@ -16,6 +16,7 @@ conversionRule 'wex', org.springframework.boot.logging.logback.WhitespaceThrowab
 def bySecond = timestamp("yyyyMMdd'T'HHmmss")
 
 appender('ROLLING',RollingFileAppender) {
+  file = "${basePath}/logs/modulusuno.log"
   encoder(PatternLayoutEncoder){
     charset = Charset.forName('UTF-8')
     pattern =
@@ -27,7 +28,7 @@ appender('ROLLING',RollingFileAppender) {
       '%m%n%wex' // Message
   }
    rollingPolicy(TimeBasedRollingPolicy){
-    FileNamePattern = "${basePath}/logs/modulusuno-%d{yyyy-MM}.log"
+    FileNamePattern = "${basePath}/logs/modulusuno.log.%d"
   }
 
 }

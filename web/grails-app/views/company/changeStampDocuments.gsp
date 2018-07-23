@@ -30,24 +30,8 @@
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
               <g:form class="form-horizontal" action="updateDocumentsToStamp" name="documentsToInvoice" method="POST" enctype="multipart/form-data" >
-                <label>Archivo .key</label>
-                <input type="file" required="true" class="form-control" name="key" />
-                <label>Archivo .cer</label>
-                <input type="file" required="true" class="form-control" name="cer" />
-                <label>Número de Certificado <small><a href="https://portalsat.plataforma.sat.gob.mx/RecuperacionDeCertificados/">Más Información</a></small></label>
-                <input type="text" required="true" class="form-control" name="numCert" />
-                <label>Logotipo <small>(Solo se acepta archivos *.png con dimensiones 254 × 101)</small></label>
-                <input type="file" required="true" class="form-control" name="logo" accept="image/png" />
-                <label>Password</label>
-                <input type="password" required="true" class="form-control" name="password" />
-                <label>Serie de Facturas</label>
-                <input type="text" class="form-control" name="serie" />
-                <br />
-                <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
-                  <input type="submit" class="btn btn-green btn-lg" value="Actualizar" />
-                </sec:ifAnyGranted>
+                <g:render template="formDataToInvoice"/>
               </g:form>
-
             </div>
           </div>
         </div>

@@ -1,6 +1,8 @@
 package com.modulus.uno.saleorder
 
 import grails.util.Environment
+import groovy.json.JsonSlurper
+
 import com.modulus.uno.invoice.*
 import com.modulus.uno.catalogs.UnitType
 import java.math.RoundingMode
@@ -18,7 +20,7 @@ class InvoiceService {
   RestService restService
   def grailsApplication
 
-  String generateFactura(SaleOrder saleOrder){
+  Map generateFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
     log.info "Factura command to send: ${factura.dump()}"
     log.info "Datos de Facturación to send: ${factura.datosDeFacturacion.dump()}"
@@ -33,17 +35,19 @@ class InvoiceService {
       log.info "${ti.dump()}" 
     }
 
-    def result = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    def resultStamp = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    log.info "Result stamp: ${resultStamp.text}"
+    def result = new JsonSlurper().parseText(resultStamp.text)
     if (!result) {
       throw new RestException("No se pudo generar la factura") 
     }
-    if (result.text.startsWith("Error")) {
-      throw new RestException(result.text) 
+    if (result.error) {
+      throw new RestException(result.error) 
     }
-    result.text
+    result 
   }
 
-  private def createInvoiceFromSaleOrder(SaleOrder saleOrder){
+  FacturaCommand createInvoiceFromSaleOrder(SaleOrder saleOrder){
     FacturaCommand facturaCommand = new FacturaCommand(
       id:saleOrder.company.id.toString(),
       datosDeFacturacion: getDatosDeFacturacion(saleOrder), 
@@ -135,7 +139,7 @@ class InvoiceService {
         claveProd:item.satKey ?: "01010101",
         descripcion:item.name, 
         unidad:item.unitType,
-        claveUnidad:getUnitKeyFromItem(item),
+        claveUnidad:getUnitKeyFromItem(item.saleOrder.company, item),
         impuestos:buildTaxesFromItem(item),
         retenciones:buildTaxWithholdingsFromItem(item)
       )
@@ -145,12 +149,12 @@ class InvoiceService {
     conceptos
   }
 
-  private String getUnitKeyFromItem(SaleOrderItem item) {
-    UnitType unitType = UnitType.findByCompanyAndName(item.saleOrder.company, item.unitType)
+  String getUnitKeyFromItem(Company company, def item) {
+    UnitType unitType = UnitType.findByCompanyAndName(company, item.unitType)
     unitType ? unitType.unitKey : "XNA"
   }
 
-  private List<Impuesto> buildTaxesFromItem(SaleOrderItem item) {
+  List<Impuesto> buildTaxesFromItem(def item) {
     List<Impuesto> taxes = []
     
     if (item.iva){
@@ -166,7 +170,7 @@ class InvoiceService {
     taxes
   }
 
-  private List<Impuesto> buildTaxWithholdingsFromItem(SaleOrderItem item) {
+  List<Impuesto> buildTaxWithholdingsFromItem(def item) {
     List<Impuesto> holdings = []
     
     if (item.ivaRetention){
@@ -182,7 +186,7 @@ class InvoiceService {
     holdings
   }
 
-  private TotalesImpuestos buildSummaryTaxes(FacturaCommand facturaCommand) {
+  TotalesImpuestos buildSummaryTaxes(FacturaCommand facturaCommand) {
     new TotalesImpuestos(
       totalImpuestosTrasladados: calculateTaxesTotal(facturaCommand),
       totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand),

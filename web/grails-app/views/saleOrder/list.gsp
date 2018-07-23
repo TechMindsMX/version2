@@ -26,17 +26,18 @@
           <div class="well well-sm alert-success">${messageSuccess}</div>
         </g:if>
       <div class="table-responsive">
+      <div class="container-fluid">
         <table class="table table-condensed table-striped">
         <thead>
          <tr>
-           <th>No. de Orden</th>
-           <th>Fecha de Creación</th>
-           <th>RFC</th>
-           <th>Cliente</th>
-           <th>Estatus</th>
-           <th>Fecha de Cobro</th>
-           <th>Moneda</th>
-           <th>Total</th>
+           <th class="text-center">No. de Orden</th>
+           <th class="text-center">Fecha de Creación</th>
+           <th class="text-center col-xs-4">Cliente</th>
+           <th class="text-center col-xs-2">Estatus</th>
+           <th class="text-center">Serie</th>
+           <th class="text-center">Folio</th>
+           <th class="text-center"></th>
+           <th class="text-center">Total</th>
           </tr>
           <thead>
           <g:if test="${saleOrders.isEmpty()}">
@@ -48,17 +49,18 @@
          <g:each in="${saleOrders}" var="sale">
          <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
             <td class="text-center"><g:link action="show" id="${sale.id}">${sale.id}</g:link></td>
-            <td><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
-            <td>${sale.rfc}</td>
-            <td>${sale.clientName}</td>
+            <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
+            <td>${sale.clientName}<br/>${sale.rfc}</td>
             <td><g:message code="saleOrder.status.${sale.status}" default="${sale.status}"/> </td>
-            <td><g:formatDate format="dd-MM-yyyy" date="${sale.fechaCobro}"/></td>
-            <td>${sale.currency}</td>
+            <td class="text-center">${sale.invoiceSerie}</td>
+            <td class="text-center">${sale.invoiceFolio}</td>
+            <td class="text-center">${sale.currency}</td>
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
           </tr>
          </g:each>
          <tbody>
        </table>
+       </div>
        <g:if test="${!filterValues}">
        <nav>
           <div class="pagination">

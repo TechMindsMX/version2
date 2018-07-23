@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%! import com.modulus.uno.status.SaleOrderStatus %>
 <html>
   <head>
     <meta name="layout" content="main" />
@@ -39,6 +40,11 @@
       <div class="col-md-12">
         <g:render template="saleOrderData"/>
       </div>
+      <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA}">
+      <div class="col-md-12">
+        <g:render template="creditNotes"/>
+      </div>
+      </g:if>
     </div>
 
     <div class="row">

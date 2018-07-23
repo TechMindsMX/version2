@@ -29,8 +29,8 @@
           <div class="input-group easy-autocomplete col-xs-10">
             <input type="text" id="sku" name="sku" class="form-control" autocomplete="off" placeholder="SKU" required="" pattern=".{4,50}" maxlength="50" title="4 caracteres mínimo"/>
           </div>
-          <div class="input-group col-xs-10">
-            <input type="text" id="satKey" name="satKey" class="form-control" placeholder="Clave SAT" required="" pattern="[0-9]{8}" maxlength="8" title="8 dígitos exactamente"/>
+          <div class="input-group easy-autocomplete col-xs-10">
+            <input type="text" id="satKey" name="satKey" class="form-control" autocomplete="off" placeholder="Clave SAT" required="" pattern="[0-9]{8}" maxlength="8" title="8 dígitos exactamente"/>
           </div>
         </td>
         <td>

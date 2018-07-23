@@ -12,6 +12,7 @@ import com.modulus.uno.PaymentWay
 import com.modulus.uno.PaymentMethod
 import com.modulus.uno.InvoicePurpose
 import com.modulus.uno.status.SaleOrderStatus
+import com.modulus.uno.status.CreditNoteStatus
 
 class SaleOrder {
 
@@ -37,10 +38,12 @@ class SaleOrder {
   BigDecimal changeType = new BigDecimal(0)
   PaymentMethod paymentMethod = PaymentMethod.PUE
   InvoicePurpose invoicePurpose = InvoicePurpose.G01
+  String invoiceFolio
+  String invoiceSerie
 
   static belongsTo = [company:Company]
 
-  static hasMany = [addresses:Address, items:SaleOrderItem,authorizations:Authorization, documents:S3Asset, payments:SaleOrderPayment]
+  static hasMany = [addresses:Address, items:SaleOrderItem,authorizations:Authorization, documents:S3Asset, payments:SaleOrderPayment, creditNotes:CreditNote]
 
   static constraints = {
     rfc blank:false,size:10..50
@@ -56,6 +59,8 @@ class SaleOrder {
     pdfTemplate nullable:true
     currency nullable:false
     changeType nullable:true
+    invoiceFolio nullable:true
+    invoiceSerie nullable:true
   }
 
   BigDecimal getTotalIVA(){
@@ -70,15 +75,11 @@ class SaleOrder {
     getSubtotal() + getTotalIVA() - getTotalIvaRetention()
   }
 
-  def getSubtotal(){
+  BigDecimal getSubtotal(){
     items*.amountWithoutTaxes.sum() ?: 0
   }
 
-  def getAmountDiscount() {
-    getSubtotal()*(discount/100)
-  }
-
-  def getSubtotalWithDiscount() {
+  BigDecimal getSubtotalWithDiscount() {
     getSubtotal() - getAmountDiscount()
   }
 
@@ -91,7 +92,11 @@ class SaleOrder {
   }
 
   BigDecimal getAmountToPay() {
-    getTotal() - getAmountPayed()
+    getTotal() - getAmountPayed() - getTotalCreditNotesApplied()
+  }
+
+  BigDecimal getTotalCreditNotesApplied() {
+    (creditNotes.findAll { it.status == CreditNoteStatus.APPLIED })*.total.sum() ?: 0
   }
 
   String toString(){
