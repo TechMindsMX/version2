@@ -12,8 +12,11 @@ class AuthenticatorService {
   }
 
   Boolean isValidToken(String key, Integer token){
+    log.error "Validating token for key ${key} and token ${token}"
     GoogleAuthenticator gAuth = new GoogleAuthenticator()
-    gAuth.authorize(key, token)
+    def result = gAuth.authorize(key, token)
+    log.error "Result authorize: ${result}"
+    result
   }
 
 
