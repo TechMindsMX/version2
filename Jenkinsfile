@@ -99,7 +99,7 @@ pipeline {
       }
       steps{
         dir("configFiles"){
-          sh "git clone -b ${env.BRANCH_NAME}-new --single-branch git@bitbucket.org:techmindsmx/sepomex.git ."
+          sh "git clone -b ${env.BRANCH_NAME}-new --single-branch git@bitbucket.org:techmindsmx/config-modulusuno-v3.git ."
         }
       }
     }
