@@ -216,4 +216,11 @@ class ConciliationController {
     }
   }
 
+   def showDetailPaymentConciliated(Payment payment) {
+    log.info "Payment to conciliate: ${payment.dump()}"
+    List<Conciliation> conciliations = conciliationService.getConciliationsAppliedForPayment(payment)
+
+    render view:"chooseInvoiceToConciliate", model:[payment:payment, conciliations:conciliations]
+  }
+
 }
