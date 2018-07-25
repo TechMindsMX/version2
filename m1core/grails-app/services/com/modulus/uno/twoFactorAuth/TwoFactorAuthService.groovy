@@ -19,14 +19,14 @@ class TwoFactorAuthService implements TwoFactorAuthValidator {
     @Transactional(readOnly = true)
     @Override
     boolean isValidCodeAndUserName(String code, String name) {
-      log.info "Validate code and user name: ${code} - ${name}"
+      log.error "Validate code and user name: ${code} - ${name}"
         User user = userService.findByUsername(name)
         if (!user) {
-          log.info "User not found"
+          log.error "User not found"
           return false
         }
       if (user.enable2FA) {
-        log.info "Validating verification code"
+        log.error "Validating verification code"
         return (isValidLong(code) && authenticatorService.isValidToken(user.key2FA, code.toInteger()))
       }
       true

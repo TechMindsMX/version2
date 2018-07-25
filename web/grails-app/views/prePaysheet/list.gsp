@@ -17,13 +17,13 @@
       <div class="portlet portlet-blue">
         <div id="horizontalFormExample" class="panel-collapse collapse in">
 
-        <g:if test="${paysheetContracts}">
+        <g:if test="${!prePaysheetList}">
           <g:form action="listPrePaysheetsForPaysheetContract">
             <g:render template="choosePaysheetContract"/>
           </g:form>
         </g:if>
 
-        <g:if test="${!paysheetContracts}">
+        <g:if test="${prePaysheetList}">
 
           <div class="portlet-body">
             <div class="table-responsive">
@@ -56,7 +56,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="pagination">
-                    <g:paginate total="${prePaysheetCount ?: 0}" params="[paysheetContractId:paysheetContract.id]"/>
+                    <g:paginate total="${prePaysheetCount ?: 0}" params="[paysheetContractId:paysheetContract?.id]"/>
                 </div>
               </div>
             </div>
