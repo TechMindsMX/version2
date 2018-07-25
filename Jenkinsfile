@@ -117,8 +117,8 @@ pipeline {
           sh "git clone git@github.com:makingdevs/Tomcat-Docker.git ."
         }
         sh 'mv folderDocker/* .'
-        sh 'mv build/libs/web-0.1.war .'
-        sh 'mv build/libs/webservices-0.1.war .'
+        sh 'mv web/build/libs/web-0.1.war .'
+        sh 'mv webservices/build/libs/webservices-0.1.war .'
         sh 'mv web-0.1.war ROOT-WEB.war'
         sh 'mv webservices-0.1.war ROOT.war'
       }
