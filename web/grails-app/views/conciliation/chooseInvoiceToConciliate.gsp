@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.ConciliationStatus %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -55,9 +56,11 @@
                     <td>${conciliation.saleOrder.currency}</td>
                     <td>${conciliation.changeType ?: "NA"}</td>
                     <td class="text-center">
-                      <g:form action="deleteConciliation" id="${conciliation.id}">
-                        <button class="btn btn-danger">Quitar</button>
-                      </g:form>
+                      <g:if test="${conciliation.status == ConciliationStatus.TO_APPLY}">
+                        <g:form action="deleteConciliation" id="${conciliation.id}">                
+                          <button class="btn btn-danger">Quitar</button>
+                        </g:form>
+                      </g:if>  
                     </td>
                   </tr>
                   </g:each>
