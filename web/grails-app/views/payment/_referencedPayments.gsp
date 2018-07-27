@@ -4,7 +4,16 @@
       <th>Fecha</th>
       <th>Monto</th>
       <th>Cliente</th>
-      <th></th>
+      <g:if test="${conciliated}">
+        <th class="text-center">
+          <g:link class="btn btn-primary" controller="payment" action="referencedPayments">Ver todas</g:link>
+        </th>
+      </g:if>
+      <g:else>
+        <th class="text-center">
+          <g:link class="btn btn-primary" controller="payment" action="referencedPaymentsConciliated">Ver conciliadas</g:link>
+        </th>
+      </g:else>
     </tr>
     <g:if test="${payments}">
     <g:each in="${payments.list}" var="payment">

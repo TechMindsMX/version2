@@ -4,6 +4,14 @@
     <meta name="layout" content="main" />
     <g:set var="entityName" value="${message(code: 'menu.label', default: 'Menu')}" />
     <title><g:message code="default.show.label" args="[entityName]" /></title>
+
+    <style>
+      .button_to_submit {
+        margin-left: 2%;
+        margin-bottom: 2%;
+      }
+    </style>
+
   </head>
   <body>
 
@@ -61,37 +69,39 @@
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
             <div class="portlet-body">
-              <table class="table table-condensed">
-                <thead>
-                  <tr>
-                    <th>Nombre del menú</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                <g:if test="${menu.menus}">
-                  <g:each in="${menu.menus}" var="m">
-                  <tr>
-                    <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
-                    <td>
-                      <g:form action="removeSubmenu" method="DELETE" id="${menu.id}">
-                      <g:hiddenField name="submenuId" value="${m.id}"></g:hiddenField>
-                      <button class="btn btn-danger" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Seguro?')}');">
-                        Quitar operación
-                      </button>
-                      </g:form>
-                    </td>
-                  </tr>
-                  </g:each>
-                </g:if>
-                <g:else>
-                  <tr>
-                    <td colspan="2"><b>No hay submenues</b></td>
-                  </tr>
-                </g:else>
-                </tbody>
-              </table>
-              <div class="property-value" aria-labelledby="menu-label">
+              <div class="table-responsive">
+                <table class="table table-condensed table-striped">
+                  <thead>
+                    <tr>
+                      <th>Nombre del menú</th>
+                      <th>&nbsp;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <g:if test="${menu.menus}">
+                    <g:each in="${menu.menus}" var="m">
+                    <tr>
+                      <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
+                      <td>
+                        <g:form action="removeSubmenu" method="DELETE" id="${menu.id}">
+                        <g:hiddenField name="submenuId" value="${m.id}"></g:hiddenField>
+                        <button class="btn btn-danger" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Seguro?')}');">
+                          Quitar operación
+                        </button>
+                        </g:form>
+                      </td>
+                    </tr>
+                    </g:each>
+                  </g:if>
+                  <g:else>
+                    <tr>
+                      <td colspan="2"><b>No hay submenues</b></td>
+                    </tr>
+                  </g:else>
+                  </tbody>
+                </table>
+                <div class="property-value" aria-labelledby="menu-label">
+                </div>
               </div>
             </div>
           </div>
@@ -109,40 +119,54 @@
             <div class="clearfix"></div>
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
-						<g:form action="addSubmenu" id="${menu.id}">
+						<g:form action="addSubmenu" id="${menu.id}" class="form_to_submit">
             <div class="portlet-body">
-              <table class="table table-condensed">
-                <thead>
-                  <tr>
-                    <th>Nombre del menú</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                <g:if test="${menusNotIncluded}">
-                  <g:hiddenField name="parentMenuId" value="${menu.id}" />
-                  <g:each in="${menusNotIncluded}" var="m">
-                  <tr>
-                    <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
-                    <td>
-                      <g:checkBox name="menuOption" value="${m.id}" class="form-check-input" checked="false"></g:checkBox>
-                    </td>
-                  </tr>
-                  </g:each>
-                </g:if>
-                <g:else>
-                  <tr>
-                    <td colspan="2"><b>Todos los menues incluidos</b></td>
-                  </tr>
-                </g:else>
-                </tbody>
-              </table>
-							<g:submitButton name="submit" value="Agregar submenues" class="btn btn-default"></g:submitButton>
+              <div class="table-responsive">
+                <table class="table table-condensed table-striped">
+                  <thead>
+                    <tr>
+                      <th>Nombre del menú</th>
+                      <th>&nbsp;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <g:if test="${menusNotIncluded}">
+                    <g:hiddenField name="parentMenuId" value="${menu.id}" />
+                    <g:each in="${menusNotIncluded}" var="m">
+                    <tr>
+                      <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
+                      <td>
+                        <g:checkBox name="menuOption" value="${m.id}" class="form-check-input" checked="false"></g:checkBox>
+                      </td>
+                    </tr>
+                    </g:each>
+                  </g:if>
+                  <g:else>
+                    <tr>
+                      <td colspan="2"><b>Todos los menues incluidos</b></td>
+                    </tr>
+                  </g:else>
+                  </tbody>
+                </table>
+              </div>
             </div>
 						</g:form>
+            <div class="portlet-footer">
+              <div class="row">
+                <div class="col-md-4">
+                  <button class="btn btn-primary" id="button_to_submit">Agregar submenues</button>
+                </div>
+                <div class="col-md-8">
+                  <div class="alert alert-danger alert-dismissible" id="noSelectionAlert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    Por favor seleccione al menos un submenú
+                  </div>
+                </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <asset:javascript src="menu/submenues.js" />
   </body>
 </html>

@@ -375,7 +375,6 @@ class SaleOrderController {
 
   @Transactional
   def stampedDateForSaleOrders(SaleOrder saleOrder) {
-    log.info "Sale order ${saleOrder}"
     saleOrderService.updateStampDateAlreadyUpdate(saleOrder)
     redirect action:"list"
   }

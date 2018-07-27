@@ -272,7 +272,7 @@ class InvoiceService {
   }
 
   void cancelBill(SaleOrder saleOrder) {
-    String rfc = (Environment.current == Environment.PRODUCTION) ? creditNote.saleOrder.company.rfc : "AAA010101AAA"
+    String rfc = (Environment.current == Environment.PRODUCTION) ? saleOrder.company.rfc : "AAA010101AAA"
     CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${saleOrder.folio.length()>36 ? saleOrder.folio.substring(0,36) : saleOrder.folio}", rfc:rfc, id:"${saleOrder.company.id}")
     def result = restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
     if (!result) {
