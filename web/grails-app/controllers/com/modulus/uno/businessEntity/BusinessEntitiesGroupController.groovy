@@ -21,4 +21,26 @@ class BusinessEntitiesGroupController {
     respond new BusinessEntitiesGroup(), model:[companies:corporate.companies.sort{it.bussinessName}]
   }
 
+  @Transactional
+  def save(BusinessEntitiesGroupCommand command) {
+    log.info "Command: ${command.dump()}"
+    Corporate corporate = session.corporate
+    if (command.hasErrors()) {
+      render view:'create', model:[commandErrors:command.errors, companies:corporate.companies.sort{it.bussinessName}]
+    }
+    BusinessEntitiesGroup businessEntitiesGroup = command.createBusinessEntitiesGroup()
+    log.info "Group to save: ${businessEntitiesGroup?.dump()}"
+    if (businessEntitiesGroup.hasErrors()) {
+      render view:'create', model:[businessEntitiesGroup:businessEntitiesGroup, companies:corporate.companies.sort{it.bussinessName}]
+    }
+    businessEntitiesGroup.save()
+    log.info "Group saved: ${businessEntitiesGroup.dump()}"
+
+    redirect action:"show", id:businessEntitiesGroup.id
+  }
+
+  def show(BusinessEntitiesGroup businessEntitiesGroup) {
+    respond businessEntitiesGroup
+  }
+
 }
