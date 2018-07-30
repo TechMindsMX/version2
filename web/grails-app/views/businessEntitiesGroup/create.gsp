@@ -33,7 +33,7 @@
               <div class="alert alert-danger" role="alert">
                 <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error.getFieldError()}"/></li>
               </div>
-                  </g:each>
+              </g:each>
               </g:if>
               <g:hasErrors bean="${this.businessEntitiesGroup}">
               <ul class="errors" role="alert">
@@ -41,17 +41,19 @@
                 <div class="alert alert-danger" role="alert">
                   <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
                 </div>
-                    </g:eachError>
+                </g:eachError>
               </ul>
-                </g:hasErrors>
-                <g:form action="save">
+              </g:hasErrors>
+
+              <g:form action="save">
                 <fieldset class="form">
                   <g:render template="form" bean="${businessEntitiesGroup}" />
                 </fieldset>
-                <fieldset class="buttons">
+                <fieldset class="buttons text-right">
                   <g:submitButton name="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
                 </fieldset>
-                  </g:form>
+              </g:form>
+
             </div>
           </div>
         </div>
