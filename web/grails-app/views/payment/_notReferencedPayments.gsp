@@ -1,5 +1,6 @@
 <div class="table-responsive">
-  <table class="table">
+  <table class="table table-condensed table-striped">
+    <thead>
     <tr>
       <th>Fecha</th>
       <th>Monto</th> 
@@ -14,7 +15,9 @@
         </div>
       </th>
     </tr>
+    </thead>
     <g:if test="${payments}">
+    <tbody>
     <g:each in="${payments.list}" var="payment">
     <tr> 
       <td>
@@ -26,8 +29,8 @@
         <g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}"/>
       </g:else>  
       <td>${modulusuno.formatPrice(number: payment.amount)}</td>
-      <g:if test="${!conciliated}">
         <td class="text-center">
+          <g:if test="${!conciliated}">
           <div class="col-md-3 text-center">
             <g:link class="btn btn-primary" controller="conciliation" action="chooseInvoiceToConciliate" id="${payment.id}">
               Elegir Factura
@@ -38,10 +41,12 @@
               Sin Factura
             </g:link>
           </div>
+          </g:if>
         </td>
-      </g:if>
+      
     </tr>
     </g:each>
+    </tbody>
     </g:if>
 
   </table>
