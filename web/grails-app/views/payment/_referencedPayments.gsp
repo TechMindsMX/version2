@@ -9,8 +9,7 @@
         <th class="text-center">
           <g:link class="btn btn-primary" controller="payment" action="referencedPayments">Ver por conciliar</g:link>
         </th>
-      </g:if>
-      <g:else>
+      </g:if><g:else>
         <th class="text-center">
           <g:link class="btn btn-primary" controller="payment" action="referencedPaymentsConciliated">Ver conciliadas</g:link>
         </th>
@@ -22,7 +21,9 @@
     <tr>
       <td>
         <g:if test="${conciliated}">
-          <g:link controller="conciliation" action="showDetailPaymentConciliated" id="${payment.id}"><g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}" /></g:link>
+          <g:link controller="conciliation" action="showDetailPaymentConciliated" id="${payment.id}">
+            <g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}" />
+          </g:link>
         </g:if><g:else>
           <g:formatDate format="dd/MM/yyyy" date="${payment.dateCreated}"/>
         </g:else>
