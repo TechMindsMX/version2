@@ -2,7 +2,7 @@
 <f:with bean="businessEntitiesGroup">
 <div class="form-group">
   <label for="">${message(code:"businessEntitiesGroup.company.label")}</label>
-  <g:select name="company" from="${companies}" value="${businessEntitiesGroup.company}" class="form-control" />
+  <g:select name="companyId" from="${companies}" optionKey="id" value="${businessEntitiesGroup.company}" class="form-control" />
 </div>
 <div class="form-group">
   <label for="">${message(code:"businessEntitiesGroup.type.label")}</label>
@@ -10,6 +10,6 @@
 </div>
 <div class="form-group">
   <label for="">${message(code:"businessEntitiesGroup.description.label")}</label>
-  <input type="text" name="description" class="form-control" value="${businessEntitiesGroup.description}"/>
+  <input type="text" name="description" class="form-control" value="${businessEntitiesGroup.description}" required/>
 </div>
 </f:with>
