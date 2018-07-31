@@ -9,6 +9,8 @@ import com.modulus.uno.Corporate
 class BusinessEntitiesGroupController {
 
   static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+
+  BusinessEntitiesGroupService businessEntitiesGroupService
   
   def list() {
     params.max = 25
@@ -40,7 +42,8 @@ class BusinessEntitiesGroupController {
   }
 
   def show(BusinessEntitiesGroup businessEntitiesGroup) {
-    respond businessEntitiesGroup
+    businessEntitiesAvailables = businessEntitiesGroupService.getBusinessEntitiesAvailablesForGroup(businessEntitiesGroup)
+    respond businessEntitiesGroup, model:[businessEntitiesAvailables:businessEntitiesAvailables]
   }
 
 }
