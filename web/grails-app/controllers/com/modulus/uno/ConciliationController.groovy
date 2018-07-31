@@ -226,4 +226,10 @@ class ConciliationController {
     }
   }
 
+  def showDetailBankingDepositConciliated(MovimientosBancarios bankingTransaction) {
+    log.info "Banking Transaction conciliated: ${bankingTransaction.dump()}"
+    List<Conciliation> conciliations = conciliationService.getConciliationsAppliedForBankingTransaction(bankingTransaction)
+    render view:"choosePaymentToPurchaseToConciliateWithBankingWithdraw", model:[bankingTransaction:bankingTransaction, conciliations:conciliations]
+  }
+
 }
