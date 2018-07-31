@@ -19,7 +19,15 @@
     </tr>
     <g:each in="${bankingDeposits}" var="transaction">
     <tr>
-      <td><g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/></td>
+      <td>
+        <g:if test="${conciliated}">
+          <g:link controller="conciliation" action="showDetailPaymentConciliated" id="${movimientosBancarios.id}">
+            <g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/>
+          </g:link>
+        </g:if><else>
+          <g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/>
+        </else>
+      </td>
       <td>${transaction.cuenta}</td>
       <td>${transaction.concept}</td>
       <td>${transaction.reference}</td>
