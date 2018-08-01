@@ -25,4 +25,12 @@ class BusinessEntitiesGroupService {
     businessEntitiesGroup
   }
 
+  @Transactional
+  BusinessEntitiesGroup deleteBusinessEntityFromGroup(BusinessEntitiesGroup businessEntitiesGroup, String businessEntityId) {
+    BusinessEntity businessEntity = BusinessEntity.get(businessEntityId)
+    businessEntitiesGroup.removeFromBusinessEntities(businessEntity)
+    businessEntitiesGroup.save()
+    businessEntitiesGroup
+  }
+
 }
