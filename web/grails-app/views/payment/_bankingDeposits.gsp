@@ -21,12 +21,12 @@
     <tr>
       <td>
         <g:if test="${conciliated}">
-          <g:link controller="conciliation" action="showDetailPaymentConciliated" id="${movimientosBancarios.id}">
+          <g:link controller="conciliation" action="showDetailBankingDepositConciliated" id="${transaction.id}">
             <g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/>
           </g:link>
-        </g:if><else>
+        </g:if><g:else>
           <g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/>
-        </else>
+      </g:else>
       </td>
       <td>${transaction.cuenta}</td>
       <td>${transaction.concept}</td>
