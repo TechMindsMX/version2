@@ -21,7 +21,7 @@
     <tr>
       <td>
         <g:if test="${conciliated}">
-          <g:link controller="conciliation" action="showDetailBankingDepositConciliated" id="${transaction.id}">
+          <g:link controller="conciliation" action="showDetailBankingWithdrawsConciliated" id="${transaction.id}">
             <g:formatDate date="${transaction.dateEvent}" format="dd-MM-yyyy"/></td>
           </g:link>
         </g:if><g:else>
