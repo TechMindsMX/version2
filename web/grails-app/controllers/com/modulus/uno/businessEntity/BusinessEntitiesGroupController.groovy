@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
 import com.modulus.uno.Corporate
+import com.modulus.uno.BusinessEntity
 
 @Transactional(readOnly = true)
 class BusinessEntitiesGroupController {
@@ -42,8 +43,14 @@ class BusinessEntitiesGroupController {
   }
 
   def show(BusinessEntitiesGroup businessEntitiesGroup) {
-    businessEntitiesAvailables = businessEntitiesGroupService.getBusinessEntitiesAvailablesForGroup(businessEntitiesGroup)
+    List<BusinessEntity> businessEntitiesAvailables = businessEntitiesGroupService.getBusinessEntitiesAvailablesForGroup(businessEntitiesGroup)
     respond businessEntitiesGroup, model:[businessEntitiesAvailables:businessEntitiesAvailables]
+  }
+
+  @Transactional
+  def addBusinessEntity(BusinessEntitiesGroup businessEntitiesGroup) {
+    businessEntitiesGroupService.addBusinessEntityToGroup(businessEntitiesGroup, params.businessEntityId)
+    redirect action:"show", id:businessEntitiesGroup.id
   }
 
 }
