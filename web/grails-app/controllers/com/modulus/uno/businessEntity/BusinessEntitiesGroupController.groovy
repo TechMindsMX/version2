@@ -53,4 +53,10 @@ class BusinessEntitiesGroupController {
     redirect action:"show", id:businessEntitiesGroup.id
   }
 
+  @Transactional
+  def deleteBusinessEntity(BusinessEntitiesGroup businessEntitiesGroup) {
+    businessEntitiesGroupService.deleteBusinessEntityFromGroup(businessEntitiesGroup, params.businessEntityId)
+    redirect action:"show", id:businessEntitiesGroup.id
+  }
+
 }
