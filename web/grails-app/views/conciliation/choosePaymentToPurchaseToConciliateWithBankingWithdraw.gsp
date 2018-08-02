@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.ConciliationStatus %>
+<%! import com.modulus.uno.status.ConciliationStatus %>
 <!DOCTYPE html>
 <html>
   <head>
