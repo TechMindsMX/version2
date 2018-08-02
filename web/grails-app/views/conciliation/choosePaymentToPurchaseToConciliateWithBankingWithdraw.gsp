@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.ConciliationStatus %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -39,7 +40,7 @@
                   <tr>
                     <th class="col-md-4">Pago</th>
                     <th>Monto del Pago</th>
-                    <th>Monto a aplicar (MXN)</th>
+                    <th><g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}"> Monto a aplicar (MXN)</g:if></th>
                     <th>Nuevo Saldo</th>
                     <th></th>
                   </tr>
@@ -47,12 +48,14 @@
                   <tr>
                     <td>${conciliation.paymentToPurchase.id}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.paymentToPurchase.amount)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.amount)}</td>
+                    <td class="text-right"><g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">${modulusuno.formatPrice(number: conciliation.amount)}</g:if></td>
                     <td class="text-right">${modulusuno.formatPrice(number: (conciliation.paymentToPurchase.amount - conciliation.amount)) }</td>
                     <td class="text-center">
-                      <g:form action="deleteConciliation" id="${conciliation.id}">
-                        <button class="btn btn-danger">Quitar</button>
-                      </g:form>
+                      <g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}"> 
+                        <g:form action="deleteConciliation" id="${conciliation.id}">
+                          <button class="btn btn-danger">Quitar</button>
+                        </g:form>
+                      </g:if>
                     </td>
                   </tr>
                   </g:each>
