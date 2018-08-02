@@ -160,7 +160,7 @@ function calculatePriceWithCurrency(prodPrice, prodCurrency) {
 }
 
 function calculatePriceWithDiscount() {
-  return $("#price").val() - $("#price").val()*($("#discount").val()/100)
+  return $("#price").val() - $("#price").val()*($("#discount").val()/100.00)
 }
 
 function calculateAmountAndNetPrice(){
@@ -171,8 +171,9 @@ function calculateAmountAndNetPrice(){
     return
   }
 
-  $("#netprice").val((calculatePriceWithDiscount()*(1 + $("#iva").val()/100.00) - $("#ivaRetention").val()).toFixed(2))
-  $("#amount").val(($("#quantity").val()*$("#netprice").val()).toFixed(2))
+  var netPrice = calculatePriceWithDiscount()*(1 + $("#iva").val()/100.00) - $("#ivaRetention").val()
+  $("#netprice").val(netPrice.toFixed(6))
+  $("#amount").val(($("#quantity").val()*netPrice).toFixed(2))
 }
 
 
