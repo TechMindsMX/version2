@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.ConciliationStatus %>
+<%! import com.modulus.uno.status.ConciliationStatus %>
 <div class="row">
   <div class="col-md-4 text-center">
     <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
