@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.BusinessEntityService
 import com.modulus.uno.Company
+import com.modulus.uno.User
 
 class BusinessEntitiesGroupService {
 
@@ -46,8 +47,17 @@ class BusinessEntitiesGroupService {
     }
   }
 
-  List<BusinessEntitiesGroup> getGroupsForCompany(Company company) {
-    BusinessEntitiesGroup.findAllByCompany(company)
+  List<BusinessEntitiesGroup> getAvailableGroupsForCompanyAndUser(Company company, User user) {
+    List<BusinessEntitiesGroup> allCompanyGroups = BusinessEntitiesGroup.findAllByCompany(company)
+    List<BusinessEntitiesGroup> currentGroupsForUserInCompany = user.businessEntitiesGroups.findAll { group -> group.company == company }.toList()
+    allCompanyGroups - currentGroupsForUserInCompany
+  }
+
+  @Transactional
+  User addBusinessEntitiesGroupToUser(User user, BusinessEntitiesGroup group) {
+    user.addToBusinessEntitiesGroups(group)
+    user.save()
+    user
   }
 
 }
