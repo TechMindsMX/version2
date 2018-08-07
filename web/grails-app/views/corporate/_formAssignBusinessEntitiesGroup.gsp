@@ -7,12 +7,12 @@
   </div>
   <div id="defaultPortlet" class="panel-collapse collapse in">
     <div class="portlet-body">
-      <g:form action="addBusinessEntitiesGroup" id="${user.id}">
+      <g:form action="addBusinessEntitiesGroupToUser" id="${user.id}">
       <div class="row">
         <div class="col-md-8">
           <div class="form-group">
             <label>Grupos disponibles a agregar:</label>
-            <g:select class="form-control" name="businessEntititesGroupId" from="${companyGroups.sort{it.description}}" optionKey="id" optionValue="description" noSelection="['':'Seleccione un grupo...']" required=""/>
+            <g:select class="form-control" name="businessEntitiesGroupId" from="${companyGroups.sort{it.description}}" optionKey="id" optionValue="description" noSelection="['':'Seleccione un grupo...']" required=""/>
           </div>
         </div>
         <div class="col-md-4 text-right">
