@@ -230,8 +230,16 @@ class CorporateController {
 
   def assignBusinessEntitiesGroup(User user) {
     Company company = Company.get(params.companyId)
-    List<BusinessEntitiesGroup> companyGroups = businessEntitiesGroupService.getGroupsForCompany(company)  
+    List<BusinessEntitiesGroup> companyGroups = businessEntitiesGroupService.getAvailableGroupsForCompanyAndUser(company, user)  
     [companyGroups:companyGroups, user:user, company:company]
+  }
+
+  @Transactional
+  def addBusinessEntitiesGroupToUser(User user) {
+    BusinessEntitiesGroup group = BusinessEntitiesGroup.get(params.businessEntitiesGroupId)
+    log.info "Add group: ${group.description} to user: ${user.username}"
+    businessEntitiesGroupService.addBusinessEntitiesGroupToUser(user, group)
+    redirect action:"assignBusinessEntitiesGroup", id:user.id, params:[companyId:group.company.id]
   }
 }
 
