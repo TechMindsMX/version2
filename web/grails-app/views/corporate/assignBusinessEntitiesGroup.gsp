@@ -23,6 +23,11 @@
                 <dt>Usuario:</dt>
                 <dd>${user.username}</dd>
               </dl>
+              <div class="row">
+                <div class="col-md-12 text-right">
+                  <g:link class="btn btn-primary" action="users" id="${corporate.id}">Regresar</g:link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -37,7 +42,6 @@
 
     <div class"row">
       <div class"col-md-12 text-right">
-        
       </div>
     </div>
 
