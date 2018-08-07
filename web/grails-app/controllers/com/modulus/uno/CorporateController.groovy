@@ -229,18 +229,26 @@ class CorporateController {
   }
 
   def assignBusinessEntitiesGroup(User user) {
+    Corporate corporate = Corporate.get(session.corporate.id)
     Company company = Company.get(params.companyId)
     List<BusinessEntitiesGroup> companyGroups = businessEntitiesGroupService.getAvailableGroupsForCompanyAndUser(company, user)  
-    [companyGroups:companyGroups, user:user, company:company]
+    [companyGroups:companyGroups, user:user, company:company, corporate:corporate]
   }
 
   @Transactional
   def addBusinessEntitiesGroupToUser(User user) {
     BusinessEntitiesGroup group = BusinessEntitiesGroup.get(params.businessEntitiesGroupId)
-    log.info "Add group: ${group.description} to user: ${user.username}"
     businessEntitiesGroupService.addBusinessEntitiesGroupToUser(user, group)
     redirect action:"assignBusinessEntitiesGroup", id:user.id, params:[companyId:group.company.id]
   }
+
+  @Transactional
+  def deleteBusinessEntitiesGroupFromUser(User user) {
+    BusinessEntitiesGroup group = BusinessEntitiesGroup.get(params.groupId)
+    businessEntitiesGroupService.deleteBusinessEntitiesGroupFromUser(user, group)
+    redirect action:"assignBusinessEntitiesGroup", id:user.id, params:[companyId:group.company.id]
+  }
+
 }
 
 @groovy.transform.TypeChecked
