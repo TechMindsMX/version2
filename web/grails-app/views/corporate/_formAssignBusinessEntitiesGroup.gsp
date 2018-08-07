@@ -37,7 +37,7 @@
                 <g:each in="${user.businessEntitiesGroups.sort{it.description}}" var="group">
                   <tr>
                     <td>${group.description}</td>
-                    <td class="text-right"><g:link class="btn btn-danger" action="deleteBusinessEntitiesGroup" id="${group.id}" params="[userId:user.id]">Quitar</g:link></td>
+                    <td class="text-right"><g:link class="btn btn-danger" action="deleteBusinessEntitiesGroupFromUser" id="${user.id}" params="[groupId:group.id]">Quitar</g:link></td>
                   </tr>
                 </g:each>
               </tbody>
