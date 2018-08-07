@@ -16,7 +16,7 @@ class FilterTagLib {
       out << """
         <div class="col-md-${width}">
           <label>${attrs.labels[index]}</label>
-          <input class="form-control" name="${filter}" type="text" value="${value}"/>
+          <input class="form-control" id="${filter}" name="${filter}" type="text" value="${value}"/>
         </div>
       """
     }
