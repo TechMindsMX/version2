@@ -60,4 +60,11 @@ class BusinessEntitiesGroupService {
     user
   }
 
+  @Transactional
+  User deleteBusinessEntitiesGroupFromUser(User user, BusinessEntitiesGroup group) {
+    user.removeFromBusinessEntitiesGroups(group)
+    user.save()
+    user
+  }
+
 }
