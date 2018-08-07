@@ -46,4 +46,8 @@ class BusinessEntitiesGroupService {
     }
   }
 
+  List<BusinessEntitiesGroup> getGroupsForCompany(Company company) {
+    BusinessEntitiesGroup.findAllByCompany(company)
+  }
+
 }
