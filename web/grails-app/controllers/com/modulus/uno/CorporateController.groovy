@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import com.modulus.uno.businessEntity.BusinessEntitiesGroup
 import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
 
 class CorporateController {
@@ -225,6 +226,12 @@ class CorporateController {
     corporate.save()
     corporateService.unassignRolesForQuotationServiceToUsersInCorporate(corporate)
     redirect action:"show", id:corporate.id
+  }
+
+  def assignBusinessEntitiesGroup(User user) {
+    Company company = Company.get(params.companyId)
+    List<BusinessEntitiesGroup> companyGroups = businessEntitiesGroupService.getGroupsForCompany(company)  
+    [companyGroups:companyGroups, user:user, company:company]
   }
 }
 
