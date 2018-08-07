@@ -19,7 +19,7 @@
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
         
-        <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName']" labels="['RFC', 'CLIENTE']" filterValues="${filterValues}" viewAll="list"/>
+        <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName', 'stampedDateInit', 'stampedDateEnd']" labels="['RFC', 'CLIENTE', 'FECHA TIMBRE DESDE', 'FECHA TIMBRE HASTA']" filterValues="${filterValues}" viewAll="list"/>
         
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
@@ -109,5 +109,6 @@
   </div>
 </div>
 </div>
+<asset:javascript src="saleOrder/list.js"/>
 </body>
 </html>
