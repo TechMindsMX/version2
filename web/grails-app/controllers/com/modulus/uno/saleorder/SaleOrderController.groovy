@@ -215,9 +215,9 @@ class SaleOrderController {
 
   def searchClientForSale(){
     def company = Company.get(session.company ? session.company.toLong() : params.companyId)
-    def clients = businessEntityService.findBusinessEntityByKeyword(params.q, "CLIENT", company)
+    List<BusinessEntity> clients = saleOrderService.getClientsForCompany(company, params.q)
     if(clients.isEmpty()){
-      flash.message = "No se encontró cliente."
+      flash.message = "No se encontraron coincidencias"
     }
     render view:'create',model:([company:company, clients:clients] + params)
   }
