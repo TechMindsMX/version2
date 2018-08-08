@@ -11,6 +11,7 @@ import grails.util.Environment
 import com.modulus.uno.EmailSenderService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CommissionTransactionService
+import com.modulus.uno.BusinessEntityService
 
 import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntity
@@ -444,4 +445,16 @@ class SaleOrderService {
     saleOrder.save()
     saleOrder
   }
+
+  List<BusinessEntity> searchClientsForCompany(Company company, String dataQuery) {
+    User currentUser = springSecurityService.currentUser
+    List<BusinessEntity> clients = []
+    if (user.businessEntitiesGroups.findAll { group -> group.company == company && group.type == BusinessEntitiesGroupType.CLIENTS }) {
+      clients = businessEntitiesGroupService.findBusinessEntitiesByKeyword(currentUser, company, dataQuery)
+    } else {
+      clients = businessEntityService.findBusinessEntityByKeyword(dataQuery, "CLIENT", company)
+    }
+    clients
+  }
+
 }
