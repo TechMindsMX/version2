@@ -68,13 +68,27 @@ class BusinessEntitiesGroupService {
   }
 
   List<BusinessEntity> findBusinessEntitiesByKeyword(User user, Company company, String dataQuery) {
-    List<BusinessEntity> allClientsForUser = []
-    List<BusinessEntitiesGroup> allClientsGroupsForUserInCompany = user.businessEntitiesGroups.findAll { group -> group.company == company && group.type == BusinessEntitiesGroupType.CLIENTS }.toList()
-    allClientsGroupsForUserInCompany.each { group ->
-      allClientsForUser.addAll(group.businessEntities.toList())
-    }
+    List<BusinessEntity> allClientsForUser = getAllClientsFromUserInCompany(user, company)
     List<BusinessEntity> clients = dataQuery ? allClientsForUser.findAll { client -> client.rfc.contains(dataQuery) || client.toString().contains(dataQuery) } : allClientsForUser
     clients
+  }
+
+  List<BusinessEntitiesGroup> findClientsGroupsForUserInCompany(User user, Company company) {
+    user.businessEntitiesGroups.findAll { group -> group.company == company && group.type == BusinessEntitiesGroupType.CLIENTS }.toList()
+  }
+
+  List<BusinessEntity> getAllClientsFromUserGroups(List<BusinessEntitiesGroup> groups) {
+    List<BusinessEntity> allClientsForUser = [] 
+    groups.each { group ->
+      allClientsForUser.addAll(group.businessEntities.toList())
+    }
+    allClientsForUser
+  }
+
+  List<BusinessEntity> getAllClientsFromUserInCompany(User user, Company company) {
+    List<BusinessEntitiesGroup> userClientsGroups = findClientsGroupsForUserInCompany(user, company)
+    List<BusinessEntity> allClientsForUser = getAllClientsFromUserGroups(userClientsGroups)
+    allClientsForUser
   }
 
 }
