@@ -71,10 +71,8 @@ class BusinessEntitiesGroupService {
     List<BusinessEntity> allClientsForUser = []
     List<BusinessEntitiesGroup> allClientsGroupsForUserInCompany = user.businessEntitiesGroups.findAll { group -> group.company == company && group.type == BusinessEntitiesGroupType.CLIENTS }.toList()
     allClientsGroupsForUserInCompany.each { group ->
-      println "Business Entities group: ${group.id} - ${group.businessEntities}"
       allClientsForUser.addAll(group.businessEntities.toList())
     }
-    println "All clients for user: ${allClientsForUser}"
     List<BusinessEntity> clients = dataQuery ? allClientsForUser.findAll { client -> client.rfc.contains(dataQuery) || client.toString().contains(dataQuery) } : allClientsForUser
     clients
   }
