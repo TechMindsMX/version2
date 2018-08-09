@@ -12,6 +12,7 @@ import com.modulus.uno.EmailSenderService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CommissionTransactionService
 import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
 
 import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntity
@@ -28,6 +29,7 @@ import com.modulus.uno.CommissionType
 import com.modulus.uno.status.SaleOrderStatus
 import com.modulus.uno.status.ConciliationStatus
 import com.modulus.uno.status.CommissionTransactionStatus
+import com.modulus.uno.businessEntity.BusinessEntitiesGroupType
 
 class SaleOrderService {
 
@@ -39,6 +41,8 @@ class SaleOrderService {
   def springSecurityService
   def dataSource
   CommissionTransactionService commissionTransactionService
+  BusinessEntityService businessEntityService
+  BusinessEntitiesGroupService businessEntitiesGroupService
 
   // TODO: Code Review
   @Transactional
@@ -449,7 +453,7 @@ class SaleOrderService {
   List<BusinessEntity> searchClientsForCompany(Company company, String dataQuery) {
     User currentUser = springSecurityService.currentUser
     List<BusinessEntity> clients = []
-    if (user.businessEntitiesGroups.findAll { group -> group.company == company && group.type == BusinessEntitiesGroupType.CLIENTS }) {
+    if (currentUser.businessEntitiesGroups.findAll { group -> group.company == company && group.type == BusinessEntitiesGroupType.CLIENTS }) {
       clients = businessEntitiesGroupService.findBusinessEntitiesByKeyword(currentUser, company, dataQuery)
     } else {
       clients = businessEntityService.findBusinessEntityByKeyword(dataQuery, "CLIENT", company)
