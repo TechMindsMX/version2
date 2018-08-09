@@ -3,6 +3,7 @@ package com.modulus.uno.businessEntity
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import com.modulus.uno.BusinessEntity
 import com.modulus.uno.Company
@@ -10,6 +11,8 @@ import com.modulus.uno.User
 import com.modulus.uno.ComposeName
 import com.modulus.uno.BusinessEntityService
 import com.modulus.uno.NameType
+import com.modulus.uno.BusinessEntityType
+import com.modulus.uno.BusinessEntityStatus
 
 @TestFor(BusinessEntitiesGroupService)
 @Mock([BusinessEntitiesGroup, BusinessEntity, Company, User, ComposeName])
@@ -61,7 +64,8 @@ class BusinessEntitiesGroupServiceSpec extends Specification {
       result.size() == 2
   }
 
-  void "Should get all clients from users clients groups in company"() {
+  @Unroll
+  void "Should get all clients from users clients groups in company when query is #theQuery"() {
     given:"The business entities"
       ComposeName name1 = new ComposeName(value:"CLIENT 1", type:NameType.RAZON_SOCIAL).save(validate:false) 
       ComposeName name2 = new ComposeName(value:"CLIENT 2", type:NameType.RAZON_SOCIAL).save(validate:false) 
@@ -69,22 +73,22 @@ class BusinessEntitiesGroupServiceSpec extends Specification {
       ComposeName name4 = new ComposeName(value:"CLIENT 4", type:NameType.RAZON_SOCIAL).save(validate:false) 
       ComposeName name5 = new ComposeName(value:"CLIENT 5", type:NameType.RAZON_SOCIAL).save(validate:false) 
       ComposeName name6 = new ComposeName(value:"CLIENT 6", type:NameType.RAZON_SOCIAL).save(validate:false) 
-      BusinessEntity businessEntity1 = new BusinessEntity(rfc:"RFC1").save(validate:false)
+      BusinessEntity businessEntity1 = new BusinessEntity(rfc:"RFC1", status:BusinessEntityStatus.ACTIVE, type:BusinessEntityType.MORAL).save(validate:false)
       businessEntity1.addToNames(name1)
       businessEntity1.save(validate:false)
-      BusinessEntity businessEntity2 = new BusinessEntity(rfc:"RFC2").save(validate:false)
+      BusinessEntity businessEntity2 = new BusinessEntity(rfc:"RFC2", status:BusinessEntityStatus.ACTIVE, type:BusinessEntityType.MORAL).save(validate:false)
       businessEntity2.addToNames(name2)
       businessEntity2.save(validate:false)
-      BusinessEntity businessEntity3 = new BusinessEntity(rfc:"RFC3").save(validate:false)
+      BusinessEntity businessEntity3 = new BusinessEntity(rfc:"RFC3", status:BusinessEntityStatus.ACTIVE, type:BusinessEntityType.MORAL).save(validate:false)
       businessEntity3.addToNames(name3)
       businessEntity3.save(validate:false)
-      BusinessEntity businessEntity4 = new BusinessEntity(rfc:"RFC4").save(validate:false)
+      BusinessEntity businessEntity4 = new BusinessEntity(rfc:"RFC4", status:BusinessEntityStatus.ACTIVE, type:BusinessEntityType.MORAL).save(validate:false)
       businessEntity4.addToNames(name4)
       businessEntity4.save(validate:false)
-      BusinessEntity businessEntity5 = new BusinessEntity(rfc:"RFC5").save(validate:false)
+      BusinessEntity businessEntity5 = new BusinessEntity(rfc:"RFC5", status:BusinessEntityStatus.ACTIVE, type:BusinessEntityType.MORAL).save(validate:false)
       businessEntity5.addToNames(name5)
       businessEntity5.save(validate:false)
-      BusinessEntity businessEntity6 = new BusinessEntity(rfc:"RFC6").save(validate:false)
+      BusinessEntity businessEntity6 = new BusinessEntity(rfc:"RFC6", status:BusinessEntityStatus.ACTIVE, type:BusinessEntityType.MORAL).save(validate:false)
       businessEntity6.addToNames(name6)
       businessEntity6.save(validate:false)
     and: "The company"
@@ -109,9 +113,14 @@ class BusinessEntitiesGroupServiceSpec extends Specification {
       user.addToBusinessEntitiesGroups(group3)
       user.save(validate:false)
     when:
-      def result = service.findBusinessEntitiesByKeyword(user, company, "RFC3")
+      def result = service.findBusinessEntitiesByKeyword(user, company, theQuery)
     then:
-      result.size() == 6
+      result.size() == items
+    where:
+      theQuery          ||    items
+      ""                ||    4
+      "RFC5"            ||    1
+      "RFC3"            ||    0
   }
 
 }
