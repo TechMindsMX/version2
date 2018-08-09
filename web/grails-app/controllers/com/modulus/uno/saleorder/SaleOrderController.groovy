@@ -215,7 +215,7 @@ class SaleOrderController {
 
   def searchClientForSale(){
     def company = Company.get(session.company ? session.company.toLong() : params.companyId)
-    List<BusinessEntity> clients = saleOrderService.getClientsForCompany(company, params.q)
+    List<BusinessEntity> clients = saleOrderService.searchClientsForCompany(company, params.q)
     if(clients.isEmpty()){
       flash.message = "No se encontraron coincidencias"
     }
