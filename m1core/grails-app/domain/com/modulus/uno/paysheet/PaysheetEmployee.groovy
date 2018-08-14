@@ -48,7 +48,7 @@ class PaysheetEmployee {
   }
 
   BigDecimal getTotalToInvoice() {
-    getPaysheetTotal() ?: 0 + getPaysheetIva() ?: 0
+    (getPaysheetTotal() ?: 0) + (getPaysheetIva() ?: 0)
   }
 
   BigDecimal getTotalIncidencesImssPerceptions() {
