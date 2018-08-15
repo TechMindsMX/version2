@@ -398,14 +398,30 @@ class SaleOrderService {
 
   List<SaleOrder> searchSaleOrders(Long idCompany, Map params) {
     Company company = Company.get(idCompany)
+    def results = []
     def criteriaSO = SaleOrder.createCriteria()
-    def results = criteriaSO.list {
-      eq('company', company)
-      and {
-        ilike('rfc', "${params.rfc}%")
-        ilike('clientName', "%${params.clientName}%")
+    User currentUser = springSecurityService.currentUser
+    List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
+    if (clientsGroupsForUser) {
+      List<BusinessEntity> userClients = businessEntitiesGroupService.getAllClientsFromUserGroups(clientsGroupsForUser)
+      results = criteriaSO.list {
+        eq('company', company)
+        and {
+          ilike('rfc', "${params.rfc}%")
+          'in'('rfc', userClients.rfc)
+          ilike('clientName', "%${params.clientName}%")
+        }
+        order('dateCreated', 'desc')
       }
-      order('dateCreated', 'desc')
+    } else {
+      results = criteriaSO.list {
+        eq('company', company)
+        and {
+          ilike('rfc', "${params.rfc}%")
+          ilike('clientName', "%${params.clientName}%")
+        }
+        order('dateCreated', 'desc')
+      }
     }
     results
   }
