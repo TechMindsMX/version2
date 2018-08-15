@@ -149,4 +149,6 @@ databaseChangeLog = {
   include file: 'adding-columns-reject-reason-and-comments-to-credit-note.groovy'
   include file: 'adding-columns-key-and-enabled-2FA-into-user.groovy'
   include file: 'adding-column-stamped-date-into-sale-order.groovy'
+  include file: 'create-domain-business-entities-group.groovy'
+  include file: 'create-relation-users-with-business-entities-groups.groovy'
 }
