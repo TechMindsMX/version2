@@ -71,7 +71,7 @@ pipeline {
       steps{
         dir("web") {
           echo 'Building app'
-          sh './grailsw -Dgrails.env=production war'
+          sh './grailsw war'
         }
       }
     }
@@ -85,7 +85,7 @@ pipeline {
       steps{
         dir("webservices") {
           echo 'Building app'
-          sh './grailsw -Dgrails.env=production war'
+          sh './grailsw war'
         }
       }
     }
