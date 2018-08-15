@@ -188,8 +188,8 @@ class SaleOrderService {
     Map saleOrders = [:]
     User currentUser = springSecurityService.currentUser
     List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
-    if (clientsGroups) {
-      List<BusinessEntity> userClients = businessEntitiesGroupService.getAllClientsFromUserGroups(clientsGroups)
+    if (clientsGroupsForUser) {
+      List<BusinessEntity> userClients = businessEntitiesGroupService.getAllClientsFromUserGroups(clientsGroupsForUser)
       saleOrders.list = SaleOrder.findAllByCompanyAndStatusInListAndRfcInList(company, statusOrders, userClients.rfc, params)
       saleOrders.items = SaleOrder.countByCompanyAndStatusInListAndRfcInList(company, statusOrders, userClients.rfc)
     } else {
