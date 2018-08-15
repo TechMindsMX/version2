@@ -4,6 +4,8 @@ import grails.converters.JSON
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
+import com.modulus.uno.businessEntity.BusinessEntitiesGroup
+
 @EqualsAndHashCode(includes='username')
 @ToString(includes='username', includeNames=true, includePackage=false)
 class User implements Serializable {
@@ -23,6 +25,8 @@ class User implements Serializable {
   boolean enable2FA
 
   Profile profile
+
+  static hasMany = [businessEntitiesGroups:BusinessEntitiesGroup]
 
 	Set<Role> getAuthorities() {
 		UserRole.findAllByUser(this)*.role

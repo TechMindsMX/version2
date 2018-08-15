@@ -14,10 +14,6 @@
           ${user.profile.email}
         </small>
       </h1>
-      <ol class="breadcrumb">
-        <li><i class="fa fa-caret-square-o-up"></i> Compañia </li>
-        <li class="active">Creación de Compañia</li>
-      </ol>
     </div>
 
     <div class="row">
@@ -38,6 +34,7 @@
                       </a>
                     </th>
                   </g:each>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -49,6 +46,11 @@
                         <modulusuno:checkboxForRoleAtCompany company="${company}" role="${someRole}" rolesOfUser="${rolesOfUser}" />
                       </td>
                     </g:each>
+                    <td>
+                      <g:if test="${company.hasGroups}">
+                        <g:link class="btn btn-primary" action="assignBusinessEntitiesGroup" id="${user.id}" params="[companyId:company.id]">Grupos</g:link>
+                      </g:if>
+                    </td>
                   </tr>
                 </g:each>
               </tbody>
