@@ -40,15 +40,15 @@ class PaysheetEmployee {
   }
 
   BigDecimal getPaysheetTotal() {
-    getPaysheetCost() ?: 0 + this.commission ?: 0
+    (getPaysheetCost() ?: 0) + (this.commission ?: 0)
   }
 
   BigDecimal getPaysheetIva() {
-    getPaysheetTotal() ?: 0 * (this.ivaRate / 100)
+    (getPaysheetTotal() ?: 0) * (this.ivaRate / 100)
   }
 
   BigDecimal getTotalToInvoice() {
-    getPaysheetTotal() ?: 0 + getPaysheetIva() ?: 0
+    (getPaysheetTotal() ?: 0) + (getPaysheetIva() ?: 0)
   }
 
   BigDecimal getTotalIncidencesImssPerceptions() {

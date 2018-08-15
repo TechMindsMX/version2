@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.status.ConciliationStatus %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -40,7 +41,7 @@
                     <th class="col-md-4">Factura</th>
                     <th>Total</th>
                     <th>Por pagar</th>
-                    <th>Monto a aplicar (MXN)</th>
+                    <th><g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">Monto a aplicar (MXN)</g:if></th>
                     <th>Nuevo Saldo</th>
                     <th>Moneda</th>
                     <th>Tipo Cambio</th>
@@ -51,14 +52,16 @@
                     <td>${conciliation.saleOrder.id} / ${conciliation.saleOrder.clientName}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.total)}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.amount)}</td>
+                    <td class="text-right"><g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">${modulusuno.formatPrice(number: conciliation.amount)}</g:if></td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.currency == "MXN" ? conciliation.saleOrder.amountToPay - conciliation.amount : conciliation.saleOrder.amountToPay - (conciliation.amount/conciliation.changeType)) }</td>
                     <td>${conciliation.saleOrder.currency}</td>
                     <td>${conciliation.changeType ?: "NA"}</td>
                     <td class="text-center">
-                      <g:form action="deleteConciliation" id="${conciliation.id}">
-                        <button class="btn btn-danger">Quitar</button>
-                      </g:form>
+                      <g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">
+                        <g:form action="deleteConciliation" id="${conciliation.id}">
+                          <button class="btn btn-danger">Quitar</button>
+                        </g:form>
+                      </g:if>
                     </td>
                   </tr>
                   </g:each>

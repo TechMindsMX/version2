@@ -6,6 +6,7 @@ import java.math.RoundingMode
 
 import com.modulus.uno.invoice.*
 import com.modulus.uno.catalogs.UnitType
+
 import com.modulus.uno.Company
 import com.modulus.uno.ClientLink
 import com.modulus.uno.BankAccount
@@ -14,7 +15,6 @@ import com.modulus.uno.Address
 import com.modulus.uno.AddressType
 import com.modulus.uno.RestService
 import com.modulus.uno.RestException
-import java.math.RoundingMode
 
 class InvoiceService {
 
@@ -272,7 +272,7 @@ class InvoiceService {
   }
 
   void cancelBill(SaleOrder saleOrder) {
-    String rfc = (Environment.current == Environment.PRODUCTION) ? creditNote.saleOrder.company.rfc : "AAA010101AAA"
+    String rfc = (Environment.current == Environment.PRODUCTION) ? saleOrder.company.rfc : "AAA010101AAA"
     CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${saleOrder.folio.length()>36 ? saleOrder.folio.substring(0,36) : saleOrder.folio}", rfc:rfc, id:"${saleOrder.company.id}")
     def result = restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
     if (!result) {
