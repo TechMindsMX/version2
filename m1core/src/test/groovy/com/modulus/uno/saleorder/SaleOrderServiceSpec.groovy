@@ -14,6 +14,7 @@ import com.modulus.uno.User
 import com.modulus.uno.Address
 import com.modulus.uno.Authorization
 import com.modulus.uno.Commission
+import com.modulus.uno.businessEntity.BusinessEntitiesGroup
 import com.modulus.uno.status.SaleOrderStatus
 import com.modulus.uno.BusinessEntityType
 import com.modulus.uno.PaymentWay
@@ -25,6 +26,7 @@ import com.modulus.uno.Period
 import com.modulus.uno.EmailSenderService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CommissionTransactionService
+import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
 
 @TestFor(SaleOrderService)
 @Mock([BusinessEntity, SaleOrder, SaleOrderItem, Company, User, Address,Authorization, Commission, SaleOrderPayment])
@@ -35,6 +37,8 @@ class SaleOrderServiceSpec extends Specification {
   def invoiceService = Mock(InvoiceService)
   def companyService = Mock(CompanyService)
   def commissionTransactionService = Mock(CommissionTransactionService)
+  def businessEntitiesGroupService = Mock(BusinessEntitiesGroupService)
+  def springSecurityService = [currentUser:Mock(User)]
 
   def setup(){
     items.removeAll()
@@ -42,8 +46,10 @@ class SaleOrderServiceSpec extends Specification {
     service.invoiceService = invoiceService
     service.companyService = companyService
     service.commissionTransactionService = commissionTransactionService
+    service.businessEntitiesGroupService = businessEntitiesGroupService
     grailsApplication.config.m1emitter.rfc = "AAA010101AAA"
     grailsApplication.config.iva = "16"
+    service.springSecurityService = springSecurityService
   }
 
   void "should create an sale order"() {
@@ -411,5 +417,30 @@ class SaleOrderServiceSpec extends Specification {
       result.invoiceSerie == "serie1"
       result.stampedDate == Date.parse("yyy-MM-dd'T'HH:mm:ss", "2018-05-30T12:20:33")
 
+  }
+
+  void "Should get the sale orders to list for a user with associate business entities groups"() {
+    given:"The company"
+      Company company = new Company().save(validate:false)
+    and:"The statusOrders"
+      def statusOrders = Arrays.asList(SaleOrderStatus.values())
+    and:"The params"
+      def params = [max:25]
+    and:"The sale orders"
+      SaleOrder so1 = new SaleOrder(company:company, status:SaleOrderStatus.EJECUTADA, rfc:"AAA").save(validate:false)
+      SaleOrder so2 = new SaleOrder(company:company, status:SaleOrderStatus.AUTORIZADA, rfc:"CCC").save(validate:false)
+      SaleOrder so3 = new SaleOrder(company:new Company(rfc:"dos").save(validate:false), status:SaleOrderStatus.CREADA, rfc:"AAA").save(validate:false)
+      SaleOrder so4 = new SaleOrder(company:company, status:SaleOrderStatus.EJECUTADA, rfc:"XXX").save(validate:false)
+      SaleOrder so5 = new SaleOrder(company:company, status:SaleOrderStatus.EJECUTADA, rfc:"YYY").save(validate:false)
+    and:"The users clients"
+      businessEntitiesGroupService.findClientsGroupsForUserInCompany(_, _) >> [Mock(BusinessEntitiesGroup)]
+      businessEntitiesGroupService.getAllClientsFromUserGroups(_) >> [new BusinessEntity(rfc:"AAA").save(validate:false), new BusinessEntity(rfc:"BBB").save(validate:false), new BusinessEntity(rfc:"CCC").save(validate:false)]
+    and:
+      User user = Mock(User)
+      springSecurityService.currentUser >> user
+    when:
+      def result = service.findSaleOrdersForCurrentUser(company, statusOrders, params)
+    then:
+      result.list.size() == 2
   }
 }
