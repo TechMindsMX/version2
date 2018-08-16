@@ -11,6 +11,8 @@ import grails.util.Environment
 import com.modulus.uno.EmailSenderService
 import com.modulus.uno.CompanyService
 import com.modulus.uno.CommissionTransactionService
+import com.modulus.uno.BusinessEntityService
+import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
 
 import com.modulus.uno.Company
 import com.modulus.uno.BusinessEntity
@@ -18,6 +20,7 @@ import com.modulus.uno.Address
 import com.modulus.uno.Authorization
 import com.modulus.uno.Conciliation
 import com.modulus.uno.User
+import com.modulus.uno.businessEntity.BusinessEntitiesGroup
 
 import com.modulus.uno.PaymentWay
 import com.modulus.uno.Period
@@ -27,6 +30,7 @@ import com.modulus.uno.CommissionType
 import com.modulus.uno.status.SaleOrderStatus
 import com.modulus.uno.status.ConciliationStatus
 import com.modulus.uno.status.CommissionTransactionStatus
+import com.modulus.uno.businessEntity.BusinessEntitiesGroupType
 
 class SaleOrderService {
 
@@ -38,6 +42,8 @@ class SaleOrderService {
   def springSecurityService
   def dataSource
   CommissionTransactionService commissionTransactionService
+  BusinessEntityService businessEntityService
+  BusinessEntitiesGroupService businessEntitiesGroupService
 
   // TODO: Code Review
   @Transactional
@@ -178,12 +184,26 @@ class SaleOrderService {
     saleOrderStatuses
   }
 
+  Map findSaleOrdersForCurrentUser(Company company, def statusOrders, def params) {
+    Map saleOrders = [:]
+    User currentUser = springSecurityService.currentUser
+    List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
+    if (clientsGroupsForUser) {
+      List<BusinessEntity> userClients = businessEntitiesGroupService.getAllClientsFromUserGroups(clientsGroupsForUser)
+      saleOrders.list = SaleOrder.findAllByCompanyAndStatusInListAndRfcInList(company, statusOrders, userClients.rfc, params)
+      saleOrders.items = SaleOrder.countByCompanyAndStatusInListAndRfcInList(company, statusOrders, userClients.rfc)
+    } else {
+      saleOrders.list = SaleOrder.findAllByCompanyAndStatusInList(company, statusOrders, params)
+      saleOrders.items = SaleOrder.countByCompanyAndStatusInList(company, statusOrders)
+    }
+    saleOrders
+  }
+
   def getSaleOrdersToList(Long company, params){
     def statusOrders = getSaleOrderStatus(params.status)
     def saleOrders = [:]
     if(company){
-      saleOrders.list = SaleOrder.findAllByCompanyAndStatusInList(Company.get(company), statusOrders, params)
-      saleOrders.items = SaleOrder.countByCompanyAndStatusInList(Company.get(company), statusOrders)
+      saleOrders = findSaleOrdersForCurrentUser(Company.get(company), statusOrders, params)
     } else{
       saleOrders.list = SaleOrder.findAllByStatusInList(statusOrders, params)
       saleOrders.items = SaleOrder.countByStatusInList(statusOrders)
@@ -378,14 +398,30 @@ class SaleOrderService {
 
   List<SaleOrder> searchSaleOrders(Long idCompany, Map params) {
     Company company = Company.get(idCompany)
+    def results = []
     def criteriaSO = SaleOrder.createCriteria()
-    def results = criteriaSO.list {
-      eq('company', company)
-      and {
-        ilike('rfc', "${params.rfc}%")
-        ilike('clientName', "%${params.clientName}%")
+    User currentUser = springSecurityService.currentUser
+    List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
+    if (clientsGroupsForUser) {
+      List<BusinessEntity> userClients = businessEntitiesGroupService.getAllClientsFromUserGroups(clientsGroupsForUser)
+      results = criteriaSO.list {
+        eq('company', company)
+        and {
+          ilike('rfc', "${params.rfc}%")
+          'in'('rfc', userClients.rfc)
+          ilike('clientName', "%${params.clientName}%")
+        }
+        order('dateCreated', 'desc')
       }
-      order('dateCreated', 'desc')
+    } else {
+      results = criteriaSO.list {
+        eq('company', company)
+        and {
+          ilike('rfc', "${params.rfc}%")
+          ilike('clientName', "%${params.clientName}%")
+        }
+        order('dateCreated', 'desc')
+      }
     }
     results
   }
@@ -444,4 +480,16 @@ class SaleOrderService {
     saleOrder.save()
     saleOrder
   }
+
+  List<BusinessEntity> searchClientsForCompany(Company company, String dataQuery) {
+    User currentUser = springSecurityService.currentUser
+    List<BusinessEntity> clients = []
+    if (currentUser.businessEntitiesGroups.findAll { group -> group.company == company && group.type == BusinessEntitiesGroupType.CLIENTS }) {
+      clients = businessEntitiesGroupService.findBusinessEntitiesByKeyword(currentUser, company, dataQuery)
+    } else {
+      clients = businessEntityService.findBusinessEntityByKeyword(dataQuery, "CLIENT", company)
+    }
+    clients
+  }
+
 }

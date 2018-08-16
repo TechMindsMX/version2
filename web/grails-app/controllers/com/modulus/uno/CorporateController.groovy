@@ -1,6 +1,8 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import com.modulus.uno.businessEntity.BusinessEntitiesGroup
+import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
 
 class CorporateController {
 
@@ -13,6 +15,7 @@ class CorporateController {
   def recoveryService
   CommissionTransactionService commissionTransactionService
   CollaboratorService collaboratorService
+  BusinessEntitiesGroupService businessEntitiesGroupService
 
   def create(){
     respond new Corporate()
@@ -56,7 +59,8 @@ class CorporateController {
     Corporate corporate = corporateService.findCorporateOfUser(user)
     def roles = corporateService.getRolesForCorporate(corporate)
     List<UserRoleCompany> rolesOfUser = organizationService.findRolesForUserInCompanies(user.username,corporate)
-    [companies:corporate.companies,roles:roles,user:user,rolesOfUser:rolesOfUser]
+    List companiesGroups = businessEntitiesGroupService.checkGroupsForCompanies(corporate.companies.toList())
+    [companies:companiesGroups, roles:roles, user:user, rolesOfUser:rolesOfUser]
   }
 
   def saveRolesForUser(RolesCompanyCommand command){
@@ -223,6 +227,28 @@ class CorporateController {
     corporateService.unassignRolesForQuotationServiceToUsersInCorporate(corporate)
     redirect action:"show", id:corporate.id
   }
+
+  def assignBusinessEntitiesGroup(User user) {
+    Corporate corporate = Corporate.get(session.corporate.id)
+    Company company = Company.get(params.companyId)
+    List<BusinessEntitiesGroup> companyGroups = businessEntitiesGroupService.getAvailableGroupsForCompanyAndUser(company, user)  
+    [companyGroups:companyGroups, user:user, company:company, corporate:corporate]
+  }
+
+  @Transactional
+  def addBusinessEntitiesGroupToUser(User user) {
+    BusinessEntitiesGroup group = BusinessEntitiesGroup.get(params.businessEntitiesGroupId)
+    businessEntitiesGroupService.addBusinessEntitiesGroupToUser(user, group)
+    redirect action:"assignBusinessEntitiesGroup", id:user.id, params:[companyId:group.company.id]
+  }
+
+  @Transactional
+  def deleteBusinessEntitiesGroupFromUser(User user) {
+    BusinessEntitiesGroup group = BusinessEntitiesGroup.get(params.groupId)
+    businessEntitiesGroupService.deleteBusinessEntitiesGroupFromUser(user, group)
+    redirect action:"assignBusinessEntitiesGroup", id:user.id, params:[companyId:group.company.id]
+  }
+
 }
 
 @groovy.transform.TypeChecked
