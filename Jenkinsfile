@@ -159,7 +159,7 @@ pipeline {
       }
     }
 
-    /*stage('Deploy Kube') {
+    stage('Deploy Kube web-modulusuno') {
       when {
         expression {
           env.BRANCH_NAME in ["master","stage","production"]
@@ -169,9 +169,23 @@ pipeline {
         ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
       }
       steps{
-        sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} sepomex"
+        sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} web-modulusuno"
       }
-    }*/
+    }
+
+    stage('Deploy Kube webservice-modulusuno') {
+      when {
+        expression {
+          env.BRANCH_NAME in ["master","stage","production"]
+        }
+      }
+      environment {
+        ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
+      }
+      steps{
+        sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} webservice-modulusuno"
+      }
+    }
 
   }
 
