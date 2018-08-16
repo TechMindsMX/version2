@@ -68,10 +68,13 @@ pipeline {
           env.BRANCH_NAME in ["master","stage","production"]
         }
       }
+      environment {
+        WARENV = "${env.BRANCH_NAME == 'master' ? 'test' : 'prod'}"
+      }
       steps{
         dir("web") {
           echo 'Building app'
-          sh './grailsw war'
+          sh "./grailsw -Dgrails.env=${env.WARENV} war"
         }
       }
     }
@@ -82,10 +85,13 @@ pipeline {
           env.BRANCH_NAME in ["master","stage","production"]
         }
       }
+      environment {
+        WARENV = "${env.BRANCH_NAME == 'master' ? 'test' : 'prod'}"
+      }
       steps{
         dir("webservices") {
           echo 'Building app'
-          sh './grailsw war'
+          sh "./grailsw -Dgrails.env=${env.WARENV} war"
         }
       }
     }
