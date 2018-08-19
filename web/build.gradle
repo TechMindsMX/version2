@@ -64,7 +64,7 @@ dependencyManagement {
 dependencies {
   // ******************* IMPORTANT *******************
   // NOTE: This should be removed
-  compile 'org.codehaus.groovy:groovy-all:2.4.8'
+  
   // TODO: Removed when will solve https://github.com/javamelody/grails-melody-plugin/issues/43
   // ******************* IMPORTANT *******************
   compile "org.springframework.boot:spring-boot-starter-logging"
