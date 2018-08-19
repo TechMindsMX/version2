@@ -123,34 +123,13 @@ pipeline {
         sh "cp configFiles/application-api-${NAMEFILE}.groovy ."
         sh "cp configFiles/application-${NAMEFILE}.groovy ."
         dir("folderDocker"){
-          sh "git clone git@github.com:makingdevs/Tomcat-Docker.git ."
+          sh "git clone git@github.com:makingdevs/Java-8-Docker.git ."
         }
         sh 'mv folderDocker/* .'
         sh 'mv web/build/libs/web-0.1.war .'
         sh 'mv webservices/build/libs/webservices-0.1.war .'
         sh 'mv web-0.1.war ROOT-WEB.war'
         sh 'mv webservices-0.1.war ROOT.war'
-      }
-    }
-
-    stage('Build image docker web') {
-      when {
-        expression {
-          env.BRANCH_NAME in ["master","stage","production"]
-        }
-      }
-      environment {
-        NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
-      }
-      steps{
-        script {
-          docker.withTool('Docker') {
-            docker.withRegistry('https://752822034914.dkr.ecr.us-east-1.amazonaws.com/web-modulusuno', 'ecr:us-east-1:techminds-aws') {
-              def customImage = docker.build("web-modulusuno:${env.VERSION}", "--build-arg URL_WAR=ROOT-WEB.war --build-arg FILE_NAME_CONFIGURATION=application-${NAMEFILE}.groovy --build-arg PATH_NAME_CONFIGURATION=/root/.modulusuno/ .")
-              customImage.push()
-            }
-          }
-        }
       }
     }
 
@@ -168,6 +147,28 @@ pipeline {
           docker.withTool('Docker') {
             docker.withRegistry('https://752822034914.dkr.ecr.us-east-1.amazonaws.com/webservice-modulusuno', 'ecr:us-east-1:techminds-aws') {
               def customImage = docker.build("webservice-modulusuno:${env.VERSION}", "--build-arg URL_WAR=ROOT.war --build-arg FILE_NAME_CONFIGURATION=application-api-${NAMEFILE}.groovy --build-arg PATH_NAME_CONFIGURATION=/root/.modulusuno/ .")
+              customImage.push()
+            }
+          }
+        }
+      }
+    }
+
+    stage('Build image docker web') {
+      when {
+        expression {
+          env.BRANCH_NAME in ["master","stage","production"]
+        }
+      }
+      environment {
+        NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
+      }
+      steps{
+        sh 'mv ROOT-WEB.war ROOT.war'
+        script {
+          docker.withTool('Docker') {
+            docker.withRegistry('https://752822034914.dkr.ecr.us-east-1.amazonaws.com/web-modulusuno', 'ecr:us-east-1:techminds-aws') {
+              def customImage = docker.build("web-modulusuno:${env.VERSION}", "--build-arg URL_WAR=ROOT.war --build-arg FILE_NAME_CONFIGURATION=application-${NAMEFILE}.groovy --build-arg PATH_NAME_CONFIGURATION=/root/.modulusuno/ .")
               customImage.push()
             }
           }
