@@ -48,7 +48,7 @@ pipeline {
     stage('Update Assets') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       steps{
@@ -65,11 +65,11 @@ pipeline {
     stage('Build App web') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       environment {
-        WARENV = "${env.BRANCH_NAME == 'master' ? 'test' : 'prod'}"
+        WARENV = "${env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'master-new' ? 'test' : 'prod'}"
       }
       steps{
         dir("web") {
@@ -82,11 +82,11 @@ pipeline {
     stage('Build App webservices') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       environment {
-        WARENV = "${env.BRANCH_NAME == 'master' ? 'test' : 'prod'}"
+        WARENV = "${env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'master-new' ? 'test' : 'prod'}"
       }
       steps{
         dir("webservices") {
@@ -99,12 +99,12 @@ pipeline {
     stage('Download Config'){
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       steps{
         dir("configFiles"){
-          sh "git clone -b ${env.BRANCH_NAME}-new --single-branch git@bitbucket.org:techmindsmx/config-modulusuno-v3.git ."
+          sh "git clone -b master-new --single-branch git@bitbucket.org:techmindsmx/config-modulusuno-v3.git ."
         }
       }
     }
@@ -112,11 +112,11 @@ pipeline {
     stage('Preparing build Image Docker'){
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       environment {
-        NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
+        NAMEFILE = "${env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'master-new' ? 'test' : 'production'}"
       }
       steps{
 
@@ -136,11 +136,11 @@ pipeline {
     stage('Build image docker web') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       environment {
-        NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
+        NAMEFILE = "${env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'master-new' ? 'test' : 'production'}"
       }
       steps{
         script {
@@ -157,11 +157,11 @@ pipeline {
     stage('Build image docker webservices') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       environment {
-        NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
+        NAMEFILE = "${env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'master-new' ? 'test' : 'production'}"
       }
       steps{
         script {
@@ -178,11 +178,11 @@ pipeline {
     stage('Deploy Kube web-modulusuno') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       environment {
-        ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
+        ENVIRONMENT = "${env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'master-new' ? 'development' : env.BRANCH_NAME}"
       }
       steps{
         sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} web-modulusuno"
@@ -192,11 +192,11 @@ pipeline {
     stage('Deploy Kube webservice-modulusuno') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME in ["master","stage","production","master-new"]
         }
       }
       environment {
-        ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
+        ENVIRONMENT = "${env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'master-new' ? 'development' : env.BRANCH_NAME}"
       }
       steps{
         sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} webservice-modulusuno"

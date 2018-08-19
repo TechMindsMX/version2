@@ -33,12 +33,7 @@
             <span class="icon-bar"></span>
           </button>
           <ul class="nav navbar-nav">
-            <sec:ifNotLoggedIn>
-              <li><g:link controller="dashboard" >Ingresa a tu Cuenta</g:link></li>
-            </sec:ifNotLoggedIn>
-            <sec:ifLoggedIn>
-              <li><g:link controller="dashboard">Entra al dashboard</g:link></li>
-            </sec:ifLoggedIn>
+            
           </ul>
           </div>
         </div>
