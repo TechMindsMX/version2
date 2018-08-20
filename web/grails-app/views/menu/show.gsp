@@ -119,7 +119,7 @@
             <div class="clearfix"></div>
           </div>
           <div id="defaultPortlet" class="panel-collapse collapse in">
-						<g:form action="addSubmenu" id="${menu.id}" class="form_to_submit">
+						<g:form name="formSubmenues" action="addSubmenu" id="${menu.id}">
             <div class="portlet-body">
               <div class="table-responsive">
                 <table class="table table-condensed table-striped">
@@ -136,7 +136,7 @@
                     <tr>
                       <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
                       <td>
-                        <g:checkBox name="menuOption" value="${m.id}" class="form-check-input" checked="false"></g:checkBox>
+                        <g:checkBox id="menuOption" name="menuOption" value="${m.id}" class="form-check-input" checked="false"></g:checkBox>
                       </td>
                     </tr>
                     </g:each>
@@ -157,11 +157,25 @@
                   <button class="btn btn-primary" id="button_to_submit">Agregar submenues</button>
                 </div>
                 <div class="col-md-8">
-                  <div class="alert alert-danger alert-dismissible" id="noSelectionAlert" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    Por favor seleccione al menos un submenú
+                </div>
+
+                <div class="modal fade" id="noSelectionModal" tabindex="-1" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">ModulusUno</h4>
+                      </div>
+                      <div class="modal-body">
+                        <p>Por favor seleccione al menos un submenú</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
             </div>
           </div>
         </div>

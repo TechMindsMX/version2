@@ -1,13 +1,14 @@
 $(function () {
-  $('#noSelectionAlert').hide();
+  $('#noSelectionModal').modal('hide');
 });
 
-$("#button_to_submit").on("click", () =>{
-  if ($(".form-check-input").is(":checked")) {
-    $('#noSelectionAlert').hide();
-    $(".form_to_submit").submit();
+$("#button_to_submit").click(function() {
+  var checkedSubmenues = $("#menuOption:checked").val() ? true : false;
+  if (checkedSubmenues) {
+    $('#noSelectionModal').modal('hide');
+    document.formSubmenues.submit();
   } else {
-    $('#noSelectionAlert').show();
+    $('#noSelectionModal').modal('show');
   }
 });
 
