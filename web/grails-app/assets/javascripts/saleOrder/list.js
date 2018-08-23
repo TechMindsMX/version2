@@ -12,42 +12,18 @@ $( function() {
   });
 } );
 
-validateRangeOfDates = function() {
-	var primera = Date.parse("10/01/2013"); //01 de Octubre del 2013
-var segunda = Date.parse("10/03/2013"); //03 de Octubre del 2013
- 
-if (primera == segunda){
-    alert("Primera es igual Segunda");
-} else if (primera > segunda) {
-    alert("Primera mayor que Segunda");
-} else{
-    alert("Segunda mayor que Primera");
-}
-}
+$("#formFilters").submit(function (event) {
+  if ($("#stampedDateInit").val() == "" || $("#stampedDateEnd").val() == "") {
+    return true
+  }
 
-var DateController = (function(){
-  
-  initValidations = function(){
-  $( "#stampedDateInit" ).datepicker({
-    dateFormat: 'dd/mm/yy',
-    maxDate: 0
-    })
-  },
+  var init = $("#stampedDateInit").datepicker("getDate");
+  var end = $("#stampedDateEnd").datepicker("getDate");
+  if (init.getTime() > end.getTime()) {
+    $("#messageAlert").text("La fecha inicial es posterior a la fecha final");
+    $("#modalAlert").modal('show');
+    event.preventDefault();
+  }
 
-  bindEvents = function(){
-    console.log("inician eventos")
-  },
-
-  start = function(){
-    initValidations();
-    bindEvents();
-  };
-
-   return {
-    start:start
-  };
-}());
-
-jQuery(function($){
-	DateController.start();
 });
+
