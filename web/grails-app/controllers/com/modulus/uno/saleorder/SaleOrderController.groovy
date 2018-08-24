@@ -333,14 +333,14 @@ class SaleOrderController {
 
   def search() {
     log.info "Search sale orders with params: ${params}"
-    if (!params.rfc && !params.clientName) {
+    if (!params.rfc && !params.clientName && !params.stampedDateInit && !params.stampedDateEnd) {
       redirect action:"list"
       return
     }
 
     def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
 
-    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName]] 
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd]] 
   }
 
   def listOrdersWithAmountToPayForClient(BusinessEntity businessEntity) {

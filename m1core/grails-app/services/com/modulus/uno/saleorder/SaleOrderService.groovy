@@ -398,10 +398,22 @@ class SaleOrderService {
 
   List<SaleOrder> searchSaleOrders(Long idCompany, Map params) {
     Company company = Company.get(idCompany)
-    def results = []
-    def criteriaSO = SaleOrder.createCriteria()
+    List<SaleOrder> results = []
+    if (!params.stampedDateInit && !params.stampedDateEnd) {
+      log.info "Searching by rfc and client name only"
+      results = filterWithRfcAndClientName(company, params) 
+    } else {
+      log.info "Searching with stamped dates"
+      results = filterWithStampedDates(company, params)
+    }
+    results
+  }
+
+  List<SaleOrder> filterWithRfcAndClientName(Company company, Map params) {
     User currentUser = springSecurityService.currentUser
     List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
+    def criteriaSO = SaleOrder.createCriteria()
+    def results = []
     if (clientsGroupsForUser) {
       List<BusinessEntity> userClients = businessEntitiesGroupService.getAllClientsFromUserGroups(clientsGroupsForUser)
       results = criteriaSO.list {
@@ -420,6 +432,47 @@ class SaleOrderService {
           ilike('rfc', "${params.rfc}%")
           ilike('clientName', "%${params.clientName}%")
         }
+        order('dateCreated', 'desc')
+      }
+    }
+    results
+  }
+
+  List<SaleOrder> filterWithStampedDates(Company company, Map params) {
+    if (params.stampedDateInit && !params.stampedDateEnd) {
+      params.stampedDateEnd = params.stampedDateInit
+    }
+    if (params.stampedDateEnd && !params.stampedDateInit) {
+      params.stampedDateInit = params.stampedDateEnd
+    }
+
+    Date dStampedInit = Date.parse("dd/MM/yyyy hh:mm:ss", params.stampedDateInit.concat(" 00:00:00"))
+    Date dStampedEnd = Date.parse("dd/MM/yyyy hh:mm:ss", params.stampedDateEnd.concat(" 23:59:59"))
+    User currentUser = springSecurityService.currentUser
+    List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
+
+    def criteriaSO = SaleOrder.createCriteria()
+    def results = []
+    if (clientsGroupsForUser) {
+      List<BusinessEntity> userClients = businessEntitiesGroupService.getAllClientsFromUserGroups(clientsGroupsForUser)
+      results = criteriaSO.list {
+        eq('company', company)
+        and {
+          ilike('rfc', "${params.rfc}%")
+          'in'('rfc', userClients.rfc)
+          ilike('clientName', "%${params.clientName}%")
+        }
+        between('stampedDate', dStampedInit, dStampedEnd)
+        order('dateCreated', 'desc')
+      }
+    } else {
+      results = criteriaSO.list {
+        eq('company', company)
+        and {
+          ilike('rfc', "${params.rfc}%")
+          ilike('clientName', "%${params.clientName}%")
+        }
+        between('stampedDate', dStampedInit, dStampedEnd)
         order('dateCreated', 'desc')
       }
     }
