@@ -7,7 +7,7 @@ class FilterTagLib {
   def showFilters = { attrs, body ->
     out << """
       <div class="row">
-        <form action=\"/${attrs.controller}/${attrs.action}\">
+        <form id=\"formFilters\" action=\"/${attrs.controller}/${attrs.action}\">
    """
     Integer noFilters = attrs.filters.size()<=4 ? attrs.filters.size() : 4
     Integer width = 10 / noFilters
@@ -16,7 +16,7 @@ class FilterTagLib {
       out << """
         <div class="col-md-${width}">
           <label>${attrs.labels[index]}</label>
-          <input class="form-control" name="${filter}" type="text" value="${value}"/>
+          <input class="form-control" id="${filter}" name="${filter}" type="text" value="${value}"/>
         </div>
       """
     }
@@ -33,6 +33,23 @@ class FilterTagLib {
       out << """
       </div>
     </form>
+      <div id="modalAlert" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">ModulusUno</h4>
+            </div>
+            <div class="modal-body">
+              <p id="messageAlert"></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     <hr/>
     <br/>
