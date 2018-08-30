@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import com.modulus.uno.status.SaleOrderStatus
+
 class FilterTagLib {
   static namespace = "modulusuno"
   static defaultEncodeAs = "raw"
@@ -9,16 +11,36 @@ class FilterTagLib {
       <div class="row">
         <form id=\"formFilters\" action=\"/${attrs.controller}/${attrs.action}\">
    """
-    Integer noFilters = attrs.filters.size()<=4 ? attrs.filters.size() : 4
+    Integer noFilters = attrs.filters.size()<=5 ? attrs.filters.size() : 5
     Integer width = 10 / noFilters
     attrs.filters.eachWithIndex { filter, index ->
       String value = attrs.filterValues ? attrs.filterValues."${filter}" : ""
-      out << """
-        <div class="col-md-${width}">
-          <label>${attrs.labels[index]}</label>
-          <input class="form-control" id="${filter}" name="${filter}" type="text" value="${value}"/>
-        </div>
-      """
+      if (attrs.filterTypes[index]=="select") {
+        String optionsSelectSource = attrs.optionsSelectFilters ? attrs.optionsSelectFilters[index] : []
+        def optionsSelect = "getOptionsFrom${optionsSelectSource}"()
+        out << """
+          <div class="col-md-${width}">
+            <label>${attrs.labels[index]}</label>
+            <select class="form-control" id="${filter}" name="${filter}">
+            <option value="">Todas...</option>
+        """
+        optionsSelect.each { option ->
+          out << """
+            <option value="${option}">${option}</option>
+          """ 
+        }
+        out << """
+            </select>
+          </div>
+        """
+      } else {
+        out << """
+          <div class="col-md-${width}">
+            <label>${attrs.labels[index]}</label>
+              <input type="text" class="form-control" id="${filter}" name="${filter}" value="${value}"/>
+          </div>
+        """
+      }
     }
     out << """
       <div class="col-md-2 text-right">
@@ -54,5 +76,9 @@ class FilterTagLib {
     <hr/>
     <br/>
     """
+  }
+
+  def getOptionsFromSaleOrderStatus() {
+    SaleOrderStatus.values().collect { it.name().toString() }
   }
 }
