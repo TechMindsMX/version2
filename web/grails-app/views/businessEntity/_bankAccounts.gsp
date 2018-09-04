@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="col-md-6">
-          <span class="property-label"><h4><g:message code="businessEntity.label.bankAccounts.${relation}" default="Cuentas Bancarias"/></h4></span>
+          <span class="property-label"><h4><g:message code="businessEntity.label.bankAccounts.${relation}" default="Datos Bancarios"/></h4></span>
         </div>
         <div class="col-md-6" align="right">
 
