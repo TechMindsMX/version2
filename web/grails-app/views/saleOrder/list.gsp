@@ -1,6 +1,5 @@
 <%! import com.modulus.uno.status.SaleOrderStatus%>
 <!DOCTYPE html>
-<%! import com.modulus.uno.status.SaleOrderStatus %>
 <html>
 <head>
   <meta name="layout" content="main" />
@@ -19,7 +18,7 @@
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
         
-        <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName', 'stampedDateInit', 'stampedDateEnd']" labels="['RFC', 'CLIENTE', 'TIMBRADA DESDE', 'TIMBRADA HASTA']" filterValues="${filterValues}" viewAll="list"/>
+        <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName', 'stampedDateInit', 'stampedDateEnd', 'status']" labels="['RFC', 'Cliente', 'Timbrada Desde', 'Timbrada Hasta', 'Estatus']" filterTypes="['text', 'text', 'text', 'text', 'select']" optionsSelectFilters="['', '', '', '', 'SaleOrderStatus' ]" filterValues="${filterValues}" viewAll="list"/>
         
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
