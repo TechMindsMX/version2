@@ -26,7 +26,7 @@ class FilterTagLib {
         """
         optionsSelect.each { option ->
           out << """
-            <option value="${option}">${option}</option>
+            <option value="${option}" ${value==option ? 'selected' : ''}>${option}</option>
           """ 
         }
         out << """
