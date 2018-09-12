@@ -1,3 +1,4 @@
+<%! import com.modulus.uno.BusinessEntityStatus %>
 <style>
 	th {
 	  text-align:center;
@@ -42,18 +43,35 @@
 
         <g:each in="${employeesAvailableToAdd}" var="employee" status="index">
         <tr>
-          <td><g:checkBox class="entity" id="checkBe" name="checkBe" value="${employee.id}" checked="false"/></td>
+          <td>
+            <g:if test="${employee.status == BusinessEntityStatus.ACTIVE}">
+              <g:checkBox class="entity" id="checkBe" name="checkBe" value="${employee.id}" checked="false"/>
+            </g:if>
+            <g:if test="${employee.status == BusinessEntityStatus.INACTIVE}">
+              <span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" title="El empleado está dado de baja"></span>
+            </g:if>
+          </td>
           <td>${employee.number}</td>
           <td>${employee}</td>
           <td>${employee.rfc}</td>
           <td>${employee.curp}</td>
           <td>${dataImssEmployees[index]?.nss}</td>
           <td>
+            <g:if test="${employee.status == BusinessEntityStatus.ACTIVE}">
 						<g:set var="bankAccount" value="${employee.banksAccounts ? employee.banksAccounts.first().id : ""}"/> 
 						<g:select class="form-control fixwidth" id="bankAccount${employee.id}" name="bankAccount${employee.id}" from="${employee.banksAccounts}" noSelection="['':'EFECTIVO/CHEQUE']" optionKey="id" value="${bankAccount}"/>
+            </g:if>
+            <g:if test="${employee.status == BusinessEntityStatus.INACTIVE}">
+              <span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" title="El empleado está dado de baja"></span>
+            </g:if>
           </td>
           <td>
+            <g:if test="${employee.status == BusinessEntityStatus.ACTIVE}">
 						<input type="text" id="netPayment${employee.id}" name="netPayment${employee.id}" class="form-control text-right" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o hasta 2 decimales)" value="${netPaymentEmployees[index]}" placeholder="Neto a Pagar" style="width:100px"/>
+            </g:if>
+            <g:if test="${employee.status == BusinessEntityStatus.INACTIVE}">
+              <span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" title="El empleado está dado de baja"></span>
+            </g:if>
           </td>
           <td>
 						<g:textField class="form-control fixwidth" id="note${employee.id}" name="note${employee.id}" value="" placeholder="Observaciones"/>
