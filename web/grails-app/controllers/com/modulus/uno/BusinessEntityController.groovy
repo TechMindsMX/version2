@@ -209,6 +209,7 @@ class BusinessEntityController {
 
   @Transactional
   def inactive(BusinessEntity businessEntity) {
+    businessEntityService.changeEnabledRelatedUserIfExists(businessEntity, false)
     businessEntity.status = BusinessEntityStatus.INACTIVE
     businessEntity.save()
     redirect action:"show", id:businessEntity.id 
@@ -216,6 +217,7 @@ class BusinessEntityController {
 
   @Transactional
   def authorize(BusinessEntity businessEntity) {
+    businessEntityService.changeEnabledRelatedUserIfExists(businessEntity, true)
     businessEntity.status = BusinessEntityStatus.ACTIVE
     businessEntity.save()
     redirect action:"show", id:businessEntity.id
