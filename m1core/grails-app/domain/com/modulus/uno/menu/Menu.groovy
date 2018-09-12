@@ -5,6 +5,7 @@ class Menu {
   String name
   String internalUrl
   String parameters
+  Integer position = 1
 
   static hasMany = [menus: Menu]
 

@@ -21,6 +21,7 @@ class BusinessEntityService {
   XlsLayoutsBusinessEntityService xlsLayoutsBusinessEntityService
   XlsImportService xlsImportService
   DataImssEmployeeService dataImssEmployeeService
+  UserService userService
 
   @Transactional
   def generatedBussinessEntityProperties(BusinessEntity businessEntity, def params, Company company) {
@@ -695,4 +696,11 @@ class BusinessEntityService {
     company.businessEntities.find { it.rfc == rfc } ? true : false
   }
 
+  def changeEnabledRelatedUserIfExists(BusinessEntity businessEntity, boolean status) {
+    User user = userService.findByUsername(businessEntity.rfc)
+    if (user) {
+      user.enabled = status
+      user.save()
+    }
+  }
 }
