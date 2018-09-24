@@ -1,11 +1,11 @@
 <f:with bean="product">
   <div class="form-group">
     <label for="">${message(code:"product.satKey.label")}</label>
-    <g:textField name="satKey" class="form-control" required="" pattern=".{8, 8}" title="8 caracteres exactamente" autofocus="" value="${product?.satKey}"/>
+    <g:textField name="satKey" class="form-control" required="" pattern="[0-9]{8}" title="8 dígitos exactamente" autofocus="" value="${product?.satKey}" placeholder="Ingreso 8 dígitos exactamente"/>
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.sku.label")}</label>
-    <g:textField name="sku" class="form-control" required="" pattern=".{4,50}" title="4 caracteres mínimo" value="${product?.sku}"/>
+    <g:textField name="sku" class="form-control" required="" pattern=".{4,50}" title="4 caracteres mínimo" value="${product?.sku}" placeholder="Mínimo 4 caracteres"/>
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.name.label")}</label>
