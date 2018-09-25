@@ -157,9 +157,9 @@ class PrePaysheetService {
 	def deleteRelationsForPrePaysheetEmployee(PrePaysheetEmployee prePaysheetEmployee){
 		log.info "Deleting incidences"
 		prePaysheetEmployee.incidences.each { incidence ->
-			prePaysheetEmployee.removeFromIncidences(incidence)
     	PrePaysheetEmployeeIncidence.executeUpdate("delete PrePaysheetEmployeeIncidence incidence where incidence.id = :id", [id: incidence.id])
 		}
+    prePaysheetEmployee.incidences.clear()
 		prePaysheetEmployee.save()
 		log.info "PrePaysheet employee incidences: ${prePaysheetEmployee.incidences}"
 
