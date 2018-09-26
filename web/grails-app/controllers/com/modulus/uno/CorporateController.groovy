@@ -67,7 +67,7 @@ class CorporateController {
     User user = organizationService.updateRolesForUserInCompanies(command.username,command.rolesByCompany())
     Corporate corporate = session.corporate
     flash.message = message(code:'users.roles.updated',default: 'Usuario actualizado')
-    redirect(action:"users",id:corporate.id)
+    redirect(action:"assignRolesInCompaniesForUser",id:user.id)
   }
 
   def addCompany(Corporate corporate){
@@ -249,6 +249,15 @@ class CorporateController {
     redirect action:"assignBusinessEntitiesGroup", id:user.id, params:[companyId:group.company.id]
   }
 
+  def setUpMenusForUser(User user) {
+    Corporate corporate = Corporate.get(session.corporate.id)
+    Company company = Company.get(params.companyId)
+    List<UserRoleCompany> rolesOfUser = organizationService.findRolesForUserInCompanies(user.username,corporate)
+    def companyRolesForUser = rolesOfUser.find { allUserRoles ->
+      allUserRoles.company == company
+    }?.roles
+    [companyRolesForUser:companyRolesForUser, user:user, company:company, corporate:corporate]   
+  }
 }
 
 @groovy.transform.TypeChecked
