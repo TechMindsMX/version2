@@ -45,6 +45,7 @@
       </div>
     </div>
 
+    <asset:javascript src="corporate/setUpMenusForUser.js"/>
   </body>
 </html>
 
