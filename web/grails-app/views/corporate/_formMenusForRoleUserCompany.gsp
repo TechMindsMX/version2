@@ -12,7 +12,7 @@
         <div class="col-md-12">
           <div class="form-group">
             <label>Rol a configurar:</label>
-            <select class="form-control" name="roleId">
+            <select class="form-control" id="roleId" name="roleId">
               <option value="">Seleccione el rol a configurar...</option>
               <g:each in="${companyRolesForUser}" var="role">
                 <option value="${role.id}"><g:message code="role.authority.${role.authority.toLowerCase()}"/></option>
@@ -22,10 +22,12 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div id="divListMenus" class="row">
         <div class="col-md-12">
-          <div class="form-group">
-            <label>Seleccione los menús disponibles para el usuario</label>
+          <label>Seleccione los menús disponibles para el usuario</label>
+          <div class="table-responsive">
+            <table id="listMenus" class="table table-condensed table-striped">
+            </table>
           </div>
         </div>
       </div>
