@@ -283,6 +283,12 @@ class CorporateController {
     render listMenus as JSON
   }
   
+  def saveGrantsMenusForUser(User user) {
+    log.info "Params checked submenus: ${params}"
+    corporateService.saveUserMenus(user, params)
+    redirect action:"setUpMenusForUser", id:user.id, params:[companyId:params.companyId]
+  }
+
 }
 
 @groovy.transform.TypeChecked
