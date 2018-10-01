@@ -49,7 +49,6 @@ $(document).on("click", "input[id^=chkMenu_]", function(event) {
 $(document).on("click", "input[id^=chkSubMenu_]", function(event) {
   var targetId = event.target.id;
   var menuId = targetId.split("_")[1];
-  console.log("Menu Id: " + menuId);
   var submenus = $("input.submenu_"+menuId+"[type=checkbox]");
   var parentMenu = $("#chkMenu_"+menuId);
   if (event.target.checked) {
@@ -66,3 +65,16 @@ $(document).on("click", "input[id^=chkSubMenu_]", function(event) {
     }
   }
 });
+
+$("#buttonApplyUserMenus").click(function(event) {
+  event.stopImmediatePropagation();
+  event.preventDefault();
+  var checkedSubmenus = $("#formUserMenus input:checkbox:checked").length;
+  if (checkedSubmenus) {
+    $('#noSelectionModal').modal('hide');
+    //document.formUserMenus.submit();
+  } else {
+    $('#noSelectionModal').modal('show');
+  }
+});
+
