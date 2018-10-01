@@ -2,6 +2,7 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 import grails.util.Holders as H
+import com.modulus.uno.menu.Menu
 
 @Transactional
 class CorporateService {
@@ -205,4 +206,20 @@ class CorporateService {
     }
   }
 
+  def saveUserMenus(User user, Map params) {
+    def menusIdsSelected = []
+    params.each { key, value ->
+      if (key.startsWith("menuId")) {
+        menusIdsSelected.add(value)
+      }
+    }
+    def listMenus = Menu.getAll(menusIdsSelected)
+    UserRoleCompanyMenu userMenu = new UserRoleCompanyMenu(
+      user: user,
+      company: Company.get(params.companyId),
+      role: Role.get(params.roleId),
+      menus: listMenus
+    ).save()
+
+  }  
 }
