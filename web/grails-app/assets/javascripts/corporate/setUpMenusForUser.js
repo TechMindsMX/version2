@@ -1,4 +1,5 @@
 $("#divListMenus").hide();
+$("#divNoListMenus").hide();
 
 $("#roleId").change( function() {
   var theRole = $("#roleId").val()
@@ -9,7 +10,6 @@ $("#roleId").change( function() {
     $("#divListMenus").hide();
     return;
   }
-  $("#divListMenus").show();
 
   var consulta = $.ajax({
     type:'GET',
@@ -23,6 +23,14 @@ $("#roleId").change( function() {
     if(data.error!==undefined){
       return false;
     } else {
+      if (data.length == 0) {
+        $("#divListMenus").hide();
+        $("#divNoListMenus").show();
+        return false;
+      }
+
+      $("#divNoListMenus").hide();
+      $("#divListMenus").show();
       $.each(data, function(k,v) {
         if(v.checked) {
           $("#listMenus").append("<tr><td colspan='2' class='col-md-10'><strong>" + v.name.toUpperCase() + "</strong></td><td class='col-md-2 text-center'><input id='chkMenu_" + v.id + "' type='checkBox' name='menuId" + v.id + "' value='" + v.id + "' checked='true'/></td></tr>");
