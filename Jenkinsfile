@@ -163,7 +163,7 @@ pipeline {
       //  }
       //}
       environment {
-        NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
+        NAMEFILE = 'test'
       }
       steps{
         //sh 'mv ROOT-WEB.war ROOT.war'
@@ -171,7 +171,7 @@ pipeline {
           docker.withTool('Docker') {
             docker.withRegistry('https://752822034914.dkr.ecr.us-east-1.amazonaws.com/web-modulusuno', 'ecr:us-east-1:techminds-aws') {
               //def customImage = docker.build("web-modulusuno:${env.VERSION}", "--build-arg URL_WAR=ROOT.war --build-arg FILE_NAME_CONFIGURATION=application-${NAMEFILE}.groovy --build-arg PATH_NAME_CONFIGURATION=/root/.modulusuno/ web")
-              def customImage = docker.build("web-modulusuno:${env.VERSION}", ".")
+              def customImage = docker.build("web-modulusuno:${env.VERSION}", "--build-arg FILE_NAME_CONFIGURATION=application-${NAMEFILE}.groovy --build-arg PATH_NAME_CONFIGURATION=/root/.modulusuno/ .")
               customImage.push()
             }
           }
