@@ -123,7 +123,7 @@ pipeline {
         sh "cp configFiles/application-api-${NAMEFILE}.groovy ."
         sh "cp configFiles/application-${NAMEFILE}.groovy ."
         dir("folderDocker"){
-          sh "git clone -b master-test git@github.com:makingdevs/Tomcat-Docker.git ."
+          sh "git clone git@github.com:makingdevs/Java-8-Docker.git ."
         }
         sh 'mv folderDocker/* .'
         sh 'mv web/build/libs/web-0.1.war .'
