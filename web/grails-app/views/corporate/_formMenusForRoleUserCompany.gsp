@@ -24,11 +24,16 @@
           </div>
         </div>
       </div>
+      <div id="divNoListMenus" class="row">
+        <div class="alert alert-warning" role="alert">
+          El rol seleccionado no tiene menús asignados
+        </div>
+      </div>
       <div id="divListMenus" class="row">
         <div class="col-md-12">
           <label>Seleccione los menús disponibles para el usuario</label>
           <div class="table-responsive">
-            <table id="listMenus" class="table table-condensed table-striped">
+            <table id="listMenus" class="table table-condensed table-striped table-hover">
             </table>
           </div>
           <div class="row text-right">
