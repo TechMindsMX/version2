@@ -104,7 +104,8 @@ pipeline {
       //}
       steps{
         dir("configFiles"){
-          sh "git clone -b ${env.BRANCH_NAME}-new --single-branch git@bitbucket.org:techmindsmx/config-modulusuno-v3.git ."
+          //sh "git clone -b ${env.BRANCH_NAME}-new --single-branch git@bitbucket.org:techmindsmx/config-modulusuno-v3.git ."
+          sh "git clone -b master-new --single-branch git@bitbucket.org:techmindsmx/config-modulusuno-v3.git ."
         }
       }
     }
