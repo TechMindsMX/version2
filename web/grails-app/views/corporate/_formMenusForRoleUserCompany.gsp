@@ -7,7 +7,9 @@
   </div>
   <div id="defaultPortlet" class="panel-collapse collapse in">
     <div class="portlet-body">
-      <g:form name="formUserMenus" action="saveGrantsMenusForUser" id="${user.id}" params="[companyId:company.id]">
+      <g:form name="formUserMenus" action="saveGrantsMenusForUser" id="${user.id}">
+      <g:hiddenField id="companyId" name="companyId" value="${company.id}"/>
+      <g:hiddenField id="userId" name="userId" value="${user.id}"/>
       <div class="row">
         <div class="col-md-12">
           <div class="form-group">
