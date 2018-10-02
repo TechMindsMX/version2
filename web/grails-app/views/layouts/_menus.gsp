@@ -1,4 +1,5 @@
 <g:each var="menu" in="${menus.sort{it.position}}">
+  <g:if test="${userMenus.contains(menu)}">
   <li class="panel">
     <g:if test="${menu.menus.size() != 0 }">
       <a href="javascript:;" data-parent="#side" data-toggle="collapse" class="accordion-toggle" data-target="#${menu.name.replace(' ','')}">
@@ -6,9 +7,11 @@
       </a>
       <ul class="collapse nav" id="${menu.name.replace(' ','')}">
         <g:each var="submenu" in="${menu.menus.sort{it.position}}">
+          <g:if test="${userMenus.contains(submenu)}">
           <li>
             <a href="${submenu.internalUrl}${evaluate(submenu.parameters ?: '')}">${submenu.name}</a>
           </li>
+          </g:if>
         </g:each>
       </ul>
     </g:if>
@@ -16,4 +19,5 @@
       <a href="${menu.internalUrl}${evaluate(menu.parameters ?: '')}">${menu.name}</a>
     </g:else>
   </li>
+  </g:if>
 </g:each>
