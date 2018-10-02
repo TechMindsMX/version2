@@ -127,7 +127,7 @@ pipeline {
         dir("folderDocker"){
           sh "git clone git@github.com:makingdevs/Grails-Docker.git ."
         }
-        sh 'cp folderDocker/Dockerfile web/'
+        sh 'cp folderDocker/Dockerfile .'
         //sh 'mv web/build/libs/web-0.1.war .'
         //sh 'mv webservices/build/libs/webservices-0.1.war .'
         //sh 'mv web-0.1.war ROOT-WEB.war'
@@ -171,7 +171,7 @@ pipeline {
           docker.withTool('Docker') {
             docker.withRegistry('https://752822034914.dkr.ecr.us-east-1.amazonaws.com/web-modulusuno', 'ecr:us-east-1:techminds-aws') {
               //def customImage = docker.build("web-modulusuno:${env.VERSION}", "--build-arg URL_WAR=ROOT.war --build-arg FILE_NAME_CONFIGURATION=application-${NAMEFILE}.groovy --build-arg PATH_NAME_CONFIGURATION=/root/.modulusuno/ web")
-              def customImage = docker.build("web-modulusuno:${env.VERSION}", "web")
+              def customImage = docker.build("web-modulusuno:${env.VERSION}", ".")
               customImage.push()
             }
           }
