@@ -27,23 +27,23 @@ pipeline {
       }
     }
 
-    stage('Run Migration App') {
-      steps{
-        dir("web"){
-          sh './grailsw -Dgrails.env=test clean'
-          sh './grailsw -Dgrails.env=test dbm-clear-checksums'
-          sh './grailsw -Dgrails.env=test dbm-update'
-        }
-      }
-    }
+    //stage('Run Migration App') {
+    //  steps{
+    //    dir("web"){
+    //      sh './grailsw -Dgrails.env=test clean'
+    //      sh './grailsw -Dgrails.env=test dbm-clear-checksums'
+    //      sh './grailsw -Dgrails.env=test dbm-update'
+    //    }
+    //  }
+    //}
 
-    stage('Testing App') {
-      steps{
-        dir("m1core"){
-          sh './grailsw -Dgrails.env=test test-app'
-        }
-      }
-    }
+    //stage('Testing App') {
+    //  steps{
+    //    dir("m1core"){
+    //      sh './grailsw -Dgrails.env=test test-app'
+    //    }
+    //  }
+    //}
 
     stage('Update Assets') {
       //when {
@@ -117,7 +117,8 @@ pipeline {
       //  }
       //}
       environment {
-        NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
+        //NAMEFILE = "${env.BRANCH_NAME == 'master' ? 'test' : 'production'}"
+        NAMEFILE = 'test'
       }
       steps{
 
@@ -185,7 +186,8 @@ pipeline {
       //  }
       //}
       environment {
-        ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
+        //ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
+        ENVIRONMENT = 'development'
       }
       steps{
         sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} web-modulusuno"
