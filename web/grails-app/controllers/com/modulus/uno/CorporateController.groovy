@@ -4,8 +4,6 @@ import grails.transaction.Transactional
 import grails.converters.JSON
 import com.modulus.uno.businessEntity.BusinessEntitiesGroup
 import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
-import com.modulus.uno.menu.MenuOperationsService
-import com.modulus.uno.menu.Menu
 
 class CorporateController {
 
@@ -19,7 +17,6 @@ class CorporateController {
   CommissionTransactionService commissionTransactionService
   CollaboratorService collaboratorService
   BusinessEntitiesGroupService businessEntitiesGroupService
-  MenuOperationsService menuOperationsService
 
   def create(){
     respond new Corporate()
@@ -264,22 +261,7 @@ class CorporateController {
   }
 
   def getMenusForRole() {
-    Role role = Role.get(params.role)
-    def listMenusOfRole = menuOperationsService.getMenusForTheseRoles([role]) 
-    def listMenus = []
-    listMenusOfRole.each { item ->
-      Map menu = [:]
-      menu.id = item.id
-      menu.name = item.name
-      menu.menus = []
-      item.menus.each { subItem ->
-        Map submenu = [:]
-        submenu.id = subItem.id
-        submenu.name = subItem.name
-        menu.menus.add(submenu)
-      }
-      listMenus.add(menu)
-    }
+    def listMenus = corporateService.getMenusForRole(params)
     render listMenus as JSON
   }
   
