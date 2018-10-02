@@ -215,13 +215,24 @@ class CorporateService {
         menusIdsSelected.add(value)
       }
     }
+
     def listMenus = Menu.getAll(menusIdsSelected)
-    UserRoleCompanyMenu userMenu = new UserRoleCompanyMenu(
-      user: user,
-      company: Company.get(params.companyId),
-      role: Role.get(params.roleId),
-      menus: listMenus
-    ).save()
+    Company company = Company.get(params.companyId)
+    Role role = Role.get(params.roleId)
+    UserRoleCompanyMenu userMenus = UserRoleCompanyMenu.findByUserAndRoleAndCompany(user, role, company)
+    if (userMenus) {
+      userMenus.menus.clear()
+      userMenus.save()
+      userMenus.menus = listMenus
+    } else {
+      userMenus = new UserRoleCompanyMenu(
+        user: user,
+        company: company,
+        role: role,
+        menus: listMenus
+      )
+    }
+    userMenus.save()
   } 
 
   def getMenusForRole(Map userRoleCompany) {
@@ -249,11 +260,11 @@ class CorporateService {
   }
 
   List<Menu> getUserRoleCompanyMenus(Map userRoleCompanyData) {
-    UserRoleCompanyMenu.findByUserAndRoleAndCompany(userRoleCompanyData.user, userRoleCompanyData.role, userRoleCompanyData.company).menus.toList()
+    UserRoleCompanyMenu.findByUserAndRoleAndCompany(userRoleCompanyData.user, userRoleCompanyData.role, userRoleCompanyData.company)?.menus?.toList()
   }
 
   boolean menuIsAssignedToUserInCompany(Map userRoleCompanyMenu) {
     List<Menu> userMenus = getUserRoleCompanyMenus(userRoleCompanyMenu)
-    userMenus.contains(userRoleCompanyMenu.menu)
+    userMenus?.contains(userRoleCompanyMenu.menu)
   }
 }
