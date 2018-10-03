@@ -73,7 +73,7 @@ class ConciliationController {
       redirect action:"chooseInvoiceToConciliate", id:payment.id
       return
     } else if (bankingTransaction) {
-      redirect action:"chooseInvoiceToConciliateWithBankingTransaction", id:bankingTransaction.id
+      redirect action:"chooseInvoiceToConciliateWithBankingDeposit", id:bankingTransaction.id
       return
     }
   }
