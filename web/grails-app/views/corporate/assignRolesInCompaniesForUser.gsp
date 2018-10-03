@@ -35,6 +35,7 @@
                     </th>
                   </g:each>
                   <th></th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -51,6 +52,11 @@
                         <g:link class="btn btn-primary" action="assignBusinessEntitiesGroup" id="${user.id}" params="[companyId:company.id]">Grupos</g:link>
                       </g:if>
                     </td>
+                    <td>
+                      <g:if test="${(rolesOfUser.find { rolesAtCompany -> rolesAtCompany.company == company }?.roles)}">
+                        <g:link class="btn btn-primary" action="setUpMenusForUser" id="${user.id}" params="[companyId:company.id]">Menús</g:link>
+                      </g:if>
+                    </td>
                   </tr>
                 </g:each>
               </tbody>
@@ -58,6 +64,7 @@
             </div>
             <div class="row text-right">
               <input class="save btn btn-default" type="submit" value="Aplicar" />
+              <g:link class="btn btn-default" action="users" id="${corporate.id}">Salir</g:link>
             </div>
           </div>
         </div>
