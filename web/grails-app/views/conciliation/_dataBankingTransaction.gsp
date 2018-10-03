@@ -5,7 +5,7 @@
   </div>
   <div class="col-md-3 text-center">
     <strong>Cuenta bancaria</strong><br>
-    ${bankingTransaction.cuenta}"
+    ${bankingTransaction.cuenta}
   </div>
   <div class="col-md-3 text-center">
     <strong>Total</strong>
