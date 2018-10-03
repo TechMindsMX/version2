@@ -102,6 +102,9 @@ class ConciliationController {
   @Transactional
   def applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
     log.info "Applying conciliations for banking transaction: ${bankingTransaction.id}"
+    if (params.chkPaymentComplement) {
+      bankingTransaction.createPaymentComplement = true
+    }
     conciliationService.applyConciliationsForBankingTransaction(bankingTransaction)
     redirect controller:"payment", action:"conciliation"
   }
