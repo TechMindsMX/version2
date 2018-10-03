@@ -31,8 +31,8 @@
   <g:if test="${conciliations && toApply == 0}">
     <div class="col-md-6 text-right">
       <g:form action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}">
-      <button type="submit" class="btn btn-success">Aplicar</button>
-      <input type="checkbox" name="chkPaymentComplement"/> <label>Complemento de Pago SAT</label>
+        <button type="submit" class="btn btn-success">Aplicar</button>
+        <input type="checkbox" name="chkPaymentComplement"/> <label>Complemento de Pago SAT</label>
       </g:form>
     </div>
   </g:if>
