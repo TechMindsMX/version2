@@ -11,6 +11,8 @@ class MovimientosBancarios {
   MovimientoBancarioType type
   Boolean reconcilable = false
   ConciliationStatus conciliationStatus
+  Boolean createPaymentComplement = false
+  String paymentComplementUuid
 
   Date dateCreated
   Date lastUpdated
@@ -22,6 +24,7 @@ class MovimientosBancarios {
     reference blank:true, nullable:true, size:5..200
     amount min:0.0
     conciliationStatus nullable:true
+    paymentComplementUuid nullable:true
   }
 
 
