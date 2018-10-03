@@ -1,8 +1,8 @@
 <div class="row">
-  <div class="col-md-4 text-center">
+  <div class="col-md-3 text-center">
     <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
   </div>
-  <div class="col-md-4 text-center">
+  <div class="col-md-3 text-center">
     <g:if test="${conciliations}">
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm" title="Al cancelar se borrarán las facturas seleccionadas">
       Cancelar
@@ -28,16 +28,23 @@
     </div>
     </g:if>
   </div>
-  <div class="col-md-4 text-center">
-    <g:if test="${conciliations && toApply == 0}">
-      <g:link action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}" class="btn btn-success">Aplicar</g:link>
-    </g:if>
+  <g:if test="${conciliations && toApply == 0}">
+    <div class="col-md-6 text-right">
+      <g:form action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}">
+      <button type="submit" class="btn btn-success">Aplicar</button>
+      <input type="checkbox" name="chkPaymentComplement"/> <label>Complemento de Pago SAT</label>
+      </g:form>
+    </div>
+  </g:if>
     <g:if test="${!conciliations}">
-    <div class="alert alert-warning" role="alert">No ha agregado facturas</div>
+    <div class="col-md-6 text-center">
+      <div class="alert alert-warning" role="alert">No ha agregado facturas</div>
+    </div>
     </g:if>
     <g:if test="${conciliations && toApply > 0}">
-    <div class="alert alert-warning" role="alert">Aún dispone de monto por aplicar</div>
+    <div class="col-md-6 text-center">
+      <div class="alert alert-warning" role="alert">Aún dispone de monto por aplicar</div>
+    </div>
     </g:if>
-  </div>
 </div>
 
