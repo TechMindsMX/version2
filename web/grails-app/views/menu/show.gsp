@@ -47,6 +47,7 @@
                 <f:display bean="menu" property="name" wrapper="show" />
                 <f:display bean="menu" property="internalUrl" wrapper="show" />
                 <f:display bean="menu" property="parameters" wrapper="show" />
+                <f:display bean="menu" property="position" wrapper="show" />
               </ul>
               <div class="property-value" aria-labelledby="menu-label">
                 <g:form action="delete" method="DELETE" id="${menu.id}">
@@ -79,7 +80,7 @@
                   </thead>
                   <tbody>
                   <g:if test="${menu.menus}">
-                    <g:each in="${menu.menus}" var="m">
+                    <g:each in="${menu.menus.sort{it.position}}" var="m">
                     <tr>
                       <td> <g:link action="show" id="${m.id}"> ${m} </g:link> </td>
                       <td>
