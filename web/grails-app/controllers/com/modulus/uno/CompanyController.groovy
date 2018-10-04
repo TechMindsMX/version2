@@ -96,6 +96,9 @@ class CompanyController {
 
   def setCompanyInSession() {
     def company = params.company
+    if (!company) {
+      return
+    }
     session['company'] = company
     def currentUser = springSecurityService.currentUser
     def companyInfo = Company.findById(company.toLong())

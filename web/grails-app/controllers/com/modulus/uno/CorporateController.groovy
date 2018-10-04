@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import grails.transaction.Transactional
+import grails.converters.JSON
 import com.modulus.uno.businessEntity.BusinessEntitiesGroup
 import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
 
@@ -67,7 +68,7 @@ class CorporateController {
     User user = organizationService.updateRolesForUserInCompanies(command.username,command.rolesByCompany())
     Corporate corporate = session.corporate
     flash.message = message(code:'users.roles.updated',default: 'Usuario actualizado')
-    redirect(action:"users",id:corporate.id)
+    redirect(action:"assignRolesInCompaniesForUser",id:user.id)
   }
 
   def addCompany(Corporate corporate){
@@ -247,6 +248,27 @@ class CorporateController {
     BusinessEntitiesGroup group = BusinessEntitiesGroup.get(params.groupId)
     businessEntitiesGroupService.deleteBusinessEntitiesGroupFromUser(user, group)
     redirect action:"assignBusinessEntitiesGroup", id:user.id, params:[companyId:group.company.id]
+  }
+
+  def setUpMenusForUser(User user) {
+    Corporate corporate = Corporate.get(session.corporate.id)
+    Company company = Company.get(params.companyId)
+    List<UserRoleCompany> rolesOfUser = organizationService.findRolesForUserInCompanies(user.username,corporate)
+    def companyRolesForUser = rolesOfUser.find { allUserRoles ->
+      allUserRoles.company == company
+    }?.roles
+    [companyRolesForUser:companyRolesForUser, user:user, company:company, corporate:corporate]   
+  }
+
+  def getMenusForRole() {
+    def listMenus = corporateService.getMenusForRole(params)
+    render listMenus as JSON
+  }
+  
+  def saveGrantsMenusForUser(User user) {
+    log.info "Params checked submenus: ${params}"
+    corporateService.saveUserMenus(user, params)
+    redirect action:"setUpMenusForUser", id:user.id, params:[companyId:params.companyId]
   }
 
 }
