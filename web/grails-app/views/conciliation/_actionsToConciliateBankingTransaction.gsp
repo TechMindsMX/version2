@@ -1,3 +1,5 @@
+<%! import com.modulus.uno.PaymentWay %>
+<%! import com.modulus.uno.Bank %>
 <div class="row">
   <div class="col-md-3 text-center">
     <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
@@ -31,8 +33,8 @@
   <g:if test="${conciliations && toApply == 0}">
     <div class="col-md-6 text-right">
       <g:form action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}">
-        <button type="submit" class="btn btn-success">Aplicar</button>
-        <input type="checkbox" name="chkPaymentComplement"/> <label>Complemento de Pago SAT</label>
+        <button id="btnApply" type="submit" class="btn btn-success">Aplicar</button>
+        <input type="checkbox" id="chkPaymentComplement" name="chkPaymentComplement"/> <label>Complemento de Pago SAT</label>
       </g:form>
     </div>
   </g:if>
@@ -47,4 +49,30 @@
     </div>
     </g:if>
 </div>
-
+<div class="row">
+  <div class="col-md-12">
+<div class="collapse" id="collapsePaymentComplement">
+  <hr>
+  <div class="well">
+    <g:form action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}">
+      <g:hiddenField name="chkPaymentComplement" value="on"/>
+      <div class="form-group">
+        <label>Forma de Pago del Depósito:</label>
+        <g:select class="form-control" name="paymentWay" from="${PaymentWay.values()}" optionKey="key" optionValue="description" value="${PaymentWay.TRANSFERENCIA_ELECTRONICA}"/>
+      </div>
+      <div class="form-group">
+        <label>Banco Origen:</label>
+        <g:select class="form-control" name="sourceBank" from="${Bank.list()}" optionKey="id" optionValue="name" noSelection="['':'Elija el Banco Origen...']" required=""/>
+      </div>
+      <div class="form-group">
+        <label>Cuenta Origen:</label>
+        <g:textField class="form-control" name="sourceAccount" required="" pattern="[0-9]*" placeholder="Hasta 18 dígitos"/>
+      </div>
+      <div class="text-right">
+        <button type="submit" class="btn btn-success">Aplicar</button>
+      </div>
+    </g:form>
+  </div>
+</div>
+  </div>
+</div>
