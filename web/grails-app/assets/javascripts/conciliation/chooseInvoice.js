@@ -35,8 +35,6 @@ function getCurrencyForSaleOrder(saleOrderId) {
 };
 
 $("#chkPaymentComplement").change(function(){
-  console.log("Click on check payment complement")
-  console.log("Checked: "+this.checked)
   if (this.checked) {
     $("#btnApply").hide();
     $("#collapsePaymentComplement").collapse('show');
