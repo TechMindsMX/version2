@@ -62,7 +62,7 @@
       </div>
       <div class="form-group">
         <label>Banco Origen:</label>
-        <g:select class="form-control" name="sourceBank" from="${Bank.list()}" optionKey="id" optionValue="name" noSelection="['':'Elija el Banco Origen...']" required=""/>
+        <g:select class="form-control" name="sourceBank" from="${Bank.findAll(sort:'name'){rfc != null}}" optionKey="id" optionValue="name" noSelection="['':'Elija el Banco Origen...']" required=""/>
       </div>
       <div class="form-group">
         <label>Cuenta Origen:</label>
