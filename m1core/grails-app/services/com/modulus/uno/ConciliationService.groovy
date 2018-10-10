@@ -89,20 +89,21 @@ class ConciliationService {
     paymentService.conciliatePayment(payment)
   }
 
-  void applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
+  void applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
     List<Conciliation> conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
     conciliations.each { conciliation ->
       applyConciliation(conciliation)
     }
     movimientosBancariosService.conciliateBankingTransaction(bankingTransaction)
     if (bankingTransaction.createPaymentComplement) {
-      generatePaymentComplement(bankingTransaction)
+      dataPaymentComplement.conciliations = conciliations
+      generatePaymentComplement(bankingTransaction, dataPaymentComplement)
     }
   }
 
-  private def generatePaymentComplement(MovimientosBancarios bankingTransaction) {
+  private def generatePaymentComplement(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
     log.info "Generating payment complement for bankingTransaction: ${bankingTransaction.id}"
-    String paymentComplementUuid = invoiceService.generatePaymentComplementForConciliatedBankingTransaction(bankingTransaction)
+    String paymentComplementUuid = invoiceService.generatePaymentComplementForConciliatedBankingTransaction(bankingTransaction, dataPaymentComplement)
     bankingTransaction.paymentComplementUuid = paymentComplementUuid
     bankingTransaction.save()
   }
