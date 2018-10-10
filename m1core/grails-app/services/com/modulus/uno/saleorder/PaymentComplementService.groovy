@@ -30,7 +30,7 @@ class PaymentComplementService {
     emisor: createEmisor(dataPaymentComplement.company),
     receptor: createReceptor(dataPaymentComplement.conciliations.first().saleOrder),
     emitter: dataPaymentComplement.company.rfc,
-    datosDeFacturacion: createDatosDeFacturacion(),
+    datosDeFacturacion:  new DatosDeFacturacion(),
     payment: createDataPayment(bankingTransaction, dataPaymentComplement)
    )
    paymentComplementCommand
@@ -58,4 +58,19 @@ class PaymentComplementService {
     ) 
   }
 
+  Payment createDataPayment(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
+    PaymentWay paymentWay = PaymentWay.values().find { it.toString() == dataPaymentComplement.paymentWay }
+    Bank bank = Bank.get(dataPaymentComplement.bankId)
+    new Payment(
+      paymentDate:,
+      paymentWay: paymentWay.key,
+      currency:"MXN",
+      amount: bankingTransaction.amount.setScale(2, RoundingMode.HALF_UP).toString(),
+      sourceBankRfc:bank.rfc,
+      sourceAccount:dataPaymentComplement.sourceAccount,
+      destinationBankRfc:bankingTransaction.cuenta.banco.rfc,
+      destinationAccount:bankingTransaction.cuenta.clabe ?: bankingTransaction.cuenta.accountNumber,
+      relatedDocuments:createRelatedDocuments()
+    )
+  }
 }
