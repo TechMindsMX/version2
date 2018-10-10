@@ -316,7 +316,7 @@ class PaysheetService {
         prePaysheetEmployee {
           eq("rfc", rfc)
         }
-        'in'("status", [PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED_XML, PaysheetEmployeeStatus.FULL_STAMPED])
+        'in'("status", [PaysheetEmployeeStatus.IMSS_STAMPED_XML, PaysheetEmployeeStatus.IMSS_STAMPED, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED_XML, PaysheetEmployeeStatus.ASSIMILABLE_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED_XML, PaysheetEmployeeStatus.FULL_STAMPED, PaysheetEmployeeStatus.FULL_STAMPED_XML_IMSS_PDF, PaysheetEmployeeStatus.FULL_STAMPED_XML_ASSIMILABLE_PDF])
       }
     }
 
