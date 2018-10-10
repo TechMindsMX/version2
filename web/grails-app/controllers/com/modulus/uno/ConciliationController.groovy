@@ -102,10 +102,15 @@ class ConciliationController {
   @Transactional
   def applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
     log.info "Applying conciliations for banking transaction: ${bankingTransaction.id}"
+    Map dataPaymentComplement = [:]
     if (params.chkPaymentComplement) {
       bankingTransaction.createPaymentComplement = true
+      dataPaymentComplement.paymentWay = params.paymentWay
+      dataPaymentComplement.bankId = params.bankId
+      dataPaymentComplement.sourceAccount = params.sourceAccount
+      dataPaymentComplement.company = Company.get(session.company)
     }
-    conciliationService.applyConciliationsForBankingTransaction(bankingTransaction)
+    conciliationService.applyConciliationsForBankingTransaction(bankingTransaction, dataPaymentComplement)
     redirect controller:"payment", action:"conciliation"
   }
 
