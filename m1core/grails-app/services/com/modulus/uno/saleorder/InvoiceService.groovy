@@ -330,10 +330,4 @@ class InvoiceService {
     Date.parse("yyy-MM-dd'T'HH:mm:ss", result.stampDate)
   }
 
-  String generatePaymentComplementForConciliatedBankingTransaction(MovimientosBancarios bankingTransaction) {
-    //Create command for payment complement
-    //Send command to M1-API-Facturacion
-    //Receive uuid and return it
-    "hardcode uuid"
-  }
 }
