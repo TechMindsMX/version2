@@ -64,7 +64,7 @@ class PaymentComplementService {
     PaymentWay paymentWay = PaymentWay.values().find { it.toString() == dataPaymentComplement.paymentWay }
     Bank bank = Bank.get(dataPaymentComplement.bankId)
     new Payment(
-      paymentDate:,
+      paymentDate: bankingTransaction.dateEvent.format("yyyy-MM-dd'T00:00:00'"),
       paymentWay: paymentWay.key,
       currency:"MXN",
       amount: bankingTransaction.amount.setScale(2, RoundingMode.HALF_UP).toString(),
