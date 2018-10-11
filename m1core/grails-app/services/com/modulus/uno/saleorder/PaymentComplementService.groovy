@@ -3,6 +3,7 @@ package com.modulus.uno.saleorder
 import com.modulus.uno.MovimientosBancarios
 import com.modulus.uno.PaymentWay
 import com.modulus.uno.Company
+import com.modulus.uno.Conciliation
 import com.modulus.uno.saleorder.PaymentComplementCommand
 import com.modulus.uno.invoice.*
 import com.modulus.uno.Address
@@ -11,6 +12,7 @@ import com.modulus.uno.RestService
 import com.modulus.uno.RestException
 
 import grails.util.Environment
+import java.math.RoundingMode
 
 class PaymentComplementService {
 
@@ -70,7 +72,28 @@ class PaymentComplementService {
       sourceAccount:dataPaymentComplement.sourceAccount,
       destinationBankRfc:bankingTransaction.cuenta.banco.rfc,
       destinationAccount:bankingTransaction.cuenta.clabe ?: bankingTransaction.cuenta.accountNumber,
-      relatedDocuments:createRelatedDocuments()
+      relatedDocuments:createRelatedDocuments(dataPaymentComplement.conciliations)
     )
   }
+
+  List<RelatedDocument> createRelatedDocuments(List<Conciliation> conciliations) {
+    List<RelatedDocument> relatedDocuments = []
+    conciliations.each { conciliation ->
+      RelatedDocument relatedDocument = new RelatedDocument(
+        uuid: conciliation.saleOrder.folio,
+        serie: conciliation.saleOrder.invoiceSerie ?: "",
+        folio: conciliation.saleOrder.invoiceFolio ?: "",
+        currency: conciliation.saleOrder.currency,
+        changeType: conciliation.saleOrder.changeType.setScale(2, RoundingMode.HALF_UP).toString(),
+        paymentMethod: conciliation.saleOrder.paymentMethod.name(),
+        partialNumber: conciliation.saleOrder.payments.size(),
+        beforeAmount: (conciliation.saleOrder.amountToPay + conciliation.amount).setScale(2, RoundingMode.HALF_UP).toString(),
+        payedAmount: conciliation.amount.setScale(2, RoundingMode.HALF_UP).toString(),
+        newAmount: conciliation.saleOrder.amountToPay.setScale(2, RoundingMode.HALF_UP).toString()
+      )
+      relatedDocuments.add(relatedDocument)
+    }
+    relatedDocuments
+  }
+
 }
