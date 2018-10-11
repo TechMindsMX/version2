@@ -5,7 +5,8 @@ class RelatedDocument {
   String serie
   String folio
   String currency
-  String paymentWay
+  String changeType
+  String paymentMethod
   String partialNumber
   String beforeAmount
   String payedAmount
