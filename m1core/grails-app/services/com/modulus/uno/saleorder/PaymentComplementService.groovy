@@ -6,7 +6,9 @@ import com.modulus.uno.Company
 import com.modulus.uno.Conciliation
 import com.modulus.uno.saleorder.PaymentComplementCommand
 import com.modulus.uno.invoice.*
+import com.modulus.uno.invoice.paymentComplement.*
 import com.modulus.uno.Address
+import com.modulus.uno.Bank
 import com.modulus.uno.AddressType
 import com.modulus.uno.RestService
 import com.modulus.uno.RestException
@@ -44,7 +46,7 @@ class PaymentComplementService {
       datosFiscales: new DatosFiscales(
         razonSocial: company.bussinessName,
         rfc: (Environment.current == Environment.PRODUCTION) ? company.rfc : "AAA010101AAA",
-        regimen: new RegimenFiscal(clave:company.taxRegime.key, descripcion:company.taxRegime.description)
+        regimen: new RegimenFiscal(clave:company.taxRegime.key, descripcion:company.taxRegime.description),
         codigoPostal: address.zipCode
       )
     ) 
