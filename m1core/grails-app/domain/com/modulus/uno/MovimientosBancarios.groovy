@@ -1,6 +1,7 @@
 package com.modulus.uno
 
 import com.modulus.uno.status.ConciliationStatus
+import com.modulus.uno.status.PaymentComplementStatus
 
 class MovimientosBancarios {
 
@@ -13,6 +14,7 @@ class MovimientosBancarios {
   ConciliationStatus conciliationStatus
   Boolean createPaymentComplement = false
   String paymentComplementUuid
+  PaymentComplementStatus paymentComplementStatus
 
   Date dateCreated
   Date lastUpdated
@@ -25,6 +27,7 @@ class MovimientosBancarios {
     amount min:0.0
     conciliationStatus nullable:true
     paymentComplementUuid nullable:true
+    paymentComplementStatus nullable:true
   }
 
 
