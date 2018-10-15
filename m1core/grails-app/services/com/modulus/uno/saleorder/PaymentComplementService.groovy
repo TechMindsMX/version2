@@ -15,6 +15,7 @@ import com.modulus.uno.RestException
 
 import grails.util.Environment
 import java.math.RoundingMode
+import groovy.json.JsonSlurper
 
 class PaymentComplementService {
 
@@ -24,8 +25,19 @@ class PaymentComplementService {
     //Create command for payment complement
     PaymentComplementCommand paymentComplementCommand = createPaymentComplementCommand(bankingTransaction, dataPaymentComplement)
     //Send command to M1-API-Facturacion
-    //Receive uuid and return it
-    "hardcode uuid"
+    def resultStamp = restService.sendFacturaCommandWithAuth(paymentComplementCommand, grailsApplication.config.modulus.paymentComplementCreate)
+    if (!resultStamp) {
+      throw new RestException("No se pudo generar el complemento de pago") 
+    }
+    log.info "Result stamp: ${resultStamp.text}"
+    def result = new JsonSlurper().parseText(resultStamp.text)
+    if (!result) {
+      throw new RestException("No se pudo generar el complemento de pago") 
+    }
+    if (result.error) {
+      throw new RestException(result.error) 
+    }
+    result
   }
  
   PaymentComplementCommand createPaymentComplementCommand(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
@@ -96,6 +108,16 @@ class PaymentComplementService {
       relatedDocuments.add(relatedDocument)
     }
     relatedDocuments
+  }
+
+  def generatePdfForPaymentComplementFromBankingTransaction(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
+    PaymentComplementCommand paymentComplementCommand = createPaymentComplementCommand(bankingTransaction, dataPaymentComplement)
+    paymentComplementCommand.datosDeFacturacion.uuid = bankingTransaction.paymentComplementUuid
+    def result = restService.sendFacturaCommandWithAuth(paymentComplementCommand, grailsApplication.config.modulus.pdfPaymentComplementCreate)
+    if (!result) {
+      throw new RestException("No se pudo generar el PDF del complemento de pago")
+    }
+    result
   }
 
 }
