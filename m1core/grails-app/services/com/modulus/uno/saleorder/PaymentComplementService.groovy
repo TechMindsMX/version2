@@ -20,6 +20,7 @@ import groovy.json.JsonSlurper
 class PaymentComplementService {
 
   RestService restService
+  def grailsApplication
 
   String generatePaymentComplementForConciliatedBankingTransaction(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
     //Create command for payment complement
@@ -30,14 +31,18 @@ class PaymentComplementService {
       throw new RestException("No se pudo generar el complemento de pago") 
     }
     log.info "Result stamp: ${resultStamp.text}"
-    def result = new JsonSlurper().parseText(resultStamp.text)
+    resultStamp.text
+  }
+
+  def generatePdfForPaymentComplementWithUuid(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
+    PaymentComplementCommand paymentComplementCommand = createPaymentComplementCommand(bankingTransaction, dataPaymentComplement)
+    paymentComplementCommand.datosDeFacturacion.uuid = bankingTransaction.paymentComplementUuid
+    def result = restService.sendFacturaCommandWithAuth(paymentComplementCommand, grailsApplication.config.modulus.paymentComplementGeneratePdf)
+    log.info "Result generating pdf: ${result}"
     if (!result) {
-      throw new RestException("No se pudo generar el complemento de pago") 
+      throw new RestException("No se pudo generar el PDF del complemento de pago")
     }
-    if (result.error) {
-      throw new RestException(result.error) 
-    }
-    result
+    result   
   }
  
   PaymentComplementCommand createPaymentComplementCommand(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
@@ -75,7 +80,7 @@ class PaymentComplementService {
   }
 
   Payment createDataPayment(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
-    PaymentWay paymentWay = PaymentWay.values().find { it.toString() == dataPaymentComplement.paymentWay }
+    PaymentWay paymentWay = PaymentWay.values().find { it.key == dataPaymentComplement.paymentWay }
     Bank bank = Bank.get(dataPaymentComplement.bankId)
     new Payment(
       paymentDate: bankingTransaction.dateEvent.format("yyyy-MM-dd'T00:00:00'"),
@@ -94,7 +99,7 @@ class PaymentComplementService {
     List<RelatedDocument> relatedDocuments = []
     conciliations.each { conciliation ->
       RelatedDocument relatedDocument = new RelatedDocument(
-        uuid: conciliation.saleOrder.folio,
+        uuid: conciliation.saleOrder.folio.length() > 36 ? conciliation.saleOrder.folio.substring(0,36) : conciliation.saleOrder.folio,
         serie: conciliation.saleOrder.invoiceSerie ?: "",
         folio: conciliation.saleOrder.invoiceFolio ?: "",
         currency: conciliation.saleOrder.currency,
