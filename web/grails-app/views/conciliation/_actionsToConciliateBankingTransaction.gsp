@@ -1,14 +1,17 @@
 <%! import com.modulus.uno.PaymentWay %>
 <%! import com.modulus.uno.Bank %>
+<%! import com.modulus.uno.ConciliationStatus %>
 <div class="row">
   <div class="col-md-3 text-center">
     <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
   </div>
   <div class="col-md-3 text-center">
     <g:if test="${conciliations}">
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm" title="Al cancelar se borrarán las facturas seleccionadas">
-      Cancelar
-    </button>
+    <g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">  
+      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm" title="Al cancelar se borrarán las facturas seleccionadas">
+        Cancelar
+      </button>
+    </g:if>
     <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">

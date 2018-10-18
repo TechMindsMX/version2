@@ -230,4 +230,26 @@ class ConciliationController {
     }
   }
 
+   def showDetailPaymentConciliated(Payment payment) {
+    log.info "Payment to conciliate: ${payment.dump()}"
+    List<Conciliation> conciliations = conciliationService.getConciliationsAppliedForPayment(payment)
+    if (conciliations.saleOrder.grep()) {
+      render view:"chooseInvoiceToConciliate", model:[payment:payment, conciliations:conciliations]
+    } else {
+      render view:"showConciliationWithoutInvoice", model:[payment:payment, conciliations:conciliations]
+    }
+  }
+
+  def showDetailBankingWithdrawsConciliated(MovimientosBancarios bankingTransaction) {
+    log.info "Banking Transaction conciliated: ${bankingTransaction.dump()}"
+    List<Conciliation> conciliations = conciliationService.getConciliationsAppliedForBankingTransaction(bankingTransaction)
+    render view:"choosePaymentToPurchaseToConciliateWithBankingWithdraw", model:[bankingTransaction:bankingTransaction, conciliations:conciliations]
+  }
+
+    def showDetailBankingDepositConciliated(MovimientosBancarios bankingTransaction) {
+    log.info "Banking Transaction conciliated: ${bankingTransaction.dump()}"
+    List<Conciliation> conciliations = conciliationService.getConciliationsAppliedForBankingTransaction(bankingTransaction)
+    render view:"chooseInvoiceToConciliateWithBankingDeposit", model:[bankingTransaction:bankingTransaction, conciliations:conciliations]
+  }
+
 }

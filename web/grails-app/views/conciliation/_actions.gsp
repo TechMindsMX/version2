@@ -1,12 +1,15 @@
+<%! import com.modulus.uno.PaymentStatus %>
 <div class="row">
   <div class="col-md-4 text-center">
     <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
   </div>
   <div class="col-md-4 text-center">
     <g:if test="${conciliations}">
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm" title="Al cancelar se borrarán las facturas seleccionadas">
-      Cancelar
-    </button>
+      <g:if test="${payment.status == PaymentStatus.PENDING}">  
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm" title="Al cancelar se borrarán las facturas seleccionadas">
+        Cancelar
+        </button>
+      </g:if>
     <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
