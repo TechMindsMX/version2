@@ -56,7 +56,7 @@
     <div class="col-md-6 text-right">
       <a href="${modulusuno.paymentComplementUrl(bankingTransaction:bankingTransaction, company:company, format:'xml')}" class="btn btn-success" download>XML</a>
       <g:if test="${bankingTransaction.paymentComplementStatus == PaymentComplementStatus.XML_GENERATED}">
-        <g:link class="btn btn-default text-right" action="generatePdf" id="${bankingTransaction.id}">Generar PDF</g:link>
+        <g:link class="btn btn-default text-right" action="generatePdfForPaymentComplement" id="${bankingTransaction.id}">Generar PDF</g:link>
       </g:if>
       <g:else>
         <a href="${modulusuno.paymentComplementUrl(bankingTransaction:bankingTransaction, company:company, format:'pdf')}" class="btn btn-success" download>PDF</a>
