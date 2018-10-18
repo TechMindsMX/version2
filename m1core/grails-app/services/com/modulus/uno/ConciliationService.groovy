@@ -126,17 +126,29 @@ class ConciliationService {
   private def generatePaymentComplement(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
     log.info "Generating payment complement for bankingTransaction: ${bankingTransaction.id}"
     String paymentComplementUuid = paymentComplementService.generatePaymentComplementForConciliatedBankingTransaction(bankingTransaction, dataPaymentComplement)
-    bankingTransaction.paymentComplementUuid = paymentComplementUuid
-    bankingTransaction.paymentComplementStatus = PaymentComplementStatus.XML_GENERATED
-    bankingTransaction.save()
+    dataPaymentComplement.uuid = paymentComplementUuid
+    updateBankingTransactionWithDataPaymentComplement(bankingTransaction, dataPaymentComplement)
   }
 
-  void generatePdfForPaymentComplementFromBankingTransaction(MovimientosBancarios bankingTransaction, Map params) {
+  private MovimientosBancarios updateBankingTransactionWithDataPaymentComplement(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
+    PaymentWay paymentWay = PaymentWay.values().find { it.key == dataPaymentComplement.paymentWay }
+    Bank bank = Bank.get(dataPaymentComplement.bankId)
+
+    bankingTransaction.paymentComplementUuid = dataPaymentComplement.uuid
+    bankingTransaction.paymentComplementStatus = PaymentComplementStatus.XML_GENERATED
+    bankingTransaction.paymentWay = paymentWay 
+    bankingTransaction.sourceBank = bank
+    bankingTransaction.sourceAccount = dataPaymentComplement.sourceAccount
+    bankingTransaction.save()
+    bankingTransaction
+  }
+
+  void generatePdfForPaymentComplementFromBankingTransaction(MovimientosBancarios bankingTransaction, Company company) {
     Map dataPaymentComplement = [:]
-    dataPaymentComplement.paymentWay = params.paymentWay
-    dataPaymentComplement.bankId = params.sourceBank
-    dataPaymentComplement.sourceAccount = params.sourceAccount
-    dataPaymentComplement.company = Company.get(params.companyId)
+    dataPaymentComplement.paymentWay = bankingTransaction.paymentWay.key
+    dataPaymentComplement.bankId = bankingTransaction.sourceBank.id
+    dataPaymentComplement.sourceAccount = bankingTransaction.sourceAccount
+    dataPaymentComplement.company = company
     dataPaymentComplement.conciliations = Conciliation.findAllByBankingTransactionAndStatus(bankingTransaction, ConciliationStatus.APPLIED)
 
     paymentComplementService.generatePdfForPaymentComplementWithUuid(bankingTransaction, dataPaymentComplement)
