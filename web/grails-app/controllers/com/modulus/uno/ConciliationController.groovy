@@ -105,7 +105,7 @@ class ConciliationController {
     params.companyId = Company.get(session.company).id
     conciliationService.applyConciliationsForBankingTransaction(bankingTransaction, params)
     if (params.chkPaymentComplement) {
-      redirect action:"generatePdfForPaymentComplement", id:bankingTransaction.id, params:params
+      redirect action:"generatePdfForPaymentComplement", id:bankingTransaction.id
     } else {
       redirect controller:"payment", action:"conciliation"
     }
@@ -113,7 +113,8 @@ class ConciliationController {
 
   @Transactional
   def generatePdfForPaymentComplement(MovimientosBancarios bankingTransaction) {
-    conciliationService.generatePdfForPaymentComplementFromBankingTransaction(bankingTransaction, params) 
+    Company company = Company.get(session.company)
+    conciliationService.generatePdfForPaymentComplementFromBankingTransaction(bankingTransaction, company) 
     redirect controller:"payment", action:"conciliation"
   }
 
