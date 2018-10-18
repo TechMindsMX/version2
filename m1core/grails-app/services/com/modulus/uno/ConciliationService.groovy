@@ -3,6 +3,7 @@ package com.modulus.uno
 import grails.transaction.Transactional
 import java.math.RoundingMode
 import com.modulus.uno.status.ConciliationStatus
+import com.modulus.uno.status.PaymentComplementStatus
 import com.modulus.uno.saleorder.PaymentComplementService
 
 @Transactional
@@ -94,7 +95,7 @@ class ConciliationService {
     if (params.chkPaymentComplement) {
       bankingTransaction.createPaymentComplement = true
       dataPaymentComplement.paymentWay = params.paymentWay
-      dataPaymentComplement.bankId = params.bankId
+      dataPaymentComplement.bankId = params.sourceBank
       dataPaymentComplement.sourceAccount = params.sourceAccount
       dataPaymentComplement.company = Company.get(params.companyId)
     }
@@ -133,12 +134,14 @@ class ConciliationService {
   void generatePdfForPaymentComplementFromBankingTransaction(MovimientosBancarios bankingTransaction, Map params) {
     Map dataPaymentComplement = [:]
     dataPaymentComplement.paymentWay = params.paymentWay
-    dataPaymentComplement.bankId = params.bankId
+    dataPaymentComplement.bankId = params.sourceBank
     dataPaymentComplement.sourceAccount = params.sourceAccount
     dataPaymentComplement.company = Company.get(params.companyId)
+    dataPaymentComplement.conciliations = Conciliation.findAllByBankingTransactionAndStatus(bankingTransaction, ConciliationStatus.APPLIED)
 
     paymentComplementService.generatePdfForPaymentComplementWithUuid(bankingTransaction, dataPaymentComplement)
     bankingTransaction.paymentComplementStatus = PaymentComplementStatus.FULL_STAMPED
+    bankingTransaction.save()
   }
 
   void applyConciliationWithoutInvoice(Conciliation conciliation) {
