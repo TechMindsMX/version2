@@ -1,6 +1,6 @@
 <%! import com.modulus.uno.PaymentWay %>
 <%! import com.modulus.uno.Bank %>
-<%! import com.modulus.uno.ConciliationStatus %>
+<%! import com.modulus.uno.status.ConciliationStatus %>
 <div class="row">
   <div class="col-md-3 text-center">
     <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
