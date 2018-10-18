@@ -56,7 +56,7 @@ class PaymentComplementServiceSpec extends Specification {
         addresses: [new Address(zipCode:"03400", addressType:AddressType.FISCAL).save(validate:false)],
         taxRegime: CompanyTaxRegime.MORAL,
       ).save(validate:false),
-      paymentWay:"03 - TRANSFERENCIA ELECTRONICA",
+      paymentWay:"03",
       bankId:"1",
       sourceAccount:"0101010101",
       conciliations: [

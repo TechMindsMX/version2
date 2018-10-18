@@ -246,7 +246,7 @@ class ConciliationServiceSpec extends Specification {
       def conciliations = [conciliation1, conciliation2]
       service.getConciliationsToApplyForBankingTransaction(bankingTransaction) >> conciliations
     when:
-      service.applyConciliationsForBankingTransaction(bankingTransaction)
+      service.applyConciliationsForBankingTransaction(bankingTransaction, [:])
     then:
       service.getConciliationsToApplyForBankingTransaction(bankingTransaction) == []
       service.getConciliationsAppliedForBankingTransaction(bankingTransaction) == conciliations
