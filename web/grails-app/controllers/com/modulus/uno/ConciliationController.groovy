@@ -246,10 +246,11 @@ class ConciliationController {
     render view:"choosePaymentToPurchaseToConciliateWithBankingWithdraw", model:[bankingTransaction:bankingTransaction, conciliations:conciliations]
   }
 
-    def showDetailBankingDepositConciliated(MovimientosBancarios bankingTransaction) {
+  def showDetailBankingDepositConciliated(MovimientosBancarios bankingTransaction) {
     log.info "Banking Transaction conciliated: ${bankingTransaction.dump()}"
+    Company company = Company.get(session.company)
     List<Conciliation> conciliations = conciliationService.getConciliationsAppliedForBankingTransaction(bankingTransaction)
-    render view:"chooseInvoiceToConciliateWithBankingDeposit", model:[bankingTransaction:bankingTransaction, conciliations:conciliations]
+    render view:"chooseInvoiceToConciliateWithBankingDeposit", model:[bankingTransaction:bankingTransaction, conciliations:conciliations, company:company]
   }
 
 }
