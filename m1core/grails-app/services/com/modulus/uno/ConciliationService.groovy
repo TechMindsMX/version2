@@ -2,9 +2,11 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 import java.math.RoundingMode
+import org.springframework.transaction.annotation.Propagation
 import com.modulus.uno.status.ConciliationStatus
 import com.modulus.uno.status.PaymentComplementStatus
 import com.modulus.uno.saleorder.PaymentComplementService
+import com.modulus.uno.PaymentWay
 
 @Transactional
 class ConciliationService {
@@ -128,15 +130,17 @@ class ConciliationService {
     String paymentComplementUuid = paymentComplementService.generatePaymentComplementForConciliatedBankingTransaction(bankingTransaction, dataPaymentComplement)
     dataPaymentComplement.uuid = paymentComplementUuid
     updateBankingTransactionWithDataPaymentComplement(bankingTransaction, dataPaymentComplement)
+    log.info "Banking Transaction updated: ${bankingTransaction.dump()}"
+    bankingTransaction
   }
 
   private MovimientosBancarios updateBankingTransactionWithDataPaymentComplement(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
-    PaymentWay paymentWay = PaymentWay.values().find { it.key == dataPaymentComplement.paymentWay }
+    log.info "Updating banking transaction with data payment complement: ${dataPaymentComplement}"
     Bank bank = Bank.get(dataPaymentComplement.bankId)
 
     bankingTransaction.paymentComplementUuid = dataPaymentComplement.uuid
     bankingTransaction.paymentComplementStatus = PaymentComplementStatus.XML_GENERATED
-    bankingTransaction.paymentWay = paymentWay 
+    bankingTransaction.paymentWay = dataPaymentComplement.paymentWay
     bankingTransaction.sourceBank = bank
     bankingTransaction.sourceAccount = dataPaymentComplement.sourceAccount
     bankingTransaction.save()
@@ -144,8 +148,9 @@ class ConciliationService {
   }
 
   void generatePdfForPaymentComplementFromBankingTransaction(MovimientosBancarios bankingTransaction, Company company) {
+    log.info "Generating PDF for bankingTransaction: ${bankingTransaction.dump()}"
     Map dataPaymentComplement = [:]
-    dataPaymentComplement.paymentWay = bankingTransaction.paymentWay.key
+    dataPaymentComplement.paymentWay = bankingTransaction.paymentWay
     dataPaymentComplement.bankId = bankingTransaction.sourceBank.id
     dataPaymentComplement.sourceAccount = bankingTransaction.sourceAccount
     dataPaymentComplement.company = company
