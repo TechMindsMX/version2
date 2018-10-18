@@ -1,4 +1,4 @@
-<%! import com.modulus.uno.ConciliationStatus %>
+<%! import com.modulus.uno.status.ConciliationStatus %>
 <div class="row">
   <div class="col-md-3 text-center">
     <strong>Fecha del Movimiento</strong><br>
