@@ -15,7 +15,7 @@ class MovimientosBancarios {
   Boolean createPaymentComplement = false
   String paymentComplementUuid
   PaymentComplementStatus paymentComplementStatus
-  PaymentWay paymentWay
+  String paymentWay
   Bank sourceBank
   String sourceAccount
 
@@ -35,6 +35,5 @@ class MovimientosBancarios {
     sourceBank nullable:true
     sourceAccount nullable:true
   }
-
 
 }
