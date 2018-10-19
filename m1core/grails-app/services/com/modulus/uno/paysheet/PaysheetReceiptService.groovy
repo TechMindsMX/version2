@@ -143,11 +143,21 @@ class PaysheetReceiptService {
   }
 
   DetalleNomina createSalaryDetailForSchemaIMSS(PaysheetEmployee paysheetEmployee) {
-    new DetalleNomina(clave: PerceptionType.P001.name(), descripcion: PerceptionType.P001.description, tipo: PerceptionType.P001.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.salaryImss)
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.PERCEPTION && incidence.keyType == PerceptionType.P001.key && incidence.paymentSchema == PaymentSchema.IMSS }
+    BigDecimal totalSalary = paysheetEmployee.salaryImss
+    if (incidences) {
+      totalSalary += incidences.exemptAmount.sum() + incidences.taxedAmount.sum()
+    }
+    new DetalleNomina(clave: PerceptionType.P001.name(), descripcion: PerceptionType.P001.description, tipo: PerceptionType.P001.key, importeExento: new BigDecimal(0), importeGravado: totalSalary)
   }
 
   DetalleNomina createSalaryDetailForSchemaASSIMILABLE(PaysheetEmployee paysheetEmployee) {
-      new DetalleNomina(clave: PerceptionType.P046.name(), descripcion: PerceptionType.P046.description, tipo: PerceptionType.P046.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.crudeAssimilable)
+    def incidences = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.PERCEPTION && incidence.keyType == PerceptionType.P046.key && incidence.paymentSchema == PaymentSchema.ASSIMILABLE }
+    BigDecimal totalSalary = paysheetEmployee.crudeAssimilable
+    if (incidences) {
+      totalSalary += incidences.exemptAmount.sum() + incidences.taxedAmount.sum()
+    }
+    new DetalleNomina(clave: PerceptionType.P046.name(), descripcion: PerceptionType.P046.description, tipo: PerceptionType.P046.key, importeExento: new BigDecimal(0), importeGravado: totalSalary)
   }
 
   List<DetalleNomina> addPerceptionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
@@ -178,15 +188,32 @@ class PaysheetReceiptService {
 
   List<DetalleNomina> createDeductionDetailForSchemaIMSS(PaysheetEmployee paysheetEmployee) {
     List<DetalleNomina> deductions = []
-    deductions.add(new DetalleNomina(clave: DeductionType.D001.name(), descripcion: DeductionType.D001.description, tipo: DeductionType.D001.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.socialQuota))
+
+    def incidencesSS = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType == DeductionType.D001.key && incidence.paymentSchema == PaymentSchema.IMSS }
+    BigDecimal totalSS = paysheetEmployee.socialQuota
+    if (incidencesSS) {
+      totalSS += incidencesSS.exemptAmount.sum() + incidencesSS.taxedAmount.sum()
+    }
+    deductions.add(new DetalleNomina(clave: DeductionType.D001.name(), descripcion: DeductionType.D001.description, tipo: DeductionType.D001.key, importeExento: new BigDecimal(0), importeGravado: totalSS))
+
     if ((paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax) < 0) {
-      deductions.add(new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.incomeTax - paysheetEmployee.subsidySalary))
+      def incidencesISR = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType == DeductionType.D002.key && incidence.paymentSchema == PaymentSchema.IMSS }
+      BigDecimal totalIsr = paysheetEmployee.incomeTax - paysheetEmployee.subsidySalary
+      if (incidencesISR) {
+        totalIsr += incidencesISR.exemptAmount.sum() + incidencesISR.taxedAmount.sum()
+      }
+      deductions.add(new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: totalIsr))
     }
     deductions
   }
 
   List<DetalleNomina> createDeductionDetailForSchemaASSIMILABLE(PaysheetEmployee paysheetEmployee) {
-    [new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: paysheetEmployee.incomeTaxAssimilable)]
+    def incidencesISR = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType == DeductionType.D002.key && incidence.paymentSchema == PaymentSchema.ASSIMILABLE }
+    BigDecimal totalIsr = paysheetEmployee.incomeTaxAssimilable
+    if (incidencesISR) {
+      totalIsr += incidencesISR.exemptAmount.sum() + incidencesISR.taxedAmount.sum()
+    }
+    [new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: totalIsr)]
   }
 
   List<DetalleNomina> addDeductionIncidenceForSchema(PaysheetEmployee paysheetEmployee, PaymentSchema schema) {
