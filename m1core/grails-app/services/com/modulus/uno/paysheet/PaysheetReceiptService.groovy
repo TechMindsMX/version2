@@ -196,13 +196,17 @@ class PaysheetReceiptService {
     }
     deductions.add(new DetalleNomina(clave: DeductionType.D001.name(), descripcion: DeductionType.D001.description, tipo: DeductionType.D001.key, importeExento: new BigDecimal(0), importeGravado: totalSS))
 
+    def incidencesISR = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType == DeductionType.D002.key && incidence.paymentSchema == PaymentSchema.IMSS }
     if ((paysheetEmployee.subsidySalary - paysheetEmployee.incomeTax) < 0) {
-      def incidencesISR = paysheetEmployee.prePaysheetEmployee.incidences.findAll { incidence -> incidence.type == IncidenceType.DEDUCTION  && incidence.keyType == DeductionType.D002.key && incidence.paymentSchema == PaymentSchema.IMSS }
       BigDecimal totalIsr = paysheetEmployee.incomeTax - paysheetEmployee.subsidySalary
       if (incidencesISR) {
         totalIsr += incidencesISR.exemptAmount.sum() + incidencesISR.taxedAmount.sum()
       }
       deductions.add(new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: totalIsr))
+    } else {
+      if (incidencesISR) {
+        deductions.add(new DetalleNomina(clave: DeductionType.D002.name(), descripcion: DeductionType.D002.description, tipo: DeductionType.D002.key, importeExento: new BigDecimal(0), importeGravado: incidencesISR.exemptAmount.sum() + incidencesISR.taxedAmount.sum()))
+      }
     }
     deductions
   }
