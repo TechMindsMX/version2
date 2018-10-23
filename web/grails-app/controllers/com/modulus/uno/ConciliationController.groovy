@@ -73,7 +73,7 @@ class ConciliationController {
       redirect action:"chooseInvoiceToConciliate", id:payment.id
       return
     } else if (bankingTransaction) {
-      redirect action:"chooseInvoiceToConciliateWithBankingTransaction", id:bankingTransaction.id
+      redirect action:"chooseInvoiceToConciliateWithBankingDeposit", id:bankingTransaction.id
       return
     }
   }
@@ -102,7 +102,19 @@ class ConciliationController {
   @Transactional
   def applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
     log.info "Applying conciliations for banking transaction: ${bankingTransaction.id}"
-    conciliationService.applyConciliationsForBankingTransaction(bankingTransaction)
+    params.companyId = Company.get(session.company).id
+    conciliationService.applyConciliationsForBankingTransaction(bankingTransaction, params)
+    if (params.chkPaymentComplement) {
+      redirect action:"generatePdfForPaymentComplement", id:bankingTransaction.id
+    } else {
+      redirect controller:"payment", action:"conciliation"
+    }
+  }
+
+  @Transactional
+  def generatePdfForPaymentComplement(MovimientosBancarios bankingTransaction) {
+    Company company = Company.get(session.company)
+    conciliationService.generatePdfForPaymentComplementFromBankingTransaction(bankingTransaction, company) 
     redirect controller:"payment", action:"conciliation"
   }
 
@@ -235,10 +247,11 @@ class ConciliationController {
     render view:"choosePaymentToPurchaseToConciliateWithBankingWithdraw", model:[bankingTransaction:bankingTransaction, conciliations:conciliations]
   }
 
-    def showDetailBankingDepositConciliated(MovimientosBancarios bankingTransaction) {
+  def showDetailBankingDepositConciliated(MovimientosBancarios bankingTransaction) {
     log.info "Banking Transaction conciliated: ${bankingTransaction.dump()}"
+    Company company = Company.get(session.company)
     List<Conciliation> conciliations = conciliationService.getConciliationsAppliedForBankingTransaction(bankingTransaction)
-    render view:"chooseInvoiceToConciliateWithBankingDeposit", model:[bankingTransaction:bankingTransaction, conciliations:conciliations]
+    render view:"chooseInvoiceToConciliateWithBankingDeposit", model:[bankingTransaction:bankingTransaction, conciliations:conciliations, company:company]
   }
 
 }
