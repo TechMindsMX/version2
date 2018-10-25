@@ -32,4 +32,14 @@ function getCurrencyForSaleOrder(saleOrderId) {
   consulta.fail(function(){
     return false;
   });
-}
+};
+
+$("#chkPaymentComplement").change(function(){
+  if (this.checked) {
+    $("#btnApply").hide();
+    $("#collapsePaymentComplement").collapse('show');
+  } else {
+    $("#btnApply").show();
+    $("#collapsePaymentComplement").collapse('hide');
+  }
+});

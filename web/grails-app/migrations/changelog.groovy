@@ -152,5 +152,9 @@ databaseChangeLog = {
   include file: 'create-domain-business-entities-group.groovy'
   include file: 'create-relation-users-with-business-entities-groups.groovy'
   include file: 'add-position-into-menu.groovy'
-    include file: 'create-domain-user-company-role-menu.groovy'
+  include file: 'create-domain-user-company-role-menu.groovy'
+  include file: 'adding-flag-for-payment-complement-and-payment-complement-uuid-to-banking-transaction.groovy'
+  include file: 'adding-column-rfc-to-bank.groovy'
+  include file: 'adding-column-payment-complement-status-into-banking-transactions.groovy'
+  include file: 'adding-columns-data-payment-complement-into-banking-transactions.groovy'
 }

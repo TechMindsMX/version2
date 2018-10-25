@@ -2,7 +2,11 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 import java.math.RoundingMode
+import org.springframework.transaction.annotation.Propagation
 import com.modulus.uno.status.ConciliationStatus
+import com.modulus.uno.status.PaymentComplementStatus
+import com.modulus.uno.saleorder.PaymentComplementService
+import com.modulus.uno.PaymentWay
 
 @Transactional
 class ConciliationService {
@@ -12,6 +16,7 @@ class ConciliationService {
   def paymentService
   def movimientosBancariosService
   def purchaseOrderService
+  PaymentComplementService paymentComplementService
 
   def getTotalToApplyForPayment(Payment payment) {
     def conciliations = getConciliationsToApplyForPayment(payment)
@@ -87,15 +92,29 @@ class ConciliationService {
     paymentService.conciliatePayment(payment)
   }
 
-  void applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction) {
+  void applyConciliationsForBankingTransaction(MovimientosBancarios bankingTransaction, Map params) {
+    Map dataPaymentComplement = [:]
+    if (params.chkPaymentComplement) {
+      bankingTransaction.createPaymentComplement = true
+      dataPaymentComplement.paymentWay = params.paymentWay
+      dataPaymentComplement.bankId = params.sourceBank
+      dataPaymentComplement.sourceAccount = params.sourceAccount
+      dataPaymentComplement.company = Company.get(params.companyId)
+    }
+
     List<Conciliation> conciliations = getConciliationsToApplyForBankingTransaction(bankingTransaction)
     conciliations.each { conciliation ->
       applyConciliation(conciliation)
     }
+
     movimientosBancariosService.conciliateBankingTransaction(bankingTransaction)
+    if (bankingTransaction.createPaymentComplement) {
+      dataPaymentComplement.conciliations = conciliations
+      generatePaymentComplement(bankingTransaction, dataPaymentComplement)
+    }
   }
 
-  private applyConciliation(Conciliation conciliation) {
+  private def applyConciliation(Conciliation conciliation) {
 		if (conciliation.saleOrder) {
     	saleOrderService.addPaymentToSaleOrder(conciliation.saleOrder, conciliation.amount, conciliation.changeType)
 		}
@@ -104,6 +123,42 @@ class ConciliationService {
 		}
     conciliation.status = ConciliationStatus.APPLIED
     conciliation.save()
+  }
+
+  private def generatePaymentComplement(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
+    log.info "Generating payment complement for bankingTransaction: ${bankingTransaction.id}"
+    String paymentComplementUuid = paymentComplementService.generatePaymentComplementForConciliatedBankingTransaction(bankingTransaction, dataPaymentComplement)
+    dataPaymentComplement.uuid = paymentComplementUuid
+    updateBankingTransactionWithDataPaymentComplement(bankingTransaction, dataPaymentComplement)
+    log.info "Banking Transaction updated: ${bankingTransaction.dump()}"
+    bankingTransaction
+  }
+
+  private MovimientosBancarios updateBankingTransactionWithDataPaymentComplement(MovimientosBancarios bankingTransaction, Map dataPaymentComplement) {
+    log.info "Updating banking transaction with data payment complement: ${dataPaymentComplement}"
+    Bank bank = Bank.get(dataPaymentComplement.bankId)
+
+    bankingTransaction.paymentComplementUuid = dataPaymentComplement.uuid
+    bankingTransaction.paymentComplementStatus = PaymentComplementStatus.XML_GENERATED
+    bankingTransaction.paymentWay = dataPaymentComplement.paymentWay
+    bankingTransaction.sourceBank = bank
+    bankingTransaction.sourceAccount = dataPaymentComplement.sourceAccount
+    bankingTransaction.save()
+    bankingTransaction
+  }
+
+  void generatePdfForPaymentComplementFromBankingTransaction(MovimientosBancarios bankingTransaction, Company company) {
+    log.info "Generating PDF for bankingTransaction: ${bankingTransaction.dump()}"
+    Map dataPaymentComplement = [:]
+    dataPaymentComplement.paymentWay = bankingTransaction.paymentWay
+    dataPaymentComplement.bankId = bankingTransaction.sourceBank.id
+    dataPaymentComplement.sourceAccount = bankingTransaction.sourceAccount
+    dataPaymentComplement.company = company
+    dataPaymentComplement.conciliations = Conciliation.findAllByBankingTransactionAndStatus(bankingTransaction, ConciliationStatus.APPLIED)
+
+    paymentComplementService.generatePdfForPaymentComplementWithUuid(bankingTransaction, dataPaymentComplement)
+    bankingTransaction.paymentComplementStatus = PaymentComplementStatus.FULL_STAMPED
+    bankingTransaction.save()
   }
 
   void applyConciliationWithoutInvoice(Conciliation conciliation) {

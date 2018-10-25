@@ -1,9 +1,12 @@
+<%! import com.modulus.uno.PaymentWay %>
+<%! import com.modulus.uno.Bank %>
 <%! import com.modulus.uno.status.ConciliationStatus %>
+<%! import com.modulus.uno.status.PaymentComplementStatus %>
 <div class="row">
-  <div class="col-md-4 text-center">
+  <div class="col-md-3 text-center">
     <g:link class="btn btn-info" controller="payment" action="conciliation">Regresar</g:link>
   </div>
-  <div class="col-md-4 text-center">
+  <div class="col-md-3 text-center">
     <g:if test="${conciliations}">
     <g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">  
       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalConfirm" title="Al cancelar se borrarán las facturas seleccionadas">
@@ -31,16 +34,62 @@
     </div>
     </g:if>
   </div>
-  <div class="col-md-4 text-center">
-    <g:if test="${conciliations && toApply == 0}">
-      <g:link action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}" class="btn btn-success">Aplicar</g:link>
-    </g:if>
-    <g:if test="${!conciliations}">
-    <div class="alert alert-warning" role="alert">No ha agregado facturas</div>
-    </g:if>
-    <g:if test="${conciliations && toApply > 0}">
-    <div class="alert alert-warning" role="alert">Aún dispone de monto por aplicar</div>
-    </g:if>
-  </div>
+  <g:if test="${conciliations && toApply == 0}">
+    <div class="col-md-6 text-right">
+      <g:form action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}">
+        <button id="btnApply" type="submit" class="btn btn-success">Aplicar</button>
+        <input type="checkbox" id="chkPaymentComplement" name="chkPaymentComplement"/> <label>Complemento de Pago SAT</label>
+      </g:form>
+    </div>
+  </g:if>
+  <g:if test="${!conciliations}">
+    <div class="col-md-6 text-center">
+      <div class="alert alert-warning" role="alert">No ha agregado facturas</div>
+    </div>
+  </g:if>
+  <g:if test="${conciliations && toApply > 0}">
+    <div class="col-md-6 text-center">
+      <div class="alert alert-warning" role="alert">Aún dispone de monto por aplicar</div>
+    </div>
+  </g:if>
+  <g:if test="${bankingTransaction.createPaymentComplement && bankingTransaction.paymentComplementUuid}">
+    <div class="col-md-6 text-right">
+      <a href="${modulusuno.paymentComplementUrl(bankingTransaction:bankingTransaction, company:company, format:'xml')}" class="btn btn-success" download>XML</a>
+      <g:if test="${bankingTransaction.paymentComplementStatus == PaymentComplementStatus.XML_GENERATED}">
+        <g:link class="btn btn-default text-right" action="generatePdfForPaymentComplement" id="${bankingTransaction.id}">Generar PDF</g:link>
+      </g:if>
+      <g:else>
+        <a href="${modulusuno.paymentComplementUrl(bankingTransaction:bankingTransaction, company:company, format:'pdf')}" class="btn btn-success" download>PDF</a>
+      </g:else>
+    </div>
+  </g:if>
+
 </div>
 
+<div class="row">
+  <div class="col-md-12">
+    <div class="collapse" id="collapsePaymentComplement">
+      <hr>
+      <div class="well">
+        <g:form action="applyConciliationsForBankingTransaction" id="${bankingTransaction.id}">
+          <g:hiddenField name="chkPaymentComplement" value="on"/>
+          <div class="form-group">
+            <label>Forma de Pago del Depósito:</label>
+            <g:select class="form-control" name="paymentWay" from="${PaymentWay.values()}" optionKey="key" optionValue="description" value="${PaymentWay.TRANSFERENCIA_ELECTRONICA}"/>
+          </div>
+          <div class="form-group">
+            <label>Banco Origen:</label>
+            <g:select class="form-control" name="sourceBank" from="${Bank.findAll(sort:'name'){rfc != null}}" optionKey="id" optionValue="name" noSelection="['':'Elija el Banco Origen...']" required=""/>
+          </div>
+          <div class="form-group">
+            <label>Cuenta Origen:</label>
+            <g:textField class="form-control" name="sourceAccount" required="" pattern="[0-9]*" placeholder="Hasta 18 dígitos"/>
+          </div>
+          <div class="text-right">
+            <button type="submit" class="btn btn-success">Aplicar</button>
+          </div>
+        </g:form>
+      </div>
+    </div>
+  </div>
+</div>
