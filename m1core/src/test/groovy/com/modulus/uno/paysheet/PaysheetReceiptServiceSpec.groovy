@@ -4,6 +4,7 @@ import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.math.RoundingMode
 
 import com.modulus.uno.invoice.paysheetReceipt.*
 import com.modulus.uno.invoice.*
@@ -396,6 +397,141 @@ class PaysheetReceiptServiceSpec extends Specification {
       def result = service.sendToGeneratePdfFromPaysheetReceipt(paysheetReceipt)
     then:
       thrown RestException
+  }
+
+  void "Should create salary detail for schema IMSS without incidences"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences = []
+    when:
+      def salaryDetail = service.createSalaryDetailForSchemaIMSS(paysheetEmployee)
+    then:
+      salaryDetail.importeGravado == new BigDecimal(2500)
+      salaryDetail.clave == "P001"
+  }
+
+  void "Should create salary detail for schema IMSS wit incidences but not include type P001 incidence"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    when:
+      def salaryDetail = service.createSalaryDetailForSchemaIMSS(paysheetEmployee)
+    then:
+      salaryDetail.importeGravado == new BigDecimal(2500)
+      salaryDetail.clave == "P001"
+  }
+
+  void "Should create salary detail for schema IMSS wit incidences and include type P001 incidence"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences.add(new PrePaysheetEmployeeIncidence(internalKey:"P001", description:"Sueldos, Salarios  Rayas y Jornales", keyType:"001", type: IncidenceType.PERCEPTION, paymentSchema: PaymentSchema.IMSS, exemptAmount: new BigDecimal(100), taxedAmount: new BigDecimal(0)).save(validate:false))
+    when:
+      def salaryDetail = service.createSalaryDetailForSchemaIMSS(paysheetEmployee)
+    then:
+      salaryDetail.importeGravado == new BigDecimal(2600)
+      salaryDetail.clave == "P001"
+  }
+
+  void "Should create salary detail for schema ASSIMILABLE without incidences"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences = []
+    when:
+      def salaryDetail = service.createSalaryDetailForSchemaASSIMILABLE(paysheetEmployee)
+    then:
+      salaryDetail.importeGravado == new BigDecimal(17468.60)
+      salaryDetail.clave == "P046"
+  }
+
+  void "Should create salary detail for schema IMSS wit incidences but not include type P046 incidence"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    when:
+      def salaryDetail = service.createSalaryDetailForSchemaASSIMILABLE(paysheetEmployee)
+    then:
+      salaryDetail.importeGravado == new BigDecimal(17468.60)
+      salaryDetail.clave == "P046"
+  }
+
+  void "Should create salary detail for schema IMSS wit incidences and include type P046 incidence"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences.add(new PrePaysheetEmployeeIncidence(internalKey:"P046", description:"Ingresos asimilados a salarios", keyType:"046", type: IncidenceType.PERCEPTION, paymentSchema: PaymentSchema.ASSIMILABLE, exemptAmount: new BigDecimal(100), taxedAmount: new BigDecimal(0)).save(validate:false))
+    when:
+      def salaryDetail = service.createSalaryDetailForSchemaASSIMILABLE(paysheetEmployee)
+    then:
+      salaryDetail.importeGravado == new BigDecimal(17568.60)
+      salaryDetail.clave == "P046"
+  }
+
+  void "Should create deductions detail for schema IMSS without incidences"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences = []
+    when:
+      def deductionsDetail = service.createDeductionDetailForSchemaIMSS(paysheetEmployee)
+    then:
+      deductionsDetail.first().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(63.44).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.first().clave == "D001"
+      deductionsDetail.last().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(4.13).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.last().clave == "D002"
+  }
+
+  void "Should create deductions detail for schema IMSS wit incidences but not include types D001 and D002 incidences"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    when:
+      def deductionsDetail = service.createDeductionDetailForSchemaIMSS(paysheetEmployee)
+    then:
+      deductionsDetail.first().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(63.44).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.first().clave == "D001"
+      deductionsDetail.last().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(4.13).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.last().clave == "D002"
+  }
+
+  void "Should create deductions detail for schema IMSS wit incidences and include types D001 and D002 incidences"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences.add(new PrePaysheetEmployeeIncidence(internalKey:"D001", description:"Seguridad social", keyType:"001", type: IncidenceType.DEDUCTION, paymentSchema: PaymentSchema.IMSS, exemptAmount: new BigDecimal(100), taxedAmount: new BigDecimal(0)).save(validate:false))
+      paysheetEmployee.prePaysheetEmployee.incidences.add(new PrePaysheetEmployeeIncidence(internalKey:"D002", description:"ISR", keyType:"002", type: IncidenceType.DEDUCTION, paymentSchema: PaymentSchema.IMSS, exemptAmount: new BigDecimal(100), taxedAmount: new BigDecimal(0)).save(validate:false))
+    when:
+      def deductionsDetail = service.createDeductionDetailForSchemaIMSS(paysheetEmployee)
+    then:
+      deductionsDetail.first().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(163.44).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.first().clave == "D001"
+      deductionsDetail.last().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(104.13).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.last().clave == "D002"
+  }
+
+  void "Should create deductions detail for schema ASSIMILABLE without incidences"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences = []
+    when:
+      def deductionsDetail = service.createDeductionDetailForSchemaASSIMILABLE(paysheetEmployee)
+    then:
+      deductionsDetail.first().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(3401.03).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.first().clave == "D002"
+  }
+
+  void "Should create deductions detail for schema ASSIMILABLE wit incidences but not include type D002 incidence"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+    when:
+      def deductionsDetail = service.createDeductionDetailForSchemaASSIMILABLE(paysheetEmployee)
+    then:
+      deductionsDetail.first().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(3401.03).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.first().clave == "D002"
+  }
+
+  void "Should create deductions detail for schema ASSIMILABLE wit incidences and include type D002 incidence"() {
+    given:"The paysheet employee"
+      PaysheetEmployee paysheetEmployee = createPaysheetEmployee()
+      paysheetEmployee.prePaysheetEmployee.incidences.add(new PrePaysheetEmployeeIncidence(internalKey:"D002", description:"ISR", keyType:"002", type: IncidenceType.DEDUCTION, paymentSchema: PaymentSchema.ASSIMILABLE, exemptAmount: new BigDecimal(100), taxedAmount: new BigDecimal(0)).save(validate:false))
+    when:
+      def deductionsDetail = service.createDeductionDetailForSchemaASSIMILABLE(paysheetEmployee)
+    then:
+      deductionsDetail.first().importeGravado.setScale(2, RoundingMode.HALF_UP) == new BigDecimal(3501.03).setScale(2, RoundingMode.HALF_UP)
+      deductionsDetail.first().clave == "D002"
   }
 
 
