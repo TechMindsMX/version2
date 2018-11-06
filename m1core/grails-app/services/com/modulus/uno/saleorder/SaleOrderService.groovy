@@ -123,8 +123,11 @@ class SaleOrderService {
     }
     Map stampData = invoiceService.generateFactura(saleOrder)
     commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
+    stampData.pdfTemplate = saleOrder.pdfTemplate
     log.info "Stamp UUID: ${stampData.stampId}"
-    saleOrder = updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
+    updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
+    saleOrder.refresh()
+    log.info "Sale Order updated with stamped uuid: ${saleOrder.id}, ${saleOrder.pdfTemplate}"
     saleOrder
   }
 
@@ -136,6 +139,7 @@ class SaleOrderService {
     saleOrder.invoiceSerie = stampData.serie
     saleOrder.stampedDate = Date.parse("yyy-MM-dd'T'HH:mm:ss", stampData.stampDate)
     saleOrder.status = SaleOrderStatus.XML_GENERADO
+    saleOrder.pdfTemplate = stampData.pdfTemplate
     saleOrder.save()
     saleOrder
   }
