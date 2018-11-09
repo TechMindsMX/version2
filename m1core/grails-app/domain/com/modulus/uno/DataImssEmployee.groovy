@@ -12,6 +12,7 @@ class DataImssEmployee {
   Date registrationDate
   Date dischargeDate
   BigDecimal baseImssMonthlySalary
+  BigDecimal monthlyNetAssimilableSalary
   BigDecimal totalMonthlySalary
   BigDecimal holidayBonusRate
   Integer annualBonusDays
@@ -22,19 +23,21 @@ class DataImssEmployee {
   JobRisk jobRisk = JobRisk.CLASS_01
   String department
   String job
-
+  Boolean isVariableAssimilable = false
+  Boolean isOnlyAssimilable = false
 
   static constraints = {
     employee nullable:false
-    nss nullable:false
-    registrationDate nullable:false
+    nss nullable:true
+    registrationDate nullable:true
     dischargeDate nullable:true
     baseImssMonthlySalary nullable:false, min:0.0
+    monthlyNetAssimilableSalary nullable:false, min:0.0
     totalMonthlySalary nullable:false, min:0.0
-    holidayBonusRate nullable:false, min:0.0, max:100.0
-    annualBonusDays nullable:false, min:15
+    holidayBonusRate nullable:true, min:0.0, max:100.0
+    annualBonusDays nullable:true, min:15
     paymentPeriod nullable:false
-    jobRisk nullable:false
+    jobRisk nullable:true
   }
 
   BigDecimal getMonthlyAssimilableSalary() {
