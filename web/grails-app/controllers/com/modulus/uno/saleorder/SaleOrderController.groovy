@@ -333,14 +333,14 @@ class SaleOrderController {
 
   def search() {
     log.info "Search sale orders with params: ${params}"
-    if (!params.rfc && !params.clientName && !params.stampedDateInit && !params.stampedDateEnd) {
+    if (!params.rfc && !params.clientName && !params.stampedDateInit && !params.stampedDateEnd && !params.status) {
       redirect action:"list"
       return
     }
 
     def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
 
-    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd]] 
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status]] 
   }
 
   def listOrdersWithAmountToPayForClient(BusinessEntity businessEntity) {
@@ -375,7 +375,6 @@ class SaleOrderController {
 
   @Transactional
   def stampedDateForSaleOrders(SaleOrder saleOrder) {
-    log.info "Sale order ${saleOrder}"
     saleOrderService.updateStampDateAlreadyUpdate(saleOrder)
     redirect action:"list"
   }
