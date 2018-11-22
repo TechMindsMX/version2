@@ -1,4 +1,5 @@
 <%! import com.modulus.uno.MovimientoBancarioType %>
+<%! import com.modulus.uno.status.ConciliationStatus %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -90,9 +91,11 @@
 									</g:else>
 								</td>
                 <td>
+                  <g:if test="${!movimiento.reconcilable || movimiento.conciliationStatus == ConciliationStatus.TO_APPLY}">
                   <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteTransaction" data-whatever="${movimiento.id}">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                   </button>
+                  </g:if>
 
                   <div class="modal fade" id="deleteTransaction" tabindex="-1" role="dialog" aria-labelledby="deleteTransactionLabel">
                     <div class="modal-dialog" role="document">

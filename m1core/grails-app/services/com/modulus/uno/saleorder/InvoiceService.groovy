@@ -13,6 +13,7 @@ import com.modulus.uno.BankAccount
 import com.modulus.uno.PaymentWay
 import com.modulus.uno.Address
 import com.modulus.uno.AddressType
+import com.modulus.uno.MovimientosBancarios
 import com.modulus.uno.RestService
 import com.modulus.uno.RestException
 
@@ -37,6 +38,9 @@ class InvoiceService {
     }
 
     def resultStamp = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
+    if (!resultStamp) {
+      throw new RestException("No se pudo generar la factura") 
+    }
     log.info "Result stamp: ${resultStamp.text}"
     def result = new JsonSlurper().parseText(resultStamp.text)
     if (!result) {

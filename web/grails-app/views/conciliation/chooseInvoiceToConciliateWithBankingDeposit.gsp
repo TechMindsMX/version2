@@ -41,7 +41,7 @@
                     <th class="col-md-4">Factura</th>
                     <th>Total</th>
                     <th>Por pagar</th>
-                    <th><g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">Monto a aplicar (MXN)</g:if></th>
+                    <th>Monto a aplicar (MXN)</th>
                     <th>Nuevo Saldo</th>
                     <th>Moneda</th>
                     <th>Tipo Cambio</th>
@@ -51,9 +51,23 @@
                   <tr>
                     <td>${conciliation.saleOrder.id} / ${conciliation.saleOrder.clientName}</td>
                     <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.total)}</td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay)}</td>
-                    <td class="text-right"><g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">${modulusuno.formatPrice(number: conciliation.amount)}</g:if></td>
-                    <td class="text-right">${modulusuno.formatPrice(number: conciliation.saleOrder.currency == "MXN" ? conciliation.saleOrder.amountToPay - conciliation.amount : conciliation.saleOrder.amountToPay - (conciliation.amount/conciliation.changeType)) }</td>
+                    <td class="text-right">
+                      <g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">
+                        ${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay)}
+                      </g:if><g:else>
+                        ${modulusuno.formatPrice(number: conciliation.saleOrder.currency == "MXN" ? conciliation.saleOrder.amountToPay + conciliation.amount : conciliation.saleOrder.amountToPay + (conciliation.amount/conciliation.changeType)) }
+                      </g:else>
+                    </td>
+                    <td class="text-right">
+                        ${modulusuno.formatPrice(number: conciliation.amount)}
+                    </td>
+                    <td class="text-right">
+                      <g:if test="${bankingTransaction.conciliationStatus == ConciliationStatus.TO_APPLY}">
+                        ${modulusuno.formatPrice(number: conciliation.saleOrder.currency == "MXN" ? conciliation.saleOrder.amountToPay - conciliation.amount : conciliation.saleOrder.amountToPay - (conciliation.amount/conciliation.changeType)) }
+                      </g:if><g:else>
+                        ${modulusuno.formatPrice(number: conciliation.saleOrder.amountToPay)}
+                      </g:else>
+                    </td>
                     <td>${conciliation.saleOrder.currency}</td>
                     <td>${conciliation.changeType ?: "NA"}</td>
                     <td class="text-center">

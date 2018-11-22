@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%! import com.modulus.uno.status.ConciliationStatus %>
 <html>
     <head>
         <meta name="layout" content="main" />
@@ -47,7 +48,9 @@
                 </fieldset>
                 <fieldset class="buttons text-right">
                   <g:link class="btn btn-primary" action="show" id="${movimientosBancarios.cuenta.id}">Cancelar</g:link>
-                  <input class="btn btn-primary" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+                  <g:if test="${!this.movimientosBancarios?.reconcilable || this.movimientosBancarios?.conciliationStatus == ConciliationStatus.TO_APPLY}">
+                    <input class="btn btn-primary" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+                  </g:if>
                 </fieldset>
             </g:form>
         </div>

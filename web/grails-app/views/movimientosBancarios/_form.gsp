@@ -36,8 +36,17 @@
   </div>
   <div class="col-md-6">
     <div class="form-group">
-      <label>Es conciliable:</label>
-      <g:checkBox class="form-control" name="reconcilable" value="${false}" />
+      <g:if test="${movimientosBancarios?.reconcilable}">
+        <g:checkBox name="reconcilable" value="${false}" checked="true" />
+      </g:if><g:else>
+        <g:checkBox class="form-control" name="reconcilable" value="${false}" />
+      </g:else>
+      <label> Es conciliable</label><br/>
+      <g:if test="${movimientosBancarios?.reconcilable}">
+        <label>Estatus de Conciliación:</label>
+        <g:message code="conciliation.status.${movimientosBancarios?.conciliationStatus}"/>
+      </g:if>
+
     </div>
   </div>
 </div>
