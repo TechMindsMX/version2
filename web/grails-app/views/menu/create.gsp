@@ -12,7 +12,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-plus-circle fa-3x"></i>
-        Nuea operación en el menú
+        Configuración de menú
         <small><g:message code="menu.new" /></small>
       </h1>
       <ol class="breadcrumb">
@@ -41,9 +41,10 @@
             </g:hasErrors>
             <g:form action="save">
               <fieldset class="form">
-                <f:field bean="menu" property="name" wrapper="create"/>
-                <f:field bean="menu" property="internalUrl" wrapper="create"/>
-                <f:field bean="menu" property="parameters" wrapper="create"/>
+                <f:field bean="menu" property="name" wrapper="create" label="Nombre"/>
+                <f:field bean="menu" property="internalUrl" wrapper="create" label="URL"/>
+                <f:field bean="menu" property="parameters" wrapper="create" label="Parámetros"/>
+                <f:field bean="menu" property="position" wrapper="create" label="Posición"/>
                 
               </fieldset>
               <fieldset class="buttons">
