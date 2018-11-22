@@ -2,6 +2,8 @@ package com.modulus.uno
 
 import grails.transaction.Transactional
 import grails.util.Holders as H
+import com.modulus.uno.menu.Menu
+import com.modulus.uno.menu.MenuOperationsService
 
 @Transactional
 class CorporateService {
@@ -10,6 +12,7 @@ class CorporateService {
   def springSecurityService
   def awsRoute53Service
   def userRoleService
+  MenuOperationsService menuOperationsService
 
   private final String VALUE_HOST_IP = H.grailsApplication.config.grails.plugin.awssdk.value.host.ip
   private final String DOMAIN_BASE_URL = H.grailsApplication.config.grails.plugin.awssdk.domain.base.url
@@ -205,4 +208,63 @@ class CorporateService {
     }
   }
 
+  def saveUserMenus(User user, Map params) {
+    def menusIdsSelected = []
+    params.each { key, value ->
+      if (key.startsWith("menuId")) {
+        menusIdsSelected.add(value)
+      }
+    }
+
+    def listMenus = Menu.getAll(menusIdsSelected)
+    Company company = Company.get(params.companyId)
+    Role role = Role.get(params.roleId)
+    UserRoleCompanyMenu userMenus = UserRoleCompanyMenu.findByUserAndRoleAndCompany(user, role, company)
+    if (userMenus) {
+      userMenus.menus.clear()
+      userMenus.save()
+      userMenus.menus = listMenus
+    } else {
+      userMenus = new UserRoleCompanyMenu(
+        user: user,
+        company: company,
+        role: role,
+        menus: listMenus
+      )
+    }
+    userMenus.save()
+  } 
+
+  def getMenusForRole(Map userRoleCompany) {
+    Role role = Role.get(userRoleCompany.role)
+    Company company = Company.get(userRoleCompany.company)
+    User user = User.get(userRoleCompany.user)
+    def listMenusOfRole = menuOperationsService.getMenusForTheseRoles([role]) 
+    def listMenus = []
+    listMenusOfRole.each { item ->
+      Map menu = [:]
+      menu.id = item.id
+      menu.name = item.name
+      menu.menus = []
+      menu.checked = menuIsAssignedToUserInCompany([user:user, company:company, role:role, menu:item])
+      item.menus.each { subItem ->
+        Map submenu = [:]
+        submenu.id = subItem.id
+        submenu.name = subItem.name
+        submenu.checked = menuIsAssignedToUserInCompany([user:user, company:company, role:role, menu:subItem])
+        menu.menus.add(submenu)
+      }
+      listMenus.add(menu)
+    }
+    listMenus
+  }
+
+  List<Menu> getUserRoleCompanyMenus(Map userRoleCompanyData) {
+    UserRoleCompanyMenu.findByUserAndRoleAndCompany(userRoleCompanyData.user, userRoleCompanyData.role, userRoleCompanyData.company)?.menus?.toList()
+  }
+
+  boolean menuIsAssignedToUserInCompany(Map userRoleCompanyMenu) {
+    List<Menu> userMenus = getUserRoleCompanyMenus(userRoleCompanyMenu)
+    userMenus?.contains(userRoleCompanyMenu.menu)
+  }
 }
