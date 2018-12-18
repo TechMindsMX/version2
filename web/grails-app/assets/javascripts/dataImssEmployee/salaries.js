@@ -1,3 +1,30 @@
+$("input[name='paymentSchema']").change( function (){
+  alert($("input[name='paymentSchema']:checked").val());
+  var schema = $("input[name='paymentSchema']:checked").val();
+  switch(schema) {
+    case '1': saAndIas(); break;
+    case '2': onlySa(); break;
+    case '3': onlyIas(); break;
+  }
+});
+
+function saAndIas() {
+  $("#saSalary").removeAttr("disabled");
+  $("#iasSalary").removeAttr("disabled");
+}
+
+function onlySa() {
+  $("#saSalary").removeAttr("disabled");
+  $("#iasSalary").attr("disabled", "true");
+  $("#iasSalary").val("");
+}
+
+function onlyIas() {
+  $("#iasSalary").removeAttr("disabled");
+  $("#saSalary").attr("disabled", "true");
+  $("#saSalary").val("");
+}
+
 $("#saSalary").on('blur',function(){
   calculateTotalSalary();
 });
