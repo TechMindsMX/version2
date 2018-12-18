@@ -6,6 +6,50 @@
 <input type="hidden" name="idEmployee" value="${employee.id}"/>
 <input type="hidden" name="businessEntityId" value="${businessEntity.id}"/>
 <div class="row">
+  <div class="col-md-8">
+    <div class="form-group">
+      <label>Esquema de Pago:</label>
+      <g:radioGroup name="paymentSchema" labels="['SA + IAS', 'SA', 'IAS']" values="[1,2,3]" value="">
+        ${it.radio} ${it.label} &nbsp; &nbsp; &nbsp; 
+      </g:radioGroup>
+    </div>   
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label><g:message code="dataImssEmployee.label.paymentPeriod"/></label>
+      <g:select class="form-control" name="paymentPeriod" from="${PaymentPeriod.values()}" value="${dataImssEmployee?.paymentPeriod}" />
+    </div>   
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-md-4">
+    <div class="form-group">
+      <label><g:message code="dataImssEmployee.label.baseImssMonthlySalary"/></label>
+      <input class="form-control" id="saSalary" type="number" min="0.00" step="0.01" name="baseImssMonthlySalary" value="${dataImssEmployee?.baseImssMonthlySalary}" required=""/>
+      <label><g:message code="dataImssEmployee.label.netSAMonthlySalary"/></label>
+      <input class="form-control" id="netSASalary" type="number" name="netSASalary" readOnly=""/>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label><g:message code="dataImssEmployee.label.crudeAssimilableMonthlySalary"/></label>
+      <input class="form-control" id="crudeIASSalary" type="number" name="crudeAssimilableSalary" readOnly=""/>
+      <label><g:message code="dataImssEmployee.label.assimilableMonthlySalary"/></label>
+      <input class="form-control" id="iasSalary" type="number" min="0.00" step="0.01" name="monthlyNetAssimilableSalary" value="${dataImssEmployee?.monthlyNetAssimilableSalary}" required=""/>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label><g:message code="dataImssEmployee.label.totalCrudeMonthlySalary"/></label>
+      <input class="form-control" id="totalCrudeSalary" type="number" name="totalCrudeMonthlySalary" readOnly="" />
+      <label><g:message code="dataImssEmployee.label.totalNetMonthlySalary"/></label>
+      <input class="form-control" id="totalSalary" type="number" min="0.00" step="0.01" name="totalMonthlySalary" value="${dataImssEmployee?.totalMonthlySalary}" readOnly=""/>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="row">
   <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.nss"/></label>
@@ -29,22 +73,6 @@
 <div class="row">
   <div class="col-md-6">
     <div class="form-group">
-      <label><g:message code="dataImssEmployee.label.baseImssMonthlySalary"/></label>
-      <input class="form-control" id="saSalary" type="number" min="0.00" step="0.01" name="baseImssMonthlySalary" value="${dataImssEmployee?.baseImssMonthlySalary}" required=""/>
-      <input class="form-control" id="iasSalary" type="hidden" name="assimilableMonthlySalary" value="${dataImssEmployee.id ? dataImssEmployee.totalMonthlySalary-dataImssEmployee.baseImssMonthlySalary : '0'}" />
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="form-group">
-      <label><g:message code="dataImssEmployee.label.totalMonthlySalary"/></label>
-      <input class="form-control" id="totalSalary" type="number" min="0.00" step="0.01" name="totalMonthlySalary" value="${dataImssEmployee?.totalMonthlySalary}" required=""/>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6">
-    <div class="form-group">
       <label><g:message code="dataImssEmployee.label.holidayBonusRate"/></label>
       <input class="form-control" type="number" min="0.00" max="100.00" step="0.01" name="holidayBonusRate" value="${dataImssEmployee?.holidayBonusRate ?: 25}" required=""/>
     </div>
@@ -60,35 +88,29 @@
 <div class="row">
   <div class="col-md-6">
     <div class="form-group">
-      <label><g:message code="dataImssEmployee.label.paymentPeriod"/></label>
-      <g:select class="form-control" name="paymentPeriod" from="${PaymentPeriod.values()}" value="${dataImssEmployee?.paymentPeriod}" />
+      <label><g:message code="dataImssEmployee.label.contractType"/></label>
+      <g:select class="form-control" name="contractType" from="${ContractType.values()}" value="${dataImssEmployee?.contractType}" />
     </div>
   </div>
   <div class="col-md-6">
     <div class="form-group">
-      <label><g:message code="dataImssEmployee.label.contractType"/></label>
-      <g:select class="form-control" name="contractType" from="${ContractType.values()}" value="${dataImssEmployee?.contractType}" />
+      <label><g:message code="dataImssEmployee.label.jobRisk"/></label>
+      <g:select class="form-control" name="jobRisk" from="${JobRisk.values()}" value="${dataImssEmployee?.jobRisk}" />
     </div>
   </div>
 </div>
 
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.department"/></label>
       <input class="form-control" name="department" value="${dataImssEmployee?.department}" maxLength="150" required=""/>
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.job"/></label>
       <input class="form-control" name="job" value="${dataImssEmployee?.job}" maxLength="150" required=""/>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="form-group">
-      <label><g:message code="dataImssEmployee.label.jobRisk"/></label>
-      <g:select class="form-control" name="jobRisk" from="${JobRisk.values()}" value="${dataImssEmployee?.jobRisk}" />
     </div>
   </div>
 </div>
