@@ -27,14 +27,10 @@
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.baseImssMonthlySalary"/></label>
       <input class="form-control" id="saSalary" type="number" min="0.00" step="0.01" name="baseImssMonthlySalary" value="${dataImssEmployee?.baseImssMonthlySalary}" required=""/>
-      <label><g:message code="dataImssEmployee.label.netSAMonthlySalary"/></label>
-      <input class="form-control" id="netSASalary" type="number" name="netSASalary" readOnly=""/>
     </div>
   </div>
   <div class="col-md-4">
     <div class="form-group">
-      <label><g:message code="dataImssEmployee.label.crudeAssimilableMonthlySalary"/></label>
-      <input class="form-control" id="crudeIASSalary" type="number" name="crudeAssimilableSalary" readOnly=""/>
       <label><g:message code="dataImssEmployee.label.assimilableMonthlySalary"/></label>
       <input class="form-control" id="iasSalary" type="number" min="0.00" step="0.01" name="monthlyNetAssimilableSalary" value="${dataImssEmployee?.monthlyNetAssimilableSalary}" required=""/>
     </div>
@@ -43,8 +39,6 @@
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.totalCrudeMonthlySalary"/></label>
       <input class="form-control" id="totalCrudeSalary" type="number" name="totalCrudeMonthlySalary" readOnly="" />
-      <label><g:message code="dataImssEmployee.label.totalNetMonthlySalary"/></label>
-      <input class="form-control" id="totalSalary" type="number" min="0.00" step="0.01" name="totalMonthlySalary" value="${dataImssEmployee?.totalMonthlySalary}" readOnly=""/>
     </div>
   </div>
 </div>
