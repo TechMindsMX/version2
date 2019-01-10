@@ -11,18 +11,52 @@ $("input[name='paymentSchema']").change( function (){
 function saAndIas() {
   $("#saSalary").removeAttr("disabled");
   $("#iasSalary").removeAttr("disabled");
+  $("#nss").removeAttr("disabled");
+  $("#dpRegistration").removeAttr("disabled");
+  $("#dpDischarge").removeAttr("disabled");
+  $("#holidayBonusRate").removeAttr("disabled");
+  $("#annualBonusDays").removeAttr("disabled");
+  $("#jobRisk").removeAttr("disabled");
+  $("#department").removeAttr("disabled");
+  $("#job").removeAttr("disabled");
+  $("#workDayType").removeAttr("disabled");
 }
 
 function onlySa() {
   $("#saSalary").removeAttr("disabled");
+  $("#nss").removeAttr("disabled");
+  $("#dpRegistration").removeAttr("disabled");
+  $("#dpDischarge").removeAttr("disabled");
+  $("#holidayBonusRate").removeAttr("disabled");
+  $("#annualBonusDays").removeAttr("disabled");
   $("#iasSalary").attr("disabled", "true");
   $("#iasSalary").val("");
+  $("#jobRisk").removeAttr("disabled");
+  $("#department").removeAttr("disabled");
+  $("#job").removeAttr("disabled");
+  $("#workDayType").removeAttr("disabled");
 }
 
 function onlyIas() {
   $("#iasSalary").removeAttr("disabled");
   $("#saSalary").attr("disabled", "true");
   $("#saSalary").val("");
+  $("#nss").attr("disabled", "true");
+  $("#nss").val("");
+  $("#dpRegistration").attr("disabled", "true");
+  $("#dpRegistration").val("");
+  $("#dpDischarge").attr("disabled", "true");
+  $("#dpDischarge").val("");
+  $("#holidayBonusRate").attr("disabled", "true");
+  $("#holidayBonusRate").val("");
+  $("#annualBonusDays").attr("disabled", "true");
+  $("#annualBonusDays").val("");
+  $("#jobRisk").attr("disabled", "true");
+  $("#department").attr("disabled", "true");
+  $("#department").val("");
+  $("#job").attr("disabled", "true");
+  $("#job").val("");
+  $("#workDayType").attr("disabled", "true");
 }
 
 $("#saSalary").on('blur',function(){
