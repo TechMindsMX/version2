@@ -53,7 +53,7 @@
   <div class="col-md-4">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.nss"/></label>
-      <input class="form-control" type="number" name="nss" value="${dataImssEmployee?.nss}" required=""/>
+      <input class="form-control" type="number" id="nss" name="nss" value="${dataImssEmployee?.nss}" required=""/>
     </div>
   </div>
   <div class="col-md-4">
@@ -74,13 +74,13 @@
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.holidayBonusRate"/></label>
-      <input class="form-control" type="number" min="0.00" max="100.00" step="0.01" name="holidayBonusRate" value="${dataImssEmployee?.holidayBonusRate ?: 25}" required=""/>
+      <input class="form-control" type="number" min="0.00" max="100.00" step="0.01" id="holidayBonusRate" name="holidayBonusRate" value="${dataImssEmployee?.holidayBonusRate ?: 25}" required=""/>
     </div>
   </div>
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.annualBonusDays"/></label>
-      <input class="form-control" type="number" min="15" name="annualBonusDays" value="${dataImssEmployee?.annualBonusDays ?: 15}" required=""/>
+      <input class="form-control" type="number" min="15" id="annualBonusDays" name="annualBonusDays" value="${dataImssEmployee?.annualBonusDays ?: 15}" required=""/>
     </div>
   </div>
 </div>
@@ -95,7 +95,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.jobRisk"/></label>
-      <g:select class="form-control" name="jobRisk" from="${JobRisk.values()}" value="${dataImssEmployee?.jobRisk}" />
+      <g:select class="form-control" id="jobRisk" name="jobRisk" from="${JobRisk.values()}" value="${dataImssEmployee?.jobRisk}" />
     </div>
   </div>
 </div>
@@ -104,13 +104,13 @@
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.department"/></label>
-      <input class="form-control" name="department" value="${dataImssEmployee?.department}" maxLength="150" required=""/>
+      <input class="form-control" id="department" name="department" value="${dataImssEmployee?.department}" maxLength="150" required=""/>
     </div>
   </div>
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="dataImssEmployee.label.job"/></label>
-      <input class="form-control" name="job" value="${dataImssEmployee?.job}" maxLength="150" required=""/>
+      <input class="form-control" id="job" name="job" value="${dataImssEmployee?.job}" maxLength="150" required=""/>
     </div>
   </div>
 </div>
