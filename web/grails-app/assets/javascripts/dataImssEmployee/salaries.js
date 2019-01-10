@@ -1,5 +1,5 @@
+calculateTotalSalary();
 $("input[name='paymentSchema']").change( function (){
-  alert($("input[name='paymentSchema']:checked").val());
   var schema = $("input[name='paymentSchema']:checked").val();
   switch(schema) {
     case '1': saAndIas(); break;
@@ -20,6 +20,7 @@ function saAndIas() {
   $("#department").removeAttr("disabled");
   $("#job").removeAttr("disabled");
   $("#workDayType").removeAttr("disabled");
+  calculateTotalSalary();
 }
 
 function onlySa() {
@@ -35,6 +36,7 @@ function onlySa() {
   $("#department").removeAttr("disabled");
   $("#job").removeAttr("disabled");
   $("#workDayType").removeAttr("disabled");
+  calculateTotalSalary();
 }
 
 function onlyIas() {
@@ -57,6 +59,7 @@ function onlyIas() {
   $("#job").attr("disabled", "true");
   $("#job").val("");
   $("#workDayType").attr("disabled", "true");
+  calculateTotalSalary();
 }
 
 $("#saSalary").on('blur',function(){
@@ -67,10 +70,6 @@ $("#iasSalary").on('blur',function(){
   calculateTotalSalary();
 });
 
-$("#totalSalary").on('blur',function(){
-  calculateIasSalary();
-});
-
 function calculateTotalSalary() {
   $('#totalSalary').val('');
   var sa = $("#saSalary").val()*1;
@@ -79,7 +78,7 @@ function calculateTotalSalary() {
       return
   }
   var total = sa + ias;
-  $('#totalSalary').val((total).toFixed(2));
+  $('#totalCrudeSalary').val((total).toFixed(2));
 }
 
 function calculateIasSalary() {
