@@ -6,6 +6,7 @@ import com.modulus.uno.paysheet.ContractType
 import com.modulus.uno.paysheet.RegimeType
 import com.modulus.uno.paysheet.WorkDayType
 import com.modulus.uno.paysheet.JobRisk
+import com.modulus.uno.paysheet.EmployeePaysheetSchema
 
 class DataImssEmployeeCommand implements Validateable {
 
@@ -24,23 +25,26 @@ class DataImssEmployeeCommand implements Validateable {
   String jobRisk
   String department
   String job
+  String paysheetSchema
 
   static constraints = {
     idEmployee nullable:false
-    nss nullable:false
-    registrationDate nullable:false
+    nss nullable:true
+    registrationDate nullable:true
     dischargeDate nullable:true
     baseImssMonthlySalary nullable:false
+    monthlyNetAssimilableSalary nullable:false
     totalMonthlySalary nullable:false
-    holidayBonusRate nullable:false
-    annualBonusDays nullable:false
+    holidayBonusRate nullable:true
+    annualBonusDays nullable:true
     paymentPeriod nullable:false
     contractType nullable:false
     regimeType nullable:false
-    workDayType nullable:false
-    jobRisk nullable:false
-    department nullable:false
-    job nullable:false
+    workDayType nullable:true
+    jobRisk nullable:true
+    department nullable:true
+    job nullable:true
+    paysheetSchema nullable:false
   }
 
   DataImssEmployee createDataImssEmployee() {
@@ -61,6 +65,7 @@ class DataImssEmployeeCommand implements Validateable {
       jobRisk:JobRisk.find { it.toString() == this.jobRisk },
       department:this.department,
       job:this.job
+      paysheetSchema:EmployeePaysheetSchema.find { it.toString() == this.paysheetSchema }
     )
   }
 
