@@ -3,13 +3,14 @@
 <%! import com.modulus.uno.paysheet.WorkDayType %>
 <%! import com.modulus.uno.paysheet.RegimeType %>
 <%! import com.modulus.uno.paysheet.JobRisk %>
+<%! import com.modulus.uno.paysheet.EmployeePaysheetSchema %>
 <input type="hidden" name="idEmployee" value="${employee.id}"/>
 <input type="hidden" name="businessEntityId" value="${businessEntity.id}"/>
 <div class="row">
   <div class="col-md-8">
     <div class="form-group">
-      <label>Esquema de Pago:</label>
-      <g:radioGroup name="paymentSchema" labels="['SA + IAS', 'SA', 'IAS']" values="[1,2,3]" value="">
+      <label>Esquema de Nómina:</label>
+      <g:radioGroup name="paysheetSchema" labels="['SA + IAS', 'SA', 'IAS Fijo', 'IAS Variable']" values="['SA_IAS', 'SA', 'IAS_FIJO', 'IAS_VARIABLE']" value="${dataImssEmployee?.paysheetSchema}">
         ${it.radio} ${it.label} &nbsp; &nbsp; &nbsp; 
       </g:radioGroup>
     </div>   
