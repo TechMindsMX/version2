@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="col-md-6">
-          <span id="address-label" class="property-label"><h4>Datos IMSS</h4></span>
+          <span id="address-label" class="property-label"><h4>Datos de Nómina</h4></span>
         </div>
         <div class="col-md-6" align="right">
           <g:if test="${!dataImssEmployee}">
