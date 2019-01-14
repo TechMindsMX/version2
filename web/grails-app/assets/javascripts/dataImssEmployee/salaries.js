@@ -1,10 +1,10 @@
 calculateTotalSalary();
-$("input[name='paymentSchema']").change( function (){
-  var schema = $("input[name='paymentSchema']:checked").val();
+$("input[name='paysheetSchema']").change( function (){
+  var schema = $("input[name='paysheetSchema']:checked").val();
   switch(schema) {
-    case '1': saAndIas(); break;
-    case '2': onlySa(); break;
-    case '3': onlyIas(); break;
+    case 'SA_IAS': saAndIas(); break;
+    case 'SA': onlySa(); break;
+    case 'IAS_FIJO', 'IAS_VARIABLE': onlyIas(); break;
   }
 });
 
