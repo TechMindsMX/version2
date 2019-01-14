@@ -5,6 +5,8 @@
   </div>
   <div class="portlet-body">
 
+  <input type="checkbox" id="writeConcept" name="writeConcept" value="Concept" />&nbsp;&nbsp;<label>Escritura de concepto</label>  
+
     <g:if test="${errors}">
       <ul class="errors alert alert-danger alert-dismissable" role="alert">
         <g:each in="${errors}" var="error">
