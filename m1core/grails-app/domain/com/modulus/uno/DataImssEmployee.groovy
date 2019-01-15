@@ -4,6 +4,7 @@ import com.modulus.uno.paysheet.ContractType
 import com.modulus.uno.paysheet.RegimeType
 import com.modulus.uno.paysheet.WorkDayType
 import com.modulus.uno.paysheet.JobRisk
+import com.modulus.uno.paysheet.PaysheetSchema
 
 class DataImssEmployee {
 
@@ -23,8 +24,7 @@ class DataImssEmployee {
   JobRisk jobRisk = JobRisk.CLASS_01
   String department
   String job
-  Boolean isVariableAssimilable = false
-  Boolean isOnlyAssimilable = false
+  PaysheetSchema paysheetSchema = PaysheetSchema.SA_IAS
 
   static constraints = {
     employee nullable:false
@@ -38,6 +38,10 @@ class DataImssEmployee {
     annualBonusDays nullable:true, min:15
     paymentPeriod nullable:false
     jobRisk nullable:true
+    paysheetSchema nullable:true
+    workDayType nullable:true
+    department nullable:true
+    job nullable:true
   }
 
   BigDecimal getMonthlyAssimilableSalary() {
