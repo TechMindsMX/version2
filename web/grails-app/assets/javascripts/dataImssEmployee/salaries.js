@@ -1,12 +1,18 @@
+processSchema();
 calculateTotalSalary();
+
 $("input[name='paysheetSchema']").change( function (){
+  processSchema();
+});
+
+function processSchema() {
   var schema = $("input[name='paysheetSchema']:checked").val();
   switch(schema) {
     case 'SA_IAS': saAndIas(); break;
     case 'SA': onlySa(); break;
-    case 'IAS_FIJO', 'IAS_VARIABLE': onlyIas(); break;
+    case 'IAS_FIJO': case 'IAS_VARIABLE': onlyIas(); break;
   }
-});
+}
 
 function saAndIas() {
   $("#saSalary").removeAttr("disabled");
