@@ -5,7 +5,7 @@
   </div>
   <div class="portlet-body">
 
-  <input type="checkbox" id="writeConcept" name="writeConcept" value="Concept" />&nbsp;&nbsp;<label>Escritura de concepto</label>  
+  <input type="checkbox" id="selectWriteConcept" name="selectWriteConcept" value="Concept" />&nbsp;&nbsp;<label>Escritura de conceptoo</label>  
 
     <g:if test="${errors}">
       <ul class="errors alert alert-danger alert-dismissable" role="alert">
@@ -32,9 +32,12 @@
             <g:hiddenField name="creditNoteId" value="${creditNote.id}"/>
             <tr>
               <td>
-                <div class="input-group">
+                <div class="input-group" id="selectConcept">
                   <g:select class="form-control" name="item" from="${creditNote.saleOrder.items.sort{it.id}}" var="item" optionKey="id" optionValue="name" noSelection="['':'Elija el producto']" required=""/>
                   <input type="hidden" id="name" name="name" value=""/>
+                </div>
+                <div class="input-group" id="writeConcept" hidden>
+                  <input type="text" class="form-control" id="name" value=""/>
                 </div>
                 <div class="input-group">
                   <div class="input-group-addon">SKU</div>
