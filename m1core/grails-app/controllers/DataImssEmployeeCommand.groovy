@@ -6,7 +6,7 @@ import com.modulus.uno.paysheet.ContractType
 import com.modulus.uno.paysheet.RegimeType
 import com.modulus.uno.paysheet.WorkDayType
 import com.modulus.uno.paysheet.JobRisk
-import com.modulus.uno.paysheet.EmployeePaysheetSchema
+import com.modulus.uno.paysheet.PaysheetSchema
 
 class DataImssEmployeeCommand implements Validateable {
 
@@ -15,7 +15,8 @@ class DataImssEmployeeCommand implements Validateable {
   String registrationDate
   String dischargeDate
   String baseImssMonthlySalary
-  String totalMonthlySalary
+  String monthlyNetAssimilableSalary
+  String totalCrudeMonthlySalary
   String holidayBonusRate
   String annualBonusDays
   String paymentPeriod
@@ -32,9 +33,9 @@ class DataImssEmployeeCommand implements Validateable {
     nss nullable:true
     registrationDate nullable:true
     dischargeDate nullable:true
-    baseImssMonthlySalary nullable:false
-    monthlyNetAssimilableSalary nullable:false
-    totalMonthlySalary nullable:false
+    baseImssMonthlySalary nullable:true
+    monthlyNetAssimilableSalary nullable:true
+    totalCrudeMonthlySalary nullable:false
     holidayBonusRate nullable:true
     annualBonusDays nullable:true
     paymentPeriod nullable:false
@@ -51,21 +52,22 @@ class DataImssEmployeeCommand implements Validateable {
     EmployeeLink employee = EmployeeLink.get(this.idEmployee)
     new DataImssEmployee(
       employee:employee,
-      registrationDate:Date.parse("dd/MM/yyyy", this.registrationDate),
+      registrationDate:this.registrationDate ? Date.parse("dd/MM/yyyy", this.registrationDate) : null,
       dischargeDate:this.dischargeDate ? Date.parse("dd/MM/yyyy", this.dischargeDate) : null,
       nss:this.nss,
-      baseImssMonthlySalary:getValueInBigDecimal(this.baseImssMonthlySalary),
-      totalMonthlySalary:getValueInBigDecimal(this.totalMonthlySalary),
-      holidayBonusRate:getValueInBigDecimal(this.holidayBonusRate),
-      annualBonusDays:this.annualBonusDays.toInteger(),
+      baseImssMonthlySalary:getValueInBigDecimal(this.baseImssMonthlySalary ?: "0"),
+      monthlyNetAssimilableSalary:getValueInBigDecimal(this.monthlyNetAssimilableSalary ?: "0"),
+      totalMonthlySalary:getValueInBigDecimal(this.totalCrudeMonthlySalary ?: "0"),
+      holidayBonusRate:getValueInBigDecimal(this.holidayBonusRate ?: "0"),
+      annualBonusDays:this.annualBonusDays?.toInteger(),
       paymentPeriod:PaymentPeriod.find { it.toString() == this.paymentPeriod },
       contractType:ContractType.find { it.toString() == this.contractType },
       regimeType:RegimeType.find { it.toString() == this.regimeType },
-      workDayType:WorkDayType.find { it.toString() == this.workDayType },
-      jobRisk:JobRisk.find { it.toString() == this.jobRisk },
+      workDayType:this.workDayType ? WorkDayType.find { it.toString() == this.workDayType } : null,
+      jobRisk:this.jobRisk ? JobRisk.find { it.toString() == this.jobRisk } : null,
       department:this.department,
-      job:this.job
-      paysheetSchema:EmployeePaysheetSchema.find { it.toString() == this.paysheetSchema }
+      job:this.job,
+      paysheetSchema:PaysheetSchema."${this.paysheetSchema}"
     )
   }
 
