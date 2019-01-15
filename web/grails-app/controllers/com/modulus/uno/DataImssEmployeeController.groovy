@@ -13,6 +13,7 @@ class DataImssEmployeeController {
 
   def save(DataImssEmployeeCommand command) {
     log.info "Data Imss command: ${command.dump()}"
+    Company company = Company.get(session.company)
 
     if (command.hasErrors()) {
       BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
@@ -42,6 +43,7 @@ class DataImssEmployeeController {
 
   def update(DataImssEmployeeCommand command) {
     log.info "Data Imss to update: ${command.dump()}"
+    Company company = Company.get(session.company)
 
     if (command.hasErrors()) {
       BusinessEntity businessEntity = BusinessEntity.get(params.businessEntityId)
