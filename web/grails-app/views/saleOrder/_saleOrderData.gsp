@@ -12,6 +12,13 @@
 			<div class="row">
         <div class="col-md-6">
           <g:render template="summaryData"/>
+          <g:if test="${saleOrder.status == SaleOrderStatus.CREADA}">
+            <div class="form-group">
+              <h4>
+                <input type="checkbox" id="replacementInvoice" name="replacementInvoice" value="" />&nbsp;&nbsp;<label>Marcar como factura de reposición</label>
+              </h4>
+            </div>
+          </g:if>
         </div>
         <div class="col-md-6">
         <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA || saleOrder.status == SaleOrderStatus.PAGADA}">
