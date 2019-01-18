@@ -40,6 +40,9 @@
       <div class="col-md-12">
         <g:render template="saleOrderData"/>
       </div>
+      <div class="col-md-12">
+        <g:render template="replacementInvoice"/>
+      </div>
       <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA}">
       <div class="col-md-12">
         <g:render template="creditNotes"/>
