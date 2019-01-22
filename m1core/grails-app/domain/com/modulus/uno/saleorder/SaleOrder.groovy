@@ -41,6 +41,7 @@ class SaleOrder {
   String invoiceFolio
   String invoiceSerie
   Date stampedDate
+  String uuidReplacement
 
   static belongsTo = [company:Company]
 
