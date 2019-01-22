@@ -383,5 +383,20 @@ class SaleOrderController {
     saleOrderService.getCanceledSaleOrders(rfc)
   }
 
+  @Transactional
+  def save(SaleOrderCommand saleOrderCommand) {
+    log.info "Creating a sale order: ${saleOrderCommand.dump()}"
+    if (!saleOrderCommand) {
+      transactionStatus.setRollbackOnly()
+      notFound()
+      return
+    }
+
+  @Transactional
+  def getReplacementInvoiceUUID(SaleOrder saleOrder, String uuid){
+    saleOrderService.updateReplacementInvoiceUUID(saleOrder, uuid)
+  }
+
+
 
 }

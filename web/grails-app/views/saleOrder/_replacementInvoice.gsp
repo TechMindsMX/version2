@@ -29,6 +29,7 @@
                     <td>${sale.folio}</td>
                     <td>${sale.status}</td>
                     <td>${sale.note}</td>
+                    <td><g:link class="btn btn-default" controller="saleOrder" action="getReplacementInvoiceUUID" params="[saleOrder: saleOrder.id, uuid: sale.uuid]">Seleccionar</g:link></td>
                   </tr>
                 </g:each>  
               </tbody>
