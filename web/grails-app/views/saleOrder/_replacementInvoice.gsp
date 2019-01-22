@@ -1,7 +1,7 @@
 <%! import com.modulus.uno.status.SaleOrderStatus%><div class="portlet portlet- default">
   <div class="portlet-heading">
     <div class="portlet-title">
-      <h4>Facturas canceladas del cliente</h4>
+      <h4>Sustitución de factura</h4>
     </div>
     <div class="clearfix"></div>
   </div>
@@ -22,9 +22,15 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                </tr>
+                <g:each in="${canceledSaleOrders}" var="sale">
+                  <tr>
+                    <td>${sale.uuid}</td>
+                    <td>${sale.dateCreated}</td>
+                    <td>${sale.folio}</td>
+                    <td>${sale.status}</td>
+                    <td>${sale.note}</td>
+                  </tr>
+                </g:each>  
               </tbody>
             </table>
           </div>    
