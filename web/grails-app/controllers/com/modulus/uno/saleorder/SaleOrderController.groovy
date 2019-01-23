@@ -386,6 +386,7 @@ class SaleOrderController {
   @Transactional
   def getReplacementInvoiceUUID(SaleOrder saleOrder){
     saleOrderService.updateReplacementInvoiceUUID(saleOrder, params.uuid)
+    redirect action:"show", id:saleOrder.id
   }
 
 

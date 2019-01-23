@@ -13,9 +13,9 @@
             <table class="table table-condensed table-striped">
               <thead>
                 <tr>
-                  <th class="col-xs-3">UUID</th>
+                  <th class="col-xs-2">UUID</th>
                   <th class="col-xs-2">Fecha de Creación</th>
-                  <th class="col-xs-1">Folio</th>
+                  <th class="col-xs-2">Folio</th>
                   <th class="col-xs-2">Estatus</th>
                   <th class="col-xs-3">Nota</th>
                   <th class="col-xs-1"></th>
