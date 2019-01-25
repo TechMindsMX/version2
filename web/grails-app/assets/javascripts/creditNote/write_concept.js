@@ -48,4 +48,7 @@ $("#btnSubmit").click( function(){
   if ($("#selectWriteConcept").is(":checked")) {
     $("#selectConcept").remove()
   }
+  if ($("#selectWriteConcept").is(":not(:checked)")) {
+    $("#writeConcept").remove()
+  }
 })

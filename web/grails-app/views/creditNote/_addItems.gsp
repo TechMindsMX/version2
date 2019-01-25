@@ -77,7 +77,7 @@
               </td>
               <td>
                 <div class="input-group">
-                  <input type="text" id="unitType" name="unitType" class="form-control" value="" readonly="" pattern="[A-Za-z]{1,50}" title="Ingrese una medida en formato correcto (únicamente letras)"/>
+                  <input type="text" id="unitType" name="unitType" class="form-control" value="" readonly="" pattern="[A-Z]{1,50}" title="Ingrese una medida en formato correcto (únicamente letras mayúsculas)"/>
                 </div>
               </td>
               <td>
