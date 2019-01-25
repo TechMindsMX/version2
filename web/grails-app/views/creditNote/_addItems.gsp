@@ -37,11 +37,11 @@
                   <input type="hidden" id="name" name="name" value=""/>
                 </div>
                 <div  id="writeConcept" hidden>
-                  <input name="writeConcept" class="form-control" value="" placeholder="Esciba el producto"/>
+                  <input id="selectName" name="selectName" class="form-control" value="" placeholder="Esciba el producto" required="" pattern=".{1,50}" title="Complete este campo"/>
                 </div>
                 <div class="input-group">
                   <div class="input-group-addon">SKU</div>
-                  <input type="text" id="sku" name="sku" class="form-control" readOnly=""/>
+                  <input type="text" id="sku" name="sku" class="form-control" readOnly="" pattern=".{8,50}" title="8 caracteres mínimo"/>
                 </div>
               </td>
               <td>
@@ -77,7 +77,7 @@
               </td>
               <td>
                 <div class="input-group">
-                  <input type="text" id="unitType" name="unitType" class="form-control" value="" readonly=""/>
+                  <input type="text" id="unitType" name="unitType" class="form-control" value="" readonly="" pattern="[A-Za-z]{1,50}" title="Ingrese una medida en formato correcto (únicamente letras)"/>
                 </div>
               </td>
               <td>
@@ -85,7 +85,7 @@
                 <input type="hidden" id="originalAmount" name="originalAmount" class="form-control" value="" readonly=""/>
               </td>
               <td class="text-center">
-                <button class="btn btn-primary" type="submit">Agregar</button>
+                <button id="btnSubmit" class="btn btn-primary" type="submit">Agregar</button>
               </td>
             </tr>
           </g:if>
