@@ -15,4 +15,5 @@ class FacturaCommand implements MessageCommand {
   TotalesImpuestos totalesImpuestos
   Boolean betweenIntegrated = false
   String observaciones
+  String uuidReplacement
 }
