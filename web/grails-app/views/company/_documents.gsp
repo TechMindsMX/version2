@@ -118,6 +118,43 @@
 
          </li>
 
+
+
+         <li class="text-primary">
+           Template por default: &nbsp;
+            <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#changeTemplatesSerieModal" data-whatever="${documents.currentSerieExpenses}">
+              Cambiar Template
+            </button>
+            <!-- modal change date -->
+            <div class="modal fade" id="changeTemplatesSerieModal" tabindex="-1" role="dialog" aria-labelledby="changeSerieModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="changeSerieModalLabel">Cambiar template por default</h4>
+                  </div>
+                  <g:form action="changeSerieForInvoices" id="${company.id}">
+                  <g:hiddenField name="type" value="holaº"/>
+                  <div class="modal-body">
+                      <div class="form-group">
+                        <label for="folio" class="control-label">Folio Inicial:</label>
+                        <select name="pdfTemplate" class="form-control" required="required">
+                          <option value=""> Seleccione la plantilla PDF...</option>
+                        </select>  
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Cambiar</button>
+                  </div>
+                  </g:form>
+                </div>
+              </div>
+            </div>
+            <!-- modal change date end -->
+
+         </li>
+
        </ul>
        <div class="text-right">
          <g:link class="btn btn-primary" action="changeStampDocuments" id="${company.id}">Cambiar</g:link>
