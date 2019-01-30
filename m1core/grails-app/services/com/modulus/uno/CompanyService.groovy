@@ -457,4 +457,8 @@ class CompanyService {
     applyOperationsCloseTransaction(company, transactions)
   }
 
+  def getAllTemplates(Company company) {
+    def response = restService.getAllTemplates()
+  }
+
 }

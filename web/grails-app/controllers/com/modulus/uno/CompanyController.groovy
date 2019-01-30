@@ -309,4 +309,9 @@ class CompanyController {
     }
   }
 
+def getAllTemplates(){
+  companyService.getAllTemplates()
+}
+
+
 }
