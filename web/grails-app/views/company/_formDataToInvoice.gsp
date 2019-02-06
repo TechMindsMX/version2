@@ -10,9 +10,7 @@
 <input type="text" class="form-control" name="serieIncomes" placeholder="Serie para Ingresos" /><br/>
 <input type="text" class="form-control" name="serieExpenses" placeholder="Serie para Egresos" />
 <br />
-<select name="pdfTemplate" class="form-control" required="required">
-  <option value=""> Seleccione la plantilla PDF...</option>
-</select> 
+<companyInfo:listTemplatesPdfForCompany/>
 <br/> 
 <sec:ifAnyGranted roles="ROLE_LEGAL_REPRESENTATIVE_EJECUTOR">
   <input type="submit" class="btn btn-green btn-lg" value="Guardar" />
