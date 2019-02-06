@@ -223,9 +223,9 @@ class RestService {
     response ? response.json : [error:true]
   }
 
-  def getAllTemplates() {
+  def getAllPdfTemplates() {
     log.info "CALLING Service: Get all templates"
-    String endpoint = "${grailsApplication.config.modulus.allTemplates}"
+    String endpoint = "${grailsApplication.config.modulus.allPdfTemplates}"
 
     def response = wsliteRequestService.doRequest(facturacionUrl){
       endpointUrl endpoint
