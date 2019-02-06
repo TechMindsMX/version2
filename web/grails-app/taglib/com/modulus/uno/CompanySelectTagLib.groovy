@@ -26,15 +26,15 @@ class CompanySelectTagLib {
     out << (company.status == CompanyStatus.ACCEPTED)
   }
 
-  def listTemplatesPdfForCompany = { attrs, body ->
-    def emisor = restService.getAllTemplates()
+  def listTemplatesPdfForCompany = {
+    def emisor = restService.getAllPdfTemplates()
     if (emisor.templatesPdf?.size()>1) {
       out << """
           <select name="pdfTemplate" class="form-control" required="required">
             <option value=""> Seleccione la plantilla PDF...</option>
         """
-        emisor.templatesPdf.each { it ->
-          out << "<option value=\"${it}\">${it}</option>"
+        emisor.templatesPdf.each { template ->
+          out << "<option value=\"${template}\">${template}</option>"
         }
       out << """
           </select>

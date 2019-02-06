@@ -457,8 +457,11 @@ class CompanyService {
     applyOperationsCloseTransaction(company, transactions)
   }
 
-  def getAllTemplates(Company company) {
-    def response = restService.getAllTemplates()
+
+  Company saveCompanyTemplateByDefault(Company company, def params){
+    company.pdfTemplate = params.pdfTemplate
+    company.save()
+    company
   }
 
 }
