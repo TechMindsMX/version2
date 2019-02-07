@@ -21,6 +21,11 @@
               </div>
             </g:if>  
           </g:if>
+          <g:if test="${saleOrder.uuidReplacement}">
+            <h4>
+              <label><b>Factura de reposición</b></label>
+            </h4>
+          </g:if>
         </div>
         <div class="col-md-6">
         <g:if test="${saleOrder.status == SaleOrderStatus.EJECUTADA || saleOrder.status == SaleOrderStatus.PAGADA}">
