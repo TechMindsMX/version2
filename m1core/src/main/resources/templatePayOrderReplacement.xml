@@ -1,0 +1,26 @@
+<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:h2h='http://h2h.integration.spei.enlacefi.lgec.com/'>
+  <soapenv:Header/>
+  <soapenv:Body>
+    <h2h:registraOrden>
+      <ordenPago>
+        <fechaOperacion>$fechaDeOperacion</fechaOperacion>
+        <institucionOperante>$institucionOperante</institucionOperante>
+        <institucionContraparte>$institucionContraparte</institucionContraparte>
+        <claveRastreo>$claveDeRastreo</claveRastreo>
+        <monto>$montoDelPago</monto>
+        <tipoPago>$tipoDelPago</tipoPago>
+        <empresa>$empresa</empresa>
+        <nombreOrdenante>$nombreDelOrdenante</nombreOrdenante>
+        <nombreBeneficiario>$nombreDelBeneficiario</nombreBeneficiario>
+        <tipoCuentaBeneficiario>$tipoDeCuentaDelBeneficiario</tipoCuentaBeneficiario>
+        <cuentaBeneficiario>$cuentaDelBeneficiario</cuentaBeneficiario>
+        <rfcCurpBeneficiario>$rfcCurpDelBeneficiario</rfcCurpBeneficiario>
+        <conceptoPago>$conceptoDelPago</conceptoPago>
+        <referenciaNumerica>$referenciaNumerica</referenciaNumerica>
+        <firma>$firma</firma>
+        <emailBeneficiario>$emailDelBeneficiario</emailBeneficiario>
+        <uuidReplacement>$uuidReplacement</uuidReplacement>
+      </ordenPago>
+    </h2h:registraOrden>
+  </soapenv:Body>
+</soapenv:Envelope>
