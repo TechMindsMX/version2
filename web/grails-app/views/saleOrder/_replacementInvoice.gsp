@@ -1,4 +1,5 @@
-<%! import com.modulus.uno.status.SaleOrderStatus%><div class="portlet portlet- default">
+<%! import com.modulus.uno.status.SaleOrderStatus%>
+<div class="portlet portlet- default">
   <div class="portlet-heading">
     <div class="portlet-title">
       <h4>Sustitución de factura</h4>
@@ -13,22 +14,24 @@
             <table class="table table-condensed table-striped">
               <thead>
                 <tr>
+                  <th class="col-xs-2">Nombre del Cliente</th>
+                  <th class="col-xs-1">RFC</th>
+                  <th class="col-xs-1">No. Factura</th>
+                  <th class="col-xs-3">Folio</th>
                   <th class="col-xs-2">UUID</th>
-                  <th class="col-xs-2">Fecha de Creación</th>
-                  <th class="col-xs-2">Folio</th>
-                  <th class="col-xs-2">Estatus</th>
-                  <th class="col-xs-3">Nota</th>
+                  <th class="col-xs-1">Importe</th>
                   <th class="col-xs-1"></th>
                 </tr>
               </thead>
               <tbody>
                 <g:each in="${canceledSaleOrders}" var="sale">
                   <tr>
-                    <td>${sale.uuid}</td>
-                    <td>${sale.dateCreated}</td>
+                    <td>${sale.clientName}</td>
+                    <td>${sale.rfc}</td>
+                    <td>${sale.id}</td>
                     <td>${sale.folio}</td>
-                    <td>${sale.status}</td>
-                    <td>${sale.note}</td>
+                    <td>${sale.uuid}</td>
+                    <td>${modulusuno.formatPrice(number: sale.total)}</td>
                     <td><g:link class="btn btn-default" action="getReplacementInvoiceUUID" params="[uuid: sale.uuid]" id="${saleOrder.id}">Seleccionar</g:link></td>
                   </tr>
                 </g:each>  
