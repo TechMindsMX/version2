@@ -13,13 +13,15 @@
         <div class="col-md-6">
           <g:render template="summaryData"/>
           <g:if test="${saleOrder.status == SaleOrderStatus.CREADA}">
-            <g:if test="${!saleOrder.uuidReplacement}"
-              <div class="form-group">
-                <h4>
-                  <input type="checkbox" id="replacementInvoice" name="replacementInvoice" value="" />&nbsp;&nbsp;<label>Marcar como factura de reposición</label>
-                </h4>
-              </div>
-            </g:if>  
+            <g:if test="${canceledSaleOrders}">
+              <g:if test="${!saleOrder.uuidReplacement}"
+                <div class="form-group">
+                  <h4>
+                    <input type="checkbox" id="replacementInvoice" name="replacementInvoice" value="" />&nbsp;&nbsp;<label>Marcar como factura de reposición</label>
+                  </h4>
+                </div>
+              </g:if>
+            </g:if>    
           </g:if>
           <g:if test="${saleOrder.uuidReplacement}">
             <h4>
