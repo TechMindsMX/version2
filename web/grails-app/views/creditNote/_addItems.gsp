@@ -5,6 +5,8 @@
   </div>
   <div class="portlet-body">
 
+  <input type="checkbox" id="selectWriteConcept" name="selectWriteConcept" value="Concept" />&nbsp;&nbsp;<label>Escritura de concepto</label>  
+
     <g:if test="${errors}">
       <ul class="errors alert alert-danger alert-dismissable" role="alert">
         <g:each in="${errors}" var="error">
@@ -30,13 +32,16 @@
             <g:hiddenField name="creditNoteId" value="${creditNote.id}"/>
             <tr>
               <td>
-                <div class="input-group">
+                <div class="input-group" id="selectConcept">
                   <g:select class="form-control" name="item" from="${creditNote.saleOrder.items.sort{it.id}}" var="item" optionKey="id" optionValue="name" noSelection="['':'Elija el producto']" required=""/>
                   <input type="hidden" id="name" name="name" value=""/>
                 </div>
+                <div  id="writeConcept" hidden>
+                  <input id="selectName" name="selectName" class="form-control" value="" placeholder="Esciba el producto" required="" pattern=".{1,50}" title="Complete este campo"/>
+                </div>
                 <div class="input-group">
                   <div class="input-group-addon">SKU</div>
-                  <input type="text" id="sku" name="sku" class="form-control" readOnly=""/>
+                  <input type="text" id="sku" name="sku" class="form-control" readOnly="" pattern=".{8,50}" title="8 caracteres mínimo"/>
                 </div>
               </td>
               <td>
@@ -72,7 +77,7 @@
               </td>
               <td>
                 <div class="input-group">
-                  <input type="text" id="unitType" name="unitType" class="form-control" value="" readonly=""/>
+                  <input type="text" id="unitType" name="unitType" class="form-control" value="" readonly="" pattern="[A-Z]{1,50}" title="Ingrese una medida en formato correcto (únicamente letras mayúsculas)"/>
                 </div>
               </td>
               <td>
@@ -80,7 +85,7 @@
                 <input type="hidden" id="originalAmount" name="originalAmount" class="form-control" value="" readonly=""/>
               </td>
               <td class="text-center">
-                <button class="btn btn-primary" type="submit">Agregar</button>
+                <button id="btnSubmit" class="btn btn-primary" type="submit">Agregar</button>
               </td>
             </tr>
           </g:if>

@@ -72,5 +72,6 @@
       </div>
     </div>
     <asset:javascript src="creditNote/show.js"/>
+    <asset:javascript src="creditNote/write_concept.js"/>
   </body>
 </html>
