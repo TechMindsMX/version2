@@ -351,9 +351,11 @@ class NotifyService {
 
   //Send a email notification
   def sendEmailNotifications(def emailsToNotify, String idTemplate, def paramsMap){
-    emailsToNotify.each{ email ->
-      sendNotify(buildEmailerMap(idTemplate, email, paramsMap))
-    }
+    Thread.start({
+      emailsToNotify.each{ email ->
+        sendNotify(buildEmailerMap(idTemplate, email, paramsMap))
+      }
+    })
   }
 
   def buildEmailerMap(String idEmailer, String toSend, def params){
