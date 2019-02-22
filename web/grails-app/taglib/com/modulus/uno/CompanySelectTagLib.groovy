@@ -64,7 +64,7 @@ class CompanySelectTagLib {
       }
       else{
         out << """
-          <select name="pdfTemplate" class="form-control" required="required">
+          <select id="pdfTemplate" name="pdfTemplate" class="form-control" required="required">
             <option value=""> Seleccione la plantilla PDF...</option>
         """
         emisor.templatesPdf.each { template ->
