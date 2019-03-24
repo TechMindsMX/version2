@@ -159,31 +159,69 @@ pipeline {
       }
     }
 
-    stage('Deploy Kube web-modulusuno') {
+    stage('Deploy Docker Machine development web') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME == "master"
         }
       }
-      environment {
-        ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
-      }
       steps{
-        sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} web-modulusuno"
+        sh "ssh ec2-user@34.206.149.172 sh /home/ec2-user/deployApps.sh ${env.VERSION} development web-modulusuno 8093 8080"
       }
     }
 
-    stage('Deploy Kube webservice-modulusuno') {
+    stage('Deploy Docker Machine stage web') {
       when {
         expression {
-          env.BRANCH_NAME in ["master","stage","production"]
+          env.BRANCH_NAME == "stage"
         }
       }
-      environment {
-        ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'development' : env.BRANCH_NAME}"
+      steps{
+        sh "ssh ec2-user@34.206.149.172 sh /home/ec2-user/deployApps.sh ${env.VERSION} stage web-modulusuno 8094 8080"
+      }
+    }
+
+    stage('Deploy Docker Machine production web') {
+      when {
+        expression {
+          env.BRANCH_NAME == "production"
+        }
       }
       steps{
-        sh "ssh ec2-user@34.200.152.121 sh /home/ec2-user/deployApp.sh ${env.VERSION} ${env.ENVIRONMENT} webservice-modulusuno"
+        sh "ssh ec2-user@34.206.149.172 sh /home/ec2-user/deployApps.sh ${env.VERSION} production web-modulusuno 8095 8080"
+      }
+    }
+
+    stage('Deploy Docker Machine development webservice') {
+      when {
+        expression {
+          env.BRANCH_NAME == "master"
+        }
+      }
+      steps{
+        sh "ssh ec2-user@34.206.149.172 sh /home/ec2-user/deployApps.sh ${env.VERSION} development webservice-modulusuno 8090 8080"
+      }
+    }
+
+    stage('Deploy Docker Machine stage webservice') {
+      when {
+        expression {
+          env.BRANCH_NAME == "stage"
+        }
+      }
+      steps{
+        sh "ssh ec2-user@34.206.149.172 sh /home/ec2-user/deployApps.sh ${env.VERSION} stage webservice-modulusuno 8091 8080"
+      }
+    }
+
+    stage('Deploy Docker Machine production webservice') {
+      when {
+        expression {
+          env.BRANCH_NAME == "production"
+        }
+      }
+      steps{
+        sh "ssh ec2-user@34.206.149.172 sh /home/ec2-user/deployApps.sh ${env.VERSION} production webservice-modulusuno 8092 8080"
       }
     }
 
