@@ -95,7 +95,8 @@ class SaleOrderController {
       emailSenderService.notifySaleOrderChangeStatus(saleOrder)
       messageSuccess = message(code:"saleOrder.executed.message")
     }
-    redirect action:'generatePdf', id:saleOrder.id 
+
+    redirect action:'show', id:saleOrder.id
   }
 
   @Transactional
@@ -340,7 +341,7 @@ class SaleOrderController {
 
     def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
 
-    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status]] 
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status]]
   }
 
   def listOrdersWithAmountToPayForClient(BusinessEntity businessEntity) {
