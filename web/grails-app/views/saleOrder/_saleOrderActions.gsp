@@ -22,9 +22,15 @@
   </div>
 </div>
 
-<g:if test="${!isEnabledToStamp && [SaleOrderStatus.AUTORIZADA, SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.CANCELACION_AUTORIZADA, SaleOrderStatus.CANCELACION_EJECUTADA].contains(saleOrder.status)}">
+<g:if test="${!isEnabledToStamp && [SaleOrderStatus.AUTORIZADA, SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.CANCELACION_AUTORIZADA, SaleOrderStatus.CANCELACION_EJECUTADA, SaleOrderStatus.GENERANDO_XML].contains(saleOrder.status)}">
   <div class="alert alert-warning">
     No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
+  </div>
+</g:if>
+
+<g:if test="${isEnabledToStamp && SaleOrderStatus.GENERANDO_XML == saleOrder.status}">
+  <div class="alert alert-warning">
+    La generación está tomando más tiempo de lo esperado, por favor regresa más tarde.
   </div>
 </g:if>
 
@@ -126,7 +132,7 @@
         </g:form>
           <div class="row">
             <div class="col-md-12">
-              <br/>       
+              <br/>
               <div class="collapse" id="inputReasonCancellation">
                 <div class="well">
                   <g:form action="rejectSaleOrder" id="${saleOrder.id}">
