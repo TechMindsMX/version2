@@ -32,9 +32,11 @@ import com.modulus.uno.status.ConciliationStatus
 import com.modulus.uno.status.CommissionTransactionStatus
 import com.modulus.uno.businessEntity.BusinessEntitiesGroupType
 
+import com.modulus.uno.messages.SenderQueueService
+
 class SaleOrderService {
 
-  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+  SenderQueueService senderQueueService
   EmailSenderService emailSenderService
   InvoiceService invoiceService
   def grailsApplication
@@ -121,14 +123,24 @@ class SaleOrderService {
     if (!commissionTransactionService.getCommissionForCompanyByType(saleOrder.company, CommissionType.FACTURA)) {
       throw new BusinessException("La empresa no tiene comisión de facturación registrada")
     }
+
+    senderQueueService.generateFacturaForSaleOrder(saleOrder.id)
+
+    saleOrder.status = SaleOrderStatus.GENERANDO_XML
+    saleOrder.save()
+    saleOrder
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  void generateInvoiceFromSaleOrderId(Long saleOrderId) {
+    SaleOrder saleOrder = SaleOrder.get(saleOrderId)
+
     Map stampData = invoiceService.generateFactura(saleOrder)
     commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
     stampData.pdfTemplate = saleOrder.pdfTemplate
     log.info "Stamp UUID: ${stampData.stampId}"
     updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
-    saleOrder.refresh()
     log.info "Sale Order updated with stamped uuid: ${saleOrder.id}, ${saleOrder.pdfTemplate}"
-    saleOrder
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
