@@ -28,6 +28,8 @@ import com.modulus.uno.CompanyService
 import com.modulus.uno.CommissionTransactionService
 import com.modulus.uno.businessEntity.BusinessEntitiesGroupService
 
+import com.modulus.uno.messages.SenderQueueService
+
 @TestFor(SaleOrderService)
 @Mock([BusinessEntity, SaleOrder, SaleOrderItem, Company, User, Address,Authorization, Commission, SaleOrderPayment])
 class SaleOrderServiceSpec extends Specification {
@@ -39,6 +41,7 @@ class SaleOrderServiceSpec extends Specification {
   def commissionTransactionService = Mock(CommissionTransactionService)
   def businessEntitiesGroupService = Mock(BusinessEntitiesGroupService)
   def springSecurityService = [currentUser:Mock(User)]
+  def senderQueueService = Mock(SenderQueueService)
 
   def setup(){
     items.removeAll()
@@ -47,6 +50,7 @@ class SaleOrderServiceSpec extends Specification {
     service.companyService = companyService
     service.commissionTransactionService = commissionTransactionService
     service.businessEntitiesGroupService = businessEntitiesGroupService
+    service.senderQueueService = senderQueueService
     grailsApplication.config.m1emitter.rfc = "AAA010101AAA"
     grailsApplication.config.iva = "16"
     service.springSecurityService = springSecurityService
