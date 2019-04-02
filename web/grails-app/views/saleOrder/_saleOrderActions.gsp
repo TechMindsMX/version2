@@ -30,7 +30,7 @@
 
 <g:if test="${isEnabledToStamp && SaleOrderStatus.GENERANDO_XML == saleOrder.status}">
   <div class="alert alert-warning">
-    La generación está tomando más tiempo de lo esperado, por favor regresa más tarde.
+    La facturación está en proceso, favor de regresar en unos minutos
   </div>
 </g:if>
 
