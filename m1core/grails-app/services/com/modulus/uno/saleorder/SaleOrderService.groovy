@@ -133,6 +133,7 @@ class SaleOrderService {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   void generateInvoiceFromSaleOrderId(Long saleOrderId) {
+    log.info "generating async invoice for sale order with id : ${saleOrderId}"
     SaleOrder saleOrder = SaleOrder.get(saleOrderId)
 
     Map stampData = invoiceService.generateFactura(saleOrder)
