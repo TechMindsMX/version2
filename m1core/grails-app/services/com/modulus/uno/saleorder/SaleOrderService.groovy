@@ -25,6 +25,7 @@ import com.modulus.uno.businessEntity.BusinessEntitiesGroup
 import com.modulus.uno.PaymentWay
 import com.modulus.uno.Period
 import com.modulus.uno.BusinessException
+import com.modulus.uno.RestException
 import com.modulus.uno.AddressType
 import com.modulus.uno.CommissionType
 import com.modulus.uno.status.SaleOrderStatus
@@ -136,12 +137,27 @@ class SaleOrderService {
     log.info "generating async invoice for sale order with id : ${saleOrderId}"
     SaleOrder saleOrder = SaleOrder.get(saleOrderId)
 
-    Map stampData = invoiceService.generateFactura(saleOrder)
-    commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
-    stampData.pdfTemplate = saleOrder.pdfTemplate
-    log.info "Stamp UUID: ${stampData.stampId}"
-    updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
-    log.info "Sale Order updated with stamped uuid: ${saleOrder.id}, ${saleOrder.pdfTemplate}"
+    try {
+      Map stampData = invoiceService.generateFactura(saleOrder)
+      commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
+      stampData.pdfTemplate = saleOrder.pdfTemplate
+      log.info "Stamp UUID: ${stampData.stampId}"
+      updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
+      log.info "Sale Order updated with stamped uuid: ${saleOrder.id}, ${saleOrder.pdfTemplate}"
+
+      // saleOrder.refresh()
+      // saleOrderService.generatePdfForStampedInvoice(saleOrder)
+    } catch(RestException re) {
+      log.error("Error en la generación de la factura", re)
+      markSaleOrderAsError(saleOrderId)
+    }
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  SaleOrder markSaleOrderAsError(Long saleOrderId) {
+    SaleOrder saleOrder = SaleOrder.get(saleOrderId)
+    saleOrder.status = SaleOrderStatus.ERROR_FACTURANDO
+    saleOrder.save()
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
