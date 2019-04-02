@@ -40,7 +40,7 @@
                 </div>
               </td>
               <td>
-                <input class="form-control" id="quantity" name="quantity" type="number"/>
+                <input class="form-control" id="quantity" name="quantity" type="number" min="0.01" step="0.01" />
                 <input type="hidden" id="originalQuantity" name="originalQuantity" value=""/>
               </td>
               <td>
