@@ -14,6 +14,9 @@ import com.modulus.uno.saleorder.SaleOrder
 import com.modulus.uno.status.CommissionTransactionStatus
 import com.modulus.uno.status.SaleOrderStatus
 
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
+
 @Transactional
 class CompanyService {
 
@@ -283,7 +286,13 @@ class CompanyService {
   def validateCertificateAndGetNumber(String rfc, def cerFile) {
     File cer = File.createTempFile("${System.getProperty('java.io.tmpdir')}/cerFile",".tmp")
     cer.bytes = cerFile
-    String numCert = cer.text.substring(14,34)
+
+    CertificateFactory cf = CertificateFactory.getInstance("X.509");
+    FileInputStream fis = new FileInputStream(cer);
+    X509Certificate certificado = (X509Certificate)cf.generateCertificate(fis);
+    def byteArray = certificado.getSerialNumber().toByteArray()
+    String numCert = new String(byteArray)
+
     if (!numCert.isNumber()) {
       throw new BusinessException("El número de certificado no es válido")
     }
