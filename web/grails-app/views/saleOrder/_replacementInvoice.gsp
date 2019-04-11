@@ -32,7 +32,7 @@
                     <td>${sale.folio}</td>
                     <td>${sale.uuid}</td>
                     <td>${modulusuno.formatPrice(number: sale.total)}</td>
-                    <td><g:link class="btn btn-default" action="getReplacementInvoiceUUID" params="[uuid: sale.uuid]" id="${saleOrder.id}">Seleccionar</g:link></td>
+                    <td><g:link class="btn btn-default" action="getReplacementInvoiceUUID" params="[uuid: sale.folio]" id="${saleOrder.id}">Seleccionar</g:link></td>
                   </tr>
                 </g:each>  
               </tbody>
