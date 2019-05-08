@@ -24,7 +24,7 @@
   <div class="portlet portlet-blue">
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
-        
+
         <modulusuno:showFilters controller="purchaseOrder" action="search" filters="['providerName']" labels="['PROVEEDOR']" filterTypes="['text']" filterValues="${filterValues}" viewAll="list"/>
         <div class="row">
           <div class="col-md-12 text-right">
@@ -39,16 +39,17 @@
           <div class="well well-sm alert-success">${messageSuccess}</div>
         </g:if>
       <div class="table-responsive">
+
       <table class="table">
         <tr>
-          <th>No. de Orden</th>
-          <th>${messageBusinessEntityOrder}</th>
-          <th>Estatus</th>
-          <th>Fecha de Pago</th>
+          <g:sortableColumn property="id" title="No. de Orden" />
+          <g:sortableColumn property="providerName" title="${messageBusinessEntityOrder}" />
+          <g:sortableColumn property="status" title="Estatus" />
+          <g:sortableColumn property="fechaPago" title="Fecha de Pago" />
           <th>Total</th>
           <th>Por pagar</th>
           <g:if test="${!isMoneyBackOrder}">
-            <th>Anticipada</th>
+            <g:sortableColumn property="isAnticipated" title="Anticipada" />
           </g:if>
           <th>Factura</th>
         </tr>
