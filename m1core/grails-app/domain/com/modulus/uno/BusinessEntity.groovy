@@ -84,14 +84,14 @@ class BusinessEntity implements ClientBusinessEntity, ProviderBusinessEntity, Em
 
   @Override
   String getCurp() {
-    Company company = Company.list().find { it.businessEntities.id.contains(this.id) } 
+    Company company = Company.list().find { it.businessEntities.id.contains(this.id) }
     EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(this.rfc, company)
     employee?.curp ?: ""
   }
 
   @Override
   String getNumber() {
-    Company company = Company.list().find { it.businessEntities.id.contains(this.id) } 
+    Company company = Company.list().find { it.businessEntities.id.contains(this.id) }
     EmployeeLink employee = EmployeeLink.findByEmployeeRefAndCompany(this.rfc, company)
     employee?.number ?: ""
   }
