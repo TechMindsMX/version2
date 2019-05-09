@@ -515,4 +515,15 @@ class SaleOrderService {
     clients
   }
 
+  List<SaleOrder> getCanceledSaleOrders(String rfc) {
+   SaleOrder.findAllByRfcAndStatus(rfc, SaleOrderStatus.CANCELACION_EJECUTADA) 
+  }
+
+  @Transactional
+  SaleOrder updateReplacementInvoiceUUID(SaleOrder saleOrder, String uuid){
+    saleOrder.uuidReplacement = uuid
+    saleOrder.save()
+    saleOrder
+  }
+
 }

@@ -42,6 +42,7 @@ class PayOrderSTP implements Validateable {
   String medioDeEntrega
   String prioridad
   String iva
+  String uuidReplacement
 
 
   static constraints = {
@@ -83,6 +84,7 @@ class PayOrderSTP implements Validateable {
     medioDeEntrega blank:true, nullable:false
     prioridad blank:true, nullable:false
     iva blank:true, nullable:false
+    uuidReplacement blank:true, nullable:true
   }
 
   Map asMap() {

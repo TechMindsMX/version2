@@ -157,4 +157,6 @@ databaseChangeLog = {
   include file: 'adding-column-rfc-to-bank.groovy'
   include file: 'adding-column-payment-complement-status-into-banking-transactions.groovy'
   include file: 'adding-columns-data-payment-complement-into-banking-transactions.groovy'
+  include file: 'adding-column-uuid-replacement-invoice-to-sale-order.groovy'
+  include file: 'updating-column-uuid-replacement-invoice-to-sale-order.groovy'
 }

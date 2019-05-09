@@ -41,6 +41,7 @@ class SaleOrder {
   String invoiceFolio
   String invoiceSerie
   Date stampedDate
+  String uuidReplacement
 
   static belongsTo = [company:Company]
 
@@ -63,6 +64,7 @@ class SaleOrder {
     invoiceFolio nullable:true
     invoiceSerie nullable:true
     stampedDate nullable:true
+    uuidReplacement nullable:true
   }
 
   BigDecimal getTotalIVA(){
@@ -119,7 +121,8 @@ class SaleOrder {
         addresses:m.addresses,
         items:m.items,
         authorizations: m.authorizations,
-        documents:m.documents
+        documents:m.documents,
+        uuidReplacement:m.uuidReplacement
       ]
     }
   }

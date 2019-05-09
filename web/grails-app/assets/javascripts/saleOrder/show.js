@@ -226,3 +226,12 @@ $('#product-name').keypress(function (e) {
   }
 )
 
+$("#replacementInvoice").click( function() {
+  if ($("#replacementInvoice").is(":checked")) {
+    $("#showReplacementInvoice").show()
+  } else {
+    $("#showReplacementInvoice").hide()
+  }
+});
+
+
