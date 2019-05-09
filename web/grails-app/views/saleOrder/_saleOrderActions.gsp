@@ -34,6 +34,12 @@
   </div>
 </g:if>
 
+<g:if test="${isEnabledToStamp && SaleOrderStatus.ERROR_FACTURANDO == saleOrder.status}">
+  <div class="alert alert-warning">
+    Hubo un error en el proceso de facturación. Verifique los datos y vuelva a intentar.
+  </div>
+</g:if>
+
 <div class="col-md-4">
   <g:if test="${!params.backController}">
     <g:link class="btn btn-primary" action="list">Regresar</g:link>
@@ -113,7 +119,7 @@
   </sec:ifAnyGranted>
 
   <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-    <g:if test="${saleOrder.status == SaleOrderStatus.AUTORIZADA}">
+    <g:if test="${saleOrder.status == SaleOrderStatus.AUTORIZADA || saleOrder.status == SaleOrderStatus.ERROR_FACTURANDO}">
       <div class="container-fluid">
         <g:form name="executeSale">
           <input type="hidden" id="saleOrderId" name="id" value="${saleOrder.id}"/>
