@@ -49,16 +49,20 @@ function calculateAmountAndNetPrice(){
     return
   }
 
-  if (priceIsGreaterThanOriginalPrice()) {
-    $("#price").focus()
-    alert("El precio ingresado es mayor al precio original")
-    return
+  if ($("#selectWriteConcept").is(":not(:checked)")) {
+    if (priceIsGreaterThanOriginalPrice()) {
+      $("#price").focus()
+      alert("El precio ingresado es mayor al precio original")
+      return
+    }
   }
 
-  if (quantityIsGreaterThanOriginalQuantity()) {
-    $("#quantity").focus()
-    alert("La cantidad ingresada es mayor a la cantidad original")
-    return
+  if ($("#selectWriteConcept").is(":not(:checked)")) {
+    if (quantityIsGreaterThanOriginalQuantity()) {
+      $("#quantity").focus()
+      alert("La cantidad ingresada es mayor a la cantidad original")
+      return
+    }
   }
 
   var netPrice = (calculatePriceWithDiscount()*(1 + $("#iva").val()/100.00) - $("#ivaRetention").val()).toFixed(2)
@@ -111,10 +115,13 @@ $("#quantity").change( function() {
   }
 )
 
+
 function verifyAmount() {
-  if (($("#amount").val()*1) > ($("#originalAmount").val()*1)) {
-    $("#amount").val("0.00")
-    alert("El importe del concepto no puede ser mayor al importe original ("+$("#originalAmount").val()+")")
+  if ($("#selectWriteConcept").is(":not(:checked)")) {
+    if (($("#amount").val()*1) > ($("#originalAmount").val()*1)) {
+      $("#amount").val("0.00")
+      alert("El importe del concepto no puede ser mayor al importe original ("+$("#originalAmount").val()+")")
+    }
   }
 }
 
