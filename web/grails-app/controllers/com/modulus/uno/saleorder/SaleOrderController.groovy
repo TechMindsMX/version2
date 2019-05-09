@@ -95,8 +95,7 @@ class SaleOrderController {
       emailSenderService.notifySaleOrderChangeStatus(saleOrder)
       messageSuccess = message(code:"saleOrder.executed.message")
     }
-
-    redirect action:'show', id:saleOrder.id
+    redirect action:'generatePdf', id:saleOrder.id
   }
 
   @Transactional
@@ -153,8 +152,9 @@ class SaleOrderController {
 
   def list() {
     params.max = params.max ?: 25
-    params.sort = "dateCreated"
-    params.order = "desc"
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
+    println params
     def saleOrders = [:]
     saleOrders = saleOrderService.getSaleOrdersToList(session.company?session.company.toLong():session.company, params)
 
