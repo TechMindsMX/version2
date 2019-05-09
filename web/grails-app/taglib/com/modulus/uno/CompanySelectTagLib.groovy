@@ -26,15 +26,15 @@ class CompanySelectTagLib {
     out << (company.status == CompanyStatus.ACCEPTED)
   }
 
-  def listTemplatesPdfForCompany = { attrs, body ->
-    def emisor = restService.existEmisorForGenerateInvoice(attrs.rfc, attrs.id)
+  def listTemplatesPdfForCompany = {
+    def emisor = restService.getAllPdfTemplates()
     if (emisor.templatesPdf?.size()>1) {
       out << """
           <select name="pdfTemplate" class="form-control" required="required">
             <option value=""> Seleccione la plantilla PDF...</option>
         """
-        emisor.templatesPdf.each { it ->
-          out << "<option value=\"${it}\">${it}</option>"
+        emisor.templatesPdf.each { template ->
+          out << "<option value=\"${template}\">${template}</option>"
         }
       out << """
           </select>
@@ -42,4 +42,48 @@ class CompanySelectTagLib {
     }
   }
 
+  def listSelectedTemplatePdfForCompany = { attrs ->
+    def company = Company.findById(attrs.id.toLong())
+    def emisor = restService.getAllPdfTemplates()
+    if (emisor.templatesPdf?.size()>1) {
+      if(company.pdfTemplate){
+        out << """
+            <select name="pdfTemplate" class="form-control" required="required" placeholder=${company.pdfTemplate}>
+          """
+          emisor.templatesPdf.each { template ->
+            if(template == company.pdfTemplate){
+              out << "<option value=\"${template}\" selected>${template}</option>"  
+            }
+            else{
+              out << "<option value=\"${template}\">${template}</option>"
+            }
+          }
+        out << """
+            </select>
+        """
+      }
+      else{
+        out << """
+          <select id="pdfTemplate" name="pdfTemplate" class="form-control" required="required">
+            <option value=""> Seleccione la plantilla PDF...</option>
+        """
+        emisor.templatesPdf.each { template ->
+          out << "<option value=\"${template}\">${template}</option>"
+        }
+      out << """
+          </select>
+      """
+      }  
+    }
+  }
 }
+
+
+
+
+
+
+
+
+
+

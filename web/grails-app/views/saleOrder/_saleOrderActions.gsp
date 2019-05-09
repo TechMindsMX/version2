@@ -120,7 +120,7 @@
           <g:if test="${isEnabledToStamp}">
             <div class="row">
               <div class="col-md-4 text-right">
-                <companyInfo:listTemplatesPdfForCompany rfc="${saleOrder.company.rfc}" id="${saleOrder.company.id.toString()}"/>
+                <companyInfo:listSelectedTemplatePdfForCompany rfc="${saleOrder.company.rfc}" id="${saleOrder.company.id.toString()}"/>
               </div>
               <div class="col-md-8 text-right">
                 <button id="btnPreview" type="button" class="btn btn-info">Vista Previa</button>

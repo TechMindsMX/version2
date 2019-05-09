@@ -280,6 +280,8 @@ class CompanyService {
     log.info "Cert Number from file cer: ${certNumber}"
     def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:certNumber, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
     def result = restService.sendFilesForInvoiceM1(documents)
+    company.pdfTemplate = params.pdfTemplate
+    company.save()
     result
   }
 
@@ -313,6 +315,8 @@ class CompanyService {
     def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:certNumber, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
     log.info "Updating documents to stamp: ${documents}"
     def result = restService.updateFilesForInvoice(documents)
+    company.pdfTemplate = params.pdfTemplate
+    company.save()
     result
   }
 
@@ -464,6 +468,13 @@ class CompanyService {
     Period period = collaboratorService.getPeriodStpConciliationInDate(date)
     Map transactions = stpService.getTransactionsForCompanyInPeriod(company, period)
     applyOperationsCloseTransaction(company, transactions)
+  }
+
+
+  Company saveCompanyTemplateByDefault(Company company, def params){
+    company.pdfTemplate = params.pdfTemplate
+    company.save()
+    company
   }
 
 }

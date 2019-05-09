@@ -261,6 +261,7 @@ class InvoiceService {
 
   def generatePreviewFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
+    factura.pdfTemplate ? "" : (factura.pdfTemplate="template_pdf.tof") 
     log.info "Factura to preview: ${factura.dump()}"
     String file = "previo.pdf"
     String rfc = "${saleOrder.company.rfc}/${saleOrder.company.id}"

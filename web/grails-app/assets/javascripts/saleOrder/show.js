@@ -203,6 +203,10 @@ $("#quantity").change( function() {
 )
 
 $("#btnPreview").click( function() {
+    if ($("#pdfTemplate").val() == "") {
+      alert("Necesita seleccionar una platilla");
+      return false
+    }
     $("#executeSale").attr("action","/saleOrder/previewInvoicePdf/");
     $("#executeSale").submit();
   }
