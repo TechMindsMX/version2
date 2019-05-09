@@ -28,13 +28,14 @@ class StpService {
     def result = requestSOAPService.doRequest(grailsApplication.config.stp.urls.payOrder){
       xml xmlPayOrder
     }.doit()
-    validateResult(result.envelope.text())
+    validateResult(result.envelope.text(), xmlPayOrder)
     result.envelope.text()
   }
 
-  private void validateResult(String idResult) {
+  private void validateResult(String idResult, String xmlPayOrder) {
     if (!idResult.isNumber()) {
       log.error "Error al registrar el pago en STP: ${idResult}"
+      log.error "xmlPayOrder: ${xmlPayOrder}"
       throw new RestException("No fue posible ejecutar el pago, intente más tarde")
     }
   }
