@@ -44,7 +44,7 @@
               <div class="col-md-2">
                 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#export" aria-expanded="false" aria-controls="collapseExample">Exportar</button>
               </div>
-              
+
               <div class="col-md-2 text-right">
                 <sec:ifAnyGranted roles="ROLE_AUTHORIZER_EJECUTOR">
                   <g:if test="${businessEntityToAuthorize}">
@@ -82,17 +82,18 @@
             <div class="table-responsive">
               <table class="table">
                 <tr>
-                  <th>RFC</th>
+                  <g:sortableColumn property="rfc" title="RFC" />
                   <th>Nombre/Razón Social</th>
-                  <th>Sitio web</th>
-                  <th>Persona</th>
+                  <g:sortableColumn property="website" title="Sitio web" />
+                  <g:sortableColumn property="type" title="Persona" />
                   <th>Tipo de Relación</th>
-                  <th>Estatus</th>
+                  <g:sortableColumn property="status" title="Estatus" />
                 </tr>
-                <g:each in="${businessEntityList?.sort{it.id}}" var="be">
+                <g:each in="${businessEntityList}" var="be">
                   <tr>
                     <td>
-                      <g:link controller="businessEntity" action="show" id="${be.id}">${be.rfc}</g:link></td>
+                      <g:link controller="businessEntity" action="show" id="${be.id}">${be.rfc}</g:link>
+                    </td>
                     <td>${be}</td>
                     <td>${be.website}</td>
                     <td>${be.type}</td>
