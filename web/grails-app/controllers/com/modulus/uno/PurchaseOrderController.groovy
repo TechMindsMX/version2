@@ -163,8 +163,8 @@ class PurchaseOrderController {
 
   def list() {
     params.max = params.max ?: 25
-    params.sort = "dateCreated"
-    params.order = "desc"
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
     def purchaseOrders = purchaseOrderService.getPurchaseOrdersToList(session.company ? session.company.toLong() : session.company, params)
 
     [purchaseOrder: purchaseOrders.list, purchaseOrderCount: purchaseOrders.items, messageSuccess:params.messageSuccess]
@@ -316,7 +316,7 @@ class PurchaseOrderController {
 
     def purchaseOrders = purchaseOrderService.searchPurchaseOrders(session.company.toLong(), params)
 
-    render view:"list", model:[purchaseOrder: purchaseOrders, filterValues:[providerName:params.providerName]] 
+    render view:"list", model:[purchaseOrder: purchaseOrders, filterValues:[providerName:params.providerName]]
   }
 
   def listMissingDocs() {
