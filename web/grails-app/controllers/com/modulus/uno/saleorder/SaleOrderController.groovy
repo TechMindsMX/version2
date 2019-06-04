@@ -231,7 +231,7 @@ class SaleOrderController {
 
   def show(SaleOrder saleOrder) {
     Company company = Company.get(session.company)
-    respond saleOrder, model:[saleOrderItem: new SaleOrderItem(), user:springSecurityService.currentUser, isEnabledToStamp:companyService.isCompanyEnabledToStamp(saleOrder.company), unitTypes:UnitType.findAllByCompany(company, [sort:"name"])]
+    respond saleOrder, model:[saleOrderItem: new SaleOrderItem(), user:springSecurityService.currentUser, isEnabledToStamp:companyService.isCompanyEnabledToStamp(saleOrder.company), unitTypes:UnitType.findAllByCompany(company, [sort:"name"]), canceledSaleOrders:findCanceledSaleOrders(saleOrder.rfc)]
   }
 
   def showFactura(SaleOrder saleOrder){
@@ -378,5 +378,17 @@ class SaleOrderController {
     saleOrderService.updateStampDateAlreadyUpdate(saleOrder)
     redirect action:"list"
   }
+
+  def findCanceledSaleOrders(String rfc){
+    saleOrderService.getCanceledSaleOrders(rfc)
+  }
+
+  @Transactional
+  def getReplacementInvoiceUUID(SaleOrder saleOrder){
+    saleOrderService.updateReplacementInvoiceUUID(saleOrder, params.uuid)
+    redirect action:"show", id:saleOrder.id
+  }
+
+
 
 }

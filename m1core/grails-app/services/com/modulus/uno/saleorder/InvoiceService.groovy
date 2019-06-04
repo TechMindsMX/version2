@@ -75,7 +75,8 @@ class InvoiceService {
       pdfTemplate: saleOrder.pdfTemplate,
       observaciones: saleOrder.note,
       betweenIntegrated: false,
-      conceptos: buildConceptsFromSaleOrder(saleOrder)
+      conceptos: buildConceptsFromSaleOrder(saleOrder),
+      uuidReplacement: saleOrder.uuidReplacement.toString()
     )
     log.info "Command invoice created: ${facturaCommand.dump()}"
     facturaCommand.emitter = facturaCommand.emisor.datosFiscales.rfc
