@@ -17,9 +17,9 @@
   <div class="portlet portlet-blue">
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
-        
+
         <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName', 'stampedDateInit', 'stampedDateEnd', 'status']" labels="['RFC', 'Cliente', 'Timbrada Desde', 'Timbrada Hasta', 'Estatus']" filterTypes="['text', 'text', 'text', 'text', 'select']" optionsSelectFilters="['', '', '', '', 'SaleOrderStatus' ]" filterValues="${filterValues}" viewAll="list"/>
-        
+
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
         </g:if>
@@ -31,13 +31,13 @@
         <table class="table table-condensed table-striped">
         <thead>
          <tr>
-           <th class="text-center">No. de Orden</th>
-           <th class="text-center">Fecha de Creación</th>
-           <th class="text-center">Fecha de Timbrado</th>
-           <th class="text-center col-xs-4">Cliente</th>
-           <th class="text-center col-xs-2">Estatus</th>
-           <th class="text-center">Serie</th>
-           <th class="text-center">Folio</th>
+           <g:sortableColumn property="id" title="No. de Orden" />
+           <g:sortableColumn property="dateCreated" title="Fecha de Creación" />
+           <g:sortableColumn property="stampedDate" title="Fecha de Timbrado" />
+           <g:sortableColumn property="clientName" title="Cliente" />
+           <g:sortableColumn property="status" title="Estatus" />
+           <g:sortableColumn property="invoiceSerie" title="Serie" />
+           <g:sortableColumn property="invoiceFolio" title="Folio" />
            <th class="text-center"></th>
            <th class="text-center">Total</th>
           </tr>
@@ -49,7 +49,7 @@
           </g:if>
          <tbody>
          <g:each in="${saleOrders}" var="sale">
-         <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
+            <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
             <td class="text-center"><g:link action="show" id="${sale.id}">${sale.id}</g:link></td>
             <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
             <td class="text-center">

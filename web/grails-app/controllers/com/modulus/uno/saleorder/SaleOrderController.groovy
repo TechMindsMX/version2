@@ -95,7 +95,7 @@ class SaleOrderController {
       emailSenderService.notifySaleOrderChangeStatus(saleOrder)
       messageSuccess = message(code:"saleOrder.executed.message")
     }
-    redirect action:'generatePdf', id:saleOrder.id 
+    redirect action:'generatePdf', id:saleOrder.id
   }
 
   @Transactional
@@ -152,8 +152,9 @@ class SaleOrderController {
 
   def list() {
     params.max = params.max ?: 25
-    params.sort = "dateCreated"
-    params.order = "desc"
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
+    println params
     def saleOrders = [:]
     saleOrders = saleOrderService.getSaleOrdersToList(session.company?session.company.toLong():session.company, params)
 
@@ -340,7 +341,7 @@ class SaleOrderController {
 
     def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
 
-    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status]] 
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status]]
   }
 
   def listOrdersWithAmountToPayForClient(BusinessEntity businessEntity) {
