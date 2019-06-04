@@ -309,4 +309,10 @@ class CompanyController {
     }
   }
 
+  def changeCompanyTemplateByDefault(Company company){
+    companyService.saveCompanyTemplateByDefault(company, params)
+    redirect action: "show", id:company.id
+  }
+
+
 }
