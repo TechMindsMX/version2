@@ -13,7 +13,7 @@
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.price.label")}</label>
-    <input type="text" name="price" value="${formatNumber(number:product.price,locale: 'es_MX', format:'##0.00')}" class="form-control" required="" min="0" pattern="[0-9]+(\.[0-9]{2})?$" title="Ingrese una cantidad sin separador de miles y con dos decimales"/>
+    <input type="text" name="price" value="${formatNumber(number:product.price,locale: 'es_MX', format:'##0.0000')}" class="form-control" required="" min="0" pattern="[0-9]+(\.[0-9]{4})?$" title="Ingrese una cantidad sin separador de miles y con 4 decimales"/>
   </div>
   <div class="form-group">
     <label for="">${message(code:"product.ieps.label")}</label>

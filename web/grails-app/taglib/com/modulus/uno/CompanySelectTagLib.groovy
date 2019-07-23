@@ -28,6 +28,7 @@ class CompanySelectTagLib {
 
   def listTemplatesPdfForCompany = {
     def emisor = restService.getAllPdfTemplates()
+    println emisor
     if (emisor.templatesPdf?.size()>1) {
       out << """
           <select name="pdfTemplate" class="form-control" required="required">
@@ -52,7 +53,7 @@ class CompanySelectTagLib {
           """
           emisor.templatesPdf.each { template ->
             if(template == company.pdfTemplate){
-              out << "<option value=\"${template}\" selected>${template}</option>"  
+              out << "<option value=\"${template}\" selected>${template}</option>"
             }
             else{
               out << "<option value=\"${template}\">${template}</option>"
@@ -73,7 +74,7 @@ class CompanySelectTagLib {
       out << """
           </select>
       """
-      }  
+      }
     }
   }
 }

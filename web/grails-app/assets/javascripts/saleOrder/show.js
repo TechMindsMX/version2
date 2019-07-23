@@ -173,7 +173,7 @@ function calculateAmountAndNetPrice(){
 
   var netPrice = calculatePriceWithDiscount()*(1 + $("#iva").val()/100.00) - $("#ivaRetention").val()
   $("#netprice").val(netPrice.toFixed(6))
-  $("#amount").val(($("#quantity").val()*netPrice).toFixed(2))
+  $("#amount").val(($("#quantity").val()*netPrice).toFixed(4))
 }
 
 

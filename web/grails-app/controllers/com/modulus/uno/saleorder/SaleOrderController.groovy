@@ -110,6 +110,7 @@ class SaleOrderController {
 
   @Transactional
   def executeCancelBill(SaleOrder saleOrder) {
+    log.info "canceling order : ${saleOrder} - service: ${saleOrderService}"
     saleOrderService.executeCancelBill(saleOrder)
     redirect action:'list', params:[status:"${SaleOrderStatus.CANCELACION_AUTORIZADA}"]
   }
