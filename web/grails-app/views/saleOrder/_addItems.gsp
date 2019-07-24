@@ -36,7 +36,7 @@
         <td>
           <div class="input-group">
             <div class="input-group-addon">$</div>
-            <input type="text" id="price" name="price" class="form-control" required="" pattern="[0-9]+(\.[0-9]{1,2})?" title="Ingrese una cantidad en formato correcto (número sin decimales o con 2 decimales exactamente)"/>
+            <input type="text" id="price" name="price" class="form-control" required="" pattern="[0-9]+(\.[0-9]{1,4})?" title="Ingrese una cantidad en formato correcto (número sin decimales o con 4 decimales exactamente)"/>
           </div>
           <div class="input-group">
             <div class="input-group-addon">%</div>
