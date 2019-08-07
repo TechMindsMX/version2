@@ -38,7 +38,7 @@
            <g:sortableColumn property="status" title="Estatus" />
            <g:sortableColumn property="invoiceSerie" title="Serie" />
            <g:sortableColumn property="invoiceFolio" title="Folio" />
-           <th class="text-center"></th>
+           <g:sortableColumn property="currency" title="Moneda" />
            <th class="text-center">Total</th>
           </tr>
           <thead>
