@@ -97,9 +97,29 @@
          </g:each>
          <tbody>
          <tfoot>
+          <g:if test="${params.currency}">
+            <tr>
+              <g:set var="currencyTotal" value="${saleOrders.findAll({v -> v.currency == params.currency})*.total.sum()}" />
+              <td colspan="7"></td>
+              <td class="text-right"><strong>${params.currency}</strong></td>
+              <td class="text-right"><strong>${modulusuno.formatPrice(number: currencyTotal)}</strong></td>
+            </tr>
+          </g:if>
+          <g:else>
+            <g:each in="${['MXN', 'USD']}" var="currencyType">
+              <tr>
+                <g:set var="currencyTotal" value="${saleOrders.findAll({v -> v.currency == currencyType})*.total.sum() ?: 0}" />
+                <td colspan="7"></td>
+                <td class="text-right"><strong>${currencyType}</strong></td>
+                <td class="text-right"><strong>${modulusuno.formatPrice(number: currencyTotal)}</strong></td>
+              </tr>
+            </g:each>
+          </g:else>
+          <tr>
             <td colspan="7"></td>
             <td class="text-right"><strong>Suma Total</strong></td>
             <td class="text-right"><strong>${modulusuno.formatPrice(number: saleOrders*.total.sum())}</strong></td>
+          </tr>
          </tfoot>
        </table>
        </div>

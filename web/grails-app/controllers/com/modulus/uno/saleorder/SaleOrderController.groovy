@@ -154,7 +154,6 @@ class SaleOrderController {
     params.max = params.max ?: 25
     params.sort = params["sort"] ?: "dateCreated"
     params.order = params.order ?: "desc"
-    println params
     def saleOrders = [:]
     saleOrders = saleOrderService.getSaleOrdersToList(session.company?session.company.toLong():session.company, params)
 
