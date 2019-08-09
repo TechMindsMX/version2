@@ -117,7 +117,7 @@
           </g:else>
           <tr>
             <td colspan="7"></td>
-            <td class="text-right"><strong>Suma Total</strong></td>
+            <td class="text-right"><strong>Suma de registros visualizados</strong></td>
             <td class="text-right"><strong>${modulusuno.formatPrice(number: saleOrders*.total.sum())}</strong></td>
           </tr>
          </tfoot>
