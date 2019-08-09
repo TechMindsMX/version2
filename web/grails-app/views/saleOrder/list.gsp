@@ -46,6 +46,8 @@
            <g:sortableColumn property="invoiceSerie" title="Serie" />
            <g:sortableColumn property="invoiceFolio" title="Folio" />
            <g:sortableColumn property="currency" title="Moneda" />
+           <th class="text-center">Monto</th>
+           <th class="text-center">IVA</th>
            <th class="text-center">Total</th>
           </tr>
           <thead>
@@ -92,6 +94,8 @@
               </g:else>
             </td>
             <td class="text-center">${sale.currency}</td>
+            <td class="text-right">${modulusuno.formatPrice(number: sale.subtotal)}</td>
+            <td class="text-right">${modulusuno.formatPrice(number: sale.totalIVA)}</td>
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
           </tr>
          </g:each>
@@ -100,7 +104,7 @@
           <g:if test="${params.currency}">
             <tr>
               <g:set var="currencyTotal" value="${saleOrders.findAll({v -> v.currency == params.currency})*.total.sum()}" />
-              <td colspan="7"></td>
+              <td colspan="9"></td>
               <td class="text-right"><strong>${params.currency}</strong></td>
               <td class="text-right"><strong>${modulusuno.formatPrice(number: currencyTotal)}</strong></td>
             </tr>
@@ -109,15 +113,15 @@
             <g:each in="${['MXN', 'USD']}" var="currencyType">
               <tr>
                 <g:set var="currencyTotal" value="${saleOrders.findAll({v -> v.currency == currencyType})*.total.sum() ?: 0}" />
-                <td colspan="7"></td>
+                <td colspan="9"></td>
                 <td class="text-right"><strong>${currencyType}</strong></td>
                 <td class="text-right"><strong>${modulusuno.formatPrice(number: currencyTotal)}</strong></td>
               </tr>
             </g:each>
           </g:else>
           <tr>
-            <td colspan="7"></td>
-            <td class="text-right"><strong>Suma de registros visualizados</strong></td>
+            <td colspan="9"></td>
+            <td class="text-right"><strong>Total de registros mostrados</strong></td>
             <td class="text-right"><strong>${modulusuno.formatPrice(number: saleOrders*.total.sum())}</strong></td>
           </tr>
          </tfoot>
