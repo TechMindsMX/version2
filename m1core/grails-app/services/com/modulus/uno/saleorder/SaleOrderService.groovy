@@ -461,6 +461,9 @@ class SaleOrderService {
       if (params.status) {
         eq('status', SaleOrderStatus."${params.status}")
       }
+      if (params.currency) {
+        eq('currency', params.currency)
+      }
     }
     results
   }
@@ -532,7 +535,7 @@ class SaleOrderService {
   }
 
   List<SaleOrder> getCanceledSaleOrders(String rfc) {
-   SaleOrder.findAllByRfcAndStatus(rfc, SaleOrderStatus.CANCELACION_EJECUTADA) 
+   SaleOrder.findAllByRfcAndStatus(rfc, SaleOrderStatus.CANCELACION_EJECUTADA)
   }
 
   @Transactional

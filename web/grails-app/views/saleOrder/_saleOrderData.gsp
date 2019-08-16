@@ -21,7 +21,7 @@
                   </h4>
                 </div>
               </g:if>
-            </g:if>    
+            </g:if>
           </g:if>
           <g:if test="${saleOrder.uuidReplacement}">
             <h4>

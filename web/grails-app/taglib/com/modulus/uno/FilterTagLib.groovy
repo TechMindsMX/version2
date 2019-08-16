@@ -27,7 +27,7 @@ class FilterTagLib {
         optionsSelect.each { option ->
           out << """
             <option value="${option}" ${value==option ? 'selected' : ''}>${option}</option>
-          """ 
+          """
         }
         out << """
             </select>
@@ -80,5 +80,9 @@ class FilterTagLib {
 
   def getOptionsFromSaleOrderStatus() {
     SaleOrderStatus.values().collect { it.name().toString() }
+  }
+
+  def getOptionsFromSaleOrderCurrency() {
+    ['MXN', 'USD']
   }
 }

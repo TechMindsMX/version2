@@ -46,8 +46,9 @@ class AddressController {
   }
 
   def edit(Address address) {
+    log.info "company ---- ${session?.company?.getClass()}"
     def businessEntity = BusinessEntity.get(params.businessEntityId)
-    def addressTypes = addressService.getAddressTypesForEditCompanyAddress(address, session.company)
+    def addressTypes = addressService.getAddressTypesForEditCompanyAddress(address, session.company.toString())
     if (businessEntity)
       addressTypes = addressService.getAddressTypesForEditBusinessEntityAddress(address, businessEntity)
 
