@@ -12,10 +12,6 @@ $( function() {
   });
 } );
 
-if ($("#stampedDateInit").val() != '' || $("#stampedDateEnd").val() != '') {
-  $("#status").attr("disabled", "true");
-}
-
 $("#formFilters").submit(function (event) {
   if ($("#stampedDateInit").val() == "" || $("#stampedDateEnd").val() == "") {
     return true
@@ -29,18 +25,4 @@ $("#formFilters").submit(function (event) {
     event.preventDefault();
   }
 
-});
-
-$("#stampedDateInit").change( function () {
-  $("#status").removeAttr("disabled");
-  if ($("#stampedDateInit").val() != '' || $("#stampedDateEnd").val() != '') {
-    $("#status").attr("disabled", "true");
-  }
-});
-
-$("#stampedDateEnd").change( function () {
-  $("#status").removeAttr("disabled");
-  if ($("#stampedDateInit").val() != '' || $("#stampedDateEnd").val() != '') {
-    $("#status").attr("disabled", "true");
-  }
 });
