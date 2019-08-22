@@ -114,7 +114,7 @@
               <tr>
                 <g:set var="currencyTotal" value="${saleOrders.findAll({v -> v.currency == currencyType})*.total.sum() ?: 0}" />
                 <td colspan="9"></td>
-                <td class="text-right"><strong>${currencyType}</strong></td>
+                <td class="text-right"><strong>Total de registros mostrados en ${currencyType}</strong></td>
                 <td class="text-right"><strong>${modulusuno.formatPrice(number: currencyTotal)}</strong></td>
               </tr>
             </g:each>
