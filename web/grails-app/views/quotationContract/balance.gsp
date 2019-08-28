@@ -54,7 +54,7 @@
                   <label>
                     <g:message code="Del" />
                   </label>
-                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required" autocomplete="off">
                   <input type="hidden" value="${balance.quotationContract.id}" name="id" />
                   </div>
                   <div class="col-md-6">

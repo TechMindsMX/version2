@@ -23,7 +23,7 @@
   <div class="col-md-4">
     <div class="form-group">
       <label>Fecha:</label>
-      <input class="form-control" type="text" id="datepicker" name="dateEvent" required="required" value="${modulusuno.dateFormat(date:movimientosBancarios?.dateEvent)}">
+      <input class="form-control" type="text" id="datepicker" name="dateEvent" required="required" value="${modulusuno.dateFormat(date:movimientosBancarios?.dateEvent)}" autocomplete="off">
     </div>
   </div>
 </div>
