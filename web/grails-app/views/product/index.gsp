@@ -47,7 +47,7 @@
                  </td>
                  <td class="text-center">${product.sku}</td>
                  <td>${product.name}</td>
-                 <td class="text-right">${modulusuno.formatPrice(number:product.price)}</td>
+                 <td class="text-right">${modulusuno.formatPrice(number:product.price, decimals: 4)}</td>
                  <td class="text-right">${product.ieps}</td>
                  <td class="text-right">${product.iva}</td>
                  <td class="text-center">${product.unitType?.name}</td>
