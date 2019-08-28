@@ -22,7 +22,7 @@
                   <div class="col-md-12 col-lg-12">
                     <div class="form-group">
                       <label>Fecha:</label>
-                      <input type="text" id="datepicker" name="date" required="required">
+                      <input type="text" id="datepicker" name="fechaPago" required="required" autocomplete="off">
                     </div>
                   </div>
                 </div>

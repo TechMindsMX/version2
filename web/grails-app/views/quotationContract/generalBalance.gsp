@@ -5,7 +5,7 @@
     <g:set var="entityName" value="${message(code: 'quotationContract.label', default: 'QuotationContract')}" />
     <title><g:message code="default.create.label" args="[entityName]" /></title>
   </head>
-    
+
   <body>
     <div class="page-title">
       <h1>
@@ -34,7 +34,7 @@
                   <label>
                     <g:message code="Del:"/>
                   </label>
-                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required" autocomplete="off">
                 </div>
                 <div class="col-md-4">
                   <label>
@@ -48,7 +48,7 @@
                 </div>
               </div>
               <br>
-              <br>  
+              <br>
             </g:form>
 
             <div class="row">
@@ -68,7 +68,7 @@
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.payment)}</td>
                         <td class="text-right">${modulusuno.formatPrice(number:generalBalance.balance)}</td>
                       </tr>
-                    </g:each> 
+                    </g:each>
                     <tfoot>
                       <th>Total</th>
                       <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.request })}</th>
@@ -76,7 +76,7 @@
                       <th class="text-right">${modulusuno.formatPrice(number:detailGeneralBalance.sum { it.balance })}</th>
                     </tfoot>
                   </table>
-                  
+
                 </div>
               </div>
             </div>
