@@ -7,7 +7,7 @@ class FormatsTagLib {
   static defaultEncodeAs = [taglib:'html']
 
   def formatPrice = { attrs, body ->
-    out << g.formatNumber(number:attrs.number, type:"currency", maxFractionDigits:attrs.decimals?:"4", locale:"es_MX")
+    out << g.formatNumber(number:attrs.number, type:"currency", maxFractionDigits:attrs.decimals?:"2", locale:"es_MX")
   }
 
   def formatQuantity = { attrs, body ->

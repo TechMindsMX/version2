@@ -12,7 +12,7 @@
 </div>
 <div class="form-group">
   <label for=""><g:message code="product.price"/>:</label>
-  ${modulusuno.formatPrice(number:product.price)}
+  ${modulusuno.formatPrice(number:product.price, decimals: 4)}
 </div>
 <div class="form-group">
   <label for=""><g:message code="product.ieps"/>:</label>

@@ -6,7 +6,7 @@
   <td>
     <dl class="dl-horizontal">
       <dt>Precio:</dt>
-      <dd>${modulusuno.formatPrice(number:item.price)}</dd>
+      <dd>${modulusuno.formatPrice(number:item.price, decimals: 4)}</dd>
       <dt>Descuento:</dt>
       <dd>${modulusuno.formatPrice(number:item.amountDiscount)}</dd>
       <dt>IVA:</dt>
