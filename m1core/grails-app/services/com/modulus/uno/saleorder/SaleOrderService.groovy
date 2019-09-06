@@ -32,9 +32,10 @@ import com.modulus.uno.status.ConciliationStatus
 import com.modulus.uno.status.CommissionTransactionStatus
 import com.modulus.uno.businessEntity.BusinessEntitiesGroupType
 
+import java.util.zip.*
+
 class SaleOrderService {
 
-  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
   EmailSenderService emailSenderService
   InvoiceService invoiceService
   def grailsApplication
@@ -332,6 +333,7 @@ class SaleOrderService {
     }
     salesOrderEjecuted.total.sum()
   }
+
   BigDecimal getTotalSoldForClientStatusConciliated(Company company, String rfc) {
     List<SaleOrder> salesOrderConciliated = SaleOrder.createCriteria().list{
       eq("rfc", rfc)
@@ -516,4 +518,58 @@ class SaleOrderService {
     saleOrder
   }
 
+  def generateZipFileFor(SaleOrder saleOrder) {
+    def invoices = downloadFiles(saleOrder)
+    String nameFile = generateName(saleOrder.id, saleOrder.folio)
+
+    File tmpZipFile = File.createTempFile(nameFile + "_", ".zip")
+    ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(tmpZipFile))
+
+    invoices.each { invoice ->
+      zipFile.putNextEntry(new ZipEntry(invoice.name))
+      def buffer = new byte[invoice.size()]
+      invoice.withInputStream {
+        zipFile.write(buffer, 0, it.read(buffer))
+      }
+      zipFile.closeEntry()
+    }
+    zipFile.close()
+
+    tmpZipFile
+  }
+
+  private def downloadFiles(SaleOrder saleOrder) {
+    String nameFile = generateName(saleOrder.id, saleOrder.folio)
+
+    ['.xml', '.pdf'].collect { format ->
+      def filename = "${nameFile}${format}"
+      String url = generateUrl(filename, saleOrder)
+      downloadFile(nameFile, format, url)
+    }
+  }
+
+  private String generateName(Long id, String folio) {
+    folio.length() > 36 ? "${folio}" : "${folio}_${id}"
+  }
+
+  def String generateUrl(String filename, SaleOrder saleOrder) {
+    def parentDir = (Environment.current == Environment.PRODUCTION) ? saleOrder.company.rfc : "AAA010101AAA"
+    def rfc = "${parentDir}/${saleOrder.company.id}"
+    def urlPath = grailsApplication.config.modulus.showFactura.replace('#rfc', rfc).replace('#file', filename)
+
+    "${grailsApplication.config.modulus.facturacionUrl}${urlPath}".toString()
+  }
+
+  private File downloadFile(String nameFile, String format, String url) {
+    File tmpFile = File.createTempFile(nameFile, format)
+    new URL(url).openConnection().with { conn ->
+      conn.inputStream.with { inp ->
+        tmpFile.withOutputStream { out ->
+          out << inp
+          inp.close()
+        }
+      }
+    }
+    tmpFile
+  }
 }
