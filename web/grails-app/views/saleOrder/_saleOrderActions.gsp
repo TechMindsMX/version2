@@ -36,13 +36,16 @@
   </g:else>
 
   <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
-    <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-success" download>XML</a>
+    <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-default" download>XML</a>
   </g:if>
   <g:if test="${[SaleOrderStatus.XML_GENERADO].contains(saleOrder.status) && isEnabledToStamp}">
     <g:link class="btn btn-default text-right" action="generatePdf" id="${saleOrder.id}">Generar PDF</g:link>
   </g:if>
   <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
     <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default" download>PDF</a>
+  </g:if>
+  <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
+    <g:link class="btn btn-default text-right" action="downloadZip" id="${saleOrder.id}">ZIP</g:link>
   </g:if>
 
   <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_EJECUTADA && isEnabledToStamp}">
@@ -126,7 +129,7 @@
         </g:form>
           <div class="row">
             <div class="col-md-12">
-              <br/>       
+              <br/>
               <div class="collapse" id="inputReasonCancellation">
                 <div class="well">
                   <g:form action="rejectSaleOrder" id="${saleOrder.id}">
