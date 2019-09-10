@@ -520,9 +520,9 @@ class SaleOrderService {
 
   def generateZipFileFor(SaleOrder saleOrder) {
     def invoices = downloadFiles(saleOrder)
-    String nameFile = generateName(saleOrder.id, saleOrder.folio)
+    String zipFilename = generateZipName(saleOrder)
 
-    File tmpZipFile = File.createTempFile(nameFile + "_", ".zip")
+    File tmpZipFile = File.createTempFile(zipFilename + "_", ".zip")
     ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(tmpZipFile))
 
     invoices.each { invoice ->
@@ -546,6 +546,10 @@ class SaleOrderService {
       String url = generateUrl(filename, saleOrder)
       downloadFile(nameFile, format, url)
     }
+  }
+
+  private String generateZipName(SaleOrder saleOrder) {
+    "${saleOrder.stampedDate.format("ddMMYYYY")}-${saleOrder.rfc}-${saleOrder.invoiceFolio}".toString()
   }
 
   private String generateName(Long id, String folio) {
