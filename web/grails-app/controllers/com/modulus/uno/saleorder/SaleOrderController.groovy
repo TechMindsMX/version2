@@ -22,6 +22,8 @@ import com.modulus.uno.Corporate
 import com.modulus.uno.Period
 import com.modulus.uno.status.SaleOrderStatus
 
+import grails.util.Environment
+
 @Transactional(readOnly = true)
 class SaleOrderController {
 
@@ -102,6 +104,13 @@ class SaleOrderController {
   def generatePdf(SaleOrder saleOrder) {
     saleOrderService.generatePdfForStampedInvoice(saleOrder)
     redirect action:'show', id:saleOrder.id
+  }
+
+  def downloadZip(SaleOrder saleOrder) {
+    def zipFile = saleOrderService.generateZipFileFor(saleOrder)
+    response.setContentType("application/zip")
+    response.setHeader("Content-disposition", "attachment;filename=\"${zipFile.name}\"")
+    response.outputStream << zipFile.bytes
   }
 
   private Boolean saleOrderIsInStatus(SaleOrder saleOrder, def statusExpected) {
