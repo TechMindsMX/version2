@@ -412,7 +412,7 @@ class SaleOrderService {
     User currentUser = springSecurityService.currentUser
     List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
     def filterCriteria = SaleOrder.createCriteria()
-    def results = filterCriteria.list () {
+    def results = filterCriteria.list([sort: params.sort, order: params.order]) {
       eq('company', company)
         ilike('rfc', "${params.rfc}%")
         ilike('clientName', "%${params.clientName}%")
@@ -526,7 +526,8 @@ class SaleOrderService {
     ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(tmpZipFile))
 
     invoices.each { invoice ->
-      zipFile.putNextEntry(new ZipEntry(invoice.name))
+      String filename = sanitizeFilename(invoice.name)
+      zipFile.putNextEntry(new ZipEntry(filename))
       def buffer = new byte[invoice.size()]
       invoice.withInputStream {
         zipFile.write(buffer, 0, it.read(buffer))
@@ -536,6 +537,37 @@ class SaleOrderService {
     zipFile.close()
 
     tmpZipFile
+  }
+
+  def downloadInvoices(Company company, Map params) {
+    List<SaleOrder> saleOrders = getFilterOrdersWithParams(company, params)
+
+    File tmpZipFile = File.createTempFile("invoices_", ".zip")
+    ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(tmpZipFile))
+
+    saleOrders.each { saleOrder ->
+      downloadFiles(saleOrder).each { invoice ->
+        String directory = "${saleOrder.rfc}_${saleOrder.invoiceFolio}"
+        String filename = sanitizeFilename(invoice.name)
+        zipFile.putNextEntry(new ZipEntry(directory + "/" + filename))
+        def buffer = new byte[invoice.size()]
+        invoice.withInputStream {
+          zipFile.write(buffer, 0, it.read(buffer))
+        }
+        zipFile.closeEntry()
+      }
+    }
+    zipFile.close()
+
+    tmpZipFile
+  }
+
+  private String sanitizeFilename(String name) {
+    def pattern = ~/.+?(?=_)/
+    String filename = (name =~ pattern).collect { it }.join()
+    String extention = name.tokenize("\\.").pop()
+
+    "${filename}.${extention}"
   }
 
   private def downloadFiles(SaleOrder saleOrder) {
@@ -565,7 +597,7 @@ class SaleOrderService {
   }
 
   private File downloadFile(String nameFile, String format, String url) {
-    File tmpFile = File.createTempFile(nameFile, format)
+    File tmpFile = File.createTempFile(nameFile + "_", format)
     new URL(url).openConnection().with { conn ->
       conn.inputStream.with { inp ->
         tmpFile.withOutputStream { out ->

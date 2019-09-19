@@ -10,9 +10,12 @@ class FilterTagLib {
     out << """
       <div class="row">
         <form id=\"formFilters\" action=\"/${attrs.controller}/${attrs.action}\">
+          <div class="row">
    """
     Integer noFilters = attrs.filters.size()<=5 ? attrs.filters.size() : 5
-    Integer width = 10 / noFilters
+    Integer width = 12 / noFilters
+    Boolean enabledDownload = Boolean.valueOf(attrs.enabledDownload)
+
     attrs.filters.eachWithIndex { filter, index ->
       String value = attrs.filterValues ? attrs.filterValues."${filter}" : ""
       if (attrs.filterTypes[index]=="select") {
@@ -43,16 +46,25 @@ class FilterTagLib {
       }
     }
     out << """
-      <div class="col-md-2 text-right">
-        <button class="btn btn-primary" type="submit">Buscar</button>
+      </div>
+      <div class="row">
+        <div class="col-sm-offset-8 col-sm-4 text-right">
+          <button class="btn btn-primary btn-lg" type="submit">Buscar</button>
       """
       if (attrs.filterValues) {
         out << """
-          <br/><br/>
-          <a href=\"/${attrs.controller}/${attrs.viewAll}\" class="btn btn-primary">Ver todo</a>
+          <a href=\"/${attrs.controller}/${attrs.viewAll}\" class="btn btn-primary btn-lg">Ver todo</a>
+        """
+      }
+    println params
+      if(enabledDownload) {
+        out << """
+
+          <a href="${g.createLink(controller:attrs.controller, action:"downloadInvoices", params:params)}" class="btn btn-primary btn-lg">Descargar</a>
         """
       }
       out << """
+        </div>
       </div>
     </form>
       <div id="modalAlert" class="modal fade" tabindex="-1" role="dialog">

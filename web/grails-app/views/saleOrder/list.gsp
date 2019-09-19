@@ -25,6 +25,7 @@
           filterTypes="['text', 'text', 'text', 'text', 'select', 'select']"
           optionsSelectFilters="['', '', '', '', 'SaleOrderStatus', 'SaleOrderCurrency' ]"
           filterValues="${filterValues}"
+          enabledDownload="true"
           viewAll="list"/>
 
         <g:if test="${flash.message}">
@@ -84,7 +85,9 @@
             </td>
             <td class="text-center">
               <g:if test="${sale.invoiceFolio!=null}">
-                ${sale.invoiceFolio}
+                <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(sale.status) && isEnabledToStamp}">
+                  <g:link action="downloadZip" id="${sale.id}">${sale.invoiceFolio}</g:link>
+                </g:if>
               </g:if><g:else>
                 <g:if test="${sale.status == SaleOrderStatus.EJECUTADA}">
                   <g:link class="btn btn-primary" action="loadFolioFromInvoice" id="${sale.id}">
