@@ -164,10 +164,14 @@ class SaleOrderController {
     params.max = params.max ?: 25
     params.sort = params["sort"] ?: "dateCreated"
     params.order = params.order ?: "desc"
+
+    def company = Company.get(session.company ?: params.companyId)
+    def isEnabledToStamp = companyService.isCompanyEnabledToStamp(company)
+
     def saleOrders = [:]
     saleOrders = saleOrderService.getSaleOrdersToList(session.company?session.company.toLong():session.company, params)
 
-    [saleOrders: saleOrders.list, saleOrderCount: saleOrders.items, messageSuccess:params.messageSuccess]
+    [saleOrders: saleOrders.list, saleOrderCount: saleOrders.items, messageSuccess:params.messageSuccess, isEnabledToStamp: isEnabledToStamp]
   }
 
   def listProducts(){
@@ -177,7 +181,7 @@ class SaleOrderController {
       products = Product.findAllByNameIlikeAndCompany("%${params.pname}%", company)
     else if (params.psku)
       products = Product.findAllBySkuIlikeAndCompany("%${params.psku}%", company)
-      render products as JSON
+    render products as JSON
   }
 
   protected void notFound() {
@@ -348,9 +352,14 @@ class SaleOrderController {
       return
     }
 
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
+    def company = Company.get(session.company ?: params.companyId)
+    def isEnabledToStamp = companyService.isCompanyEnabledToStamp(company)
+
     def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
 
-    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status, currency: params.currency]]
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status, currency: params.currency], isEnabledToStamp: isEnabledToStamp]
   }
 
   def listOrdersWithAmountToPayForClient(BusinessEntity businessEntity) {
@@ -399,6 +408,25 @@ class SaleOrderController {
     redirect action:"show", id:saleOrder.id
   }
 
+  def downloadInvoices() {
+    log.info "Download invoices for sale orders with params: ${params}"
+    if (!params.rfc && !params.clientName && !params.stampedDateInit && !params.stampedDateEnd && !params.status && !params.currency) {
+      redirect action:"list"
+      return
+    }
 
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
+    params.status = SaleOrderStatus.EJECUTADA
+
+    def company = Company.get(session.company ?: params.companyId)
+    def isEnabledToStamp = companyService.isCompanyEnabledToStamp(company)
+
+    def zipFile = saleOrderService.downloadInvoices(company, params)
+
+    response.setContentType("application/zip")
+    response.setHeader("Content-disposition", "attachment;filename=\"${zipFile.name}\"")
+    response.outputStream << zipFile.bytes
+  }
 
 }
