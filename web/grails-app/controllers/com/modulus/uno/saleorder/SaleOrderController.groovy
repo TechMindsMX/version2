@@ -417,6 +417,7 @@ class SaleOrderController {
 
     params.sort = params["sort"] ?: "dateCreated"
     params.order = params.order ?: "desc"
+    params.max = params.max ?: 25
     params.status = SaleOrderStatus.EJECUTADA
 
     def company = Company.get(session.company ?: params.companyId)
