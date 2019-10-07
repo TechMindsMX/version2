@@ -56,8 +56,7 @@ class FilterTagLib {
           <a href=\"/${attrs.controller}/${attrs.viewAll}\" class="btn btn-primary btn-lg">Ver todo</a>
         """
       }
-    println params
-      if(enabledDownload) {
+      if(enabledDownload && attrs.filterValues) {
         out << """
 
           <a href="${g.createLink(controller:attrs.controller, action:"downloadInvoices", params:params)}" class="btn btn-primary btn-lg">Descargar</a>
