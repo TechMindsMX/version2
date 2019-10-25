@@ -77,7 +77,7 @@ class InvoiceServiceSpec extends Specification {
       result.receptor.datosFiscales.noExterior == '266'
       result.receptor.datosFiscales.colonia == 'Reforma'
       result.receptor.datosFiscales.usoCFDI == "G01"
-      
+
       result.datosDeFacturacion.metodoDePago.clave == "PPD"
       result.datosDeFacturacion.formaDePago.clave == "03"
 
@@ -164,9 +164,9 @@ class InvoiceServiceSpec extends Specification {
     and:"A Sale order to cancel"
       SaleOrder saleOrder = new SaleOrder(uuid:'uuid',company:company, folio:'folioSat').save(validate:false)
     when:
-      service.cancelBill(saleOrder)
+      def result = service.cancelBill(saleOrder)
     then:
-      thrown RestException
+      result == null
   }
 
 }
