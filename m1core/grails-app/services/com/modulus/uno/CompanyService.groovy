@@ -321,7 +321,7 @@ class CompanyService {
   }
 
   def isAvailableForGenerateInvoices(Company company) {
-    def response = restService.existEmisorForGenerateInvoice(company.rfc, company.id.toString())
+    restService.existEmisorForGenerateInvoice(company.rfc, company.id.toString())
   }
 
   PendingAccounts obtainPendingAccountsOfPeriod(Date startDate, Date endDate, Company company) {
