@@ -103,10 +103,15 @@ class RestService {
   def existEmisorForGenerateInvoice(String rfc, String id) {
     log.info "CALLING Service: Verify if exist emisor"
     String endpoint = "${grailsApplication.config.modulus.invoice}/${rfc}/${id}"
-    def response = wsliteRequestService.doRequest(facturacionUrl){
-      endpointUrl endpoint
-    }.doit()
-    response ? response.json : [error:false]
+    try {
+      def response = wsliteRequestService.doRequest(facturacionUrl){
+        endpointUrl endpoint
+      }.doit()
+
+      response.json
+    } catch(RestException re) {
+      [error:false]
+    }
   }
 
   def getSerieFromInvoice(String emitter, String folio) {
