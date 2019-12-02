@@ -24,11 +24,17 @@ class BusinessEntityController {
     def total = company.businessEntities.size()
 
     def businessEntitiesIds = company.businessEntities.toList().collect { it.id }
-    def businessEntities = BusinessEntity.where {
-      id in businessEntitiesIds
+
+    def allBusinessEntitiesCompany = []
+
+    if(businessEntitiesIds) {
+      def businessEntities = BusinessEntity.where {
+        id in businessEntitiesIds
+      }
+
+      allBusinessEntitiesCompany = businessEntities.list(params)
     }
 
-    def allBusinessEntitiesCompany = businessEntities.list(params)
     boolean businessEntityToAuthorize = allBusinessEntitiesCompany.find { it.status == BusinessEntityStatus.TO_AUTHORIZE } ? true : false
     // def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
 
