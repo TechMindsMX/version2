@@ -1,5 +1,7 @@
 package com.modulus.uno
 
+import grails.transaction.Transactional
+
 class TelephoneService {
 
   def save(Telephone telephone, User user){
@@ -23,6 +25,13 @@ class TelephoneService {
     contact.addToTelephones(telephone)
     contact.save()
     log.info "Telephones for contact: ${contact.telephones}"
+    telephone
+  }
+
+  @Transactional
+  def updateTelephone(Telephone telephone) {
+    log.info "Saving telephone: ${telephone.dump()}"
+    telephone.save()
     telephone
   }
 }

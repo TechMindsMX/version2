@@ -92,6 +92,10 @@ class TelephoneController {
     respond telephone, model:[company:Company.get(session.company)]
   }
 
+  def editForContact(Telephone telephone) {
+    respond telephone
+  }
+
   @Transactional
   def update(Telephone telephone) {
     if (telephone == null) {
@@ -133,6 +137,20 @@ class TelephoneController {
     }
 
     telephone.save flush:true
+
+    redirect(action:"show",controller:"company",id:"${session.company}")
+  }
+
+  def updateForContact(Telephone telephone) {
+    log.info "Updating telephone"
+
+    if (telephone.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      respond telephone.errors, view:'editForCompany'
+      return
+    }
+
+    telephoneService.updateTelephone(telephone)
 
     redirect(action:"show",controller:"company",id:"${session.company}")
   }
