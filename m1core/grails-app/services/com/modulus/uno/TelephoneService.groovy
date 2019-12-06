@@ -16,4 +16,13 @@ class TelephoneService {
     telephone
   }
 
+  def saveForContact(Telephone telephone, Long contactId) {
+    ContactInformation contact = ContactInformation.get(contactId)
+    log.info "Adding telephone: ${telephone} to contact: ${contact}"
+
+    contact.addToTelephones(telephone)
+    contact.save()
+    log.info "Telephones for contact: ${contact.telephones}"
+    telephone
+  }
 }

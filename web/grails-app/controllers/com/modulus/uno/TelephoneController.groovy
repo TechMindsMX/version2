@@ -26,6 +26,10 @@ class TelephoneController {
     respond new Telephone(), model:[company:Company.get(session.company)]
   }
 
+  def createForContact(ContactInformation contactInformation){
+    respond new Telephone(), model:[contactInformation : contactInformation, company:params.company]
+  }
+
   @Transactional
   def save(Telephone telephone) {
     log.info "Saving telephone: ${telephone.dump()}"
@@ -65,6 +69,19 @@ class TelephoneController {
 
     redirect(action:"show", controller:"company", id:"${session.company}")
 
+  }
+
+  @Transactional
+  def saveForContact(Telephone telephone) {
+    log.info "Saving telephone: ${telephone.dump()}, ${params}"
+
+    if (telephone.hasErrors()) {
+      respond telephone.errors, view:'createForContact', model:[contactInformation : params.id, company:params.company]
+      return
+    }
+
+    telephoneService.saveForContact(telephone, new Long(params.contactId))
+    redirect(action:"show", controller:"company", id:"${session.company}")
   }
 
   def edit(Telephone telephone) {
