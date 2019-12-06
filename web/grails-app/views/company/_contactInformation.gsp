@@ -38,7 +38,7 @@
               </a>
 
               <span class="pull-right">
-                <g:link controller="contactInformation" action="editForCompany" id="${contact.id}">Editar</g:link>
+                <g:link controller="contactInformation" action="edit" id="${contact.id}">Editar</g:link>
               <span>
             </h4>
           </div>

@@ -16,4 +16,11 @@ class ContactInformationService {
     company
   }
 
+  @Transactional
+  def updateContactInformation(ContactInformation contactInformation) {
+    log.info "Saving contact information: ${contactInformation.dump()}"
+    contactInformation.save()
+    contactInformation
+  }
+
 }
