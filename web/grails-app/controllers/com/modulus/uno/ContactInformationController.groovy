@@ -2,11 +2,9 @@ package com.modulus.uno
 
 class ContactInformationController {
 
-  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+  static allowedMethods = [saveForCompany: "POST", update: "PUT"]
 
   def contactInformationService
-
-  def index() { }
 
   def edit(ContactInformation contactInformation) {
     respond contactInformation, model:[company:Company.get(session.company)]
