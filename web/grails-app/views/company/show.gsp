@@ -105,6 +105,8 @@
             </sec:ifAnyGranted>
           </div>
         </div>
+
+        <!-- Información de contacto -->
         <div class="portlet portlet-default">
           <div class="portlet-heading">
             <div class="portlet-title">
