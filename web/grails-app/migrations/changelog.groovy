@@ -161,4 +161,5 @@ databaseChangeLog = {
   include file: 'updating-column-uuid-replacement-invoice-to-sale-order.groovy'
   include file: 'adding-column-pdf-template-in-company.groovy'
   include file: 'update_price_decimals.groovy'
+  include file: 'add-contact-information-domain.groovy'
 }

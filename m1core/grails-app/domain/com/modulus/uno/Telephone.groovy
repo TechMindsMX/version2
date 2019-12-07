@@ -5,7 +5,7 @@ class Telephone {
   String extension
   TelephoneType type
 
-  static belongsTo = [Profile,Company]
+  static belongsTo = [Profile, Company, ContactInformation]
 
   static constraints = {
     number blank:false,matches:/^[0-9]*$/,size:10..10
