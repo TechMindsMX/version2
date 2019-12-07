@@ -31,7 +31,9 @@ class Company implements Linker {
                     feesReceipts:FeesReceipt,
                     loanOrders: LoanOrder,
                     commissions:Commission,
-                    telephones:Telephone]
+                    telephones:Telephone,
+                    contacts:ContactInformation
+  ]
 
   static constraints = {
     bussinessName blank:false,size:1..100
@@ -47,7 +49,7 @@ class Company implements Linker {
   String toString(){
     aliasCompany ? "${bussinessName} / ${aliasCompany}" : bussinessName
   }
- 
+
   static marshaller = {
     JSON.registerObjectMarshaller(Company, 1) { m ->
       return [

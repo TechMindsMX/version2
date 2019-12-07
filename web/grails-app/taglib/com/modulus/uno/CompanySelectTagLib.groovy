@@ -28,7 +28,6 @@ class CompanySelectTagLib {
 
   def listTemplatesPdfForCompany = {
     def emisor = restService.getAllPdfTemplates()
-    println emisor
     if (emisor.templatesPdf?.size()>1) {
       out << """
           <select name="pdfTemplate" class="form-control" required="required">
