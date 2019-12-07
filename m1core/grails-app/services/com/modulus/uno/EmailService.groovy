@@ -15,4 +15,11 @@ class EmailService {
     contact
   }
 
+  @Transactional
+  def updateEmail(Email email) {
+    log.info "Updating email: ${email.dump()}"
+    email.save()
+    email
+  }
+
 }

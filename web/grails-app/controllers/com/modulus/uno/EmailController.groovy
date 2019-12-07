@@ -6,6 +6,23 @@ class EmailController {
 
   static allowedMethods = [save: "POST", update: "PUT"]
 
+  def editForContact(Email email) {
+    respond email
+  }
+
+  def updateForContact(Email email) {
+    log.info "Updating email"
+
+    if (email.hasErrors()) {
+      respond email.errors, view:'editForContact'
+      return
+    }
+
+    emailService.updateEmail(email)
+
+    redirect(action:"show",controller:"company",id:"${session.company}")
+  }
+
   def createForContact() {
     respond new Email(), model: [contact: ContactInformation.get(params.id), company: Company.get(session.company)]
   }
