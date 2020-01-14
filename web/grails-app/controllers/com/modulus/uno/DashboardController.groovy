@@ -14,7 +14,6 @@ class DashboardController {
     def user = springSecurityService.currentUser
     def companyList
     params.max = 25
-    println session.corporate
 
     if (session.corporate) {
       companyList = companyService.findCompaniesByCorporateAndStatus(CompanyStatus.ACCEPTED,session.corporate.id)
