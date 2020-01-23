@@ -17,6 +17,7 @@
           <li class="active"><g:message code="businessEntity.view.create.label" /></li>
         </ol>
       </div>
+
       <div id="edit-address" class="content scaffold-edit" role="main">
         <div class="portlet portlet-blue">
           <div class="portlet-heading">
