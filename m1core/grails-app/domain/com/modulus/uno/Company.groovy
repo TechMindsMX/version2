@@ -3,6 +3,7 @@ package com.modulus.uno
 import grails.converters.JSON
 import com.modulus.uno.paysheet.PaysheetProject
 import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.credit.Credit
 
 class Company implements Linker {
 
@@ -32,7 +33,8 @@ class Company implements Linker {
                     loanOrders: LoanOrder,
                     commissions:Commission,
                     telephones:Telephone,
-                    contacts:ContactInformation
+                    contacts:ContactInformation,
+                    credits: Credit
   ]
 
   static constraints = {
