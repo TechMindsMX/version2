@@ -5,6 +5,8 @@ class Corporate {
   String nameCorporate
   String corporateUrl
   boolean hasQuotationContract
+  boolean hasCredit
+
   CorporateStatus status = CorporateStatus.ENABLED
 
   static  hasMany =[companies:Company,users: User]

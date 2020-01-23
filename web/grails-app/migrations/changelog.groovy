@@ -162,4 +162,6 @@ databaseChangeLog = {
   include file: 'adding-column-pdf-template-in-company.groovy'
   include file: 'update_price_decimals.groovy'
   include file: 'add-contact-information-domain.groovy'
+  include file: 'add_has_credit_to_corporate.groovy'
+  include file: 'adding_credit_table.groovy'
 }

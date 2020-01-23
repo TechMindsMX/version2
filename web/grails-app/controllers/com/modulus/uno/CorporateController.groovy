@@ -48,8 +48,9 @@ class CorporateController {
   }
 
   def show(Corporate corporate){
-    if(!corporate)
+    if(!corporate) {
       return response.sendError(404)
+    }
 
     ArrayList<User> users = corporateService.findCorporateUsers(corporate.id)
 
@@ -222,8 +223,9 @@ class CorporateController {
   }
 
   @Transactional
-  def updateFlagQuotation(Corporate corporate) {
-    corporate.hasQuotationContract = !corporate.hasQuotationContract
+  def updateAdditionalServices(Corporate corporate) {
+    corporate.hasQuotationContract = params.enableQuotations ?: false
+    corporate.hasCredit = params.enableCredits ?: false
     corporate.save()
     corporateService.unassignRolesForQuotationServiceToUsersInCorporate(corporate)
     redirect action:"show", id:corporate.id
@@ -232,7 +234,7 @@ class CorporateController {
   def assignBusinessEntitiesGroup(User user) {
     Corporate corporate = Corporate.get(session.corporate.id)
     Company company = Company.get(params.companyId)
-    List<BusinessEntitiesGroup> companyGroups = businessEntitiesGroupService.getAvailableGroupsForCompanyAndUser(company, user)  
+    List<BusinessEntitiesGroup> companyGroups = businessEntitiesGroupService.getAvailableGroupsForCompanyAndUser(company, user)
     [companyGroups:companyGroups, user:user, company:company, corporate:corporate]
   }
 
@@ -257,14 +259,14 @@ class CorporateController {
     def companyRolesForUser = rolesOfUser.find { allUserRoles ->
       allUserRoles.company == company
     }?.roles
-    [companyRolesForUser:companyRolesForUser, user:user, company:company, corporate:corporate]   
+    [companyRolesForUser:companyRolesForUser, user:user, company:company, corporate:corporate]
   }
 
   def getMenusForRole() {
     def listMenus = corporateService.getMenusForRole(params)
     render listMenus as JSON
   }
-  
+
   def saveGrantsMenusForUser(User user) {
     log.info "Params checked submenus: ${params}"
     corporateService.saveUserMenus(user, params)
