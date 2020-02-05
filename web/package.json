@@ -1,0 +1,22 @@
+{
+  "name": "modulusuno-v3",
+  "version": "1.0.0",
+  "description": "modulusuno-v3",
+  "main": "index.js",
+  "repository": "https://github.com/TechMindsMX/modulusuno-v3",
+  "author": "brandonVergara",
+  "license": "MIT",
+  "dependencies": {
+    "dagre-d3": "^0.6.4",
+    "easy-autocomplete": "^1.3.5",
+    "font-awesome": "^4.7.0",
+    "graphlib-dot": "^0.6.4",
+    "handlebars": "^4.7.3",
+    "hisrc": "^2.0.0",
+    "holderjs": "^2.9.6",
+    "jquery-slimscroll": "^1.3.8",
+    "jquery-ui": "^1.12.1",
+    "jquery-validation": "^1.19.1",
+    "modulus-uno-theme": "https://github.com/TechMindsMX/integradora-theme.git"
+  }
+}
