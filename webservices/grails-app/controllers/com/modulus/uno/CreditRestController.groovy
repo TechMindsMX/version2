@@ -2,6 +2,10 @@ package com.modulus.uno
 
 import com.modulus.uno.credit.Credit
 import com.modulus.uno.credit.CreditCommand
+import grails.transaction.Transactional
+import com.github.rahulsom.swaggydoc.*
+import com.wordnik.swagger.annotations.*
+import static org.springframework.http.HttpStatus.*
 
 @Api
 class CreditRestController {
@@ -9,7 +13,7 @@ class CreditRestController {
   def creditService
   
   def index() {
-    respond [hola: "Hola mundo"], status: 200, formats: ['json']
+    respond status: 201, formats: ['json']
   }
 
 }
