@@ -2,7 +2,7 @@
 <f:field bean="corporate" property="nameCorporate" label="${message(code:'corporate.nameCorporate')}*" class="input-group" value="${corporate.nameCorporate}" wrapper="create" />
 </div>
 
-<div class="form-group col-sm-8">
+<div class="form-group col-sm-12">
   <label for="corporateUrl">
     ${message(code:'corporate.corporateUrl')}*
   </label>
@@ -12,7 +12,11 @@
     <div class="input-group-addon">.modulusuno.com</div>
   </div>
 </div>
-<div class="form-group col-sm-4" style="margin-top:30px;">
+<div class="form-group col-sm-3" style="margin-top:30px;">
   <input type="checkbox" name="hasQuotationContract"/>
   <label for="quotationService">Servicios de Cotizaciones</label>
+</div>
+<div class="form-group col-sm-3" style="margin-top:30px;">
+  <input type="checkbox" name="hasCredit"/>
+  <label for="quotationService">Servicio de Crédito</label>
 </div>
