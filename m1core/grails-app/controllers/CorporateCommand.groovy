@@ -7,12 +7,14 @@ class CorporateCommand implements Validateable {
   String nameCorporate
   String corporateUrl
   boolean hasQuotationContract
+  boolean hasCredit
 
   Corporate getCorporate(){
     new Corporate(
       nameCorporate: nameCorporate,
       corporateUrl: corporateUrl,
-      hasQuotationContract: hasQuotationContract ?: false
+      hasQuotationContract: hasQuotationContract ?: false,
+      hasCredit: hasCredit ?: false
     )
   }
 }
