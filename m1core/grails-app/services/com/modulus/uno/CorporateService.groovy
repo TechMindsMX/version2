@@ -180,6 +180,11 @@ class CorporateService {
                             "ROLE_EXECUTOR_QUOTATION"
                             ]})
     }
+    if(corporate.hasCredit){
+      roles.addAll(Role.list().findAll{ it.authority.toString() in [
+                            "ROLE_CREDIT"
+                            ]}) 
+    }
     roles 
   }
 
