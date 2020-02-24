@@ -107,4 +107,19 @@ class BusinessEntityController {
     respond businessEntity, status: 201, formats: ['json']
   }
 
+  @ApiOperation(value='Get all emplooyees for company', response = BusinessEntity, responseContainer = 'list')
+  @ApiImplicitParams ([
+    @ApiImplicitParam(name = 'corporateId', value = '', dataType = 'number',paramType = 'query')
+  ])
+  def getAllActiveEmployeesForCompany() {
+    def company = Company.get(params.corporateId)
+    if(company){
+      List<BusinessEntity> allEmployees = businessEntityService.getAllActiveEmployeesForCompany(company)
+      respond allEmployees,status: 200, formats: ['json']
+    }
+    else{
+      response.sendError(404,"Company not found" )
+    }
+  }
+
 }
