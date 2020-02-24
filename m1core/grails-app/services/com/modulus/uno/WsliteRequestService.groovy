@@ -44,6 +44,8 @@ class Request {
     }catch (HTTPClientException e) {
       handleError(
         e:e, method:this.method, baseUrl:this.baseUrl, endpoint:this.endpointUrl, query:this.query)
+      String message = e.response ? e.response.contentAsString : e.message
+      throw new RestException(message)
     }
   }
 

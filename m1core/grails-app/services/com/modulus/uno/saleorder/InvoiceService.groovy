@@ -34,22 +34,22 @@ class InvoiceService {
     }
     log.info "Totales impuestos:"
     factura.totalesImpuestos.each { ti ->
-      log.info "${ti.dump()}" 
+      log.info "${ti.dump()}"
     }
 
     def resultStamp = restService.sendFacturaCommandWithAuth(factura, grailsApplication.config.modulus.facturaCreate)
     if (!resultStamp) {
-      throw new RestException("No se pudo generar la factura") 
+      throw new RestException("No se pudo generar la factura")
     }
     log.info "Result stamp: ${resultStamp.text}"
     def result = new JsonSlurper().parseText(resultStamp.text)
     if (!result) {
-      throw new RestException("No se pudo generar la factura") 
+      throw new RestException("No se pudo generar la factura")
     }
     if (result.error) {
-      throw new RestException(result.error) 
+      throw new RestException(result.error)
     }
-    result 
+    result
   }
 
   def generatePdfForInvoice(SaleOrder saleOrder) {
@@ -69,8 +69,8 @@ class InvoiceService {
   FacturaCommand createInvoiceFromSaleOrder(SaleOrder saleOrder){
     FacturaCommand facturaCommand = new FacturaCommand(
       id:saleOrder.company.id.toString(),
-      datosDeFacturacion: getDatosDeFacturacion(saleOrder), 
-      emisor: buildEmitterFromSaleOrder(saleOrder), 
+      datosDeFacturacion: getDatosDeFacturacion(saleOrder),
+      emisor: buildEmitterFromSaleOrder(saleOrder),
       receptor:buildReceiverFromSaleOrder(saleOrder),
       pdfTemplate: saleOrder.pdfTemplate,
       observaciones: saleOrder.note,
@@ -153,11 +153,11 @@ class InvoiceService {
     saleOrder.items.toList().sort{it.name}.each { item ->
       log.info "Current item: ${item.dump()}"
       Concepto concepto = new Concepto(
-        cantidad:item.quantity, 
-        valorUnitario:item.price, 
-        descuento:item.appliedDiscount, 
+        cantidad:item.quantity,
+        valorUnitario:item.price,
+        descuento:item.appliedDiscount,
         claveProd:item.satKey ?: "01010101",
-        descripcion:item.name, 
+        descripcion:item.name,
         unidad:item.unitType,
         claveUnidad:getUnitKeyFromItem(item.saleOrder.company, item),
         impuestos:buildTaxesFromItem(item),
@@ -176,13 +176,13 @@ class InvoiceService {
 
   List<Impuesto> buildTaxesFromItem(def item) {
     List<Impuesto> taxes = []
-    
+
     if (item.iva){
       Impuesto tax = new Impuesto(
-        base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
+        base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP),
         importe:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP) * (item.iva / 100).setScale(2, RoundingMode.HALF_UP),
-        tasa:item.iva/100, 
-        impuesto:'002', 
+        tasa:item.iva/100,
+        impuesto:'002',
         tipoFactor:"Tasa"
       )
       tax.importe = (tax.base * tax.tasa).setScale(2, RoundingMode.HALF_UP)
@@ -194,16 +194,16 @@ class InvoiceService {
 
   List<Impuesto> buildTaxWithholdingsFromItem(def item) {
     List<Impuesto> holdings = []
-    
+
     if (item.ivaRetention){
       Impuesto retention = new Impuesto(
-        base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP), 
-        importe:(item.quantity * item.ivaRetention).setScale(2, RoundingMode.HALF_UP), 
-        tasa:item.ivaRetention/item.priceWithDiscount, 
-        impuesto:'002', 
+        base:(item.quantity * item.priceWithDiscount).setScale(2, RoundingMode.HALF_UP),
+        importe:(item.quantity * item.ivaRetention).setScale(2, RoundingMode.HALF_UP),
+        tasa:item.ivaRetention/item.priceWithDiscount,
+        impuesto:'002',
         tipoFactor:"Tasa"
       )
-      retention.importe = (retention.base * retention.tasa).setScale(2, RoundingMode.HALF_UP) 
+      retention.importe = (retention.base * retention.tasa).setScale(2, RoundingMode.HALF_UP)
       holdings.add(retention)
     }
 
@@ -216,12 +216,12 @@ class InvoiceService {
       totalImpuestosRetenidos: calculateHoldingsTotal(facturaCommand),
       impuestos: buildSummaryForTaxes(facturaCommand),
       retenciones: buildSummaryForHoldings(facturaCommand)
-    ) 
+    )
   }
 
   private BigDecimal calculateTaxesTotal(FacturaCommand facturaCommand) {
     BigDecimal total = 0
-    facturaCommand.conceptos.each { concepto -> 
+    facturaCommand.conceptos.each { concepto ->
       total += concepto.impuestos*.importe.sum()?.setScale(2, RoundingMode.HALF_UP) ?: 0
     }
     total
@@ -229,7 +229,7 @@ class InvoiceService {
 
   private BigDecimal calculateHoldingsTotal(FacturaCommand facturaCommand) {
     BigDecimal total = 0
-    facturaCommand.conceptos.each { concepto -> 
+    facturaCommand.conceptos.each { concepto ->
       total += concepto.retenciones*.importe.sum()?.setScale(2, RoundingMode.HALF_UP) ?: 0
     }
     total
@@ -261,6 +261,7 @@ class InvoiceService {
 
   def generatePreviewFactura(SaleOrder saleOrder){
     def factura = createInvoiceFromSaleOrder(saleOrder)
+    factura.pdfTemplate ? "" : (factura.pdfTemplate="template_pdf.tof")
     log.info "Factura to preview: ${factura.dump()}"
     String file = "previo.pdf"
     String rfc = "${saleOrder.company.rfc}/${saleOrder.company.id}"
@@ -269,9 +270,9 @@ class InvoiceService {
     log.info "Url: ${url}"
     def result = restService.sendFacturaCommandWithAuth(factura, url)
     log.info "Result rest: ${result?.dump()}"
-    if (!result) {
-      throw new RestException("No se pudo generar la vista previa") 
-    }
+    // if (!result) {
+    //   throw new RestException("No se pudo generar la vista previa")
+    // }
     log.info "Preview invoice generated for sale order ${saleOrder.id} with template ${saleOrder.pdfTemplate}"
     result.data
   }
@@ -279,10 +280,10 @@ class InvoiceService {
   void cancelBill(SaleOrder saleOrder) {
     String rfc = (Environment.current == Environment.PRODUCTION) ? saleOrder.company.rfc : "AAA010101AAA"
     CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${saleOrder.folio.length()>36 ? saleOrder.folio.substring(0,36) : saleOrder.folio}", rfc:rfc, id:"${saleOrder.company.id}")
-    def result = restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
-    if (!result) {
-      throw new RestException("No se pudo realizar la cancelación, intente más tarde")
-    }
+    restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
+    // if (!result) {
+    //   throw new RestException("No se pudo realizar la cancelación, intente más tarde")
+    // }
   }
 
   void changeSerieAndInitialFolioToStampInvoiceForEmitter(Map params) {
@@ -293,16 +294,16 @@ class InvoiceService {
     String rfc = (Environment.current == Environment.PRODUCTION) ? creditNote.saleOrder.company.rfc : "AAA010101AAA"
     CancelBillCommand cancelCommand = new CancelBillCommand(uuid:"${creditNote.folio.substring(0,36)}", rfc:rfc, id:"${creditNote.saleOrder.company.id}")
     def result = restService.sendFacturaCommandWithAuth(cancelCommand, grailsApplication.config.modulus.cancelFactura)
-    if (!result) {
-      throw new RestException("No se pudo realizar la cancelación, intente más tarde")
-    }
+    // if (!result) {
+    //   throw new RestException("No se pudo realizar la cancelación, intente más tarde")
+    // }
   }
 
   String getSerieFromInvoice(String emitter, String folio) {
     def result = restService.getSerieFromInvoice(emitter, folio)
-    if (!result) {
-      throw new RestException("No se pudo obtener la serie de la factura")
-    }
+    // if (!result) {
+    //   throw new RestException("No se pudo obtener la serie de la factura")
+    // }
     log.info "Serie: ${result.serie}"
     if (result.serie.startsWith("Error")) {
       throw new RestException("No se pudo obtener la serie de la factura")
@@ -312,9 +313,9 @@ class InvoiceService {
 
   String getFolioFromInvoice(String emitter, String uuid) {
     def result = restService.getFolioFromInvoice(emitter, uuid)
-    if (!result) {
-      throw new RestException("No se pudo obtener el folio de la factura")
-    }
+    // if (!result) {
+    //   throw new RestException("No se pudo obtener el folio de la factura")
+    // }
     log.info "Folio: ${result.folio}"
     if (result.folio.startsWith("Error")) {
       throw new RestException("No se pudo obtener la folio de la factura")
@@ -325,9 +326,9 @@ class InvoiceService {
   Date getStampedDate(String emitter, String folio) {
     def result = restService.getStampedDate(emitter, folio)
     log.info "Result: ${result}"
-    if (!result || result.error) {
-      throw new RestException("Error al intentar obtener la fecha de timbrado")
-    }
+    // if (!result || result.error) {
+    //   throw new RestException("Error al intentar obtener la fecha de timbrado")
+    // }
     Date.parse("yyy-MM-dd'T'HH:mm:ss", result.stampDate)
   }
 

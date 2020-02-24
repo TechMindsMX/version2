@@ -25,6 +25,7 @@ import com.modulus.uno.businessEntity.BusinessEntitiesGroup
 import com.modulus.uno.PaymentWay
 import com.modulus.uno.Period
 import com.modulus.uno.BusinessException
+import com.modulus.uno.RestException
 import com.modulus.uno.AddressType
 import com.modulus.uno.CommissionType
 import com.modulus.uno.status.SaleOrderStatus
@@ -32,9 +33,13 @@ import com.modulus.uno.status.ConciliationStatus
 import com.modulus.uno.status.CommissionTransactionStatus
 import com.modulus.uno.businessEntity.BusinessEntitiesGroupType
 
+import com.modulus.uno.messages.SenderQueueService
+import java.util.zip.*
+
 class SaleOrderService {
 
-  static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+  SenderQueueService senderQueueService
+
   EmailSenderService emailSenderService
   InvoiceService invoiceService
   def grailsApplication
@@ -121,14 +126,40 @@ class SaleOrderService {
     if (!commissionTransactionService.getCommissionForCompanyByType(saleOrder.company, CommissionType.FACTURA)) {
       throw new BusinessException("La empresa no tiene comisión de facturación registrada")
     }
-    Map stampData = invoiceService.generateFactura(saleOrder)
-    commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
-    stampData.pdfTemplate = saleOrder.pdfTemplate
-    log.info "Stamp UUID: ${stampData.stampId}"
-    updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
-    saleOrder.refresh()
-    log.info "Sale Order updated with stamped uuid: ${saleOrder.id}, ${saleOrder.pdfTemplate}"
+
+    senderQueueService.generateFacturaForSaleOrder(saleOrder.id)
+
+    saleOrder.status = SaleOrderStatus.GENERANDO_XML
+    saleOrder.save()
     saleOrder
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  void generateInvoiceFromSaleOrderId(Long saleOrderId) {
+    log.info "generating async invoice for sale order with id : ${saleOrderId}"
+    SaleOrder saleOrder = SaleOrder.get(saleOrderId)
+
+    try {
+      Map stampData = invoiceService.generateFactura(saleOrder)
+      commissionTransactionService.registerCommissionForSaleOrder(saleOrder)
+      stampData.pdfTemplate = saleOrder.pdfTemplate
+      log.info "Stamp UUID: ${stampData.stampId}"
+      updateSaleOrderFromGeneratedBill(stampData, saleOrder.id)
+      log.info "Sale Order updated with stamped uuid: ${saleOrder.id}, ${saleOrder.pdfTemplate}"
+
+      // saleOrder.refresh()
+      // saleOrderService.generatePdfForStampedInvoice(saleOrder)
+    } catch(RestException re) {
+      log.error("Error en la generación de la factura", re)
+      markSaleOrderAsError(saleOrderId)
+    }
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  SaleOrder markSaleOrderAsError(Long saleOrderId) {
+    SaleOrder saleOrder = SaleOrder.get(saleOrderId)
+    saleOrder.status = SaleOrderStatus.ERROR_FACTURANDO
+    saleOrder.save()
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -332,6 +363,7 @@ class SaleOrderService {
     }
     salesOrderEjecuted.total.sum()
   }
+
   BigDecimal getTotalSoldForClientStatusConciliated(Company company, String rfc) {
     List<SaleOrder> salesOrderConciliated = SaleOrder.createCriteria().list{
       eq("rfc", rfc)
@@ -410,7 +442,7 @@ class SaleOrderService {
     User currentUser = springSecurityService.currentUser
     List<BusinessEntitiesGroup> clientsGroupsForUser = businessEntitiesGroupService.findClientsGroupsForUserInCompany(currentUser, company)
     def filterCriteria = SaleOrder.createCriteria()
-    def results = filterCriteria.list () {
+    def results = filterCriteria.list([sort: params.sort, order: params.order]) {
       eq('company', company)
         ilike('rfc', "${params.rfc}%")
         ilike('clientName', "%${params.clientName}%")
@@ -431,6 +463,9 @@ class SaleOrderService {
       }
       if (params.status) {
         eq('status', SaleOrderStatus."${params.status}")
+      }
+      if (params.currency) {
+        eq('currency', params.currency)
       }
     }
     results
@@ -503,7 +538,7 @@ class SaleOrderService {
   }
 
   List<SaleOrder> getCanceledSaleOrders(String rfc) {
-   SaleOrder.findAllByRfcAndStatus(rfc, SaleOrderStatus.CANCELACION_EJECUTADA) 
+   SaleOrder.findAllByRfcAndStatus(rfc, SaleOrderStatus.CANCELACION_EJECUTADA)
   }
 
   @Transactional
@@ -513,4 +548,94 @@ class SaleOrderService {
     saleOrder
   }
 
+  def generateZipFileFor(SaleOrder saleOrder) {
+    def invoices = downloadFiles(saleOrder)
+    String zipFilename = generateZipName(saleOrder)
+
+    File tmpZipFile = File.createTempFile(zipFilename + "_", ".zip")
+    ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(tmpZipFile))
+
+    invoices.each { invoice ->
+      String filename = sanitizeFilename(invoice.name)
+      zipFile.putNextEntry(new ZipEntry(filename))
+      def buffer = new byte[invoice.size()]
+      invoice.withInputStream {
+        zipFile.write(buffer, 0, it.read(buffer))
+      }
+      zipFile.closeEntry()
+    }
+    zipFile.close()
+
+    tmpZipFile
+  }
+
+  def downloadInvoices(Company company, Map params) {
+    List<SaleOrder> saleOrders = getFilterOrdersWithParams(company, params)
+
+    File tmpZipFile = File.createTempFile("invoices_", ".zip")
+    ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(tmpZipFile))
+
+    saleOrders.each { saleOrder ->
+      downloadFiles(saleOrder).each { invoice ->
+        String directory = "${saleOrder.rfc}_${saleOrder.invoiceFolio}"
+        String filename = sanitizeFilename(invoice.name)
+        zipFile.putNextEntry(new ZipEntry(directory + "/" + filename))
+        def buffer = new byte[invoice.size()]
+        invoice.withInputStream {
+          zipFile.write(buffer, 0, it.read(buffer))
+        }
+        zipFile.closeEntry()
+      }
+    }
+    zipFile.close()
+
+    tmpZipFile
+  }
+
+  private String sanitizeFilename(String name) {
+    def pattern = ~/.+?(?=_)/
+    String filename = (name =~ pattern).collect { it }.join()
+    String extention = name.tokenize("\\.").pop()
+
+    "${filename}.${extention}"
+  }
+
+  private def downloadFiles(SaleOrder saleOrder) {
+    String nameFile = generateName(saleOrder.id, saleOrder.folio)
+
+    ['.xml', '.pdf'].collect { format ->
+      def filename = "${nameFile}${format}"
+      String url = generateUrl(filename, saleOrder)
+      downloadFile(nameFile, format, url)
+    }
+  }
+
+  private String generateZipName(SaleOrder saleOrder) {
+    "${saleOrder.stampedDate.format("ddMMYYYY")}-${saleOrder.rfc}-${saleOrder.invoiceFolio}".toString()
+  }
+
+  private String generateName(Long id, String folio) {
+    folio.length() > 36 ? "${folio}" : "${folio}_${id}"
+  }
+
+  def String generateUrl(String filename, SaleOrder saleOrder) {
+    def parentDir = (Environment.current == Environment.PRODUCTION) ? saleOrder.company.rfc : "AAA010101AAA"
+    def rfc = "${parentDir}/${saleOrder.company.id}"
+    def urlPath = grailsApplication.config.modulus.showFactura.replace('#rfc', rfc).replace('#file', filename)
+
+    "${grailsApplication.config.modulus.facturacionUrl}${urlPath}".toString()
+  }
+
+  private File downloadFile(String nameFile, String format, String url) {
+    File tmpFile = File.createTempFile(nameFile + "_", format)
+    new URL(url).openConnection().with { conn ->
+      conn.inputStream.with { inp ->
+        tmpFile.withOutputStream { out ->
+          out << inp
+          inp.close()
+        }
+      }
+    }
+    tmpFile
+  }
 }

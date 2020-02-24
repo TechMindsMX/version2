@@ -22,9 +22,21 @@
   </div>
 </div>
 
-<g:if test="${!isEnabledToStamp && [SaleOrderStatus.AUTORIZADA, SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.CANCELACION_AUTORIZADA, SaleOrderStatus.CANCELACION_EJECUTADA].contains(saleOrder.status)}">
+<g:if test="${!isEnabledToStamp && [SaleOrderStatus.AUTORIZADA, SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.CANCELACION_AUTORIZADA, SaleOrderStatus.CANCELACION_EJECUTADA, SaleOrderStatus.GENERANDO_XML].contains(saleOrder.status)}">
   <div class="alert alert-warning">
     No está habilitado para timbrar facturas, debe registrar su certificado y su domicilio fiscal
+  </div>
+</g:if>
+
+<g:if test="${isEnabledToStamp && SaleOrderStatus.GENERANDO_XML == saleOrder.status}">
+  <div class="alert alert-warning">
+    La facturación está en proceso, favor de regresar en unos minutos
+  </div>
+</g:if>
+
+<g:if test="${isEnabledToStamp && SaleOrderStatus.ERROR_FACTURANDO == saleOrder.status}">
+  <div class="alert alert-warning">
+    Hubo un error en el proceso de facturación. Verifique los datos y vuelva a intentar.
   </div>
 </g:if>
 
@@ -36,13 +48,16 @@
   </g:else>
 
   <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.XML_GENERADO, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
-    <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-success" download>XML</a>
+    <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'xml')}" class="btn btn-default" download>XML</a>
   </g:if>
   <g:if test="${[SaleOrderStatus.XML_GENERADO].contains(saleOrder.status) && isEnabledToStamp}">
     <g:link class="btn btn-default text-right" action="generatePdf" id="${saleOrder.id}">Generar PDF</g:link>
   </g:if>
   <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
     <a href="${modulusuno.invoiceUrl(saleOrder:saleOrder, format:'pdf')}" class="btn btn-default" download>PDF</a>
+  </g:if>
+  <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(saleOrder.status) && isEnabledToStamp}">
+    <g:link class="btn btn-default text-right" action="downloadZip" id="${saleOrder.id}">ZIP</g:link>
   </g:if>
 
   <g:if test="${saleOrder.status == SaleOrderStatus.CANCELACION_EJECUTADA && isEnabledToStamp}">
@@ -107,14 +122,14 @@
   </sec:ifAnyGranted>
 
   <sec:ifAnyGranted roles="ROLE_FICO_EJECUTOR">
-    <g:if test="${saleOrder.status == SaleOrderStatus.AUTORIZADA}">
+    <g:if test="${saleOrder.status == SaleOrderStatus.AUTORIZADA || saleOrder.status == SaleOrderStatus.ERROR_FACTURANDO}">
       <div class="container-fluid">
         <g:form name="executeSale">
           <input type="hidden" id="saleOrderId" name="id" value="${saleOrder.id}"/>
           <g:if test="${isEnabledToStamp}">
             <div class="row">
               <div class="col-md-4 text-right">
-                <companyInfo:listTemplatesPdfForCompany rfc="${saleOrder.company.rfc}" id="${saleOrder.company.id.toString()}"/>
+                <companyInfo:listSelectedTemplatePdfForCompany rfc="${saleOrder.company.rfc}" id="${saleOrder.company.id.toString()}"/>
               </div>
               <div class="col-md-8 text-right">
                 <button id="btnPreview" type="button" class="btn btn-info">Vista Previa</button>
@@ -126,7 +141,7 @@
         </g:form>
           <div class="row">
             <div class="col-md-12">
-              <br/>       
+              <br/>
               <div class="collapse" id="inputReasonCancellation">
                 <div class="well">
                   <g:form action="rejectSaleOrder" id="${saleOrder.id}">

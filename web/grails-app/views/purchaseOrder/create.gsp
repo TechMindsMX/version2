@@ -121,7 +121,7 @@
               <input type="hidden" name="company" value="${params.company.id}"/>
               <div class="">
                 <label>Fecha de Pago<font color="red"> *Requerida</font></label>
-                <input type="text" id="datepicker" name="fechaPago" required="required">
+                <input type="text" id="datepicker" name="fechaPago" required="required" autocomplete="off">
               </div>
               <br/>
               <div class="form-group">

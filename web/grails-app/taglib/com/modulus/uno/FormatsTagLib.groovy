@@ -11,7 +11,7 @@ class FormatsTagLib {
   }
 
   def formatQuantity = { attrs, body ->
-    out << g.formatNumber(number:attrs.number, format:"#,##0.00", maxFractionDigits:attrs.decimals?:"2", locale:"es_MX")
+    out << g.formatNumber(number:attrs.number, format:"#,##0.00", maxFractionDigits:attrs.decimals?:"4", locale:"es_MX")
   }
 
   def dateFormat = { attrs, body ->
@@ -19,7 +19,7 @@ class FormatsTagLib {
   }
 
   def quantityWithoutComma = { attrs, body ->
-    out << g.formatNumber(number:attrs.number, format:"#0.00", maxFractionDigits:attrs.decimals?:"2", locale:"es_MX")
+    out << g.formatNumber(number:attrs.number, format:"#0.00", maxFractionDigits:attrs.decimals?:"4", locale:"es_MX")
   }
 
 }

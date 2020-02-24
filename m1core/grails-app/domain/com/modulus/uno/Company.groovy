@@ -3,6 +3,7 @@ package com.modulus.uno
 import grails.converters.JSON
 import com.modulus.uno.paysheet.PaysheetProject
 import com.modulus.uno.saleorder.SaleOrder
+import com.modulus.uno.credit.Credit
 
 class Company implements Linker {
 
@@ -18,6 +19,7 @@ class Company implements Linker {
   CompanyTaxRegime taxRegime = CompanyTaxRegime.MORAL
 
   String artemisaId
+  String pdfTemplate
 
   static hasMany = [banksAccounts:BankAccount,
                     documents:S3Asset,
@@ -30,7 +32,10 @@ class Company implements Linker {
                     feesReceipts:FeesReceipt,
                     loanOrders: LoanOrder,
                     commissions:Commission,
-                    telephones:Telephone]
+                    telephones:Telephone,
+                    contacts:ContactInformation,
+                    credits: Credit
+  ]
 
   static constraints = {
     bussinessName blank:false,size:1..100
@@ -40,12 +45,13 @@ class Company implements Linker {
     rfc blank:false,size:10..50,matches:/^[A-Z]{3,4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/
     numberOfAuthorizations nullable:false
     artemisaId nullable:true
+    pdfTemplate nullable:true, blank:true
   }
 
   String toString(){
     aliasCompany ? "${bussinessName} / ${aliasCompany}" : bussinessName
   }
- 
+
   static marshaller = {
     JSON.registerObjectMarshaller(Company, 1) { m ->
       return [
@@ -64,6 +70,7 @@ class Company implements Linker {
       //documents: m.documents,
       addresses: m.addresses,
       businessEntities: m.businessEntities,
+      pdfTemplate: m.pdfTemplate,
       //products: m.products,
       //accounts: m.accounts,
       //salesOrders: m.salesOrders,

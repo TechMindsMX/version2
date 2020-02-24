@@ -103,10 +103,15 @@ class RestService {
   def existEmisorForGenerateInvoice(String rfc, String id) {
     log.info "CALLING Service: Verify if exist emisor"
     String endpoint = "${grailsApplication.config.modulus.invoice}/${rfc}/${id}"
-    def response = wsliteRequestService.doRequest(facturacionUrl){
-      endpointUrl endpoint
-    }.doit()
-    response ? response.json : [error:false]
+    try {
+      def response = wsliteRequestService.doRequest(facturacionUrl){
+        endpointUrl endpoint
+      }.doit()
+
+      response.json
+    } catch(RestException re) {
+      [error:false]
+    }
   }
 
   def getSerieFromInvoice(String emitter, String folio) {
@@ -221,6 +226,16 @@ class RestService {
       endpointUrl endpoint
     }.doit()
     response ? response.json : [error:true]
+  }
+
+  def getAllPdfTemplates() {
+    log.info "CALLING Service: Get all templates"
+    String endpoint = "${grailsApplication.config.modulus.allPdfTemplates}"
+
+    def response = wsliteRequestService.doRequest(facturacionUrl){
+      endpointUrl endpoint
+    }.doit()
+    response ? response.json : [error:false]
   }
 
 }

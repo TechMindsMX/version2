@@ -16,10 +16,13 @@
                 <tr>
                   <th class="col-xs-2">Nombre del Cliente</th>
                   <th class="col-xs-1">RFC</th>
-                  <th class="col-xs-1">No. Factura</th>
-                  <th class="col-xs-3">Folio</th>
-                  <th class="col-xs-2">UUID</th>
-                  <th class="col-xs-1">Importe</th>
+                  <th class="col-xs-2">Fecha de factura original</th>
+                  <th class="col-xs-1">Serie</th>
+                  <th class="col-xs-2">Número de factura</th>
+                  <th class="col-xs-1">Moneda</th>
+                  <th class="col-xs-1">Monto</th>
+                  <th class="col-xs-1">IVA</th>
+                  <th class="col-xs-1">Total</th>
                   <th class="col-xs-1"></th>
                 </tr>
               </thead>
@@ -28,17 +31,20 @@
                   <tr>
                     <td>${sale.clientName}</td>
                     <td>${sale.rfc}</td>
-                    <td>${sale.id}</td>
-                    <td>${sale.folio}</td>
-                    <td>${sale.uuid}</td>
+                    <td><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
+                    <td>${sale.invoiceSerie}</td>
+                    <td>${sale.invoiceFolio}</td>
+                    <td>${sale.currency}</td>
+                    <td>${modulusuno.formatPrice(number: sale.subtotal)}</td>
+                    <td>${modulusuno.formatPrice(number: sale.totalIVA)}</td>
                     <td>${modulusuno.formatPrice(number: sale.total)}</td>
                     <td><g:link class="btn btn-default" action="getReplacementInvoiceUUID" params="[uuid: sale.folio]" id="${saleOrder.id}">Seleccionar</g:link></td>
                   </tr>
-                </g:each>  
+                </g:each>
               </tbody>
             </table>
-          </div>    
-        </div>  
+          </div>
+        </div>
       </div>
     </div>
   </div>

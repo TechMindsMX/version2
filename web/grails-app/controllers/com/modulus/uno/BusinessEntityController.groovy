@@ -22,11 +22,23 @@ class BusinessEntityController {
     max = Math.min(max ?: 25, 100)
     def offset = params.offset? params.offset.toInteger() : 0
     def total = company.businessEntities.size()
-    def allBusinessEntitiesCompany = company.businessEntities.toList().sort{it.id}
-    boolean businessEntityToAuthorize = allBusinessEntitiesCompany.find {it.status == BusinessEntityStatus.TO_AUTHORIZE} ? true : false
-    def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
 
-    respond businessEntityList, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize, clientProviderType:LeadType.CLIENTE, company:company]
+    def businessEntitiesIds = company.businessEntities.toList().collect { it.id }
+
+    def allBusinessEntitiesCompany = []
+
+    if(businessEntitiesIds) {
+      def businessEntities = BusinessEntity.where {
+        id in businessEntitiesIds
+      }
+
+      allBusinessEntitiesCompany = businessEntities.list(params)
+    }
+
+    boolean businessEntityToAuthorize = allBusinessEntitiesCompany.find { it.status == BusinessEntityStatus.TO_AUTHORIZE } ? true : false
+    // def businessEntityList = allBusinessEntitiesCompany.subList(Math.min(offset, total), Math.min(offset+max,total))
+
+    respond allBusinessEntitiesCompany, model:[businessEntityCount:total, businessEntityToAuthorize:businessEntityToAuthorize, clientProviderType:LeadType.CLIENTE, company:company]
   }
 
   def show(BusinessEntity businessEntity) {
@@ -49,32 +61,32 @@ class BusinessEntityController {
   }
 
   @Transactional
- def save(BusinessEntityCommand command) {
-  command.rfc = command.rfc.toUpperCase()
-   command.clientProviderType = params.clientProviderType
-   if (params.clientProviderType.equals("EMPLEADO")){
-     command.website="http://www.employee.com"
-     command.type = BusinessEntityType.FISICA
-     params.persona = 'fisica'
-   }
+  def save(BusinessEntityCommand command) {
+    command.rfc = command.rfc.toUpperCase()
+    command.clientProviderType = params.clientProviderType
+    if (params.clientProviderType.equals("EMPLEADO")){
+      command.website="http://www.employee.com"
+      command.type = BusinessEntityType.FISICA
+      params.persona = 'fisica'
+    }
 
-   BusinessEntity businessEntity = new BusinessEntity(command.properties)
-   if (command.hasErrors()) {
-     render(view:'create', model:[command:command, businessEntity:businessEntity, clientProviderType:params.clientProviderType], params:params,banks:Bank.list().sort{ it.name })
-     return
-   }
+    BusinessEntity businessEntity = new BusinessEntity(command.properties)
+    if (command.hasErrors()) {
+      render(view:'create', model:[command:command, businessEntity:businessEntity, clientProviderType:params.clientProviderType], params:params,banks:Bank.list().sort{ it.name })
+      return
+    }
 
-   Company company = Company.findById(session.company.toLong())
-   businessEntityService.generatedBussinessEntityProperties(businessEntity, params, company)
+    Company company = Company.findById(session.company.toLong())
+    businessEntityService.generatedBussinessEntityProperties(businessEntity, params, company)
 
-   request.withFormat {
-     form multipartForm {
-       flash.message = message(code: 'businessEntity.created', args: [message(code: 'businessEntity.label', default: 'BusinessEntity'), businessEntity.id])
-       redirect action: 'show', id:businessEntity.id
-     }
-     '*' { respond businessEntity, [status: CREATED] }
-   }
- }
+    request.withFormat {
+      form multipartForm {
+        flash.message = message(code: 'businessEntity.created', args: [message(code: 'businessEntity.label', default: 'BusinessEntity'), businessEntity.id])
+        redirect action: 'show', id:businessEntity.id
+      }
+      '*' { respond businessEntity, [status: CREATED] }
+    }
+  }
 
   def edit(BusinessEntity businessEntity) {
     String clientProviderType = businessEntityService.getClientProviderType(businessEntity.rfc)
@@ -210,17 +222,17 @@ class BusinessEntityController {
   @Transactional
   def inactive(BusinessEntity businessEntity) {
     businessEntityService.changeEnabledRelatedUserIfExists(businessEntity, false)
-    businessEntity.status = BusinessEntityStatus.INACTIVE
-    businessEntity.save()
-    redirect action:"show", id:businessEntity.id 
+      businessEntity.status = BusinessEntityStatus.INACTIVE
+      businessEntity.save()
+      redirect action:"show", id:businessEntity.id
   }
 
   @Transactional
   def authorize(BusinessEntity businessEntity) {
     businessEntityService.changeEnabledRelatedUserIfExists(businessEntity, true)
-    businessEntity.status = BusinessEntityStatus.ACTIVE
-    businessEntity.save()
-    redirect action:"show", id:businessEntity.id
+      businessEntity.status = BusinessEntityStatus.ACTIVE
+      businessEntity.save()
+      redirect action:"show", id:businessEntity.id
   }
 
 }

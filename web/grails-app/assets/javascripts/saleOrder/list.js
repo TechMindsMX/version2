@@ -26,17 +26,3 @@ $("#formFilters").submit(function (event) {
   }
 
 });
-
-$("#stampedDateInit").change( function () {
-  $("#status").removeAttr("disabled");
-  if ($("#stampedDateInit").val() != '' || $("#stampedDateEnd").val() != '') {
-    $("#status").attr("disabled", "true");
-  }
-});
-
-$("#stampedDateEnd").change( function () {
-  $("#status").removeAttr("disabled");
-  if ($("#stampedDateInit").val() != '' || $("#stampedDateEnd").val() != '') {
-    $("#status").attr("disabled", "true");
-  }
-});

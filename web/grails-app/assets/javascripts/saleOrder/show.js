@@ -173,7 +173,7 @@ function calculateAmountAndNetPrice(){
 
   var netPrice = calculatePriceWithDiscount()*(1 + $("#iva").val()/100.00) - $("#ivaRetention").val()
   $("#netprice").val(netPrice.toFixed(6))
-  $("#amount").val(($("#quantity").val()*netPrice).toFixed(2))
+  $("#amount").val(($("#quantity").val()*netPrice).toFixed(4))
 }
 
 
@@ -203,6 +203,10 @@ $("#quantity").change( function() {
 )
 
 $("#btnPreview").click( function() {
+    if ($("#pdfTemplate").val() == "") {
+      alert("Necesita seleccionar una platilla");
+      return false
+    }
     $("#executeSale").attr("action","/saleOrder/previewInvoicePdf/");
     $("#executeSale").submit();
   }

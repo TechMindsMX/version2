@@ -30,7 +30,7 @@
       </div>
       <div class="">
         <label>Fecha de Cobro:</label>
-        <input type="text" id="datepicker" name="fechaCobro" required="required">
+        <input type="text" id="datepicker" name="fechaCobro" required="required" autocomplete="off" autocomplete="off">
       </div>
       <br />
       <div class="form-group">

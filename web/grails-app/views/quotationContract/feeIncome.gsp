@@ -40,7 +40,7 @@
                   <label>
                     <g:message code="Del:" />
                   </label>
-                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required">
+                  <input class="form-control" type="text" value="${formatDate(format:'dd-MM-yyyy', date:period.init)}" id="datepicker" name="initDate" required="required" autocomplete="off">
                 </div>
                 <div class="col-md-4">
                   <label>

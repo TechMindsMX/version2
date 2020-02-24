@@ -667,8 +667,9 @@ and:
   }
 
   void "Should validate the certificate for a company with rfc = #theRfc and the certificate file = #theCertFile"() {
+
     given:"The company rfc"
-      String rfc = theRfc 
+      String rfc = theRfc
     and: "The multipart file with certificate"
       Resource txtCert = new ClassPathResource(theCertFile)
       def certif = txtCert.getFile()

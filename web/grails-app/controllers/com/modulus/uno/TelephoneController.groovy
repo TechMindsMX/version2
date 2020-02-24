@@ -26,6 +26,10 @@ class TelephoneController {
     respond new Telephone(), model:[company:Company.get(session.company)]
   }
 
+  def createForContact(ContactInformation contactInformation){
+    respond new Telephone(), model:[contactInformation : contactInformation, company:params.company]
+  }
+
   @Transactional
   def save(Telephone telephone) {
     log.info "Saving telephone: ${telephone.dump()}"
@@ -67,12 +71,29 @@ class TelephoneController {
 
   }
 
+  @Transactional
+  def saveForContact(Telephone telephone) {
+    log.info "Saving telephone: ${telephone.dump()}, ${params}"
+
+    if (telephone.hasErrors()) {
+      respond telephone.errors, view:'createForContact', model:[contactInformation : params.id, company:params.company]
+      return
+    }
+
+    telephoneService.saveForContact(telephone, new Long(params.contactId))
+    redirect(action:"show", controller:"company", id:"${session.company}")
+  }
+
   def edit(Telephone telephone) {
     respond telephone
   }
 
   def editForCompany(Telephone telephone) {
     respond telephone, model:[company:Company.get(session.company)]
+  }
+
+  def editForContact(Telephone telephone) {
+    respond telephone
   }
 
   @Transactional
@@ -116,6 +137,20 @@ class TelephoneController {
     }
 
     telephone.save flush:true
+
+    redirect(action:"show",controller:"company",id:"${session.company}")
+  }
+
+  def updateForContact(Telephone telephone) {
+    log.info "Updating telephone"
+
+    if (telephone.hasErrors()) {
+      transactionStatus.setRollbackOnly()
+      respond telephone.errors, view:'editForCompany'
+      return
+    }
+
+    telephoneService.updateTelephone(telephone)
 
     redirect(action:"show",controller:"company",id:"${session.company}")
   }

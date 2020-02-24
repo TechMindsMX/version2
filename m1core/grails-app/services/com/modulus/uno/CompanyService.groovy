@@ -14,6 +14,9 @@ import com.modulus.uno.saleorder.SaleOrder
 import com.modulus.uno.status.CommissionTransactionStatus
 import com.modulus.uno.status.SaleOrderStatus
 
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
+
 @Transactional
 class CompanyService {
 
@@ -277,13 +280,21 @@ class CompanyService {
     log.info "Cert Number from file cer: ${certNumber}"
     def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:certNumber, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
     def result = restService.sendFilesForInvoiceM1(documents)
+    company.pdfTemplate = params.pdfTemplate
+    company.save()
     result
   }
 
   def validateCertificateAndGetNumber(String rfc, def cerFile) {
     File cer = File.createTempFile("${System.getProperty('java.io.tmpdir')}/cerFile",".tmp")
     cer.bytes = cerFile
-    String numCert = cer.text.substring(14,34)
+
+    CertificateFactory cf = CertificateFactory.getInstance("X.509");
+    FileInputStream fis = new FileInputStream(cer);
+    X509Certificate certificado = (X509Certificate)cf.generateCertificate(fis);
+    def byteArray = certificado.getSerialNumber().toByteArray()
+    String numCert = new String(byteArray)
+
     if (!numCert.isNumber()) {
       throw new BusinessException("El número de certificado no es válido")
     }
@@ -304,11 +315,13 @@ class CompanyService {
     def documents = [rfc:company.rfc, id:company.id.toString(), key:params.key,cer:params.cer,logo:params.logo,,password:params.password, certNumber:certNumber, serieIncomes:params.serieIncomes, serieExpenses:params.serieExpenses]
     log.info "Updating documents to stamp: ${documents}"
     def result = restService.updateFilesForInvoice(documents)
+    company.pdfTemplate = params.pdfTemplate
+    company.save()
     result
   }
 
   def isAvailableForGenerateInvoices(Company company) {
-    def response = restService.existEmisorForGenerateInvoice(company.rfc, company.id.toString())
+    restService.existEmisorForGenerateInvoice(company.rfc, company.id.toString())
   }
 
   PendingAccounts obtainPendingAccountsOfPeriod(Date startDate, Date endDate, Company company) {
@@ -455,6 +468,13 @@ class CompanyService {
     Period period = collaboratorService.getPeriodStpConciliationInDate(date)
     Map transactions = stpService.getTransactionsForCompanyInPeriod(company, period)
     applyOperationsCloseTransaction(company, transactions)
+  }
+
+
+  Company saveCompanyTemplateByDefault(Company company, def params){
+    company.pdfTemplate = params.pdfTemplate
+    company.save()
+    company
   }
 
 }

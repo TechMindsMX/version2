@@ -22,6 +22,8 @@ import com.modulus.uno.Corporate
 import com.modulus.uno.Period
 import com.modulus.uno.status.SaleOrderStatus
 
+import grails.util.Environment
+
 @Transactional(readOnly = true)
 class SaleOrderController {
 
@@ -95,7 +97,7 @@ class SaleOrderController {
       emailSenderService.notifySaleOrderChangeStatus(saleOrder)
       messageSuccess = message(code:"saleOrder.executed.message")
     }
-    redirect action:'generatePdf', id:saleOrder.id 
+    redirect action:'generatePdf', id:saleOrder.id
   }
 
   @Transactional
@@ -104,12 +106,20 @@ class SaleOrderController {
     redirect action:'show', id:saleOrder.id
   }
 
+  def downloadZip(SaleOrder saleOrder) {
+    def zipFile = saleOrderService.generateZipFileFor(saleOrder)
+    response.setContentType("application/zip")
+    response.setHeader("Content-disposition", "attachment;filename=\"${zipFile.name}\"")
+    response.outputStream << zipFile.bytes
+  }
+
   private Boolean saleOrderIsInStatus(SaleOrder saleOrder, def statusExpected) {
     saleOrder.status == statusExpected
   }
 
   @Transactional
   def executeCancelBill(SaleOrder saleOrder) {
+    log.info "canceling order : ${saleOrder} - service: ${saleOrderService}"
     saleOrderService.executeCancelBill(saleOrder)
     redirect action:'list', params:[status:"${SaleOrderStatus.CANCELACION_AUTORIZADA}"]
   }
@@ -152,12 +162,16 @@ class SaleOrderController {
 
   def list() {
     params.max = params.max ?: 25
-    params.sort = "dateCreated"
-    params.order = "desc"
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
+
+    def company = Company.get(session.company ?: params.companyId)
+    def isEnabledToStamp = companyService.isCompanyEnabledToStamp(company)
+
     def saleOrders = [:]
     saleOrders = saleOrderService.getSaleOrdersToList(session.company?session.company.toLong():session.company, params)
 
-    [saleOrders: saleOrders.list, saleOrderCount: saleOrders.items, messageSuccess:params.messageSuccess]
+    [saleOrders: saleOrders.list, saleOrderCount: saleOrders.items, messageSuccess:params.messageSuccess, isEnabledToStamp: isEnabledToStamp]
   }
 
   def listProducts(){
@@ -167,7 +181,7 @@ class SaleOrderController {
       products = Product.findAllByNameIlikeAndCompany("%${params.pname}%", company)
     else if (params.psku)
       products = Product.findAllBySkuIlikeAndCompany("%${params.psku}%", company)
-      render products as JSON
+    render products as JSON
   }
 
   protected void notFound() {
@@ -333,14 +347,19 @@ class SaleOrderController {
 
   def search() {
     log.info "Search sale orders with params: ${params}"
-    if (!params.rfc && !params.clientName && !params.stampedDateInit && !params.stampedDateEnd && !params.status) {
+    if (!params.rfc && !params.clientName && !params.stampedDateInit && !params.stampedDateEnd && !params.status && !params.currency) {
       redirect action:"list"
       return
     }
 
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
+    def company = Company.get(session.company ?: params.companyId)
+    def isEnabledToStamp = companyService.isCompanyEnabledToStamp(company)
+
     def saleOrders = saleOrderService.searchSaleOrders(session.company.toLong(), params)
 
-    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status]] 
+    render view:"list", model:[saleOrders: saleOrders, filterValues:[rfc:params.rfc, clientName:params.clientName, stampedDateInit:params.stampedDateInit, stampedDateEnd:params.stampedDateEnd, status:params.status, currency: params.currency], isEnabledToStamp: isEnabledToStamp]
   }
 
   def listOrdersWithAmountToPayForClient(BusinessEntity businessEntity) {
@@ -389,6 +408,26 @@ class SaleOrderController {
     redirect action:"show", id:saleOrder.id
   }
 
+  def downloadInvoices() {
+    log.info "Download invoices for sale orders with params: ${params}"
+    if (!params.rfc && !params.clientName && !params.stampedDateInit && !params.stampedDateEnd && !params.status && !params.currency) {
+      redirect action:"list"
+      return
+    }
 
+    params.sort = params["sort"] ?: "dateCreated"
+    params.order = params.order ?: "desc"
+    params.max = params.max ?: 25
+    params.status = SaleOrderStatus.EJECUTADA
+
+    def company = Company.get(session.company ?: params.companyId)
+    def isEnabledToStamp = companyService.isCompanyEnabledToStamp(company)
+
+    def zipFile = saleOrderService.downloadInvoices(company, params)
+
+    response.setContentType("application/zip")
+    response.setHeader("Content-disposition", "attachment;filename=\"${zipFile.name}\"")
+    response.outputStream << zipFile.bytes
+  }
 
 }

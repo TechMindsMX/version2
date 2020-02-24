@@ -17,9 +17,17 @@
   <div class="portlet portlet-blue">
     <div id="horizontalFormExample" class="panel-collapse collapse in">
       <div class="portlet-body">
-        
-        <modulusuno:showFilters controller="saleOrder" action="search" filters="['rfc', 'clientName', 'stampedDateInit', 'stampedDateEnd', 'status']" labels="['RFC', 'Cliente', 'Timbrada Desde', 'Timbrada Hasta', 'Estatus']" filterTypes="['text', 'text', 'text', 'text', 'select']" optionsSelectFilters="['', '', '', '', 'SaleOrderStatus' ]" filterValues="${filterValues}" viewAll="list"/>
-        
+
+        <modulusuno:showFilters controller="saleOrder"
+          action="search"
+          filters="['rfc', 'clientName', 'stampedDateInit', 'stampedDateEnd', 'status', 'currency']"
+          labels="['RFC', 'Cliente', 'Timbrada Desde', 'Timbrada Hasta', 'Estatus', 'Moneda']"
+          filterTypes="['text', 'text', 'text', 'text', 'select', 'select']"
+          optionsSelectFilters="['', '', '', '', 'SaleOrderStatus', 'SaleOrderCurrency' ]"
+          filterValues="${filterValues}"
+          enabledDownload="true"
+          viewAll="list"/>
+
         <g:if test="${flash.message}">
           <div class="alert alert-danger" role="alert">${flash.message}</div>
         </g:if>
@@ -31,14 +39,16 @@
         <table class="table table-condensed table-striped">
         <thead>
          <tr>
-           <th class="text-center">No. de Orden</th>
-           <th class="text-center">Fecha de Creación</th>
-           <th class="text-center">Fecha de Timbrado</th>
-           <th class="text-center col-xs-4">Cliente</th>
-           <th class="text-center col-xs-2">Estatus</th>
-           <th class="text-center">Serie</th>
-           <th class="text-center">Folio</th>
-           <th class="text-center"></th>
+           <g:sortableColumn property="id" title="No. de Orden" />
+           <g:sortableColumn property="dateCreated" title="Fecha de Creación" />
+           <g:sortableColumn property="stampedDate" title="Fecha de Timbrado" />
+           <g:sortableColumn property="clientName" title="Cliente" />
+           <g:sortableColumn property="status" title="Estatus" />
+           <g:sortableColumn property="invoiceSerie" title="Serie" />
+           <g:sortableColumn property="invoiceFolio" title="Folio" />
+           <g:sortableColumn property="currency" title="Moneda" />
+           <th class="text-center">Monto</th>
+           <th class="text-center">IVA</th>
            <th class="text-center">Total</th>
           </tr>
           <thead>
@@ -49,7 +59,7 @@
           </g:if>
          <tbody>
          <g:each in="${saleOrders}" var="sale">
-         <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
+            <tr class="${message(code: 'saleOrder.style.background.'+sale.status)}">
             <td class="text-center"><g:link action="show" id="${sale.id}">${sale.id}</g:link></td>
             <td class="text-center"><g:formatDate format="dd-MM-yyyy" date="${sale.dateCreated}"/></td>
             <td class="text-center">
@@ -75,7 +85,9 @@
             </td>
             <td class="text-center">
               <g:if test="${sale.invoiceFolio!=null}">
-                ${sale.invoiceFolio}
+                <g:if test="${[SaleOrderStatus.EJECUTADA, SaleOrderStatus.PAGADA].contains(sale.status) && isEnabledToStamp}">
+                  <g:link action="downloadZip" id="${sale.id}">${sale.invoiceFolio}</g:link>
+                </g:if>
               </g:if><g:else>
                 <g:if test="${sale.status == SaleOrderStatus.EJECUTADA}">
                   <g:link class="btn btn-primary" action="loadFolioFromInvoice" id="${sale.id}">
@@ -85,14 +97,36 @@
               </g:else>
             </td>
             <td class="text-center">${sale.currency}</td>
+            <td class="text-right">${modulusuno.formatPrice(number: sale.subtotal)}</td>
+            <td class="text-right">${modulusuno.formatPrice(number: sale.totalIVA)}</td>
             <td class="text-right">${modulusuno.formatPrice(number: sale.total)}</td>
           </tr>
          </g:each>
          <tbody>
          <tfoot>
-            <td colspan="7"></td>
-            <td class="text-right"><strong>Suma Total</strong></td>
+          <g:if test="${params.currency}">
+            <tr>
+              <g:set var="currencyTotal" value="${saleOrders.findAll({v -> v.currency == params.currency})*.total.sum()}" />
+              <td colspan="9"></td>
+              <td class="text-right"><strong>${params.currency}</strong></td>
+              <td class="text-right"><strong>${modulusuno.formatPrice(number: currencyTotal)}</strong></td>
+            </tr>
+          </g:if>
+          <g:else>
+            <g:each in="${['MXN', 'USD']}" var="currencyType">
+              <tr>
+                <g:set var="currencyTotal" value="${saleOrders.findAll({v -> v.currency == currencyType})*.total.sum() ?: 0}" />
+                <td colspan="9"></td>
+                <td class="text-right"><strong>Total de registros mostrados en ${currencyType}</strong></td>
+                <td class="text-right"><strong>${modulusuno.formatPrice(number: currencyTotal)}</strong></td>
+              </tr>
+            </g:each>
+          </g:else>
+          <tr>
+            <td colspan="9"></td>
+            <td class="text-right"><strong>Total de registros mostrados</strong></td>
             <td class="text-right"><strong>${modulusuno.formatPrice(number: saleOrders*.total.sum())}</strong></td>
+          </tr>
          </tfoot>
        </table>
        </div>

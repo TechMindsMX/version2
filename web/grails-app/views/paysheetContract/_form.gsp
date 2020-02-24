@@ -17,7 +17,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label><g:message code="paysheetContract.label.initDate"/></label><br/>
-      <input type="text" id="datepicker" name="initDate" value="${paysheetContract?.initDate?.format('dd/MM/yyyy')}" required="required">
+      <input type="text" id="datepicker" name="initDate" value="${paysheetContract?.initDate?.format('dd/MM/yyyy')}" required="required" autocomplete="off">
     </div>
   </div>
   <div class="col-md-6">
