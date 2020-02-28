@@ -48,6 +48,7 @@ class CreditController {
       return
     }
 
+    credit.hasCredit = params.enableCredits ?: false
     def company = Company.get(session.company.toLong())
     def credit = creditService.updateCreditForCompany(creditCommand, company)
 
