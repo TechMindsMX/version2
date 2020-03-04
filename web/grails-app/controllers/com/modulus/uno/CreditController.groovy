@@ -60,6 +60,27 @@ class CreditController {
     redirect(action: "show", id: credit.id)
   }
 
+  def authorize() {
+    Company company = Company.get(session.company.toLong())
+    def data = creditService.list(company, params)
+    respond data.credits, model: [credits: data.credits, total: data.total]
+  }
+
+  def authorizeSave(CreditCommand creditCommand) {
+   if (!creditCommand) {
+      notFound()
+      return
+    }
+    def credit = creditService.authorizeCredit(creditCommand)
+
+    if(credit.hasErrors()) {
+      respond credit, model: [company: company], view:'authorize'
+      return
+    }
+
+   redirect(action: "authorize")
+  }
+
   protected void notFound() {
     request.withFormat {
       form multipartForm {

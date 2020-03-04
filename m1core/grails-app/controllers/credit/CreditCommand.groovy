@@ -12,6 +12,7 @@ class CreditCommand implements Validateable {
   CreditLineType creditLineType
   DispersionType dispersionType
   Boolean enabled
+  Boolean authorize
 
   static constraints = {
     name blank:false, nullable:false
@@ -25,7 +26,8 @@ class CreditCommand implements Validateable {
       frequencyType: this.frequencyType,
       creditLineType: this.creditLineType,
       dispersionType: this.dispersionType,
-      enabled: this.enabled
+      enabled: this.enabled,
+      authorize: this.authorize
     )
   }
 

@@ -36,4 +36,11 @@ class CreditService {
     [credits: credits, total: total]
   }
 
+  def authorizeCredit(CreditCommand creditCommand) {
+    Credit credit = Credit.get(creditCommand.id)
+    credit.authorize = true
+    credit.save()
+    credit
+  }
+
 }

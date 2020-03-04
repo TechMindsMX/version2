@@ -11,6 +11,7 @@ class Credit {
   CreditLineType creditLineType
   DispersionType dispersionType
   Boolean enabled
+  Boolean authorize = false
 
   static belongsTo = [company: Company]
 

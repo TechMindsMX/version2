@@ -9,7 +9,7 @@
     <div class="page-title">
       <h1>
         <i class="fa fa-usd fa-3x"></i>
-        Créditos
+        Authorización de Créditos
         <small>${company}</small>
       </h1>
     </div>
@@ -36,7 +36,7 @@
                 <th class="col-xs-1 text-center"><g:message code="credit.creditLineType" default="Múltiplo Solicitud" /></th>
                 <th class="col-xs-1 text-center"><g:message code="credit.dispersionType" default="Tipo dispersión" /></th>
                 <th class="col-xs-1 text-center"><g:message code="credit.enabled" default="Habilitado"/></th>
-                <th class="col-xs-1 text-center"><g:message code="credit.enabled" default="Autorizar"/></th>
+                <th class="col-xs-1 text-center"><g:message code="credit.enabled" default="Autorizado"/></th>
               </tr>
               <g:each in="${credits.sort{it.id}}" var="credit">
               <tr>
@@ -46,8 +46,8 @@
                   <%-- </g:link> --%>
                 </td>
                 <td class="text-center">${credit.productType.value}</td>
-                <td class="text-right">${credit.portfolioManagementType.value}</td>
-                <td class="text-right">${credit.frequencyType.value}</td>
+                <td class="text-center">${credit.portfolioManagementType.value}</td>
+                <td class="text-center">${credit.frequencyType.value}</td>
                 <td class="text-center">${credit.creditLineType.value}</td>
                 <td class="text-center">${credit.dispersionType.value}</td>
                 <td class="text-center">
@@ -63,7 +63,14 @@
                   </g:else>
                 </td>
                 <td class="text-center">
-                    <input type="checkbox" name="hasCredit"/>
+                  <g:if test="${!credit.authorize}">
+                    <g:link class="create btn btn-primary" controller="credit" action="authorizeSave" id="${credit.id}">Authorizar</g:link>
+                  </g:if>
+                  <g:else>
+                    <span class="label label-primary">
+                      <i class="glyphicon glyphicon-ok fa-1x"></i>
+                    </span>
+                  </g:else>
                 </td>
               </tr>
               </g:each>
@@ -74,10 +81,6 @@
           </div>
         </div>
       </div>
-
-      <g:link class="create btn btn-primary" action="update">
-        <g:message code="credit.view.create.label" default="Autorizar ${entityName}" />
-      </g:link>
     </div>
     </div>
   </body>
