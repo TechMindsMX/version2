@@ -12,6 +12,8 @@ import com.modulus.uno.Company
 @Api
 class CreditRestController {
 
+  static allowedMethods = [save: "POST", update: "POST"]
+  
   CreditService creditService
 
   @ApiOperation(value='Credits list companies', response = Credit, responseContainer = 'list')
@@ -26,11 +28,11 @@ class CreditRestController {
   @SwaggySave(extraParams = [
   @ApiImplicitParam(name = 'corporateId', value = '', dataType = 'string',paramType = 'form'),
   ])
-  def save() {
+  def save(Credit credit) {
     def company = Company.get(params.corporateId  )
     credit = creditService.createCreditForCompany(credit, company)
     if (credit.hasErrors()) {
-      respond address.errors, status: 404, formats: ['json']
+      respond credit.errors, status: 404, formats: ['json']
       return
     }
     respond credit, status: 201, formats: ['json']
