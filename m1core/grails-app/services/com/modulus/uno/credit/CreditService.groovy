@@ -1,10 +1,12 @@
 package com.modulus.uno.credit
 
 import com.modulus.uno.Company
+import com.modulus.uno.BusinessEntity
 import grails.transaction.Transactional
 
 @Transactional
 class CreditService {
+
 
   def createCreditForCompany(Credit credit, Company company) {
     // if (!company) {
@@ -36,4 +38,9 @@ class CreditService {
     [credits: credits, total: total]
   }
 
+  Map findBusinessAndCompanyByRfc(String rfc){
+    BusinessEntity businessEntity =  BusinessEntity.findByRfc(rfc)
+    Company company = Company.list().find { it.businessEntities.id.contains(businessEntity.id) }
+    [company: company, business: businessEntity]
+  }
 }
