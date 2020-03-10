@@ -26,16 +26,12 @@ class CreditRestController {
   }
 
   @SwaggySave(extraParams = [
-  @ApiImplicitParam(name = 'corporateId', value = '', dataType = 'string',paramType = 'form'),
+  @ApiImplicitParam(name = 'rfc', value = '', dataType = 'string', paramType = 'form'),
   ])
-  def save(Credit credit) {
-    def company = Company.get(params.corporateId  )
-    credit = creditService.createCreditForCompany(credit, company)
-    if (credit.hasErrors()) {
-      respond credit.errors, status: 404, formats: ['json']
-      return
-    }
-    respond credit, status: 201, formats: ['json']
+  def save(String rfc) {
+    println rfc
+    def response = creditService.findBusinessAndCompanyByRfc(rfc)
+    respond response, status: 201, formats: ['json']
   }
 
 }
