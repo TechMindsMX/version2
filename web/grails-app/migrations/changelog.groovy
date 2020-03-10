@@ -166,4 +166,5 @@ databaseChangeLog = {
   include file: 'adding_credit_table.groovy'
     include file: 'adding-credit-role.groovy'
     include file: 'add-authorize-column-for-credit.groovy'
+    include file: 'add-payment-day-in-company.groovy'
 }
