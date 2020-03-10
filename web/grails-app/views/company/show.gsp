@@ -83,6 +83,18 @@
               </div>
               </g:if>
               <f:display bean="company" property="rfc" wrapper="describe" />
+              <div class="form-group">
+                <label id="grossAnnualBilling-label" class="col-sm-12 control-label">Día de la primera quincena de pago</label>
+                <div class="col-sm-12">
+                  ${company.firstPaymentDay}
+                </div>
+              </div>
+              <div class="form-group">
+                <label id="grossAnnualBilling-label" class="col-sm-12 control-label">Día de la segunda quincena de pago</label>
+                <div class="col-sm-12">
+                  ${company.secondPaymentDay}
+                </div>
+              </div>
               </form>
 
               <div class="property-value">

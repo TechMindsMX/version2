@@ -13,3 +13,11 @@
   	<input id="rfc" class="form-control" name="rfc" value="${company.rfc}" required="true"  />
 </div>
 <f:field bean="company" property="numberOfAuthorizations" label="${message(code:"company.numberOfAuthorizations")}*" wrapper="home" />
+<div class="form-group">
+  <label class="control-label">Fecha de primer quincena de pago: <span class="required-indicator">*</span></label>
+    <g:select name="firstPaymentDay" from="${(1..<32)}" class="form-control" value="${i}" valueMessagePrefix="${i}" noSelection="['null':'Seleccione el día']"/>
+</div>
+<div class="form-group">
+  <label class="control-label">Fecha de segunda quincena de pago: <span class="required-indicator">*</span></label>
+    <g:select name="secondPaymentDay" from="${(1..<32)}" class="form-control" value="${i}" valueMessagePrefix="${i}" noSelection="['null':'Seleccione el día']"/>
+</div>
