@@ -20,6 +20,8 @@ class Company implements Linker {
 
   String artemisaId
   String pdfTemplate
+  Integer firstPaymentDay 
+  Integer secondPaymentDay 
 
   static hasMany = [banksAccounts:BankAccount,
                     documents:S3Asset,

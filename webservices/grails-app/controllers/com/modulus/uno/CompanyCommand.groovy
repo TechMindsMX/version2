@@ -12,6 +12,8 @@ class CompanyCommand implements Validateable {
   String numberOfAuthorizations
   String taxRegime
   String corporateId
+  Integer firstPaymentDay 
+  Integer secondPaymentDay 
 
   Company createCompany() {
     new Company(
@@ -22,7 +24,9 @@ class CompanyCommand implements Validateable {
       employeeNumbers: this.employeeNumbers,
       grossAnnualBilling: this.grossAnnualBilling,
       numberOfAuthorizations: this.numberOfAuthorizations,
-      taxRegime: CompanyTaxRegime."${this.taxRegime}"
+      taxRegime: CompanyTaxRegime."${this.taxRegime}",
+      firstPaymentDay: this.firstPaymentDay,
+      secondPaymentDay: this.secondPaymentDay
     )
   }
 }
