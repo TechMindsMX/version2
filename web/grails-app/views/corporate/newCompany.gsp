@@ -36,7 +36,7 @@
               <fieldset class="form">
                 <g:render template="/company/form" bean="${company}" />
               </fieldset>
-              <g:submitButton name="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+              <g:submitButton name="create" id="create" class="save btn btn-default" value="${message(code: 'default.button.create.label', default: 'Create')}" />
             </g:form>
           </div>
           <!-- END OF CONTENT -->
@@ -50,7 +50,17 @@
         $("#rfc").blur(function(){
           $(this).val($(this).val().toUpperCase());
         });
+        
       });
+      function verifyCorrectDates(){
+          return Number(document.getElementById("firstPaymentDay").value) < Number(document.getElementById("secondPaymentDay").value)
+        };
+        $("#create").click( function(){
+          if(!verifyCorrectDates()){
+            alert('Las fechas son incorrectas, favor de verificar');
+            return 
+          } else { return true }
+        });
     </g:javascript>
   </body>
 </html>

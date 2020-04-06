@@ -39,7 +39,7 @@
               <g:render template="form" bean="${company}" />
               <div class="form-group">
                 <div class="col-sm-offset-4 col-sm-10">
-                  <input class="save btn btn-default" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+                  <input class="save btn btn-default" id="update" type="submit" value="${message(code: 'default.button.update.label', default: 'Update')}" />
                 </div>
               </div>
             </g:form>
@@ -47,5 +47,17 @@
         </div>
       </div>
     </div>
+    <g:javascript>
+
+      function verifyCorrectDates(){
+          return Number(document.getElementById("firstPaymentDay").value) < Number(document.getElementById("secondPaymentDay").value)
+        };
+        $("#update").click( function(){
+          if(!verifyCorrectDates()){
+            alert('Las fechas son incorrectas, favor de verificar');
+            return false
+          } else { return true }
+        });
+    </g:javascript>
   </body>
 </html>
