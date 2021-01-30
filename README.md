@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/TechMindsMX/modulusuno-v3.png?label=ready&title=Ready)](https://waffle.io/TechMindsMX/modulusuno-v3)
 # version2
 # Iniciar aplicación
 1. Clonar base de datos por problema de las migraciones
